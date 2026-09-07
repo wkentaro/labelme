@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>Mô tả</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>Các nhãn có thể chọn</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>Cờ của nhãn</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

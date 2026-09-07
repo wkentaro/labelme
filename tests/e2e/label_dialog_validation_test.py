@@ -111,47 +111,6 @@ def test_validate_label_exact_rejects_unknown_label(
 
 
 @pytest.mark.gui
-def test_arrow_keys_in_label_edit_navigate_label_list(
-    *,
-    main_win: MainWinFactory,
-    qtbot: QtBot,
-    data_path: Path,
-    pause: bool,
-) -> None:
-    win = main_win(
-        file_or_dir=str(data_path / _RAW_FILE),
-        config_overrides={"labels": ["cat", "dog", "person"]},
-    )
-    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    canvas = win._canvas_widgets.canvas
-    label_dialog = win._label_dialog
-
-    after_down: list[str] = []
-
-    def _press_down_capture_then_cancel() -> None:
-        # Sorted labels: cat, dog, person. Pin selection to row 0 so Down
-        # pressed in the line edit advances the list to row 1.
-        label_dialog.label_list.setCurrentRow(0)
-        qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Down)
-        qtbot.wait(50)
-        item = label_dialog.label_list.currentItem()
-        if item is not None:
-            after_down.append(item.text())
-        qtbot.keyClick(label_dialog, Qt.Key.Key_Escape)
-
-    _draw_triangle(qtbot=qtbot, win=win)
-    schedule_on_dialog(
-        label_dialog=label_dialog, action=_press_down_capture_then_cancel
-    )
-    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=_CLOSE_POLYGON_CLICK)
-
-    qtbot.waitUntil(lambda: bool(after_down), timeout=3000)
-    assert after_down[0] == "dog"
-
-    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
-
-
-@pytest.mark.gui
 def test_add_label_history_dedups_repeated_labels_and_keeps_sorted(
     *,
     main_win: MainWinFactory,

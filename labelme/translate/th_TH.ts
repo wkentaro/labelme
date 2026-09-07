@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>คำอธิบาย</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>ตัวเลือกป้ายกำกับ</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>แฟล็กป้ายกำกับ</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

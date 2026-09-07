@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>توضیحات</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>گزینه‌های برچسب</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>پرچم‌های برچسب</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

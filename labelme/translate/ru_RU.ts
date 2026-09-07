@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>Описание</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>Варианты меток</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>Флаги метки</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

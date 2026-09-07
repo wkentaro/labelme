@@ -22,7 +22,7 @@ class LabelDialogEntry:
     description: str
 
 
-_PLACEHOLDER_TEXT: Final[str] = "Enter object label"
+_PLACEHOLDER_TEXT: Final[str] = "Name this shape"
 
 
 class LabelDialog(QtWidgets.QDialog):
@@ -59,10 +59,8 @@ class LabelDialog(QtWidgets.QDialog):
         # The flags currently on show, keyed by flag name, so a flag named by
         # two matching label_flags patterns gets exactly one checkbox.
         self._flag_checkboxes: dict[str, QtWidgets.QCheckBox] = {}
-        # Checked state per flag key, remembered for the lifetime of one popup.
-        # The checkboxes themselves cannot hold it: editing the label rebuilds
-        # them, and an intermediate keystroke that matches no pattern destroys
-        # them entirely.
+        # Checked state per flag key, remembered for the lifetime of one popup
+        # even when an intermediate label has no checkbox for that key.
         self._flag_states: dict[str, bool] = {}
 
         if fit_to_content is None:
@@ -75,6 +73,7 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.setAccessibleName(self.tr("Label"))
 
         group_id_name = self.tr("Group ID")
+        group_id_label = QtWidgets.QLabel(group_id_name)
         self.edit_group_id = QtWidgets.QLineEdit()
         self.edit_group_id.setPlaceholderText(group_id_name)
         self.edit_group_id.setAccessibleName(group_id_name)
@@ -89,6 +88,7 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit_description.setFixedHeight(50)
 
         self.label_list = QtWidgets.QListWidget()
+        self.label_list.setAccessibleName(self.tr("Label choices"))
         self.label_list.setFixedHeight(LABEL_LIST_HEIGHT)
 
         # Configure label list
@@ -113,8 +113,6 @@ class LabelDialog(QtWidgets.QDialog):
         # Set up completer bound to label_list's model
         completer = self._make_completer(completion=completion)
         self.edit.setCompleter(completer)
-        # Up/Down are taken before the line edit sees them so the arrow keys walk
-        # the label list while every other key keeps editing the text.
         self.edit.installEventFilter(self)
 
         button_box = QtWidgets.QDialogButtonBox(
@@ -134,6 +132,8 @@ class LabelDialog(QtWidgets.QDialog):
         if show_text_field:
             top_row = QtWidgets.QHBoxLayout()
             top_row.addWidget(self.edit, stretch=4)
+            group_id_label.setBuddy(self.edit_group_id)
+            top_row.addWidget(group_id_label)
             top_row.addWidget(self.edit_group_id, stretch=1)
             main_layout.addLayout(top_row)
         else:
@@ -149,6 +149,8 @@ class LabelDialog(QtWidgets.QDialog):
         self._flags_container.setLayout(self._flags_layout)
 
         self._flags_scroll = QtWidgets.QScrollArea()
+        self._flags_scroll.setAccessibleName(self.tr("Label flags"))
+        self._flags_scroll.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
         self._flags_scroll.setWidgetResizable(True)
         self._flags_scroll.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         self._flags_scroll.setHorizontalScrollBarPolicy(
@@ -161,8 +163,9 @@ class LabelDialog(QtWidgets.QDialog):
 
         # Connect signals
         self.edit.textChanged.connect(self._on_text_changed)
-        self.label_list.currentItemChanged.connect(self._on_label_selected)
-        self.label_list.itemDoubleClicked.connect(self._submit_item)
+        self.label_list.itemSelectionChanged.connect(self._select_current_label)
+        self.label_list.itemClicked.connect(self._on_label_selected)
+        self.label_list.itemDoubleClicked.connect(self._accept_clicked_label)
 
         # Populate initial labels
         for label in dict.fromkeys([*(labels or []), *self._label_history]):
@@ -199,6 +202,9 @@ class LabelDialog(QtWidgets.QDialog):
         if text != text.lstrip():
             self.edit.setText(text.lstrip())
             return
+        item = self.label_list.currentItem()
+        if item is not None and item.text() != text:
+            self.label_list.clearSelection()
         self._refresh_ok_button()
         if "flags" not in self._locked:
             self._update_flags(text)
@@ -211,32 +217,30 @@ class LabelDialog(QtWidgets.QDialog):
         )
 
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
-        if watched is self.edit and event.type() == QtCore.QEvent.Type.KeyPress:
+        if event.type() == QtCore.QEvent.Type.KeyPress and watched is self.edit:
             assert isinstance(event, QtGui.QKeyEvent)
-            step = {QtCore.Qt.Key.Key_Up: -1, QtCore.Qt.Key.Key_Down: 1}.get(
-                QtCore.Qt.Key(event.key())
-            )
-            if step is not None:
-                row = self.label_list.currentRow() + step
-                self.label_list.setCurrentRow(
-                    min(max(row, 0), self.label_list.count() - 1)
-                )
+            if QtCore.Qt.Key(event.key()) in (
+                QtCore.Qt.Key.Key_Up,
+                QtCore.Qt.Key.Key_Down,
+            ):
+                self.label_list.keyPressEvent(event)
                 return True
         return super().eventFilter(watched, event)
 
-    def _on_label_selected(
-        self,
-        current: QtWidgets.QListWidgetItem | None,
-        _previous: QtWidgets.QListWidgetItem | None,
-        /,
-    ) -> None:
-        if current is None:
-            return
-        self.edit.setText(current.text())
+    def _select_current_label(self) -> None:
+        # Tabbing into the list sets a current row without selecting a label.
+        # Only an explicit selection should replace the typed text.
+        item = self.label_list.currentItem()
+        if item is not None and item.isSelected():
+            self._on_label_selected(item)
 
-    def _submit_item(self, item: QtWidgets.QListWidgetItem, /) -> None:
-        self.label_list.setCurrentItem(item)
-        self._ok_button.click()
+    def _on_label_selected(self, item: QtWidgets.QListWidgetItem, /) -> None:
+        self.edit.setText(item.text())
+
+    def _accept_clicked_label(self, item: QtWidgets.QListWidgetItem, /) -> None:
+        self.edit.setText(item.text())
+        if self._ok_button.isEnabled():
+            self.accept()
 
     def _clear_flag_checkboxes(self) -> None:
         self._flag_checkboxes.clear()
@@ -250,14 +254,13 @@ class LabelDialog(QtWidgets.QDialog):
                 widget.deleteLater()
 
     def _update_flags(self, text: str, /) -> None:
-        self._flag_states.update(self._collect_flags())
-        flags: dict[str, bool] = {}
-        for pattern, flag_keys in self._flags_spec.items():
-            if not pattern.match(text):
-                continue
-            for key in flag_keys:
-                flags[key] = self._flag_states.get(key, False)
-        self._set_flag_checkboxes(flags=flags)
+        keys = dict.fromkeys(
+            key
+            for pattern, pattern_keys in self._flags_spec.items()
+            if pattern.match(text)
+            for key in pattern_keys
+        )
+        self._reconcile_flag_checkboxes(keys=keys)
 
     def add_label_history(self, *, label: str) -> None:
         if label not in self._label_history:
@@ -314,11 +317,7 @@ class LabelDialog(QtWidgets.QDialog):
         self._flag_states.clear()
         self._clear_flag_checkboxes()
 
-        # A locked field shows nothing: the caller's value is not shared by the
-        # whole selection, and the field is skipped when the entry is applied.
-        for name, widgets in self._get_field_widgets().items():
-            for widget in widgets:
-                widget.setEnabled(name not in self._locked)
+        self._apply_field_locks()
         if "label" in self._locked:
             text = ""
         elif text is None:
@@ -342,14 +341,16 @@ class LabelDialog(QtWidgets.QDialog):
         else:
             self._set_flag_checkboxes(flags=flags)
 
-        self.label_list.setCurrentRow(self._find_label_row(text))
+        # Highlighting a case-insensitive match must not apply a different label.
+        with QtCore.QSignalBlocker(self.label_list):
+            self.label_list.setCurrentRow(self._find_label_row(text))
 
         self._fit_label_list_to_content()
         self._refresh_ok_button()
-        self.edit.setFocus(QtCore.Qt.FocusReason.PopupFocusReason)
+        self.edit.setFocus(QtCore.Qt.FocusReason.OtherFocusReason)
 
         if move:
-            target = position if position is not None else QtGui.QCursor.pos()
+            target = self._popup_target(position)
             self._move_within_screen(target)
             # frameGeometry() lacks the window-manager decoration size until the
             # dialog is mapped, so re-clamp once exec() has shown it. Clamp only
@@ -375,30 +376,59 @@ class LabelDialog(QtWidgets.QDialog):
         self.remember_label(label=entry.label)
         return entry
 
-    def _get_field_widgets(
-        self,
-    ) -> dict[LabelDialogField, tuple[QtWidgets.QWidget, ...]]:
-        return {
-            "label": (self.edit, self.label_list),
-            "flags": (self._flags_container,),
-            "group_id": (self.edit_group_id,),
-            "description": (self.edit_description,),
-        }
+    def _apply_field_locks(self) -> None:
+        self.edit.setEnabled("label" not in self._locked)
+        self.label_list.setEnabled("label" not in self._locked)
+        self._flags_container.setEnabled("flags" not in self._locked)
+        self.edit_group_id.setEnabled("group_id" not in self._locked)
+        self.edit_description.setEnabled("description" not in self._locked)
+
+    @staticmethod
+    def _popup_target(position: QtCore.QPoint | None, /) -> QtCore.QPoint:
+        if position is not None:
+            return position
+        return QtGui.QCursor.pos()
 
     def _set_flag_checkboxes(self, *, flags: dict[str, bool]) -> None:
+        self._flag_states.update(flags)
+        self._reconcile_flag_checkboxes(keys=flags)
+        for key, checked in flags.items():
+            self._flag_checkboxes[key].setChecked(checked)
+
+    def _reconcile_flag_checkboxes(self, *, keys: Collection[str]) -> None:
         FLAGS_SCROLL_MAX_HEIGHT: Final[int] = 150
 
-        self._clear_flag_checkboxes()
-        for key, checked in flags.items():
-            checkbox = QtWidgets.QCheckBox(key)
-            checkbox.setChecked(checked)
-            self._flag_checkboxes[key] = checkbox
+        ordered_keys = list(keys)
+        visible_keys = set(ordered_keys)
+        for key in self._flag_checkboxes.keys() - visible_keys:
+            checkbox = self._flag_checkboxes.pop(key)
+            self._flag_states[key] = checkbox.isChecked()
+            self._flags_layout.removeWidget(checkbox)
+            checkbox.setParent(None)
+            checkbox.deleteLater()
+
+        for key in ordered_keys:
+            if key not in self._flag_checkboxes:
+                checkbox = QtWidgets.QCheckBox(key)
+                checkbox.setChecked(self._flag_states.get(key, False))
+                self._flag_checkboxes[key] = checkbox
+
+        for key in ordered_keys:
+            checkbox = self._flag_checkboxes[key]
+            self._flags_layout.removeWidget(checkbox)
             self._flags_layout.addWidget(checkbox)
             # A widget added to a visible layout stays hidden until the event
             # loop activates the layout, and the layout counts hidden widgets as
             # empty, so the container hint below would be momentarily 0 and
             # would pin the scroll area shut for the rest of the popup.
             checkbox.show()
+
+        previous: QtWidgets.QWidget = self.label_list
+        for key in ordered_keys:
+            checkbox = self._flag_checkboxes[key]
+            self.setTabOrder(previous, checkbox)
+            previous = checkbox
+        self.setTabOrder(previous, self.edit_description)
 
         content_height = self._flags_container.sizeHint().height()
         self._flags_scroll.setFixedHeight(min(content_height, FLAGS_SCROLL_MAX_HEIGHT))

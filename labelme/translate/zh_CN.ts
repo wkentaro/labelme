@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>描述</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>标签选项</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>标签标志</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

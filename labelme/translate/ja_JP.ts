@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>説明</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>ラベルの選択肢</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>ラベルのフラグ</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

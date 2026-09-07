@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>Descrição</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>Opções de rótulo</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>Sinalizadores do rótulo</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

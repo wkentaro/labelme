@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>Deskripsi</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>Pilihan label</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>Penanda label</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

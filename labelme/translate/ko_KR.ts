@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>설명</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>레이블 선택 항목</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>레이블 플래그</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

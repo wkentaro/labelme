@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>Opis</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>Dostępne etykiety</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>Flagi etykiety</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

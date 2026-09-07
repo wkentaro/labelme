@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>Leírás</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>Választható címkék</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>Címkejelzők</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

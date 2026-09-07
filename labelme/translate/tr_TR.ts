@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>Açıklama</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>Etiket seçenekleri</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>Etiket bayrakları</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

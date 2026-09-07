@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>Περιγραφή</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>Επιλογές ετικέτας</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>Σημαίες ετικέτας</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>

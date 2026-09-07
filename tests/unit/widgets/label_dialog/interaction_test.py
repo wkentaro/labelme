@@ -12,11 +12,7 @@ from labelme._widgets.label_dialog import LabelDialog
 from labelme._widgets.label_dialog import LabelDialogEntry
 from labelme._widgets.label_dialog import LabelDialogField
 
-# Black-box characterization of LabelDialog: behavior is exercised only through
-# the public surface (popup(), public methods, public widgets edit/
-# edit_group_id/edit_description/label_list, and observable Qt state). No
-# private method or attribute is referenced, so a rewrite is free to restructure
-# internals while these tests keep pinning observable behavior.
+# Exercise observable dialog behavior without depending on private helpers.
 
 
 def _add_dialog(qtbot: QtBot, /, *, dialog: LabelDialog) -> LabelDialog:
@@ -88,32 +84,86 @@ def _show_dialog_with_labels(qtbot: QtBot, /, *, labels: list[str]) -> LabelDial
     return dialog
 
 
-def test_key_down_in_edit_moves_list_selection(*, qtbot: QtBot) -> None:
-    dialog = _show_dialog_with_labels(qtbot, labels=["a", "b", "c"])
-    dialog.label_list.setCurrentRow(0)
-    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Down)
-    assert dialog.label_list.currentRow() == 1
-    assert dialog.edit.text() == "b"
-
-
-def test_key_up_in_edit_moves_list_selection(*, qtbot: QtBot) -> None:
-    dialog = _show_dialog_with_labels(qtbot, labels=["a", "b", "c"])
-    dialog.label_list.setCurrentRow(2)
-    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Up)
-    assert dialog.label_list.currentRow() == 1
-    assert dialog.edit.text() == "b"
-
-
-def test_arrow_keys_stop_at_list_ends(*, qtbot: QtBot) -> None:
-    dialog = _show_dialog_with_labels(qtbot, labels=["a", "b"])
+def test_arrow_keys_in_edit_select_labels(*, qtbot: QtBot) -> None:
+    dialog = _show_dialog_with_labels(qtbot, labels=["cat", "dog", "person"])
     dialog.label_list.setCurrentRow(-1)
+    dialog.edit.clear()
     qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Down)
-    assert dialog.label_list.currentRow() == 0
+    assert dialog.edit.text() == "cat"
+    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Down)
+    assert dialog.edit.text() == "dog"
+    assert _ok_button(dialog).isEnabled()
     qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Up)
-    assert dialog.label_list.currentRow() == 0
-    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Down)
-    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Down)
-    assert dialog.label_list.currentRow() == 1
+    assert dialog.edit.text() == "cat"
+
+
+@pytest.mark.parametrize(
+    ("key", "expected"),
+    [(QtCore.Qt.Key.Key_P, "person"), (QtCore.Qt.Key.Key_Down, "dog")],
+)
+def test_list_keyboard_choice_is_accepted_immediately(
+    *, qtbot: QtBot, key: QtCore.Qt.Key, expected: str
+) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat", "dog", "person"]))
+
+    def choose_label() -> None:
+        dialog.label_list.setFocus(QtCore.Qt.FocusReason.TabFocusReason)
+        dialog.label_list.setCurrentRow(0)
+        dialog.edit.setText("custom")
+        qtbot.keyClick(dialog.label_list, key)
+        qtbot.keyClick(dialog.label_list, QtCore.Qt.Key.Key_Return)
+
+    QtCore.QTimer.singleShot(0, choose_label)
+    QtCore.QTimer.singleShot(1000, dialog.reject)
+    entry = dialog.popup(text="custom", move=False)
+    assert entry is not None
+    assert entry.label == expected
+
+
+@pytest.mark.parametrize(
+    "modifier",
+    [
+        QtCore.Qt.KeyboardModifier.ControlModifier,
+        QtCore.Qt.KeyboardModifier.MetaModifier,
+        QtCore.Qt.KeyboardModifier.AltModifier,
+    ],
+)
+def test_list_shortcuts_preserve_typed_label(
+    *, qtbot: QtBot, modifier: QtCore.Qt.KeyboardModifier
+) -> None:
+    dialog = _show_dialog_with_labels(qtbot, labels=["cat", "dog"])
+    dialog.label_list.setFocus()
+    dialog.label_list.setCurrentRow(0)
+    dialog.edit.setText("custom")
+    qtbot.keyClick(dialog.label_list, QtCore.Qt.Key.Key_C, modifier)
+    assert dialog.edit.text() == "custom"
+
+
+@pytest.mark.parametrize("selected", [False, True])
+def test_unmatched_list_search_preserves_typed_label(
+    *, qtbot: QtBot, selected: bool
+) -> None:
+    dialog = _show_dialog_with_labels(qtbot, labels=["cat", "dog"])
+    dialog.label_list.setFocus()
+    dialog.label_list.setCurrentRow(0)
+    dialog.label_list.item(0).setSelected(selected)
+    dialog.edit.setText("custom")
+    qtbot.keyClick(dialog.label_list, QtCore.Qt.Key.Key_Z)
+    assert dialog.edit.text() == "custom"
+
+
+def test_editing_selected_label_clears_stale_selection(*, qtbot: QtBot) -> None:
+    dialog = _show_dialog_with_labels(qtbot, labels=["car", "dog"])
+    dialog.label_list.setCurrentRow(0)
+    dialog.edit.setFocus()
+    dialog.edit.setCursorPosition(len(dialog.edit.text()))
+    qtbot.keyClicks(dialog.edit, "fad")
+
+    assert dialog.edit.text() == "carfad"
+    assert dialog.label_list.selectedItems() == []
+    qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Return)
+    assert dialog.result() == QtWidgets.QDialog.DialogCode.Accepted
+    assert dialog.edit.text() == "carfad"
 
 
 def test_other_keys_edit_text_not_list(*, qtbot: QtBot) -> None:
@@ -314,20 +364,33 @@ def test_accepted_label_is_stripped(*, qtbot: QtBot) -> None:
     assert entry.label == "hello"
 
 
-def test_selecting_label_sets_edit_text(*, qtbot: QtBot) -> None:
+def test_clicking_label_sets_edit_text(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat", "dog"]))
     item = dialog.label_list.findItems("dog", QtCore.Qt.MatchFlag.MatchExactly)[0]
-    dialog.label_list.setCurrentItem(item)
+    dialog.label_list.itemClicked.emit(item)
     assert dialog.edit.text() == "dog"
 
 
-def test_clearing_selection_with_none_does_not_crash(*, qtbot: QtBot) -> None:
+def test_tabbing_into_choices_does_not_replace_custom_text(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat"]))
-    dialog.label_list.setCurrentItem(
-        dialog.label_list.findItems("cat", QtCore.Qt.MatchFlag.MatchExactly)[0]
-    )
-    dialog.label_list.clear()  # fires currentItemChanged(None)
-    assert dialog.edit.text() == "cat"
+    dialog.edit.setText("custom")
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    dialog.edit.setFocus()
+    for _ in range(4):
+        qtbot.keyClick(dialog.focusWidget(), QtCore.Qt.Key.Key_Tab)
+    assert dialog.focusWidget() is dialog.label_list
+    assert dialog.label_list.currentRow() == 0
+    assert dialog.edit.text() == "custom"
+
+
+def test_arrow_key_in_focused_label_list_selects_label(*, qtbot: QtBot) -> None:
+    dialog = _show_dialog_with_labels(qtbot, labels=["cat", "dog"])
+    dialog.edit.setText("custom")
+    dialog.label_list.setCurrentRow(0)
+    dialog.label_list.setFocus(QtCore.Qt.FocusReason.TabFocusReason)
+    qtbot.keyClick(dialog.label_list, QtCore.Qt.Key.Key_Down)
+    qtbot.waitUntil(lambda: dialog.edit.text() == "dog")
 
 
 # ---------------------------------------------------------------------------
@@ -450,7 +513,6 @@ def test_locked_fields_are_blank_and_disabled_for_one_popup(*, qtbot: QtBot) -> 
 def test_double_click_label_accepts(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat"]))
     item = dialog.label_list.findItems("cat", QtCore.Qt.MatchFlag.MatchExactly)[0]
-    dialog.label_list.setCurrentItem(item)  # selection sets the edit text
     dialog.label_list.itemDoubleClicked.emit(item)
     assert dialog.result() == QtWidgets.QDialog.DialogCode.Accepted
 
@@ -489,6 +551,7 @@ def test_flag_checked_state_preserved_across_text_change(*, qtbot: QtBot) -> Non
     box.setChecked(True)
     dialog.edit.setText("cat2")  # still matches "^cat"
     box2 = next(cb for cb in _checkboxes(dialog) if cb.text() == "indoor")
+    assert box2 is box
     assert box2.isChecked()
 
 
@@ -512,12 +575,12 @@ def test_flag_checked_state_shared_across_labels(*, qtbot: QtBot) -> None:
     assert _checkbox(dialog=dialog, name="indoor").isChecked()
 
 
-def test_flag_checkboxes_stay_visible_when_rebuilt_while_shown(*, qtbot: QtBot) -> None:
+def test_flag_checkboxes_stay_visible_when_updated_while_shown(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(qtbot, dialog=LabelDialog(flags={".*": ["occluded"]}))
     dialog.edit.setText("cat")
     with qtbot.waitExposed(dialog):
         dialog.show()
-    dialog.edit.setText("dog")  # rebuilds the checkboxes while the dialog is shown
+    dialog.edit.setText("dog")
     qtbot.waitUntil(
         lambda: not _checkbox(dialog=dialog, name="occluded").visibleRegion().isEmpty(),
         timeout=1000,
@@ -802,7 +865,7 @@ def test_popup_highlights_matching_label_at_show(*, qtbot: QtBot) -> None:
         text="dog",
         at_show=lambda d: seen.update(
             cur=d.label_list.currentItem().text()
-            if d.label_list.currentItem()
+            if d.label_list.currentItem() and d.label_list.currentItem().isSelected()
             else None
         ),
         flags=None,
@@ -822,7 +885,7 @@ def test_popup_highlights_matching_label_case_insensitively(*, qtbot: QtBot) -> 
         text="cat",
         at_show=lambda d: seen.update(
             cur=d.label_list.currentItem().text()
-            if d.label_list.currentItem()
+            if d.label_list.currentItem() and d.label_list.currentItem().isSelected()
             else None
         ),
         flags=None,
@@ -831,6 +894,29 @@ def test_popup_highlights_matching_label_case_insensitively(*, qtbot: QtBot) -> 
         locked=(),
     )
     assert seen["cur"] == "Cat"
+
+
+def test_popup_highlight_preserves_stored_label_and_flags(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(
+        qtbot,
+        dialog=LabelDialog(
+            labels=["cat", "Cat"], sort_labels=False, flags={"^Cat$": ["capital"]}
+        ),
+    )
+    for text, flags in [("cat", {}), ("Cat", {"capital": True})]:
+        entry = _run_popup(
+            dialog=dialog,
+            accept=True,
+            text=text,
+            flags=flags,
+            group_id=None,
+            description=None,
+            locked=(),
+            at_show=None,
+        )
+        assert entry == LabelDialogEntry(
+            label=text, flags=flags, group_id=None, description=""
+        )
 
 
 def test_popup_clears_stale_highlight_when_nothing_matches(*, qtbot: QtBot) -> None:

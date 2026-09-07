@@ -258,6 +258,14 @@
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
+    <message>
+        <source>Label choices</source>
+        <translation>Labelauswahl</translation>
+    </message>
+    <message>
+        <source>Label flags</source>
+        <translation>Label-Markierungen</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
