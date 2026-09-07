@@ -177,8 +177,8 @@
         <translation>کلیک راست و کشیدن برای کپی شکل</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>کلیک روی گوشه مقابل مستطیل (Shift برای مربع)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>گوشهٔ دیگر را انتخاب کنید. برای مربع، Shift را نگه دارید.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

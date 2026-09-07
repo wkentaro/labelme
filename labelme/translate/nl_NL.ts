@@ -177,8 +177,8 @@
         <translation>Rechtsklik en sleep om vorm te kopiëren</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Klik op tegenoverliggende hoek voor rechthoek (Shift voor vierkant)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Kies de andere hoek. Houd Shift ingedrukt voor een vierkant.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

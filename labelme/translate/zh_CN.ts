@@ -177,8 +177,8 @@
         <translation>按住鼠标右键拖动以复制形状</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>单击对角以确定矩形（按住 Shift 绘制正方形）</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>选择另一个角。按住Shift可绘制正方形。</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

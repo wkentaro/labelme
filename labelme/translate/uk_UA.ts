@@ -153,8 +153,8 @@
         <translation>Натисніть перший кут для прямокутника</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Натисніть протилежний кут для прямокутника (Shift для квадрата)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Виберіть інший кут. Утримуйте Shift, щоб намалювати квадрат.</translation>
     </message>
     <message>
         <source>Click to add point</source>

@@ -177,8 +177,8 @@
         <translation>Klik kanan &amp; seret untuk menyalin bentuk</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Klik sudut berlawanan untuk persegi panjang (Shift untuk persegi)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Pilih sudut lainnya. Tahan Shift untuk membuat persegi.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

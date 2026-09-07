@@ -177,8 +177,8 @@
         <translation>Rechtsklick und Ziehen, um die Form zu kopieren</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Gegenüberliegende Ecke des Rechtecks anklicken (Shift für Quadrat)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Wähle die andere Ecke. Halte Shift für ein Quadrat gedrückt.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

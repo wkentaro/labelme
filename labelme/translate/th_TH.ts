@@ -161,6 +161,10 @@
         <translation>คลิกมุมแรกของสี่เหลี่ยม</translation>
     </message>
     <message>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>เลือกมุมอีกด้าน กด Shift ค้างไว้เพื่อวาดสี่เหลี่ยมจัตุรัส</translation>
+    </message>
+    <message>
         <source>Click to add point</source>
         <translation>คลิกเพื่อเพิ่มจุด</translation>
     </message>
@@ -175,10 +179,6 @@
     <message>
         <source>Right-click &amp; drag to copy shape</source>
         <translation>คลิกขวาและลากเพื่อคัดลอกรูปร่าง</translation>
-    </message>
-    <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>คลิกมุมตรงข้ามของสี่เหลี่ยม (Shift สำหรับสี่เหลี่ยมจัตุรัส)</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

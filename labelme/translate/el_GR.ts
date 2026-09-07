@@ -153,8 +153,8 @@
         <translation>Κάντε κλικ στην πρώτη γωνία για ορθογώνιο</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Κάντε κλικ στην αντίθετη γωνία για ορθογώνιο (Shift για τετράγωνο)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Επιλέξτε την άλλη γωνία. Κρατήστε πατημένο το Shift για τετράγωνο.</translation>
     </message>
     <message>
         <source>Click to add point</source>

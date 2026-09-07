@@ -177,8 +177,8 @@
         <translation>Şekli kopyalamak için sağ tıklayın &amp; sürükleyin</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Dikdörtgenin karşı köşesine tıklayın (kare için Shift)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Diğer köşeyi seçin. Kare çizmek için Shift tuşunu basılı tutun.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
