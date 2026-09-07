@@ -81,7 +81,8 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         settings_layout.setSpacing(4)
 
         self._model_combo = model_combo = QtWidgets.QComboBox()
-        # Qt exposes the selected option as the name, so describe the control's purpose.
+        # Windows needs an explicit name; Unix exposes the selected option instead.
+        model_combo.setAccessibleName(self.tr("Model"))
         model_combo.setAccessibleDescription(self.tr("Text-to-annotation model"))
         for model_id, model_display in self._available_models:
             model_combo.addItem(model_display, model_id)

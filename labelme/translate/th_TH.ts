@@ -39,6 +39,14 @@
         <source>AI-assisted annotation output format</source>
         <translation>รูปแบบผลลัพธ์คำอธิบายประกอบที่สร้างด้วย AI</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>โมเดล</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>รูปแบบผลลัพธ์</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -69,6 +77,10 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>เลือกโหมด &apos;Polygon&apos;, &apos;Rectangle&apos; หรือ &apos;AI-Points&apos; เพื่อเปิดใช้งาน</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>โมเดล</translation>
     </message>
     <message>
         <source>Prompt</source>

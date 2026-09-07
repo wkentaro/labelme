@@ -39,6 +39,14 @@
         <source>AI-assisted annotation output format</source>
         <translation>Μορφή εξόδου σχολιασμού με υποβοήθηση AI</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>Μοντέλο</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Μορφή εξόδου</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -69,6 +77,10 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Επιλέξτε τη λειτουργία &apos;Polygon&apos;, &apos;Rectangle&apos; ή &apos;AI-Points&apos; για ενεργοποίηση</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Μοντέλο</translation>
     </message>
     <message>
         <source>Prompt</source>

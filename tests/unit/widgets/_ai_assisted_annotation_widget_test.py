@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import sys
+
 import pytest
 from PySide6 import QtGui
 from pytestqt.qtbot import QtBot
@@ -66,11 +68,17 @@ def test_model_and_output_controls_expose_accessible_purpose(
 
     model = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
     output = QtGui.QAccessible.queryAccessibleInterface(widget._output_format_combo)
-    assert model.text(QtGui.QAccessible.Text.Name) == "EfficientSam (speed)"
+    model_name = (
+        widget.tr("Model") if sys.platform == "win32" else "EfficientSam (speed)"
+    )
+    output_name = widget.tr("Output format") if sys.platform == "win32" else "Polygon"
+    assert model.text(QtGui.QAccessible.Text.Name) == model_name
+    assert model.text(QtGui.QAccessible.Text.Value) == "EfficientSam (speed)"
     assert model.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-assisted annotation model"
     )
-    assert output.text(QtGui.QAccessible.Text.Name) == "Polygon"
+    assert output.text(QtGui.QAccessible.Text.Name) == output_name
+    assert output.text(QtGui.QAccessible.Text.Value) == "Polygon"
     assert output.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-assisted annotation output format"
     )

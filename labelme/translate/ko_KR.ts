@@ -39,6 +39,14 @@
         <source>AI-assisted annotation output format</source>
         <translation>AI 지원 주석 출력 형식</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>모델</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>출력 형식</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -69,6 +77,10 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>&apos;Polygon&apos;, &apos;Rectangle&apos; 또는 &apos;AI-Points&apos; 모드를 선택하여 활성화</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>모델</translation>
     </message>
     <message>
         <source>Prompt</source>

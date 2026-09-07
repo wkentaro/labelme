@@ -119,7 +119,8 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         body.setLayout(body_layout)
 
         self._model_combo = QtWidgets.QComboBox()
-        # Qt exposes the selected option as the name, so describe the control's purpose.
+        # Windows needs an explicit name; Unix exposes the selected option instead.
+        self._model_combo.setAccessibleName(self.tr("Model"))
         self._model_combo.setAccessibleDescription(
             self.tr("AI-assisted annotation model")
         )
@@ -128,6 +129,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         body_layout.addWidget(self._model_combo)
 
         self._output_format_combo = QtWidgets.QComboBox()
+        self._output_format_combo.setAccessibleName(self.tr("Output format"))
         self._output_format_combo.setAccessibleDescription(
             self.tr("AI-assisted annotation output format")
         )

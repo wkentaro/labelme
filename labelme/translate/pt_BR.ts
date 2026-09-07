@@ -39,6 +39,14 @@
         <source>AI-assisted annotation output format</source>
         <translation>Formato de saída de anotação assistida por AI</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>Modelo</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Formato de saída</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -69,6 +77,10 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Selecione o modo &apos;Polygon&apos;, &apos;Rectangle&apos; ou &apos;AI-Points&apos; para ativar</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Modelo</translation>
     </message>
     <message>
         <source>Prompt</source>

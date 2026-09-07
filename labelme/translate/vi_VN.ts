@@ -39,6 +39,14 @@
         <source>AI-assisted annotation output format</source>
         <translation>Định dạng đầu ra chú thích có AI hỗ trợ</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>Mô hình</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Định dạng đầu ra</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -69,6 +77,10 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Chọn chế độ &apos;Polygon&apos;, &apos;Rectangle&apos; hoặc &apos;AI-Points&apos; để bật</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Mô hình</translation>
     </message>
     <message>
         <source>Prompt</source>

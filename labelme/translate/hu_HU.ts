@@ -39,6 +39,14 @@
         <source>AI-assisted annotation output format</source>
         <translation>AI-támogatott annotáció kimeneti formátuma</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Kimeneti formátum</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -69,6 +77,10 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Válassza a &apos;Polygon&apos;, &apos;Rectangle&apos; vagy &apos;AI-Points&apos; módot az engedélyezéshez</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
     </message>
     <message>
         <source>Prompt</source>

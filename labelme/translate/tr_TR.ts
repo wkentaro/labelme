@@ -39,6 +39,14 @@
         <source>AI-assisted annotation output format</source>
         <translation>AI destekli açıklama çıktı biçimi</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Çıktı biçimi</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -69,6 +77,10 @@
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Etkinleştirmek için &apos;Çokgen&apos;, &apos;Dikdörtgen&apos; veya &apos;AI-Noktalar&apos; modunu seçin</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
     </message>
     <message>
         <source>Prompt</source>
