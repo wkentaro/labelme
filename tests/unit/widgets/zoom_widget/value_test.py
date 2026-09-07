@@ -29,7 +29,7 @@ def test_zoom_widget_rounds_to_one_decimal(*, widget: ZoomWidget) -> None:
 
 def test_zoom_widget_clamps_to_range(*, widget: ZoomWidget) -> None:
     widget.setValue(10000)
-    assert widget.value() == ZoomWidget.PERCENT_MAX
+    assert widget.value() == 1000
     widget.setValue(0)
     assert widget.value() == 1.0
 

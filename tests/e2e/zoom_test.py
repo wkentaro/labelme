@@ -814,3 +814,27 @@ def test_ctrl_wheel_keeps_image_point_under_cursor(
         assert after.y() == pytest.approx(before.y(), abs=0.01)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", [_ZoomMode.MANUAL_ZOOM, _ZoomMode.FIT_WINDOW])
+def test_percentage_entry_preserves_mode_and_updates_canvas(
+    *,
+    qtbot: QtBot,
+    _win: MainWindow,
+    mode: _ZoomMode,
+) -> None:
+    _win._switch_zoom_mode(mode)
+    widget = _win._canvas_widgets.zoom_widget
+    widget.setFocus()
+    widget.selectAll()
+    scales: list[float] = []
+    widget.valueChanged.connect(
+        lambda: scales.append(_win._canvas_widgets.canvas.scale)
+    )
+
+    qtbot.keyClicks(widget, "125.5")
+    assert scales == pytest.approx([0.01, 0.12, 1.25, 1.255])
+    qtbot.keyClick(widget, Qt.Key.Key_Return)
+    assert scales == pytest.approx([0.01, 0.12, 1.25, 1.255, 1.255])
+    assert _win._zoom_mode == mode
