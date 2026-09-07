@@ -143,16 +143,16 @@ class _CanvasMode(enum.Enum):
 
 
 class Canvas(QtWidgets.QWidget):
-    pixmap: QtGui.QPixmap
+    _pixmap: QtGui.QPixmap
     _pixmap_hash: int | None
     _cursor: CursorRole
-    shapes: list[Shape]
-    shape_backups: collections.deque[list[Shape]]
+    _shapes: list[Shape]
+    _shape_backups: collections.deque[list[Shape]]
     _is_moving_shape: bool
-    selected_shapes: list[Shape]
+    _selected_shapes: list[Shape]
     _selected_shapes_copy: list[Shape]
     _current: _DraftShape | None
-    hovered_shape: Shape | None
+    _hovered_shape: Shape | None
     _last_hovered_shape: Shape | None
     _hovered_vertex: int | None
     _last_hovered_vertex: int | None
@@ -176,7 +176,7 @@ class Canvas(QtWidgets.QWidget):
     mouse_moved = QtCore.Signal(QPointF)
     status_updated = QtCore.Signal(str)
 
-    mode: _CanvasMode = _CanvasMode.EDIT
+    _mode: _CanvasMode = _CanvasMode.EDIT
 
     _create_mode: _CreateMode = "polygon"
 
@@ -206,6 +206,50 @@ class Canvas(QtWidgets.QWidget):
     _ai_existing_shape_highlights: list[Shape]
     _ai_points_preview: list[Shape]
     _ai_points_preview_key: tuple[object, ...] | None
+
+    @property
+    def pixmap(self) -> QtGui.QPixmap:
+        return self._pixmap
+
+    @pixmap.setter
+    def pixmap(self, value: QtGui.QPixmap, /) -> None:
+        self._pixmap = value
+
+    @property
+    def shapes(self) -> list[Shape]:
+        return self._shapes
+
+    @shapes.setter
+    def shapes(self, value: list[Shape], /) -> None:
+        self._shapes = value
+
+    @property
+    def shape_backups(self) -> collections.deque[list[Shape]]:
+        return self._shape_backups
+
+    @property
+    def selected_shapes(self) -> list[Shape]:
+        return self._selected_shapes
+
+    @selected_shapes.setter
+    def selected_shapes(self, value: list[Shape], /) -> None:
+        self._selected_shapes = value
+
+    @property
+    def hovered_shape(self) -> Shape | None:
+        return self._hovered_shape
+
+    @property
+    def mode(self) -> _CanvasMode:
+        return self._mode
+
+    @property
+    def context_menus(self) -> _canvas_interaction.ContextMenuPair:
+        return self._context_menus
+
+    @property
+    def context_menu_origin(self) -> QtCore.QPoint | None:
+        return self._context_menu_origin
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         self._epsilon: float = kwargs.pop("epsilon", 10.0)
@@ -266,11 +310,11 @@ class Canvas(QtWidgets.QWidget):
         self._point_type: Literal["square", "round"] = "round"
         self._draft_palette = _DEFAULT_PALETTE
         self._palette_cache = {}
-        self.context_menus = _canvas_interaction.ContextMenuPair(
+        self._context_menus = _canvas_interaction.ContextMenuPair(
             without_selection=QtWidgets.QMenu(),
             with_selection=QtWidgets.QMenu(),
         )
-        self.context_menu_origin: QtCore.QPoint | None = None
+        self._context_menu_origin: QtCore.QPoint | None = None
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
 
@@ -539,7 +583,7 @@ class Canvas(QtWidgets.QWidget):
 
         # Peeking would leave this entry on the stack, and the reload that
         # follows would record it a second time, making the next undo a no-op.
-        self.shapes = self.shape_backups.pop()
+        self._shapes = self.shape_backups.pop()
         self.selected_shapes.clear()
         self.update()
 
@@ -570,7 +614,7 @@ class Canvas(QtWidgets.QWidget):
         new_mode = _CanvasMode.EDIT if value else _CanvasMode.CREATE
         if new_mode is not self.mode:
             self._clear_ai_existing_shape_highlights()
-        self.mode = new_mode
+        self._mode = new_mode
         if self.mode == _CanvasMode.EDIT:
             # CREATE -> EDIT
             self.update()  # clear crosshair
@@ -610,7 +654,7 @@ class Canvas(QtWidgets.QWidget):
         self._last_hovered_edge = (
             self._hovered_edge if hovered_edge is None else hovered_edge
         )
-        self.hovered_shape = hovered_shape
+        self._hovered_shape = hovered_shape
         self._hovered_vertex = hovered_vertex
         self._hovered_edge = hovered_edge
         self._hovered_rotation = hovered_rotation
@@ -1015,7 +1059,7 @@ class Canvas(QtWidgets.QWidget):
             return
         shape.insert_point(i=index, point=(point.x(), point.y()))
         self._highlight_vertex(index=index, mode="move")
-        self.hovered_shape = shape
+        self._hovered_shape = shape
         self._hovered_vertex = index
         self._hovered_edge = None
         self._is_moving_shape = True
@@ -1032,7 +1076,7 @@ class Canvas(QtWidgets.QWidget):
         # Drop the hovered vertex and selection so the press that deleted the
         # point cannot also drag the adjacent vertex (#968) or the whole shape.
         self.deselect_shape()
-        self.hovered_shape = shape
+        self._hovered_shape = shape
         self._hovered_vertex = None
         self._last_hovered_vertex = None
         self._is_moving_shape = True  # commit the removal on release
@@ -1267,11 +1311,11 @@ class Canvas(QtWidgets.QWidget):
             has_selection=len(self._selected_shapes_copy) > 0
         )
         self._release_cursor()
-        self.context_menu_origin = self.mapToGlobal(event.position().toPoint())
+        self._context_menu_origin = self.mapToGlobal(event.position().toPoint())
         try:
             triggered = menu.exec(self.context_menu_origin)  # type: ignore
         finally:
-            self.context_menu_origin = None
+            self._context_menu_origin = None
         if triggered:
             return
         if not self._selected_shapes_copy:
@@ -1537,7 +1581,7 @@ class Canvas(QtWidgets.QWidget):
         if not self.selected_shapes:
             return []
         removed = list(self.selected_shapes)
-        self.shapes = [s for s in self.shapes if s not in self.selected_shapes]
+        self._shapes = [s for s in self.shapes if s not in self.selected_shapes]
         self.backup_shapes()
         self.selected_shapes.clear()
         self._set_ai_existing_shape_highlights(shapes=[])
@@ -1547,7 +1591,7 @@ class Canvas(QtWidgets.QWidget):
     def delete_shape(self, *, shape: Shape) -> None:
         if shape in self.selected_shapes:
             self.selected_shapes.remove(shape)
-        self.shapes = [s for s in self.shapes if s is not shape]
+        self._shapes = [s for s in self.shapes if s is not shape]
         self.backup_shapes()
         self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
@@ -2067,7 +2111,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _reset_interaction_state(self) -> None:
         self._current = None
-        self.hovered_shape = None
+        self._hovered_shape = None
         self._hovered_vertex = None
         self._hovered_edge = None
         self._hovered_rotation = None
@@ -2076,18 +2120,18 @@ class Canvas(QtWidgets.QWidget):
 
     def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
         pixmap_arr = _utils.img_qt_to_arr(pixmap.toImage())
-        self.pixmap = pixmap
+        self._pixmap = pixmap
         self._pixmap_hash = hash(pixmap_arr.tobytes())
         # A new image is a fresh inference context that should surface its own
         # first failure rather than staying muted by the prior image's latch.
         self._ai_inference_failed = False
         self._set_ai_existing_shape_highlights(shapes=[])
         if clear_shapes:
-            self.shapes = []
+            self._shapes = []
         self.update()
 
     def load_shapes(self, *, shapes: list[Shape], replace: bool = True) -> None:
-        self.shapes = list(shapes) if replace else self.shapes + list(shapes)
+        self._shapes = list(shapes) if replace else self.shapes + list(shapes)
         self.backup_shapes()
         self._reset_interaction_state()
         self.update()
@@ -2120,19 +2164,19 @@ class Canvas(QtWidgets.QWidget):
         self._ai_points_preview = []
         self._ai_points_preview_key = None
         self._release_cursor()
-        self.pixmap = QtGui.QPixmap()
+        self._pixmap = QtGui.QPixmap()
         self._pixmap_hash = None
-        self.shapes = []
-        self.shape_backups = collections.deque(maxlen=self._num_backups)
+        self._shapes = []
+        self._shape_backups = collections.deque(maxlen=self._num_backups)
         self._is_moving_shape = False
-        self.selected_shapes = []
+        self._selected_shapes = []
         self._selected_shapes_copy = []
         self._current = None
         self._view_offset = QPointF()
         self._highlight = None
         self._rotation_highlight = None
         self._set_ai_existing_shape_highlights(shapes=[])
-        self.hovered_shape = None
+        self._hovered_shape = None
         self._last_hovered_shape = None
         self._hovered_vertex = None
         self._last_hovered_vertex = None

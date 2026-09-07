@@ -28,6 +28,22 @@ _PLACEHOLDER_TEXT: Final[str] = "Enter object label"
 class LabelDialog(QtWidgets.QDialog):
     """Dialog for entering label, group id, description, and flags."""
 
+    @property
+    def edit(self) -> QtWidgets.QLineEdit:
+        return self._edit
+
+    @property
+    def edit_group_id(self) -> QtWidgets.QLineEdit:
+        return self._edit_group_id
+
+    @property
+    def edit_description(self) -> QtWidgets.QTextEdit:
+        return self._edit_description
+
+    @property
+    def label_list(self) -> QtWidgets.QListWidget:
+        return self._label_list
+
     def __init__(
         self,
         *,
@@ -70,12 +86,12 @@ class LabelDialog(QtWidgets.QDialog):
         self._fit_to_content = fit_to_content
 
         # Build widgets
-        self.edit = QtWidgets.QLineEdit()
+        self._edit = QtWidgets.QLineEdit()
         self.edit.setPlaceholderText(text)
         self.edit.setAccessibleName(self.tr("Label"))
 
         group_id_name = self.tr("Group ID")
-        self.edit_group_id = QtWidgets.QLineEdit()
+        self._edit_group_id = QtWidgets.QLineEdit()
         self.edit_group_id.setPlaceholderText(group_id_name)
         self.edit_group_id.setAccessibleName(group_id_name)
         self.edit_group_id.setValidator(
@@ -83,12 +99,12 @@ class LabelDialog(QtWidgets.QDialog):
         )
 
         description_name = self.tr("Description")
-        self.edit_description = QtWidgets.QTextEdit()
+        self._edit_description = QtWidgets.QTextEdit()
         self.edit_description.setPlaceholderText(description_name)
         self.edit_description.setAccessibleName(description_name)
         self.edit_description.setFixedHeight(50)
 
-        self.label_list = QtWidgets.QListWidget()
+        self._label_list = QtWidgets.QListWidget()
         self.label_list.setFixedHeight(LABEL_LIST_HEIGHT)
 
         # Configure label list

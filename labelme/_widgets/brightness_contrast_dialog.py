@@ -14,6 +14,14 @@ _NEUTRAL: Final = 50
 
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
+    @property
+    def slider_brightness(self) -> QtWidgets.QSlider:
+        return self._slider_brightness
+
+    @property
+    def slider_contrast(self) -> QtWidgets.QSlider:
+        return self._slider_contrast
+
     def __init__(
         self,
         *,
@@ -28,8 +36,8 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         # Alpha rides along as an untouched band; every other mode collapses
         # to RGB so one lookup table covers all color channels.
         self._img = img.convert("RGBA" if "A" in img.getbands() else "RGB")
-        self.slider_brightness = QtWidgets.QSlider(Qt.Orientation.Horizontal)
-        self.slider_contrast = QtWidgets.QSlider(Qt.Orientation.Horizontal)
+        self._slider_brightness = QtWidgets.QSlider(Qt.Orientation.Horizontal)
+        self._slider_contrast = QtWidgets.QSlider(Qt.Orientation.Horizontal)
 
         grid = QtWidgets.QGridLayout(self)
         grid.setColumnStretch(1, 1)
