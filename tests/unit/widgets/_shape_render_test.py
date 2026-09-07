@@ -10,6 +10,7 @@ from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._widgets._shape_render import Palette
 from labelme._widgets._shape_render import ShapeRenderContext
+from labelme._widgets._shape_render import VertexHighlight
 from labelme._widgets._shape_render import bounds
 from labelme._widgets._shape_render import is_hit_by_point
 from labelme._widgets._shape_render import render_shape
@@ -34,7 +35,14 @@ def _unit_square_polygon() -> Shape:
     )
 
 
-def _render(*, shape: Shape, show_label: bool, scale: float) -> QtGui.QImage:
+def _render(
+    *,
+    shape: Shape,
+    show_label: bool,
+    scale: float,
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+) -> QtGui.QImage:
     image = QtGui.QImage(_SIZE, _SIZE, QtGui.QImage.Format.Format_ARGB32)
     image.fill(QtGui.QColor(255, 255, 255))
     painter = QtGui.QPainter(image)
@@ -45,8 +53,8 @@ def _render(*, shape: Shape, show_label: bool, scale: float) -> QtGui.QImage:
         point_type="round",
         selected=False,
         fill=False,
-        highlight=None,
-        rotation_highlight=None,
+        highlight=highlight,
+        rotation_highlight=rotation_highlight,
         show_label=show_label,
     )
     render_shape(painter=painter, shape=shape, context=context)
@@ -129,8 +137,20 @@ def test_show_labels_draws_text_above_shape() -> None:
     # The polygon top edge sits at y=50, so the label text lands above it.
     assert (
         _diff_rows(
-            a=_render(shape=shape, show_label=True, scale=1.0),
-            b=_render(shape=shape, show_label=False, scale=1.0),
+            a=_render(
+                shape=shape,
+                show_label=True,
+                scale=1.0,
+                highlight=None,
+                rotation_highlight=None,
+            ),
+            b=_render(
+                shape=shape,
+                show_label=False,
+                scale=1.0,
+                highlight=None,
+                rotation_highlight=None,
+            ),
             bottom=48,
         )
         > 0
@@ -145,8 +165,18 @@ def test_show_labels_draws_group_id(*, group_id: int) -> None:
     grouped.group_id = group_id
     expected = _polygon(label=f"person ({group_id})")
 
-    assert _render(shape=grouped, show_label=True, scale=1.0) == _render(
-        shape=expected, show_label=True, scale=1.0
+    assert _render(
+        shape=grouped,
+        show_label=True,
+        scale=1.0,
+        highlight=None,
+        rotation_highlight=None,
+    ) == _render(
+        shape=expected,
+        show_label=True,
+        scale=1.0,
+        highlight=None,
+        rotation_highlight=None,
     )
 
 
@@ -157,8 +187,20 @@ def test_empty_label_draws_no_text() -> None:
         shape = _polygon(label=label)
         assert (
             _diff_rows(
-                a=_render(shape=shape, show_label=True, scale=1.0),
-                b=_render(shape=shape, show_label=False, scale=1.0),
+                a=_render(
+                    shape=shape,
+                    show_label=True,
+                    scale=1.0,
+                    highlight=None,
+                    rotation_highlight=None,
+                ),
+                b=_render(
+                    shape=shape,
+                    show_label=False,
+                    scale=1.0,
+                    highlight=None,
+                    rotation_highlight=None,
+                ),
                 bottom=_SIZE,
             )
             == 0
@@ -177,8 +219,20 @@ def test_point_shape_label_is_drawn() -> None:
     )
     assert (
         _diff_rows(
-            a=_render(shape=shape, show_label=True, scale=1.0),
-            b=_render(shape=shape, show_label=False, scale=1.0),
+            a=_render(
+                shape=shape,
+                show_label=True,
+                scale=1.0,
+                highlight=None,
+                rotation_highlight=None,
+            ),
+            b=_render(
+                shape=shape,
+                show_label=False,
+                scale=1.0,
+                highlight=None,
+                rotation_highlight=None,
+            ),
             bottom=_SIZE,
         )
         > 0
@@ -205,9 +259,21 @@ def test_two_point_shape_scales_like_its_points(
     # and the equality isolates the outline.
     shape = _shape(shape_type=shape_type, points=points)
     prescaled = _shape(shape_type=shape_type, points=(np.array(points) * 2).tolist())
-    rendered = _render(shape=shape, show_label=False, scale=2.0)
+    rendered = _render(
+        shape=shape,
+        show_label=False,
+        scale=2.0,
+        highlight=None,
+        rotation_highlight=None,
+    )
     assert rendered.pixelColor(*outline_probe) != QtGui.QColor(255, 255, 255)
-    assert rendered == _render(shape=prescaled, show_label=False, scale=1.0)
+    assert rendered == _render(
+        shape=prescaled,
+        show_label=False,
+        scale=1.0,
+        highlight=None,
+        rotation_highlight=None,
+    )
 
 
 def _mask_shape() -> Shape:
@@ -248,7 +314,13 @@ def test_mask_outline_aligns_with_fill() -> None:
     # The mask fill is rasterized at the correct position; the contour outline
     # must be centered on that same block, not sit a pixel off from it.
     shape = _mask_shape()
-    image = _render(shape=shape, show_label=False, scale=1.0)
+    image = _render(
+        shape=shape,
+        show_label=False,
+        scale=1.0,
+        highlight=None,
+        rotation_highlight=None,
+    )
     outline = _outline_center(image=image)
     assert shape.mask is not None
     ys, xs = np.nonzero(shape.mask)
@@ -269,8 +341,20 @@ def test_label_anchor_tracks_scale() -> None:
     # into the band above y=24 rather than staying near y=48.
     assert (
         _diff_rows(
-            a=_render(shape=shape, show_label=True, scale=0.5),
-            b=_render(shape=shape, show_label=False, scale=0.5),
+            a=_render(
+                shape=shape,
+                show_label=True,
+                scale=0.5,
+                highlight=None,
+                rotation_highlight=None,
+            ),
+            b=_render(
+                shape=shape,
+                show_label=False,
+                scale=0.5,
+                highlight=None,
+                rotation_highlight=None,
+            ),
             bottom=24,
         )
         > 0
@@ -377,3 +461,39 @@ def test_polygon_hit_uses_path_containment() -> None:
     shape = _unit_square_polygon()
     assert _hit(shape=shape, point=(5, 5), scale=1.0) is True
     assert _hit(shape=shape, point=(50, 50), scale=1.0) is False
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+@pytest.mark.parametrize("shape_type", ["polygon", "linestrip"])
+def test_vertex_highlight_colors_the_vertex_group(*, shape_type: ShapeType) -> None:
+    shape = _polygon(label=None)
+    shape.shape_type = shape_type
+    image = _render(
+        shape=shape,
+        show_label=False,
+        scale=1.0,
+        highlight=VertexHighlight(index=0, mode="move"),
+        rotation_highlight=None,
+    )
+
+    assert image.pixelColor(50, 50) == QtGui.QColor(255, 255, 255)
+    assert image.pixelColor(150, 50) == QtGui.QColor(255, 255, 255)
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+def test_rotation_highlight_colors_rotation_group_without_coloring_vertices() -> None:
+    shape = _polygon(label=None)
+    shape.shape_type = "oriented_rectangle"
+    image = _render(
+        shape=shape,
+        show_label=False,
+        scale=1.0,
+        rotation_highlight=VertexHighlight(index=1, mode="move"),
+        highlight=None,
+    )
+
+    assert image.pixelColor(100, 50) == QtGui.QColor(255, 255, 255)
+    assert image.pixelColor(150, 100) == QtGui.QColor(255, 255, 255)
+    assert image.pixelColor(50, 50) == QtGui.QColor(255, 0, 0)
