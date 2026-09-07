@@ -217,15 +217,24 @@ class LabelDialog(QtWidgets.QDialog):
         )
 
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
-        if event.type() == QtCore.QEvent.Type.KeyPress and watched is self.edit:
-            assert isinstance(event, QtGui.QKeyEvent)
-            if QtCore.Qt.Key(event.key()) in (
-                QtCore.Qt.Key.Key_Up,
-                QtCore.Qt.Key.Key_Down,
-            ):
-                self.label_list.keyPressEvent(event)
-                return True
-        return super().eventFilter(watched, event)
+        if watched is not self.edit or event.type() != QtCore.QEvent.Type.KeyPress:
+            return super().eventFilter(watched, event)
+        assert isinstance(event, QtGui.QKeyEvent)
+        actions = {
+            QtCore.Qt.Key.Key_Up: QtWidgets.QAbstractItemView.CursorAction.MoveUp,
+            QtCore.Qt.Key.Key_Down: QtWidgets.QAbstractItemView.CursorAction.MoveDown,
+        }
+        action = actions.get(QtCore.Qt.Key(event.key()))
+        if action is None:
+            return super().eventFilter(watched, event)
+
+        index = self.label_list.moveCursor(action, event.modifiers())
+        # At a boundary, even an unselected suggestion must leave typed text alone.
+        if index.isValid() and index != self.label_list.currentIndex():
+            self.label_list.selectionModel().setCurrentIndex(
+                index, self.label_list.selectionCommand(index, event)
+            )
+        return True
 
     def _select_current_label(self) -> None:
         # Tabbing into the list sets a current row without selecting a label.

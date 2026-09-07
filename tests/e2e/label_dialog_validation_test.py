@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from functools import partial
 from pathlib import Path
 from typing import Final
@@ -261,3 +262,43 @@ def test_trailing_whitespace_label_is_stripped(
     assert canvas.shapes[-1].label == "cat"
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("key", [Qt.Key.Key_Return, Qt.Key.Key_Enter])
+def test_editor_arrow_then_immediate_return_survives_save_and_reopen(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    key: Qt.Key,
+) -> None:
+    win = main_win(
+        file_or_dir=data_path / _RAW_FILE,
+        config_overrides={"labels": ["cat", "dog", "person"], "auto_save": True},
+        output_dir=tmp_path,
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    dialog = win._label_dialog
+
+    def choose() -> None:
+        dialog.edit.selectAll()
+        qtbot.keyClicks(dialog.edit, "unmatched")
+        qtbot.keyClick(dialog.edit, Qt.Key.Key_Down)
+        qtbot.keyClick(dialog.edit, Qt.Key.Key_Down)
+        assert dialog.edit.text() == "dog"
+        assert dialog.focusWidget() is dialog.edit
+        qtbot.keyClick(dialog.edit, key)
+
+    _draw_triangle(qtbot=qtbot, win=win)
+    schedule_on_dialog(label_dialog=dialog, action=choose)
+    click_canvas_fraction(
+        qtbot=qtbot, canvas=win._canvas_widgets.canvas, xy=_CLOSE_POLYGON_CLICK
+    )
+    saved = tmp_path / "2011_000003.json"
+    qtbot.waitUntil(saved.exists)
+    assert json.loads(saved.read_text())["shapes"][0]["label"] == "dog"
+    assert win._load_file(image_or_label_path=str(saved))
+    assert [shape.label for shape in win._canvas_widgets.canvas.shapes] == ["dog"]
+    win.close()
