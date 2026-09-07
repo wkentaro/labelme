@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Final
 
+from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
 
 
 class ToolBar(QtWidgets.QToolBar):
@@ -13,46 +13,53 @@ class ToolBar(QtWidgets.QToolBar):
         *,
         title: str,
         actions: list[QtGui.QAction],
-        orientation: Qt.Orientation = Qt.Orientation.Horizontal,
-        button_style: Qt.ToolButtonStyle = Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
+        orientation: QtCore.Qt.Orientation = QtCore.Qt.Orientation.Horizontal,
+        button_style: QtCore.Qt.ToolButtonStyle = (
+            QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon
+        ),
         font_base: QtGui.QFont | None = None,
     ) -> None:
-        OBJECT_NAME_SUFFIX: Final = "ToolBar"
-        FONT_SCALE_FACTOR: Final = 0.8
-        VERTICAL_SEPARATOR_STYLE: Final = (
-            "QToolBar::separator { height: 1px; background: palette(mid); "
-            "margin: 2px 4px; }"
-        )
-
         super().__init__(title)
-        self.setObjectName(title + OBJECT_NAME_SUFFIX)
-        self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
+
+        # Tracking only user-action buttons avoids Qt's private overflow control.
+        self._buttons: list[QtWidgets.QToolButton] = []
+
+        # Qt persists toolbar placement under this compatibility key.
+        self.setObjectName(f"{title}ToolBar")
         self.setMovable(False)
         self.setFloatable(False)
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.WindowType.FramelessWindowHint
+        )
+
+        layout = self.layout()
+        assert layout is not None, "QToolBar always owns a layout"
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+
         self.setOrientation(orientation)
         self.setToolButtonStyle(button_style)
 
-        layout = self.layout()
-        if layout is not None:
-            layout.setSpacing(0)
-            layout.setContentsMargins(0, 0, 0, 0)
-
         if font_base is not None:
-            scaled_font = QtGui.QFont(font_base)
-            scaled_font.setPointSizeF(font_base.pointSizeF() * FONT_SCALE_FACTOR)
-            self.setFont(scaled_font)
+            FONT_SIZE_SCALE: Final = 0.9
+            font = QtGui.QFont(font_base)
+            font.setPointSizeF(font_base.pointSizeF() * FONT_SIZE_SCALE)
+            self.setFont(font)
 
-        if orientation == Qt.Orientation.Vertical:
-            self.setStyleSheet(VERTICAL_SEPARATOR_STYLE)
+        if orientation == QtCore.Qt.Orientation.Vertical:
+            self.setStyleSheet(
+                "QToolBar::separator { background: palette(mid); height: 1px; "
+                "margin: 2px 4px; }"
+            )
 
         for action in actions:
             self.addAction(action)
 
-        if orientation == Qt.Orientation.Vertical:
+        if orientation == QtCore.Qt.Orientation.Vertical:
             self._equalize_button_widths()
 
     def addAction(self, action: QtGui.QAction, /) -> None:  # ty: ignore[invalid-method-override]
-        if isinstance(action, QtWidgets.QWidgetAction) or action.isSeparator():
+        if action.isSeparator() or isinstance(action, QtWidgets.QWidgetAction):
             super().addAction(action)
             return
 
@@ -61,18 +68,14 @@ class ToolBar(QtWidgets.QToolBar):
         button.setToolButtonStyle(self.toolButtonStyle())
         self.toolButtonStyleChanged.connect(button.setToolButtonStyle)
         self.addWidget(button)
+        self._buttons.append(button)
         layout = self.layout()
-        if layout is not None:
-            layout.setAlignment(button, Qt.AlignmentFlag.AlignCenter)
+        assert layout is not None
+        layout.setAlignment(button, QtCore.Qt.AlignmentFlag.AlignCenter)
 
     def _equalize_button_widths(self) -> None:
-        buttons = [
-            b
-            for b in self.findChildren(QtWidgets.QToolButton)
-            if b.objectName() != "qt_toolbar_ext_button"
-        ]
-        if not buttons:
+        if not self._buttons:
             return
-        max_width = max(b.sizeHint().width() for b in buttons)
-        for button in buttons:
-            button.setMinimumWidth(max_width)
+        width = max(button.sizeHint().width() for button in self._buttons)
+        for button in self._buttons:
+            button.setMinimumWidth(width)
