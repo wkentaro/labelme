@@ -52,6 +52,27 @@ def test_construction_exposes_default_without_firing_callbacks(
     assert formats == []
 
 
+def test_model_and_output_controls_expose_accessible_names(
+    *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
+) -> None:
+    widget = _make_widget(
+        qtbot=qtbot,
+        models=models,
+        formats=formats,
+        default_model="EfficientSam (speed)",
+        details=None,
+    )
+
+    assert widget._model_combo.accessibleName() == widget.tr("Model")
+    assert widget._model_combo.accessibleDescription() == widget.tr(
+        "AI-assisted annotation model"
+    )
+    assert widget._output_format_combo.accessibleName() == widget.tr("Output format")
+    assert widget._output_format_combo.accessibleDescription() == widget.tr(
+        "AI-assisted annotation output format"
+    )
+
+
 def test_first_listed_default_resolves(
     *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:

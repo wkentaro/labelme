@@ -47,7 +47,7 @@ def test_slider_change_preserves_alpha_while_brightening(
 ) -> None:
     dialog, captured = _make_dialog(qtbot=qtbot, img=rgba_img)
 
-    dialog.slider_brightness.setValue(75)
+    dialog.slider_brightness.setValue(150)
 
     assert len(captured) == 1, "a slider move should re-run apply() via valueChanged"
     emitted = captured[0]

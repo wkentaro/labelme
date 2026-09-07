@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Chọn chế độ &apos;AI-Points&apos; hoặc &apos;AI-Box&apos; để bật Chú thích Hỗ trợ AI</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>Mô hình chú thích có AI hỗ trợ</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>Định dạng đầu ra chú thích có AI hỗ trợ</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Mô hình</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Định dạng đầu ra</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -62,6 +78,18 @@
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Chọn chế độ &apos;Polygon&apos;, &apos;Rectangle&apos; hoặc &apos;AI-Points&apos; để bật</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>Mô hình</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>Lời nhắc</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>Mô hình chuyển văn bản thành chú thích</translation>
+    </message>
 </context>
 <context>
     <name>BrightnessContrastDialog</name>
@@ -76,6 +104,14 @@
     <message>
         <source>Contrast:</source>
         <translation>Độ tương phản:</translation>
+    </message>
+    <message>
+        <source>Brightness</source>
+        <translation>Độ sáng</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Độ tương phản</translation>
     </message>
 </context>
 <context>
@@ -1079,6 +1115,17 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Predefined image flags</source>
         <translation>Cờ hình ảnh định sẵn</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Thu phóng</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>Tỷ lệ thu phóng</translation>
     </message>
 </context>
 <context>

@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Seleccione el modo &apos;AI-Points&apos; o &apos;AI-Box&apos; para habilitar la Anotación Asistida por IA</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>Modelo de anotación asistida por AI</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>Formato de salida de anotación asistida por AI</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Modelo</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Formato de salida</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -62,6 +78,18 @@
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Selecciona el modo &apos;Polygon&apos;, &apos;Rectangle&apos; o &apos;AI-Points&apos; para habilitar</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>Modelo</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>Instrucción</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>Modelo de texto a anotación</translation>
+    </message>
 </context>
 <context>
     <name>BrightnessContrastDialog</name>
@@ -76,6 +104,14 @@
     <message>
         <source>Contrast:</source>
         <translation>Contraste:</translation>
+    </message>
+    <message>
+        <source>Brightness</source>
+        <translation>Brillo</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Contraste</translation>
     </message>
 </context>
 <context>
@@ -1079,6 +1115,17 @@ Seleccione un modelo diferente o use el modo AI-Box.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Banderas de imagen predefinidas</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>Porcentaje de zoom</translation>
     </message>
 </context>
 <context>

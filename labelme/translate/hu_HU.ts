@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az AI-támogatott annotáció engedélyezéséhez</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>AI-támogatott annotációs modell</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>AI-támogatott annotáció kimeneti formátuma</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>Kimeneti formátum</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -62,6 +78,18 @@
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Válassza a &apos;Polygon&apos;, &apos;Rectangle&apos; vagy &apos;AI-Points&apos; módot az engedélyezéshez</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>Utasítás</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>Szövegből annotáló modell</translation>
+    </message>
 </context>
 <context>
     <name>BrightnessContrastDialog</name>
@@ -76,6 +104,14 @@
     <message>
         <source>Contrast:</source>
         <translation>Kontraszt:</translation>
+    </message>
+    <message>
+        <source>Brightness</source>
+        <translation>Fényerő</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Kontraszt</translation>
     </message>
 </context>
 <context>
@@ -1085,6 +1121,17 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Predefined image flags</source>
         <translation>Előre definiált képjelzők</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Nagyítás</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>Nagyítás százalékban</translation>
     </message>
 </context>
 <context>

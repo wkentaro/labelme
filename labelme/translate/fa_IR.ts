@@ -31,6 +31,22 @@
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
         <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی حاشیه‌نویسی با کمک AI انتخاب کنید</translation>
     </message>
+    <message>
+        <source>AI-assisted annotation model</source>
+        <translation>مدل حاشیه‌نویسی به کمک AI</translation>
+    </message>
+    <message>
+        <source>AI-assisted annotation output format</source>
+        <translation>قالب خروجی حاشیه‌نویسی به کمک AI</translation>
+    </message>
+    <message>
+        <source>Model</source>
+        <translation>مدل</translation>
+    </message>
+    <message>
+        <source>Output format</source>
+        <translation>قالب خروجی</translation>
+    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -62,6 +78,18 @@
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>حالت &apos;Polygon&apos;، &apos;Rectangle&apos; یا &apos;AI-Points&apos; را برای فعال‌سازی انتخاب کنید</translation>
     </message>
+    <message>
+        <source>Model</source>
+        <translation>مدل</translation>
+    </message>
+    <message>
+        <source>Prompt</source>
+        <translation>دستور</translation>
+    </message>
+    <message>
+        <source>Text-to-annotation model</source>
+        <translation>مدل تبدیل متن به حاشیه‌نویسی</translation>
+    </message>
 </context>
 <context>
     <name>BrightnessContrastDialog</name>
@@ -76,6 +104,14 @@
     <message>
         <source>Contrast:</source>
         <translation>کنتراست:</translation>
+    </message>
+    <message>
+        <source>Brightness</source>
+        <translation>روشنایی</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>کنتراست</translation>
     </message>
 </context>
 <context>
@@ -1079,6 +1115,17 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>پرچم‌های تصویر از پیش تعریف‌شده</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>بزرگ‌نمایی</translation>
+    </message>
+    <message>
+        <source>Zoom percentage</source>
+        <translation>درصد بزرگ‌نمایی</translation>
     </message>
 </context>
 <context>
