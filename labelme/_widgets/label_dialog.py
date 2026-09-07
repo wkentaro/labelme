@@ -28,6 +28,11 @@ _PLACEHOLDER_TEXT: Final[str] = "Enter object label"
 class LabelDialog(QtWidgets.QDialog):
     """Dialog for entering label, group id, description, and flags."""
 
+    edit: QtWidgets.QLineEdit
+    edit_group_id: QtWidgets.QLineEdit
+    edit_description: QtWidgets.QTextEdit
+    label_list: QtWidgets.QListWidget
+
     def __init__(
         self,
         *,

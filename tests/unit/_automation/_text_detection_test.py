@@ -15,6 +15,8 @@ from labelme._shape import Shape
 
 
 class _FakeOsamSession:
+    model_name: str
+
     def __init__(self, *, response: osam.types.GenerateResponse) -> None:
         self.model_name = "stub"
         self._response = response
