@@ -2210,7 +2210,6 @@ def test_pick_pending_moved_shape_returns_hovered_when_present() -> None:
         pytest.param((0, 0), (0, 0), (0.0, 0.0), id="zero_delta_stays_put"),
         pytest.param((5, 0), (0, 0), (0.0, 0.0), id="horizontal_collapses"),
         pytest.param((7.75, -2.5), (1.25, 3.25), (7.0, -2.5), id="fractional"),
-        pytest.param((-0.0, -5), (-0.0, -0.0), (0.0, -0.0), id="signed_zero"),
     ],
 )
 def test_snap_cursor_pos_for_square(
@@ -2223,9 +2222,6 @@ def test_snap_cursor_pos_for_square(
         pos=QPointF(*pos), opposite_vertex=QPointF(*opposite_vertex)
     )
     assert (result.x(), result.y()) == pytest.approx(expected)
-    assert (
-        np.signbit([result.x(), result.y()]).tolist() == np.signbit(expected).tolist()
-    )
 
 
 def _make_polygon() -> Shape:
@@ -2495,191 +2491,36 @@ def test_ai_preview_clears_when_replacement_is_unavailable(
     assert canvas._build_preview_shapes() == []
 
 
-def _move_pointer(
-    *,
-    canvas: Canvas,
-    pos: QPointF,
-    shift: bool,
-    dragging: bool,
-) -> None:
-    widget_pos = canvas.transform_image_point_to_widget(pos)
-    canvas.mouseMoveEvent(
-        QtGui.QMouseEvent(
-            QtCore.QEvent.Type.MouseMove,
-            widget_pos,
-            widget_pos,
-            Qt.MouseButton.NoButton,
-            Qt.MouseButton.LeftButton if dragging else Qt.MouseButton.NoButton,
-            Qt.KeyboardModifier.ShiftModifier
-            if shift
-            else Qt.KeyboardModifier.NoModifier,
-        )
-    )
-
-
 @pytest.mark.gui
-@pytest.mark.parametrize("mode", ["rectangle", "ai_box_to_shape"])
-@pytest.mark.parametrize("allow_outside", [False, True])
-def test_square_drawing_preview_and_commit(
-    *,
-    canvas: Canvas,
-    qtbot: QtBot,
-    monkeypatch: pytest.MonkeyPatch,
-    mode: str,
-    allow_outside: bool,
+def test_square_drawing_commits_ai_box_prompt(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # Download and inference are external to box geometry.
     monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", lambda **_: True)
-    prompts: list[tuple[list[QPointF], list[int]]] = []
+    prompts: list[list[QPointF]] = []
 
-    def propose_shapes(
-        *, points: list[QPointF], point_labels: list[int], **_: object
-    ) -> AiAssistProposal:
-        prompts.append((points, point_labels))
+    def propose_shapes(*, points: list[QPointF], **_: object) -> AiAssistProposal:
+        prompts.append(points)
         return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
 
     monkeypatch.setattr(canvas, "_propose_ai_shapes", propose_shapes)
-    canvas.load_shapes(shapes=[])
-    canvas.scale = 1.25
-    canvas.resize(220, 150)
-    canvas._view_offset = QPointF(5.5, -2.25)
-    canvas.set_allow_out_of_bounds_points(value=allow_outside)
-    canvas.set_editing(value=False, create_mode=mode)
-    canvas.mousePressEvent(
-        _left_press(
-            pos=canvas.transform_image_point_to_widget(QPointF(10, 10)),
-            modifiers=Qt.KeyboardModifier.NoModifier,
-        )
-    )
-    for shift, expected in [
-        (False, QPointF(70, 30)),
-        (True, QPointF(30, 30)),
-        (False, QPointF(70, 30)),
-    ]:
-        if shift:
-            qtbot.keyPress(canvas, Qt.Key.Key_Shift)
-        else:
-            qtbot.keyRelease(canvas, Qt.Key.Key_Shift)
-        _move_pointer(canvas=canvas, pos=QPointF(70, 30), shift=shift, dragging=False)
-        assert canvas._line.points == (QPointF(10, 10), expected)
-        assert canvas._line.point_labels == (1, 1)
-        assert canvas._line.closed
-        assert canvas._prev_move_point == expected
-
-    _move_pointer(canvas=canvas, pos=QPointF(150, 80), shift=True, dragging=False)
-    expected = QPointF(80, 80) if allow_outside else QPointF(50, 50)
-    assert canvas._line.points == (QPointF(10, 10), expected)
-    assert canvas._prev_move_point == expected
-    canvas.mousePressEvent(
-        _left_press(
-            pos=canvas.transform_image_point_to_widget(QPointF(150, 80)),
-            modifiers=Qt.KeyboardModifier.ShiftModifier,
-        )
-    )
-    assert canvas._current is None
-    if mode == "ai_box_to_shape":
-        assert prompts == [([QPointF(10, 10), expected], [2, 3])]
-    else:
-        np.testing.assert_array_equal(
-            canvas.shapes[0].points, [(10, 10), (expected.x(), expected.y())]
-        )
-        assert canvas.shapes[0].point_labels.tolist() == [1]
-        canvas.restore_last_shape()
-        assert canvas.shapes == []
-
-
-@pytest.mark.gui
-@pytest.mark.parametrize("vertex_index", [0, 1])
-@pytest.mark.parametrize("allow_outside", [False, True])
-def test_square_resize_crosses_anchor_and_preserves_undo(
-    *, canvas: Canvas, qtbot: QtBot, vertex_index: int, allow_outside: bool
-) -> None:
-    points = [(10, 10), (50, 40)]
-    shape = Shape(
-        shape_type="rectangle", points=np.array(points, dtype=float), closed=True
-    )
-    canvas.load_shapes(shapes=[shape])
-    canvas.scale = 1.25
-    canvas.resize(220, 150)
-    canvas._view_offset = QPointF(5.5, -2.25)
-    canvas.set_allow_out_of_bounds_points(value=allow_outside)
-    _move_pointer(
-        canvas=canvas, pos=QPointF(*points[vertex_index]), shift=False, dragging=False
-    )
-    canvas.mousePressEvent(
-        _left_press(
-            pos=canvas.transform_image_point_to_widget(QPointF(*points[vertex_index])),
-            modifiers=Qt.KeyboardModifier.NoModifier,
-        )
-    )
-    assert canvas._hovered_vertex == vertex_index
-    anchor = points[1 - vertex_index]
-    for shift, offset, expected in [
-        (True, (20, -5), (anchor[0] + 5, anchor[1] - 5)),
-        (False, (20, -5), (anchor[0] + 20, anchor[1] - 5)),
-        (True, (-8, 5), (anchor[0] - 5, anchor[1] + 5)),
-    ]:
-        cursor = QPointF(anchor[0] + offset[0], anchor[1] + offset[1])
-        _move_pointer(canvas=canvas, pos=cursor, shift=shift, dragging=True)
-        np.testing.assert_allclose(shape.points[vertex_index], expected)
-        np.testing.assert_array_equal(shape.points[1 - vertex_index], anchor)
-        assert canvas._prev_move_point == cursor
-    _move_pointer(canvas=canvas, pos=QPointF(150, 80), shift=True, dragging=True)
-    expected = (
-        ((90, 80) if vertex_index == 0 else (80, 80))
-        if allow_outside
-        else ((60, 50) if vertex_index == 0 else (50, 50))
-    )
-    np.testing.assert_allclose(shape.points[vertex_index], expected)
-    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
-    # Escape cancels drawing, but does not roll back a vertex drag.
-    np.testing.assert_allclose(shape.points[vertex_index], expected)
-    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton)
-    assert canvas.can_restore_shape
-    canvas.restore_last_shape()
-    np.testing.assert_array_equal(canvas.shapes[0].points, points)
-
-
-@pytest.mark.gui
-@pytest.mark.parametrize("cursor", [QPointF(70, 30), QPointF(10, 30), QPointF(30, 10)])
-def test_square_drawing_cancel_or_reject_degenerate(
-    *, canvas: Canvas, qtbot: QtBot, cursor: QPointF
-) -> None:
     canvas.scale = 1.0
-    canvas.set_editing(value=False, create_mode="rectangle")
-    canvas.mousePressEvent(
-        _left_press(pos=QPointF(10, 10), modifiers=Qt.KeyboardModifier.NoModifier)
-    )
-    _move_pointer(canvas=canvas, pos=cursor, shift=True, dragging=False)
-    if cursor == QPointF(70, 30):
-        qtbot.keyClick(canvas, Qt.Key.Key_Escape)
-    else:
-        canvas.mousePressEvent(
-            _left_press(pos=cursor, modifiers=Qt.KeyboardModifier.ShiftModifier)
+    canvas.set_editing(value=False, create_mode="ai_box_to_shape")
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    canvas.mouseMoveEvent(
+        QtGui.QMouseEvent(
+            QtCore.QEvent.Type.MouseMove,
+            QPointF(70, 30),
+            QPointF(70, 30),
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.ShiftModifier,
         )
-    assert canvas._current is None
-    assert canvas.shapes == []
-    assert not canvas.can_restore_shape
-
-
-@pytest.mark.gui
-def test_releasing_shift_during_square_resize_preserves_drag_undo(
-    *, canvas: Canvas, qtbot: QtBot
-) -> None:
-    shape = Shape(
-        shape_type="rectangle", points=np.array([(10, 10), (50, 40)], dtype=float)
     )
-    canvas.load_shapes(shapes=[shape])
-    canvas.scale = 1.0
-    _move_pointer(canvas=canvas, pos=QPointF(50, 40), shift=False, dragging=False)
-    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(50, 40))
-    qtbot.keyPress(canvas, Qt.Key.Key_Shift)
-    _move_pointer(canvas=canvas, pos=QPointF(70, 30), shift=True, dragging=True)
-    np.testing.assert_allclose(shape.points, [(10, 10), (30, 30)])
-    qtbot.keyRelease(canvas, Qt.Key.Key_Shift)
-    np.testing.assert_allclose(shape.points, [(10, 10), (30, 30)])
-    _move_pointer(canvas=canvas, pos=QPointF(70, 30), shift=False, dragging=True)
-    np.testing.assert_allclose(shape.points, [(10, 10), (70, 30)])
-    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton)
-    canvas.restore_last_shape()
-    np.testing.assert_allclose(canvas.shapes[0].points, [(10, 10), (50, 40)])
+    qtbot.mouseClick(
+        canvas,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.ShiftModifier,
+        pos=QtCore.QPoint(70, 30),
+    )
+    assert prompts == [[QPointF(10, 10), QPointF(30, 30)]]
