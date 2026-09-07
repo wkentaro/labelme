@@ -78,10 +78,7 @@ def _make_release_event(*, pos: QPointF) -> QtGui.QMouseEvent:
 
 
 def _image_to_widget(*, canvas: Canvas, img_x: float, img_y: float) -> QPointF:
-    origin = canvas._compute_image_origin_offset(area=None)
-    wx = (img_x + origin.x()) * canvas.scale
-    wy = (img_y + origin.y()) * canvas.scale
-    return QPointF(wx, wy)
+    return canvas.transform_image_point_to_widget(QPointF(img_x, img_y))
 
 
 def _clear_cursor_override(*, canvas: Canvas) -> None:
@@ -400,6 +397,85 @@ def test_right_release_with_selection_copy_executes_menus_1(
     canvas.mouseReleaseEvent(_make_release_event(pos=pos))
 
     assert calls == [1]
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("copy", [True, False])
+def test_right_menu_action_commits_drag_preview(
+    *, canvas: Canvas, qtbot: QtBot, copy: bool
+) -> None:
+    original = Shape(
+        shape_type="rectangle",
+        points=np.array([(10, 10), (50, 40)], dtype=np.float64),
+        closed=True,
+    )
+    preview = original.copy()
+    preview.translate(offset=np.array([20, 10]))
+    canvas.shapes = [original]
+    canvas.selected_shapes = [original]
+    canvas._selected_shapes_copy = [preview]
+    menu = canvas.context_menus.with_selection
+    action = menu.addAction("Copy Here" if copy else "Move Here")
+    action.triggered.connect(lambda: canvas.end_move(copy=copy))
+    QtCore.QTimer.singleShot(
+        0,
+        lambda: qtbot.mouseClick(
+            menu, Qt.MouseButton.LeftButton, pos=menu.actionGeometry(action).center()
+        ),
+    )
+
+    canvas._release_right(event=_make_release_event(pos=QPointF(30, 25)))
+
+    assert len(canvas.shapes) == (2 if copy else 1)
+    np.testing.assert_array_equal(canvas.shapes[-1].points, preview.points)
+    assert canvas._selected_shapes_copy == []
+
+
+@pytest.mark.gui
+def test_right_menu_dismissal_discards_preview(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    preview = Shape(
+        shape_type="rectangle",
+        points=np.array([(10, 10), (50, 40)], dtype=np.float64),
+        closed=True,
+    )
+    canvas._selected_shapes_copy = [preview]
+    updates: list[None] = []
+
+    def dismiss_menu(_pos: object = None) -> None:
+        canvas.context_menus.with_selection.aboutToHide.emit()
+
+    monkeypatch.setattr(canvas.context_menus.with_selection, "exec", dismiss_menu)
+    monkeypatch.setattr(canvas, "update", lambda: updates.append(None))
+
+    canvas._release_right(event=_make_release_event(pos=QPointF(30, 25)))
+
+    assert canvas._selected_shapes_copy == []
+    assert updates == [None]
+
+
+@pytest.mark.gui
+def test_right_menu_failure_restores_origin_and_preserves_preview(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    preview = Shape(
+        shape_type="rectangle",
+        points=np.array([(10, 10), (50, 40)], dtype=np.float64),
+        closed=True,
+    )
+    canvas._selected_shapes_copy = [preview]
+    monkeypatch.setattr(
+        canvas.context_menus.with_selection,
+        "exec",
+        lambda _pos=None: (_ for _ in ()).throw(RuntimeError("menu failed")),
+    )
+
+    with pytest.raises(RuntimeError, match="menu failed"):
+        canvas._release_right(event=_make_release_event(pos=QPointF(30, 25)))
+
+    assert canvas.context_menu_origin is None
+    assert canvas._selected_shapes_copy == [preview]
 
 
 # ---------------------------------------------------------------------------
