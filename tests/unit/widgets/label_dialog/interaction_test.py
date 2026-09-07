@@ -813,26 +813,6 @@ def test_popup_highlights_matching_label_at_show(*, qtbot: QtBot) -> None:
     assert seen["cur"] == "dog"
 
 
-def test_popup_highlights_matching_label_case_insensitively(*, qtbot: QtBot) -> None:
-    seen: dict[str, object] = {}
-    dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["Cat", "Dog"]))
-    _run_popup(
-        dialog=dialog,
-        accept=True,
-        text="cat",
-        at_show=lambda d: seen.update(
-            cur=d.label_list.currentItem().text()
-            if d.label_list.currentItem()
-            else None
-        ),
-        flags=None,
-        group_id=None,
-        description=None,
-        locked=(),
-    )
-    assert seen["cur"] == "Cat"
-
-
 def test_popup_clears_stale_highlight_when_nothing_matches(*, qtbot: QtBot) -> None:
     seen: dict[str, object] = {}
     dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat", "dog"]))
@@ -1020,3 +1000,63 @@ def test_locked_flags_stay_hidden_after_label_edit(*, qtbot: QtBot) -> None:
         description=None,
     )
     assert seen["count"] == 0
+
+
+@pytest.mark.parametrize(
+    ("key", "expected"),
+    [(QtCore.Qt.Key.Key_P, "person"), (QtCore.Qt.Key.Key_Down, "dog")],
+)
+def test_list_keyboard_choice_is_accepted_immediately(
+    *, qtbot: QtBot, key: QtCore.Qt.Key, expected: str
+) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat", "dog", "person"]))
+
+    def choose_label() -> None:
+        dialog.label_list.setFocus(QtCore.Qt.FocusReason.TabFocusReason)
+        dialog.label_list.setCurrentRow(0)
+        dialog.edit.setText("custom")
+        qtbot.keyClick(dialog.label_list, key)
+        qtbot.keyClick(dialog.label_list, QtCore.Qt.Key.Key_Return)
+
+    QtCore.QTimer.singleShot(0, choose_label)
+    QtCore.QTimer.singleShot(1000, dialog.reject)
+    entry = dialog.popup(text="custom", move=False)
+    assert entry is not None
+    assert entry.label == expected
+
+
+def test_tabbing_into_choices_does_not_replace_custom_text(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["cat"]))
+    dialog.edit.setText("custom")
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    dialog.edit.setFocus()
+    for _ in range(4):
+        qtbot.keyClick(dialog.focusWidget(), QtCore.Qt.Key.Key_Tab)
+    assert dialog.focusWidget() is dialog.label_list
+    assert dialog.label_list.currentRow() == 0
+    assert dialog.edit.text() == "custom"
+
+
+def test_popup_preserves_label_case(*, qtbot: QtBot) -> None:
+    seen: dict[str, object] = {}
+    dialog = _add_dialog(qtbot, dialog=LabelDialog(labels=["Cat"]))
+
+    entry = _run_popup(
+        dialog=dialog,
+        accept=True,
+        text="cat",
+        at_show=lambda d: seen.update(
+            current=d.label_list.currentItem().text()
+            if d.label_list.currentItem()
+            else None
+        ),
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=(),
+    )
+
+    assert seen["current"] == "Cat"
+    assert entry is not None
+    assert entry.label == "cat"

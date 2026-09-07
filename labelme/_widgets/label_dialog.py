@@ -166,8 +166,9 @@ class LabelDialog(QtWidgets.QDialog):
 
         # Connect signals
         self.edit.textChanged.connect(self._on_text_changed)
-        self.label_list.currentItemChanged.connect(self._on_label_selected)
-        self.label_list.itemDoubleClicked.connect(self._submit_item)
+        self.label_list.itemSelectionChanged.connect(self._select_current_label)
+        self.label_list.itemClicked.connect(self._on_label_selected)
+        self.label_list.itemDoubleClicked.connect(self._accept_clicked_label)
 
         # Populate initial labels
         for label in dict.fromkeys([*(labels or []), *self._label_history]):
@@ -216,31 +217,28 @@ class LabelDialog(QtWidgets.QDialog):
         )
 
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
-        if watched is self.edit and event.type() == QtCore.QEvent.Type.KeyPress:
+        if event.type() == QtCore.QEvent.Type.KeyPress and watched is self.edit:
             assert isinstance(event, QtGui.QKeyEvent)
-            step = {QtCore.Qt.Key.Key_Up: -1, QtCore.Qt.Key.Key_Down: 1}.get(
-                QtCore.Qt.Key(event.key())
-            )
-            if step is not None:
-                row = self.label_list.currentRow() + step
-                self.label_list.setCurrentRow(
-                    min(max(row, 0), self.label_list.count() - 1)
-                )
+            if QtCore.Qt.Key(event.key()) in (
+                QtCore.Qt.Key.Key_Up,
+                QtCore.Qt.Key.Key_Down,
+            ):
+                self.label_list.keyPressEvent(event)
                 return True
         return super().eventFilter(watched, event)
 
-    def _on_label_selected(
-        self,
-        current: QtWidgets.QListWidgetItem | None,
-        _previous: QtWidgets.QListWidgetItem | None,
-        /,
-    ) -> None:
-        if current is None:
-            return
-        self.edit.setText(current.text())
+    def _select_current_label(self) -> None:
+        # Tabbing into the list sets a current row without selecting a label.
+        # Only an explicit selection should replace the typed text.
+        item = self.label_list.currentItem()
+        if item is not None and item.isSelected():
+            self._on_label_selected(item)
 
-    def _submit_item(self, item: QtWidgets.QListWidgetItem, /) -> None:
-        self.label_list.setCurrentItem(item)
+    def _on_label_selected(self, item: QtWidgets.QListWidgetItem, /) -> None:
+        self.edit.setText(item.text())
+
+    def _accept_clicked_label(self, item: QtWidgets.QListWidgetItem, /) -> None:
+        self._on_label_selected(item)
         self._ok_button.click()
 
     def _clear_flag_checkboxes(self) -> None:
@@ -347,7 +345,9 @@ class LabelDialog(QtWidgets.QDialog):
         else:
             self._set_flag_checkboxes(flags=flags)
 
-        self.label_list.setCurrentRow(self._find_label_row(text))
+        # Highlight the suggestion without applying its spelling to the label.
+        with QtCore.QSignalBlocker(self.label_list):
+            self.label_list.setCurrentRow(self._find_label_row(text))
 
         self._fit_label_list_to_content()
         self._refresh_ok_button()
