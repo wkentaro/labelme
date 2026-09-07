@@ -1364,10 +1364,6 @@ class Canvas(QtWidgets.QWidget):
             return False
         if self._current is None:
             return False
-        if self.create_mode == "ai_points_to_shape":
-            return True
-        if self.create_mode == "linestrip":
-            return len(self._current.points) >= MIN_LINESTRIP_POINT_COUNT
         if self.create_mode == "oriented_rectangle":
             # Points 2 and 3 are seeded as duplicates of points 1 and 0 after
             # the first edge is locked; mouse movement reprojects them. Treat
@@ -1376,7 +1372,11 @@ class Canvas(QtWidgets.QWidget):
                 len(self._current.points) == ORIENTED_RECTANGLE_POINT_COUNT
                 and self._current.points[2] != self._current.points[1]
             )
-        return len(self._current.points) >= MIN_POLYGON_POINT_COUNT
+        minimum_points = {
+            "ai_points_to_shape": 0,
+            "linestrip": MIN_LINESTRIP_POINT_COUNT,
+        }.get(self.create_mode, MIN_POLYGON_POINT_COUNT)
+        return len(self._current.points) >= minimum_points
 
     def mouseDoubleClickEvent(self, _a0: QtGui.QMouseEvent, /) -> None:
         if self._double_click != "close":

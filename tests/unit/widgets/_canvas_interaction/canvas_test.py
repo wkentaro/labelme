@@ -478,6 +478,31 @@ def test_right_menu_failure_restores_origin_and_preserves_preview(
     assert canvas._selected_shapes_copy == [preview]
 
 
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("create_mode", "points", "expected"),
+    [
+        ("ai_points_to_shape", (), True),
+        ("linestrip", (QPointF(),), False),
+        ("linestrip", (QPointF(), QPointF(1, 1)), True),
+        ("polygon", (QPointF(), QPointF(1, 0)), False),
+        ("polygon", (QPointF(), QPointF(1, 0), QPointF(1, 1)), True),
+    ],
+)
+def test_can_close_shape_uses_mode_point_requirement(
+    *,
+    canvas: Canvas,
+    create_mode: str,
+    points: tuple[QPointF, ...],
+    expected: bool,
+) -> None:
+    canvas.set_editing(value=False)
+    canvas.create_mode = create_mode
+    canvas._current = _DraftShape(points=points)
+
+    assert canvas._can_close_shape() is expected
+
+
 # ---------------------------------------------------------------------------
 # Vertex hover-highlight + snapping parity across zoom (scale) levels
 #
