@@ -234,7 +234,6 @@ class LabelDialog(QtWidgets.QDialog):
             self.label_list.selectionModel().setCurrentIndex(
                 index, self.label_list.selectionCommand(index, event)
             )
-            self.label_list.scrollTo(index)
         return True
 
     def _select_current_label(self) -> None:
