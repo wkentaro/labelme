@@ -16,9 +16,12 @@ _POINT_LABELS: Final[NDArray[np.intp]] = np.array([1])
 
 
 class _FakeModelRegistry:
+    encode_raises: bool
+    models: list[_FakeModel]
+
     def __init__(self, *, encode_raises: bool) -> None:
         self.encode_raises = encode_raises
-        self.models: list[_FakeModel] = []
+        self.models = []
 
     @property
     def model(self) -> _FakeModel:
@@ -26,12 +29,15 @@ class _FakeModelRegistry:
 
 
 class _FakeModel:
+    encode_calls: int
+    requests: list[osam.types.GenerateRequest]
+
     name = "fake-model"
 
     def __init__(self, *, registry: _FakeModelRegistry) -> None:
         self._registry = registry
         self.encode_calls = 0
-        self.requests: list[osam.types.GenerateRequest] = []
+        self.requests = []
         registry.models.append(self)
 
     def encode_image(self, *, image: NDArray[np.uint8]) -> osam.types.ImageEmbedding:

@@ -25,6 +25,8 @@ def install_fake_osam_session(
         created_model_names: list[str] = []
 
         class _FakeOsamSession:
+            model_name: str
+
             def __init__(self, *, model_name: str) -> None:
                 self.model_name = model_name
                 created_model_names.append(model_name)

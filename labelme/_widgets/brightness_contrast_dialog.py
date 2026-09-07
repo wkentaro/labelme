@@ -14,6 +14,9 @@ _NEUTRAL: Final = 50
 
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
+    slider_brightness: QtWidgets.QSlider
+    slider_contrast: QtWidgets.QSlider
+
     def __init__(
         self,
         *,

@@ -147,6 +147,8 @@ class Canvas(QtWidgets.QWidget):
     _pixmap_hash: int | None
     _cursor: CursorRole
     shapes: list[Shape]
+    context_menus: _canvas_interaction.ContextMenuPair
+    context_menu_origin: QtCore.QPoint | None
     shape_backups: collections.deque[list[Shape]]
     _is_moving_shape: bool
     selected_shapes: list[Shape]
@@ -270,7 +272,7 @@ class Canvas(QtWidgets.QWidget):
             without_selection=QtWidgets.QMenu(),
             with_selection=QtWidgets.QMenu(),
         )
-        self.context_menu_origin: QtCore.QPoint | None = None
+        self.context_menu_origin = None
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
 
