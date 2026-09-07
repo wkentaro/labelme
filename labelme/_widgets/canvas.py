@@ -1784,9 +1784,7 @@ class Canvas(QtWidgets.QWidget):
 
     def transform_widget_point_to_image(self, point: QPointF, /) -> QPointF:
         origin = self._compute_image_origin_offset(area=None)
-        image_x = point.x() / self.scale - origin.x()
-        image_y = point.y() / self.scale - origin.y()
-        return QPointF(image_x, image_y)
+        return point / self.scale - origin
 
     def transform_image_point_to_widget(
         self, point: QPointF, /, *, area: QtCore.QSize | None = None
