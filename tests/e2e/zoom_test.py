@@ -455,7 +455,7 @@ def test_navigation_restores_view_offset_with_retained_brightness(
     expected_view_offset = canvas.get_view_offset()
     first_image_path = win._image_path
     assert first_image_path is not None
-    win._brightness_contrast_values[first_image_path] = (75, 50)
+    win._brightness_contrast_values[first_image_path] = (150, 100)
 
     win._open_next_image()
     qtbot.waitUntil(lambda: win._image_path != first_image_path)

@@ -105,6 +105,14 @@
         <source>Contrast:</source>
         <translation>Contrasto:</translation>
     </message>
+    <message>
+        <source>Brightness</source>
+        <translation>Luminosità</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Contrasto</translation>
+    </message>
 </context>
 <context>
     <name>Canvas</name>

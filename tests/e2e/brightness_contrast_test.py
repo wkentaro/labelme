@@ -31,8 +31,8 @@ def test_brightness_contrast_dialog(
     )
     qtbot.addWidget(dialog)
 
-    dialog.slider_brightness.setValue(75)
-    dialog.slider_contrast.setValue(25)
+    dialog.slider_brightness.setValue(150)
+    dialog.slider_contrast.setValue(50)
     dialog.apply()
 
     updated_pixmap = canvas.pixmap
