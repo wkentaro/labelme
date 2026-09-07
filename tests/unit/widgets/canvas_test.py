@@ -64,6 +64,35 @@ def test_setting_unchanged_scale_still_resizes_canvas(*, canvas: Canvas) -> None
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    ("scale", "area", "pan", "widget_point", "image_point"),
+    [
+        (2.0, QSize(500, 300), QPointF(17, -11), QPointF(207, 149), QPointF(20, 30)),
+        (2.0, QSize(80, 40), QPointF(-7, 3), QPointF(33, 63), QPointF(20, 30)),
+        (1.25, QSize(160, 70), QPointF(5.5, -2.25), QPointF(48, 39), QPointF(20, 30)),
+        (0.5, QSize(100, 50), QPointF(), QPointF(-20, -30), QPointF(-90, -85)),
+    ],
+)
+def test_transform_widget_point_to_image(
+    *,
+    canvas: Canvas,
+    scale: float,
+    area: QSize,
+    pan: QPointF,
+    widget_point: QPointF,
+    image_point: QPointF,
+) -> None:
+    canvas.scale = scale
+    canvas.resize(area)
+    canvas._view_offset = pan
+
+    actual = canvas.transform_widget_point_to_image(widget_point)
+
+    assert actual.x() == pytest.approx(image_point.x())
+    assert actual.y() == pytest.approx(image_point.y())
+
+
+@pytest.mark.gui
 def test_propose_ai_shapes_passes_rgb_image_to_model(
     *,
     canvas: Canvas,
