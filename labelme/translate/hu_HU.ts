@@ -39,14 +39,6 @@
         <source>AI-assisted annotation output format</source>
         <translation>AI-támogatott annotáció kimeneti formátuma</translation>
     </message>
-    <message>
-        <source>Model</source>
-        <translation>Modell</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Kimeneti formátum</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -79,10 +71,6 @@
         <translation>Válassza a &apos;Polygon&apos;, &apos;Rectangle&apos; vagy &apos;AI-Points&apos; módot az engedélyezéshez</translation>
     </message>
     <message>
-        <source>Model</source>
-        <translation>Modell</translation>
-    </message>
-    <message>
         <source>Prompt</source>
         <translation>Utasítás</translation>
     </message>
@@ -104,14 +92,6 @@
     <message>
         <source>Contrast:</source>
         <translation>Kontraszt:</translation>
-    </message>
-    <message>
-        <source>Brightness</source>
-        <translation>Fényerő</translation>
-    </message>
-    <message>
-        <source>Contrast</source>
-        <translation>Kontraszt</translation>
     </message>
 </context>
 <context>
@@ -1121,17 +1101,6 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Predefined image flags</source>
         <translation>Előre definiált képjelzők</translation>
-    </message>
-</context>
-<context>
-    <name>ZoomWidget</name>
-    <message>
-        <source>Zoom</source>
-        <translation>Nagyítás</translation>
-    </message>
-    <message>
-        <source>Zoom percentage</source>
-        <translation>Nagyítás százalékban</translation>
     </message>
 </context>
 <context>

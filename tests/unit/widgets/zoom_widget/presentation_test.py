@@ -79,16 +79,12 @@ def test_zoom_widget_no_spin_buttons(*, widget: ZoomWidget) -> None:
 # --- tooltip and status tip ---
 
 
-def test_zoom_widget_tooltip_describes_percentage(*, widget: ZoomWidget) -> None:
-    assert widget.toolTip() == "Zoom percentage"
+def test_zoom_widget_tooltip_is_zoom_level(*, widget: ZoomWidget) -> None:
+    assert widget.toolTip() == "Zoom Level"
 
 
-def test_zoom_widget_has_accessible_name(*, widget: ZoomWidget) -> None:
-    assert widget.accessibleName() == "Zoom"
-
-
-def test_zoom_widget_status_tip_describes_percentage(*, widget: ZoomWidget) -> None:
-    assert widget.statusTip() == "Zoom percentage"
+def test_zoom_widget_status_tip_is_zoom_level(*, widget: ZoomWidget) -> None:
+    assert widget.statusTip() == "Zoom Level"
 
 
 # --- minimum width ---

@@ -39,14 +39,6 @@
         <source>AI-assisted annotation output format</source>
         <translation>AI destekli açıklama çıktı biçimi</translation>
     </message>
-    <message>
-        <source>Model</source>
-        <translation>Model</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Çıktı biçimi</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -79,10 +71,6 @@
         <translation>Etkinleştirmek için &apos;Çokgen&apos;, &apos;Dikdörtgen&apos; veya &apos;AI-Noktalar&apos; modunu seçin</translation>
     </message>
     <message>
-        <source>Model</source>
-        <translation>Model</translation>
-    </message>
-    <message>
         <source>Prompt</source>
         <translation>İstem</translation>
     </message>
@@ -104,14 +92,6 @@
     <message>
         <source>Contrast:</source>
         <translation>Kontrast:</translation>
-    </message>
-    <message>
-        <source>Brightness</source>
-        <translation>Parlaklık</translation>
-    </message>
-    <message>
-        <source>Contrast</source>
-        <translation>Kontrast</translation>
     </message>
 </context>
 <context>
@@ -1121,17 +1101,6 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Önceden tanımlı görüntü bayrakları</translation>
-    </message>
-</context>
-<context>
-    <name>ZoomWidget</name>
-    <message>
-        <source>Zoom</source>
-        <translation>Yakınlaştırma</translation>
-    </message>
-    <message>
-        <source>Zoom percentage</source>
-        <translation>Yakınlaştırma yüzdesi</translation>
     </message>
 </context>
 <context>

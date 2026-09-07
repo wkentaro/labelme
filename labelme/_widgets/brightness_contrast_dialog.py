@@ -37,11 +37,10 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         grid = QtWidgets.QGridLayout(self)
         grid.setColumnStretch(1, 1)
         captioned = (
-            (self.tr("Brightness"), self.tr("Brightness:"), self.slider_brightness),
-            (self.tr("Contrast"), self.tr("Contrast:"), self.slider_contrast),
+            (self.tr("Brightness:"), self.slider_brightness),
+            (self.tr("Contrast:"), self.slider_contrast),
         )
-        for row, (name, caption, slider) in enumerate(captioned):
-            slider.setAccessibleName(name)
+        for row, (caption, slider) in enumerate(captioned):
             slider.setRange(0, 3 * _NEUTRAL)
             slider.setSingleStep(2)
             slider.setPageStep(20)

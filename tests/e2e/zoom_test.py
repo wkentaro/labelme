@@ -39,6 +39,13 @@ def _win(
     return win
 
 
+def test_zoom_control_exposes_accessible_name(*, _win: MainWindow) -> None:
+    interface = QtGui.QAccessible.queryAccessibleInterface(
+        _win._canvas_widgets.zoom_widget
+    )
+    assert interface.text(QtGui.QAccessible.Text.Name) == _win.tr("Zoom")
+
+
 def _wait_for_fitted_image(*, qtbot: QtBot, win: MainWindow) -> None:
     def check() -> None:
         canvas = win._canvas_widgets.canvas

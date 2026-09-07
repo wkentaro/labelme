@@ -39,14 +39,6 @@
         <source>AI-assisted annotation output format</source>
         <translation>AI 지원 주석 출력 형식</translation>
     </message>
-    <message>
-        <source>Model</source>
-        <translation>모델</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>출력 형식</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -79,10 +71,6 @@
         <translation>&apos;Polygon&apos;, &apos;Rectangle&apos; 또는 &apos;AI-Points&apos; 모드를 선택하여 활성화</translation>
     </message>
     <message>
-        <source>Model</source>
-        <translation>모델</translation>
-    </message>
-    <message>
         <source>Prompt</source>
         <translation>프롬프트</translation>
     </message>
@@ -104,14 +92,6 @@
     <message>
         <source>Contrast:</source>
         <translation>대비:</translation>
-    </message>
-    <message>
-        <source>Brightness</source>
-        <translation>밝기</translation>
-    </message>
-    <message>
-        <source>Contrast</source>
-        <translation>대비</translation>
     </message>
 </context>
 <context>
@@ -1115,17 +1095,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>사전 정의된 이미지 플래그</translation>
-    </message>
-</context>
-<context>
-    <name>ZoomWidget</name>
-    <message>
-        <source>Zoom</source>
-        <translation>확대 비율</translation>
-    </message>
-    <message>
-        <source>Zoom percentage</source>
-        <translation>확대 비율(백분율)</translation>
     </message>
 </context>
 <context>

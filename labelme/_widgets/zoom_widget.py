@@ -12,6 +12,8 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
     PERCENT_SUFFIX: Final[str] = " %"
 
     def __init__(self) -> None:
+        ZOOM_LEVEL_LABEL: Final = "Zoom Level"
+
         super().__init__()
         self.setDecimals(self.PERCENT_DECIMALS)
         self.setRange(1, self.PERCENT_MAX)
@@ -19,10 +21,8 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         self.setSuffix(self.PERCENT_SUFFIX)
         self.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
-        tip = self.tr("Zoom percentage")
-        self.setAccessibleName(self.tr("Zoom"))
-        self.setToolTip(tip)
-        self.setStatusTip(tip)
+        self.setToolTip(ZOOM_LEVEL_LABEL)
+        self.setStatusTip(ZOOM_LEVEL_LABEL)
 
         sample = f"{self.PERCENT_MAX:.{self.PERCENT_DECIMALS}f}{self.PERCENT_SUFFIX}"
         min_width = self.fontMetrics().horizontalAdvance(sample)

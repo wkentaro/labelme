@@ -39,14 +39,6 @@
         <source>AI-assisted annotation output format</source>
         <translation>Formato de saída de anotação assistida por AI</translation>
     </message>
-    <message>
-        <source>Model</source>
-        <translation>Modelo</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Formato de saída</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -79,10 +71,6 @@
         <translation>Selecione o modo &apos;Polygon&apos;, &apos;Rectangle&apos; ou &apos;AI-Points&apos; para ativar</translation>
     </message>
     <message>
-        <source>Model</source>
-        <translation>Modelo</translation>
-    </message>
-    <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
     </message>
@@ -104,14 +92,6 @@
     <message>
         <source>Contrast:</source>
         <translation>Contraste:</translation>
-    </message>
-    <message>
-        <source>Brightness</source>
-        <translation>Brilho</translation>
-    </message>
-    <message>
-        <source>Contrast</source>
-        <translation>Contraste</translation>
     </message>
 </context>
 <context>
@@ -1115,17 +1095,6 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Sinalizadores de imagem predefinidos</translation>
-    </message>
-</context>
-<context>
-    <name>ZoomWidget</name>
-    <message>
-        <source>Zoom</source>
-        <translation>Zoom</translation>
-    </message>
-    <message>
-        <source>Zoom percentage</source>
-        <translation>Porcentagem de zoom</translation>
     </message>
 </context>
 <context>

@@ -39,14 +39,6 @@
         <source>AI-assisted annotation output format</source>
         <translation>AI支援アノテーションの出力形式</translation>
     </message>
-    <message>
-        <source>Model</source>
-        <translation>モデル</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>出力形式</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -79,10 +71,6 @@
         <translation>「Polygon」「Rectangle」または「AI-Points」モードで有効</translation>
     </message>
     <message>
-        <source>Model</source>
-        <translation>モデル</translation>
-    </message>
-    <message>
         <source>Prompt</source>
         <translation>プロンプト</translation>
     </message>
@@ -104,14 +92,6 @@
     <message>
         <source>Contrast:</source>
         <translation>コントラスト:</translation>
-    </message>
-    <message>
-        <source>Brightness</source>
-        <translation>明るさ</translation>
-    </message>
-    <message>
-        <source>Contrast</source>
-        <translation>コントラスト</translation>
     </message>
 </context>
 <context>
@@ -1129,17 +1109,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>定義済み画像フラグ</translation>
-    </message>
-</context>
-<context>
-    <name>ZoomWidget</name>
-    <message>
-        <source>Zoom</source>
-        <translation>表示倍率</translation>
-    </message>
-    <message>
-        <source>Zoom percentage</source>
-        <translation>表示倍率（パーセント）</translation>
     </message>
 </context>
 <context>

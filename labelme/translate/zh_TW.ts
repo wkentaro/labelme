@@ -39,14 +39,6 @@
         <source>AI-assisted annotation output format</source>
         <translation>AI 輔助標註輸出格式</translation>
     </message>
-    <message>
-        <source>Model</source>
-        <translation>模型</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>輸出格式</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -79,10 +71,6 @@
         <translation>選擇&apos;Polygon&apos;、&apos;Rectangle&apos;或&apos;AI-Points&apos;模式以啟用</translation>
     </message>
     <message>
-        <source>Model</source>
-        <translation>模型</translation>
-    </message>
-    <message>
         <source>Prompt</source>
         <translation>提示詞</translation>
     </message>
@@ -104,14 +92,6 @@
     <message>
         <source>Contrast:</source>
         <translation>對比度:</translation>
-    </message>
-    <message>
-        <source>Brightness</source>
-        <translation>亮度</translation>
-    </message>
-    <message>
-        <source>Contrast</source>
-        <translation>對比度</translation>
     </message>
 </context>
 <context>
@@ -1121,17 +1101,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>預定義影像標記</translation>
-    </message>
-</context>
-<context>
-    <name>ZoomWidget</name>
-    <message>
-        <source>Zoom</source>
-        <translation>縮放</translation>
-    </message>
-    <message>
-        <source>Zoom percentage</source>
-        <translation>縮放百分比</translation>
     </message>
 </context>
 <context>

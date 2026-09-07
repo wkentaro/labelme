@@ -71,7 +71,6 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
         run_button = QtWidgets.QToolButton()
         run_button.setText(self.tr("Run"))
-        run_button.setAccessibleName(self.tr("Run"))
         run_button.setFixedHeight(24)
         run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         run_button.clicked.connect(on_submit)
@@ -82,7 +81,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         settings_layout.setSpacing(4)
 
         self._model_combo = model_combo = QtWidgets.QComboBox()
-        model_combo.setAccessibleName(self.tr("Model"))
+        # Qt exposes the selected option as the name, so describe the control's purpose.
         model_combo.setAccessibleDescription(self.tr("Text-to-annotation model"))
         for model_id, model_display in self._available_models:
             model_combo.addItem(model_display, model_id)
@@ -113,7 +112,6 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
         score_label = make_threshold_label(self.tr("Score"))
         self._score_spinbox = score_spinbox = QtWidgets.QDoubleSpinBox()
-        score_spinbox.setAccessibleName(self.tr("Score"))
         score_label.setBuddy(score_spinbox)
         settings_layout.addWidget(score_label)
         score_spinbox.setFont(small_font)
@@ -125,7 +123,6 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
         iou_label = make_threshold_label(self.tr("IoU"))
         self._iou_spinbox = iou_spinbox = QtWidgets.QDoubleSpinBox()
-        iou_spinbox.setAccessibleName(self.tr("IoU"))
         iou_label.setBuddy(iou_spinbox)
         settings_layout.addWidget(iou_label)
         iou_spinbox.setFont(small_font)

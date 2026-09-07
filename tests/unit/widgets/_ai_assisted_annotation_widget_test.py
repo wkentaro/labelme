@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+from PySide6 import QtGui
 from pytestqt.qtbot import QtBot
 
 from labelme._automation import AiOutputFormat
@@ -52,7 +53,7 @@ def test_construction_exposes_default_without_firing_callbacks(
     assert formats == []
 
 
-def test_model_and_output_controls_expose_accessible_names(
+def test_model_and_output_controls_expose_accessible_purpose(
     *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
@@ -63,12 +64,14 @@ def test_model_and_output_controls_expose_accessible_names(
         details=None,
     )
 
-    assert widget._model_combo.accessibleName() == widget.tr("Model")
-    assert widget._model_combo.accessibleDescription() == widget.tr(
+    model = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
+    output = QtGui.QAccessible.queryAccessibleInterface(widget._output_format_combo)
+    assert model.text(QtGui.QAccessible.Text.Name) == "EfficientSam (speed)"
+    assert model.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-assisted annotation model"
     )
-    assert widget._output_format_combo.accessibleName() == widget.tr("Output format")
-    assert widget._output_format_combo.accessibleDescription() == widget.tr(
+    assert output.text(QtGui.QAccessible.Text.Name) == "Polygon"
+    assert output.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-assisted annotation output format"
     )
 

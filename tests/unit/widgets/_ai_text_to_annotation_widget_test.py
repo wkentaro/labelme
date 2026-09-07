@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
@@ -19,18 +20,18 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
     info_button = widget.findChild(InfoButton)
     assert info_button is not None
 
-    assert widget._text_input.accessibleName() == widget.tr("Prompt")
-    assert widget._model_combo.accessibleName() == widget.tr("Model")
-    assert widget._model_combo.accessibleDescription() == widget.tr(
+    for control, name in (
+        (widget._text_input, widget.tr("Prompt")),
+        (widget._model_combo, "YOLO-World (fast)"),
+        (widget._score_spinbox, widget.tr("Score")),
+        (widget._iou_spinbox, widget.tr("IoU")),
+        (run_button, widget.tr("Run")),
+        (info_button, widget.tr("AI creates annotations from the text prompt")),
+    ):
+        interface = QtGui.QAccessible.queryAccessibleInterface(control)
+        assert interface.text(QtGui.QAccessible.Text.Name) == name
+
+    interface = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
+    assert interface.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "Text-to-annotation model"
     )
-    assert widget._score_spinbox.accessibleName() == widget.tr("Score")
-    assert widget._iou_spinbox.accessibleName() == widget.tr("IoU")
-    assert run_button.accessibleName() == widget.tr("Run")
-    assert info_button.accessibleName() == info_button.toolTip()
-
-    labels = widget.findChildren(QtWidgets.QLabel)
-    score_label = next(label for label in labels if label.text() == widget.tr("Score"))
-    iou_label = next(label for label in labels if label.text() == widget.tr("IoU"))
-    assert score_label.buddy() is widget._score_spinbox
-    assert iou_label.buddy() is widget._iou_spinbox

@@ -39,14 +39,6 @@
         <source>AI-assisted annotation output format</source>
         <translation>Формат вывода разметки с помощью AI</translation>
     </message>
-    <message>
-        <source>Model</source>
-        <translation>Модель</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Формат вывода</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -79,10 +71,6 @@
         <translation>Выберите режим &apos;Polygon&apos;, &apos;Rectangle&apos; или &apos;AI-Points&apos;, чтобы включить</translation>
     </message>
     <message>
-        <source>Model</source>
-        <translation>Модель</translation>
-    </message>
-    <message>
         <source>Prompt</source>
         <translation>Запрос</translation>
     </message>
@@ -104,14 +92,6 @@
     <message>
         <source>Contrast:</source>
         <translation>Контраст:</translation>
-    </message>
-    <message>
-        <source>Brightness</source>
-        <translation>Яркость</translation>
-    </message>
-    <message>
-        <source>Contrast</source>
-        <translation>Контрастность</translation>
     </message>
 </context>
 <context>
@@ -1118,17 +1098,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Предустановленные флаги изображения</translation>
-    </message>
-</context>
-<context>
-    <name>ZoomWidget</name>
-    <message>
-        <source>Zoom</source>
-        <translation>Масштаб</translation>
-    </message>
-    <message>
-        <source>Zoom percentage</source>
-        <translation>Масштаб в процентах</translation>
     </message>
 </context>
 <context>

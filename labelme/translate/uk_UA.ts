@@ -39,14 +39,6 @@
         <source>AI-assisted annotation output format</source>
         <translation>Формат виведення розмітки за допомогою AI</translation>
     </message>
-    <message>
-        <source>Model</source>
-        <translation>Модель</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Формат виведення</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
@@ -79,10 +71,6 @@
         <translation>Виберіть режим &apos;Polygon&apos;, &apos;Rectangle&apos; або &apos;AI-Points&apos;, щоб увімкнути</translation>
     </message>
     <message>
-        <source>Model</source>
-        <translation>Модель</translation>
-    </message>
-    <message>
         <source>Prompt</source>
         <translation>Запит</translation>
     </message>
@@ -104,14 +92,6 @@
     <message>
         <source>Contrast:</source>
         <translation>Контраст:</translation>
-    </message>
-    <message>
-        <source>Brightness</source>
-        <translation>Яскравість</translation>
-    </message>
-    <message>
-        <source>Contrast</source>
-        <translation>Контрастність</translation>
     </message>
 </context>
 <context>
@@ -1118,17 +1098,6 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Попередньо визначені прапорці зображення</translation>
-    </message>
-</context>
-<context>
-    <name>ZoomWidget</name>
-    <message>
-        <source>Zoom</source>
-        <translation>Масштаб</translation>
-    </message>
-    <message>
-        <source>Zoom percentage</source>
-        <translation>Масштаб у відсотках</translation>
     </message>
 </context>
 <context>
