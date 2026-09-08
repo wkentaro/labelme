@@ -383,8 +383,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         save_auto.setChecked(self._config["auto_save"])
         save_with_image_data = action(
-            text=self.tr("Save With Image Data"),
-            tip=self.tr("Save image data in label file"),
+            text=self.tr("Embed Image in Label File"),
+            tip=self.tr("Store a copy of the image inside the label file"),
             checkable=True,
             checked=self._config["with_image_data"],
         )
@@ -497,11 +497,11 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         remove_point = action(
-            text=self.tr("Remove Selected Point"),
+            text=self.tr("Delete Selected Vertex"),
             slot=self.remove_selected_point,
             shortcut=shortcuts["remove_selected_point"],
             icon="phosphor/trash.svg",
-            tip=self.tr("Remove selected point from polygon"),
+            tip=self.tr("Delete the selected vertex from the polygon or line strip"),
             enabled=False,
         )
         add_point_to_edge = action(

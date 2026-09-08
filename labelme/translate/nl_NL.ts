@@ -352,14 +352,6 @@
         <translation>Automatisch opslaan</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Opslaan met Afbeeldingsgegevens</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Afbeeldingsgegevens opslaan in labelbestand</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>&amp;Sluiten</translation>
     </message>
@@ -422,14 +414,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>Laatste getekende punt ongedaan maken</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Geselecteerd Punt Verwijderen</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Geselecteerd punt uit polygoon verwijderen</translation>
     </message>
     <message>
         <source>Undo
@@ -504,6 +488,14 @@ Shapes</source>
         <translation>Labels opslaan onder een nieuwe bestandsnaam</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Afbeelding in labelbestand insluiten</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Slaat een kopie van de afbeelding op in het labelbestand</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Label van geselecteerde vorm wijzigen</translation>
     </message>
@@ -522,6 +514,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Vormen van het klembord in deze afbeelding invoegen</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Geselecteerd hoekpunt verwijderen</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Verwijdert het geselecteerde hoekpunt uit de polygoon of polylijn</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -909,10 +909,6 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
         <translation>Automatisch opslaan</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Afbeeldingsgegevens opslaan in labelbestand</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Sluit de afbeelding in het JSON-labelbestand in.</translation>
     </message>
@@ -979,6 +975,10 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     <message>
         <source>Predefined labels</source>
         <translation>Voorgedefinieerde labels</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Afbeelding in labelbestand insluiten</translation>
     </message>
     <message>
         <source>Label validation</source>

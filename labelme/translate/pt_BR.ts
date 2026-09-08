@@ -352,14 +352,6 @@
         <translation>Salvar automaticamente</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Salvar com Dados da Imagem</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Salvar dados da imagem no arquivo de rótulo</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>&amp;Fechar</translation>
     </message>
@@ -422,14 +414,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>Desfazer último ponto desenhado</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Remover Ponto Selecionado</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Remover ponto selecionado do polígono</translation>
     </message>
     <message>
         <source>Undo
@@ -504,6 +488,14 @@ Shapes</source>
         <translation>Salvar os rótulos com um novo nome de arquivo</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Incorporar Imagem no Arquivo de Rótulo</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Salva uma cópia da imagem dentro do arquivo de rótulo</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modificar o rótulo da forma selecionada</translation>
     </message>
@@ -522,6 +514,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Inserir nesta imagem as formas da área de transferência</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Excluir Vértice Selecionado</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Exclui o vértice selecionado do polígono ou da polilinha</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -909,10 +909,6 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
         <translation>Salvar automaticamente</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Salvar dados da imagem no arquivo de rótulo</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Incorpora a imagem no arquivo JSON de rótulos.</translation>
     </message>
@@ -979,6 +975,10 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
     <message>
         <source>Predefined labels</source>
         <translation>Rótulos predefinidos</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Incorporar imagem no arquivo de rótulo</translation>
     </message>
     <message>
         <source>Label validation</source>

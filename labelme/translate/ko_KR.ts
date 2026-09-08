@@ -352,14 +352,6 @@
         <translation>자동 저장</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>이미지 데이터와 함께 저장</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>레이블 파일에 이미지 데이터 저장</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>닫기(&amp;C)</translation>
     </message>
@@ -422,14 +414,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>마지막으로 그린 점 실행 취소</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>선택한 점 제거</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>다각형에서 선택한 점 제거</translation>
     </message>
     <message>
         <source>Undo
@@ -504,6 +488,14 @@ Shapes</source>
         <translation>레이블을 새 파일 이름으로 저장</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>이미지를 레이블 파일에 포함</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>이미지 사본을 레이블 파일 안에 저장합니다</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>선택한 도형의 레이블 수정</translation>
     </message>
@@ -522,6 +514,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>클립보드의 도형을 이 이미지에 삽입</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>선택한 꼭짓점 삭제</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>선택한 꼭짓점을 다각형 또는 꺾은선에서 삭제합니다</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -909,10 +909,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>자동 저장</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>레이블 파일에 이미지 데이터 저장</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>이미지를 레이블 JSON 파일에 포함합니다.</translation>
     </message>
@@ -979,6 +975,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined labels</source>
         <translation>사전 정의된 레이블</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>이미지를 레이블 파일에 포함</translation>
     </message>
     <message>
         <source>Label validation</source>

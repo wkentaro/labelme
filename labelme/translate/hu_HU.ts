@@ -354,14 +354,6 @@
         <translation>Automatikus mentés</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Mentés kép adatokkal</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Kép adatok mentése a címke fájlba</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>&amp;Bezárás</translation>
     </message>
@@ -428,14 +420,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>Utolsó rajzolt pont visszavonása</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Kijelölt pont eltávolítása</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Kijelölt pont eltávolítása a sokszögből</translation>
     </message>
     <message>
         <source>Undo
@@ -530,6 +514,14 @@ Shapes</source>
         <translation>Címkék mentése új fájlnéven</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Kép beágyazása a címkefájlba</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>A kép másolatát a címkefájlban tárolja</translation>
+    </message>
+    <message>
         <source>Copy to Clipboard</source>
         <translation>Másolás a vágólapra</translation>
     </message>
@@ -544,6 +536,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>A vágólap alakzatainak beszúrása ebbe a képbe</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Kijelölt csúcspont törlése</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Törli a kijelölt csúcspontot a sokszögből vagy a töröttvonalból</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -915,10 +915,6 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
         <translation>Automatikus mentés</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Képadatok mentése a címkefájlba</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Beágyazza a képet a címke JSON-fájljába.</translation>
     </message>
@@ -985,6 +981,10 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Predefined labels</source>
         <translation>Előre definiált címkék</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Kép beágyazása a címkefájlba</translation>
     </message>
     <message>
         <source>Label validation</source>

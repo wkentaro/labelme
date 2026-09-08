@@ -347,14 +347,6 @@
         <translation>Simpan otomatis</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Simpan Dengan Data Gambar</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Simpan data gambar dalam file label</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>Tutup (&amp;C)</translation>
     </message>
@@ -419,14 +411,6 @@
         <translation>Urungkan titik terakhir yang digambar</translation>
     </message>
     <message>
-        <source>Remove Selected Point</source>
-        <translation>Hapus Titik Terpilih</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Hapus titik terpilih dari poligon</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Urungkan penambahan dan pengeditan bentuk terakhir</translation>
     </message>
@@ -479,6 +463,14 @@
         <translation>Simpan label dengan nama file baru</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Sematkan Gambar dalam File Label</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Menyimpan salinan gambar di dalam file label</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Ubah label bentuk yang dipilih</translation>
     </message>
@@ -497,6 +489,14 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Sisipkan bentuk dari clipboard ke gambar ini</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Hapus Simpul Terpilih</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Menghapus simpul terpilih dari poligon atau garis patah</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -961,10 +961,6 @@ Shapes</source>
         <translation>Simpan otomatis</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Simpan data gambar dalam file label</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Menyematkan gambar dalam file JSON label.</translation>
     </message>
@@ -1027,6 +1023,10 @@ Shapes</source>
     <message>
         <source>Predefined labels</source>
         <translation>Label yang telah ditentukan</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Sematkan gambar dalam file label</translation>
     </message>
     <message>
         <source>Label validation</source>

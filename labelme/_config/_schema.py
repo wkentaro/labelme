@@ -90,7 +90,7 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         key_path=("with_image_data",),
         group="Files and saving",
         label=cast(
-            str, QT_TRANSLATE_NOOP("SettingsDialog", "Save image data in label file")
+            str, QT_TRANSLATE_NOOP("SettingsDialog", "Embed image in label file")
         ),
         kind="bool",
         note=cast(

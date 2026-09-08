@@ -354,14 +354,6 @@
         <translation>Salva automaticamente</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Salva con dati immagine</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Salva i dati dell&apos;immagine nel file di etichette</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>&amp;Chiudi</translation>
     </message>
@@ -424,14 +416,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>Annulla l&apos;ultimo punto disegnato</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Rimuovi punto selezionato</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Rimuovi il punto selezionato dal poligono</translation>
     </message>
     <message>
         <source>Undo
@@ -510,6 +494,14 @@ forme</translation>
         <translation>Salva le etichette con un nuovo nome di file</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Incorpora immagine nel file di etichette</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Salva una copia dell&apos;immagine all&apos;interno del file di etichette</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modifica l&apos;etichetta della forma selezionata</translation>
     </message>
@@ -528,6 +520,14 @@ forme</translation>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Inserisci in questa immagine le forme degli appunti</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Elimina vertice selezionato</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Elimina il vertice selezionato dal poligono o dalla polilinea</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -915,10 +915,6 @@ Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
         <translation>Salva automaticamente</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Salva i dati dell&apos;immagine nel file di etichette</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Incorpora l’immagine nel file JSON delle etichette.</translation>
     </message>
@@ -985,6 +981,10 @@ Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
     <message>
         <source>Predefined labels</source>
         <translation>Etichette predefinite</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Incorpora immagine nel file di etichette</translation>
     </message>
     <message>
         <source>Label validation</source>

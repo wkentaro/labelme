@@ -354,14 +354,6 @@
         <translation>Automatisch speichern</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Mit Bilddaten speichern</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Bilddaten in Label-Datei speichern</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>&amp;Schließen</translation>
     </message>
@@ -428,14 +420,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>Letzten gezeichneten Punkt rückgängig machen</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Ausgewählten Punkt entfernen</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Ausgewählten Punkt aus Polygon entfernen</translation>
     </message>
     <message>
         <source>Undo
@@ -530,6 +514,14 @@ Formen</translation>
         <translation>Labels unter einem neuen Dateinamen speichern</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Bild in Label-Datei einbetten</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Speichert eine Kopie des Bildes in der Label-Datei</translation>
+    </message>
+    <message>
         <source>Copy to Clipboard</source>
         <translation>In Zwischenablage kopieren</translation>
     </message>
@@ -544,6 +536,14 @@ Formen</translation>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Formen aus der Zwischenablage in dieses Bild einfügen</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Ausgewählten Eckpunkt löschen</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Löscht den ausgewählten Eckpunkt aus dem Polygon oder Linienzug</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -915,10 +915,6 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
         <translation>Automatisch speichern</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Bilddaten in Label-Datei speichern</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Bettet das Bild in die Label-JSON-Datei ein.</translation>
     </message>
@@ -985,6 +981,10 @@ Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</trans
     <message>
         <source>Predefined labels</source>
         <translation>Vordefinierte Labels</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Bild in Label-Datei einbetten</translation>
     </message>
     <message>
         <source>Label validation</source>

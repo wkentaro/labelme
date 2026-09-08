@@ -358,14 +358,6 @@
         <translation>自動で保存</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>画像データと共に保存</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>ラベルファイルに画像データを含める</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>閉じる(&amp;C)</translation>
     </message>
@@ -431,14 +423,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>最後に描画した頂点を取り消し</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>選択した頂点を削除</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>ポリゴンから選択した頂点を削除</translation>
     </message>
     <message>
         <source>Undo
@@ -517,6 +501,14 @@ Shapes</source>
         <translation>ラベルを新しいファイル名で保存</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>画像をラベルファイルに埋め込む</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>画像のコピーをラベルファイル内に保存します</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>選択した図形のラベルを変更</translation>
     </message>
@@ -535,6 +527,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>クリップボードの図形をこの画像に挿入</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>選択した頂点を削除</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>選択した頂点をポリゴンまたは折れ線から削除します</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -923,10 +923,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>自動で保存</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>ラベルファイルに画像データを含める</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>画像をラベル JSON ファイルに埋め込みます。</translation>
     </message>
@@ -993,6 +989,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined labels</source>
         <translation>定義済みラベル</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>画像をラベルファイルに埋め込む</translation>
     </message>
     <message>
         <source>Label validation</source>

@@ -275,14 +275,6 @@
         <translation>Зберегти автоматично</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Зберегти з даними зображення</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Зберегти дані зображення у файлі мітки</translation>
-    </message>
-    <message>
         <source>&amp;Change Output Dir</source>
         <translation>&amp;Змінити каталог виводу</translation>
     </message>
@@ -383,14 +375,6 @@
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>Скасувати останнє додавання та редагування фігури</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Видалити вибрану точку</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Видалити вибрану точку з багатокутника</translation>
     </message>
     <message>
         <source>Start drawing polygons</source>
@@ -691,8 +675,24 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Зберегти мітки під новою назвою файлу</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Вбудувати зображення у файл мітки</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Зберігає копію зображення всередині файлу мітки</translation>
+    </message>
+    <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Вставити фігури з буфера обміну в це зображення</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Видалити вибрану вершину</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Видаляє вибрану вершину з багатокутника або ламаної</translation>
     </message>
     <message>
         <source>Rectangle</source>
@@ -912,10 +912,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Зберігати автоматично</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Зберігати дані зображення у файлі мітки</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Вбудовує зображення у JSON-файл мітки.</translation>
     </message>
@@ -982,6 +978,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined labels</source>
         <translation>Попередньо визначені мітки</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Вбудовувати зображення у файл мітки</translation>
     </message>
     <message>
         <source>Label validation</source>

@@ -354,14 +354,6 @@
         <translation>Otomatik kaydet</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Görüntü Verileriyle Kaydet</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Görüntü verilerini etiket dosyasına kaydet</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>K&amp;apat</translation>
     </message>
@@ -424,14 +416,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>Son çizilen noktayı geri al</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Seçili Noktayı Kaldır</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Seçili noktayı çokgenden kaldır</translation>
     </message>
     <message>
         <source>Undo
@@ -510,6 +494,14 @@ Shapes</source>
         <translation>Etiketleri yeni bir dosya adıyla kaydet</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Görüntüyü Etiket Dosyasına Göm</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Görüntünün bir kopyasını etiket dosyasının içinde saklar</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Seçili şeklin etiketini değiştir</translation>
     </message>
@@ -528,6 +520,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Panodaki şekilleri bu görüntüye ekle</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Seçili Köşe Noktasını Sil</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Seçili köşe noktasını çokgenden veya çoklu çizgiden siler</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -915,10 +915,6 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
         <translation>Otomatik kaydet</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Görüntü verilerini etiket dosyasına kaydet</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Görüntüyü etiket JSON dosyasına gömer.</translation>
     </message>
@@ -985,6 +981,10 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Predefined labels</source>
         <translation>Önceden tanımlı etiketler</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Görüntüyü etiket dosyasına göm</translation>
     </message>
     <message>
         <source>Label validation</source>

@@ -352,14 +352,6 @@
         <translation>บันทึกอัตโนมัติ</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>บันทึกพร้อมข้อมูลรูป</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>บันทึกข้อมูลรูปในไฟล์เลเบล</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>ปิด (&amp;C)</translation>
     </message>
@@ -422,14 +414,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>ยกเลิกจุดที่วาดล่าสุด</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>ลบจุดที่เลือก</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>ลบจุดที่เลือกออกจากหลายเหลี่ยม</translation>
     </message>
     <message>
         <source>Undo
@@ -504,6 +488,14 @@ Shapes</source>
         <translation>บันทึกเลเบลด้วยชื่อไฟล์ใหม่</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>ฝังรูปภาพในไฟล์เลเบล</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>เก็บสำเนาของรูปภาพไว้ในไฟล์เลเบล</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>แก้ไขเลเบลของรูปร่างที่เลือก</translation>
     </message>
@@ -522,6 +514,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>แทรกรูปร่างจากคลิปบอร์ดลงในภาพนี้</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>ลบจุดยอดที่เลือก</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>ลบจุดยอดที่เลือกออกจากรูปหลายเหลี่ยมหรือเส้นหักมุม</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -909,10 +909,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>บันทึกอัตโนมัติ</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>บันทึกข้อมูลรูปในไฟล์เลเบล</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>ฝังรูปภาพไว้ในไฟล์ JSON ของเลเบล</translation>
     </message>
@@ -979,6 +975,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined labels</source>
         <translation>เลเบลที่กำหนดไว้ล่วงหน้า</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>ฝังรูปภาพในไฟล์เลเบล</translation>
     </message>
     <message>
         <source>Label validation</source>
