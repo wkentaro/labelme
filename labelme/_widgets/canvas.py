@@ -1484,9 +1484,9 @@ class Canvas(QtWidgets.QWidget):
 
     def _drag_shapes(
         self, *, shapes: list[Shape], cursor: QPointF, constrain_cursor: bool
-    ) -> bool:
+    ) -> None:
         if constrain_cursor and self._should_constrain_to_pixmap(cursor):
-            return False
+            return
 
         current_bounds = _compute_shapes_bounds(shapes=shapes)
         rel_tl, bounds = self._drag_anchor
@@ -1512,12 +1512,11 @@ class Canvas(QtWidgets.QWidget):
         new_cursor = target - rel_tl
         delta = new_cursor - self._prev_point
         if delta.isNull():
-            return False
+            return
 
         for shape in shapes:
             shape.translate(offset=(delta.x(), delta.y()))
         self._prev_point = new_cursor
-        return True
 
     def deselect_shape(self) -> bool:
         if not self.selected_shapes:
