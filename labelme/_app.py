@@ -2130,7 +2130,7 @@ class MainWindow(QtWidgets.QMainWindow):
         cancel_button = msg_box.addButton(
             self.tr("Cancel"), QtWidgets.QMessageBox.ButtonRole.RejectRole
         )
-        msg_box.setDefaultButton(QtWidgets.QMessageBox.StandardButton.NoButton)
+        msg_box.setDefaultButton(cancel_button)
         msg_box.setEscapeButton(cancel_button)
         msg_box.exec()
         return msg_box.clickedButton() is open_button
@@ -3267,6 +3267,7 @@ def _get_image_decode_requirement(
     if bits_per_pixel <= 0:
         return None
 
+    # Match Qt's 32-bit minimum for GUI-backed image allocations.
     required_mb = (
         size.width() * size.height() * max(bits_per_pixel, 32) / 8 / 1024 / 1024
     )
