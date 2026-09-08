@@ -550,13 +550,12 @@ class Canvas(QtWidgets.QWidget):
         self._update_status(extra_messages=None)
 
     def leaveEvent(self, _a0: QtCore.QEvent, /) -> None:
-        if self._set_highlight(
+        self._set_highlight(
             hovered_shape=None,
             hovered_edge=None,
             hovered_vertex=None,
             hovered_rotation=None,
-        ):
-            self.update()
+        )
         self._release_cursor()
         self._update_status(extra_messages=None)
 
@@ -578,15 +577,13 @@ class Canvas(QtWidgets.QWidget):
             self.update()  # clear crosshair
         else:
             # EDIT -> CREATE
-            need_update: bool = self._set_highlight(
+            self._set_highlight(
                 hovered_shape=None,
                 hovered_edge=None,
                 hovered_vertex=None,
                 hovered_rotation=None,
             )
-            need_update |= self.deselect_shape()
-            if need_update:
-                self.update()
+            self.deselect_shape()
         self._update_status(extra_messages=None)
 
     def _set_highlight(
@@ -596,12 +593,10 @@ class Canvas(QtWidgets.QWidget):
         hovered_edge: int | None,
         hovered_vertex: int | None,
         hovered_rotation: int | None,
-    ) -> bool:
+    ) -> None:
         previous_shape: Shape | None = self.hovered_shape
-        need_update: bool = hovered_shape is not None
         if previous_shape is not None:
             self._clear_highlight_state()
-            need_update = True
         # NOTE: Store last highlighted for adding/removing points.
         self._last_hovered_shape = (
             previous_shape if hovered_shape is None else hovered_shape
@@ -616,7 +611,8 @@ class Canvas(QtWidgets.QWidget):
         self._hovered_vertex = hovered_vertex
         self._hovered_edge = hovered_edge
         self._hovered_rotation = hovered_rotation
-        return need_update
+        if previous_shape is not None or hovered_shape is not None:
+            self.update()
 
     def _is_vertex_selected(self) -> bool:
         return self._hovered_vertex is not None
@@ -938,13 +934,12 @@ class Canvas(QtWidgets.QWidget):
 
         if target is None:
             self._release_cursor()
-            if self._set_highlight(
+            self._set_highlight(
                 hovered_shape=None,
                 hovered_edge=None,
                 hovered_vertex=None,
                 hovered_rotation=None,
-            ):
-                self.update()
+            )
             return
 
         if target.kind is HitKind.VERTEX:
@@ -960,7 +955,6 @@ class Canvas(QtWidgets.QWidget):
             status_messages.append(self.tr("Click & drag to move point"))
             if target.shape.can_remove_point():
                 status_messages.append(self.tr("ALT + SHIFT + Click to delete point"))
-            self.update()
             return
 
         if target.kind is HitKind.ROTATION_HANDLE:
@@ -974,7 +968,6 @@ class Canvas(QtWidgets.QWidget):
             self._highlight_rotation_point(index=target.index, mode="move")
             self._apply_cursor(CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to rotate the shape"))
-            self.update()
             return
 
         if target.kind is HitKind.EDGE:
@@ -987,7 +980,6 @@ class Canvas(QtWidgets.QWidget):
             )
             self._apply_cursor(CursorRole.HANDLE)
             status_messages.append(self.tr("ALT + Click to create point on shape"))
-            self.update()
             return
 
         if target.kind is HitKind.BODY:
@@ -1004,7 +996,6 @@ class Canvas(QtWidgets.QWidget):
                 ]
             )
             self._apply_cursor(CursorRole.GRAB)
-            self.update()
             return
 
         typing.assert_never(target.kind)
