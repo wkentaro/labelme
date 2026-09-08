@@ -662,10 +662,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s。标注将在 %s 中保存或加载</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - 保存标注文件</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>标签文件 (*%s)</translation>
     </message>

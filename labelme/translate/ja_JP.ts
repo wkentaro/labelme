@@ -670,10 +670,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>%s - アノテーションは %s に保存/読み込みされます</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - アノテーションファイルを保存</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>ラベルファイル (*%s)</translation>
     </message>

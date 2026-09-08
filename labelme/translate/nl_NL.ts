@@ -656,10 +656,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>%s . Annotaties worden opgeslagen/geladen in %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Annotatiebestand opslaan</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Labelbestanden (*%s)</translation>
     </message>

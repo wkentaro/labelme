@@ -656,10 +656,6 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
         <translation>%s . As anotações serão salvas/carregadas em %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Salvar arquivo de anotações</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Arquivos de rótulo (*%s)</translation>
     </message>

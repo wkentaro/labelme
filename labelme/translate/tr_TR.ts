@@ -662,10 +662,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>%s . Açıklamalar %s dizinine kaydedilecek veya bu dizinden yüklenecek</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Açıklama Dosyasını Kaydet</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Etiket dosyaları (*%s)</translation>
     </message>

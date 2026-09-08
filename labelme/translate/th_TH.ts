@@ -656,10 +656,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s แอนโนเทชันจะถูกบันทึก/โหลดใน %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - บันทึกไฟล์คำอธิบายประกอบ</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>ไฟล์เลเบล (*%s)</translation>
     </message>

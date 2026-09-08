@@ -656,10 +656,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>%s . 주석이 %s에 저장/로드됩니다</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - 주석 파일 저장</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>레이블 파일 (*%s)</translation>
     </message>

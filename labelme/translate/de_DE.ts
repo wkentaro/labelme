@@ -670,10 +670,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>%s . Annotationen werden in %s gespeichert/geladen</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Annotationsdatei speichern</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Label-Dateien (*%s)</translation>
     </message>

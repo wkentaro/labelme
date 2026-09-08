@@ -2432,19 +2432,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
-        caption = self.tr("%s - Save Annotation File") % __appname__
-        filters = self.tr("Label files (*%s)") % LABEL_FILE_SUFFIX
-        dlg = QtWidgets.QFileDialog(
-            parent=self,
-            caption=caption,
-            directory=str(self._output_dir or Path(self._image_path).parent),
-            filter=filters,
-        )
-        dlg.setDefaultSuffix(LABEL_FILE_SUFFIX[1:])
-        dlg.setAcceptMode(QtWidgets.QFileDialog.AcceptMode.AcceptSave)
-        dlg.setOption(QtWidgets.QFileDialog.Option.DontConfirmOverwrite, False)  # noqa: FBT003 -- Qt setter takes the flag positionally
-        dlg.setOption(QtWidgets.QFileDialog.Option.DontUseNativeDialog, False)  # noqa: FBT003 -- Qt setter takes the flag positionally
-        label_path, _ = dlg.getSaveFileName(
+        label_path, _ = QtWidgets.QFileDialog.getSaveFileName(
             parent=self,
             caption=self.tr("Choose File"),
             dir=_resolve_label_path(

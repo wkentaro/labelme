@@ -656,10 +656,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s . حاشیه‌نویسی‌ها در %s ذخیره/بارگذاری خواهند شد</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - ذخیرهٔ پروندهٔ حاشیه‌نویسی</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>فایل‌های برچسب (*%s)</translation>
     </message>

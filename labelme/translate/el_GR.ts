@@ -614,10 +614,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s . Οι σχολιασμοί θα αποθηκεύονται/φορτώνονται στο %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Αποθήκευση αρχείου επισημειώσεων</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Αρχεία ετικετών (*%s)</translation>
     </message>

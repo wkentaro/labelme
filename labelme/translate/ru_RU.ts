@@ -641,10 +641,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s. Разметка будет сохраняться/загружаться в %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Сохранить файл аннотаций</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Файлы меток (*%s)</translation>
     </message>
