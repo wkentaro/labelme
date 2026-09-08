@@ -1182,11 +1182,7 @@ class MainWindow(QtWidgets.QMainWindow):
         flag_list = QtWidgets.QListWidget()
         flag = QtWidgets.QDockWidget(self.tr("Flags"), self)
         flag.setObjectName("Flags")
-        if self._config["flags"]:
-            self._load_flags(
-                flags={k: False for k in self._config["flags"]},
-                widget=flag_list,
-            )
+        self._load_flags(flags={}, widget=flag_list)
         flag.setWidget(flag_list)
         flag_list.itemChanged.connect(self.mark_dirty)
 
@@ -1717,13 +1713,13 @@ class MainWindow(QtWidgets.QMainWindow):
         widget: QtWidgets.QListWidget,
     ) -> None:
         widget.clear()
-        key: str
-        flag: bool
-        for key, flag in flags.items():
+        for key in dict.fromkeys([*(self._config["flags"] or []), *flags]):
             item: QtWidgets.QListWidgetItem = QtWidgets.QListWidgetItem(key)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             item.setCheckState(
-                Qt.CheckState.Checked if flag else Qt.CheckState.Unchecked
+                Qt.CheckState.Checked
+                if flags.get(key, False)
+                else Qt.CheckState.Unchecked
             )
             widget.addItem(item)
 
@@ -2203,13 +2199,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.load_pixmap(pixmap=QtGui.QPixmap.fromImage(image))
         self._canvas_widgets.surface.setCurrentWidget(self._canvas_widgets.scroll_area)
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
-        flags = {k: False for k in self._config["flags"] or []}
         # Record one baseline state. Loading carried-forward shapes separately
         # would create a false Undo step that discards them before any edit.
         carry_prev_shapes = bool(prev_shapes) and not shapes
         self._load_shapes(prev_shapes if carry_prev_shapes else shapes, replace=True)
-        flags.update(annotation.flags)
-        self._load_flags(flags=flags, widget=self._docks.flag_list)
+        self._load_flags(flags=annotation.flags, widget=self._docks.flag_list)
         if carry_prev_shapes:
             self.mark_dirty()
         else:
@@ -2703,10 +2697,9 @@ class MainWindow(QtWidgets.QMainWindow):
             # keep every flag already in the dock with its checked state. Like the
             # label docks, a flag removed from the config lingers until the next
             # image load, so the edit never drops a flag the current image carries.
-            current = self._read_flag_dock_states()
-            flags = {key: False for key in self._config["flags"] or []}
-            flags.update(current)
-            self._load_flags(flags=flags, widget=self._docks.flag_list)
+            self._load_flags(
+                flags=self._read_flag_dock_states(), widget=self._docks.flag_list
+            )
         elif key_path in (
             ("sort_labels",),
             ("show_label_text_field",),
