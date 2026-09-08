@@ -630,6 +630,22 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Yapay zeka çıkarımı başarısız oldu: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Büyük görüntü</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>Büyük görüntü daha fazla bellek gerektiriyor</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>Görüntü {width}x{height} pikseldir ve kodunun çözülmesi için en az yaklaşık {required} MB gerekir; bu, mevcut {limit} MB güvenlik sınırının üzerindedir. Görüntüyü açmak Labelme veya diğer uygulamaların geçici olarak daha yavaş yanıt vermesine neden olabilir.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Yine de Aç</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Dosya açılırken hata oluştu</translation>
     </message>

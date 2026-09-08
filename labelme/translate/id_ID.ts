@@ -599,6 +599,22 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Inferensi AI gagal: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Gambar besar</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>Gambar besar memerlukan lebih banyak memori</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>Gambar berukuran {width}x{height} piksel dan memerlukan setidaknya sekitar {required} MB untuk didekode, melebihi batas keamanan saat ini sebesar {limit} MB. Membukanya dapat membuat Labelme atau aplikasi lain untuk sementara menjadi kurang responsif.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Tetap Buka</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Error membuka file</translation>
     </message>

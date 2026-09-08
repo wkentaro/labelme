@@ -630,6 +630,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>AI 推理失敗: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>大型影像</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>大型影像需要更多記憶體</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>影像尺寸為 {width}x{height} 像素，解碼至少需要約 {required} MB，超過目前 {limit} MB 的安全限制。開啟影像可能會暫時降低 Labelme 或其他應用程式的回應速度。</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>仍要開啟</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>開啟檔案時發生錯誤</translation>
     </message>

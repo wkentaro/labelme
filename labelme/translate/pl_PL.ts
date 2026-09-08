@@ -624,6 +624,22 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Wnioskowanie AI nie powiodło się: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Duży obraz</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>Duży obraz wymaga więcej pamięci</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>Obraz ma {width}x{height} pikseli i do dekodowania potrzebuje co najmniej około {required} MB, czyli więcej niż bieżący limit bezpieczeństwa wynoszący {limit} MB. Otwarcie go może tymczasowo spowolnić działanie Labelme lub innych aplikacji.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Otwórz mimo to</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Błąd otwarcia pliku</translation>
     </message>

@@ -79,6 +79,7 @@ _AI_CREATE_MODES: Final[tuple[str, ...]] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
 )
+_RASTER_MAX_SIDE: Final = 32767
 
 # Keys of the Window State store, shared by the restore, reset, and close paths.
 WINDOW_SIZE_KEY: Final[str] = "window/size"
@@ -105,6 +106,12 @@ class _ViewportState(NamedTuple):
     zoom_value: float
     scroll_values: dict[Qt.Orientation, int]
     view_offset: QtCore.QPointF
+
+
+class _ImageDecodeRequirement(NamedTuple):
+    width: int
+    height: int
+    required_mb: int
 
 
 class _DockWidgets(NamedTuple):
@@ -2097,6 +2104,37 @@ class MainWindow(QtWidgets.QMainWindow):
             other_data={},
         )
 
+    def _confirm_large_image_open(
+        self, *, requirement: _ImageDecodeRequirement, limit_mb: int
+    ) -> bool:
+        msg_box = QtWidgets.QMessageBox(self)
+        msg_box.setWindowTitle(self.tr("Large image"))
+        msg_box.setText(self.tr("Large image requires more memory"))
+        msg_box.setInformativeText(
+            self.tr(
+                "The image is {width}x{height} pixels and needs at least about "
+                "{required} MB to decode, above the current {limit} MB safety "
+                "limit. Opening it may temporarily make Labelme or other "
+                "applications less responsive."
+            ).format(
+                width=requirement.width,
+                height=requirement.height,
+                required=requirement.required_mb,
+                limit=limit_mb,
+            )
+        )
+        open_button = msg_box.addButton(
+            self.tr("Open Anyway"),
+            QtWidgets.QMessageBox.ButtonRole.AcceptRole,
+        )
+        cancel_button = msg_box.addButton(
+            self.tr("Cancel"), QtWidgets.QMessageBox.ButtonRole.RejectRole
+        )
+        msg_box.setDefaultButton(QtWidgets.QMessageBox.StandardButton.NoButton)
+        msg_box.setEscapeButton(cancel_button)
+        msg_box.exec()
+        return msg_box.clickedButton() is open_button
+
     def _restore_file_list_state(
         self, *, item: QtWidgets.QListWidgetItem | None
     ) -> None:
@@ -2168,6 +2206,26 @@ class MainWindow(QtWidgets.QMainWindow):
         t0 = time.time()
         image = QtGui.QImage.fromData(annotation.image_data)
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
+
+        if image.isNull():
+            requirement = _get_image_decode_requirement(
+                image_data=annotation.image_data
+            )
+            original_limit = QtGui.QImageReader.allocationLimit()
+            if (
+                requirement is not None
+                and max(requirement.width, requirement.height) <= _RASTER_MAX_SIDE
+                and 0 < original_limit < requirement.required_mb
+            ):
+                if not self._confirm_large_image_open(
+                    requirement=requirement, limit_mb=original_limit
+                ):
+                    return False
+                try:
+                    QtGui.QImageReader.setAllocationLimit(requirement.required_mb)
+                    image = QtGui.QImage.fromData(annotation.image_data)
+                finally:
+                    QtGui.QImageReader.setAllocationLimit(original_limit)
 
         if image.isNull():
             extra = _make_image_too_large_message(image_data=annotation.image_data)
@@ -3153,19 +3211,13 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
 
     # Qt's raster paint engine cannot handle an image whose width or height
     # exceeds this, regardless of how high allocationLimit() is raised.
-    RASTER_MAX_SIDE: Final = 32767
-
-    buffer = QtCore.QBuffer()
-    buffer.setData(image_data)
-    buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
-    reader = QtGui.QImageReader(buffer)
-    size = reader.size()
-    if not size.isValid():
+    requirement = _get_image_decode_requirement(image_data=image_data)
+    if requirement is None:
         return None
-    width = size.width()
-    height = size.height()
+    width = requirement.width
+    height = requirement.height
 
-    if max(width, height) > RASTER_MAX_SIDE:
+    if max(width, height) > _RASTER_MAX_SIDE:
         return QtCore.QCoreApplication.translate(
             "MainWindow",
             "The image is too large to open: {width}x{height} pixels exceeds the "
@@ -3175,21 +3227,13 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
         ).format(
             width=width,
             height=height,
-            max_side=RASTER_MAX_SIDE,
+            max_side=_RASTER_MAX_SIDE,
         )
 
     limit_mb = QtGui.QImageReader.allocationLimit()
     if limit_mb <= 0:  # 0 disables the limit
         return None
-
-    bits_per_pixel = QtGui.QImage.toPixelFormat(
-        reader.imageFormat()  # ty: ignore[no-matching-overload]
-    ).bitsPerPixel()
-    if bits_per_pixel <= 0:  # unknown decode format: cannot estimate the need
-        return None
-
-    required_mb = width * height * bits_per_pixel / 8 / 1024 / 1024
-    if required_mb <= limit_mb:
+    if requirement.required_mb <= limit_mb:
         return None
 
     # ceil never renders "needs about N MB" with N equal to the limit, which
@@ -3202,8 +3246,34 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     ).format(
         width=width,
         height=height,
-        required=math.ceil(required_mb),
+        required=requirement.required_mb,
         limit=limit_mb,
+    )
+
+
+def _get_image_decode_requirement(
+    *, image_data: bytes
+) -> _ImageDecodeRequirement | None:
+    buffer = QtCore.QBuffer()
+    buffer.setData(image_data)
+    buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
+    reader = QtGui.QImageReader(buffer)
+    size = reader.size()
+    if not size.isValid():
+        return None
+    bits_per_pixel = QtGui.QImage.toPixelFormat(
+        reader.imageFormat()  # ty: ignore[no-matching-overload]
+    ).bitsPerPixel()
+    if bits_per_pixel <= 0:
+        return None
+
+    required_mb = (
+        size.width() * size.height() * max(bits_per_pixel, 32) / 8 / 1024 / 1024
+    )
+    return _ImageDecodeRequirement(
+        width=size.width(),
+        height=size.height(),
+        required_mb=math.ceil(required_mb),
     )
 
 
