@@ -177,8 +177,8 @@
         <translation>Jobb gombbal kattintás és húzás az alakzat másolásához</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Kattintson a téglalap ellentétes sarkára (Shift a négyzethez)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Válassza ki a másik sarkot. Négyzethez tartsa lenyomva a Shift billentyűt.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

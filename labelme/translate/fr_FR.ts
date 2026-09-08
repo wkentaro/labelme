@@ -177,8 +177,8 @@
         <translation>Clic droit et glisser pour copier la forme</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Cliquer sur le coin opposé du rectangle (Shift pour carré)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Choisissez l’autre coin. Maintenez Shift pour un carré.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

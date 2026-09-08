@@ -177,8 +177,8 @@
         <translation>우클릭하고 드래그하여 도형 복사</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>사각형의 대각 모서리 클릭 (Shift로 정사각형)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>다른 모서리를 선택하세요. 정사각형을 그리려면 Shift를 누른 상태로 조작하세요.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

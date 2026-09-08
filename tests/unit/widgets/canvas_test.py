@@ -2208,6 +2208,8 @@ def test_pick_pending_moved_shape_returns_hovered_when_present() -> None:
         pytest.param((6, 6), (2, 2), (6.0, 6.0), id="already_square_is_unchanged"),
         pytest.param((0, 5), (0, 0), (0.0, 0.0), id="collapses_when_one_axis_is_zero"),
         pytest.param((0, 0), (0, 0), (0.0, 0.0), id="zero_delta_stays_put"),
+        pytest.param((5, 0), (0, 0), (0.0, 0.0), id="horizontal_collapses"),
+        pytest.param((7.75, -2.5), (1.25, 3.25), (7.0, -2.5), id="fractional"),
     ],
 )
 def test_snap_cursor_pos_for_square(
@@ -2487,3 +2489,38 @@ def test_ai_preview_clears_when_replacement_is_unavailable(
         canvas.update()
         qtbot.waitUntil(lambda: not canvas._build_preview_shapes())
     assert canvas._build_preview_shapes() == []
+
+
+@pytest.mark.gui
+def test_square_drawing_commits_ai_box_prompt(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Download and inference are external to box geometry.
+    monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", lambda **_: True)
+    prompts: list[list[QPointF]] = []
+
+    def propose_shapes(*, points: list[QPointF], **_: object) -> AiAssistProposal:
+        prompts.append(points)
+        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", propose_shapes)
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="ai_box_to_shape")
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    canvas.mouseMoveEvent(
+        QtGui.QMouseEvent(
+            QtCore.QEvent.Type.MouseMove,
+            QPointF(70, 30),
+            QPointF(70, 30),
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.ShiftModifier,
+        )
+    )
+    qtbot.mouseClick(
+        canvas,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.ShiftModifier,
+        pos=QtCore.QPoint(70, 30),
+    )
+    assert prompts == [[QPointF(10, 10), QPointF(30, 30)]]

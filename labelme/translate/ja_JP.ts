@@ -177,8 +177,8 @@
         <translation>右クリック &amp; ドラッグで図形をコピー</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>矩形の対角をクリック（Shiftで正方形）</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>もう一方の角を指定してください。Shiftを押しながら操作すると正方形になります。</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

@@ -8,6 +8,7 @@ from typing import Final
 import numpy as np
 import PIL.Image
 import pytest
+from PySide6 import QtGui
 from PySide6.QtCore import QPoint
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
@@ -904,3 +905,64 @@ def test_select_mask_shape_by_click(
     assert shape in canvas.selected_shapes
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_square_creation_resize_save_and_reopen(
+    *,
+    qtbot: QtBot,
+    raw_win: MainWindow,
+    main_win: MainWinFactory,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    canvas = raw_win._canvas_widgets.canvas
+    raw_win._switch_canvas_mode(edit=False, create_mode="rectangle")
+    canvas.scale = 2.0
+    canvas._view_offset = QPointF(7, -3)
+    start = image_to_widget_pos(canvas=canvas, image_pos=QPointF(40, 40))
+    end = image_to_widget_pos(canvas=canvas, image_pos=QPointF(100, 80))
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=start)
+    canvas.mouseMoveEvent(
+        QtGui.QMouseEvent(
+            QtGui.QMouseEvent.Type.MouseMove,
+            QPointF(end),
+            QPointF(canvas.mapToGlobal(end)),
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.NoButton,
+            Qt.KeyboardModifier.ShiftModifier,
+        )
+    )
+    submit_label_dialog(qtbot=qtbot, label_dialog=raw_win._label_dialog, label="square")
+    qtbot.mouseClick(
+        canvas, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.ShiftModifier, pos=end
+    )
+    np.testing.assert_allclose(canvas.shapes[0].points, [(40, 40), (80, 80)])
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
+    start = image_to_widget_pos(canvas=canvas, image_pos=QPointF(80, 80))
+    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=start)
+    drag_canvas(
+        qtbot=qtbot,
+        canvas=canvas,
+        button=Qt.MouseButton.LeftButton,
+        start=start,
+        end=image_to_widget_pos(canvas=canvas, image_pos=QPointF(120, 100)),
+        modifier=Qt.KeyboardModifier.ShiftModifier,
+    )
+    np.testing.assert_allclose(canvas.shapes[0].points, [(40, 40), (100, 100)])
+    assert raw_win._actions.undo.isEnabled()
+    raw_win._actions.undo.trigger()
+    np.testing.assert_allclose(canvas.shapes[0].points, [(40, 40), (80, 80)])
+    label_path = tmp_path / "square.json"
+    assert raw_win.save_labels(label_path=str(label_path))
+    saved = json.loads(label_path.read_text())
+    assert saved["shapes"][0]["points"] == [[40, 40], [80, 80]]
+    assert saved["shapes"][0]["label"] == "square"
+    reopened = main_win(file_or_dir=label_path)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=reopened)
+    restored = reopened._canvas_widgets.canvas.shapes[0]
+    np.testing.assert_allclose(restored.points, [(40, 40), (80, 80)])
+    assert restored.label == "square"
+    raw_win.mark_clean()
+    raw_win.close()
+    close_or_pause(qtbot=qtbot, widget=reopened, pause=pause)

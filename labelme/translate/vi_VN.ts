@@ -177,8 +177,8 @@
         <translation>Nhấn chuột phải và kéo để sao chép hình dạng</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Nhấn góc đối diện cho hình chữ nhật (Shift để tạo hình vuông)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Chọn góc còn lại. Giữ Shift để vẽ hình vuông.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

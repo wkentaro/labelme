@@ -177,8 +177,8 @@
         <translation>Правый клик и перетаскивание — копировать фигуру</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Нажмите противоположный угол для прямоугольника (Shift — квадрат)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Выберите другой угол. Удерживайте Shift, чтобы нарисовать квадрат.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

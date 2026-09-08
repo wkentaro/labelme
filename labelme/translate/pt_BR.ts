@@ -177,8 +177,8 @@
         <translation>Clique com o botão direito e arraste para copiar a forma</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Clique na esquina oposta do retângulo (Shift para quadrado)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Escolha o outro canto. Segure Shift para desenhar um quadrado.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

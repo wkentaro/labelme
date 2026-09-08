@@ -177,8 +177,8 @@
         <translation>Prawy przycisk i przeciągnij — skopiuj kształt</translation>
     </message>
     <message>
-        <source>Click opposite corner for rectangle (Shift for square)</source>
-        <translation>Kliknij przeciwległy róg prostokąta (Shift — kwadrat)</translation>
+        <source>Choose the other corner. Hold Shift for a square.</source>
+        <translation>Wybierz drugi róg. Przytrzymaj Shift, aby narysować kwadrat.</translation>
     </message>
     <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>

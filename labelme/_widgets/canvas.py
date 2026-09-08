@@ -677,7 +677,7 @@ class Canvas(QtWidgets.QWidget):
             if is_new:
                 return self.tr("Click first corner for rectangle")
             else:
-                return self.tr("Click opposite corner for rectangle (Shift for square)")
+                return self.tr("Choose the other corner. Hold Shift for a square.")
         if self.create_mode == "oriented_rectangle":
             if is_new:
                 return self.tr("Click first corner for oriented rectangle")
@@ -2179,11 +2179,13 @@ def _normalize_bbox_points(*, bbox_points: Sequence[QPointF]) -> list[QPointF]:
 
 
 def _snap_cursor_pos_for_square(*, pos: QPointF, opposite_vertex: QPointF) -> QPointF:
-    pos_from_opposite: QPointF = pos - opposite_vertex
-    square_size: float = min(abs(pos_from_opposite.x()), abs(pos_from_opposite.y()))
+    offset = pos - opposite_vertex
+    square = QtCore.QSizeF(1, 1).scaled(
+        abs(offset.x()), abs(offset.y()), Qt.AspectRatioMode.KeepAspectRatio
+    )
     return opposite_vertex + QPointF(
-        np.sign(pos_from_opposite.x()) * square_size,
-        np.sign(pos_from_opposite.y()) * square_size,
+        -square.width() if offset.x() < 0 else square.width(),
+        -square.height() if offset.y() < 0 else square.height(),
     )
 
 
