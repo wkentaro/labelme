@@ -292,11 +292,9 @@ def test_drag_shapes_keeps_point_in_group_inside_image(*, canvas: Canvas) -> Non
     canvas._prev_point = QPointF(60, 30)
     canvas._record_drag_anchor(shapes=shapes, click=canvas._prev_point)
 
-    moved = canvas._drag_shapes(
-        shapes=shapes, cursor=QPointF(0, 30), constrain_cursor=True
-    )
+    canvas._drag_shapes(shapes=shapes, cursor=QPointF(0, 30), constrain_cursor=True)
 
-    assert moved is True
+    assert canvas._prev_point == QPointF(50, 30)
     np.testing.assert_allclose(point.points, [(0, 10)])
     np.testing.assert_allclose(rectangle.points, [(40, 20), (60, 40)])
 
@@ -311,11 +309,9 @@ def test_drag_shapes_blocked_off_image_by_default(*, canvas: Canvas) -> None:
     canvas._prev_point = QPointF(50, 25)
     canvas._drag_anchor = (QPointF(0, 0), QtCore.QRectF(40, 20, 20, 10))
 
-    moved = canvas._drag_shapes(
-        shapes=[shape], cursor=QPointF(150, 80), constrain_cursor=True
-    )
+    canvas._drag_shapes(shapes=[shape], cursor=QPointF(150, 80), constrain_cursor=True)
 
-    assert moved is False
+    assert canvas._prev_point == QPointF(50, 25)
     assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((40, 20))
     assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((60, 30))
 
@@ -331,11 +327,9 @@ def test_drag_shapes_keeps_out_of_bounds_when_enabled(*, canvas: Canvas) -> None
     canvas._prev_point = QPointF(50, 25)
     canvas._drag_anchor = (QPointF(0, 0), QtCore.QRectF(40, 20, 20, 10))
 
-    moved = canvas._drag_shapes(
-        shapes=[shape], cursor=QPointF(150, 80), constrain_cursor=True
-    )
+    canvas._drag_shapes(shapes=[shape], cursor=QPointF(150, 80), constrain_cursor=True)
 
-    assert moved is True
+    assert canvas._prev_point == QPointF(150, 80)
     assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((140, 75))
     assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((160, 85))
 
@@ -488,11 +482,8 @@ def test_drag_shapes_moves_oversized_shape_in_requested_direction(
     canvas._prev_point = click
     canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
 
-    moved = canvas._drag_shapes(
-        shapes=[shape], cursor=click + offset, constrain_cursor=True
-    )
+    canvas._drag_shapes(shapes=[shape], cursor=click + offset, constrain_cursor=True)
 
-    assert moved is True
     np.testing.assert_allclose(shape.points, expected)
 
 
@@ -521,13 +512,13 @@ def test_drag_shapes_stops_oversized_shape_at_symmetric_bound(
     canvas._prev_point = QPointF(50, 25)
     canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
 
-    moved = canvas._drag_shapes(
+    canvas._drag_shapes(
         shapes=[shape],
         cursor=canvas._prev_point + offset,
         constrain_cursor=True,
     )
 
-    assert moved is False
+    assert canvas._prev_point == QPointF(50, 25)
     np.testing.assert_allclose(shape.points, original)
 
 
@@ -545,13 +536,12 @@ def test_drag_shapes_preserves_orthogonal_out_of_bounds_position(
     canvas._prev_point = QPointF(50, 65)
     canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
 
-    moved = canvas._drag_shapes(
+    canvas._drag_shapes(
         shapes=[shape],
         cursor=canvas._prev_point + QPointF(5, 0),
         constrain_cursor=False,
     )
 
-    assert moved is True
     np.testing.assert_allclose(shape.points, [(45, 60), (65, 70)])
 
 
