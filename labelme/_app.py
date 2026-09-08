@@ -1620,7 +1620,6 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self._restore_file_list_state(item=previous_item)
 
-    # React to canvas signals.
     def _on_shape_selection_changed(self, selected_shapes: list[Shape], /) -> None:
         self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
@@ -2133,7 +2132,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 message=self.tr("No such file: <b>%s</b>") % image_or_label_path,
             )
             return False
-        # assumes same name, but json extension
         self.show_status_message(
             self.tr("Loading %s...") % Path(image_or_label_path).name
         )
