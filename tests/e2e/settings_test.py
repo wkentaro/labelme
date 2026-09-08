@@ -325,6 +325,24 @@ def test_flags_setting_refreshes_flag_dock_live(
     # The new "blurry" flag appears unchecked while "occluded" stays checked.
     assert states == {"occluded": True, "truncated": False, "blurry": False}
 
+    flags_editor.setPlainText("blurry\ntruncated")
+    flags_editor.commit()
+    assert list(win._read_flag_dock_states().items()) == [
+        ("blurry", False),
+        ("truncated", False),
+        ("occluded", True),
+    ]
+    assert not win._is_changed
+
+    flags_editor.setPlainText("")
+    flags_editor.commit()
+    assert list(win._read_flag_dock_states().items()) == [
+        ("blurry", False),
+        ("truncated", False),
+        ("occluded", True),
+    ]
+    assert not win._is_changed
+
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 

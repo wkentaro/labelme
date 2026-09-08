@@ -663,3 +663,52 @@ def test_open_dir_with_failing_first_image_keeps_other_images_reachable(
     qtbot.waitUntil(lambda: win._image_path == str(valid_image))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("configured", [None, [], ["new", "shared", "new"]])
+def test_image_flags_survive_save_and_navigation(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    create_annotated_session_image: Path,
+    configured: list[str] | None,
+) -> None:
+    image_path = create_annotated_session_image
+    label_path = image_path.with_suffix(".json")
+    data = json.loads(label_path.read_text())
+    data["flags"] = {"file_only": True, "shared": True, "unchecked": False}
+    label_path.write_text(json.dumps(data))
+    next_image = image_path.with_name("02-next.jpg")
+    shutil.copyfile(src=image_path, dst=next_image)
+    win = main_win(
+        file_or_dir=image_path.parent,
+        config_overrides={"flags": configured, "auto_save": False},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    expected = (
+        [("new", False), ("shared", True), ("file_only", True), ("unchecked", False)]
+        if configured
+        else [("file_only", True), ("shared", True), ("unchecked", False)]
+    )
+    assert list(win._read_flag_dock_states().items()) == expected
+    assert not win._is_changed
+
+    item = win._docks.flag_list.item(0)
+    assert item is not None
+    item.setCheckState(Qt.CheckState.Checked if configured else Qt.CheckState.Unchecked)
+    expected[0] = (expected[0][0], bool(configured))
+    assert win._is_changed
+    win._save_label_file(save_as=False)
+    assert list(json.loads(label_path.read_text())["flags"].items()) == expected
+    assert not win._is_changed
+
+    win._open_next_image()
+    assert win._image_path == str(next_image)
+    assert list(win._read_flag_dock_states().items()) == (
+        [("new", False), ("shared", False)] if configured else []
+    )
+    assert not win._is_changed
+    win._open_prev_image()
+    assert list(win._read_flag_dock_states().items()) == expected
+    assert not win._is_changed
