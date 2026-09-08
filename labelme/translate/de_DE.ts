@@ -638,6 +638,22 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>KI-Inferenz fehlgeschlagen: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Großes Bild</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>Großes Bild benötigt mehr Arbeitsspeicher</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>Das Bild ist {width}x{height} Pixel groß und benötigt zum Dekodieren mindestens etwa {required} MB, mehr als das aktuelle Sicherheitslimit von {limit} MB. Beim Öffnen reagieren Labelme oder andere Anwendungen möglicherweise vorübergehend langsamer.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Trotzdem öffnen</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Fehler beim Öffnen der Datei</translation>
     </message>
