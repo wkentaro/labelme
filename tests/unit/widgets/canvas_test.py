@@ -2524,3 +2524,81 @@ def test_square_drawing_commits_ai_box_prompt(
         pos=QtCore.QPoint(70, 30),
     )
     assert prompts == [[QPointF(10, 10), QPointF(30, 30)]]
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("clear_action", ["empty", "leave", "create"])
+def test_hover_transitions_repaint(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, clear_action: str
+) -> None:
+    polygon = _make_polygon()
+    rotated = _make_oriented_rectangle(
+        corners=[(60, 10), (100, 10), (100, 40), (60, 40)]
+    )
+    canvas.pixmap = QtGui.QPixmap(140, 60)
+    canvas.pixmap.fill(Qt.GlobalColor.white)
+    canvas.load_shapes(shapes=[polygon, rotated])
+    # Keep the desktop pointer from overwriting the scripted hover targets.
+    canvas.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+    canvas.show()
+    qtbot.waitExposed(canvas)
+    qtbot.wait(20)
+    painted = []
+    paint_event = canvas.paintEvent
+
+    def record_paint(event: QtGui.QPaintEvent, /) -> None:
+        paint_event(event)
+        painted.append(
+            tuple(
+                canvas._render_context(
+                    shape=shape, highlighted=shape is canvas.hovered_shape
+                )
+                for shape in (polygon, rotated)
+            )
+        )
+
+    monkeypatch.setattr(canvas, "paintEvent", record_paint)
+    for point, shape_index, vertex, rotation in [
+        (QPointF(10, 10), 0, 0, None),
+        (QPointF(25, 10), 0, None, None),
+        (QPointF(25, 25), 0, None, None),
+        (QPointF(80, 10), 1, None, 1),
+        (QPointF(100, 40), 1, 2, None),
+    ]:
+        painted.clear()
+        canvas._refresh_hover_state(pos=point)
+        qtbot.waitUntil(lambda: bool(painted))
+        active = painted[-1][shape_index]
+        inactive = painted[-1][1 - shape_index]
+        assert active.fill
+        assert (active.highlight.index if active.highlight else None) == vertex
+        assert (
+            active.rotation_highlight.index if active.rotation_highlight else None
+        ) == rotation
+        assert not inactive.fill
+        assert inactive.highlight is None
+        assert inactive.rotation_highlight is None
+
+    painted.clear()
+    if clear_action == "empty":
+        canvas._refresh_hover_state(pos=QPointF(130, 50))
+    elif clear_action == "leave":
+        canvas.leaveEvent(QtCore.QEvent(QtCore.QEvent.Type.Leave))
+    else:
+        canvas.set_editing(value=False)
+    qtbot.waitUntil(lambda: bool(painted))
+    assert all(
+        not context.fill
+        and context.highlight is None
+        and context.rotation_highlight is None
+        for context in painted[-1]
+    )
+    if clear_action == "empty":
+        painted.clear()
+        canvas._refresh_hover_state(pos=QPointF(125, 50))
+        qtbot.wait(20)
+        assert not painted
+    if clear_action == "create":
+        painted.clear()
+        canvas.set_editing(value=True)
+        qtbot.waitUntil(lambda: bool(painted))
