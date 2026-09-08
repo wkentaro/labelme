@@ -640,12 +640,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>โหลด %s แล้ว</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>ไฟล์รูปและเลเบล (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>ภาพและไฟล์คำอธิบายประกอบ (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - เลือกรูปหรือไฟล์เลเบล</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - เปิดภาพหรือคำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -656,8 +656,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s แอนโนเทชันจะถูกบันทึก/โหลดใน %s</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - เลือกไฟล์</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - บันทึกไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -684,20 +684,20 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>ไม่สามารถใช้ในโหมด AI-Points ได้ เนื่องจากโมเดลนี้ไม่รองรับพรอมต์แบบจุด</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>บันทึกแอนโนเทชันไปที่ &quot;{}&quot; ก่อนปิดหรือไม่?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>เก็บการเปลี่ยนแปลงคำอธิบายประกอบของ &quot;{}&quot; ไว้หรือไม่?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>บันทึกแอนโนเทชันหรือไม่?</translation>
+        <source>Unsaved changes</source>
+        <translation>การเปลี่ยนแปลงที่ยังไม่ได้บันทึก</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>ลบรูปร่าง {} รายการ? คุณสามารถกู้คืนได้ด้วยคำสั่งยกเลิก</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - เปิดโฟลเดอร์</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - เรียกดูโฟลเดอร์ภาพ</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

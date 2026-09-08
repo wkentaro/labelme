@@ -615,12 +615,12 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>%s dimuat</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Gambar &amp; File Label (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>Gambar dan berkas anotasi (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Pilih File Gambar atau Label</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - Buka Gambar atau Anotasi</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -631,8 +631,8 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>%s - Anotasi akan disimpan/dimuat di %s</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Pilih File</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - Simpan Berkas Anotasi</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -659,20 +659,20 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Tidak tersedia dalam mode AI-Points karena model ini tidak mendukung prompt titik.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Simpan anotasi ke &quot;{}&quot; sebelum menutup?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>Pertahankan perubahan anotasi untuk &quot;{}&quot;?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Simpan anotasi?</translation>
+        <source>Unsaved changes</source>
+        <translation>Perubahan belum disimpan</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Hapus {} bentuk? Anda dapat memulihkannya dengan Urungkan.</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Buka Direktori</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - Telusuri Folder Gambar</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

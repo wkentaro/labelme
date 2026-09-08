@@ -625,12 +625,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s загружен</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Файлы изображения и меток (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>Изображения и файлы аннотаций (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s — выберите файл изображения или меток</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - Открыть изображение или аннотации</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -641,8 +641,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s. Разметка будет сохраняться/загружаться в %s</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s — выбрать файл</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - Сохранить файл аннотаций</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -669,20 +669,20 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Недоступно в режиме AI-Points, так как эта модель не поддерживает точечные запросы.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Сохранить аннотации в &quot;{}&quot; перед закрытием?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>Сохранить изменения аннотаций для «{}»?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Сохранить аннотации?</translation>
+        <source>Unsaved changes</source>
+        <translation>Несохранённые изменения</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Удалить {} фигур? Вы можете восстановить их с помощью команды «Отменить».</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s — открыть папку</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - Выбрать папку изображений</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

@@ -599,12 +599,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Завантажено %s</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Файли зображень і міток (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>Зображення та файли анотацій (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Виберіть файл зображення або мітки</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - Відкрити зображення або анотації</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -615,8 +615,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s . Анотації будуть збережені/завантажені в %s</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Виберіть файл</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - Зберегти файл анотацій</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -643,20 +643,20 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Недоступно в режимі AI-Points, оскільки ця модель не підтримує точкові запити.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Зберегти анотації до &quot;{}&quot; перед закриттям?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>Зберегти зміни анотацій для «{}»?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Зберегти анотації?</translation>
+        <source>Unsaved changes</source>
+        <translation>Незбережені зміни</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Видалити {} фігур? Ви можете відновити їх за допомогою команди «Скасувати».</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Відкрити каталог</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - Вибрати теку зображень</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

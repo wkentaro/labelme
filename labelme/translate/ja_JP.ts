@@ -654,12 +654,12 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>%s を読み込みました</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>画像とラベルファイル (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>画像とアノテーションファイル (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - 画像またはラベルファイルを選択</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - 画像またはアノテーションを開く</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -670,8 +670,8 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>%s - アノテーションは %s に保存/読み込みされます</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - ファイルを選択</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - アノテーションファイルを保存</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -698,20 +698,20 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>このモデルはポイントプロンプトに対応していないため、AI-Points モードでは利用できません。</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>閉じる前にアノテーションを &quot;{}&quot; に保存しますか？</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>「{}」のアノテーションの変更を保持しますか？</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>アノテーションを保存しますか？</translation>
+        <source>Unsaved changes</source>
+        <translation>未保存の変更</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>{} 個の図形を削除しますか？「元に戻す」で復元できます。</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - ディレクトリを開く</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - 画像フォルダーを選択</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
