@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -199,15 +200,19 @@ def test_delete_undo_shape(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("shape_count", [1, 2])
 def test_right_drag_copy_here_duplicates_shape(
     *,
     qtbot: QtBot,
     annotated_win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    shape_count: int,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    canvas.select_shapes(shapes=canvas.shapes[:shape_count])
     original_shape = canvas.shapes[0]
     original_label = original_shape.label
     original_first_point = original_shape.points[0].copy()
@@ -235,12 +240,16 @@ def test_right_drag_copy_here_duplicates_shape(
         end=end_widget,
     )
 
-    assert len(canvas.shapes) == num_before + 1
+    assert len(canvas.shapes) == num_before + shape_count
 
-    # Pasted shape must be a deep copy: distinct object, distinct point list,
-    # and mutation must not bleed back into the original. Guards against a
-    # regression where ShapeClipboard.paste() returned shared references.
-    duplicated_shape = canvas.shapes[-1]
+    duplicated_shape = canvas.shapes[num_before]
+    label_path = tmp_path / "copied.json"
+    assert annotated_win.save_labels(label_path=str(label_path))
+    saved_shapes = json.loads(label_path.read_text())["shapes"]
+    assert len(saved_shapes) == num_before + shape_count
+    assert saved_shapes[num_before]["label"] == original_label
+    assert np.array_equal(saved_shapes[num_before]["points"], duplicated_shape.points)
+
     assert duplicated_shape is not original_shape
     assert duplicated_shape.points is not original_shape.points
     duplicated_shape.label = "mutated"

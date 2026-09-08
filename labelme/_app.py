@@ -2861,10 +2861,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 action.setEnabled(False)
 
     def copy_shape(self) -> None:
-        self._canvas_widgets.canvas.end_move(copy=True)
-        for shape in self._canvas_widgets.canvas.selected_shapes:
-            self.add_label(shape=shape)
+        canvas = self._canvas_widgets.canvas
+        canvas.end_move(copy=True)
+        # Clearing the label selection also clears the canvas selection.
+        shapes = canvas.selected_shapes[:]
         self._docks.label_list.clearSelection()
+        for shape in shapes:
+            self.add_label(shape=shape)
         self.mark_dirty()
 
     def move_shape(self) -> None:
