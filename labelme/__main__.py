@@ -281,8 +281,8 @@ def main() -> None:
         "--labelflags",  # deprecated
         dest="label_flags",
         action=_DeprecatedAlias,
-        help=r"yaml string of label specific flags OR file containing json "
-        r"string of label specific flags (ex. {person-\d+: [male, tall], "
+        help=r"YAML mapping from a label regex to its flag names, given inline "
+        r"or as a path to a YAML/JSON file (ex. {person-\d+: [male, tall], "
         r"dog-\d+: [black, brown, white], .*: [occluded]})",  # NOQA
         default=argparse.SUPPRESS,
     )
