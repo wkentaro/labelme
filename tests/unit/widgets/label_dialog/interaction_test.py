@@ -35,22 +35,19 @@ def _run_popup(
     description: str | None,
     locked: Collection[LabelDialogField],
 ) -> LabelDialogEntry | None:
-    code = (
-        QtWidgets.QDialog.DialogCode.Accepted
-        if accept
-        else QtWidgets.QDialog.DialogCode.Rejected
-    )
+    def finish_popup() -> None:
+        try:
+            if at_show is not None:
+                at_show(dialog)
+        finally:
+            if accept:
+                dialog.accept()
+            else:
+                dialog.reject()
 
-    def fake_exec() -> int:
-        if at_show is not None:
-            at_show(dialog)
-        return code
-
-    dialog.exec = fake_exec  # ty: ignore[invalid-assignment]
+    QtCore.QTimer.singleShot(0, finish_popup)
     return dialog.popup(
         text=text,
-        # Keeping the dialog put makes the popup deterministic under a stubbed
-        # exec(), which never shows it.
         move=False,
         flags=flags,
         group_id=group_id,
@@ -557,7 +554,7 @@ def test_flag_named_by_two_matching_patterns_keeps_its_checked_state(
 
 
 # ---------------------------------------------------------------------------
-# popup() round-trips (exec stubbed)
+# Modal popup round-trips
 # ---------------------------------------------------------------------------
 
 
@@ -1060,3 +1057,75 @@ def test_popup_preserves_label_case(*, qtbot: QtBot) -> None:
     assert seen["current"] == "Cat"
     assert entry is not None
     assert entry.label == "cat"
+
+
+@pytest.mark.parametrize("cancel_locked", [False, True])
+def test_repeated_modal_popups_restore_focus_and_isolate_results(
+    *, qtbot: QtBot, cancel_locked: bool
+) -> None:
+    dialog = _add_dialog(
+        qtbot, dialog=LabelDialog(labels=["Cat"], flags={"^cat$": ["indoor"]})
+    )
+
+    watchdog = QtCore.QTimer(dialog)
+    watchdog.timeout.connect(dialog.reject)
+    watchdog.start(5000)
+
+    def accept_with_space() -> None:
+        assert dialog.focusWidget() is dialog.edit
+        assert dialog.edit.selectedText() == "cat"
+        assert dialog.label_list.currentItem().text() == "Cat"
+        _checkbox(dialog=dialog, name="indoor").setChecked(True)
+        dialog.edit.setText("cat ")
+        qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Return)
+
+    QtCore.QTimer.singleShot(0, accept_with_space)
+    entry = dialog.popup(text=" cat", group_id=0, description="<b>pet</b>", move=False)
+    assert entry == LabelDialogEntry(
+        label="cat", flags={"indoor": True}, group_id=0, description="<b>pet</b>"
+    )
+
+    def finish_locked() -> None:
+        assert not dialog.edit.isEnabled()
+        assert not dialog.edit_group_id.isEnabled()
+        assert not dialog.edit_description.isEnabled()
+        assert not _checkboxes(dialog)
+        qtbot.keyClick(
+            dialog,
+            QtCore.Qt.Key.Key_Escape if cancel_locked else QtCore.Qt.Key.Key_Return,
+        )
+
+    QtCore.QTimer.singleShot(0, finish_locked)
+    locked_entry = dialog.popup(
+        text="mixed",
+        flags={"indoor": True},
+        group_id=7,
+        description="mixed",
+        locked=("label", "flags", "group_id", "description"),
+        move=False,
+    )
+    assert locked_entry == (
+        None
+        if cancel_locked
+        else LabelDialogEntry(label="", flags={}, group_id=None, description="")
+    )
+
+    def cancel_unlocked() -> None:
+        assert dialog.focusWidget() is dialog.edit
+        assert dialog.edit.isEnabled()
+        assert dialog.edit_group_id.isEnabled()
+        assert dialog.edit_description.isEnabled()
+        assert dialog.edit.text() == ("cat" if cancel_locked else "")
+        assert dialog.edit.selectedText() == dialog.edit.text()
+        assert dialog.edit_group_id.text() == ""
+        assert dialog.edit_description.toPlainText() == ""
+        if cancel_locked:
+            assert not _checkbox(dialog=dialog, name="indoor").isChecked()
+        dialog.edit.setText("discarded")
+        qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Escape)
+
+    QtCore.QTimer.singleShot(0, cancel_unlocked)
+    assert dialog.popup(move=False) is None
+    assert _get_shown_text(dialog=dialog, accept=False, text=None) == (
+        "cat" if cancel_locked else ""
+    )

@@ -61,6 +61,8 @@ class LabelDialog(QtWidgets.QDialog):
         self._locked: frozenset[LabelDialogField] = frozenset()
         # A popup opened without a label starts from the last one accepted.
         self._last_label = ""
+        self._entry: LabelDialogEntry | None = None
+        self.accepted.connect(self._capture_entry)
         # The flags currently on show, keyed by flag name, so a flag named by
         # two matching label_flags patterns gets exactly one checkbox.
         self._flag_checkboxes: dict[str, QtWidgets.QCheckBox] = {}
@@ -318,6 +320,7 @@ class LabelDialog(QtWidgets.QDialog):
         move: bool = True,
         position: QtCore.QPoint | None = None,
     ) -> LabelDialogEntry | None:
+        self._entry = None
         self._locked = frozenset(locked)
         # Drop the previous popup's checkboxes and their remembered states so a
         # fresh popup starts unchecked. This has to precede setText() below,
@@ -371,14 +374,15 @@ class LabelDialog(QtWidgets.QDialog):
             # visible dialog, while the clamp is a no-op unless it overflows.
             QtCore.QTimer.singleShot(0, lambda: self._clamp_within_screen(target))
 
-        if self.exec() != QtWidgets.QDialog.DialogCode.Accepted:
-            return None
+        self.exec()
+        return self._entry
 
+    def _capture_entry(self) -> None:
         # The flag checkboxes follow the text, so normalize it before they are
         # collected: "cat " must yield the flags of "cat", not none.
         self.edit.setText(self.edit.text().strip())
         group_id_text = self.edit_group_id.text()
-        entry = LabelDialogEntry(
+        self._entry = LabelDialogEntry(
             label=self.edit.text(),
             flags=self._collect_flags(),
             group_id=int(group_id_text) if group_id_text else None,
@@ -386,8 +390,7 @@ class LabelDialog(QtWidgets.QDialog):
         )
         # A locked label is accepted as blank, and the next new-shape popup
         # starts blank too, exactly as a cancelled locked edit leaves it.
-        self.remember_label(label=entry.label)
-        return entry
+        self.remember_label(label=self._entry.label)
 
     def _get_field_widgets(
         self,
