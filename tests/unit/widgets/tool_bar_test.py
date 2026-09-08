@@ -153,9 +153,29 @@ def test_toolbar_tool_buttons_inherit_button_style(*, toolbar_h: ToolBar) -> Non
         assert btn.toolButtonStyle() == toolbar_h.toolButtonStyle()
 
 
-def test_toolbar_tool_buttons_have_default_action(*, toolbar_h: ToolBar) -> None:
-    for btn in _user_buttons(toolbar_h):
-        assert btn.defaultAction() is not None
+def test_toolbar_buttons_trigger_actions_and_follow_state(
+    *, qtbot: QtBot, toolbar_h: ToolBar, actions: list[QtGui.QAction]
+) -> None:
+    toolbar_h.show()
+    button = _user_buttons(toolbar_h)[0]
+    action = actions[0]
+    action.setCheckable(True)
+
+    with qtbot.waitSignal(action.triggered):
+        qtbot.mouseClick(button, Qt.MouseButton.LeftButton)
+    assert action.isChecked()
+    assert button.isChecked()
+
+    action.setEnabled(False)
+    assert not button.isEnabled()
+    with qtbot.assertNotEmitted(action.triggered):
+        qtbot.mouseClick(button, Qt.MouseButton.LeftButton)
+
+    action.setEnabled(True)
+    with qtbot.waitSignal(action.triggered):
+        qtbot.mouseClick(button, Qt.MouseButton.LeftButton)
+    assert not action.isChecked()
+    assert not button.isChecked()
 
 
 # --- separator ---
@@ -177,29 +197,44 @@ def test_toolbar_widget_action_not_wrapped_in_tool_button(*, qtbot: QtBot) -> No
     tb = ToolBar(title="WA", actions=[wa])
     qtbot.addWidget(tb)
 
-    # QWidgetAction is added via super().addAction(), not wrapped in a QToolButton.
-    buttons = _user_buttons(tb)
-    assert len(buttons) == 0
+    tb.show()
+    assert tb.widgetForAction(wa) is inner
+    assert inner.isVisible()
+    assert not _user_buttons(tb)
 
 
 # --- button style change propagates to existing buttons ---
 
 
-def test_toolbar_button_style_change_propagates(*, toolbar_h: ToolBar) -> None:
-    toolbar_h.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+@pytest.mark.parametrize(
+    "style",
+    [
+        Qt.ToolButtonStyle.ToolButtonIconOnly,
+        Qt.ToolButtonStyle.ToolButtonTextOnly,
+        Qt.ToolButtonStyle.ToolButtonTextBesideIcon,
+    ],
+)
+def test_toolbar_button_style_change_propagates(
+    *, toolbar_h: ToolBar, style: Qt.ToolButtonStyle
+) -> None:
+    toolbar_h.setToolButtonStyle(style)
     for btn in _user_buttons(toolbar_h):
-        assert btn.toolButtonStyle() == Qt.ToolButtonStyle.ToolButtonIconOnly
+        assert btn.toolButtonStyle() == style
 
 
 # --- vertical toolbar: buttons equalized ---
 
 
-def test_toolbar_vertical_buttons_equal_min_width(*, toolbar_v: ToolBar) -> None:
+def test_toolbar_vertical_buttons_have_equal_width_and_alignment(
+    *, toolbar_v: ToolBar
+) -> None:
+    toolbar_v.show()
     buttons = _user_buttons(toolbar_v)
     assert len(buttons) >= 2
     widths = [btn.minimumWidth() for btn in buttons]
     assert len(set(widths)) == 1, f"Button minimum widths not equal: {widths}"
     assert widths[0] > 0
+    assert len({(button.x(), button.width()) for button in buttons}) == 1
 
 
 def test_toolbar_horizontal_buttons_not_equalized(*, toolbar_h: ToolBar) -> None:

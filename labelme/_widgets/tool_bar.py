@@ -51,20 +51,6 @@ class ToolBar(QtWidgets.QToolBar):
         if orientation == Qt.Orientation.Vertical:
             self._equalize_button_widths()
 
-    def addAction(self, action: QtGui.QAction, /) -> None:  # ty: ignore[invalid-method-override]
-        if isinstance(action, QtWidgets.QWidgetAction) or action.isSeparator():
-            super().addAction(action)
-            return
-
-        button = QtWidgets.QToolButton(self)
-        button.setDefaultAction(action)
-        button.setToolButtonStyle(self.toolButtonStyle())
-        self.toolButtonStyleChanged.connect(button.setToolButtonStyle)
-        self.addWidget(button)
-        layout = self.layout()
-        if layout is not None:
-            layout.setAlignment(button, Qt.AlignmentFlag.AlignCenter)
-
     def _equalize_button_widths(self) -> None:
         buttons = [
             b
