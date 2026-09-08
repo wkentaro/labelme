@@ -157,8 +157,8 @@ def test_reopening_directory_preserves_session_when_first_image_fails(
 
 @pytest.mark.gui
 @pytest.mark.parametrize(
-    ("button_text", "expected_loaded"),
-    [("Open Anyway", True), ("Cancel", False)],
+    ("action", "expected_loaded"),
+    [("Open Anyway", True), ("Enter", False)],
 )
 def test_MainWindow_prompts_when_image_exceeds_decode_limit(
     *,
@@ -168,7 +168,7 @@ def test_MainWindow_prompts_when_image_exceeds_decode_limit(
     critical_messages: list[str],
     set_allocation_limit: Callable[[int], None],
     pause: bool,
-    button_text: str,
+    action: Literal["Open Anyway", "Enter"],
     expected_loaded: bool,
 ) -> None:
     image_path = tmp_path / "too_large.png"
@@ -179,21 +179,28 @@ def test_MainWindow_prompts_when_image_exceeds_decode_limit(
     set_allocation_limit(1)
     annotation_before = raw_win._annotation
     image_path_before = raw_win._image_path
-    prompts: list[tuple[str, str, list[str], bool]] = []
+    prompts: list[tuple[str, list[str], str | None]] = []
 
     def respond_to_prompt() -> None:
         dialog = QtWidgets.QApplication.activeModalWidget()
         assert isinstance(dialog, QtWidgets.QMessageBox)
         buttons = dialog.buttons()
+        informative_text = dialog.informativeText()
+        assert "800x600" in informative_text
+        assert "2 MB" in informative_text
+        assert "1 MB" in informative_text
+        default_button = dialog.defaultButton()
         prompts.append(
             (
                 dialog.text(),
-                dialog.informativeText(),
                 [button.text() for button in buttons],
-                dialog.defaultButton() is None,
+                default_button.text() if default_button is not None else None,
             )
         )
-        next(button for button in buttons if button.text() == button_text).click()
+        if action == "Enter":
+            qtbot.keyClick(dialog, Qt.Key.Key_Return)
+        else:
+            next(button for button in buttons if button.text() == action).click()
 
     QtCore.QTimer.singleShot(0, respond_to_prompt)
 
@@ -204,11 +211,8 @@ def test_MainWindow_prompts_when_image_exceeds_decode_limit(
     assert prompts == [
         (
             "Large image requires more memory",
-            "The image is 800x600 pixels and needs at least about 2 MB to "
-            "decode, above the current 1 MB safety limit. Opening it may "
-            "temporarily make Labelme or other applications less responsive.",
             ["Open Anyway", "Cancel"],
-            True,
+            "Cancel",
         )
     ]
     assert QtGui.QImageReader.allocationLimit() == 1
