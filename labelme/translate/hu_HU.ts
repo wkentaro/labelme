@@ -654,12 +654,12 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>%s betöltve</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Kép és címke fájlok (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>Képek és annotációs fájlok (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Válasszon képet vagy címke fájlt</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - Kép vagy annotációk megnyitása</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -670,8 +670,8 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>%s . Az annotációk a %s könyvtárban lesznek mentve/betöltve</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Fájl kiválasztása</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - Annotációs fájl mentése</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -698,20 +698,20 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Nem érhető el AI-Points módban, mert ez a modell nem támogatja a pont alapú promptokat.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Mentse az annotációkat a &quot;{}&quot; fájlba bezárás előtt?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>Megtartja a(z) „{}” annotációinak módosításait?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Mentse az annotációkat?</translation>
+        <source>Unsaved changes</source>
+        <translation>Nem mentett módosítások</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Törli a {} alakzatot? A Visszavonás paranccsal visszaállíthatja őket.</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Könyvtár megnyitása</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - Képmappa tallózása</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

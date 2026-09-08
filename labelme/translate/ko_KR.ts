@@ -640,12 +640,12 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>%s 로드됨</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>이미지 및 레이블 파일 (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>이미지 및 주석 파일 (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - 이미지 또는 레이블 파일 선택</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - 이미지 또는 주석 열기</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -656,8 +656,8 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>%s . 주석이 %s에 저장/로드됩니다</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - 파일 선택</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - 주석 파일 저장</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -684,20 +684,20 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>이 모델은 포인트 프롬프트를 지원하지 않으므로 AI-Points 모드에서는 사용할 수 없습니다.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>닫기 전에 주석을 &quot;{}&quot;에 저장하시겠습니까?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>&quot;{}&quot;의 주석 변경 사항을 유지하시겠습니까?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>주석을 저장하시겠습니까?</translation>
+        <source>Unsaved changes</source>
+        <translation>저장하지 않은 변경 사항</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>{}개의 도형을 삭제하시겠습니까? 실행 취소로 복원할 수 있습니다.</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - 폴더 열기</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - 이미지 폴더 찾아보기</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

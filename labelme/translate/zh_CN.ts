@@ -646,12 +646,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>已加载 %s</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>图像 &amp; 标签文件 (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>图像与标注文件 (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - 选择图像或标签文件</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - 打开图像或标注</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -662,8 +662,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s。标注将在 %s 中保存或加载</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - 选择文件</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - 保存标注文件</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -690,20 +690,20 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>此模型不支持点提示，因此在 AI-Points 模式下不可用。</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>关闭前将标注保存到“{}”？</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>要保留“{}”的标注更改吗？</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>保存标注？</translation>
+        <source>Unsaved changes</source>
+        <translation>尚未保存的更改</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>删除 {} 个形状？可以使用「撤销」恢复。</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - 打开目录</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - 浏览图像文件夹</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

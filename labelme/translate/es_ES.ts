@@ -640,12 +640,12 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
         <translation>Cargado %s</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Archivos de imagen y etiqueta (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>Imágenes y archivos de anotaciones (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Elegir archivo de imagen o etiqueta</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - Abrir imagen o anotaciones</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -656,8 +656,8 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
         <translation>%s . Las anotaciones se guardarán/cargarán en %s</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Elegir archivo</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - Guardar archivo de anotaciones</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -684,20 +684,20 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
         <translation>No disponible en el modo AI-Points porque este modelo no admite indicaciones de puntos.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>¿Guardar anotaciones en &quot;{}&quot; antes de cerrar?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>¿Conservar los cambios en las anotaciones de «{}»?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>¿Guardar anotaciones?</translation>
+        <source>Unsaved changes</source>
+        <translation>Cambios sin guardar</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>¿Eliminar {} formas? Puede restaurarlas con Deshacer.</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Abrir directorio</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - Explorar carpeta de imágenes</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

@@ -2360,12 +2360,12 @@ class MainWindow(QtWidgets.QMainWindow):
             f"*.{fmt.toStdString()}"
             for fmt in QtGui.QImageReader.supportedImageFormats()
         ]
-        filters = self.tr("Image & Label files (%s)") % " ".join(
+        filters = self.tr("Images and annotation files (%s)") % " ".join(
             formats + [f"*{LABEL_FILE_SUFFIX}"]
         )
         image_or_label_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            self.tr("%s - Choose Image or Label file") % __appname__,
+            self.tr("%s - Open Image or Annotations") % __appname__,
             self.current_path(),
             filters,
         )
@@ -2434,7 +2434,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
-        caption = self.tr("%s - Choose File") % __appname__
+        caption = self.tr("%s - Save Annotation File") % __appname__
         filters = self.tr("Label files (*%s)") % LABEL_FILE_SUFFIX
         dlg = QtWidgets.QFileDialog(
             parent=self,
@@ -2798,12 +2798,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def _can_continue(self) -> bool:
         if not self._is_changed:
             return True
-        prompt_text = self.tr('Save annotations to "{}" before closing?').format(
+        prompt_text = self.tr('Keep the annotation changes for "{}"?').format(
             self._image_path
         )
         user_choice = QtWidgets.QMessageBox.question(
             self,
-            self.tr("Save annotations?"),
+            self.tr("Unsaved changes"),
             prompt_text,
             QtWidgets.QMessageBox.StandardButton.Save
             | QtWidgets.QMessageBox.StandardButton.Discard
@@ -2934,7 +2934,7 @@ class MainWindow(QtWidgets.QMainWindow):
         dir_path = str(
             QtWidgets.QFileDialog.getExistingDirectory(
                 self,
-                self.tr("%s - Open Directory") % __appname__,
+                self.tr("%s - Browse Image Folder") % __appname__,
                 default_open_dir_path,
                 QtWidgets.QFileDialog.Option.ShowDirsOnly
                 | QtWidgets.QFileDialog.Option.DontResolveSymlinks,

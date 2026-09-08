@@ -646,12 +646,12 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>%s yüklendi</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Görüntü &amp; Etiket dosyaları (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>Görüntüler ve açıklama dosyaları (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Görüntü veya Etiket Dosyası Seç</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - Görüntü veya Açıklamaları Aç</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -662,8 +662,8 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>%s . Açıklamalar %s dizinine kaydedilecek veya bu dizinden yüklenecek</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Dosya Seç</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - Açıklama Dosyasını Kaydet</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -690,20 +690,20 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Bu model nokta istemlerini desteklemediği için AI-Points modunda kullanılamaz.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Kapatmadan önce açıklamalar &quot;{}&quot; konumuna kaydedilsin mi?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>&quot;{}&quot; için açıklama değişiklikleri korunsun mu?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Açıklamalar kaydedilsin mi?</translation>
+        <source>Unsaved changes</source>
+        <translation>Kaydedilmemiş değişiklikler</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>{} şekil silinsin mi? Geri Al ile geri yükleyebilirsiniz.</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Dizin Aç</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - Görüntü Klasörüne Göz At</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

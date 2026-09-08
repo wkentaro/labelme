@@ -640,12 +640,12 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Geladen %s</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Afbeelding- en labelbestanden (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>Afbeeldingen en annotatiebestanden (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Kies Afbeelding- of labelbestand</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - Afbeelding of annotaties openen</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -656,8 +656,8 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>%s . Annotaties worden opgeslagen/geladen in %s</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Kies Bestand</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - Annotatiebestand opslaan</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -684,20 +684,20 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Niet beschikbaar in de modus AI-Points, omdat dit model geen puntprompts ondersteunt.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Annotaties opslaan naar &quot;{}&quot; voordat u sluit?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>De annotatiewijzigingen voor ‘{}’ behouden?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Annotaties opslaan?</translation>
+        <source>Unsaved changes</source>
+        <translation>Niet-opgeslagen wijzigingen</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>{} vormen verwijderen? U kunt ze herstellen met Ongedaan Maken.</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Map Openen</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - Afbeeldingsmap kiezen</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

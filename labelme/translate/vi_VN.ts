@@ -640,12 +640,12 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Đã tải %s</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>Tệp Hình ảnh &amp; Nhãn (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>Hình ảnh và tệp chú thích (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - Chọn tệp Hình ảnh hoặc Nhãn</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - Mở hình ảnh hoặc chú thích</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -656,8 +656,8 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>%s . Chú thích sẽ được lưu/tải trong %s</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - Chọn Tệp</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - Lưu tệp chú thích</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -684,20 +684,20 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Không khả dụng trong chế độ AI-Points vì mô hình này không hỗ trợ lời nhắc điểm.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>Lưu chú thích vào &quot;{}&quot; trước khi đóng?</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>Giữ lại các thay đổi chú thích cho &quot;{}&quot;?</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>Lưu chú thích?</translation>
+        <source>Unsaved changes</source>
+        <translation>Thay đổi chưa lưu</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>Xóa {} hình dạng? Bạn có thể khôi phục chúng bằng Hoàn tác.</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - Mở Thư mục</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - Duyệt thư mục hình ảnh</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>

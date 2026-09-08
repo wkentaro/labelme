@@ -640,12 +640,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>بارگذاری شد %s</translation>
     </message>
     <message>
-        <source>Image &amp; Label files (%s)</source>
-        <translation>فایل‌های تصویر و برچسب (%s)</translation>
+        <source>Images and annotation files (%s)</source>
+        <translation>تصاویر و پرونده‌های حاشیه‌نویسی (%s)</translation>
     </message>
     <message>
-        <source>%s - Choose Image or Label file</source>
-        <translation>%s - انتخاب فایل تصویر یا برچسب</translation>
+        <source>%s - Open Image or Annotations</source>
+        <translation>%s - باز کردن تصویر یا حاشیه‌نویسی‌ها</translation>
     </message>
     <message>
         <source>%s - Save/Load Annotations in Directory</source>
@@ -656,8 +656,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s . حاشیه‌نویسی‌ها در %s ذخیره/بارگذاری خواهند شد</translation>
     </message>
     <message>
-        <source>%s - Choose File</source>
-        <translation>%s - انتخاب فایل</translation>
+        <source>%s - Save Annotation File</source>
+        <translation>%s - ذخیرهٔ پروندهٔ حاشیه‌نویسی</translation>
     </message>
     <message>
         <source>Label files (*%s)</source>
@@ -684,20 +684,20 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>در حالت AI-Points در دسترس نیست، زیرا این مدل از دستورات نقطه‌ای پشتیبانی نمی‌کند.</translation>
     </message>
     <message>
-        <source>Save annotations to &quot;{}&quot; before closing?</source>
-        <translation>قبل از بستن، حاشیه‌نویسی‌ها را در &quot;{}&quot; ذخیره کنید؟</translation>
+        <source>Keep the annotation changes for &quot;{}&quot;?</source>
+        <translation>تغییرات حاشیه‌نویسی برای «{}» نگه داشته شوند؟</translation>
     </message>
     <message>
-        <source>Save annotations?</source>
-        <translation>ذخیره حاشیه‌نویسی‌ها؟</translation>
+        <source>Unsaved changes</source>
+        <translation>تغییرات ذخیره‌نشده</translation>
     </message>
     <message>
         <source>Delete {} shapes? You can restore them with Undo.</source>
         <translation>حذف {} شکل؟ می‌توانید آن‌ها را با بازگشت بازیابی کنید.</translation>
     </message>
     <message>
-        <source>%s - Open Directory</source>
-        <translation>%s - باز کردن پوشه</translation>
+        <source>%s - Browse Image Folder</source>
+        <translation>%s - مرور پوشهٔ تصاویر</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
