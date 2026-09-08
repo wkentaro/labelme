@@ -250,15 +250,24 @@ def test_point_shape_label_is_drawn() -> None:
         ("mask", [[20, 30], [70, 60]], (90, 60)),
         # radius = ||(15, 20)|| = 25
         ("circle", [[50, 50], [65, 70]], (100, 50)),
+        ("line", [[20, 30], [70, 30]], (90, 60)),
+        ("linestrip", [[20, 30], [70, 30], [70, 60]], (90, 60)),
+        ("polygon", [[20, 30], [70, 30], [70, 60], [20, 60]], (90, 60)),
+        # The first edge of an oriented rectangle while it is being dragged. The
+        # finished loop is left out: its orientation arrow has a fixed
+        # image-space size, so pre-scaling the corners does not pre-scale it.
+        ("oriented_rectangle", [[20, 30], [70, 30]], (90, 60)),
     ],
 )
-def test_two_point_shape_scales_like_its_points(
+def test_outline_scales_like_its_points(
     *, shape_type: ShapeType, points: list[list[float]], outline_probe: tuple[int, int]
 ) -> None:
     # Vertex markers are sized in screen pixels, so they match in both renders
     # and the equality isolates the outline.
     shape = _shape(shape_type=shape_type, points=points)
+    shape.closed = shape_type == "polygon"
     prescaled = _shape(shape_type=shape_type, points=(np.array(points) * 2).tolist())
+    prescaled.closed = shape.closed
     rendered = _render(
         shape=shape,
         show_label=False,
@@ -274,6 +283,33 @@ def test_two_point_shape_scales_like_its_points(
         highlight=None,
         rotation_highlight=None,
     )
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+@pytest.mark.parametrize(
+    # A pixel halfway along the segment that must not exist: a linestrip is
+    # open even once committed (which flags it closed like every finished
+    # shape), and prompt points are markers with nothing joining them.
+    ("shape_type", "points", "gap_probe"),
+    [
+        ("linestrip", [[20, 20], [120, 20], [120, 120]], (70, 70)),
+        ("points", [[20, 20], [120, 20]], (70, 20)),
+    ],
+)
+def test_no_outline_where_points_are_not_joined(
+    *, shape_type: ShapeType, points: list[list[float]], gap_probe: tuple[int, int]
+) -> None:
+    shape = _shape(shape_type=shape_type, points=points)
+    shape.closed = True
+    image = _render(
+        shape=shape,
+        show_label=False,
+        scale=1.0,
+        highlight=None,
+        rotation_highlight=None,
+    )
+    assert image.pixelColor(*gap_probe) == QtGui.QColor(255, 255, 255)
 
 
 def _mask_shape() -> Shape:

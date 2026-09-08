@@ -13,6 +13,7 @@ from PySide6 import QtGui
 
 from .. import _utils
 from .._shape import CIRCLE_POINT_COUNT
+from .._shape import LINE_POINT_COUNT
 from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
 from .._shape import RECTANGLE_POINT_COUNT
 from .._shape import Shape
@@ -307,71 +308,49 @@ def _build_shape_points_paths(
     paths = _ShapePaths()
     scale = context.scale
     points = shape.points
-    if shape.shape_type in ["rectangle", "mask"]:
+    if shape.shape_type in ("rectangle", "mask", "circle"):
         assert len(points) in [1, 2]
-        paths.line.addPath(_build_two_point_outline(shape=shape, scale=scale))
-        if shape.shape_type == "rectangle":
-            for i in range(len(points)):
-                _build_shape_point_path(
-                    path=paths.vertices, shape=shape, context=context, vertex_index=i
-                )
     elif shape.shape_type == "oriented_rectangle":
         assert len(points) in [1, 2, 4]
-        if len(points) == ORIENTED_RECTANGLE_POINT_COUNT:
-            paths.line.moveTo(QtCore.QPointF(*(points[0] * scale)))
-            for i in range(len(points)):
-                paths.line.lineTo(QtCore.QPointF(*(points[i] * scale)))
-                _build_shape_point_path(
-                    path=paths.vertices, shape=shape, context=context, vertex_index=i
-                )
-            paths.line.lineTo(QtCore.QPointF(*(points[0] * scale)))
-            for i in range(len(points)):
-                _build_shape_rotation_point_path(
-                    path=paths.rotation_vertices,
-                    shape=shape,
-                    context=context,
-                    vertex_index=i,
-                )
-            _build_shape_oriented_rectangle_arrow_path(
-                path=paths.orientation_arrow, shape=shape, scale=scale
-            )
-        elif len(points) == CIRCLE_POINT_COUNT:
-            paths.line.moveTo(QtCore.QPointF(*(points[0] * scale)))
-            paths.line.lineTo(QtCore.QPointF(*(points[1] * scale)))
-            for i in range(2):
-                _build_shape_point_path(
-                    path=paths.vertices, shape=shape, context=context, vertex_index=i
-                )
-    elif shape.shape_type == "circle":
-        assert len(points) in [1, 2]
-        paths.line.addPath(_build_two_point_outline(shape=shape, scale=scale))
-        for i in range(len(points)):
-            _build_shape_point_path(
-                path=paths.vertices, shape=shape, context=context, vertex_index=i
-            )
-    elif shape.shape_type == "linestrip":
-        paths.line.moveTo(QtCore.QPointF(*(points[0] * scale)))
-        for i in range(len(points)):
-            paths.line.lineTo(QtCore.QPointF(*(points[i] * scale)))
-            _build_shape_point_path(
-                path=paths.vertices, shape=shape, context=context, vertex_index=i
-            )
     elif shape.shape_type == "points":
         assert len(points) == len(shape.point_labels)
+
+    if shape.shape_type == "points":
+        # Prompt points are standalone markers; their outline only bounds them.
         for i, point_label in enumerate(shape.point_labels):
             path = paths.vertices if point_label == 1 else paths.negative_vertices
             _build_shape_point_path(
                 path=path, shape=shape, context=context, vertex_index=i
             )
-    else:
-        paths.line.moveTo(QtCore.QPointF(*(points[0] * scale)))
+        return paths
+
+    paths.line.addPath(
+        QtGui.QTransform.fromScale(scale, scale).map(_build_outline_path(shape=shape))
+    )
+    # A mask's corners are not draggable, and an oriented rectangle's first
+    # corner is drawn by the drag preview until its first edge is locked.
+    if shape.shape_type == "mask" or (
+        shape.shape_type == "oriented_rectangle" and len(points) == 1
+    ):
+        return paths
+    for i in range(len(points)):
+        _build_shape_point_path(
+            path=paths.vertices, shape=shape, context=context, vertex_index=i
+        )
+    if (
+        shape.shape_type == "oriented_rectangle"
+        and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
+    ):
         for i in range(len(points)):
-            paths.line.lineTo(QtCore.QPointF(*(points[i] * scale)))
-            _build_shape_point_path(
-                path=paths.vertices, shape=shape, context=context, vertex_index=i
+            _build_shape_rotation_point_path(
+                path=paths.rotation_vertices,
+                shape=shape,
+                context=context,
+                vertex_index=i,
             )
-        if shape.closed:
-            paths.line.lineTo(QtCore.QPointF(*(points[0] * scale)))
+        _build_shape_oriented_rectangle_arrow_path(
+            path=paths.orientation_arrow, shape=shape, scale=scale
+        )
     return paths
 
 
@@ -404,20 +383,34 @@ def bounds(*, shape: Shape) -> QtCore.QRectF:
 
 
 def _build_outline_path(*, shape: Shape) -> QtGui.QPainterPath:
+    # The single image-space outline behind painting, hit-testing and bounds,
+    # so a shape is picked exactly where it is drawn.
     points = shape.points
     path = QtGui.QPainterPath()
     if shape.shape_type in ("rectangle", "mask", "circle"):
         path.addPath(_build_two_point_outline(shape=shape, scale=1.0))
-    elif shape.shape_type == "oriented_rectangle":
-        if len(points) == ORIENTED_RECTANGLE_POINT_COUNT:
-            path.moveTo(QtCore.QPointF(*points[0]))
-            for point in points[1:]:
-                path.lineTo(QtCore.QPointF(*point))
-            path.lineTo(QtCore.QPointF(*points[0]))
+    elif shape.shape_type == "oriented_rectangle" and len(points) not in (
+        LINE_POINT_COUNT,
+        ORIENTED_RECTANGLE_POINT_COUNT,
+    ):
+        # Neither the first edge being dragged nor a finished loop yet.
+        pass
     elif len(points) > 0:
+        # lineTo, unlike addPolygon, drops a repeated point instead of adding a
+        # zero-length segment the stroker would cap with a dot.
         path.moveTo(QtCore.QPointF(*points[0]))
         for point in points[1:]:
             path.lineTo(QtCore.QPointF(*point))
+        # An oriented rectangle is a loop exactly when finished, whatever its
+        # flag says (a preview inherits the flag from the previous mode). A
+        # linestrip is flagged closed on commit like every shape, yet stays
+        # open by definition.
+        if shape.shape_type == "oriented_rectangle":
+            is_loop = len(points) == ORIENTED_RECTANGLE_POINT_COUNT
+        else:
+            is_loop = shape.closed and shape.shape_type != "linestrip"
+        if is_loop:
+            path.lineTo(QtCore.QPointF(*points[0]))
     return path
 
 
