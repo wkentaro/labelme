@@ -656,10 +656,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>%s . Chú thích sẽ được lưu/tải trong %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Lưu tệp chú thích</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Tệp nhãn (*%s)</translation>
     </message>

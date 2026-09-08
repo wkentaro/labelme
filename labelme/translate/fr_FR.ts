@@ -662,10 +662,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>%s . Les annotations seront enregistrées/chargées dans %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Enregistrer le fichier d’annotations</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Fichiers d&apos;étiquettes (*%s)</translation>
     </message>

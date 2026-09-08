@@ -662,10 +662,6 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
         <translation>%s . Le annotazioni saranno salvate/caricate in %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Salva file di annotazioni</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>File di etichette (*%s)</translation>
     </message>

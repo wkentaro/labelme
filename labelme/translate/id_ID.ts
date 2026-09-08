@@ -631,10 +631,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>%s - Anotasi akan disimpan/dimuat di %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Simpan Berkas Anotasi</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>File label (*%s)</translation>
     </message>

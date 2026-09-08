@@ -656,10 +656,6 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>%s. Adnotacje będą zapisywane/wczytywane w %s</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Zapisz plik adnotacji</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Pliki etykiet (*%s)</translation>
     </message>

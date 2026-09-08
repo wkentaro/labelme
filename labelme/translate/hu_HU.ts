@@ -670,10 +670,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>%s . Az annotációk a %s könyvtárban lesznek mentve/betöltve</translation>
     </message>
     <message>
-        <source>%s - Save Annotation File</source>
-        <translation>%s - Annotációs fájl mentése</translation>
-    </message>
-    <message>
         <source>Label files (*%s)</source>
         <translation>Címke fájlok (*%s)</translation>
     </message>
