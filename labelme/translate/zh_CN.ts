@@ -354,14 +354,6 @@
         <translation>自动保存</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>保存图像数据</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>在标签文件中保存图像数据</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>关闭(&amp;C)</translation>
     </message>
@@ -424,14 +416,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>撤销上一个绘制的点</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>移除选中的点</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>从多边形中移除选中的点</translation>
     </message>
     <message>
         <source>Undo
@@ -510,6 +494,14 @@ Shapes</source>
         <translation>以新的文件名保存标签</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>将图像嵌入标签文件</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>在标签文件中保存一份图像副本</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>修改选中形状的标签</translation>
     </message>
@@ -528,6 +520,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>将剪贴板中的形状插入此图像</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>删除选中的顶点</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>从多边形或折线中删除选中的顶点</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -915,10 +915,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>自动保存</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>在标签文件中保存图像数据</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>将图像嵌入标签 JSON 文件中。</translation>
     </message>
@@ -985,6 +981,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined labels</source>
         <translation>预定义标签</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>将图像嵌入标签文件</translation>
     </message>
     <message>
         <source>Label validation</source>

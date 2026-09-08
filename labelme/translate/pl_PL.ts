@@ -352,14 +352,6 @@
         <translation>Zapisuj automatycznie</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Zapisz z danymi obrazu</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Zapisz dane obrazu w pliku etykiet</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>&amp;Zamknij</translation>
     </message>
@@ -422,14 +414,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>Cofnij ostatnio narysowany punkt</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Usuń zaznaczony punkt</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Usuń zaznaczony punkt z wielokąta</translation>
     </message>
     <message>
         <source>Undo
@@ -504,6 +488,14 @@ Shapes</source>
         <translation>Zapisz etykiety pod nową nazwą pliku</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Osadź obraz w pliku etykiet</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Zapisuje kopię obrazu wewnątrz pliku etykiet</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Zmień etykietę zaznaczonego kształtu</translation>
     </message>
@@ -522,6 +514,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Wstaw kształty ze schowka do tego obrazu</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Usuń zaznaczony wierzchołek</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Usuwa zaznaczony wierzchołek z wielokąta lub łamanej</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -909,10 +909,6 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
         <translation>Zapisuj automatycznie</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Zapisz dane obrazu w pliku etykiet</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Osadza obraz w pliku JSON etykiety.</translation>
     </message>
@@ -979,6 +975,10 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
     <message>
         <source>Predefined labels</source>
         <translation>Predefiniowane etykiety</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Osadź obraz w pliku etykiet</translation>
     </message>
     <message>
         <source>Label validation</source>

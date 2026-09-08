@@ -352,14 +352,6 @@
         <translation>Tự động lưu</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Lưu với Dữ liệu Hình ảnh</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Lưu dữ liệu hình ảnh trong tệp nhãn</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>Đóng(&amp;C)</translation>
     </message>
@@ -422,14 +414,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>Hoàn tác điểm vẽ cuối cùng</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Xóa Điểm đã Chọn</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Xóa điểm đã chọn khỏi đa giác</translation>
     </message>
     <message>
         <source>Undo
@@ -504,6 +488,14 @@ Shapes</source>
         <translation>Lưu nhãn với tên tệp mới</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Nhúng Hình ảnh vào Tệp nhãn</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Lưu một bản sao của hình ảnh bên trong tệp nhãn</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Sửa đổi nhãn của hình dạng đã chọn</translation>
     </message>
@@ -522,6 +514,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Chèn các hình dạng trong clipboard vào ảnh này</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Xóa Đỉnh đã Chọn</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Xóa đỉnh đã chọn khỏi đa giác hoặc đường gấp khúc</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -909,10 +909,6 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
         <translation>Tự động lưu</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Lưu dữ liệu hình ảnh trong tệp nhãn</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Nhúng hình ảnh vào tệp JSON nhãn.</translation>
     </message>
@@ -979,6 +975,10 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Predefined labels</source>
         <translation>Nhãn định sẵn</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Nhúng hình ảnh vào tệp nhãn</translation>
     </message>
     <message>
         <source>Label validation</source>

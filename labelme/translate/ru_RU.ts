@@ -342,14 +342,6 @@
         <translation>Сохранять автоматически</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Сохранять вместе с данными изображения</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Сохранять данные изображения в файле разметки</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>&amp;Закрыть</translation>
     </message>
@@ -412,14 +404,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>Отменить последнюю нарисованную точку</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Удалить выбранную точку</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Удалить выбранную точку из полигона</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
@@ -489,6 +473,14 @@ Shapes</source>
         <translation>Сохранить метки под новым именем файла</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Встроить изображение в файл разметки</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Сохраняет копию изображения внутри файла разметки</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Изменить метку выбранной фигуры</translation>
     </message>
@@ -507,6 +499,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Вставить фигуры из буфера обмена в это изображение</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Удалить выбранную вершину</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Удаляет выбранную вершину из полигона или ломаной</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -912,10 +912,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Автоматически сохранять</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Сохранять данные изображения в файле меток</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Встраивает изображение в JSON-файл меток.</translation>
     </message>
@@ -982,6 +978,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined labels</source>
         <translation>Предустановленные метки</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Встраивать изображение в файл меток</translation>
     </message>
     <message>
         <source>Label validation</source>

@@ -352,14 +352,6 @@
         <translation>ذخیره خودکار</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>ذخیره با داده تصویر</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>ذخیره داده تصویر در فایل برچسب</translation>
-    </message>
-    <message>
         <source>&amp;Close</source>
         <translation>بستن(&amp;C)</translation>
     </message>
@@ -422,14 +414,6 @@
     <message>
         <source>Undo last drawn point</source>
         <translation>بازگشت آخرین نقطه رسم شده</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>حذف نقطه انتخاب شده</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>حذف نقطه انتخاب شده از چندضلعی</translation>
     </message>
     <message>
         <source>Undo
@@ -504,6 +488,14 @@ Shapes</source>
         <translation>ذخیره برچسب‌ها با نام فایل جدید</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>جاسازی تصویر در فایل برچسب</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>یک نسخه از تصویر را داخل فایل برچسب ذخیره می‌کند</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>تغییر برچسب شکل انتخاب شده</translation>
     </message>
@@ -522,6 +514,14 @@ Shapes</source>
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>درج شکل‌های کلیپ‌بورد در این تصویر</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>حذف رأس انتخاب‌شده</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>رأس انتخاب‌شده را از چندضلعی یا خط شکسته حذف می‌کند</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
@@ -909,10 +909,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>ذخیره خودکار</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>ذخیره داده تصویر در فایل برچسب</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>تصویر را در فایل JSON برچسب جاسازی می‌کند.</translation>
     </message>
@@ -979,6 +975,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined labels</source>
         <translation>برچسب‌های از پیش تعریف‌شده</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>جاسازی تصویر در فایل برچسب</translation>
     </message>
     <message>
         <source>Label validation</source>

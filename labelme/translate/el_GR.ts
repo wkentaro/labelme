@@ -275,14 +275,6 @@
         <translation>Αυτόματη αποθήκευση</translation>
     </message>
     <message>
-        <source>Save With Image Data</source>
-        <translation>Αποθήκευση με δεδομένα εικόνας</translation>
-    </message>
-    <message>
-        <source>Save image data in label file</source>
-        <translation>Αποθήκευση δεδομένων εικόνας σε αρχείο ετικέτας</translation>
-    </message>
-    <message>
         <source>&amp;Change Output Dir</source>
         <translation>&amp;Αλλαγή Οδηγίας Εξόδου</translation>
     </message>
@@ -383,14 +375,6 @@
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>Αναίρεση τελευταίας προσθήκης και επεξεργασίας σχήματος</translation>
-    </message>
-    <message>
-        <source>Remove Selected Point</source>
-        <translation>Κατάργηση επιλεγμένου σημείου</translation>
-    </message>
-    <message>
-        <source>Remove selected point from polygon</source>
-        <translation>Αφαίρεση επιλεγμένου σημείου από πολύγωνο</translation>
     </message>
     <message>
         <source>Start drawing polygons</source>
@@ -690,8 +674,24 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Αποθήκευση των ετικετών με νέο όνομα αρχείου</translation>
     </message>
     <message>
+        <source>Embed Image in Label File</source>
+        <translation>Ενσωμάτωση εικόνας στο αρχείο ετικέτας</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the label file</source>
+        <translation>Αποθηκεύει ένα αντίγραφο της εικόνας μέσα στο αρχείο ετικέτας</translation>
+    </message>
+    <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Εισαγωγή των σχημάτων του προχείρου σε αυτήν την εικόνα</translation>
+    </message>
+    <message>
+        <source>Delete Selected Vertex</source>
+        <translation>Διαγραφή επιλεγμένης κορυφής</translation>
+    </message>
+    <message>
+        <source>Delete the selected vertex from the polygon or line strip</source>
+        <translation>Διαγράφει την επιλεγμένη κορυφή από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
     </message>
     <message>
         <source>Rectangle</source>
@@ -911,10 +911,6 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Αυτόματη αποθήκευση</translation>
     </message>
     <message>
-        <source>Save image data in label file</source>
-        <translation>Αποθήκευση δεδομένων εικόνας σε αρχείο ετικέτας</translation>
-    </message>
-    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Ενσωματώνει την εικόνα στο αρχείο JSON της ετικέτας.</translation>
     </message>
@@ -981,6 +977,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Predefined labels</source>
         <translation>Προκαθορισμένες ετικέτες</translation>
+    </message>
+    <message>
+        <source>Embed image in label file</source>
+        <translation>Ενσωμάτωση εικόνας στο αρχείο ετικέτας</translation>
     </message>
     <message>
         <source>Label validation</source>
