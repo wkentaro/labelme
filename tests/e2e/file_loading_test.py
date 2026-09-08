@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Literal
 
 import pytest
+from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
@@ -155,7 +156,11 @@ def test_reopening_directory_preserves_session_when_first_image_fails(
 
 
 @pytest.mark.gui
-def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
+@pytest.mark.parametrize(
+    ("action", "expected_loaded"),
+    [("Open Anyway", True), ("Enter", False)],
+)
+def test_MainWindow_prompts_when_image_exceeds_decode_limit(
     *,
     raw_win: MainWindow,
     qtbot: QtBot,
@@ -163,6 +168,8 @@ def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
     critical_messages: list[str],
     set_allocation_limit: Callable[[int], None],
     pause: bool,
+    action: Literal["Open Anyway", "Enter"],
+    expected_loaded: bool,
 ) -> None:
     image_path = tmp_path / "too_large.png"
     image = QtGui.QImage(800, 600, QtGui.QImage.Format.Format_RGB32)
@@ -170,14 +177,50 @@ def test_MainWindow_reports_size_when_image_exceeds_decode_limit(
     assert image.save(str(image_path))
 
     set_allocation_limit(1)
+    annotation_before = raw_win._annotation
+    image_path_before = raw_win._image_path
+    prompts: list[tuple[str, list[str], str | None]] = []
 
-    raw_win._load_file(image_or_label_path=str(image_path))
+    def respond_to_prompt() -> None:
+        dialog = QtWidgets.QApplication.activeModalWidget()
+        assert isinstance(dialog, QtWidgets.QMessageBox)
+        buttons = dialog.buttons()
+        informative_text = dialog.informativeText()
+        assert "800x600" in informative_text
+        assert "2 MB" in informative_text
+        assert "1 MB" in informative_text
+        default_button = dialog.defaultButton()
+        prompts.append(
+            (
+                dialog.text(),
+                [button.text() for button in buttons],
+                default_button.text() if default_button is not None else None,
+            )
+        )
+        if action == "Enter":
+            qtbot.keyClick(dialog, Qt.Key.Key_Return)
+        else:
+            next(button for button in buttons if button.text() == action).click()
 
-    assert len(critical_messages) == 1
-    assert "800x600" in critical_messages[0]
-    assert "1 MB" in critical_messages[0]
-    assert "gdal_retile.py" in critical_messages[0]
-    assert "Allowed formats" not in critical_messages[0]
+    QtCore.QTimer.singleShot(0, respond_to_prompt)
+
+    loaded = raw_win._load_file(image_or_label_path=str(image_path))
+
+    assert loaded is expected_loaded
+    assert critical_messages == []
+    assert prompts == [
+        (
+            "Large image requires more memory",
+            ["Open Anyway", "Cancel"],
+            "Cancel",
+        )
+    ]
+    assert QtGui.QImageReader.allocationLimit() == 1
+    if expected_loaded:
+        assert raw_win._image_path == str(image_path)
+    else:
+        assert raw_win._annotation is annotation_before
+        assert raw_win._image_path == image_path_before
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 

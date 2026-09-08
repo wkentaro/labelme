@@ -624,6 +624,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>การอนุมานของ AI ล้มเหลว: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>รูปภาพขนาดใหญ่</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>รูปภาพขนาดใหญ่ต้องใช้หน่วยความจำเพิ่มขึ้น</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>รูปภาพมีขนาด {width}x{height} พิกเซลและต้องใช้หน่วยความจำอย่างน้อยประมาณ {required} MB เพื่อถอดรหัส ซึ่งเกินขีดจำกัดความปลอดภัยปัจจุบันที่ {limit} MB การเปิดรูปภาพนี้อาจทำให้ Labelme หรือแอปพลิเคชันอื่นตอบสนองช้าลงชั่วคราว</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>เปิดต่อไป</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>เกิดข้อผิดพลาดในการเปิดไฟล์</translation>
     </message>

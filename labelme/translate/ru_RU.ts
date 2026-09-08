@@ -609,6 +609,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Инференс ИИ не удался: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Большое изображение</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>Для большого изображения требуется больше памяти</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>Размер изображения — {width}x{height} пикселей, и для декодирования требуется не менее примерно {required} МБ, что превышает текущий безопасный предел в {limit} МБ. При открытии Labelme или другие приложения могут временно работать медленнее.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Всё равно открыть</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Ошибка при открытии файла</translation>
     </message>

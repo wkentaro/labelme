@@ -598,6 +598,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Η συμπερασματική επεξεργασία ΤΝ απέτυχε: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Μεγάλη εικόνα</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>Η μεγάλη εικόνα απαιτεί περισσότερη μνήμη</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>Η εικόνα είναι {width}x{height} pixel και χρειάζεται τουλάχιστον περίπου {required} MB για αποκωδικοποίηση, πάνω από το τρέχον όριο ασφαλείας των {limit} MB. Το άνοιγμά της ενδέχεται να κάνει προσωρινά το Labelme ή άλλες εφαρμογές να ανταποκρίνονται πιο αργά.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Άνοιγμα ούτως ή άλλως</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Σφάλμα κατά το άνοιγμα του αρχείου</translation>
     </message>

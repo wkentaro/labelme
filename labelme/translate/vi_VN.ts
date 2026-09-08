@@ -624,6 +624,22 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Suy luận AI thất bại: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Ảnh lớn</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>Ảnh lớn cần thêm bộ nhớ</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>Ảnh có kích thước {width}x{height} pixel và cần ít nhất khoảng {required} MB để giải mã, vượt quá giới hạn an toàn hiện tại là {limit} MB. Việc mở ảnh có thể tạm thời làm Labelme hoặc các ứng dụng khác phản hồi chậm hơn.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Vẫn mở</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Lỗi khi mở tệp</translation>
     </message>

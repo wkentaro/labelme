@@ -624,6 +624,22 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>AI-inferentie mislukt: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Grote afbeelding</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>Grote afbeelding vereist meer geheugen</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>De afbeelding is {width}x{height} pixels en heeft voor het decoderen minstens ongeveer {required} MB nodig, meer dan de huidige veiligheidslimiet van {limit} MB. Door de afbeelding te openen kunnen Labelme of andere toepassingen tijdelijk trager reageren.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Toch openen</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Fout bij openen van bestand</translation>
     </message>

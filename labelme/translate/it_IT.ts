@@ -630,6 +630,22 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
         <translation>Inferenza IA non riuscita: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Immagine grande</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>L’immagine grande richiede più memoria</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>L’immagine è di {width}x{height} pixel e richiede almeno circa {required} MB per la decodifica, oltre l’attuale limite di sicurezza di {limit} MB. L’apertura potrebbe rallentare temporaneamente Labelme o altre applicazioni.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Apri comunque</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Errore nell&apos;apertura del file</translation>
     </message>
