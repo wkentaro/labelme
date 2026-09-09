@@ -559,7 +559,6 @@ class Canvas(QtWidgets.QWidget):
 
     @property
     def can_restore_shape(self) -> bool:
-        # The latest backup mirrors the current state, so undo needs a prior one too.
         MIN_SHAPE_BACKUPS_FOR_UNDO: Final = 2
 
         return len(self.shape_backups) >= MIN_SHAPE_BACKUPS_FOR_UNDO
@@ -567,10 +566,8 @@ class Canvas(QtWidgets.QWidget):
     def restore_last_shape(self) -> None:
         if not self.can_restore_shape:
             return
+        # Label rebuilding completes [..., A, B] -> [...] -> [..., A].
         self.shape_backups.pop()  # discard current state
-
-        # Peeking would leave this entry on the stack, and the reload that
-        # follows would record it a second time, making the next undo a no-op.
         self.shapes = self.shape_backups.pop()
         self.selected_shapes.clear()
         self._drag_anchor = None
