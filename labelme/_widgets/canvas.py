@@ -1917,8 +1917,6 @@ class Canvas(QtWidgets.QWidget):
             self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
 
-    # Required by QScrollArea: it queries these to compute the
-    # scrollable viewport whenever adjustSize() is called.
     def _compute_canvas_size(self) -> QtCore.QSize:
         if self.pixmap.isNull():
             return super().minimumSizeHint()
