@@ -10,6 +10,7 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import QRect
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
+from PySide6.QtGui import QGuiApplication
 from PySide6.QtGui import QImage
 from PySide6.QtGui import QPainter
 from PySide6.QtGui import QRegion
@@ -53,6 +54,10 @@ def _pin_canvas_for_snapshot(*, qtbot: QtBot, canvas: Canvas) -> None:
 
 
 def _render_canvas_offscreen(*, canvas: Canvas) -> QImage:
+    style_hints = QGuiApplication.styleHints()
+    color_scheme = style_hints.colorScheme()
+    style_hints.setColorScheme(Qt.ColorScheme.Light)
+    QGuiApplication.processEvents()
     image = QImage(_RENDER_WIDTH, _RENDER_HEIGHT, QImage.Format.Format_ARGB32)
     image.fill(_BACKGROUND_COLOR)
     painter = QPainter(image)
@@ -67,6 +72,8 @@ def _render_canvas_offscreen(*, canvas: Canvas) -> QImage:
         )
     finally:
         painter.end()
+        style_hints.setColorScheme(color_scheme)
+        QGuiApplication.processEvents()
     return image
 
 
