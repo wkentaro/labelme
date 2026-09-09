@@ -23,12 +23,18 @@ def test_actions_follow_image_and_shapes(
         win._actions.toggle_all,
     )
     assert not win._actions.save_as.isEnabled()
+    assert not win._actions.close.isEnabled()
+    assert not win._canvas_widgets.zoom_widget.isEnabled()
+    assert not win._actions.brightness_contrast.isEnabled()
     assert all(not action.isEnabled() for action in visibility_actions)
 
     assert win._load_file(
         image_or_label_path=str(data_path / "annotated/2011_000003.jpg")
     )
     assert win._actions.save_as.isEnabled()
+    assert win._actions.close.isEnabled()
+    assert win._canvas_widgets.zoom_widget.isEnabled()
+    assert win._actions.brightness_contrast.isEnabled()
     assert all(action.isEnabled() for action in visibility_actions)
 
     assert win._load_file(image_or_label_path=str(data_path / "raw/2011_000003.jpg"))
@@ -37,6 +43,9 @@ def test_actions_follow_image_and_shapes(
 
     win.close_file()
     assert not win._actions.save_as.isEnabled()
+    assert not win._actions.close.isEnabled()
+    assert not win._canvas_widgets.zoom_widget.isEnabled()
+    assert not win._actions.brightness_contrast.isEnabled()
     assert all(not action.isEnabled() for action in visibility_actions)
 
 
@@ -108,4 +117,59 @@ def test_visibility_actions_follow_last_shape_and_restore(
     assert win._canvas_widgets.canvas.shapes[0].visible
     win._actions.toggle_all.trigger()
     assert not win._canvas_widgets.canvas.shapes[0].visible
+    win.mark_clean()
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("keep_prev", [False, True])
+@pytest.mark.parametrize("tool", ["point", "polygon"])
+def test_drawing_tool_survives_file_transitions(
+    *,
+    main_win: MainWinFactory,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    keep_prev: bool,
+    tool: str,
+) -> None:
+    win = main_win(
+        file_or_dir=data_path / "annotated/2011_000003.jpg",
+        config_overrides={"auto_save": False, "keep_prev": keep_prev},
+    )
+    canvas = win._canvas_widgets.canvas
+    selected_action = dict(win._actions.draw)[tool]
+    selected_action.trigger()
+    drawing_mode = canvas.mode
+    destination = tmp_path / "saved.json"
+    monkeypatch.setattr(
+        QFileDialog, "getSaveFileName", lambda **_kwargs: (str(destination), "")
+    )
+
+    assert win._load_file(image_or_label_path=str(data_path / "raw/2011_000003.jpg"))
+    win.mark_clean()
+    assert len(canvas.shapes) == (5 if keep_prev else 0)
+    assert canvas.create_mode == tool
+    assert canvas.mode == drawing_mode
+    assert not selected_action.isEnabled()
+    assert win._actions.edit_mode.isEnabled()
+
+    win._actions.save_as.trigger()
+    assert destination.exists()
+    assert not selected_action.isEnabled()
+    assert canvas.create_mode == tool
+    assert canvas.mode == drawing_mode
+
+    win.close_file()
+    assert not win._actions.edit_mode.isEnabled()
+    assert all(not action.isEnabled() for _, action in win._actions.draw)
+    assert win._load_file(image_or_label_path=str(destination))
+    assert not selected_action.isEnabled()
+    assert canvas.create_mode == tool
+    assert canvas.mode == drawing_mode
+    assert win._actions.edit_mode.isEnabled()
+
+    win._actions.edit_mode.trigger()
+    assert canvas.mode != drawing_mode
+    assert not win._actions.edit_mode.isEnabled()
+    assert all(action.isEnabled() for _, action in win._actions.draw)
     win.mark_clean()

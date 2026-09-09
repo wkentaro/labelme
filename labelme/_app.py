@@ -167,8 +167,7 @@ class _Actions(NamedTuple):
     open_dir: QtGui.QAction
     zoom_widget_action: QtWidgets.QWidgetAction
     draw: list[tuple[str, QtGui.QAction]]
-    zoom: tuple[ZoomWidget | QtGui.QAction, ...]
-    on_load_active: tuple[QtGui.QAction, ...]
+    image: QtGui.QActionGroup
     context_menu: tuple[QtGui.QAction, ...]
     edit_menu: tuple[QtGui.QAction, ...]
 
@@ -331,6 +330,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._highlight_ai_buttons(self._ai_buttons_highlighted)
 
     def _setup_actions(self) -> _Actions:
+        image_actions = QtGui.QActionGroup(self)
+        image_actions.setExclusive(False)
+        image_actions.setEnabled(False)
+        image_action = functools.partial(_utils.new_action, image_actions)
         action = functools.partial(_utils.new_action, self)
         separator = functools.partial(_utils.new_separator, self)
         shortcuts = self._config["shortcuts"]
@@ -366,13 +369,12 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Save labels to file"),
             enabled=False,
         )
-        save_as = action(
+        save_as = image_action(
             text=self.tr("&Save As"),
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
             icon="phosphor/floppy-disk.svg",
             tip=self.tr("Save the labels under a new file name"),
-            enabled=False,
         )
         save_auto = action(
             text=self.tr("Save &Automatically"),
@@ -408,7 +410,7 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/folder-open.svg",
             tip=self.tr("Open Dir"),
         )
-        close = action(
+        close = image_action(
             text=self.tr("&Close"),
             slot=self.close_file,
             shortcut=shortcuts["close"],
@@ -509,15 +511,14 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Insert a new point at the hovered polygon edge"),
             enabled=False,
         )
-        create_mode = action(
+        create_mode = image_action(
             text=self.tr("Polygon"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="polygon"),
             shortcut=shortcuts["create_polygon"],
             icon="phosphor/polygon.svg",
             tip=self.tr("Start drawing polygons"),
-            enabled=False,
         )
-        edit_mode = action(
+        edit_mode = image_action(
             text=self.tr("Edit Shapes"),
             slot=lambda: self._switch_canvas_mode(edit=True, create_mode=None),
             shortcut=shortcuts["edit_shape"],
@@ -525,15 +526,14 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Move and edit the selected shapes"),
             enabled=False,
         )
-        create_rectangle_mode = action(
+        create_rectangle_mode = image_action(
             text=self.tr("Rectangle"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="rectangle"),
             shortcut=shortcuts["create_rectangle"],
             icon="phosphor/rectangle.svg",
             tip=self.tr("Start drawing rectangles"),
-            enabled=False,
         )
-        create_oriented_rectangle_mode = action(
+        create_oriented_rectangle_mode = image_action(
             text=self.tr("Oriented Rectangle"),
             slot=lambda: self._switch_canvas_mode(
                 edit=False, create_mode="oriented_rectangle"
@@ -541,33 +541,29 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["create_oriented_rectangle"],
             icon="oriented_rectangle.svg",
             tip=self.tr("Start drawing oriented rectangles"),
-            enabled=False,
         )
-        create_circle_mode = action(
+        create_circle_mode = image_action(
             text=self.tr("Circle"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="circle"),
             shortcut=shortcuts["create_circle"],
             icon="phosphor/circle.svg",
             tip=self.tr("Start drawing circles"),
-            enabled=False,
         )
-        create_line_mode = action(
+        create_line_mode = image_action(
             text=self.tr("Line"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="line"),
             shortcut=shortcuts["create_line"],
             icon="phosphor/line-segment.svg",
             tip=self.tr("Start drawing lines"),
-            enabled=False,
         )
-        create_point_mode = action(
+        create_point_mode = image_action(
             text=self.tr("Point"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="point"),
             shortcut=shortcuts["create_point"],
             icon="phosphor/circles-four.svg",
             tip=self.tr("Start drawing points"),
-            enabled=False,
         )
-        create_line_strip_mode = action(
+        create_line_strip_mode = image_action(
             text=self.tr("LineStrip"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="linestrip"),
             shortcut=shortcuts["create_linestrip"],
@@ -575,9 +571,8 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr(
                 "Click to place linestrip points; Ctrl+click places the last one."
             ),
-            enabled=False,
         )
-        create_ai_points_to_shape_mode = action(
+        create_ai_points_to_shape_mode = image_action(
             text=self.tr("AI-Points"),
             slot=lambda: self._switch_canvas_mode(
                 edit=False, create_mode="ai_points_to_shape"
@@ -587,9 +582,8 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr(
                 "Click points to segment object. Ctrl+LeftClick ends creation."
             ),
-            enabled=False,
         )
-        create_ai_box_to_shape_mode = action(
+        create_ai_box_to_shape_mode = image_action(
             text=self.tr("AI-Box"),
             slot=lambda: self._switch_canvas_mode(
                 edit=False, create_mode="ai_box_to_shape"
@@ -597,7 +591,6 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=None,
             icon="ai-box.svg",
             tip=self.tr("Draw a bounding box to segment object."),
-            enabled=False,
         )
         open_next_img = action(
             text=self.tr("&Next Image"),
@@ -620,55 +613,49 @@ class MainWindow(QtWidgets.QMainWindow):
             checkable=True,
             checked=self._config["keep_prev_scale"],
         )
-        fit_window = action(
+        fit_window = image_action(
             text=self.tr("Fit to &Window"),
             slot=self.set_fit_window_mode,
             shortcut=shortcuts["fit_window"],
             icon="phosphor/frame-corners.svg",
             tip=self.tr("Keep the whole image visible when the window is resized"),
             checkable=True,
-            enabled=False,
         )
-        fit_width = action(
+        fit_width = image_action(
             text=self.tr("Fit to Wi&dth"),
             slot=self.set_fit_width_mode,
             shortcut=shortcuts["fit_width"],
             icon="frame-arrows-horizontal.svg",
             tip=self.tr("Match the image width to the window when it is resized"),
             checkable=True,
-            enabled=False,
         )
-        brightness_contrast = action(
+        brightness_contrast = image_action(
             text=self.tr("&Brightness Contrast"),
             slot=self.open_brightness_contrast_dialog,
             shortcut=None,
             icon="brightness-contrast.svg",
             tip=self.tr("Adjust brightness and contrast"),
-            enabled=False,
         )
-        zoom_in = action(
+        zoom_in = image_action(
             text=self.tr("Zoom &In"),
             slot=lambda _: self._add_zoom(increment=1.1, pos=None),
             shortcut=shortcuts["zoom_in"],
             icon="phosphor/magnifying-glass-plus.svg",
             tip=self.tr("Make the image appear larger"),
-            enabled=False,
         )
-        zoom_out = action(
+        zoom_out = image_action(
             text=self.tr("&Zoom Out"),
             slot=lambda _: self._add_zoom(increment=0.9, pos=None),
             shortcut=shortcuts["zoom_out"],
             icon="phosphor/magnifying-glass-minus.svg",
             tip=self.tr("Make the image appear smaller"),
-            enabled=False,
         )
-        zoom_org = action(
+        zoom_org = image_action(
             text=self.tr("&Actual Size"),
             slot=self._set_zoom_to_original,
             shortcut=shortcuts["zoom_to_original"],
             icon="phosphor/image-square.svg",
             tip=self.tr("Show the image at 100%"),
-            enabled=False,
         )
         reset_layout = action(
             text=self.tr("Reset Layout"),
@@ -723,7 +710,7 @@ class MainWindow(QtWidgets.QMainWindow):
         label_model.modelReset.connect(update_visibility_actions)
         update_visibility_actions()
 
-        zoom_widget_action = QtWidgets.QWidgetAction(self)
+        zoom_widget_action = QtWidgets.QWidgetAction(image_actions)
         zoom_box_layout = QtWidgets.QVBoxLayout()
         zoom_label = QtWidgets.QLabel(self.tr("Zoom"))
         zoom_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -735,7 +722,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.zoom_widget.setToolTip(
             self.tr("Ctrl+Wheel zooms the canvas")
         )
-        self._canvas_widgets.zoom_widget.setEnabled(False)
 
         self._zoom_mode = _ZoomMode.FIT_WINDOW
         fit_window.setChecked(True)
@@ -754,28 +740,6 @@ class MainWindow(QtWidgets.QMainWindow):
             ("ai_points_to_shape", create_ai_points_to_shape_mode),
             ("ai_box_to_shape", create_ai_box_to_shape_mode),
         ]
-        zoom = (
-            self._canvas_widgets.zoom_widget,
-            zoom_in,
-            zoom_out,
-            zoom_org,
-            fit_window,
-            fit_width,
-        )
-        on_load_active = (
-            close,
-            save_as,
-            create_mode,
-            create_rectangle_mode,
-            create_oriented_rectangle_mode,
-            create_circle_mode,
-            create_line_mode,
-            create_point_mode,
-            create_line_strip_mode,
-            create_ai_points_to_shape_mode,
-            create_ai_box_to_shape_mode,
-            brightness_contrast,
-        )
         # Both menus follow the platform Edit-menu convention: history first,
         # then the clipboard group, then the actions that alter a shape.
         history = (undo, undo_last_point)
@@ -853,8 +817,7 @@ class MainWindow(QtWidgets.QMainWindow):
             open_dir=open_dir,
             zoom_widget_action=zoom_widget_action,
             draw=draw,
-            zoom=zoom,
-            on_load_active=on_load_active,
+            image=image_actions,
             context_menu=context_menu,
             edit_menu=edit_menu,
         )
@@ -1362,18 +1325,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._is_changed = False
         self._actions.save.setEnabled(False)
         self.setWindowTitle(self._get_window_title(dirty=False))
-
-    def _reset_label_file_actions(self) -> None:
-        # The draw half is a reset, not a re-derivation: a label file
-        # transition returns the UI to the neutral edit-mode state, where every
-        # draw action is available. Narrowing them again is _switch_canvas_mode.
-        for _, action in self._actions.draw:
-            action.setEnabled(True)
-        self._actions.delete_file.setEnabled(self.has_label_file())
-
-    def update_action_states(self, *, value: bool = True) -> None:
-        for action in (*self._actions.zoom, *self._actions.on_load_active):
-            action.setEnabled(value)
 
     def show_status_message(self, message: str, /, *, delay: int = 500) -> None:
         self.statusBar().showMessage(message, delay)
@@ -2214,7 +2165,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.mark_dirty()
         else:
             self.mark_clean()
-            self._reset_label_file_actions()
+            self._actions.delete_file.setEnabled(self.has_label_file())
         self._canvas_widgets.canvas.setEnabled(True)
         # Zoom changes the live scroll positions, so resolve the intended
         # viewport first.
@@ -2246,7 +2197,7 @@ class MainWindow(QtWidgets.QMainWindow):
             False,  # noqa: FBT003 -- placeholder for the Qt triggered flag
             is_initial_load=True,
         )
-        self.update_action_states(value=True)
+        self._actions.image.setEnabled(True)
         # A load never pulls the keyboard out of the File List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
@@ -2436,7 +2387,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.save_labels(label_path=label_path):
             self.mark_clean()
-            self._reset_label_file_actions()
+            self._actions.delete_file.setEnabled(self.has_label_file())
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
@@ -2457,8 +2408,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._remember_current_viewport()
         self.reset_state()
         self.mark_clean()
-        self._reset_label_file_actions()
-        self.update_action_states(value=False)
+        self._actions.delete_file.setEnabled(self.has_label_file())
+        self._actions.image.setEnabled(False)
         self._canvas_widgets.canvas.setEnabled(False)
         self._canvas_widgets.surface.setCurrentWidget(self._canvas_widgets.empty_state)
         self._docks.file_list.setFocus()
@@ -2514,7 +2465,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
         self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
         self.mark_clean()
-        self._reset_label_file_actions()
+        self._actions.delete_file.setEnabled(self.has_label_file())
 
     @property
     def _is_settings_editable(self) -> bool:
