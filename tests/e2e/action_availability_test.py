@@ -173,3 +173,36 @@ def test_drawing_tool_survives_file_transitions(
     assert not win._actions.edit_mode.isEnabled()
     assert all(action.isEnabled() for _, action in win._actions.draw)
     win.mark_clean()
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("auto_save", [False, True])
+def test_delete_file_follows_carried_annotation_save_state(
+    *, main_win: MainWinFactory, data_path: Path, auto_save: bool
+) -> None:
+    win = main_win(
+        file_or_dir=data_path / "annotated/2011_000003.jpg",
+        config_overrides={"keep_prev": True, "auto_save": auto_save},
+    )
+    assert win._actions.delete_file.isEnabled()
+    labels = [shape.label for shape in win._canvas_widgets.canvas.shapes]
+    image_path = data_path / "raw/2011_000003.jpg"
+    assert win._load_file(image_or_label_path=str(image_path))
+    win.mark_clean()
+    assert [shape.label for shape in win._canvas_widgets.canvas.shapes] == labels
+    assert image_path.with_suffix(".json").exists() == auto_save
+    assert win._actions.delete_file.isEnabled() == auto_save
+
+
+@pytest.mark.gui
+def test_delete_file_enables_after_first_auto_save(
+    *, main_win: MainWinFactory, data_path: Path
+) -> None:
+    image_path = data_path / "raw/2011_000003.jpg"
+    win = main_win(file_or_dir=image_path, config_overrides={"auto_save": True})
+    assert not win._actions.delete_file.isEnabled()
+    win._insert_shapes(
+        [Shape(label="point", shape_type="point", points=np.array([[20.0, 20.0]]))]
+    )
+    assert image_path.with_suffix(".json").exists()
+    assert win._actions.delete_file.isEnabled()

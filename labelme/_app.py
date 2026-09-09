@@ -1718,6 +1718,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if items:
                 items[0].setCheckState(Qt.CheckState.Checked)
             self._last_failed_auto_save_path = None
+            self._actions.delete_file.setEnabled(True)
             return True
         except (LabelFileError, OSError, ValueError) as e:
             if show_error:
@@ -2165,7 +2166,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.mark_dirty()
         else:
             self.mark_clean()
-            self._actions.delete_file.setEnabled(self.has_label_file())
+        self._actions.delete_file.setEnabled(self.has_label_file())
         self._canvas_widgets.canvas.setEnabled(True)
         # Zoom changes the live scroll positions, so resolve the intended
         # viewport first.
@@ -2387,7 +2388,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.save_labels(label_path=label_path):
             self.mark_clean()
-            self._actions.delete_file.setEnabled(self.has_label_file())
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
