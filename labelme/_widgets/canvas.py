@@ -48,6 +48,37 @@ _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
 
 
+@dataclasses.dataclass
+class _DragAnchor:
+    rel_tl: QPointF
+    bounds: QRectF
+    origin: QPointF
+    last_cursor: QPointF
+    sources: dict[Shape, np.ndarray]
+    limits: tuple[QtCore.QSize, bool]
+    requested_cursor: tuple[float, float] | None = None
+
+    def is_current(self, *, shapes: list[Shape], cursor: QPointF) -> bool:
+        if self.sources.keys() != set(shapes):
+            return False
+        if (cursor.x(), cursor.y()) != (self.last_cursor.x(), self.last_cursor.y()):
+            return False
+        offset = self.last_cursor - self.origin
+        # Bounds alone miss interior vertex edits and replacement geometry.
+        return all(
+            np.array_equal(shape.points, source + (offset.x(), offset.y()))
+            for shape, source in self.sources.items()
+        )
+
+    def place(self, *, cursor: QPointF) -> None:
+        offset = cursor - self.origin
+        for shape, source in self.sources.items():
+            points = source + (offset.x(), offset.y())
+            if not np.array_equal(shape.points, points):
+                shape.points = points
+        self.last_cursor = QPointF(cursor)
+
+
 @dataclasses.dataclass(frozen=True)
 class _DraftShape:
     """In-progress shape held in QPointF while drawing, before it is committed
@@ -188,7 +219,7 @@ class Canvas(QtWidgets.QWidget):
 
     _prev_point: QPointF
     _prev_move_point: QPointF
-    _drag_anchor: tuple[QPointF, QRectF]
+    _drag_anchor: _DragAnchor | None
     _rotation_center: np.ndarray
     _rotation_initial_angle: float
     _rotation_original_points: np.ndarray
@@ -250,7 +281,6 @@ class Canvas(QtWidgets.QWidget):
         self._line = _DraftShape()
         self._prev_point = QPointF()
         self._prev_move_point = QPointF()
-        self._drag_anchor = (QPointF(), QRectF())
         self._rotation_center = np.zeros(2)
         self._rotation_initial_angle = 0.0
         self._rotation_original_points = np.empty((0, 2))
@@ -543,6 +573,7 @@ class Canvas(QtWidgets.QWidget):
         # follows would record it a second time, making the next undo a no-op.
         self.shapes = self.shape_backups.pop()
         self.selected_shapes.clear()
+        self._drag_anchor = None
         self.update()
 
     def enterEvent(self, _a0: QtCore.QEvent, /) -> None:
@@ -560,6 +591,7 @@ class Canvas(QtWidgets.QWidget):
         self._update_status(extra_messages=None)
 
     def focusOutEvent(self, _a0: QtGui.QFocusEvent, /) -> None:
+        self._drag_anchor = None
         self._release_cursor()
         self._update_status(extra_messages=None)
 
@@ -1242,6 +1274,7 @@ class Canvas(QtWidgets.QWidget):
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent, /) -> None:
         self._dispatch_pointer_release(event=a0)
         self._commit_pending_shape_move()
+        self._drag_anchor = None
         self._update_status(extra_messages=None)
 
     def _dispatch_pointer_release(self, *, event: QtGui.QMouseEvent) -> None:
@@ -1339,6 +1372,7 @@ class Canvas(QtWidgets.QWidget):
         else:
             self._apply_in_place_move()
         self._selected_shapes_copy.clear()
+        self._drag_anchor = None
         self.update()
         self.backup_shapes()
         return True
@@ -1426,10 +1460,20 @@ class Canvas(QtWidgets.QWidget):
 
     def _record_drag_anchor(self, *, shapes: list[Shape], click: QPointF) -> None:
         if not shapes:
-            self._drag_anchor = (QPointF(), QRectF())
+            self._drag_anchor = None
             return
         bounds = _compute_shapes_bounds(shapes=shapes)
-        self._drag_anchor = (bounds.topLeft() - click, bounds)
+        sources = {shape: shape.points.copy() for shape in shapes}
+        for source in sources.values():
+            source.setflags(write=False)
+        self._drag_anchor = _DragAnchor(
+            rel_tl=bounds.topLeft() - click,
+            bounds=bounds,
+            origin=QPointF(click),
+            last_cursor=QPointF(click),
+            sources=sources,
+            limits=(self.pixmap.size(), self._allow_out_of_bounds_points),
+        )
 
     def _bounded_move_vertex(
         self,
@@ -1489,14 +1533,19 @@ class Canvas(QtWidgets.QWidget):
             return
 
         current_bounds = _compute_shapes_bounds(shapes=shapes)
-        rel_tl, bounds = self._drag_anchor
-        expected_top_left = self._prev_point + rel_tl
         if (
-            bounds.size() != current_bounds.size()
-            or expected_top_left != current_bounds.topLeft()
+            self._drag_anchor is None
+            or self._drag_anchor.limits
+            != (self.pixmap.size(), self._allow_out_of_bounds_points)
+            or not self._drag_anchor.is_current(shapes=shapes, cursor=self._prev_point)
         ):
             self._record_drag_anchor(shapes=shapes, click=self._prev_point)
-            rel_tl, bounds = self._drag_anchor
+        anchor = self._drag_anchor
+        assert anchor is not None
+        # Re-clamping an identical request can introduce a rounding-only move.
+        if anchor.requested_cursor == (cursor.x(), cursor.y()):
+            return
+        rel_tl, bounds = anchor.rel_tl, anchor.bounds
 
         target = cursor + rel_tl
         if not self._allow_out_of_bounds_points:
@@ -1509,14 +1558,9 @@ class Canvas(QtWidgets.QWidget):
             target.setX(min(max(target.x(), min_x), max_x))
             target.setY(min(max(target.y(), min_y), max_y))
 
-        new_cursor = target - rel_tl
-        delta = new_cursor - self._prev_point
-        if delta.isNull():
-            return
-
-        for shape in shapes:
-            shape.translate(offset=(delta.x(), delta.y()))
-        self._prev_point = new_cursor
+        self._prev_point = target - rel_tl
+        anchor.place(cursor=self._prev_point)
+        anchor.requested_cursor = (cursor.x(), cursor.y())
 
     def deselect_shape(self) -> bool:
         if not self.selected_shapes:
@@ -1983,6 +2027,7 @@ class Canvas(QtWidgets.QWidget):
                     self.shape_moved.emit()
 
                 self._is_moving_shape = False
+                self._drag_anchor = None
 
     def set_last_label(self, *, text: str, flags: dict[str, bool]) -> list[Shape]:
         if not text:
@@ -2056,6 +2101,7 @@ class Canvas(QtWidgets.QWidget):
             self._cancel_current_shape()
 
     def _reset_interaction_state(self) -> None:
+        self._drag_anchor = None
         self._current = None
         self.hovered_shape = None
         self._hovered_vertex = None
@@ -2067,6 +2113,7 @@ class Canvas(QtWidgets.QWidget):
     def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
         pixmap_arr = _utils.img_qt_to_arr(pixmap.toImage())
         self.pixmap = pixmap
+        self._drag_anchor = None
         self._pixmap_hash = hash(pixmap_arr.tobytes())
         # A new image is a fresh inference context that should surface its own
         # first failure rather than staying muted by the prior image's latch.
@@ -2112,6 +2159,7 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self.pixmap = QtGui.QPixmap()
         self._pixmap_hash = None
+        self._drag_anchor = None
         self.shapes = []
         self.shape_backups = collections.deque(maxlen=self._num_backups)
         self._is_moving_shape = False

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import math
+import weakref
 from collections.abc import Callable
 from typing import Final
 from unittest.mock import Mock
@@ -307,7 +308,7 @@ def test_drag_shapes_blocked_off_image_by_default(*, canvas: Canvas) -> None:
         closed=True,
     )
     canvas._prev_point = QPointF(50, 25)
-    canvas._drag_anchor = (QPointF(0, 0), QtCore.QRectF(40, 20, 20, 10))
+    canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
 
     canvas._drag_shapes(shapes=[shape], cursor=QPointF(150, 80), constrain_cursor=True)
 
@@ -325,13 +326,121 @@ def test_drag_shapes_keeps_out_of_bounds_when_enabled(*, canvas: Canvas) -> None
         closed=True,
     )
     canvas._prev_point = QPointF(50, 25)
-    canvas._drag_anchor = (QPointF(0, 0), QtCore.QRectF(40, 20, 20, 10))
+    canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
 
     canvas._drag_shapes(shapes=[shape], cursor=QPointF(150, 80), constrain_cursor=True)
 
     assert canvas._prev_point == QPointF(150, 80)
     assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((140, 75))
     assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((160, 85))
+
+
+@pytest.mark.gui
+def test_drag_shapes_preserves_fractional_noop_and_round_trip(
+    *, canvas: Canvas
+) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array(
+            [
+                (8.44414798007001, 2.8813233909973786),
+                (12.795045643540696, 7.5153405275769956),
+            ]
+        ),
+    )
+    original = shape.points.copy()
+    click = QPointF(10.619596811805353, 5.198331959287187)
+    canvas._prev_point = QPointF(click)
+    canvas._record_drag_anchor(shapes=[shape], click=click)
+    cursor = QPointF(48.87823985103782, 6.985739658056511)
+
+    canvas._drag_shapes(shapes=[shape], cursor=cursor, constrain_cursor=True)
+    placed = shape.points
+    previous_cursor = QPointF(canvas._prev_point)
+    canvas._drag_shapes(shapes=[shape], cursor=cursor, constrain_cursor=True)
+
+    assert shape.points is placed
+    assert canvas._prev_point == previous_cursor
+    canvas._drag_shapes(shapes=[shape], cursor=click, constrain_cursor=True)
+    np.testing.assert_array_equal(shape.points, original)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("change", ["policy", "image_size"])
+def test_drag_shapes_retries_clamped_request_after_limits_change(
+    *, canvas: Canvas, change: str
+) -> None:
+    shape = Shape(shape_type="rectangle", points=np.array([(20, 20), (40, 40)]))
+    canvas._prev_point = QPointF(30, 30)
+    canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
+    canvas._drag_shapes(shapes=[shape], cursor=QPointF(200, 30), constrain_cursor=False)
+    np.testing.assert_array_equal(shape.points, [(80, 20), (100, 40)])
+
+    if change == "policy":
+        canvas.set_allow_out_of_bounds_points(value=True)
+    else:
+        canvas.pixmap = QtGui.QPixmap(300, 50)
+    canvas._drag_shapes(shapes=[shape], cursor=QPointF(200, 30), constrain_cursor=False)
+
+    np.testing.assert_array_equal(shape.points, [(190, 20), (210, 40)])
+
+
+@pytest.mark.gui
+def test_drag_shapes_rebases_after_edit_preview_and_cursor_reset(
+    *, canvas: Canvas
+) -> None:
+    shape = Shape(points=np.array([(20, 20), (40, 20), (30, 30), (20, 40)]))
+    canvas._prev_point = QPointF(30, 30)
+    canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
+    canvas._drag_shapes(shapes=[shape], cursor=QPointF(40, 30), constrain_cursor=True)
+
+    shape.move_vertex(i=2, pos=(46, 36))
+    edited = shape.points
+    canvas._drag_shapes(shapes=[shape], cursor=QPointF(40, 30), constrain_cursor=True)
+    assert shape.points is edited
+    preview = shape.copy()
+    canvas._drag_shapes(shapes=[preview], cursor=QPointF(45, 30), constrain_cursor=True)
+    np.testing.assert_array_equal(
+        shape.points, [(30, 20), (50, 20), (46, 36), (30, 40)]
+    )
+    np.testing.assert_array_equal(
+        preview.points, [(35, 20), (55, 20), (51, 36), (35, 40)]
+    )
+    canvas.selected_shapes = [preview]
+    canvas._prev_point = QPointF(60, 60)
+
+    canvas._move_by_keyboard(offset=QPointF(0, 5))
+
+    np.testing.assert_array_equal(
+        preview.points, [(35, 25), (55, 25), (51, 41), (35, 45)]
+    )
+    assert canvas._prev_point == QPointF(60, 65)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "reset", ["image", "shapes", "empty_capture", "canvas", "focus"]
+)
+def test_drag_anchor_releases_captured_shapes_on_reset(
+    *, canvas: Canvas, reset: str
+) -> None:
+    shape = Shape(shape_type="rectangle", points=np.array([(20, 20), (40, 40)]))
+    reference = weakref.ref(shape)
+    canvas._record_drag_anchor(shapes=[shape], click=QPointF(30, 30))
+    del shape
+
+    if reset == "image":
+        canvas.load_pixmap(pixmap=QtGui.QPixmap(100, 50), clear_shapes=False)
+    elif reset == "shapes":
+        canvas.load_shapes(shapes=[])
+    elif reset == "empty_capture":
+        canvas._record_drag_anchor(shapes=[], click=QPointF())
+    elif reset == "focus":
+        canvas.focusOutEvent(QtGui.QFocusEvent(QtCore.QEvent.Type.FocusOut))
+    else:
+        canvas.reset_state()
+
+    assert reference() is None
 
 
 @pytest.mark.gui
