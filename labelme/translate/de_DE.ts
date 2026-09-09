@@ -606,6 +606,10 @@ Formen</translation>
         <translation>%s gestartet.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Ungültiger regulärer Ausdruck. Die vorherige Suche bleibt aktiv.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskenausgabe nicht verfügbar</translation>
     </message>

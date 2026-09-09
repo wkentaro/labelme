@@ -592,6 +592,10 @@ Shapes</source>
         <translation>%s gestart.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Ongeldige reguliere expressie. De vorige zoekopdracht blijft actief.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskeruitvoer niet beschikbaar</translation>
     </message>

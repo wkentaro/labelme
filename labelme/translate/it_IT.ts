@@ -598,6 +598,10 @@ forme</translation>
         <translation>%s avviato.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Espressione regolare non valida. Viene mantenuta la ricerca precedente.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Output maschera non disponibile</translation>
     </message>

@@ -592,6 +592,10 @@ Shapes</source>
         <translation>%s uruchomiono.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Nieprawidłowe wyrażenie regularne. Zachowano poprzednie wyszukiwanie.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Wyjście maski niedostępne</translation>
     </message>

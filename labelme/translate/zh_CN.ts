@@ -598,6 +598,10 @@ Shapes</source>
         <translation>%s 已启动。</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>正则表达式无效。保留上一次搜索条件。</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>掩膜输出不可用</translation>
     </message>

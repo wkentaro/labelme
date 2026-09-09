@@ -123,3 +123,47 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     assert questions == []
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_invalid_search_keeps_last_valid_filter_on_current_directory(
+    *, main_win: MainWinFactory, data_path: Path
+) -> None:
+    win = main_win(file_or_dir=data_path / "raw")
+    search = win._docks.file_search
+    search.setText(r"2011_000006\.jpg$")
+    matching_paths = win.image_list[:]
+    active_path = win._image_path
+    assert len(matching_paths) == 1
+
+    search.setText("[")
+    assert win.image_list == matching_paths
+    assert win._image_path == active_path
+    assert not win._docks.file_search_error.isHidden()
+
+    win._load_from_file_or_dir(file_or_dir=str(data_path / "annotated"))
+    assert win.image_list == [str(data_path / "annotated/2011_000006.jpg")]
+    assert not win._docks.file_search_error.isHidden()
+
+    search.setText("does-not-match")
+    assert win.image_list == []
+    assert win._docks.file_search_error.isHidden()
+    search.setText("(")
+    assert win.image_list == []
+    assert not win._docks.file_search_error.isHidden()
+    search.clear()
+    assert len(win.image_list) == 3
+    assert win._docks.file_search_error.isHidden()
+
+
+@pytest.mark.gui
+def test_invalid_startup_search_leaves_images_available(
+    *, main_win: MainWinFactory, data_path: Path
+) -> None:
+    win = main_win(file_or_dir=data_path / "raw", config_overrides={"file_search": "["})
+    assert len(win.image_list) == 3
+    assert win._image_path is not None
+    assert not win._docks.file_search_error.isHidden()
+    win._docks.file_search.setText(r"2011_000006\.jpg$")
+    assert len(win.image_list) == 1
+    assert win._docks.file_search_error.isHidden()

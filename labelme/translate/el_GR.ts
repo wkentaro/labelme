@@ -538,6 +538,10 @@ Shapes</source>
         <translation>Αναζήτηση ονόματος αρχείου</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Μη έγκυρη κανονική έκφραση. Διατηρείται η προηγούμενη αναζήτηση.</translation>
+    </message>
+    <message>
         <source>File List</source>
         <translation>Λίστα αρχείων</translation>
     </message>

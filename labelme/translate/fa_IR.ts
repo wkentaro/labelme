@@ -592,6 +592,10 @@ Shapes</source>
         <translation>%s راه‌اندازی شد.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>عبارت منظم نامعتبر است. جستجوی قبلی حفظ می‌شود.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>خروجی ماسک در دسترس نیست</translation>
     </message>

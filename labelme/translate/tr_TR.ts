@@ -598,6 +598,10 @@ Shapes</source>
         <translation>%s başlatıldı.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Geçersiz düzenli ifade. Önceki arama korunuyor.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maske çıktısı kullanılamıyor</translation>
     </message>

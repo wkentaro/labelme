@@ -592,6 +592,10 @@ Shapes</source>
         <translation>%s เริ่มทำงานแล้ว</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>นิพจน์ทั่วไปไม่ถูกต้อง ใช้การค้นหาก่อนหน้า</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>ไม่สามารถสร้างเอาต์พุตมาสก์ได้</translation>
     </message>
