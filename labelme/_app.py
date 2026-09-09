@@ -169,7 +169,6 @@ class _Actions(NamedTuple):
     draw: list[tuple[str, QtGui.QAction]]
     zoom: tuple[ZoomWidget | QtGui.QAction, ...]
     on_load_active: tuple[QtGui.QAction, ...]
-    on_shapes_present: tuple[QtGui.QAction, ...]
     context_menu: tuple[QtGui.QAction, ...]
     edit_menu: tuple[QtGui.QAction, ...]
 
@@ -693,7 +692,6 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["hide_all_shapes"],
             icon="phosphor/eye.svg",
             tip=self.tr("Hide all shapes"),
-            enabled=False,
         )
         show_all = action(
             text=self.tr("&Show\nShapes"),
@@ -701,7 +699,6 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["show_all_shapes"],
             icon="phosphor/eye.svg",
             tip=self.tr("Show all shapes"),
-            enabled=False,
         )
         toggle_all = action(
             text=self.tr("&Toggle\nShapes"),
@@ -709,8 +706,22 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["toggle_all_shapes"],
             icon="phosphor/eye.svg",
             tip=self.tr("Toggle all shapes"),
-            enabled=False,
         )
+
+        visibility_actions = QtGui.QActionGroup(self)
+        visibility_actions.setExclusive(False)
+        visibility_actions.addAction(hide_all)
+        visibility_actions.addAction(show_all)
+        visibility_actions.addAction(toggle_all)
+
+        def update_visibility_actions() -> None:
+            visibility_actions.setEnabled(not self.has_no_shapes())
+
+        label_model = self._docks.label_list.model()
+        label_model.rowsInserted.connect(update_visibility_actions)
+        label_model.rowsRemoved.connect(update_visibility_actions)
+        label_model.modelReset.connect(update_visibility_actions)
+        update_visibility_actions()
 
         zoom_widget_action = QtWidgets.QWidgetAction(self)
         zoom_box_layout = QtWidgets.QVBoxLayout()
@@ -753,6 +764,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         on_load_active = (
             close,
+            save_as,
             create_mode,
             create_rectangle_mode,
             create_oriented_rectangle_mode,
@@ -764,7 +776,6 @@ class MainWindow(QtWidgets.QMainWindow):
             create_ai_box_to_shape_mode,
             brightness_contrast,
         )
-        on_shapes_present = (save_as, hide_all, show_all, toggle_all)
         # Both menus follow the platform Edit-menu convention: history first,
         # then the clipboard group, then the actions that alter a shape.
         history = (undo, undo_last_point)
@@ -844,7 +855,6 @@ class MainWindow(QtWidgets.QMainWindow):
             draw=draw,
             zoom=zoom,
             on_load_active=on_load_active,
-            on_shapes_present=on_shapes_present,
             context_menu=context_menu,
             edit_menu=edit_menu,
         )
@@ -1652,8 +1662,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 ),
             )
         self._label_dialog.add_label_history(label=shape.label)
-        for action in self._actions.on_shapes_present:
-            action.setEnabled(True)
 
         fill_rgb = self._get_rgb_by_label(
             label=shape.label,
@@ -2454,7 +2462,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.setEnabled(False)
         self._canvas_widgets.surface.setCurrentWidget(self._canvas_widgets.empty_state)
         self._docks.file_list.setFocus()
-        self._actions.save_as.setEnabled(False)
 
     def current_label_file_path(self) -> str:
         assert self._image_path is not None
@@ -2843,9 +2850,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape=self._canvas_widgets.canvas.hovered_shape
             )
             self.remove_labels(shapes=[self._canvas_widgets.canvas.hovered_shape])
-            if self.has_no_shapes():
-                for action in self._actions.on_shapes_present:
-                    action.setEnabled(False)
         self.mark_dirty()
 
     def delete_selected_shapes(self) -> None:
@@ -2856,9 +2860,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self.remove_labels(shapes=self._canvas_widgets.canvas.delete_selected())
         self.mark_dirty()
-        if self.has_no_shapes():
-            for action in self._actions.on_shapes_present:
-                action.setEnabled(False)
 
     def copy_shape(self) -> None:
         canvas = self._canvas_widgets.canvas
