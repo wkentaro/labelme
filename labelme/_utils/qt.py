@@ -124,7 +124,7 @@ def new_icon(name: str, /) -> QtGui.QIcon:
 
 
 def new_action(
-    parent: QtWidgets.QWidget,
+    parent: QtCore.QObject,
     /,
     *,
     text: str = "",
