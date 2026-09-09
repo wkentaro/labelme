@@ -592,6 +592,10 @@ Shapes</source>
         <translation>%s가 시작되었습니다.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>잘못된 정규 표현식입니다. 이전 검색 조건을 유지합니다.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>마스크 출력을 사용할 수 없음</translation>
     </message>

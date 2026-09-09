@@ -567,6 +567,10 @@
         <translation>%s dimulai.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Ekspresi reguler tidak valid. Pencarian sebelumnya tetap digunakan.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Keluaran mask tidak tersedia</translation>
     </message>

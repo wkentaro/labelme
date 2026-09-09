@@ -592,6 +592,10 @@ Shapes</source>
         <translation>%s đã khởi động.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Biểu thức chính quy không hợp lệ. Giữ nguyên tìm kiếm trước đó.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Không có đầu ra mặt nạ</translation>
     </message>

@@ -577,6 +577,10 @@ Shapes</source>
         <translation>%s запущен.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Недопустимое регулярное выражение. Сохранён предыдущий поиск.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Вывод маски недоступен</translation>
     </message>

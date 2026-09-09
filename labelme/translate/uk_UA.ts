@@ -539,6 +539,10 @@ Shapes</source>
         <translation>Пошук імені файлу</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Некоректний регулярний вираз. Збережено попередній пошук.</translation>
+    </message>
+    <message>
         <source>File List</source>
         <translation>Список файлів</translation>
     </message>

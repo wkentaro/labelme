@@ -606,6 +606,10 @@ Shapes</source>
         <translation>%s を起動しました</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>正規表現が無効です。前の検索条件を維持します。</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>マスク出力は利用できません</translation>
     </message>

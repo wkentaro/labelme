@@ -116,6 +116,7 @@ class _DockWidgets(NamedTuple):
     unique_label_list: UniqueLabelQListWidget
     file_dock: QtWidgets.QDockWidget
     file_search: QtWidgets.QLineEdit
+    file_search_error: QtWidgets.QLabel
     file_list: QtWidgets.QListWidget
 
 
@@ -211,6 +212,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _image_path: str | None
     _file_list_image_path: str | None
     _loaded_image_paths: list[str]
+    _file_search_pattern: re.Pattern[str]
     _prev_image_path: str | None
     _viewport_states: dict[str, _ViewportState]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
@@ -1007,6 +1009,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image_path = None
         self._file_list_image_path = None
         self._loaded_image_paths = []
+        self._file_search_pattern = re.compile("")
         self._prev_image_path = None
         self._viewport_states = {}
         self._brightness_contrast_values = {}
@@ -1187,12 +1190,18 @@ class MainWindow(QtWidgets.QMainWindow):
         file_search = QtWidgets.QLineEdit()
         file_search.setPlaceholderText(self.tr("Search Filename"))
         file_search.textChanged.connect(self._on_file_search_changed)
+        file_search_error = QtWidgets.QLabel(
+            self.tr("Invalid regular expression. Previous search kept.")
+        )
+        file_search_error.setWordWrap(True)
+        file_search_error.hide()
         file_list = QtWidgets.QListWidget()
         file_list.currentItemChanged.connect(self._load_selected_image)
         file_list_layout = QtWidgets.QVBoxLayout()
         file_list_layout.setContentsMargins(0, 0, 0, 0)
         file_list_layout.setSpacing(0)
         file_list_layout.addWidget(file_search)
+        file_list_layout.addWidget(file_search_error)
         file_list_layout.addWidget(file_list)
         file = QtWidgets.QDockWidget(self.tr("File List"), self)
         file.setObjectName("Files")
@@ -1235,6 +1244,7 @@ class MainWindow(QtWidgets.QMainWindow):
             unique_label_list=unique_label_list,
             file_dock=file,
             file_search=file_search,
+            file_search_error=file_search_error,
             file_list=file_list,
         )
 
@@ -1564,6 +1574,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
 
     def _on_file_search_changed(self) -> None:
+        try:
+            self._file_search_pattern = re.compile(self._docks.file_search.text())
+        except re.error:
+            self._docks.file_search_error.show()
+            return
+        self._docks.file_search_error.hide()
         self._refresh_file_list()
 
     def _load_selected_image(
@@ -2935,13 +2951,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._refresh_file_list()
 
     def _refresh_file_list(self) -> None:
-        image_paths = self._loaded_image_paths
-        pattern = self._docks.file_search.text()
-        if pattern:
-            try:
-                image_paths = [x for x in image_paths if re.search(pattern, x)]
-            except re.error:
-                pass
+        image_paths = [
+            path
+            for path in self._loaded_image_paths
+            if self._file_search_pattern.search(path)
+        ]
 
         file_list = self._docks.file_list
         with QtCore.QSignalBlocker(file_list):

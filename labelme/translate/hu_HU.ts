@@ -606,6 +606,10 @@ Shapes</source>
         <translation>%s elindítva.</translation>
     </message>
     <message>
+        <source>Invalid regular expression. Previous search kept.</source>
+        <translation>Érvénytelen reguláris kifejezés. Az előző keresés marad érvényben.</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>A maszk kimenet nem érhető el</translation>
     </message>
