@@ -721,7 +721,7 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     </message>
     <message>
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Wystąpiły błędy podczas wczytywania konfiguracji. Sprawdź listę poniżej i przeładuj konfigurację lub zignoruj błędne wiersze.</translation>
+        <translation>Podczas wczytywania konfiguracji wykryto błędy. Sprawdź błędy poniżej, a następnie wczytaj konfigurację ponownie lub zignoruj błędne wiersze.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

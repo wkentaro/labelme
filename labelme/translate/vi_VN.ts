@@ -721,7 +721,7 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     </message>
     <message>
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Đã tìm thấy lỗi khi tải cấu hình. Vui lòng xem lại các lỗi bên dưới và tải lại cấu hình hoặc bỏ qua các dòng bị lỗi.</translation>
+        <translation>Đã phát hiện lỗi khi tải cấu hình. Vui lòng xem các lỗi bên dưới rồi tải lại cấu hình hoặc bỏ qua những dòng có lỗi.</translation>
     </message>
     <message>
         <source>Reset Layout</source>
