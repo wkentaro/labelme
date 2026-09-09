@@ -136,8 +136,14 @@ def test_empty_state_is_legible_in_every_theme(
         assert empty_state.isVisible()
         assert (
             _calculate_contrast_ratio(
-                foreground=palette.color(QtGui.QPalette.ColorRole.WindowText),
-                background=palette.color(QtGui.QPalette.ColorRole.Base),
+                foreground=palette.color(
+                    QtGui.QPalette.ColorGroup.Active,
+                    QtGui.QPalette.ColorRole.WindowText,
+                ),
+                background=palette.color(
+                    QtGui.QPalette.ColorGroup.Active,
+                    QtGui.QPalette.ColorRole.Base,
+                ),
             )
             >= 4.5
         )

@@ -10,9 +10,9 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import QRect
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
-from PySide6.QtGui import QGuiApplication
 from PySide6.QtGui import QImage
 from PySide6.QtGui import QPainter
+from PySide6.QtGui import QPalette
 from PySide6.QtGui import QRegion
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
@@ -34,7 +34,7 @@ pytestmark = pytest.mark.pixel_snapshot
 # which the main_win fixture invokes for every test.
 _RENDER_WIDTH: Final[int] = 600
 _RENDER_HEIGHT: Final[int] = 450
-_BACKGROUND_COLOR: Final[QColor] = QColor(232, 232, 232)
+_BACKGROUND_COLOR: Final[QColor] = QColor(239, 239, 239)
 _PAINT_SETTLE_MS: Final[int] = 100
 
 _TRIANGLE_FRACTIONS: Final[tuple[tuple[float, float], ...]] = (
@@ -54,10 +54,10 @@ def _pin_canvas_for_snapshot(*, qtbot: QtBot, canvas: Canvas) -> None:
 
 
 def _render_canvas_offscreen(*, canvas: Canvas) -> QImage:
-    style_hints = QGuiApplication.styleHints()
-    color_scheme = style_hints.colorScheme()
-    style_hints.setColorScheme(Qt.ColorScheme.Light)
-    QGuiApplication.processEvents()
+    original_palette = canvas.palette()
+    palette = QPalette(original_palette)
+    palette.setColor(QPalette.ColorRole.Window, _BACKGROUND_COLOR)
+    canvas.setPalette(palette)
     image = QImage(_RENDER_WIDTH, _RENDER_HEIGHT, QImage.Format.Format_ARGB32)
     image.fill(_BACKGROUND_COLOR)
     painter = QPainter(image)
@@ -72,8 +72,7 @@ def _render_canvas_offscreen(*, canvas: Canvas) -> QImage:
         )
     finally:
         painter.end()
-        style_hints.setColorScheme(color_scheme)
-        QGuiApplication.processEvents()
+        canvas.setPalette(original_palette)
     return image
 
 
