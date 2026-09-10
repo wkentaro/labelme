@@ -173,10 +173,6 @@
         <translation>ALT + нажатие — создать точку на фигуре</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Правый клик и перетаскивание — копировать фигуру</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Выберите другой угол. Удерживайте Shift, чтобы нарисовать квадрат.</translation>
     </message>

@@ -173,10 +173,6 @@
         <translation>按住 ALT 并单击以在形状上添加顶点</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>按住鼠标右键拖动以复制形状</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>选择另一个角。按住Shift可绘制正方形。</translation>
     </message>

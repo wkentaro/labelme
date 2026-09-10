@@ -173,10 +173,6 @@
         <translation>Kattintson és húzza az alakzat mozgatásához</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Jobb gombbal kattintás és húzás az alakzat másolásához</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Válassza ki a másik sarkot. Négyzethez tartsa lenyomva a Shift billentyűt.</translation>
     </message>

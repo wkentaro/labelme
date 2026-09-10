@@ -173,10 +173,6 @@
         <translation>Klicken und ziehen zum Verschieben der Form</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Rechtsklick und Ziehen, um die Form zu kopieren</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Wähle die andere Ecke. Halte Shift für ein Quadrat gedrückt.</translation>
     </message>

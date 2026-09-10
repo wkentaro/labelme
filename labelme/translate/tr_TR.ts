@@ -173,10 +173,6 @@
         <translation>Şekil üzerinde nokta oluşturmak için ALT + Click</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Şekli kopyalamak için sağ tıklayın &amp; sürükleyin</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Diğer köşeyi seçin. Kare çizmek için Shift tuşunu basılı tutun.</translation>
     </message>

@@ -177,10 +177,6 @@
         <translation>ALT + คลิกเพื่อสร้างจุดบนรูปร่าง</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>คลิกขวาและลากเพื่อคัดลอกรูปร่าง</translation>
-    </message>
-    <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>คลิกจุดเพื่อรวม หรือ Shift+Click เพื่อยกเว้น Ctrl+LeftClick เพื่อจบการสร้าง</translation>
     </message>

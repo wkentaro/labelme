@@ -173,10 +173,6 @@
         <translation>ALT + クリックで図形上に頂点を作成</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>右クリック &amp; ドラッグで図形をコピー</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>もう一方の角を指定してください。Shiftを押しながら操作すると正方形になります。</translation>
     </message>

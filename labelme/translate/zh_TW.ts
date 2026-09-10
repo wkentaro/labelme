@@ -173,10 +173,6 @@
         <translation>ALT + 點擊在形狀上創建點</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>右鍵點擊並拖拽以複製形狀</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>選擇另一個角。按住Shift可繪製正方形。</translation>
     </message>

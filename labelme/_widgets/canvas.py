@@ -1008,12 +1008,7 @@ class Canvas(QtWidgets.QWidget):
                 hovered_vertex=None,
                 hovered_rotation=None,
             )
-            status_messages.extend(
-                [
-                    self.tr("Click & drag to move shape"),
-                    self.tr("Right-click & drag to copy shape"),
-                ]
-            )
+            status_messages.append(self.tr("Click & drag to move shape"))
             self._apply_cursor(CursorRole.GRAB)
             return
 

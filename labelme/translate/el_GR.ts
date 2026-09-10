@@ -177,10 +177,6 @@
         <translation>Κάντε κλικ και σύρετε για να μετακινήσετε το σχήμα</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Δεξί κλικ &amp; σύρσιμο για αντιγραφή σχήματος</translation>
-    </message>
-    <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή Shift+Click για εξαίρεση. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
     </message>
