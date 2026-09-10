@@ -1362,26 +1362,18 @@ class Canvas(QtWidgets.QWidget):
         self._is_moving_shape = False
 
     def end_move(self, *, copy: bool) -> bool:
-        assert self.selected_shapes and self._selected_shapes_copy
-        assert len(self._selected_shapes_copy) == len(self.selected_shapes)
+        assert len(self.selected_shapes) == len(self._selected_shapes_copy) > 0
         if copy:
-            self._apply_copy_move()
+            self.shapes.extend(self._selected_shapes_copy)
+            self.selected_shapes[:] = self._selected_shapes_copy
         else:
-            self._apply_in_place_move()
+            for shape, preview in zip(self.selected_shapes, self._selected_shapes_copy):
+                shape.points = preview.points.copy()
         self._selected_shapes_copy.clear()
         self._drag_anchor = None
-        self.update()
         self.backup_shapes()
+        self.update()
         return True
-
-    def _apply_copy_move(self) -> None:
-        for i, clone in enumerate(self._selected_shapes_copy):
-            self.shapes.append(clone)
-            self.selected_shapes[i] = clone
-
-    def _apply_in_place_move(self) -> None:
-        for original, clone in zip(self.selected_shapes, self._selected_shapes_copy):
-            original.points = clone.points.copy()
 
     def _can_close_shape(self) -> bool:
         if self.mode != _CanvasMode.CREATE:
