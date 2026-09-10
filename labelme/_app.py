@@ -1538,7 +1538,6 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return
 
-        self._canvas_widgets.canvas.backup_shapes()
         for item in items:
             shape = item.shape()
             assert shape is not None
@@ -1564,6 +1563,11 @@ class MainWindow(QtWidgets.QMainWindow):
                         unique_label_list=self._docks.unique_label_list,
                     ),
                 )
+        # The undo history holds one snapshot per state, the last one being
+        # the current state. Snapshot after the edit like every other edit
+        # path does; a pre-edit snapshot here would make the next undo revert
+        # this edit together with whatever change came after it.
+        self._canvas_widgets.canvas.backup_shapes()
 
     def _on_file_search_changed(self) -> None:
         try:
