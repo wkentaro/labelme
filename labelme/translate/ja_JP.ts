@@ -262,10 +262,6 @@
         <translation>図形一覧</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>ラベルを選択してアノテーションを開始。&apos;Esc&apos; で選択解除。</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>ラベル一覧</translation>
     </message>
@@ -604,6 +600,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s を起動しました</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>ラベルを選択して描画を開始します。&apos;Esc&apos;キーを押すと選択が解除されます。</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

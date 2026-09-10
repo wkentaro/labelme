@@ -262,10 +262,6 @@
         <translation>Список фигур</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Выберите метку, чтобы начать разметку. Нажмите &apos;Esc&apos;, чтобы снять выбор.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Список меток</translation>
     </message>
@@ -575,6 +571,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s запущен.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Выберите метку, чтобы начать рисовать ею. Нажмите &apos;Esc&apos;, чтобы снять выделение.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

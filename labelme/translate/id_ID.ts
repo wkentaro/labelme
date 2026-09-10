@@ -262,10 +262,6 @@
         <translation>Daftar Bentuk</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Pilih label untuk memulai anotasi. Tekan &apos;Esc&apos; untuk membatalkan pilihan.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Daftar Label</translation>
     </message>
@@ -565,6 +561,10 @@
     <message>
         <source>%s started.</source>
         <translation>%s dimulai.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Pilih label untuk mulai menggambar dengannya. Tekan &apos;Esc&apos; untuk menghapus pilihan.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

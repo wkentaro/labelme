@@ -262,10 +262,6 @@
         <translation>Vormenlijst</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Selecteer label om te beginnen met annoteren. Druk op &apos;Esc&apos; om te deselecteren.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Labellijst</translation>
     </message>
@@ -590,6 +586,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s gestart.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Kies een label om ermee te tekenen. Druk op &apos;Esc&apos; om de selectie op te heffen.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

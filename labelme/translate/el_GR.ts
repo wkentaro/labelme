@@ -526,10 +526,6 @@ Shapes</source>
         <translation>Λίστα σχημάτων</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Επιλέξτε την ετικέτα για να ξεκινήσετε να την σχολιάζετε. Πατήστε &apos;Esc&apos; για αποεπιλογή.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Λίστα ετικετών</translation>
     </message>
@@ -768,6 +764,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+Ροδέλα κάνει ζουμ στον καμβά</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Επιλέξτε μια ετικέτα για να ξεκινήσετε να σχεδιάζετε με αυτήν. Πατήστε &apos;Esc&apos; για να αποεπιλέξετε την ετικέτα.</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>

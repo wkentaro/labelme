@@ -262,10 +262,6 @@
         <translation>Danh sách Hình dạng</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Chọn nhãn để bắt đầu chú thích. Nhấn &apos;Esc&apos; để bỏ chọn.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Danh sách Nhãn</translation>
     </message>
@@ -590,6 +586,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s đã khởi động.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Chọn một nhãn để bắt đầu vẽ với nhãn đó. Nhấn &apos;Esc&apos; để xóa lựa chọn.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

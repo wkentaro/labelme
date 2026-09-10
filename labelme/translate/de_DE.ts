@@ -262,10 +262,6 @@
         <translation>Formenliste</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Label auswählen, um mit der Annotation zu beginnen. Mit &apos;Esc&apos; abwählen.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Label-Liste</translation>
     </message>
@@ -604,6 +600,10 @@ Formen</translation>
     <message>
         <source>%s started.</source>
         <translation>%s gestartet.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Wählen Sie ein Label aus, um damit zu zeichnen. Drücken Sie &apos;Esc&apos;, um die Auswahl aufzuheben.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

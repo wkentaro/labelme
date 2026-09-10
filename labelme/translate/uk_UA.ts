@@ -527,10 +527,6 @@ Shapes</source>
         <translation>Список фігур</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Виберіть мітку, щоб розпочати анотування для неї. Натисніть «Esc», щоб скасувати вибір.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Список міток</translation>
     </message>
@@ -769,6 +765,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+колесо масштабує полотно</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Виберіть мітку, щоб почати малювати нею. Натисніть &apos;Esc&apos;, щоб зняти виділення.</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>

@@ -262,10 +262,6 @@
         <translation>Alakzatlista</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Válasszon címkét az annotálás megkezdéséhez. Nyomja meg az &apos;Esc&apos; gombot a kijelölés megszüntetéséhez.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Címkelista</translation>
     </message>
@@ -604,6 +600,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s elindítva.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Válasszon egy címkét a rajzolás megkezdéséhez. Az &apos;Esc&apos; billentyűvel megszüntetheti a kijelölést.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>
