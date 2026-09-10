@@ -262,10 +262,6 @@
         <translation>形狀清單</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>選取標籤以開始為其加上標註。按「Esc」取消選取。</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>標籤清單</translation>
     </message>
@@ -596,6 +592,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s 已啟動。</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>選擇一個標籤以開始用它繪製。按 &apos;Esc&apos; 清除選擇。</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

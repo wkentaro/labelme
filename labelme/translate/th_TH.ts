@@ -262,10 +262,6 @@
         <translation>รายการรูปร่าง</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>เลือกเลเบลเพื่อเริ่มกำกับข้อมูล กด &apos;Esc&apos; เพื่อยกเลิกการเลือก</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>รายการเลเบล</translation>
     </message>
@@ -590,6 +586,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s เริ่มทำงานแล้ว</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>เลือกป้ายกำกับเพื่อเริ่มวาดด้วยป้ายนั้น กด &apos;Esc&apos; เพื่อล้างการเลือก</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

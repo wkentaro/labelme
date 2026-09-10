@@ -262,10 +262,6 @@
         <translation>도형 목록</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>주석을 시작할 레이블을 선택하세요. &apos;Esc&apos;를 눌러 선택 해제합니다.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>레이블 목록</translation>
     </message>
@@ -590,6 +586,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s가 시작되었습니다.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>그리기를 시작할 라벨을 선택하세요. &apos;Esc&apos;를 눌러 선택을 해제합니다.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

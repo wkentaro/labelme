@@ -1173,7 +1173,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         unique_label_list = UniqueLabelQListWidget()
         unique_label_list.setToolTip(
-            self.tr("Select label to start annotating for it. Press 'Esc' to deselect.")
+            self.tr(
+                "Choose a label to start drawing with it. "
+                "Press 'Esc' to clear the selection."
+            )
         )
         if self._config["labels"]:
             for lbl in self._config["labels"]:
@@ -2831,11 +2834,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def copy_shape(self) -> None:
         canvas = self._canvas_widgets.canvas
         canvas.end_move(copy=True)
-        # Clearing the label selection also clears the canvas selection.
-        shapes = canvas.selected_shapes[:]
-        self._docks.label_list.clearSelection()
-        for shape in shapes:
+        for shape in canvas.selected_shapes:
             self.add_label(shape=shape)
+        # Clearing the list selection also clears the canvas selection, so it goes last.
+        self._docks.label_list.clearSelection()
         self.mark_dirty()
 
     def move_shape(self) -> None:

@@ -262,10 +262,6 @@
         <translation>Lista kształtów</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Wybierz etykietę, aby zacząć adnotację. Naciśnij &apos;Esc&apos;, aby odznaczyć.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Lista etykiet</translation>
     </message>
@@ -590,6 +586,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s uruchomiono.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Wybierz etykietę, aby zacząć nią rysować. Naciśnij &apos;Esc&apos;, aby wyczyścić zaznaczenie.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

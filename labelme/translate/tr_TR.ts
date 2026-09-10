@@ -262,10 +262,6 @@
         <translation>Şekil Listesi</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>Etiketlemeye başlamak için kullanacağınız etiketi seçin. Seçimi kaldırmak için &apos;Esc&apos; tuşuna basın.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>Etiket Listesi</translation>
     </message>
@@ -596,6 +592,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s başlatıldı.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>Çizime başlamak için bir etiket seçin. Seçimi temizlemek için &apos;Esc&apos; tuşuna basın.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>

@@ -262,10 +262,6 @@
         <translation>فهرست شکل‌ها</translation>
     </message>
     <message>
-        <source>Select label to start annotating for it. Press &apos;Esc&apos; to deselect.</source>
-        <translation>برچسب را انتخاب کنید تا شروع به حاشیه‌نویسی کنید. &apos;Esc&apos; را فشار دهید تا انتخاب لغو شود.</translation>
-    </message>
-    <message>
         <source>Label List</source>
         <translation>فهرست برچسب‌ها</translation>
     </message>
@@ -590,6 +586,10 @@ Shapes</source>
     <message>
         <source>%s started.</source>
         <translation>%s راه‌اندازی شد.</translation>
+    </message>
+    <message>
+        <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
+        <translation>یک برچسب را انتخاب کنید تا با آن شروع به ترسیم کنید. برای لغو انتخاب، &apos;Esc&apos; را فشار دهید.</translation>
     </message>
     <message>
         <source>Invalid regular expression. Previous search kept.</source>
