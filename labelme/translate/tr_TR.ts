@@ -727,7 +727,7 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     </message>
     <message>
         <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Yapılandırma yüklenirken hatalarla karşılaşıldı. Lütfen aşağıdaki hataları inceleyip yapılandırmanızı yeniden yükleyin veya hatalı satırları yok sayın.</translation>
+        <translation>Yapılandırma yüklenirken hatalar bulundu. Lütfen aşağıdaki hataları gözden geçirin ve yapılandırmanızı yeniden yükleyin veya hatalı satırları yok sayın.</translation>
     </message>
     <message>
         <source>Reset Layout</source>
