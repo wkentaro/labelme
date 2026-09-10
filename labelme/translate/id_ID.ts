@@ -173,10 +173,6 @@
         <translation>ALT + Klik untuk membuat titik pada bentuk</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Klik kanan &amp; seret untuk menyalin bentuk</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Pilih sudut lainnya. Tahan Shift untuk membuat persegi.</translation>
     </message>

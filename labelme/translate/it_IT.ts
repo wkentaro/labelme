@@ -173,10 +173,6 @@
         <translation>ALT + Clicca per creare un punto sulla forma</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Tasto destro e trascina per copiare la forma</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Scegli l’altro angolo. Tieni premuto Shift per un quadrato.</translation>
     </message>

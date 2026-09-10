@@ -7,7 +7,6 @@ from typing import Final
 import numpy as np
 import numpy.typing as npt
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QMenu
 
 from .._shape import Shape
 from .._shape import nearest_edge_index
@@ -136,14 +135,3 @@ assert set(_CURSOR_SHAPE_MAP) == set(CursorRole), (
 
 def cursor_shape_for(role: CursorRole, /) -> Qt.CursorShape:
     return _CURSOR_SHAPE_MAP[role]
-
-
-@dataclasses.dataclass
-class ContextMenuPair:
-    without_selection: QMenu
-    with_selection: QMenu
-
-    def menu_for(self, *, has_selection: bool) -> QMenu:
-        if has_selection:
-            return self.with_selection
-        return self.without_selection

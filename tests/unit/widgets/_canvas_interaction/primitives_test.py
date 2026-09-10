@@ -5,10 +5,8 @@ from typing import Final
 import numpy as np
 import pytest
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QMenu
 
 from labelme._shape import Shape
-from labelme._widgets._canvas_interaction import ContextMenuPair
 from labelme._widgets._canvas_interaction import CursorRole
 from labelme._widgets._canvas_interaction import HitKind
 from labelme._widgets._canvas_interaction import HitTarget
@@ -432,36 +430,3 @@ def test_cursor_shape_for_all_roles(
     *, role: CursorRole, expected: Qt.CursorShape
 ) -> None:
     assert cursor_shape_for(role) == expected
-
-
-# ---------------------------------------------------------------------------
-# ContextMenuPair
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.gui
-@pytest.mark.usefixtures("qapp")
-def test_context_menu_pair_menu_for_no_selection() -> None:
-    without = QMenu()
-    with_ = QMenu()
-    pair = ContextMenuPair(without_selection=without, with_selection=with_)
-    assert pair.menu_for(has_selection=False) is without
-
-
-@pytest.mark.gui
-@pytest.mark.usefixtures("qapp")
-def test_context_menu_pair_menu_for_with_selection() -> None:
-    without = QMenu()
-    with_ = QMenu()
-    pair = ContextMenuPair(without_selection=without, with_selection=with_)
-    assert pair.menu_for(has_selection=True) is with_
-
-
-@pytest.mark.gui
-@pytest.mark.usefixtures("qapp")
-def test_context_menu_pair_stores_menus_as_named_attributes() -> None:
-    without = QMenu()
-    with_ = QMenu()
-    pair = ContextMenuPair(without_selection=without, with_selection=with_)
-    assert pair.without_selection is without
-    assert pair.with_selection is with_

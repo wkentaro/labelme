@@ -173,10 +173,6 @@
         <translation>ALT + کلیک برای ایجاد نقطه روی شکل</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>کلیک راست و کشیدن برای کپی شکل</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>گوشهٔ دیگر را انتخاب کنید. برای مربع، Shift را نگه دارید.</translation>
     </message>

@@ -177,10 +177,6 @@
         <translation>Натисніть і перетягніть, щоб перемістити фігуру</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Натисніть правою кнопкою миші та перетягніть, щоб скопіювати фігуру</translation>
-    </message>
-    <message>
         <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
         <translation>Натисніть точки для включення або Shift+Click для виключення. Ctrl+LeftClick завершує створення.</translation>
     </message>

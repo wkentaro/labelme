@@ -173,10 +173,6 @@
         <translation>ALT + 클릭으로 도형 위에 점 생성</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>우클릭하고 드래그하여 도형 복사</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>다른 모서리를 선택하세요. 정사각형을 그리려면 Shift를 누른 상태로 조작하세요.</translation>
     </message>

@@ -185,12 +185,11 @@ class Canvas(QtWidgets.QWidget):
     _pixmap_hash: int | None
     _cursor: CursorRole
     shapes: list[Shape]
-    context_menus: _canvas_interaction.ContextMenuPair
+    context_menu: QtWidgets.QMenu
     context_menu_origin: QtCore.QPoint | None
     shape_backups: collections.deque[list[Shape]]
     _is_moving_shape: bool
     selected_shapes: list[Shape]
-    _selected_shapes_copy: list[Shape]
     _current: _DraftShape | None
     hovered_shape: Shape | None
     _last_hovered_shape: Shape | None
@@ -305,10 +304,7 @@ class Canvas(QtWidgets.QWidget):
         self._point_type: Literal["square", "round"] = "round"
         self._draft_palette = _DEFAULT_PALETTE
         self._palette_cache = {}
-        self.context_menus = _canvas_interaction.ContextMenuPair(
-            without_selection=QtWidgets.QMenu(),
-            with_selection=QtWidgets.QMenu(),
-        )
+        self.context_menu = QtWidgets.QMenu()
         self.context_menu_origin = None
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
@@ -737,7 +733,8 @@ class Canvas(QtWidgets.QWidget):
             return
         buttons = event.buttons()
         if buttons & Qt.MouseButton.RightButton:
-            self._continue_right_button_drag(pos=pos)
+            # Freeze the hover state while the right button is down so the
+            # context menu opened on release targets the pressed shape.
             return
         if buttons & Qt.MouseButton.LeftButton:
             self._continue_left_button_drag(pos=pos, event=event)
@@ -877,20 +874,6 @@ class Canvas(QtWidgets.QWidget):
             )
         return pos
 
-    def _continue_right_button_drag(self, *, pos: QPointF) -> None:
-        if self._selected_shapes_copy:
-            self._apply_cursor(CursorRole.MOVE)
-            self._drag_shapes(
-                shapes=self._selected_shapes_copy,
-                cursor=pos,
-                constrain_cursor=True,
-            )
-            self.update()
-        elif self.selected_shapes:
-            self._selected_shapes_copy = [s.copy() for s in self.selected_shapes]
-            self.update()
-        self._update_status(extra_messages=None)
-
     def _continue_left_button_drag(
         self, *, pos: QPointF, event: QtGui.QMouseEvent
     ) -> None:
@@ -1025,12 +1008,7 @@ class Canvas(QtWidgets.QWidget):
                 hovered_vertex=None,
                 hovered_rotation=None,
             )
-            status_messages.extend(
-                [
-                    self.tr("Click & drag to move shape"),
-                    self.tr("Right-click & drag to copy shape"),
-                ]
-            )
+            status_messages.append(self.tr("Click & drag to move shape"))
             self._apply_cursor(CursorRole.GRAB)
             return
 
@@ -1293,21 +1271,12 @@ class Canvas(QtWidgets.QWidget):
             self._finish_pan()
 
     def _release_right(self, *, event: QtGui.QMouseEvent) -> None:
-        menu = self.context_menus.menu_for(
-            has_selection=len(self._selected_shapes_copy) > 0
-        )
         self._release_cursor()
         self.context_menu_origin = self.mapToGlobal(event.position().toPoint())
         try:
-            triggered = menu.exec(self.context_menu_origin)  # type: ignore
+            self.context_menu.exec(self.context_menu_origin)  # type: ignore
         finally:
             self.context_menu_origin = None
-        if triggered:
-            return
-        if not self._selected_shapes_copy:
-            return
-        self._selected_shapes_copy.clear()
-        self.update()
 
     def _release_left(self) -> None:
         if self.mode != _CanvasMode.EDIT:
@@ -1367,20 +1336,6 @@ class Canvas(QtWidgets.QWidget):
             self.backup_shapes()
             self.shape_moved.emit()
         self._is_moving_shape = False
-
-    def end_move(self, *, copy: bool) -> bool:
-        assert len(self.selected_shapes) == len(self._selected_shapes_copy) > 0
-        if copy:
-            self.shapes.extend(self._selected_shapes_copy)
-            self.selected_shapes[:] = self._selected_shapes_copy
-        else:
-            for shape, preview in zip(self.selected_shapes, self._selected_shapes_copy):
-                shape.points = preview.points.copy()
-        self._selected_shapes_copy.clear()
-        self._drag_anchor = None
-        self.backup_shapes()
-        self.update()
-        return True
 
     def _can_close_shape(self) -> bool:
         if self.mode != _CanvasMode.CREATE:
@@ -1618,7 +1573,6 @@ class Canvas(QtWidgets.QWidget):
             self._draw_crosshair_layer,
             self._draw_committed_shapes_layer,
             self._draw_active_shape_layer,
-            self._draw_drag_copy_layer,
             self._draw_preview_overlay_layer,
             self._draw_ai_existing_match_layer,
         )
@@ -1680,21 +1634,6 @@ class Canvas(QtWidgets.QWidget):
         assert len(self._line.points) == len(self._line.point_labels)
         self._render_draft(painter=painter, draft=self._current, highlighted=True)
         self._render_draft(painter=painter, draft=self._line, highlighted=False)
-
-    def _draw_drag_copy_layer(self, painter: QtGui.QPainter, /) -> None:
-        for copy_shape in self._selected_shapes_copy:
-            context = ShapeRenderContext(
-                scale=self.scale,
-                palette=self._resolve_palette(copy_shape.label),
-                point_size=self._point_size,
-                point_type=self._point_type,
-                selected=True,
-                fill=True,
-                highlight=None,
-                rotation_highlight=None,
-                show_label=self._show_labels,
-            )
-            render_shape(painter=painter, shape=copy_shape, context=context)
 
     def _draw_preview_overlay_layer(self, painter: QtGui.QPainter, /) -> None:
         previews = self._build_preview_shapes()
@@ -2153,7 +2092,6 @@ class Canvas(QtWidgets.QWidget):
         self.shape_backups = collections.deque(maxlen=self._num_backups)
         self._is_moving_shape = False
         self.selected_shapes = []
-        self._selected_shapes_copy = []
         self._current = None
         self._view_offset = QPointF()
         self._highlight = None

@@ -918,15 +918,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         )
 
-        self._canvas_widgets.canvas.context_menus.without_selection.addActions(
-            self._actions.context_menu
-        )
-        self._canvas_widgets.canvas.context_menus.with_selection.addActions(
-            (
-                action(text="&Copy here", slot=self.copy_shape),
-                action(text="&Move here", slot=self.move_shape),
-            )
-        )
+        self._canvas_widgets.canvas.context_menu.addActions(self._actions.context_menu)
 
         return _Menus(
             file=file_menu,
@@ -1288,10 +1280,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return not len(self._docks.label_list)
 
     def populate_mode_actions(self) -> None:
-        self._canvas_widgets.canvas.context_menus.without_selection.clear()
-        self._canvas_widgets.canvas.context_menus.without_selection.addActions(
-            self._actions.context_menu
-        )
+        self._canvas_widgets.canvas.context_menu.clear()
+        self._canvas_widgets.canvas.context_menu.addActions(self._actions.context_menu)
         self._menus.edit.clear()
         actions = (
             *[draw_action for _, draw_action in self._actions.draw],
@@ -2828,19 +2818,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._confirm_deletion(message=msg):
             return
         self.remove_labels(shapes=self._canvas_widgets.canvas.delete_selected())
-        self.mark_dirty()
-
-    def copy_shape(self) -> None:
-        canvas = self._canvas_widgets.canvas
-        canvas.end_move(copy=True)
-        for shape in canvas.selected_shapes:
-            self.add_label(shape=shape)
-        # Clearing the list selection also clears the canvas selection, so it goes last.
-        self._docks.label_list.clearSelection()
-        self.mark_dirty()
-
-    def move_shape(self) -> None:
-        self._canvas_widgets.canvas.end_move(copy=False)
         self.mark_dirty()
 
     def _load_from_file_or_dir(self, *, file_or_dir: str) -> None:

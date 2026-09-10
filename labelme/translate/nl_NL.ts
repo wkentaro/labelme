@@ -173,10 +173,6 @@
         <translation>ALT + Klik om punt op vorm te maken</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Rechtsklik en sleep om vorm te kopiëren</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Kies de andere hoek. Houd Shift ingedrukt voor een vierkant.</translation>
     </message>

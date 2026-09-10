@@ -173,10 +173,6 @@
         <translation>ALT + Nhấn để tạo điểm trên hình dạng</translation>
     </message>
     <message>
-        <source>Right-click &amp; drag to copy shape</source>
-        <translation>Nhấn chuột phải và kéo để sao chép hình dạng</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Chọn góc còn lại. Giữ Shift để vẽ hình vuông.</translation>
     </message>
