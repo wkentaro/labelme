@@ -161,15 +161,7 @@ labelme data_annotated/ --labels labels.txt  # specify label list with a file
 
 ### Command Line Arguments
 
-Run `labelme --help` for the full list. The options people most often ask about:
-
-| Option | What it does |
-| --- | --- |
-| `--output DIR` | Directory that receives the annotation JSON files, one per image and named after it. Pass a directory, not a `.json` path; a file path is rejected. Without it, each annotation is saved next to its image. |
-| `--config PATH` | Read settings from `PATH` instead of `~/.labelmerc`. The default file is created on first launch; put only the keys you want to override in it and see [`default_config.yaml`](labelme/_config/default_config.yaml) for every key and its default. |
-| `--no-sort-labels` | Keep the label list in the order given by `--labels` instead of sorting it alphabetically. |
-
-Two kinds of annotation attach at different levels: a flag belongs to the whole image ([example](examples/classification)), a label belongs to one shape ([example](examples/bbox_detection)).
+Run `labelme --help` for the full list.
 
 ### FAQ
 
