@@ -2407,21 +2407,6 @@ def test_remove_selected_point_deselects_vertex(*, canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
-def test_end_move_in_place_copies_points(*, canvas: Canvas) -> None:
-    shape = _make_polygon()
-    canvas.load_shapes(shapes=[shape])
-    canvas.selected_shapes = [shape]
-    clone = shape.copy()
-    clone.translate(offset=(5, -5))
-    canvas._selected_shapes_copy = [clone]
-
-    canvas.end_move(copy=False)
-
-    assert np.array_equal(shape.points, clone.points)
-    assert not np.shares_memory(shape.points, clone.points)
-
-
-@pytest.mark.gui
 def test_ai_preview_follows_input_without_inference_during_paint(
     *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
 ) -> None:

@@ -1,23 +1,16 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
-import numpy as np
 import pytest
-from PySide6.QtCore import QPoint
-from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
-from labelme._widgets._shape_render import bounds as _shape_bounds
 from labelme._widgets.canvas import Canvas
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
-from .conftest import drag_canvas
-from .conftest import image_to_widget_pos
 from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
@@ -197,64 +190,3 @@ def test_delete_undo_shape(
     assert_labelfile_sanity(str(tmp_path / "2011_000003.json"))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
-
-
-@pytest.mark.gui
-@pytest.mark.parametrize("shape_count", [1, 2])
-def test_right_drag_copy_here_duplicates_shape(
-    *,
-    qtbot: QtBot,
-    annotated_win: MainWindow,
-    monkeypatch: pytest.MonkeyPatch,
-    tmp_path: Path,
-    shape_count: int,
-    pause: bool,
-) -> None:
-    canvas = annotated_win._canvas_widgets.canvas
-    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
-    canvas.select_shapes(shapes=canvas.shapes[:shape_count])
-    original_shape = canvas.shapes[0]
-    original_label = original_shape.label
-    original_first_point = original_shape.points[0].copy()
-    num_before = len(canvas.shapes)
-
-    bounds_center = _shape_bounds(shape=original_shape).center()
-    start_widget = image_to_widget_pos(canvas=canvas, image_pos=bounds_center)
-    end_widget = QPoint(start_widget.x() + 30, start_widget.y() + 20)
-
-    # The modal menu would block the test, so trigger "Copy here" directly
-    # and return it truthy so the canvas treats the release as handled.
-    copy_here_action = canvas.context_menus.with_selection.actions()[0]
-
-    def trigger_copy_here(*_args: object, **_kwargs: object) -> object:
-        copy_here_action.trigger()
-        return copy_here_action
-
-    monkeypatch.setattr(canvas.context_menus.with_selection, "exec", trigger_copy_here)
-
-    drag_canvas(
-        qtbot=qtbot,
-        canvas=canvas,
-        button=Qt.MouseButton.RightButton,
-        start=start_widget,
-        end=end_widget,
-    )
-
-    assert len(canvas.shapes) == num_before + shape_count
-
-    duplicated_shape = canvas.shapes[num_before]
-    label_path = tmp_path / "copied.json"
-    assert annotated_win.save_labels(label_path=str(label_path))
-    saved_shapes = json.loads(label_path.read_text())["shapes"]
-    assert len(saved_shapes) == num_before + shape_count
-    assert saved_shapes[num_before]["label"] == original_label
-    assert np.array_equal(saved_shapes[num_before]["points"], duplicated_shape.points)
-
-    assert duplicated_shape is not original_shape
-    assert duplicated_shape.points is not original_shape.points
-    duplicated_shape.label = "mutated"
-    duplicated_shape.points[0][0] += 999.0
-    assert original_shape.label == original_label
-    assert np.array_equal(original_shape.points[0], original_first_point)
-
-    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)

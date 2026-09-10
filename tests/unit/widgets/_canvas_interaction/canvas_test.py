@@ -330,31 +330,18 @@ def test_cursor_is_cross_when_far_from_polygon_origin(*, canvas: Canvas) -> None
 
 
 @pytest.mark.gui
-def test_context_menus_pair_holds_two_menus(*, canvas: Canvas) -> None:
-    # The public context_menus pair exposes a no-selection menu and a
-    # selection menu as named QMenu attributes.
-    assert isinstance(canvas.context_menus.without_selection, QtWidgets.QMenu)
-    assert isinstance(canvas.context_menus.with_selection, QtWidgets.QMenu)
-
-
-@pytest.mark.gui
-def test_right_release_without_selection_copy_executes_menus_0(
+def test_right_release_executes_context_menu(
     *,
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    # Without a dragged copy (_selected_shapes_copy empty), the no-selection
-    # context menu (index 0) is executed.
     canvas.set_editing(value=True)
     canvas.scale = 1.0
     calls: list[int] = []
     monkeypatch.setattr(
-        canvas.context_menus.without_selection,
+        canvas.context_menu,
         "exec",
         lambda _pos=None: calls.append(0),
-    )
-    monkeypatch.setattr(
-        canvas.context_menus.with_selection, "exec", lambda _pos=None: calls.append(1)
     )
     pos = _image_to_widget(canvas=canvas, img_x=50, img_y=25)
 
@@ -365,108 +352,11 @@ def test_right_release_without_selection_copy_executes_menus_0(
 
 
 @pytest.mark.gui
-def test_right_release_with_selection_copy_executes_menus_1(
-    *,
-    canvas: Canvas,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    # When selected shapes have been right-drag-copied (_selected_shapes_copy
-    # non-empty), the with-selection context menu (index 1) is executed.
-    shape = Shape(
-        shape_type="rectangle",
-        points=np.array([(10, 10), (50, 40)], dtype=np.float64),
-        closed=True,
-    )
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
-    canvas.scale = 1.0
-    canvas.selected_shapes = [shape]
-    canvas._selected_shapes_copy = [shape.copy()]
-    calls: list[int] = []
-    monkeypatch.setattr(
-        canvas.context_menus.without_selection,
-        "exec",
-        lambda _pos=None: calls.append(0),
-    )
-    monkeypatch.setattr(
-        canvas.context_menus.with_selection, "exec", lambda _pos=None: calls.append(1)
-    )
-    pos = _image_to_widget(canvas=canvas, img_x=30, img_y=25)
-
-    canvas.mousePressEvent(_make_press_event(pos=pos))
-    canvas.mouseReleaseEvent(_make_release_event(pos=pos))
-
-    assert calls == [1]
-
-
-@pytest.mark.gui
-@pytest.mark.parametrize("copy", [True, False])
-def test_right_menu_action_commits_drag_preview(
-    *, canvas: Canvas, qtbot: QtBot, copy: bool
-) -> None:
-    original = Shape(
-        shape_type="rectangle",
-        points=np.array([(10, 10), (50, 40)], dtype=np.float64),
-        closed=True,
-    )
-    preview = original.copy()
-    preview.translate(offset=np.array([20, 10]))
-    canvas.shapes = [original]
-    canvas.selected_shapes = [original]
-    canvas._selected_shapes_copy = [preview]
-    menu = canvas.context_menus.with_selection
-    action = menu.addAction("Copy Here" if copy else "Move Here")
-    action.triggered.connect(lambda: canvas.end_move(copy=copy))
-    QtCore.QTimer.singleShot(
-        0,
-        lambda: qtbot.mouseClick(
-            menu, Qt.MouseButton.LeftButton, pos=menu.actionGeometry(action).center()
-        ),
-    )
-
-    canvas._release_right(event=_make_release_event(pos=QPointF(30, 25)))
-
-    assert len(canvas.shapes) == (2 if copy else 1)
-    np.testing.assert_array_equal(canvas.shapes[-1].points, preview.points)
-    assert canvas._selected_shapes_copy == []
-
-
-@pytest.mark.gui
-def test_right_menu_dismissal_discards_preview(
+def test_right_menu_failure_restores_origin(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    preview = Shape(
-        shape_type="rectangle",
-        points=np.array([(10, 10), (50, 40)], dtype=np.float64),
-        closed=True,
-    )
-    canvas._selected_shapes_copy = [preview]
-    updates: list[None] = []
-
-    def dismiss_menu(_pos: object = None) -> None:
-        canvas.context_menus.with_selection.aboutToHide.emit()
-
-    monkeypatch.setattr(canvas.context_menus.with_selection, "exec", dismiss_menu)
-    monkeypatch.setattr(canvas, "update", lambda: updates.append(None))
-
-    canvas._release_right(event=_make_release_event(pos=QPointF(30, 25)))
-
-    assert canvas._selected_shapes_copy == []
-    assert updates == [None]
-
-
-@pytest.mark.gui
-def test_right_menu_failure_restores_origin_and_preserves_preview(
-    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    preview = Shape(
-        shape_type="rectangle",
-        points=np.array([(10, 10), (50, 40)], dtype=np.float64),
-        closed=True,
-    )
-    canvas._selected_shapes_copy = [preview]
     monkeypatch.setattr(
-        canvas.context_menus.with_selection,
+        canvas.context_menu,
         "exec",
         lambda _pos=None: (_ for _ in ()).throw(RuntimeError("menu failed")),
     )
@@ -475,7 +365,6 @@ def test_right_menu_failure_restores_origin_and_preserves_preview(
         canvas._release_right(event=_make_release_event(pos=QPointF(30, 25)))
 
     assert canvas.context_menu_origin is None
-    assert canvas._selected_shapes_copy == [preview]
 
 
 @pytest.mark.gui
