@@ -1426,7 +1426,6 @@ class MainWindow(QtWidgets.QMainWindow):
         webbrowser.open(url)
 
     def _on_drawing_polygon_changed(self, drawing: bool, /) -> None:  # noqa: FBT001 -- Canvas.drawing_polygon slot
-        # In the middle of drawing, toggling between modes should be disabled.
         self._actions.edit_mode.setEnabled(not drawing)
         self._actions.undo_last_point.setEnabled(drawing)
         self._actions.undo.setEnabled(
