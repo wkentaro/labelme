@@ -72,7 +72,7 @@
     </message>
     <message>
         <source>AI creates annotations from the text prompt</source>
-        <translation>AI tạo chú thích từ lời nhắc văn bản</translation>
+        <translation>AI tạo chú thích dựa trên nội dung lời nhắc văn bản</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
