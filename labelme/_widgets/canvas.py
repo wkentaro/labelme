@@ -137,6 +137,13 @@ def _shape_to_draft(shape: Shape, /) -> _DraftShape:
 
 MOVE_SPEED: Final[float] = 5.0
 
+_ARROW_KEY_TO_DIRECTION: Final[dict[Qt.Key, QPointF]] = {
+    Qt.Key.Key_Up: QPointF(0.0, -1.0),
+    Qt.Key.Key_Down: QPointF(0.0, 1.0),
+    Qt.Key.Key_Left: QPointF(-1.0, 0.0),
+    Qt.Key.Key_Right: QPointF(1.0, 0.0),
+}
+
 _CreateMode = Literal[
     "polygon",
     "rectangle",
@@ -1983,14 +1990,9 @@ class Canvas(QtWidgets.QWidget):
             elif modifiers == Qt.KeyboardModifier.AltModifier:
                 self._snapping = False
         elif self.mode == _CanvasMode.EDIT:
-            if key == Qt.Key.Key_Up:
-                self._move_by_keyboard(offset=QPointF(0.0, -MOVE_SPEED))
-            elif key == Qt.Key.Key_Down:
-                self._move_by_keyboard(offset=QPointF(0.0, MOVE_SPEED))
-            elif key == Qt.Key.Key_Left:
-                self._move_by_keyboard(offset=QPointF(-MOVE_SPEED, 0.0))
-            elif key == Qt.Key.Key_Right:
-                self._move_by_keyboard(offset=QPointF(MOVE_SPEED, 0.0))
+            direction = _ARROW_KEY_TO_DIRECTION.get(Qt.Key(key))
+            if direction is not None:
+                self._move_by_keyboard(offset=direction * MOVE_SPEED)
             elif a0.matches(QtGui.QKeySequence.StandardKey.SelectAll):
                 self.select_shapes(shapes=self.shapes[:])
         self._update_status(extra_messages=None)
