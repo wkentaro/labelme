@@ -56,7 +56,7 @@
     </message>
     <message>
         <source>AI creates annotations from the text prompt</source>
-        <translation>AI maakt annotaties van de tekstprompt</translation>
+        <translation>AI genereert annotaties op basis van de tekstprompt</translation>
     </message>
     <message>
         <source>e.g., dog,cat,bird</source>

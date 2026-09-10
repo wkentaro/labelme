@@ -72,7 +72,7 @@
     </message>
     <message>
         <source>AI creates annotations from the text prompt</source>
-        <translation>AI tworzy adnotacje na podstawie podanego tekstu</translation>
+        <translation>AI generuje adnotacje na podstawie wprowadzonego polecenia tekstowego</translation>
     </message>
     <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
