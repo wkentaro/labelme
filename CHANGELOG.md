@@ -9,6 +9,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## 7.5.0 - 2026-09-14
+
+### Added
+
+- Added accessible empty-state guidance with image, directory, and drag-and-drop entry points when Labelme launches without input ([#2524](https://github.com/wkentaro/labelme/pull/2524))
+- Merge selected Mask Shapes sharing one Label into a single Mask Shape via Edit > Merge Shapes or the canvas context menu, preserving every mask pixel in exports; one Undo restores the inputs. ([#2684](https://github.com/wkentaro/labelme/pull/2684))
+
+### Changed
+
+- AI Assist point previews reuse predictions across repaints and keep the previous preview visible while updating. ([#2610](https://github.com/wkentaro/labelme/pull/2610))
+- Refreshed Simplified Chinese, Traditional Chinese, and Turkish interface translations. ([#2618](https://github.com/wkentaro/labelme/pull/2618))
+- Use native step arrows and text alignment for the zoom percentage control. ([#2642](https://github.com/wkentaro/labelme/pull/2642))
+- Clarify the rectangle drawing hint to explain holding Shift for a square. ([#2643](https://github.com/wkentaro/labelme/pull/2643))
+- Reword the image embedding and vertex removal actions, with the new labels translated in every language. ([#2649](https://github.com/wkentaro/labelme/pull/2649))
+- Clarify file-dialog captions and the prompt for unsaved annotation changes in all supported languages. ([#2650](https://github.com/wkentaro/labelme/pull/2650))
+- Clarify the `--label-flags` CLI help: the value is a YAML mapping from a label regex to its flag names, given inline or as a path to a YAML/JSON file. ([#2652](https://github.com/wkentaro/labelme/pull/2652))
+- Refine Polish and Vietnamese guidance for configuration-loading errors. ([#2666](https://github.com/wkentaro/labelme/pull/2666))
+- Refine Dutch, Polish, and Vietnamese wording for the AI text-prompt hint. ([#2668](https://github.com/wkentaro/labelme/pull/2668))
+- Refine the label list tooltip wording. ([#2670](https://github.com/wkentaro/labelme/pull/2670))
+
+### Removed
+
+- Remove the right-drag copy/move gesture and its "Copy here"/"Move here" menu from the canvas. To copy a shape to a new position, use Copy and Paste or Duplicate, then left-drag it into place. ([#2675](https://github.com/wkentaro/labelme/pull/2675))
+
+### Fixed
+
+- AI Text Prompt reports errors during Shape generation instead of closing the app. ([#2611](https://github.com/wkentaro/labelme/pull/2611))
+- Keep point shapes inside the image when dragging them together with other shapes while out-of-bounds points are disallowed. ([#2613](https://github.com/wkentaro/labelme/pull/2613))
+- Recalculate Fit to Window and Fit to Width after resizing docks or navigating between images, while preserving saved pan and scroll positions during navigation. ([#2634](https://github.com/wkentaro/labelme/pull/2634))
+- Improved accessible names for AI and zoom controls and aligned accessible brightness and contrast values with the displayed percentages. ([#2639](https://github.com/wkentaro/labelme/pull/2639))
+- Preserve typed shape labels when tabbing into suggestions or opening a label with a case-insensitive match, while applying explicit mouse and keyboard choices before acceptance. ([#2640](https://github.com/wkentaro/labelme/pull/2640))
+- Allow users to override Qt's image allocation limit when opening large images that remain within the raster engine's supported dimensions. ([#2648](https://github.com/wkentaro/labelme/pull/2648))
+- Reduce coordinate rounding drift while dragging shapes. ([#2657](https://github.com/wkentaro/labelme/pull/2657))
+- Keep Save As available for images with no shapes, and update Hide, Show, and Toggle Shapes availability after loading, deleting, undoing, or closing annotations. ([#2660](https://github.com/wkentaro/labelme/pull/2660))
+- Keep the active drawing tool's button consistent when loading or saving images, and disable image-dependent controls when no image is open. ([#2661](https://github.com/wkentaro/labelme/pull/2661))
+- Update Delete File availability when carrying annotations to another image and after automatic saving. ([#2662](https://github.com/wkentaro/labelme/pull/2662))
+- Keep the last valid filename search active and show an inline error when a regular expression is invalid. ([#2663](https://github.com/wkentaro/labelme/pull/2663))
+- Undo no longer reverts an earlier saved label, flag, group id or description edit together with the change being undone. ([#2667](https://github.com/wkentaro/labelme/pull/2667))
+- Clarify the Turkish wording of the configuration error dialog. ([#2672](https://github.com/wkentaro/labelme/pull/2672))
+- Undo no longer clears a newly created shape's group id and description together with the change being undone. ([#2677](https://github.com/wkentaro/labelme/pull/2677))
+- Undo is available right after reordering shapes in the Label List. ([#2682](https://github.com/wkentaro/labelme/pull/2682))
+- Dragging a row in the Label List no longer replaces the moved shape with a copy. ([#2683](https://github.com/wkentaro/labelme/pull/2683))
+- Show insertion lines between shapes when reordering the shape list instead of highlighting shapes as drop targets. ([#2685](https://github.com/wkentaro/labelme/pull/2685))
+
 ## 7.4.1 - 2026-09-03
 
 ### Fixed
