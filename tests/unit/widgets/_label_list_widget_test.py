@@ -10,10 +10,10 @@ from PySide6.QtWidgets import QStyle
 from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape
-from labelme._widgets.label_list_widget import LabelListWidget
-from labelme._widgets.label_list_widget import LabelListWidgetItem
-from labelme._widgets.label_list_widget import _ItemModel
-from labelme._widgets.label_list_widget import format_shape_label
+from labelme._widgets._label_list_widget import LabelListWidget
+from labelme._widgets._label_list_widget import LabelListWidgetItem
+from labelme._widgets._label_list_widget import _ItemModel
+from labelme._widgets._label_list_widget import format_shape_label
 
 
 def _paint_item(

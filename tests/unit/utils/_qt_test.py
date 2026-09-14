@@ -9,13 +9,13 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
-from labelme._utils.qt import _TintedSvgIconEngine
-from labelme._utils.qt import direction_angle
-from labelme._utils.qt import new_action
-from labelme._utils.qt import new_icon
-from labelme._utils.qt import new_separator
-from labelme._utils.qt import project_point_on_line
-from labelme._utils.qt import project_point_on_perpendicular_line
+from labelme._utils._qt import _TintedSvgIconEngine
+from labelme._utils._qt import direction_angle
+from labelme._utils._qt import new_action
+from labelme._utils._qt import new_icon
+from labelme._utils._qt import new_separator
+from labelme._utils._qt import project_point_on_line
+from labelme._utils._qt import project_point_on_perpendicular_line
 
 
 @pytest.mark.parametrize(

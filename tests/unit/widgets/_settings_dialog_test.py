@@ -12,9 +12,9 @@ from pytestqt.qtbot import QtBot
 from labelme._config import _schema as schema
 from labelme._config import load_config
 from labelme._widgets._integer_slider import IntegerSlider
-from labelme._widgets.settings_dialog import SettingsDialog
-from labelme._widgets.settings_dialog import _ColorSwatchButton
-from labelme._widgets.settings_dialog import _PlainTextEdit
+from labelme._widgets._settings_dialog import SettingsDialog
+from labelme._widgets._settings_dialog import _ColorSwatchButton
+from labelme._widgets._settings_dialog import _PlainTextEdit
 
 Applied = list[tuple[tuple[str, ...], object]]
 Previewed = list[tuple[tuple[str, ...], list[int] | None]]

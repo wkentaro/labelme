@@ -13,8 +13,8 @@ from PySide6.QtWidgets import QProgressDialog
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
-from labelme._widgets.download import _format_bytes
-from labelme._widgets.download import download_ai_model
+from labelme._widgets._download import _format_bytes
+from labelme._widgets._download import download_ai_model
 
 _MODEL_NAME: Final = "efficientsam:10m"
 

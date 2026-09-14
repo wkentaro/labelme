@@ -3,9 +3,9 @@ from __future__ import annotations
 import numpy as np
 import numpy.typing as npt
 
-from .model import Shape
-from .oriented_rectangle import _get_rotation_handles
-from .oriented_rectangle import _is_full_oriented_rectangle
+from ._model import Shape
+from ._oriented_rectangle import _get_rotation_handles
+from ._oriented_rectangle import _is_full_oriented_rectangle
 
 
 def _find_closest_index_within(

@@ -36,13 +36,13 @@ from .._shape import ShapeType
 from . import _canvas_interaction
 from ._canvas_interaction import CursorRole
 from ._canvas_interaction import HitKind
+from ._download import download_ai_model
 from ._shape_render import Palette
 from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
 from ._shape_render import bounds as _shape_bounds
 from ._shape_render import is_hit_by_point
 from ._shape_render import render_shape
-from .download import download_ai_model
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)

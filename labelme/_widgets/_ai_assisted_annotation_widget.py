@@ -10,7 +10,7 @@ from PySide6 import QtWidgets
 
 from .. import _ai_models
 from .. import _automation
-from .._utils.qt import new_icon
+from .._utils._qt import new_icon
 from ._info_button import InfoButton
 from ._integer_slider import IntegerSlider
 

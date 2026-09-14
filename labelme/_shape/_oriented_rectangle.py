@@ -5,8 +5,8 @@ from typing import Final
 import numpy as np
 import numpy.typing as npt
 
-from .model import ORIENTED_RECTANGLE_POINT_COUNT
-from .model import Shape
+from ._model import ORIENTED_RECTANGLE_POINT_COUNT
+from ._model import Shape
 
 
 def _is_full_oriented_rectangle(shape: Shape, /) -> bool:

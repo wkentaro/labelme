@@ -4,7 +4,7 @@ import PIL.Image
 from PySide6 import QtGui
 from pytestqt.qtbot import QtBot
 
-from labelme._widgets.brightness_contrast_dialog import BrightnessContrastDialog
+from labelme._widgets._brightness_contrast_dialog import BrightnessContrastDialog
 
 
 def test_sliders_expose_names_values_and_keyboard_steps(*, qtbot: QtBot) -> None:

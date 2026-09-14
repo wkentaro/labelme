@@ -9,7 +9,7 @@ from PySide6.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
-from labelme._widgets.canvas import _CanvasMode
+from labelme._widgets._canvas import _CanvasMode
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory

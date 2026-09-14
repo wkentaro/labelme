@@ -5,7 +5,7 @@ import pytest
 from numpy.typing import NDArray
 
 from labelme._label_file import ShapeDict
-from labelme._utils import shape as shape_module
+from labelme._utils import _shape as shape_module
 
 from .util import get_img_and_data
 

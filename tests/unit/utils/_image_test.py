@@ -8,7 +8,7 @@ import PIL.Image
 import pytest
 from PySide6 import QtGui
 
-from labelme._utils import image as image_module
+from labelme._utils import _image as image_module
 
 from .util import data_dir
 from .util import get_img_and_data

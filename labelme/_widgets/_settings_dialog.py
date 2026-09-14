@@ -11,7 +11,7 @@ from PySide6 import QtWidgets
 from .. import _locale
 from .._config import _schema as schema
 from .._config._shape_color import RGB_CHANNEL_COUNT
-from .._utils.qt import new_icon
+from .._utils._qt import new_icon
 from ._integer_slider import IntegerSlider
 
 ApplySetting = Callable[[tuple[str, ...], object], bool]

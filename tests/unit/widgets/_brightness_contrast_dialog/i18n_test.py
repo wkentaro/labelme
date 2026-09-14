@@ -17,8 +17,8 @@ from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
 from labelme import _locale
-from labelme._widgets import brightness_contrast_dialog
-from labelme._widgets.brightness_contrast_dialog import BrightnessContrastDialog
+from labelme._widgets import _brightness_contrast_dialog
+from labelme._widgets._brightness_contrast_dialog import BrightnessContrastDialog
 
 _LOCALE: Final = "ja_JP"
 _SLIDER_LABELS: Final = ("Brightness:", "Contrast:")
@@ -41,7 +41,7 @@ def test_slider_labels_are_extractable_by_lupdate(*, tmp_path: Path) -> None:
 
     ts_path = tmp_path / "extracted.ts"
     result = subprocess.run(
-        [lupdate, brightness_contrast_dialog.__file__, "-ts", str(ts_path)],
+        [lupdate, _brightness_contrast_dialog.__file__, "-ts", str(ts_path)],
         capture_output=True,
         text=True,
     )

@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
 from labelme import _locale
-from labelme._widgets.label_dialog import LabelDialog
+from labelme._widgets._label_dialog import LabelDialog
 
 
 @pytest.fixture

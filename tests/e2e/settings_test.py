@@ -13,9 +13,9 @@ from labelme._app import MainWindow
 from labelme._config import _writer
 from labelme._widgets import SettingsDialog
 from labelme._widgets._integer_slider import IntegerSlider
-from labelme._widgets.label_list_widget import LABEL_COLOR_ROLE
-from labelme._widgets.settings_dialog import _ColorSwatchButton
-from labelme._widgets.settings_dialog import _PlainTextEdit
+from labelme._widgets._label_list_widget import LABEL_COLOR_ROLE
+from labelme._widgets._settings_dialog import _ColorSwatchButton
+from labelme._widgets._settings_dialog import _PlainTextEdit
 from labelme._yaml import safe_load
 
 from ..conftest import close_or_pause

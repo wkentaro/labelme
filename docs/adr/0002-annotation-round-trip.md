@@ -49,7 +49,7 @@ The rejection of "delete `ShapeDict`" above rested entirely on one premise:
 codec would drag PyQt5 into `_label_file.py`. That premise no longer holds.
 `Shape` has been refactored into a Qt-free `@dataclass` (`_shape.py`): `points` /
 `point_labels` are numpy arrays, render state moved to `_widgets/_shape_render.py`
-and `_widgets/canvas.py`, and the module imports no PyQt5. The in-progress drawing
+and `_widgets/_canvas.py`, and the module imports no PyQt5. The in-progress drawing
 shape is a separate QPointF `_DraftShape` in the canvas; committed shapes are the
 Qt-free `Shape`.
 

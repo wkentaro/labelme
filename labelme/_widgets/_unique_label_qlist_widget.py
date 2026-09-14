@@ -4,8 +4,8 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 
-from .label_list_widget import LABEL_COLOR_ROLE
-from .label_list_widget import TrailingColorDotDelegate
+from ._label_list_widget import LABEL_COLOR_ROLE
+from ._label_list_widget import TrailingColorDotDelegate
 
 
 class _EscapableQListWidget(QtWidgets.QListWidget):
