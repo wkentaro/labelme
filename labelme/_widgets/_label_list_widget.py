@@ -111,6 +111,8 @@ class LabelListWidgetItem(QtGui.QStandardItem):
             else Qt.CheckState.Unchecked
         )
         self.setEditable(False)
+        # Shapes can only be reordered, so show insertion lines, not row targets.
+        self.setDropEnabled(False)
 
     def clone(self) -> LabelListWidgetItem:
         item = LabelListWidgetItem(text=self.text(), shape=self.shape())
