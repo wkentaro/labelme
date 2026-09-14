@@ -508,6 +508,14 @@ Shapes</source>
         <translation>Insertar en esta imagen las formas del portapapeles</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Combinar formas</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Combinar las formas de máscara seleccionadas en una</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Eliminar vértice seleccionado</translation>
     </message>

@@ -514,6 +514,14 @@ Shapes</source>
         <translation>Panodaki şekilleri bu görüntüye ekle</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Şekilleri Birleştir</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Seçili maske şekillerini tek şekilde birleştir</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Seçili Köşe Noktasını Sil</translation>
     </message>

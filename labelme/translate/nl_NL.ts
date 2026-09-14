@@ -508,6 +508,14 @@ Shapes</source>
         <translation>Vormen van het klembord in deze afbeelding invoegen</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Vormen Samenvoegen</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Geselecteerde maskervormen samenvoegen tot één</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Geselecteerd hoekpunt verwijderen</translation>
     </message>

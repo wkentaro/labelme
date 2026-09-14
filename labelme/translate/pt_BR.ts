@@ -508,6 +508,14 @@ Shapes</source>
         <translation>Inserir nesta imagem as formas da área de transferência</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Mesclar Formas</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Mesclar as formas de máscara selecionadas em uma</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Excluir Vértice Selecionado</translation>
     </message>

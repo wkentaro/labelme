@@ -508,6 +508,14 @@ Shapes</source>
         <translation>Chèn các hình dạng trong clipboard vào ảnh này</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Gộp Hình dạng</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Gộp các hình dạng mask đã chọn thành một</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Xóa Đỉnh đã Chọn</translation>
     </message>

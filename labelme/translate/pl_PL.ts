@@ -508,6 +508,14 @@ Shapes</source>
         <translation>Wstaw kształty ze schowka do tego obrazu</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Scal kształty</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Scal zaznaczone kształty maski w jeden</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Usuń zaznaczony wierzchołek</translation>
     </message>

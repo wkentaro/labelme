@@ -514,6 +514,14 @@ forme</translation>
         <translation>Inserisci in questa immagine le forme degli appunti</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Unisci forme</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Unisci le forme maschera selezionate in una</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Elimina vertice selezionato</translation>
     </message>

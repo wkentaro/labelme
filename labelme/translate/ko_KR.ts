@@ -508,6 +508,14 @@ Shapes</source>
         <translation>클립보드의 도형을 이 이미지에 삽입</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>도형 병합</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>선택한 마스크 도형을 하나로 병합</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>선택한 꼭짓점 삭제</translation>
     </message>

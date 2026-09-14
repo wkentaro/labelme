@@ -356,6 +356,14 @@
         <translation>Δημιουργήστε ένα αντίγραφο των επιλεγμένων σχημάτων</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Συγχώνευση σχημάτων</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Συγχώνευση των επιλεγμένων σχημάτων μάσκας σε ένα</translation>
+    </message>
+    <message>
         <source>Undo last point</source>
         <translation>Τελευταίο σημείο</translation>
     </message>

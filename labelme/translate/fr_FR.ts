@@ -514,6 +514,14 @@ les formes</translation>
         <translation>Insérer dans cette image les formes du presse-papiers</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Fusionner les formes</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Fusionner les formes de masque sélectionnées en une seule</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Supprimer le sommet sélectionné</translation>
     </message>

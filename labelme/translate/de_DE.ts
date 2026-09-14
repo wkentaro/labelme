@@ -530,6 +530,14 @@ Formen</translation>
         <translation>Formen aus der Zwischenablage in dieses Bild einfügen</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Formen zusammenführen</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Ausgewählte Maskenformen zu einer zusammenführen</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Ausgewählten Eckpunkt löschen</translation>
     </message>

@@ -356,6 +356,14 @@
         <translation>Створити дублікат вибраних фігур</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Об&apos;єднати фігури</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Об&apos;єднати вибрані фігури-маски в одну</translation>
+    </message>
+    <message>
         <source>Undo last point</source>
         <translation>Скасувати останній пункт</translation>
     </message>
