@@ -638,6 +638,22 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Az MI-következtetés sikertelen volt: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>Nagyméretű kép</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>A nagyméretű kép több memóriát igényel</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>A kép {width}x{height} képpontos, és a dekódolásához legalább körülbelül {required} MB szükséges, ami meghaladja a jelenlegi {limit} MB-os biztonsági korlátot. Megnyitása átmenetileg lelassíthatja a Labelme vagy más alkalmazások válaszidejét.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>Mégis megnyitás</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>Hiba a fájl megnyitásakor</translation>
     </message>

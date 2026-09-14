@@ -624,6 +624,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>استنتاج هوش مصنوعی ناموفق بود: %s</translation>
     </message>
     <message>
+        <source>Large image</source>
+        <translation>تصویر بزرگ</translation>
+    </message>
+    <message>
+        <source>Large image requires more memory</source>
+        <translation>تصویر بزرگ به حافظه بیشتری نیاز دارد</translation>
+    </message>
+    <message>
+        <source>The image is {width}x{height} pixels and needs at least about {required} MB to decode, above the current {limit} MB safety limit. Opening it may temporarily make Labelme or other applications less responsive.</source>
+        <translation>این تصویر {width}x{height} پیکسل است و برای رمزگشایی دست‌کم حدود {required} مگابایت حافظه نیاز دارد که از حد ایمنی فعلی {limit} مگابایت بیشتر است. باز کردن آن ممکن است موقتاً پاسخ‌گویی Labelme یا برنامه‌های دیگر را کندتر کند.</translation>
+    </message>
+    <message>
+        <source>Open Anyway</source>
+        <translation>باز کردن در هر صورت</translation>
+    </message>
+    <message>
         <source>Error opening file</source>
         <translation>خطا در باز کردن فایل</translation>
     </message>

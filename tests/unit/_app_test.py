@@ -169,6 +169,23 @@ def test_make_image_too_large_message_accounts_for_bit_depth(
     assert "2 MB" in message
 
 
+def test_make_image_too_large_message_uses_minimum_gui_depth(
+    *,
+    set_allocation_limit: Callable[[int], None],
+) -> None:
+    image_data = _make_png_bytes(
+        width=800, height=600, image_format=QtGui.QImage.Format.Format_Indexed8
+    )
+    set_allocation_limit(1)
+    assert QtGui.QImage.fromData(image_data).isNull()
+
+    message = _app._make_image_too_large_message(image_data=image_data)
+
+    assert message is not None
+    assert "2 MB" in message
+    assert "1 MB" in message
+
+
 @pytest.mark.usefixtures("qapp")
 def test_make_image_too_large_message_reports_per_side_limit() -> None:
     # A hand-built PNG whose header claims the dimensions from #2388 but
