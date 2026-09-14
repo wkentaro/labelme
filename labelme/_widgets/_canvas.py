@@ -1969,8 +1969,6 @@ class Canvas(QtWidgets.QWidget):
         for shape in shapes:
             shape.label = text
             shape.flags = flags
-        self.shape_backups.pop()
-        self.backup_shapes()
         return shapes
 
     def undo_last_line(self) -> None:
