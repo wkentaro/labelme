@@ -1800,11 +1800,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
 
     def _on_label_order_changed(self) -> None:
-        self.mark_dirty()
         shapes = [
             s for item in self._docks.label_list if (s := item.shape()) is not None
         ]
         self._canvas_widgets.canvas.load_shapes(shapes=shapes)
+        # Loading pushes the undo snapshot; marking dirty before it left Undo
+        # disabled on a freshly loaded file.
+        self.mark_dirty()
 
     # Callback functions:
 
