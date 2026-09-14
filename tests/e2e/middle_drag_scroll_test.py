@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
-from labelme._widgets.canvas import Canvas
+from labelme._widgets._canvas import Canvas
 
 from ..conftest import close_or_pause
 from .conftest import drag_canvas

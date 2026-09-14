@@ -6,7 +6,7 @@ from pytestqt.qtbot import QtBot
 
 import labelme._utils
 from labelme._app import MainWindow
-from labelme._widgets.brightness_contrast_dialog import BrightnessContrastDialog
+from labelme._widgets._brightness_contrast_dialog import BrightnessContrastDialog
 
 from ..conftest import close_or_pause
 

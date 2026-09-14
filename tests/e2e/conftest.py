@@ -23,8 +23,8 @@ from pytestqt.qtbot import QtBot
 import labelme._app
 from labelme.__main__ import main
 from labelme._app import MainWindow
-from labelme._widgets.canvas import Canvas
-from labelme._widgets.label_dialog import LabelDialog
+from labelme._widgets._canvas import Canvas
+from labelme._widgets._label_dialog import LabelDialog
 
 _DEFAULT_WINDOW_SIZE: Final = QSize(800, 600)
 

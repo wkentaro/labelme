@@ -13,8 +13,8 @@ from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape
-from labelme._widgets.canvas import Canvas
-from labelme._widgets.canvas import _DraftShape
+from labelme._widgets._canvas import Canvas
+from labelme._widgets._canvas import _DraftShape
 
 # Pixmap dimensions used across all tests.
 _W: Final[int] = 200

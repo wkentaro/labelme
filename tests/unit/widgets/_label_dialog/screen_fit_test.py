@@ -4,7 +4,7 @@ import pytest
 from PySide6 import QtGui
 from pytestqt.qtbot import QtBot
 
-from labelme._widgets.label_dialog import LabelDialog
+from labelme._widgets._label_dialog import LabelDialog
 
 
 def _make_dialog(qtbot: QtBot, /, *, flag_count: int) -> LabelDialog:

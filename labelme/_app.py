@@ -65,7 +65,7 @@ from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
 from ._widgets import download_ai_model
 from ._widgets import format_shape_label
-from ._widgets.label_list_widget import LABEL_COLOR_ROLE
+from ._widgets._label_list_widget import LABEL_COLOR_ROLE
 
 
 class _ZoomMode(enum.Enum):

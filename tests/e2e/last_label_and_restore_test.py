@@ -12,7 +12,7 @@ from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
-from labelme._widgets.label_dialog import LabelDialog
+from labelme._widgets._label_dialog import LabelDialog
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory

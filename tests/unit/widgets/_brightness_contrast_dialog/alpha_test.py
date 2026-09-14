@@ -6,8 +6,8 @@ import pytest
 from numpy.typing import NDArray
 from pytestqt.qtbot import QtBot
 
-from labelme._utils.image import img_qt_to_arr
-from labelme._widgets.brightness_contrast_dialog import BrightnessContrastDialog
+from labelme._utils._image import img_qt_to_arr
+from labelme._widgets._brightness_contrast_dialog import BrightnessContrastDialog
 
 
 @pytest.fixture()

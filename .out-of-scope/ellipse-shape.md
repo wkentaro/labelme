@@ -38,7 +38,7 @@ geometry already in the tree rather than fit:
   killed #909 (rendering a rotated ellipse) is already solved by reusing that
   4-point representation.
 - `circle` is already a degenerate ellipse: it rasterizes via
-  `PIL.ImageDraw.ellipse` (`labelme/_utils/shape.py`) and renders via
+  `PIL.ImageDraw.ellipse` (`labelme/_utils/_shape.py`) and renders via
   `addEllipse(center, radius, radius)` (`labelme/_widgets/_shape_render.py`). The
   lowest-cost slice would be an axis-aligned ellipse (unequal radii, no
   rotation), but it should not be built on spec.

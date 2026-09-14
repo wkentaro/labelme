@@ -5,7 +5,7 @@ from PySide6 import QtGui
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
-from labelme._widgets.unique_label_qlist_widget import UniqueLabelQListWidget
+from labelme._widgets._unique_label_qlist_widget import UniqueLabelQListWidget
 
 
 @pytest.fixture()

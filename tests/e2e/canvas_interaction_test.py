@@ -17,10 +17,10 @@ from pytestqt.qtbot import QtBot
 from labelme import _utils
 from labelme._app import MainWindow
 from labelme._shape import Shape
+from labelme._widgets._canvas import Canvas
+from labelme._widgets._canvas import _CanvasMode
+from labelme._widgets._label_dialog import LabelDialog
 from labelme._widgets._shape_render import bounds as _shape_bounds
-from labelme._widgets.canvas import Canvas
-from labelme._widgets.canvas import _CanvasMode
-from labelme._widgets.label_dialog import LabelDialog
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause

@@ -19,22 +19,22 @@ from pytestqt.qtbot import QtBot
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._shape import Shape
 from labelme._shape import ShapeType
-from labelme._widgets.canvas import _CREATE_MODE_TO_SHAPE_TYPE
-from labelme._widgets.canvas import Canvas
-from labelme._widgets.canvas import _compute_intersection_edges_image
-from labelme._widgets.canvas import _compute_shapes_bounds
-from labelme._widgets.canvas import _draft_to_shape
-from labelme._widgets.canvas import _DraftShape
-from labelme._widgets.canvas import _is_degenerate_draft
-from labelme._widgets.canvas import _is_out_of_image
-from labelme._widgets.canvas import _normalize_bbox_points
-from labelme._widgets.canvas import _opposite_corner_in_parallelogram
-from labelme._widgets.canvas import _pick_pending_moved_shape
-from labelme._widgets.canvas import _project_oriented_rectangle_corners
-from labelme._widgets.canvas import _reproject_oriented_rectangle_corners
-from labelme._widgets.canvas import _shape_to_draft
-from labelme._widgets.canvas import _should_reselect_on_right_press
-from labelme._widgets.canvas import _snap_cursor_pos_for_square
+from labelme._widgets._canvas import _CREATE_MODE_TO_SHAPE_TYPE
+from labelme._widgets._canvas import Canvas
+from labelme._widgets._canvas import _compute_intersection_edges_image
+from labelme._widgets._canvas import _compute_shapes_bounds
+from labelme._widgets._canvas import _draft_to_shape
+from labelme._widgets._canvas import _DraftShape
+from labelme._widgets._canvas import _is_degenerate_draft
+from labelme._widgets._canvas import _is_out_of_image
+from labelme._widgets._canvas import _normalize_bbox_points
+from labelme._widgets._canvas import _opposite_corner_in_parallelogram
+from labelme._widgets._canvas import _pick_pending_moved_shape
+from labelme._widgets._canvas import _project_oriented_rectangle_corners
+from labelme._widgets._canvas import _reproject_oriented_rectangle_corners
+from labelme._widgets._canvas import _shape_to_draft
+from labelme._widgets._canvas import _should_reselect_on_right_press
+from labelme._widgets._canvas import _snap_cursor_pos_for_square
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -1144,7 +1144,9 @@ def ai_points_harness(
         downloads.append(model_name)
         return True
 
-    monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", _download_ai_model)
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.download_ai_model", _download_ai_model
+    )
     canvas.point_prompt_rejected.connect(rejected_models.append)
     canvas.resize(_WIDTH, _HEIGHT)
     canvas.set_editing(value=False)
@@ -2430,7 +2432,7 @@ def test_ai_preview_follows_input_without_inference_during_paint(
         return proposal
 
     monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
-    monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", lambda **_: True)
+    monkeypatch.setattr("labelme._widgets._canvas.download_ai_model", lambda **_: True)
     canvas.set_editing(value=False, create_mode="ai_points_to_shape")
     canvas.show()
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
@@ -2496,7 +2498,7 @@ def test_ai_preview_refreshes_when_proposal_inputs_change(
         return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
 
     monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
-    monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", lambda **_: True)
+    monkeypatch.setattr("labelme._widgets._canvas.download_ai_model", lambda **_: True)
     canvas.set_editing(value=False, create_mode="ai_points_to_shape")
     canvas.show()
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
@@ -2555,7 +2557,7 @@ def test_ai_preview_clears_when_replacement_is_unavailable(
         return proposal
 
     monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
-    monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", lambda **_: True)
+    monkeypatch.setattr("labelme._widgets._canvas.download_ai_model", lambda **_: True)
     canvas.set_editing(value=False, create_mode="ai_points_to_shape")
     canvas.show()
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
@@ -2580,7 +2582,7 @@ def test_square_drawing_commits_ai_box_prompt(
     *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # Download and inference are external to box geometry.
-    monkeypatch.setattr("labelme._widgets.canvas.download_ai_model", lambda **_: True)
+    monkeypatch.setattr("labelme._widgets._canvas.download_ai_model", lambda **_: True)
     prompts: list[list[QPointF]] = []
 
     def propose_shapes(*, points: list[QPointF], **_: object) -> AiAssistProposal:

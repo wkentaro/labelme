@@ -6,7 +6,7 @@ from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
-from .._utils.qt import new_icon
+from .._utils._qt import new_icon
 
 
 class EmptyStateWidget(QtWidgets.QWidget):

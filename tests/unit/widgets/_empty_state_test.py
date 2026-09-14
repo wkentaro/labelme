@@ -6,7 +6,7 @@ from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._utils import new_icon
-from labelme._widgets.empty_state import EmptyStateWidget
+from labelme._widgets._empty_state import EmptyStateWidget
 
 
 def _ignore_click() -> None:

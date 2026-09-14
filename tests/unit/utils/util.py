@@ -7,7 +7,7 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from labelme._utils import image as image_module
+from labelme._utils import _image as image_module
 
 here = Path(__file__).parent
 data_dir = here.parent.parent / "data"
