@@ -1399,8 +1399,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._on_inference_failed(f"{type(e).__name__}: {e}")
             return
 
-        self._load_shapes(shapes, replace=False)
-        self.mark_dirty()
+        self._commit_shapes([*self._canvas_widgets.canvas.shapes, *shapes])
 
     def reset_state(self) -> None:
         self._docks.label_list.clear()
@@ -1416,9 +1415,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def undo_shape_edit(self) -> None:
         self._canvas_widgets.canvas.restore_last_shape()
-        self._docks.label_list.clear()
-        self._load_shapes(self._canvas_widgets.canvas.shapes, replace=True)
-        self.mark_dirty()
+        self._commit_shapes(self._canvas_widgets.canvas.shapes)
 
     def tutorial(self) -> None:
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
@@ -1681,6 +1678,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._canvas_widgets.canvas.load_shapes(shapes=shapes, replace=replace)
 
+    def _commit_shapes(self, shapes: list[Shape], /) -> None:
+        # Canvas loading pushes the one undo snapshot, so callers must not
+        # back up again. Edits the canvas makes itself (delete, point removal,
+        # drag) already snapshot there and only need the dirty mark.
+        self._docks.label_list.clear()
+        self._load_shapes(shapes, replace=True)
+        self.mark_dirty()
+
     def _load_flags(
         self,
         *,
@@ -1748,9 +1753,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def _insert_shapes(self, shapes: list[Shape], /) -> None:
         if not shapes:
             return
-        self._load_shapes(shapes, replace=False)
+        self._commit_shapes([*self._canvas_widgets.canvas.shapes, *shapes])
         self._canvas_widgets.canvas.select_shapes(shapes=shapes)
-        self.mark_dirty()
 
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []
@@ -1800,13 +1804,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
 
     def _on_label_order_changed(self) -> None:
-        shapes = [
-            s for item in self._docks.label_list if (s := item.shape()) is not None
-        ]
-        self._canvas_widgets.canvas.load_shapes(shapes=shapes)
-        # Loading pushes the undo snapshot; marking dirty before it left Undo
-        # disabled on a freshly loaded file.
-        self.mark_dirty()
+        self._commit_shapes(
+            [s for item in self._docks.label_list if (s := item.shape()) is not None]
+        )
 
     # Callback functions:
 
