@@ -483,6 +483,14 @@
         <translation>Sisipkan bentuk dari clipboard ke gambar ini</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Gabungkan Bentuk</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Gabungkan bentuk mask terpilih menjadi satu</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Hapus Simpul Terpilih</translation>
     </message>

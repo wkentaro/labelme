@@ -493,6 +493,14 @@ Shapes</source>
         <translation>Вставить фигуры из буфера обмена в это изображение</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Объединить фигуры</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>Объединить выбранные фигуры-маски в одну</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Удалить выбранную вершину</translation>
     </message>

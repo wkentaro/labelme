@@ -530,6 +530,14 @@ Shapes</source>
         <translation>A vágólap alakzatainak beszúrása ebbe a képbe</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>Alakzatok egyesítése</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>A kijelölt maszk alakzatok egyesítése eggyé</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Kijelölt csúcspont törlése</translation>
     </message>

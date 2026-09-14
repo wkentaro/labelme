@@ -521,6 +521,14 @@ Shapes</source>
         <translation>クリップボードの図形をこの画像に挿入</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>図形を結合</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>選択したマスク図形を1つに結合</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>選択した頂点を削除</translation>
     </message>

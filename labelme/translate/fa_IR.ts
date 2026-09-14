@@ -508,6 +508,14 @@ Shapes</source>
         <translation>درج شکل‌های کلیپ‌بورد در این تصویر</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>ادغام شکل‌ها</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>ادغام شکل‌های ماسک انتخاب شده در یک شکل</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>حذف رأس انتخاب‌شده</translation>
     </message>

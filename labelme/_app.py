@@ -45,6 +45,8 @@ from ._label_file import write_label_file
 from ._label_flags import compile_label_flags
 from ._shape import Shape
 from ._shape import ShapeType
+from ._shape import can_merge_shapes
+from ._shape import merge_masks
 from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
 from ._widgets import AiAssistedAnnotationWidget
@@ -146,6 +148,7 @@ class _Actions(NamedTuple):
     copy: QtGui.QAction
     paste: QtGui.QAction
     duplicate: QtGui.QAction
+    merge: QtGui.QAction
     undo_last_point: QtGui.QAction
     undo: QtGui.QAction
     add_point_to_edge: QtGui.QAction
@@ -492,6 +495,12 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Create a duplicate of the selected shapes"),
             enabled=False,
         )
+        merge = action(
+            text=self.tr("Merge Shapes"),
+            slot=self._merge_selected_shapes,
+            tip=self.tr("Merge the selected mask shapes into one"),
+            enabled=False,
+        )
         undo_last_point = action(
             text=self.tr("Undo last point"),
             slot=self._canvas_widgets.canvas.undo_last_point,
@@ -765,6 +774,7 @@ class MainWindow(QtWidgets.QMainWindow):
             separator(),
             edit,
             delete,
+            merge,
             add_point_to_edge,
             remove_point,
         )
@@ -776,6 +786,7 @@ class MainWindow(QtWidgets.QMainWindow):
             separator(),
             edit,
             delete,
+            merge,
             remove_point,
             separator(),
             keep_prev_action,
@@ -797,6 +808,7 @@ class MainWindow(QtWidgets.QMainWindow):
             copy=copy,
             paste=paste,
             duplicate=duplicate,
+            merge=merge,
             undo_last_point=undo_last_point,
             undo=undo,
             remove_point=remove_point,
@@ -1428,6 +1440,10 @@ class MainWindow(QtWidgets.QMainWindow):
             not drawing and self._canvas_widgets.canvas.can_restore_shape
         )
         self._actions.delete.setEnabled(not drawing)
+        self._actions.merge.setEnabled(
+            not drawing
+            and can_merge_shapes(self._canvas_widgets.canvas.selected_shapes)
+        )
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
@@ -1611,6 +1627,7 @@ class MainWindow(QtWidgets.QMainWindow):
         n_selected = len(selected_shapes) > 0
         self._actions.delete.setEnabled(n_selected)
         self._actions.duplicate.setEnabled(n_selected)
+        self._actions.merge.setEnabled(can_merge_shapes(selected_shapes))
         self._actions.copy.setEnabled(n_selected)
         self._actions.edit.setEnabled(n_selected)
 
@@ -1755,6 +1772,22 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self._commit_shapes([*self._canvas_widgets.canvas.shapes, *shapes])
         self._canvas_widgets.canvas.select_shapes(shapes=shapes)
+
+    def _merge_selected_shapes(self) -> None:
+        canvas = self._canvas_widgets.canvas
+        selected = list(canvas.selected_shapes)
+        if not can_merge_shapes(selected):
+            return
+        merged = merge_masks(selected)
+        # The merged shape takes the first input's slot so the Label List
+        # order is preserved; the other inputs are dropped.
+        shapes = [
+            merged if s is selected[0] else s
+            for s in canvas.shapes
+            if s is selected[0] or s not in selected
+        ]
+        self._commit_shapes(shapes)
+        canvas.select_shapes(shapes=[merged])
 
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []

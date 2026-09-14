@@ -514,6 +514,14 @@ Shapes</source>
         <translation>将剪贴板中的形状插入此图像</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>合并形状</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>将选中的掩码形状合并为一个</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>删除选中的顶点</translation>
     </message>

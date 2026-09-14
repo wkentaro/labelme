@@ -508,6 +508,14 @@ Shapes</source>
         <translation>แทรกรูปร่างจากคลิปบอร์ดลงในภาพนี้</translation>
     </message>
     <message>
+        <source>Merge Shapes</source>
+        <translation>รวมรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Merge the selected mask shapes into one</source>
+        <translation>รวมรูปร่างมาสก์ที่เลือกเป็นรูปร่างเดียว</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>ลบจุดยอดที่เลือก</translation>
     </message>
