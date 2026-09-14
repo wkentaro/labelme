@@ -292,6 +292,33 @@ def item_model(
 _DropIndicator = QtWidgets.QAbstractItemView.DropIndicatorPosition
 
 
+def test_drag_indicates_insertion_between_shapes(*, widget: LabelListWidget) -> None:
+    for text in "abc":
+        widget.add_item(item=LabelListWidgetItem(text=text))
+    # Synthetic drag events have no source widget; allow them through Qt's
+    # source check while exercising its real drop-indicator calculation.
+    widget.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.DragDrop)
+    model = widget.model()
+    mime = model.mimeData([model.index(0, 0)])
+    rect = widget.visualRect(model.index(1, 0))
+    for offset, expected in [
+        (-1, _DropIndicator.AboveItem),
+        (1, _DropIndicator.BelowItem),
+    ]:
+        event = QtGui.QDragMoveEvent(
+            rect.center() + QtCore.QPoint(0, offset),
+            Qt.DropAction.MoveAction,
+            mime,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
+
+        widget.dragMoveEvent(event)
+
+        assert event.isAccepted()
+        assert widget.dropIndicatorPosition() == expected
+
+
 @pytest.mark.parametrize(
     ("selected", "indicator", "target", "expected"),
     [
