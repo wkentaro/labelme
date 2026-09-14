@@ -1547,7 +1547,6 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return
 
-        self._canvas_widgets.canvas.backup_shapes()
         for item in items:
             shape = item.shape()
             assert shape is not None
@@ -1573,6 +1572,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         unique_label_list=self._docks.unique_label_list,
                     ),
                 )
+        self._canvas_widgets.canvas.backup_shapes()
 
     def _on_file_search_changed(self) -> None:
         try:
