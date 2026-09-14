@@ -149,30 +149,6 @@ class _ItemModel(QtGui.QStandardItemModel):
         self.item_dropped.emit()
         return ret
 
-    def dropMimeData(
-        self,
-        data: QtCore.QMimeData,
-        action: Qt.DropAction,
-        row: int,
-        column: int,
-        parent: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
-        /,
-    ) -> bool:
-        # NOTE: By default, PyQt will overwrite items when dropped on them, so we need
-        # to adjust the row/parent to insert after the item instead.
-
-        # If row is -1, we're dropping on an item (which would overwrite)
-        # Instead, we want to insert after it
-        if row == -1 and parent.isValid():
-            row = parent.row() + 1
-            parent = parent.parent()
-
-        # If still -1, append to end
-        if row == -1:
-            row = self.rowCount(parent)
-
-        return super().dropMimeData(data, action, row, column, parent)
-
 
 class _ItemSnapshot(NamedTuple):
     # A persistent index, not the item itself: the model owns the item and
@@ -242,6 +218,31 @@ class LabelListWidget(QtWidgets.QListView):
                 )
 
         self._press_snapshot = ()
+
+    def dropEvent(self, e: QtGui.QDropEvent, /) -> None:
+        # Qt's default drop rebuilds the dragged rows from MIME data, which
+        # swaps every moved shape for a copy the canvas does not hold. Moving
+        # the item objects and accepting before the base handler runs tells it
+        # the data is already in place, so it neither inserts nor removes rows.
+        rows = sorted({index.row() for index in self.selectedIndexes()})
+        target = self._resolve_drop_row(e=e)
+        target -= sum(row < target for row in rows)
+        taken = [self._model.takeRow(row) for row in reversed(rows)]
+        for offset, row_items in enumerate(reversed(taken)):
+            self._model.insertRow(target + offset, row_items)
+        e.accept()
+        super().dropEvent(e)
+        self.item_dropped.emit()
+
+    def _resolve_drop_row(self, *, e: QtGui.QDropEvent) -> int:
+        index = self.indexAt(e.position().toPoint())
+        if not index.isValid():
+            return self._model.rowCount()
+        above = QtWidgets.QAbstractItemView.DropIndicatorPosition.AboveItem
+        if self.dropIndicatorPosition() == above:
+            return index.row()
+        # Landing on a row inserts after it instead of overwriting it (#783).
+        return index.row() + 1
 
     def selection_at_press(self) -> tuple[LabelListWidgetItem, ...]:
         return tuple(
