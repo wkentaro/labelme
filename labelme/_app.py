@@ -1840,6 +1840,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape.group_id = entry.group_id
             shape.description = entry.description
             self.add_label(shape=shape)
+        # The draft snapshot was taken before the dialog ran, so retake it now
+        # or undo would strip the group id and description along with the
+        # next change.
+        self._canvas_widgets.canvas.shape_backups.pop()
+        self._canvas_widgets.canvas.backup_shapes()
         self._actions.edit_mode.setEnabled(True)
         self._actions.undo_last_point.setEnabled(False)
         self._actions.undo.setEnabled(True)
