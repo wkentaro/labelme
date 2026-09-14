@@ -14,6 +14,10 @@ Issues are tracked as GitHub issues on `wkentaro/labelme` via the `gh` CLI. See 
 
 For issue triage and type labels or pull-request verdict labels, follow `docs/agents/triage-labels.md`.
 
+### GUI driving
+
+To see or drive the real app, follow `docs/agents/gui-driving.md`: e2e tests first, then the harness's own computer use on macOS or Windows, Xvfb on Linux, and hand-driven live desktop last.
+
 ### Domain docs
 
 Single-context layout: `CONTEXT.md` and `docs/adr/` at the repo root (created lazily by `/grill-with-docs`). See `docs/agents/domain.md`.
