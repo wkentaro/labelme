@@ -3,8 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from PySide6.QtCore import QModelIndex
+from PySide6.QtCore import QMimeData
+from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QDropEvent
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
@@ -203,19 +205,34 @@ def test_reorder_label_list_is_one_undo_step(
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
     label_list = annotated_win._docks.label_list
-    model = label_list._model
+    shapes_before = list(canvas.shapes)
     labels_before = [s.label for s in canvas.shapes]
     assert not annotated_win._actions.undo.isEnabled()
 
-    # Qt's internal move drops a copy of the row, then removes the source row;
-    # the drop signal fires from that removal, so the commit runs re-entrantly.
-    mime = model.mimeData([model.index(0, 0)])
-    assert model.dropMimeData(mime, Qt.DropAction.MoveAction, -1, -1, QModelIndex())
-    assert model.removeRows(0, 1, QModelIndex())
+    # A synthetic drop below the last row stands in for a real drag, which
+    # needs a window-system pointer that offscreen Qt does not provide.
+    label_list.select_item(item=label_list[0])
+    mime = QMimeData()
+    label_list.dropEvent(
+        QDropEvent(
+            QPointF(5, label_list.viewport().height() + 50),
+            Qt.DropAction.MoveAction,
+            mime,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
+    )
     qtbot.wait(50)
 
     assert [s.label for s in canvas.shapes] == labels_before[1:] + labels_before[:1]
     assert [item.shape() for item in label_list] == canvas.shapes
+    # The reorder must keep the shape objects, not swap in copies.
+    assert all(
+        a is b
+        for a, b in zip(
+            canvas.shapes, shapes_before[1:] + shapes_before[:1], strict=True
+        )
+    )
     assert annotated_win._actions.undo.isEnabled()
 
     annotated_win._actions.undo.trigger()

@@ -289,36 +289,64 @@ def item_model(
     return model
 
 
-def test_drop_on_item_inserts_after_it_without_overwriting(
+_DropIndicator = QtWidgets.QAbstractItemView.DropIndicatorPosition
+
+
+@pytest.mark.parametrize(
+    ("selected", "indicator", "target", "expected"),
+    [
+        (["a", "b"], _DropIndicator.OnViewport, None, ["c", "a", "b"]),
+        (["c"], _DropIndicator.AboveItem, "a", ["c", "a", "b"]),
+        (["c"], _DropIndicator.OnItem, "a", ["a", "c", "b"]),
+        (["a", "c"], _DropIndicator.BelowItem, "a", ["a", "c", "b"]),
+    ],
+    ids=["multi_row_to_end", "above_item", "on_item_inserts_after", "into_selection"],
+)
+def test_drop_moves_items_and_emits_item_dropped_once(
     *,
-    item_model: _ItemModel,
+    widget: LabelListWidget,
+    monkeypatch: pytest.MonkeyPatch,
+    selected: list[str],
+    indicator: _DropIndicator,
+    target: str | None,
+    expected: list[str],
 ) -> None:
-    # Drop the dragged "c" (row 2) onto "a" (row 0) with row == -1, the way a
-    # view reports a drop landing on top of an item.
-    mime = item_model.mimeData([item_model.index(2, 0)])
-    dropped = item_model.dropMimeData(
-        mime, Qt.DropAction.MoveAction, -1, 0, item_model.index(0, 0)
+    items = {
+        text: LabelListWidgetItem(text=text, shape=Shape(label=text)) for text in "abc"
+    }
+    for item in items.values():
+        widget.add_item(item=item)
+    for text in selected:
+        widget.select_item(item=items[text])
+    fired: list[None] = []
+    widget.item_dropped.connect(lambda: fired.append(None))
+    # A synthetic drop never goes through dragMoveEvent, which is what sets
+    # the indicator the handler reads.
+    monkeypatch.setattr(widget, "dropIndicatorPosition", lambda: indicator)
+    if target is None:
+        pos = widget.visualRect(widget.model().index(2, 0)).bottomLeft()
+        pos += QtCore.QPoint(0, 20)
+    else:
+        pos = _item_center(widget=widget, item=items[target])
+    mime = QtCore.QMimeData()
+
+    widget.dropEvent(
+        QtGui.QDropEvent(
+            QtCore.QPointF(pos),
+            Qt.DropAction.MoveAction,
+            mime,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
     )
 
-    assert dropped
-    # dropMimeData only inserts; the source row is removed separately by the
-    # view (via removeRows), so the dragged "c" still remains at the end here.
-    # The row/parent adjustment lands the inserted "c" right after "a" as a
-    # sibling; without it Qt would nest "c" as a hidden child of "a".
-    assert _model_texts(item_model) == ["a", "c", "b", "c"]
-
-
-def test_drop_in_empty_space_appends_to_end(*, item_model: _ItemModel) -> None:
-    # A drop below the last row reports row == -1 with an invalid parent.
-    mime = item_model.mimeData([item_model.index(0, 0)])
-    dropped = item_model.dropMimeData(
-        mime, Qt.DropAction.MoveAction, -1, 0, QtCore.QModelIndex()
+    assert [item.text() for item in widget] == expected
+    moved_shapes = [item.shape() for item in widget]
+    assert all(
+        shape is items[text].shape()
+        for shape, text in zip(moved_shapes, expected, strict=True)
     )
-
-    assert dropped
-    # As above, the source row survives here (the view removes it separately);
-    # the dragged "a" is appended at the end.
-    assert _model_texts(item_model) == ["a", "b", "c", "a"]
+    assert fired == [None]
 
 
 def test_remove_rows_emits_item_dropped(*, item_model: _ItemModel) -> None:
