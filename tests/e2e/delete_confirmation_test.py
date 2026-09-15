@@ -13,7 +13,6 @@ from labelme._app import MainWindow
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
-from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 
@@ -91,7 +90,8 @@ def test_confirm_deletion_returns_false_when_cancel_clicked(
 
 
 @pytest.mark.gui
-def test_shape_deletion_warning_matches_working_undo(
+@pytest.mark.parametrize("delete_count", [1, 2, 5])
+def test_delete_shapes_without_confirmation_and_undo(
     *,
     qtbot: QtBot,
     main_win: MainWinFactory,
@@ -99,13 +99,11 @@ def test_shape_deletion_warning_matches_working_undo(
     data_path: Path,
     tmp_path: Path,
     pause: bool,
+    delete_count: int,
 ) -> None:
     ANNOTATED_FILE_NAME: Final[str] = "annotated/2011_000003.json"
     SHAPE_TIMEOUT_MS: Final[int] = 5_000
 
-    # Auto-save is what makes the saved shape count observable without driving
-    # a save action, and the untranslated source language is what makes the
-    # warning assertions below independent of the developer's system locale.
     win = main_win(
         file_or_dir=str(data_path / ANNOTATED_FILE_NAME),
         config_overrides=dict(auto_save=True, language="en_US"),
@@ -114,38 +112,37 @@ def test_shape_deletion_warning_matches_working_undo(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas
+    canvas.shapes[0].group_id = 7
+    canvas.shapes[0].description = "Restore this annotation"
+    canvas.shapes[0].flags = {"reviewed": True}
+    win._commit_shapes(canvas.shapes)
+    label_file = tmp_path / Path(ANNOTATED_FILE_NAME).name
+    with open(label_file) as f:
+        saved_shapes = json.load(f)["shapes"]
     labels = [shape.label for shape in canvas.shapes]
     rows = _get_shape_list_labels(win=win)
     assert labels
     shape_count = len(labels)
 
     shown_messages: list[str] = []
-    click_delete = _exec_clicking_role(QtWidgets.QMessageBox.ButtonRole.DestructiveRole)
 
-    def _capture_then_delete(msg_box: QtWidgets.QMessageBox) -> int:
+    def _capture_dialog(msg_box: QtWidgets.QMessageBox) -> int:
         shown_messages.append(msg_box.text())
-        return click_delete(msg_box)
+        return 0
 
-    monkeypatch.setattr(QtWidgets.QMessageBox, "exec", _capture_then_delete)
+    monkeypatch.setattr(QtWidgets.QMessageBox, "exec", _capture_dialog)
 
-    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    canvas.select_shapes(shapes=canvas.shapes[:delete_count])
     win._actions.delete.trigger()
+    assert shown_messages == []
     qtbot.waitUntil(
-        lambda: len(canvas.shapes) == shape_count - 1, timeout=SHAPE_TIMEOUT_MS
+        lambda: len(canvas.shapes) == shape_count - delete_count,
+        timeout=SHAPE_TIMEOUT_MS,
     )
 
-    assert len(shown_messages) == 1
-    warning = shown_messages[0]
-    assert "cannot be undone" not in warning
-    assert "restore" in warning
-    assert "Undo" in warning
-
-    label_file = tmp_path / Path(ANNOTATED_FILE_NAME).name
     with open(label_file) as f:
-        assert len(json.load(f)["shapes"]) == shape_count - 1
+        assert json.load(f)["shapes"] == saved_shapes[delete_count:]
 
-    # The warning promises Undo, which is only true when the action offering it
-    # is enabled, so drive the action itself rather than its callback.
     assert win._actions.undo.isEnabled()
     win._actions.undo.trigger()
     qtbot.waitUntil(lambda: len(canvas.shapes) == shape_count, timeout=SHAPE_TIMEOUT_MS)
@@ -153,6 +150,6 @@ def test_shape_deletion_warning_matches_working_undo(
     assert [shape.label for shape in canvas.shapes] == labels
     assert _get_shape_list_labels(win=win) == rows
     with open(label_file) as f:
-        assert len(json.load(f)["shapes"]) == shape_count
+        assert json.load(f)["shapes"] == saved_shapes
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

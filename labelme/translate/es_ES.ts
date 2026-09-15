@@ -712,10 +712,6 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
         <translation>Cambios sin guardar</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>¿Eliminar {} formas? Puede restaurarlas con Deshacer.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Explorar carpeta de imágenes</translation>
     </message>

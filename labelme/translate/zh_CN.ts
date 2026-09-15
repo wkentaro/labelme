@@ -718,10 +718,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>尚未保存的更改</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>删除 {} 个形状？可以使用「撤销」恢复。</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - 浏览图像文件夹</translation>
     </message>

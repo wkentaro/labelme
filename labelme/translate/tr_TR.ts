@@ -718,10 +718,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Kaydedilmemiş değişiklikler</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>{} şekil silinsin mi? Geri Al ile geri yükleyebilirsiniz.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Görüntü Klasörüne Göz At</translation>
     </message>
