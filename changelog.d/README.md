@@ -15,6 +15,10 @@ major version.
 Release a minor version for any ready backward-compatible improvement and a
 patch for backward-compatible fixes; there is no minimum release size.
 
+Choose release versions by change semantics, independently of announcements.
+Announcements may highlight one feature or combine improvements across
+releases; no release automatically requires an announcement.
+
 To release version `X.Y.Z`:
 
 1. Run `uv run towncrier build --yes --version X.Y.Z`.
