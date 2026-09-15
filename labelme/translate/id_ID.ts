@@ -543,6 +543,38 @@
         <translation>Isi poligon saat menggambar</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Pilih bentuk di atas</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Pilih bentuk terdekat di atas pilihan</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Pilih bentuk di bawah</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Pilih bentuk terdekat di bawah pilihan</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Pilih bentuk di kiri</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Pilih bentuk terdekat di kiri pilihan</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Pilih bentuk di kanan</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Pilih bentuk terdekat di kanan pilihan</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+Scroll melakukan zoom pada kanvas</translation>
     </message>

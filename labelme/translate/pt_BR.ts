@@ -568,6 +568,38 @@ Shapes</source>
         <translation>Preencher polígono enquanto desenha</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Selecionar forma acima</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Selecionar a forma mais próxima acima da seleção</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Selecionar forma abaixo</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Selecionar a forma mais próxima abaixo da seleção</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Selecionar forma à esquerda</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Selecionar a forma mais próxima à esquerda da seleção</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Selecionar forma à direita</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Selecionar a forma mais próxima à direita da seleção</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+Roda amplia a tela</translation>
     </message>

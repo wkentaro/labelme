@@ -568,6 +568,38 @@ Shapes</source>
         <translation>เติมสีหลายเหลี่ยมขณะวาด</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>เลือกรูปร่างด้านบน</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>เลือกรูปร่างที่ใกล้ที่สุดด้านบนของส่วนที่เลือก</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>เลือกรูปร่างด้านล่าง</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>เลือกรูปร่างที่ใกล้ที่สุดด้านล่างของส่วนที่เลือก</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>เลือกรูปร่างด้านซ้าย</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>เลือกรูปร่างที่ใกล้ที่สุดด้านซ้ายของส่วนที่เลือก</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>เลือกรูปร่างด้านขวา</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>เลือกรูปร่างที่ใกล้ที่สุดด้านขวาของส่วนที่เลือก</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+ล้อเลื่อน เพื่อซูมแคนวาส</translation>
     </message>

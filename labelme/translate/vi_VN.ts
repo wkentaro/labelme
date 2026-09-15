@@ -568,6 +568,38 @@ Shapes</source>
         <translation>Tô đa giác khi vẽ</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Chọn hình dạng phía trên</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Chọn hình dạng gần nhất phía trên vùng chọn</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Chọn hình dạng phía dưới</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Chọn hình dạng gần nhất phía dưới vùng chọn</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Chọn hình dạng bên trái</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Chọn hình dạng gần nhất bên trái vùng chọn</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Chọn hình dạng bên phải</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Chọn hình dạng gần nhất bên phải vùng chọn</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+Bánh xe phóng to/thu nhỏ canvas</translation>
     </message>
