@@ -798,6 +798,18 @@ Please select a different model or use AI-Box mode.</source>
 Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>Không tìm thấy ảnh</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>Chú thích này tham chiếu đến &quot;{name}&quot;, nhưng không tìm thấy ảnh đó.
+
+Vị trí dự kiến: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>Danh sách tệp bị tắt khi mở tệp nhãn</translation>
     </message>

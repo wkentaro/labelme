@@ -798,6 +798,18 @@ Please select a different model or use AI-Box mode.</source>
 다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>이미지를 찾을 수 없음</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>이 어노테이션은 &quot;{name}&quot;을(를) 참조하지만 해당 이미지를 찾을 수 없습니다.
+
+예상 위치: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>라벨 파일이 열려 있을 때 파일 목록이 비활성화됩니다</translation>
     </message>

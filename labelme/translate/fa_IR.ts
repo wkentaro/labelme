@@ -798,6 +798,18 @@ Please select a different model or use AI-Box mode.</source>
 لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>تصویر پیدا نشد</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>این حاشیه‌نویسی به «{name}» اشاره دارد، اما این تصویر پیدا نشد.
+
+محل مورد انتظار: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>فهرست فایل‌ها هنگام باز بودن یک فایل برچسب غیرفعال است</translation>
     </message>

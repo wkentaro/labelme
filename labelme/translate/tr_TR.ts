@@ -804,6 +804,18 @@ Please select a different model or use AI-Box mode.</source>
 Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>Görüntü bulunamadı</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>Bu anotasyon &quot;{name}&quot; görüntüsüne başvuruyor, ancak bu görüntü bulunamadı.
+
+Beklenen konum: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>Bir etiket dosyası açıkken dosya listesi devre dışı kalır</translation>
     </message>

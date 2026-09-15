@@ -205,6 +205,14 @@ class LabelFileReadError(LabelFileError):
     """Wraps an underlying parse or image-decode failure during load."""
 
 
+class ImageNotFoundError(LabelFileReadError):
+    image_path: str
+
+    def __init__(self, *, image_path: str) -> None:
+        super().__init__(f"Image not found: {image_path}")
+        self.image_path = image_path
+
+
 class LabelFileWriteError(LabelFileError):
     """Wraps an underlying I/O failure during save."""
 
@@ -306,9 +314,11 @@ def read_label_file(*, filename: str) -> Annotation:
             raw: dict[str, Any] = json.load(f)
         image_path = PureWindowsPath(raw["imagePath"]).as_posix()
         if raw["imageData"] is None:
-            image_data = read_image_file(
-                filename=str(Path(filename).parent / image_path)
-            )
+            resolved_image_path = str(Path(filename).parent / image_path)
+            try:
+                image_data = read_image_file(filename=resolved_image_path)
+            except FileNotFoundError as e:
+                raise ImageNotFoundError(image_path=resolved_image_path) from e
         else:
             image_data = base64.b64decode(raw["imageData"])
         _check_image_dimensions(

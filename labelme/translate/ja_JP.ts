@@ -812,6 +812,18 @@ Please select a different model or use AI-Box mode.</source>
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>画像が見つかりません</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>このアノテーションは「{name}」を参照していますが、画像が見つかりません。
+
+画像の参照先: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>ラベルファイルを開いている場合、ファイルリストは無効です</translation>
     </message>

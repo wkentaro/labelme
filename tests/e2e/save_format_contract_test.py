@@ -3,11 +3,13 @@ from __future__ import annotations
 import base64
 import json
 import os
+import sys
 from pathlib import Path
 from typing import Final
 
 import numpy as np
 import pytest
+from PySide6 import QtWidgets
 from PySide6.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
@@ -16,7 +18,6 @@ from labelme._app import MainWindow
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
-from .conftest import dismiss_active_modal
 from .conftest import draw_and_commit_polygon
 from .conftest import show_window_and_wait_for_imagedata
 
@@ -251,6 +252,9 @@ def test_round_trip_mask_shape_via_fixture(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    "image_path", ["does_not_exist.jpg", "images/does_not_exist.jpg"]
+)
 def test_open_json_with_missing_image_shows_error_and_recovers(
     *,
     qtbot: QtBot,
@@ -258,13 +262,14 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
     data_path: Path,
     tmp_path: Path,
     pause: bool,
+    image_path: str,
 ) -> None:
     missing_image_json = tmp_path / "missing_image.json"
     json_data = {
         "version": "6.0.0",
         "flags": {},
         "shapes": [],
-        "imagePath": "does_not_exist.jpg",
+        "imagePath": image_path,
         "imageData": None,
         "imageHeight": 100,
         "imageWidth": 100,
@@ -272,8 +277,26 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
     with open(missing_image_json, "w") as f:
         json.dump(json_data, f)
 
-    QTimer.singleShot(0, lambda: dismiss_active_modal(qtbot=qtbot))
+    messages = []
+
+    def capture_error() -> None:
+        dialog = QtWidgets.QApplication.activeModalWidget()
+        assert isinstance(dialog, QtWidgets.QMessageBox)
+        messages.append((dialog.windowTitle(), dialog.text(), dialog.detailedText()))
+        dialog.accept()
+
+    QTimer.singleShot(0, capture_error)
     raw_win._load_file(image_or_label_path=str(missing_image_json))
+
+    title, message, details = messages[0]
+    # Qt ignores message-box window titles on macOS.
+    assert title == ("" if sys.platform == "darwin" else "Image not found")
+    assert "does_not_exist.jpg" in message
+    assert str(tmp_path / image_path) in message
+    assert "imagePath" not in message
+    assert "Move the original image" not in message
+    assert "No such file or directory" not in message
+    assert "No such file or directory" in details
 
     raw_win._load_file(image_or_label_path=str(data_path / _RAW_FILE_NAME))
     qtbot.waitUntil(lambda: raw_win._annotation is not None, timeout=5_000)

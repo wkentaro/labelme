@@ -804,6 +804,18 @@ Please select a different model or use AI-Box mode.</source>
 Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>Image introuvable</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>Cette annotation fait référence à « {name} », mais cette image est introuvable.
+
+Emplacement attendu : {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>La liste des fichiers est désactivée lorsqu&apos;un fichier d&apos;étiquettes est ouvert</translation>
     </message>
