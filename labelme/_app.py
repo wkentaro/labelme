@@ -498,6 +498,7 @@ class MainWindow(QtWidgets.QMainWindow):
         merge = action(
             text=self.tr("Merge Shapes"),
             slot=self._merge_selected_shapes,
+            icon="phosphor/unite-duotone.svg",
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
         )
