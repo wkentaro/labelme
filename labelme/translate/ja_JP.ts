@@ -582,6 +582,38 @@ Shapes</source>
         <translation>描画中にポリゴンを塗りつぶす</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>上の図形を選択</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>選択範囲の上にある最も近い図形を選択</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>下の図形を選択</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>選択範囲の下にある最も近い図形を選択</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>左の図形を選択</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>選択範囲の左にある最も近い図形を選択</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>右の図形を選択</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>選択範囲の右にある最も近い図形を選択</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+ホイールでキャンバスをズームします</translation>
     </message>

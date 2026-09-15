@@ -553,6 +553,38 @@ Shapes</source>
         <translation>Заполнять полигон во время рисования</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Выбрать фигуру выше</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Выбрать ближайшую фигуру над выделением</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Выбрать фигуру ниже</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Выбрать ближайшую фигуру под выделением</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Выбрать фигуру слева</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Выбрать ближайшую фигуру слева от выделения</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Выбрать фигуру справа</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Выбрать ближайшую фигуру справа от выделения</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+Колесо масштабирует холст</translation>
     </message>

@@ -568,6 +568,38 @@ Shapes</source>
         <translation>پر کردن چندضلعی هنگام رسم</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>انتخاب شکل بالا</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>انتخاب نزدیک‌ترین شکل بالای انتخاب</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>انتخاب شکل پایین</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>انتخاب نزدیک‌ترین شکل پایین انتخاب</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>انتخاب شکل چپ</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>انتخاب نزدیک‌ترین شکل سمت چپ انتخاب</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>انتخاب شکل راست</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>انتخاب نزدیک‌ترین شکل سمت راست انتخاب</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+چرخ روی بوم بزرگ‌نمایی می‌کند</translation>
     </message>

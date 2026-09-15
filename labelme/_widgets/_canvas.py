@@ -144,6 +144,15 @@ _ARROW_KEY_TO_DIRECTION: Final[dict[Qt.Key, QPointF]] = {
     Qt.Key.Key_Right: QPointF(1.0, 0.0),
 }
 
+NeighborDirection = Literal["up", "down", "left", "right"]
+
+_NEIGHBOR_DIRECTION_TO_VECTOR: Final[dict[NeighborDirection, QPointF]] = {
+    "up": QPointF(0.0, -1.0),
+    "down": QPointF(0.0, 1.0),
+    "left": QPointF(-1.0, 0.0),
+    "right": QPointF(1.0, 0.0),
+}
+
 _CreateMode = Literal[
     "polygon",
     "rectangle",
@@ -1367,6 +1376,31 @@ class Canvas(QtWidgets.QWidget):
         self.selection_changed.emit(shapes)
         self.update()
 
+    def select_neighbor_shape(self, *, direction: NeighborDirection) -> None:
+        """Select the nearest visible shape in `direction` from the selection.
+
+        With nothing selected, the shape closest to the image's top-left
+        corner is selected instead. When no visible shape lies within the
+        90-degree cone opening that way, the selection is left as it is.
+        """
+        candidates = [
+            shape
+            for shape in self.shapes
+            if shape.visible and shape not in self.selected_shapes
+        ]
+        if not candidates:
+            return
+        if self.selected_shapes:
+            neighbor = _find_neighbor_shape(
+                candidates=candidates,
+                origin=_compute_shapes_bounds(shapes=self.selected_shapes).center(),
+                vector=_NEIGHBOR_DIRECTION_TO_VECTOR[direction],
+            )
+        else:
+            neighbor = min(candidates, key=_distance_from_top_left)
+        if neighbor is not None:
+            self.select_shapes(shapes=[neighbor])
+
     def _select_shape_point(
         self, point: QPointF, /, *, multiple_selection_mode: bool
     ) -> None:
@@ -2217,6 +2251,33 @@ def _opposite_corner_in_parallelogram(
     *, opposite_to: QPointF, neighbor1: QPointF, neighbor2: QPointF
 ) -> QPointF:
     return neighbor1 + neighbor2 - opposite_to
+
+
+def _distance_from_top_left(shape: Shape, /) -> float:
+    center = _shape_bounds(shape=shape).center()
+    return center.x() + center.y()
+
+
+def _find_neighbor_shape(
+    *, candidates: list[Shape], origin: QPointF, vector: QPointF
+) -> Shape | None:
+    # Compare bounding-box centers. Only shapes inside the 90-degree cone
+    # opening along `vector` count as lying in that direction, so a shape far
+    # off to the side is never picked just because it is slightly ahead. Within
+    # the cone, sideways drift is penalized more than distance ahead so a
+    # neighbor in the same row or column beats a nearer diagonal one.
+    SIDEWAYS_WEIGHT: Final = 2.0
+    best: tuple[float, Shape] | None = None
+    for shape in candidates:
+        delta = _shape_bounds(shape=shape).center() - origin
+        along = delta.x() * vector.x() + delta.y() * vector.y()
+        sideways = abs(delta.x() * vector.y() - delta.y() * vector.x())
+        if along <= 0 or sideways > along:
+            continue
+        score = along + SIDEWAYS_WEIGHT * sideways
+        if best is None or score < best[0]:
+            best = (score, shape)
+    return None if best is None else best[1]
 
 
 def _compute_shapes_bounds(*, shapes: list[Shape]) -> QRectF:

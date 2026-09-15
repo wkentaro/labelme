@@ -582,6 +582,38 @@ Shapes</source>
         <translation>A kép megjelenítése 100%-on</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Felső alakzat kijelölése</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>A kijelölés feletti legközelebbi alakzat kijelölése</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Alsó alakzat kijelölése</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>A kijelölés alatti legközelebbi alakzat kijelölése</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Bal oldali alakzat kijelölése</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>A kijelöléstől balra lévő legközelebbi alakzat kijelölése</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Jobb oldali alakzat kijelölése</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>A kijelöléstől jobbra lévő legközelebbi alakzat kijelölése</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>A Ctrl+Görgő nagyítja a vásznat</translation>
     </message>

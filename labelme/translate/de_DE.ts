@@ -582,6 +582,38 @@ Formen</translation>
         <translation>Das Bild bei 100 % anzeigen</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Form darüber auswählen</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Die nächste Form oberhalb der Auswahl auswählen</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Form darunter auswählen</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Die nächste Form unterhalb der Auswahl auswählen</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Form links auswählen</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Die nächste Form links von der Auswahl auswählen</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Form rechts auswählen</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Die nächste Form rechts von der Auswahl auswählen</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Strg+Mausrad zoomt die Leinwand</translation>
     </message>

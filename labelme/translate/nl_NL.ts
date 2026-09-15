@@ -568,6 +568,38 @@ Shapes</source>
         <translation>Polygoon vullen tijdens tekenen</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Vorm erboven selecteren</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Dichtstbijzijnde vorm boven de selectie selecteren</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Vorm eronder selecteren</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Dichtstbijzijnde vorm onder de selectie selecteren</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Vorm links selecteren</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Dichtstbijzijnde vorm links van de selectie selecteren</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Vorm rechts selecteren</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Dichtstbijzijnde vorm rechts van de selectie selecteren</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+Wiel zoomt op het canvas</translation>
     </message>
