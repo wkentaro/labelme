@@ -712,10 +712,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>การเปลี่ยนแปลงที่ยังไม่ได้บันทึก</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>ลบรูปร่าง {} รายการ? คุณสามารถกู้คืนได้ด้วยคำสั่งยกเลิก</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - เรียกดูโฟลเดอร์ภาพ</translation>
     </message>

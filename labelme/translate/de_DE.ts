@@ -726,10 +726,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>Ungespeicherte Änderungen</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>{} Formen löschen? Sie können sie mit „Rückgängig“ wiederherstellen.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Bilderordner auswählen</translation>
     </message>

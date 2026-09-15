@@ -712,10 +712,6 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Niezapisane zmiany</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>Usunąć {} kształtów? Możesz je przywrócić poleceniem Cofnij.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Przeglądaj folder obrazów</translation>
     </message>

@@ -666,10 +666,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Μη αποθηκευμένες αλλαγές</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>Διαγραφή {} σχημάτων; Μπορείτε να τα επαναφέρετε με την Αναίρεση.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Επιλογή φακέλου εικόνων</translation>
     </message>

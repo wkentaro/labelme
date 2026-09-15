@@ -726,10 +726,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>未保存の変更</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>{} 個の図形を削除しますか？「元に戻す」で復元できます。</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - 画像フォルダーを選択</translation>
     </message>

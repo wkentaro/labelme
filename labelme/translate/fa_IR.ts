@@ -712,10 +712,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>تغییرات ذخیره‌نشده</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>حذف {} شکل؟ می‌توانید آن‌ها را با بازگشت بازیابی کنید.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - مرور پوشهٔ تصاویر</translation>
     </message>

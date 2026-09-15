@@ -712,10 +712,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Thay đổi chưa lưu</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>Xóa {} hình dạng? Bạn có thể khôi phục chúng bằng Hoàn tác.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Duyệt thư mục hình ảnh</translation>
     </message>

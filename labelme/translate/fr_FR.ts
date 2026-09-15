@@ -718,10 +718,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>Modifications non enregistrées</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>Supprimer {} formes ? Vous pouvez les restaurer avec la commande Annuler.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Parcourir un dossier d’images</translation>
     </message>

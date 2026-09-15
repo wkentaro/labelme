@@ -687,10 +687,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Perubahan belum disimpan</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>Hapus {} bentuk? Anda dapat memulihkannya dengan Urungkan.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Telusuri Folder Gambar</translation>
     </message>

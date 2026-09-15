@@ -667,10 +667,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Незбережені зміни</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>Видалити {} фігур? Ви можете відновити їх за допомогою команди «Скасувати».</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Вибрати теку зображень</translation>
     </message>

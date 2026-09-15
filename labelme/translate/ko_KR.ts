@@ -712,10 +712,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>저장하지 않은 변경 사항</translation>
     </message>
     <message>
-        <source>Delete {} shapes? You can restore them with Undo.</source>
-        <translation>{}개의 도형을 삭제하시겠습니까? 실행 취소로 복원할 수 있습니다.</translation>
-    </message>
-    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - 이미지 폴더 찾아보기</translation>
     </message>
