@@ -798,6 +798,18 @@ Please select a different model or use AI-Box mode.</source>
 Selecione um modelo diferente ou use o modo AI-Box.</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>Imagem não encontrada</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>Esta anotação faz referência a &quot;{name}&quot;, mas essa imagem não foi encontrada.
+
+Local esperado: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>A lista de arquivos está desativada quando um arquivo de rótulos é aberto</translation>
     </message>

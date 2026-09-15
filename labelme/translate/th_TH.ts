@@ -798,6 +798,18 @@ Please select a different model or use AI-Box mode.</source>
 กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>ไม่พบรูปภาพ</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>คำอธิบายประกอบนี้อ้างอิงถึง &quot;{name}&quot; แต่ไม่พบรูปภาพดังกล่าว
+
+ตำแหน่งที่คาดไว้: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>รายการไฟล์ถูกปิดใช้งานเมื่อเปิดไฟล์ป้ายกำกับ</translation>
     </message>

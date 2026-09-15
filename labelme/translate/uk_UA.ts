@@ -801,6 +801,18 @@ Please select a different model or use AI-Box mode.</source>
 Будь ласка, виберіть іншу модель або використовуйте режим AI-Box.</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>Зображення не знайдено</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>Ця анотація посилається на «{name}», але зображення не знайдено.
+
+Очікуване розташування: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>Список файлів вимкнено, коли відкрито файл міток</translation>
     </message>

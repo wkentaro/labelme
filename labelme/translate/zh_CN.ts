@@ -804,6 +804,18 @@ Please select a different model or use AI-Box mode.</source>
 请另选模型，或改用 AI-Box 模式。</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>找不到图像</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>此标注引用了“{name}”，但找不到该图像。
+
+预期位置：{path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>打开标签文件时，文件列表不可用</translation>
     </message>

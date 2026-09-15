@@ -36,6 +36,7 @@ from . import _config
 from . import _utils
 from ._label_file import LABEL_FILE_SUFFIX
 from ._label_file import Annotation
+from ._label_file import ImageNotFoundError
 from ._label_file import LabelFileError
 from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
@@ -2881,6 +2882,23 @@ class MainWindow(QtWidgets.QMainWindow):
         exc: BaseException | None,
         extra: str | None,
     ) -> None:
+        if isinstance(exc, ImageNotFoundError):
+            dialog = QtWidgets.QMessageBox(self)
+            dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+            dialog.setWindowTitle(self.tr("Image not found"))
+            dialog.setTextFormat(Qt.TextFormat.PlainText)
+            dialog.setText(
+                self.tr(
+                    'This annotation refers to "{name}", but that image could not '
+                    "be found.\n\nExpected location: {path}"
+                ).format(name=Path(exc.image_path).name, path=exc.image_path)
+            )
+            dialog.setDetailedText(str(exc.__cause__))
+            dialog.exec()
+            self.show_status_message(
+                self.tr("Failed to load: {path}").format(path=path)
+            )
+            return
         if file_kind == "label":
             message = self.tr(
                 "The selected label file could not be opened: {path}"

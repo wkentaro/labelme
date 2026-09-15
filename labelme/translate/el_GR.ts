@@ -800,6 +800,18 @@ Please select a different model or use AI-Box mode.</source>
 Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>Η εικόνα δεν βρέθηκε</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>Αυτή η επισήμανση αναφέρεται στην εικόνα «{name}», αλλά η εικόνα δεν βρέθηκε.
+
+Αναμενόμενη τοποθεσία: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>Η λίστα αρχείων είναι απενεργοποιημένη όταν ανοίγεται ένα αρχείο ετικετών</translation>
     </message>

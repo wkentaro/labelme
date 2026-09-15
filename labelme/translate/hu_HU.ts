@@ -804,6 +804,18 @@ Please select a different model or use AI-Box mode.</source>
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
     <message>
+        <source>Image not found</source>
+        <translation>A kép nem található</translation>
+    </message>
+    <message>
+        <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
+
+Expected location: {path}</source>
+        <translation>Ez az annotáció a(z) „{name}” képre hivatkozik, de a kép nem található.
+
+Várt hely: {path}</translation>
+    </message>
+    <message>
         <source>File list is disabled when a label file is opened</source>
         <translation>A fájllista le van tiltva, ha egy címke fájl van megnyitva</translation>
     </message>
