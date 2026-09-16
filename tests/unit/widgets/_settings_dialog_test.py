@@ -988,3 +988,24 @@ def test_shape_flag_write_failure_restores_saved_rules(
         assert editor.focusProxy() is editor._add_button
     else:
         assert editor._rows[0][1].toPlainText() == "occluded"
+
+
+def test_shape_flag_validation_preserves_accessible_note(
+    *,
+    dialog: SettingsDialog,
+) -> None:
+    editor = dialog._editors[("label_flags",)]
+    assert isinstance(editor, _LabelFlagsEditor)
+    note = editor.accessibleDescription()
+    assert "One flag name per line" in note
+    editor._add_button.click()
+    assert editor.accessibleDescription() == f"{note} {editor._error.text()}"
+    pattern, flags, remove = editor._rows[0]
+    pattern.setText("car(")
+    flags.setPlainText("occluded")
+    assert "Invalid regular expression" in editor.accessibleDescription()
+    assert editor.accessibleDescription().count(note) == 1
+    pattern.setText("^car$")
+    assert editor.accessibleDescription() == note
+    remove.click()
+    assert editor.accessibleDescription() == note

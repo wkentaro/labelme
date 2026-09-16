@@ -328,10 +328,9 @@ class LabelDialog(QtWidgets.QDialog):
     ) -> LabelDialogEntry | None:
         self._entry = None
         self._locked = frozenset(locked)
-        # Drop the previous popup's checkboxes and their remembered states so a
-        # fresh popup starts unchecked. This has to precede setText() below,
-        # whose textChanged signal would otherwise re-seed the states from the
-        # previous popup's checkboxes; the flags block below rebuilds them.
+        # Seed from the caller's flags and clear the previous popup's checkboxes
+        # before changing the label, so its change signal cannot carry checked
+        # values over from another Shape.
         self._flag_states = dict(flags or {})
         self._stored_flag_names = tuple(flags or {})
         self._clear_flag_checkboxes()

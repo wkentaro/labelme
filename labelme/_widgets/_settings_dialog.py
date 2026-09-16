@@ -126,6 +126,7 @@ class _LabelFlagsEditor(QtWidgets.QWidget):
     def __init__(self) -> None:
         super().__init__()
         self._value: dict[str, list[str]] | None = None
+        self._accessible_note = ""
         self._rows: list[
             tuple[QtWidgets.QLineEdit, _PlainTextEdit, QtWidgets.QPushButton]
         ] = []
@@ -147,6 +148,10 @@ class _LabelFlagsEditor(QtWidgets.QWidget):
         layout.addWidget(self._error)
         layout.addWidget(self._add_button, alignment=QtCore.Qt.AlignmentFlag.AlignLeft)
         self.setFocusProxy(self._add_button)
+
+    def set_accessible_note(self, note: str, /) -> None:
+        self._accessible_note = note
+        self._validate()
 
     def set_value(self, *, value: dict[str, list[str]] | None) -> None:
         # A successful write syncs back into this control while it has focus.
@@ -245,7 +250,9 @@ class _LabelFlagsEditor(QtWidgets.QWidget):
             rules[pattern] = names
         self._error.setText(error)
         self._error.setVisible(bool(error))
-        self.setAccessibleDescription(error)
+        self.setAccessibleDescription(
+            " ".join(part for part in (self._accessible_note, error) if part)
+        )
         return None if error else rules
 
     def commit(self) -> None:
@@ -858,7 +865,7 @@ class SettingsDialog(QtWidgets.QDialog):
             editor.setAccessibleName(self.tr(setting.label))
             if setting.note:
                 note = self.tr(setting.note)
-                if isinstance(editor, _ColorSwatchButton):
+                if isinstance(editor, _ColorSwatchButton | _LabelFlagsEditor):
                     editor.set_accessible_note(note)
                 else:
                     editor.setAccessibleDescription(note)
