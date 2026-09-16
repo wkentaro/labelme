@@ -474,7 +474,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 shapes=self._canvas_widgets.canvas.selected_shapes
             ),
             shortcut=shortcuts["copy_shape"],
-            icon="copy_clipboard",
+            icon="phosphor/clipboard.svg",
             tip=self.tr("Place the selected shapes on the clipboard"),
             enabled=False,
         )
@@ -482,7 +482,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Paste from Clipboard"),
             slot=lambda: self._insert_shapes(self._shape_clipboard.paste()),
             shortcut=shortcuts["paste_shape"],
-            icon="paste",
+            icon="phosphor/clipboard-text.svg",
             tip=self.tr("Insert the clipboard shapes into this image"),
             enabled=False,
         )
