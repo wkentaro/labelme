@@ -2,7 +2,7 @@ ifneq ($(OS),Windows_NT)
 	SHELL := bash
 endif
 
-.PHONY: help setup format lint test coverage update_translate check_translate release
+.PHONY: help setup format lint test coverage update_translate check_translate check_config_migrations release
 .DEFAULT_GOAL := help
 
 PYTEST_ARGS ?= --numprocesses=auto
@@ -43,6 +43,9 @@ update_translate:  # Regenerate the translation catalogs
 
 check_translate:  # Fail if the translation catalogs are stale or incomplete (CI and release gate)
 	$(call exec,uv run tools/update_translate.py --check)
+
+check_config_migrations:  # Replay released configs (requires full release tags)
+	$(call exec,uv run python -m tools.check_config_migrations)
 
 coverage:  # Run tests with coverage
 	$(MAKE) test PYTEST_ARGS="--cov=labelme --cov-report=term-missing"
