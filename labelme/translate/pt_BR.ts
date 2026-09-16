@@ -991,6 +991,10 @@ Local esperado: {path}</translation>
         <translation>Salvar automaticamente</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>salvamento automático salvar automaticamente</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Incorpora a imagem no arquivo JSON de rótulos.</translation>
     </message>
@@ -1055,8 +1059,16 @@ Local esperado: {path}</translation>
         <translation>Detalhe do polígono</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>suavizar suavidade simplificar contorno</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Valores mais altos preservam mais detalhes da borda da máscara e regiões menores.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>duplicado duplicados evitar duplicados remover duplicados</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1179,6 +1191,10 @@ Local esperado: {path}</translation>
         <translation>Os rótulos predefinidos não podem ficar vazios enquanto a validação de rótulo estiver definida como «exact». Desative primeiro a validação «exact».</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Selecione {mode} no modo de cor das formas para editar esta configuração.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Idioma</translation>
     </message>
@@ -1207,6 +1223,22 @@ Local esperado: {path}</translation>
     <message>
         <source>Settings sections</source>
         <translation>Seções de configurações</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Pesquisar configurações</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Configurações correspondentes</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} configurações correspondentes</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>Nenhuma configuração correspondente nesta janela. Tente outro termo ou limpe a pesquisa.</translation>
     </message>
 </context>
 </TS>

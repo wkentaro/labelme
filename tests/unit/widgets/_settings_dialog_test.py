@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -70,6 +71,25 @@ def dialog(*, qtbot: QtBot, applied: Applied) -> SettingsDialog:
     return _make_dialog(
         qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
     )
+
+
+@pytest.fixture
+def localized_dialog(
+    *, qapp: QtWidgets.QApplication, qtbot: QtBot, applied: Applied, locale: str
+) -> Iterator[SettingsDialog]:
+    translator = QtCore.QTranslator()
+    if locale != "en_US":
+        translation_path = (
+            Path(__file__).parents[3] / "labelme" / "translate" / f"{locale}.qm"
+        )
+        assert translator.load(str(translation_path))
+        qapp.installTranslator(translator)
+    try:
+        yield _make_dialog(
+            qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
+        )
+    finally:
+        qapp.removeTranslator(translator)
 
 
 @pytest.mark.usefixtures("dialog")
@@ -417,34 +437,26 @@ def test_navigation_uses_readable_typography_and_spacing(
     )
 
 
+@pytest.mark.parametrize("locale", ["ru_RU"])
 def test_navigation_elides_long_localized_names_without_squeezing_content(
-    *, qapp: QtWidgets.QApplication, qtbot: QtBot, applied: Applied
+    *, localized_dialog: SettingsDialog, qtbot: QtBot
 ) -> None:
-    translator = QtCore.QTranslator()
-    translation_path = Path(__file__).parents[3] / "labelme" / "translate" / "ru_RU.qm"
-    assert translator.load(str(translation_path))
-    qapp.installTranslator(translator)
-    try:
-        dialog = _make_dialog(
-            qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
-        )
-        navigation = dialog._page._navigation
-        long_title = "Продолжение работы между изображениями"
+    dialog = localized_dialog
+    navigation = dialog._page._navigation
+    long_title = "Продолжение работы между изображениями"
 
-        assert navigation.item(3).text() == long_title
-        assert navigation.item(3).toolTip() == long_title
-        assert navigation.textElideMode() == QtCore.Qt.TextElideMode.ElideRight
-        assert navigation.width() == 240
+    assert navigation.item(3).text() == long_title
+    assert navigation.item(3).toolTip() == long_title
+    assert navigation.textElideMode() == QtCore.Qt.TextElideMode.ElideRight
+    assert navigation.width() == 240
 
-        with qtbot.waitExposed(dialog):
-            dialog.show()
-        # A screen narrower than the dialog wants leaves it no room to keep the
-        # content out of a horizontal scroll bar.
-        if dialog.width() < _preferred_width(dialog):
-            pytest.skip("this screen is narrower than the settings content")
-        assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
-    finally:
-        qapp.removeTranslator(translator)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    # A screen narrower than the dialog wants leaves it no room to keep the
+    # content out of a horizontal scroll bar.
+    if dialog.width() < _preferred_width(dialog):
+        pytest.skip("this screen is narrower than the settings content")
+    assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
 
 
 def test_default_size_scrolls_vertically_only(
@@ -607,5 +619,342 @@ def test_large_font_uses_default_size_with_scrolling(
         assert dialog.width() == min(_preferred_width(dialog), available_size.width())
         assert dialog.height() == min(590, available_size.height())
         assert dialog._page._scroll_area.verticalScrollBar().maximum() > 0
+        assert dialog._editors[("color_theme",)].font().pointSize() == 24
     finally:
         QtWidgets.QApplication.setFont(original_font)
+
+
+@pytest.mark.parametrize(
+    ("locale", "query", "expected"),
+    [
+        ("en_US", "autosave", ("auto_save",)),
+        ("en_US", "auto save", ("auto_save",)),
+        ("en_US", "duplicate", ("ai", "suppress_existing_shape_matches")),
+        ("en_US", "avoid duplicates", ("ai", "suppress_existing_shape_matches")),
+        ("en_US", "dark", ("color_theme",)),
+        ("en_US", "label color", ("shape_color", "mode")),
+        ("en_US", "color label", ("shape_color", "by_label", "fallback")),
+        ("en_US", "poly det", ("mask_polygonization", "detail")),
+        ("en_US", "smoothness", ("mask_polygonization", "detail")),
+        ("en_US", "  AUTO_SAVE  ", ("auto_save",)),
+        ("en_US", "shape_color.mode", ("shape_color", "mode")),
+        ("en_US", "日本語", ("language",)),
+        *[
+            (locale, query, ("auto_save",))
+            for locale, alias in (
+                ("ja_JP", "自動保存"),
+                ("de_DE", "automatische Speicherung"),
+                ("zh_CN", "自动保存"),
+            )
+            for query in (alias, "autosave", "auto_save")
+        ],
+        *[
+            (locale, query, key_path)
+            for locale in ("en_US", "ja_JP")
+            for query, key_path in (
+                ("ja_JP", ("language",)),
+                ("en_US", ("language",)),
+                ("System default", ("language",)),
+                ("(none)", ("validate_label",)),
+            )
+        ],
+    ],
+)
+def test_search_matches_metadata_in_both_languages(
+    *, localized_dialog: SettingsDialog, query: str, expected: tuple[str, ...]
+) -> None:
+    dialog = localized_dialog
+    page = dialog._page
+    page._search.setText(query)
+    paths = [
+        tuple(page._navigation.item(i).data(QtCore.Qt.ItemDataRole.UserRole))
+        for i in range(page._navigation.count())
+    ]
+    assert expected in paths
+    assert len(paths) == len(set(paths))
+    setting = next(
+        setting for setting in schema.SETTINGS if setting.key_path == expected
+    )
+    item = page._navigation.item(paths.index(expected))
+    assert item.text() == f"{dialog.tr(setting.label)}\n{dialog.tr(setting.group)}"
+    assert item.data(QtCore.Qt.ItemDataRole.AccessibleTextRole) == (
+        f"{dialog.tr(setting.label)}, {dialog.tr(setting.group)}"
+    )
+    if query.strip().casefold() in ("auto_save", "shape_color.mode"):
+        assert paths[0] == expected
+    if query in ("System default", "(none)"):
+        editor = dialog._editors[expected]
+        assert isinstance(editor, QtWidgets.QComboBox)
+        assert editor.itemText(0) == dialog.tr(query)
+
+
+def test_search_requires_every_term_and_does_not_index_user_values(
+    *, qtbot: QtBot, applied: Applied
+) -> None:
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        applied=applied,
+        overrides={"labels": ["zzzzprivatevalue"]},
+        succeed=True,
+        previewed=None,
+    )
+    for query in ("autosave zzzz", "zzzzprivatevalue", "^auto_save$"):
+        dialog._page._search.setText(query)
+        assert dialog._page._navigation.count() == 0
+
+
+def test_search_preserves_visual_order_after_direct_matches(
+    *, dialog: SettingsDialog
+) -> None:
+    page = dialog._page
+    page._search.setText("color")
+    paths = [
+        tuple(page._navigation.item(i).data(QtCore.Qt.ItemDataRole.UserRole))
+        for i in range(page._navigation.count())
+    ]
+    assert paths.index(("color_theme",)) < paths.index(("shape_color", "mode"))
+
+
+def test_search_disabled_result_explains_prerequisite_without_enabling_it(
+    *, qtbot: QtBot, dialog: SettingsDialog, applied: Applied
+) -> None:
+    page = dialog._page
+    # Wider content than the viewport forces a sideways scroll to the control.
+    page._content.setMinimumWidth(1400)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    page._search.setText("uniform color")
+    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
+    editor = dialog._editors[("shape_color", "uniform", "color")]
+    viewport = page._scroll_area.viewport()
+    assert viewport.rect().contains(editor.mapTo(viewport, editor.rect().center()))
+    assert not editor.isEnabled()
+    assert page._navigation.hasFocus()
+    assert "Select Uniform in Shape Color Mode" in page._status.text()
+    assert (
+        page._navigation.currentItem().data(
+            QtCore.Qt.ItemDataRole.AccessibleDescriptionRole
+        )
+        == page._status.text()
+    )
+    assert applied == []
+
+
+@pytest.mark.parametrize(
+    ("query", "key_path"),
+    [
+        ("predefined labels", ("labels",)),
+        ("duplicate", ("ai", "suppress_existing_shape_matches")),
+    ],
+)
+def test_search_activation_places_row_at_top_without_editing(
+    *,
+    qtbot: QtBot,
+    dialog: SettingsDialog,
+    applied: Applied,
+    query: str,
+    key_path: tuple[str, ...],
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    page = dialog._page
+    page._search.setText(query)
+    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
+    editor = dialog._editors[key_path]
+    row = editor.parentWidget()
+    assert row is not None
+    viewport = page._scroll_area.viewport()
+    assert 0 <= row.mapTo(viewport, QtCore.QPoint()).y() <= 64
+    if key_path == ("labels",):
+        group = row.parentWidget()
+        assert group is not None
+        assert group.mapTo(viewport, QtCore.QPoint()).y() >= 0
+    assert page._navigation.hasFocus()
+    assert not editor.hasFocus()
+    assert page._highlight.isVisible()
+    assert page._highlight.geometry() == QtCore.QRect(
+        row.mapTo(page._content, QtCore.QPoint()), row.size()
+    )
+    dialog.resize(dialog.width() + 80, dialog.height())
+    assert page._highlight.geometry() == QtCore.QRect(
+        row.mapTo(page._content, QtCore.QPoint()), row.size()
+    )
+    assert page._search.text() == query
+    assert applied == []
+    qtbot.keyClick(page._navigation, QtCore.Qt.Key.Key_Tab)
+    assert (editor.focusProxy() or editor).hasFocus()
+    page._search.clear()
+    assert not page._highlight.isVisible()
+
+
+@pytest.mark.parametrize("height", [590, 700])
+def test_search_clear_and_reopen_preserve_destination(
+    *, qtbot: QtBot, dialog: SettingsDialog, height: int
+) -> None:
+    dialog.resize(dialog.width(), height)
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    page = dialog._page
+    page._search.setText("duplicate")
+    qtbot.mouseClick(
+        page._navigation.viewport(),
+        QtCore.Qt.MouseButton.LeftButton,
+        pos=page._navigation.visualItemRect(page._navigation.item(0)).center(),
+    )
+    scroll_bar = page._scroll_area.verticalScrollBar()
+    position = scroll_bar.value()
+    editor = dialog._editors[("ai", "suppress_existing_shape_matches")]
+    row = editor.parentWidget()
+    assert row is not None
+    viewport = page._scroll_area.viewport()
+    assert 0 <= row.mapTo(viewport, QtCore.QPoint()).y() <= 24
+    assert page._navigation.hasFocus()
+    qtbot.keyClick(dialog.focusWidget(), QtCore.Qt.Key.Key_Escape)
+    assert dialog.isVisible()
+    assert page._search.text() == ""
+    assert scroll_bar.value() == position
+    assert viewport.rect().contains(editor.mapTo(viewport, editor.rect().center()))
+    restored_section = page._navigation.currentRow()
+    # The active section follows the viewport reading position, which can be
+    # above the destination on taller windows or with smaller platform fonts.
+    scroll_bar.setValue(0)
+    scroll_bar.setValue(position)
+    assert page._navigation.currentRow() == restored_section
+    page._search.setText("autosave")
+    dialog.close()
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    assert page._search.text() == ""
+    assert page._search.hasFocus()
+    assert scroll_bar.value() == position
+    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Escape)
+    assert not dialog.isVisible()
+
+
+def test_search_empty_results_are_recoverable(
+    *, qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    page = dialog._page
+    scroll_bar = page._scroll_area.verticalScrollBar()
+    scroll_bar.setValue(scroll_bar.maximum() // 2)
+    position = scroll_bar.value()
+    page._search.setText("zzzznonexistent")
+    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Down)
+    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
+    assert dialog.isVisible()
+    assert page._search.hasFocus()
+    assert scroll_bar.value() == position
+    assert page._navigation.count() == 0
+    assert page._status.isVisible()
+    assert page._status.text() == (
+        "No matching settings in this dialog. Try another term or clear search."
+    )
+    clear_button = page._search.findChild(QtWidgets.QToolButton)
+    qtbot.mouseClick(clear_button, QtCore.Qt.MouseButton.LeftButton)
+    assert page._navigation.count() == len(page._groups)
+    assert scroll_bar.value() == position
+    assert not page._status.isVisible()
+
+
+def test_search_shortcut_commits_pending_label_edits_once(
+    *, qtbot: QtBot, dialog: SettingsDialog, applied: Applied
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    page = dialog._page
+    page._search.setText("predefined labels")
+    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
+    editor = dialog._editors[("labels",)]
+    assert isinstance(editor, _PlainTextEdit)
+    qtbot.mouseClick(editor.viewport(), QtCore.Qt.MouseButton.LeftButton)
+    assert editor.hasFocus()
+    editor.setPlainText("cat\ndog")
+    qtbot.keySequence(editor, QtGui.QKeySequence.StandardKey.Find)
+    assert applied == [(("labels",), ["cat", "dog"])]
+    dialog.close()
+    assert applied == [(("labels",), ["cat", "dog"])]
+
+
+def test_search_tab_order_and_native_popup_escape(
+    *, qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    page = dialog._page
+    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Tab)
+    assert page._navigation.hasFocus()
+    qtbot.keyClick(page._navigation, QtCore.Qt.Key.Key_Tab)
+    editor = dialog._editors[("color_theme",)]
+    assert isinstance(editor, QtWidgets.QComboBox)
+    assert editor.hasFocus()
+    qtbot.keySequence(editor, QtGui.QKeySequence.StandardKey.Find)
+    page._search.setText("dark")
+    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
+    assert page._navigation.hasFocus()
+    qtbot.keyClick(page._navigation, QtCore.Qt.Key.Key_Tab)
+    assert editor.hasFocus()
+    editor.showPopup()
+    qtbot.keyClick(editor.view(), QtCore.Qt.Key.Key_Escape)
+    assert not editor.view().isVisible()
+    assert page._search.text() == "dark"
+    assert dialog.isVisible()
+
+
+def test_tab_order_connects_page_and_footer(
+    *, qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    last_editor = dialog._editors[("ai", "suppress_existing_shape_matches")]
+    last_editor.setFocus()
+    qtbot.keyClick(last_editor, QtCore.Qt.Key.Key_Tab)
+    open_button = dialog.focusWidget()
+    assert isinstance(open_button, QtWidgets.QPushButton)
+    assert open_button.text() == "Open config file as text…"
+    qtbot.keyClick(open_button, QtCore.Qt.Key.Key_Tab)
+    close_button = dialog.focusWidget()
+    assert isinstance(close_button, QtWidgets.QPushButton)
+    assert close_button.text() == "Close"
+    qtbot.keyClick(close_button, QtCore.Qt.Key.Key_Tab)
+    assert dialog._page._search.hasFocus()
+    for expected in (close_button, open_button, last_editor):
+        qtbot.keyClick(
+            dialog.focusWidget(),
+            QtCore.Qt.Key.Key_Tab,
+            QtCore.Qt.KeyboardModifier.ShiftModifier,
+        )
+        assert expected.hasFocus()
+
+
+@pytest.mark.parametrize("query", ["", "   ", " \t\n "])
+def test_escape_closes_with_empty_search(
+    *, qtbot: QtBot, dialog: SettingsDialog, query: str
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    dialog._page._search.setText(query)
+    qtbot.keyClick(dialog._page._search, QtCore.Qt.Key.Key_Escape)
+    assert not dialog.isVisible()
+
+
+@pytest.mark.parametrize("query", ["", "autosave"])
+def test_enter_in_editor_reaches_default_button(
+    *, qtbot: QtBot, dialog: SettingsDialog, applied: Applied, query: str
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    page = dialog._page
+    editor = dialog._editors[("auto_save",)]
+    if query:
+        page._search.setText(query)
+        qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
+        qtbot.keyClick(page._navigation, QtCore.Qt.Key.Key_Tab)
+    else:
+        editor.setFocus()
+    assert editor.hasFocus()
+    qtbot.keyClick(editor, QtCore.Qt.Key.Key_Return)
+    assert not page._navigation.hasFocus()
+    assert not dialog.isVisible()
+    assert applied == []

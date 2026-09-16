@@ -994,6 +994,10 @@ Expected location: {path}</source>
         <translation>Зберігати автоматично</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>автозбереження автоматичне збереження</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Вбудовує зображення у JSON-файл мітки.</translation>
     </message>
@@ -1058,8 +1062,16 @@ Expected location: {path}</source>
         <translation>Деталізація полігона</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>згладжування гладкість спрощення контур</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Вищі значення зберігають більше деталей межі маски та менші області.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>дублікат дублікати уникнення дублікатів видалення дублікатів</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1182,6 +1194,10 @@ Expected location: {path}</source>
         <translation>Попередньо визначені мітки не можуть бути порожніми, коли перевірка мітки встановлена на «exact». Спочатку вимкніть перевірку «exact».</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Щоб змінити це налаштування, виберіть {mode} у режимі кольору фігур.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Мова</translation>
     </message>
@@ -1210,6 +1226,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings sections</source>
         <translation>Розділи налаштувань</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Пошук налаштувань</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Відповідні налаштування</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>Знайдено налаштувань: {count}</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>У цьому вікні немає відповідних налаштувань. Спробуйте інший запит або очистьте пошук.</translation>
     </message>
 </context>
 </TS>

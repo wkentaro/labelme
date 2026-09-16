@@ -991,6 +991,10 @@ Verwachte locatie: {path}</translation>
         <translation>Automatisch opslaan</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>automatisch opslaan</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Sluit de afbeelding in het JSON-labelbestand in.</translation>
     </message>
@@ -1055,8 +1059,16 @@ Verwachte locatie: {path}</translation>
         <translation>Polygoondetail</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>glad vloeiend vereenvoudigen omtrek</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Hogere waarden behouden meer details van de maskerrand en kleinere gebieden.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>duplicaat duplicaten voorkomen verwijderen</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1179,6 +1191,10 @@ Verwachte locatie: {path}</translation>
         <translation>Voorgedefinieerde labels mogen niet leeg zijn wanneer labelvalidatie is ingesteld op &apos;exact&apos;. Schakel eerst de &apos;exact&apos;-validatie uit.</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Selecteer {mode} bij de kleurmodus voor vormen om deze instelling te bewerken.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Taal</translation>
     </message>
@@ -1207,6 +1223,22 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Settings sections</source>
         <translation>Instellingssecties</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Instellingen zoeken</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Overeenkomende instellingen</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} overeenkomende instellingen</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>Geen overeenkomende instellingen in dit dialoogvenster. Probeer een andere term of wis de zoekopdracht.</translation>
     </message>
 </context>
 </TS>

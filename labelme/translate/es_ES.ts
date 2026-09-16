@@ -991,6 +991,10 @@ Ubicación esperada: {path}</translation>
         <translation>Guardar automáticamente</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>autoguardado guardar automáticamente</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Incorpora la imagen en el archivo JSON de etiquetas.</translation>
     </message>
@@ -1055,8 +1059,16 @@ Ubicación esperada: {path}</translation>
         <translation>Detalle del polígono</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>suavizar suavidad simplificar contorno</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Los valores más altos conservan más detalle del borde de la máscara y regiones más pequeñas.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>duplicado duplicados evitar duplicados eliminar duplicados</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1179,6 +1191,10 @@ Ubicación esperada: {path}</translation>
         <translation>Las etiquetas predefinidas no pueden estar vacías mientras la validación de etiquetas esté configurada como «exact». Desactiva primero la validación «exact».</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Seleccione {mode} en el modo de color de formas para editar este ajuste.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Idioma</translation>
     </message>
@@ -1207,6 +1223,22 @@ Ubicación esperada: {path}</translation>
     <message>
         <source>Settings sections</source>
         <translation>Secciones de ajustes</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Buscar ajustes</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Ajustes coincidentes</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} ajustes coincidentes</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>No hay ajustes coincidentes en este diálogo. Pruebe otro término o borre la búsqueda.</translation>
     </message>
 </context>
 </TS>

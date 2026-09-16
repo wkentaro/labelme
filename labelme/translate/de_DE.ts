@@ -997,6 +997,10 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Automatisch speichern</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>automatisch speichern automatische Speicherung</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Bettet das Bild in die Label-JSON-Datei ein.</translation>
     </message>
@@ -1061,8 +1065,16 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Polygondetails</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>glatt glätten Glättung vereinfachen Umriss</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Höhere Werte bewahren mehr Details der Maskengrenze und kleinere Bereiche.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>Duplikat Duplikate vermeiden entfernen</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1185,6 +1197,10 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Vordefinierte Labels dürfen nicht leer sein, solange die Label-Validierung auf „exact“ gesetzt ist. Deaktivieren Sie zuerst die „exact“-Validierung.</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Wählen Sie {mode} im Formfarbmodus, um diese Einstellung zu bearbeiten.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
@@ -1213,6 +1229,22 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Settings sections</source>
         <translation>Einstellungsbereiche</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Einstellungen suchen</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Passende Einstellungen</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} passende Einstellungen</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>Keine passenden Einstellungen in diesem Dialog. Versuchen Sie einen anderen Begriff oder löschen Sie die Suche.</translation>
     </message>
 </context>
 </TS>

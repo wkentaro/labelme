@@ -991,6 +991,10 @@ Expected location: {path}</source>
         <translation>บันทึกอัตโนมัติ</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>บันทึกอัตโนมัติ บันทึกโดยอัตโนมัติ</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>ฝังรูปภาพไว้ในไฟล์ JSON ของเลเบล</translation>
     </message>
@@ -1055,8 +1059,16 @@ Expected location: {path}</source>
         <translation>รายละเอียดโพลีกอน</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>เรียบ ความเรียบ ลดความซับซ้อน เส้นขอบ</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>ค่าที่สูงขึ้นจะคงรายละเอียดขอบมาสก์และพื้นที่ขนาดเล็กไว้มากขึ้น</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>ซ้ำ รายการซ้ำ หลีกเลี่ยงรายการซ้ำ ลบรายการซ้ำ</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1179,6 +1191,10 @@ Expected location: {path}</source>
         <translation>เลเบลที่กำหนดไว้ล่วงหน้าต้องไม่ว่างเปล่าขณะที่การตรวจสอบเลเบลถูกตั้งค่าเป็น &apos;exact&apos; โปรดปิดการตรวจสอบ &apos;exact&apos; ก่อน</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>เลือก {mode} ในโหมดสีรูปร่างเพื่อแก้ไขการตั้งค่านี้</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>ภาษา</translation>
     </message>
@@ -1207,6 +1223,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings sections</source>
         <translation>ส่วนต่างๆ ของการตั้งค่า</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>ค้นหาการตั้งค่า</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>การตั้งค่าที่ตรงกัน</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>พบการตั้งค่าที่ตรงกัน {count} รายการ</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>ไม่พบการตั้งค่าที่ตรงกันในกล่องโต้ตอบนี้ ลองใช้คำอื่นหรือล้างการค้นหา</translation>
     </message>
 </context>
 </TS>

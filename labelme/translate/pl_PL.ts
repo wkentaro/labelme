@@ -991,6 +991,10 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Zapisuj automatycznie</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>autozapis automatyczne zapisywanie</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Osadza obraz w pliku JSON etykiety.</translation>
     </message>
@@ -1055,8 +1059,16 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Szczegółowość wielokąta</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>wygładzanie gładkość uproszczenie kontur</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Wyższe wartości zachowują więcej szczegółów granicy maski i mniejsze obszary.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>duplikat duplikaty unikanie duplikatów usuwanie duplikatów</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1179,6 +1191,10 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Predefiniowane etykiety nie mogą być puste, gdy walidacja etykiet jest ustawiona na „exact”. Najpierw wyłącz walidację „exact”.</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Wybierz {mode} w trybie koloru kształtów, aby edytować to ustawienie.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Język</translation>
     </message>
@@ -1207,6 +1223,22 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Settings sections</source>
         <translation>Sekcje ustawień</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Szukaj ustawień</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Pasujące ustawienia</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>Pasujące ustawienia: {count}</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>Brak pasujących ustawień w tym oknie. Spróbuj innego hasła lub wyczyść wyszukiwanie.</translation>
     </message>
 </context>
 </TS>

@@ -52,6 +52,57 @@ def editable_config_file(*, tmp_path: Path) -> Path:
     return config_file
 
 
+@pytest.mark.gui
+def test_settings_search_navigation_and_explicit_edits_persist_and_sync_menu(
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    dialog = _open_settings_dialog(win=win)
+    qtbot.waitUntil(dialog.isActiveWindow)
+    search = dialog._page._search
+    assert search.hasFocus()
+    qtbot.keyClick(search, Qt.Key.Key_Return)
+    assert dialog.isVisible()
+    qtbot.keyClicks(search, "autosave")
+    qtbot.keyClick(search, Qt.Key.Key_Return)
+    editor = dialog._editors[("auto_save",)]
+    assert dialog._page._navigation.hasFocus()
+    assert win._config["auto_save"] is True
+    qtbot.mouseClick(editor, Qt.MouseButton.LeftButton)
+    assert win._config["auto_save"] is False
+    assert not win._actions.save_auto.isChecked()
+    persisted = safe_load(editable_config_file.read_text())
+    assert persisted["auto_save"] is False
+    qtbot.keySequence(editor, QtGui.QKeySequence.StandardKey.Find)
+    assert search.selectedText() == "autosave"
+    scroll_bar = dialog._page._scroll_area.verticalScrollBar()
+    position = scroll_bar.value()
+    search.setText("poly det")
+    qtbot.keyClick(search, Qt.Key.Key_Down)
+    assert scroll_bar.value() == position
+    qtbot.keyClick(search, Qt.Key.Key_Return)
+    slider = dialog._editors[("mask_polygonization", "detail")]
+    assert dialog._page._navigation.hasFocus()
+    assert win._config["mask_polygonization"]["detail"] == 80
+    qtbot.mouseClick(
+        slider.focusProxy(),
+        Qt.MouseButton.LeftButton,
+        pos=slider.focusProxy().rect().center(),
+    )
+    assert slider.focusProxy().hasFocus()
+    detail = win._config["mask_polygonization"]["detail"]
+    qtbot.keyClick(dialog.focusWidget(), Qt.Key.Key_Left)
+    assert win._config["mask_polygonization"]["detail"] == detail - 1
+    assert (
+        safe_load(editable_config_file.read_text())["mask_polygonization"]["detail"]
+        == detail - 1
+    )
+    dialog.close()
+    reopened = _open_settings_dialog(win=win)
+    assert reopened is dialog
+    assert search.text() == ""
+
+
 @pytest.fixture
 def settings_with_label_history(
     *,

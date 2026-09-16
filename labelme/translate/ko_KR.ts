@@ -991,6 +991,10 @@ Expected location: {path}</source>
         <translation>자동 저장</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>자동저장 자동 저장</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>이미지를 레이블 JSON 파일에 포함합니다.</translation>
     </message>
@@ -1055,8 +1059,16 @@ Expected location: {path}</source>
         <translation>폴리곤 세부 수준</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>매끄럽게 부드럽게 단순화 윤곽선</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>값이 높을수록 마스크 경계의 세부 정보와 작은 영역이 더 많이 유지됩니다.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>중복 중복 방지 중복 제거</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1179,6 +1191,10 @@ Expected location: {path}</source>
         <translation>레이블 검증이 &apos;exact&apos;로 설정된 동안에는 사전 정의된 레이블을 비울 수 없습니다. 먼저 &apos;exact&apos; 검증을 비활성화하세요.</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>이 설정을 편집하려면 도형 색상 모드에서 {mode}을(를) 선택하세요.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>언어</translation>
     </message>
@@ -1207,6 +1223,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings sections</source>
         <translation>설정 섹션</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>설정 검색</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>일치하는 설정</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>일치하는 설정 {count}개</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>이 대화상자에 일치하는 설정이 없습니다. 다른 검색어를 입력하거나 검색을 지우세요.</translation>
     </message>
 </context>
 </TS>

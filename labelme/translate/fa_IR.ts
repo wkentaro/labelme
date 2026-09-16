@@ -991,6 +991,10 @@ Expected location: {path}</source>
         <translation>ذخیره خودکار</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>ذخیره خودکار ذخیره‌سازی خودکار</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>تصویر را در فایل JSON برچسب جاسازی می‌کند.</translation>
     </message>
@@ -1055,8 +1059,16 @@ Expected location: {path}</source>
         <translation>جزئیات چندضلعی</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>هموار هموارسازی ساده‌سازی مرز</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>مقادیر بالاتر جزئیات بیشتری از مرز ماسک و نواحی کوچک‌تر را حفظ می‌کنند.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>تکراری جلوگیری از تکرار حذف تکراری‌ها</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1179,6 +1191,10 @@ Expected location: {path}</source>
         <translation>برچسب‌های از پیش تعریف‌شده نمی‌توانند خالی باشند در حالی که اعتبارسنجی برچسب روی «exact» تنظیم شده است. ابتدا اعتبارسنجی «exact» را غیرفعال کنید.</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>برای ویرایش این تنظیم، {mode} را در حالت رنگ شکل انتخاب کنید.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>زبان</translation>
     </message>
@@ -1207,6 +1223,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings sections</source>
         <translation>بخش‌های تنظیمات</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>جستجوی تنظیمات</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>تنظیمات مطابق</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} تنظیم مطابق</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>تنظیم مطابقی در این پنجره یافت نشد. عبارت دیگری را امتحان کنید یا جستجو را پاک کنید.</translation>
     </message>
 </context>
 </TS>

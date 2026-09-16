@@ -971,6 +971,10 @@ Shapes</source>
         <translation>Label yang telah ditentukan tidak boleh kosong saat validasi label diatur ke &apos;eksak&apos;. Nonaktifkan validasi eksak terlebih dahulu.</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Pilih {mode} di Mode Warna Bentuk untuk mengedit pengaturan ini.</translation>
+    </message>
+    <message>
         <source>Color theme</source>
         <translation>Tema warna</translation>
     </message>
@@ -1043,6 +1047,10 @@ Shapes</source>
         <translation>Simpan otomatis</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>simpan otomatis penyimpanan otomatis</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Menyematkan gambar dalam file JSON label.</translation>
     </message>
@@ -1103,8 +1111,16 @@ Shapes</source>
         <translation>Detail poligon</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>halus kehalusan sederhanakan garis tepi</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Nilai yang lebih tinggi mempertahankan lebih banyak detail batas masker dan area yang lebih kecil.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>duplikat hindari duplikat hapus duplikat</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1207,6 +1223,22 @@ Shapes</source>
     <message>
         <source>Settings sections</source>
         <translation>Bagian pengaturan</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Cari pengaturan</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Pengaturan yang cocok</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} pengaturan yang cocok</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>Tidak ada pengaturan yang cocok dalam dialog ini. Coba istilah lain atau hapus pencarian.</translation>
     </message>
 </context>
 </TS>
