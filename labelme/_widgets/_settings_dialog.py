@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 from collections.abc import Callable
 from collections.abc import Sequence
+from itertools import pairwise
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -16,6 +17,85 @@ from ._integer_slider import IntegerSlider
 
 ApplySetting = Callable[[tuple[str, ...], object], bool]
 PreviewShapeColor = Callable[[tuple[str, ...], list[int] | None], None]
+
+_SOURCE_LABEL_ROLE: typing.Final = QtCore.Qt.ItemDataRole.UserRole + 1
+_CONTEXT_FONT_SCALE: typing.Final = 0.85
+
+
+class _SearchResultDelegate(QtWidgets.QStyledItemDelegate):
+    # Search results carry "name\nsection" as their text; the section is drawn
+    # smaller and muted so the setting name stays primary. Section items have no
+    # user data and keep the default single-line rendering.
+    def paint(
+        self,
+        painter: QtGui.QPainter,
+        option: QtWidgets.QStyleOptionViewItem,
+        index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
+        /,
+    ) -> None:
+        if index.data(QtCore.Qt.ItemDataRole.UserRole) is None:
+            super().paint(painter, option, index)
+            return
+        opt = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
+        # PySide6 leaves the copied option's text empty, so read the model.
+        title, section = index.data(QtCore.Qt.ItemDataRole.DisplayRole).split(
+            "\n", maxsplit=1
+        )
+        style = opt.widget.style()
+        text_rect = style.subElementRect(
+            QtWidgets.QStyle.SubElement.SE_ItemViewItemText, opt, opt.widget
+        )
+        opt.text = ""
+        style.drawControl(
+            QtWidgets.QStyle.ControlElement.CE_ItemViewItem, opt, painter, opt.widget
+        )
+        margin = (
+            style.pixelMetric(
+                QtWidgets.QStyle.PixelMetric.PM_FocusFrameHMargin, None, opt.widget
+            )
+            + 1
+        )
+        text_rect.adjust(margin, 0, -margin, 0)
+        section_font = QtGui.QFont(opt.font)
+        section_font.setPointSizeF(opt.font.pointSizeF() * _CONTEXT_FONT_SCALE)
+        title_metrics = QtGui.QFontMetrics(opt.font)
+        section_metrics = QtGui.QFontMetrics(section_font)
+        LINE_GAP: typing.Final = 2
+        height = title_metrics.height() + LINE_GAP + section_metrics.height()
+        text_rect.setTop(text_rect.top() + (text_rect.height() - height) // 2)
+        selected = bool(opt.state & QtWidgets.QStyle.StateFlag.State_Selected)
+        opt.palette.setCurrentColorGroup(
+            QtGui.QPalette.ColorGroup.Active
+            if opt.state & QtWidgets.QStyle.StateFlag.State_Active
+            else QtGui.QPalette.ColorGroup.Inactive
+        )
+        painter.save()
+        painter.setClipRect(opt.rect)
+        painter.setPen(
+            opt.palette.color(
+                QtGui.QPalette.ColorRole.HighlightedText
+                if selected
+                else QtGui.QPalette.ColorRole.Text
+            )
+        )
+        flags = QtCore.Qt.AlignmentFlag.AlignLeading | QtCore.Qt.AlignmentFlag.AlignTop
+        painter.setFont(opt.font)
+        painter.drawText(
+            text_rect,
+            flags,
+            title_metrics.elidedText(title, opt.textElideMode, text_rect.width()),
+        )
+        text_rect.setTop(text_rect.top() + title_metrics.height() + LINE_GAP)
+        painter.setFont(section_font)
+        if not selected:
+            painter.setOpacity(0.7)
+        painter.drawText(
+            text_rect,
+            flags,
+            section_metrics.elidedText(section, opt.textElideMode, text_rect.width()),
+        )
+        painter.restore()
 
 
 class _PlainTextEdit(QtWidgets.QPlainTextEdit):
@@ -73,15 +153,38 @@ class _ColorSwatchButton(QtWidgets.QPushButton):
         self.setAccessibleDescription(description)
 
 
+class _SettingHighlight(QtWidgets.QWidget):
+    def paintEvent(self, _event: QtGui.QPaintEvent, /) -> None:
+        # macOS lets users choose text-selection and accent colors independently.
+        color = self.palette().color(
+            QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Accent
+        )
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+        BORDER_WIDTH: typing.Final = 3
+        CORNER_RADIUS: typing.Final = 6
+        painter.setPen(QtGui.QPen(color, BORDER_WIDTH))
+        color.setAlpha(35)
+        painter.setBrush(color)
+        inset = BORDER_WIDTH / 2
+        painter.drawRoundedRect(
+            QtCore.QRectF(self.rect()).adjusted(inset, inset, -inset, -inset),
+            CORNER_RADIUS,
+            CORNER_RADIUS,
+        )
+
+
 class _SettingsPage(QtWidgets.QWidget):
     def __init__(
         self,
         *,
         groups: Sequence[tuple[str, QtGui.QIcon, QtWidgets.QGroupBox]],
+        editors: dict[tuple[str, ...], QtWidgets.QWidget],
     ) -> None:
         super().__init__()
 
         navigation = QtWidgets.QListWidget()
+        navigation.setItemDelegate(_SearchResultDelegate(navigation))
         navigation.setAccessibleName(self.tr("Settings sections"))
         navigation.setHorizontalScrollBarPolicy(
             QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff
@@ -100,15 +203,10 @@ class _SettingsPage(QtWidgets.QWidget):
         navigation.setStyleSheet(
             f"QListWidget::item {{ padding-left: {NAVIGATION_TEXT_INSET}px; }}"
         )
-        for title, icon, _group_box in groups:
-            item = QtWidgets.QListWidgetItem(icon, title)
-            item.setToolTip(title)
-            navigation.addItem(item)
-            item_size = navigation.sizeHintForIndex(navigation.indexFromItem(item))
-            item_size.setHeight(
-                navigation.fontMetrics().height() + NAVIGATION_VERTICAL_PADDING
-            )
-            item.setSizeHint(item_size)
+        self._navigation = navigation
+        self._sections = [(title, icon) for title, icon, _ in groups]
+        self._navigation_padding = NAVIGATION_VERTICAL_PADDING
+        self._show_sections()
         MINIMUM_NAVIGATION_WIDTH: typing.Final = 160
         MAXIMUM_NAVIGATION_WIDTH: typing.Final = 240
         NAVIGATION_PADDING: typing.Final = 8
@@ -132,25 +230,282 @@ class _SettingsPage(QtWidgets.QWidget):
         scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(content)
 
+        self._search = QtWidgets.QLineEdit()
+        self._search.setPlaceholderText(self.tr("Search settings"))
+        self._search.setAccessibleName(self.tr("Search settings"))
+        self._search.setClearButtonEnabled(True)
+        self._status = QtWidgets.QLabel()
+        self._status.setWordWrap(True)
+        self._status.hide()
+        sidebar = QtWidgets.QWidget()
+        sidebar.setFixedWidth(navigation_width)
+        sidebar_layout = QtWidgets.QVBoxLayout(sidebar)
+        sidebar_layout.setContentsMargins(0, 0, 0, 0)
+        sidebar_layout.addWidget(self._search)
+        sidebar_layout.addWidget(navigation, stretch=1)
+        sidebar_layout.addWidget(self._status)
+
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(navigation)
+        layout.addWidget(sidebar)
         layout.addWidget(scroll_area, stretch=1)
 
-        self._navigation = navigation
         self._scroll_area = scroll_area
         self._content = content
         self._groups = [group_box for _title, _icon, group_box in groups]
         self._scrolling_to_group = False
+        self._editors = editors
+        self._search_index: list[tuple[schema.Setting, tuple[str, ...], str]] = []
+        settings_by_path = {setting.key_path: setting for setting in schema.SETTINGS}
+        for key_path, editor in editors.items():
+            setting = settings_by_path[key_path]
+            names = (
+                setting.label,
+                QtCore.QCoreApplication.translate("SettingsDialog", setting.label),
+                ".".join(key_path),
+            )
+            metadata = [
+                *names,
+                setting.group,
+                setting.note or "",
+                setting.search_aliases,
+            ]
+            metadata += [
+                QtCore.QCoreApplication.translate("SettingsDialog", text)
+                for text in metadata
+            ]
+            if isinstance(editor, QtWidgets.QComboBox):
+                for i in range(editor.count()):
+                    metadata += [
+                        editor.itemText(i),
+                        str(editor.itemData(i)),
+                        editor.itemData(i, _SOURCE_LABEL_ROLE),
+                    ]
+            self._search_index.append(
+                (
+                    setting,
+                    tuple(name.casefold() for name in names),
+                    " ".join(metadata).casefold(),
+                )
+            )
+        # The editor the last activated search result led to, or None.
+        self._destination: QtWidgets.QWidget | None = None
+        self._highlight = _SettingHighlight(content)
+        self._highlight.hide()
+        self._highlight.setAttribute(
+            QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents
+        )
+        content.installEventFilter(self)
+        self._announcement_timer = QtCore.QTimer(self)
+        self._announcement_timer.setSingleShot(True)
+        self._announcement_timer.timeout.connect(self._announce_status)
+        self._search.textChanged.connect(self._update_search)
+        self._search.installEventFilter(self)
+        navigation.installEventFilter(self)
+
+        self.setFocusProxy(self._search)
+        for before, after in pairwise([self._search, navigation, *editors.values()]):
+            QtWidgets.QWidget.setTabOrder(before, after)
 
         navigation.currentRowChanged.connect(self._scroll_to_group)
-        navigation.itemClicked.connect(
-            lambda item: self._scroll_to_group(navigation.row(item))
-        )
+        navigation.itemClicked.connect(self._activate_item)
         scroll_area.verticalScrollBar().valueChanged.connect(
             self._sync_navigation_to_scroll
         )
         navigation.setCurrentRow(0)
+
+    def showEvent(self, event: QtGui.QShowEvent, /) -> None:
+        super().showEvent(event)
+        self._search.clear()
+        self.focus_search()
+
+    def focus_search(self) -> None:
+        self._search.setFocus(QtCore.Qt.FocusReason.ShortcutFocusReason)
+        self._search.selectAll()
+
+    def clear_search(self) -> bool:
+        if not self._search.text().strip():
+            return False
+        self._search.clear()
+        self.focus_search()
+        return True
+
+    def _show_sections(self) -> None:
+        self._navigation.clear()
+        self._navigation.setAccessibleName(self.tr("Settings sections"))
+        for title, icon in self._sections:
+            item = QtWidgets.QListWidgetItem(icon, title)
+            item.setToolTip(title)
+            self._navigation.addItem(item)
+            size = self._navigation.sizeHintForIndex(
+                self._navigation.indexFromItem(item)
+            )
+            size.setHeight(
+                self._navigation.fontMetrics().height() + self._navigation_padding
+            )
+            item.setSizeHint(size)
+
+    def _update_search(self, text: str, /) -> None:
+        self._destination = None
+        self._highlight.hide()
+        with QtCore.QSignalBlocker(self._navigation):
+            if not text.strip():
+                self._show_sections()
+                self._status.hide()
+                self._announcement_timer.stop()
+                self._sync_navigation_to_scroll(
+                    self._scroll_area.verticalScrollBar().value()
+                )
+                return
+            self._navigation.clear()
+            self._navigation.setAccessibleName(self.tr("Matching settings"))
+            matches = _find_settings(index=self._search_index, query=text)
+            for setting in matches:
+                title = QtCore.QCoreApplication.translate(
+                    "SettingsDialog", setting.label
+                )
+                section = QtCore.QCoreApplication.translate(
+                    "SettingsDialog", setting.group
+                )
+                item = QtWidgets.QListWidgetItem(f"{title}\n{section}")
+                item.setData(QtCore.Qt.ItemDataRole.UserRole, setting.key_path)
+                item.setData(
+                    QtCore.Qt.ItemDataRole.AccessibleTextRole, f"{title}, {section}"
+                )
+                item.setToolTip(item.text())
+                item.setSizeHint(
+                    QtCore.QSize(
+                        0,
+                        self._navigation.fontMetrics().lineSpacing() * 2
+                        + self._navigation_padding,
+                    )
+                )
+                self._navigation.addItem(item)
+        message = (
+            self.tr("{count} matching settings").format(count=len(matches))
+            if matches
+            else self.tr(
+                "No matching settings in this dialog. Try another term or clear search."
+            )
+        )
+        self._set_status(message)
+
+    def _set_status(self, message: str, /) -> None:
+        self._status.setText(message)
+        self._status.show()
+        self._queue_announcement(message)
+
+    def _queue_announcement(self, message: str, /) -> None:
+        self._announcement_message = message
+        # Results update immediately; speech waits for a typing pause.
+        ANNOUNCEMENT_DELAY_MS: typing.Final = 350
+        self._announcement_timer.start(ANNOUNCEMENT_DELAY_MS)
+
+    def _announce_status(self) -> None:
+        if (
+            self.isVisible()
+            and self._search.text().strip()
+            and QtGui.QAccessible.isActive()
+        ):
+            event = QtGui.QAccessibleAnnouncementEvent(
+                self._status, self._announcement_message
+            )
+            event.setPoliteness(QtGui.QAccessible.AnnouncementPoliteness.Polite)
+            QtGui.QAccessible.updateAccessibility(event)
+
+    def _activate_item(self, item: QtWidgets.QListWidgetItem, /) -> None:
+        if not self._search.text().strip():
+            self._scroll_to_group(self._navigation.row(item))
+            return
+        key_path = tuple(item.data(QtCore.Qt.ItemDataRole.UserRole))
+        editor = self._editors[key_path]
+        row = editor.parentWidget()
+        assert row is not None
+        TOP_INSET: typing.Final = 16
+        row_top = row.mapTo(self._content, QtCore.QPoint()).y()
+        # Leave room below the final settings so they can also land near the top.
+        self._content.setMinimumHeight(
+            max(
+                self._content.minimumSizeHint().height(),
+                row_top + self._scroll_area.viewport().height() - TOP_INSET,
+            )
+        )
+        self._scroll_area.ensureWidgetVisible(editor)
+        group = row.parentWidget()
+        assert group is not None
+        group_layout = group.layout()
+        assert group_layout is not None
+        # Keep the section heading intact when its first setting is the destination.
+        target = group if group_layout.indexOf(row) == 0 else row
+        target_top = target.mapTo(self._content, QtCore.QPoint()).y()
+        self._scroll_area.verticalScrollBar().setValue(target_top - TOP_INSET)
+        self._navigation.setFocus(QtCore.Qt.FocusReason.OtherFocusReason)
+        if editor.isEnabled():
+            self._announcement_timer.stop()
+            item.setData(QtCore.Qt.ItemDataRole.AccessibleDescriptionRole, "")
+            self._status.setText(
+                self.tr("{count} matching settings").format(
+                    count=self._navigation.count()
+                )
+            )
+        else:
+            reason = row.toolTip()
+            item.setData(QtCore.Qt.ItemDataRole.AccessibleDescriptionRole, reason)
+            self._set_status(reason)
+        self._destination = editor
+        self._place_highlight()
+        self._highlight.show()
+        self._highlight.lower()
+
+    def _place_highlight(self) -> None:
+        if self._destination is None:
+            return
+        row = self._destination.parentWidget()
+        assert row is not None
+        self._highlight.setGeometry(
+            QtCore.QRect(row.mapTo(self._content, QtCore.QPoint()), row.size())
+        )
+
+    def focusNextPrevChild(self, next: bool, /) -> bool:  # noqa: FBT001 -- QWidget override
+        # Tab from an activated result enters that setting rather than the
+        # first editor on the page.
+        if next and self._destination is not None and self._navigation.hasFocus():
+            self._destination.setFocus(QtCore.Qt.FocusReason.TabFocusReason)
+            return True
+        return super().focusNextPrevChild(next)
+
+    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
+        if watched is self._content and event.type() == QtCore.QEvent.Type.Resize:
+            self._place_highlight()
+        if (
+            isinstance(event, QtGui.QKeyEvent)
+            and event.type() == QtCore.QEvent.Type.KeyPress
+        ):
+            key = event.key()
+            searching = bool(self._search.text().strip())
+            if (
+                watched is self._search
+                and searching
+                and key in (QtCore.Qt.Key.Key_Up, QtCore.Qt.Key.Key_Down)
+            ):
+                # Browse results without leaving the search field; the list is
+                # not focused, so announce the selection ourselves.
+                QtWidgets.QApplication.sendEvent(self._navigation, event)
+                item = self._navigation.currentItem()
+                if item is not None:
+                    self._queue_announcement(
+                        item.data(QtCore.Qt.ItemDataRole.AccessibleTextRole)
+                    )
+                return True
+            if key in (QtCore.Qt.Key.Key_Return, QtCore.Qt.Key.Key_Enter):
+                if searching and self._navigation.currentItem() is None:
+                    self._navigation.setCurrentRow(0)
+                item = self._navigation.currentItem()
+                if item is not None and (watched is self._navigation or searching):
+                    self._activate_item(item)
+                # Consumed either way so Enter never reaches the default button.
+                return True
+        return super().eventFilter(watched, event)
 
     @property
     def _required_width(self) -> int:
@@ -167,7 +522,7 @@ class _SettingsPage(QtWidgets.QWidget):
         )
 
     def _scroll_to_group(self, index: int, /) -> None:
-        if not 0 <= index < len(self._groups):
+        if self._search.text().strip() or not 0 <= index < len(self._groups):
             return
         group = self._groups[index]
         group_top = group.mapTo(self._content, QtCore.QPoint()).y()
@@ -181,7 +536,7 @@ class _SettingsPage(QtWidgets.QWidget):
             self._navigation.setCurrentRow(index)
 
     def _sync_navigation_to_scroll(self, value: int, /) -> None:
-        if self._scrolling_to_group:
+        if self._scrolling_to_group or self._search.text().strip():
             return
         viewport = self._scroll_area.viewport()
         # Move the reading point toward the viewport center as the user leaves
@@ -241,8 +596,10 @@ class SettingsDialog(QtWidgets.QDialog):
                     self._build_group(title=self.tr(group), settings=settings),
                 )
             )
-        page = _SettingsPage(groups=groups)
+        page = _SettingsPage(groups=groups, editors=self._editors)
         self._page = page
+        find_shortcut = QtGui.QShortcut(QtGui.QKeySequence.StandardKey.Find, self)
+        find_shortcut.activated.connect(page.focus_search)
 
         open_button = QtWidgets.QPushButton(self.tr("Open config file as text…"))
         open_button.setToolTip(
@@ -262,6 +619,10 @@ class SettingsDialog(QtWidgets.QDialog):
         layout.addWidget(page, stretch=1)
         layout.addLayout(button_layout)
         self.setLayout(layout)
+
+        QtWidgets.QWidget.setTabOrder(page, open_button)
+        QtWidgets.QWidget.setTabOrder(open_button, close_button)
+
         DEFAULT_DIALOG_SIZE: typing.Final = QtCore.QSize(760, 590)
         scroll_bar_width = self.style().pixelMetric(
             QtWidgets.QStyle.PixelMetric.PM_ScrollBarExtent
@@ -283,6 +644,12 @@ class SettingsDialog(QtWidgets.QDialog):
 
         self._sync_validate_label_gate()
         self._sync_shape_color_mode()
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent, /) -> None:
+        if event.key() == QtCore.Qt.Key.Key_Escape and self._page.clear_search():
+            event.accept()
+            return
+        super().keyPressEvent(event)
 
     def accept(self) -> None:
         # Flush text editors whose edits commit on focus-out: clicking Close
@@ -337,6 +704,11 @@ class SettingsDialog(QtWidgets.QDialog):
     ) -> QtWidgets.QGroupBox:
         group_box = QtWidgets.QGroupBox(title)
         group_box.setFlat(True)
+        # Section headings are secondary to setting names, so they use the
+        # same smaller size as the section line in search results.
+        section_font = QtGui.QFont(self.font())
+        section_font.setPointSizeF(section_font.pointSizeF() * _CONTEXT_FONT_SCALE)
+        group_box.setFont(section_font)
         layout = QtWidgets.QVBoxLayout(group_box)
         for setting in settings:
             editor = self._create_editor(setting=setting)
@@ -351,6 +723,12 @@ class SettingsDialog(QtWidgets.QDialog):
 
             label_cell = self._build_label_cell(setting=setting, editor=editor)
             row = QtWidgets.QWidget()
+            # Rows must not inherit the heading's smaller font. Re-setting the
+            # size marks it as explicitly resolved; copying the dialog font
+            # alone would resolve back to the group box.
+            row_font = QtGui.QFont(self.font())
+            row_font.setPointSizeF(row_font.pointSizeF())
+            row.setFont(row_font)
             if setting.kind == "str_list":
                 row_layout = QtWidgets.QVBoxLayout(row)
                 row_layout.addWidget(label_cell)
@@ -415,9 +793,11 @@ class SettingsDialog(QtWidgets.QDialog):
             enum_items: list[tuple[str, object]] = []
             for index, choice in enumerate(setting.choices):
                 if setting.choice_labels is not None:
-                    label = self.tr(setting.choice_labels[index])
+                    label = setting.choice_labels[index]
                 elif choice is None:
-                    label = self.tr("(none)")
+                    label = typing.cast(
+                        str, QtCore.QT_TRANSLATE_NOOP("SettingsDialog", "(none)")
+                    )
                 else:
                     label = str(choice)
                 enum_items.append((label, choice))
@@ -458,7 +838,13 @@ class SettingsDialog(QtWidgets.QDialog):
                 key=lambda name_and_code: name_and_code[0].casefold(),
             )
             items = [
-                (self.tr("System default"), None),
+                (
+                    typing.cast(
+                        str,
+                        QtCore.QT_TRANSLATE_NOOP("SettingsDialog", "System default"),
+                    ),
+                    None,
+                ),
                 ("English", _locale.SOURCE_LOCALE),
                 *languages,
             ]
@@ -497,8 +883,9 @@ class SettingsDialog(QtWidgets.QDialog):
     ) -> QtWidgets.QComboBox:
         combo = QtWidgets.QComboBox()
         combo.setMinimumWidth(min_width)
-        for label, data in items:
-            combo.addItem(label, data)
+        for index, (label, data) in enumerate(items):
+            combo.addItem(self.tr(label), data)
+            combo.setItemData(index, label, _SOURCE_LABEL_ROLE)
         self._set_editor_value(editor=combo, value=value)
         combo.currentIndexChanged.connect(
             lambda: self._apply_combo(setting=setting, combo=combo)
@@ -646,6 +1033,35 @@ class SettingsDialog(QtWidgets.QDialog):
             row = self._editors[key_path].parentWidget()
             assert row is not None
             row.setEnabled(key_path == active_path)
+            row.setToolTip(
+                ""
+                if key_path == active_path
+                else self.tr(
+                    "Select {mode} in Shape Color Mode to edit this setting."
+                ).format(mode=mode.itemText(mode.findData(key_path[1])))
+            )
+
+
+def _find_settings(
+    *, index: Sequence[tuple[schema.Setting, tuple[str, ...], str]], query: str
+) -> list[schema.Setting]:
+    query = " ".join(query.casefold().split())
+    if not query:
+        return []
+    terms = query.split()
+    matches = [
+        (
+            0
+            if query in names
+            else 1
+            if all(any(term in name for name in names) for term in terms)
+            else 2,
+            setting,
+        )
+        for setting, names, metadata in index
+        if all(term in metadata for term in terms)
+    ]
+    return [setting for _, setting in sorted(matches, key=lambda match: match[0])]
 
 
 def _build_beta_badge(*, text: str) -> QtWidgets.QLabel:

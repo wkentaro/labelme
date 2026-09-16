@@ -1005,6 +1005,10 @@ Expected location: {path}</source>
         <translation>自動で保存</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>自動保存 オートセーブ</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>画像をラベル JSON ファイルに埋め込みます。</translation>
     </message>
@@ -1069,8 +1073,16 @@ Expected location: {path}</source>
         <translation>ポリゴンの詳細度</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>滑らか なめらか 平滑化 簡略化 輪郭</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>値を高くすると、マスク境界の詳細と小さな領域がより多く保持されます。</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>重複 重複回避 重複を避ける 重複削除</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1193,6 +1205,10 @@ Expected location: {path}</source>
         <translation>ラベルの検証が「exact」に設定されている間は、定義済みラベルを空にできません。先に「exact」検証を無効にしてください。</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>この設定を編集するには、形状の色モードで「{mode}」を選択してください。</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>言語</translation>
     </message>
@@ -1221,6 +1237,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings sections</source>
         <translation>設定セクション</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>設定を検索</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>一致する設定</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} 件の設定が一致</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>このダイアログに一致する設定はありません。別の語句を試すか、検索をクリアしてください。</translation>
     </message>
 </context>
 </TS>

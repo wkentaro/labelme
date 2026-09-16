@@ -997,6 +997,10 @@ Emplacement attendu : {path}</translation>
         <translation>Enregistrer automatiquement</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>sauvegarde automatique enregistrer automatiquement</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Intègre l’image dans le fichier JSON d’étiquettes.</translation>
     </message>
@@ -1061,8 +1065,16 @@ Emplacement attendu : {path}</translation>
         <translation>Détail du polygone</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>lisser lissage simplifier contour</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Les valeurs élevées préservent davantage de détails du contour du masque et les petites régions.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>doublon doublons éviter les doublons dédupliquer</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1185,6 +1197,10 @@ Emplacement attendu : {path}</translation>
         <translation>Les étiquettes prédéfinies ne peuvent pas être vides lorsque la validation des étiquettes est définie sur « exact ». Désactivez d’abord la validation « exact ».</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Sélectionnez {mode} dans le mode de couleur des formes pour modifier ce réglage.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
@@ -1213,6 +1229,22 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Settings sections</source>
         <translation>Sections des réglages</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Rechercher des réglages</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Réglages correspondants</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} réglages correspondants</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>Aucun réglage correspondant dans cette fenêtre. Essayez un autre terme ou effacez la recherche.</translation>
     </message>
 </context>
 </TS>

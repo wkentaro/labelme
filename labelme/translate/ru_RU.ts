@@ -994,6 +994,10 @@ Expected location: {path}</source>
         <translation>Автоматически сохранять</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>автосохранение автоматическое сохранение</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Встраивает изображение в JSON-файл меток.</translation>
     </message>
@@ -1058,8 +1062,16 @@ Expected location: {path}</source>
         <translation>Детализация полигона</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>сглаживание гладкость упрощение контур</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Более высокие значения сохраняют больше деталей границы маски и более мелкие области.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>дубликат дубликаты избегать дубликатов удаление дубликатов</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1182,6 +1194,10 @@ Expected location: {path}</source>
         <translation>Предустановленные метки не могут быть пустыми, пока проверка меток установлена в «exact». Сначала отключите проверку «exact».</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Чтобы изменить эту настройку, выберите {mode} в режиме цвета фигур.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
@@ -1210,6 +1226,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings sections</source>
         <translation>Разделы настроек</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Поиск настроек</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Подходящие настройки</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>Найдено настроек: {count}</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>В этом окне нет подходящих настроек. Попробуйте другой запрос или очистите поиск.</translation>
     </message>
 </context>
 </TS>

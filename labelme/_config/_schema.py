@@ -52,6 +52,7 @@ class Setting:
     choice_labels: tuple[str, ...] | None = None
     # Optional muted caption rendered beneath the control.
     note: str | None = None
+    search_aliases: str = ""
     minimum: int | None = None
     maximum: int | None = None
     # Marks a feature shipped for early use: renders a "BETA" badge beside the
@@ -86,6 +87,9 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         group="Files and saving",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Save automatically")),
         kind="bool",
+        search_aliases=cast(
+            str, QT_TRANSLATE_NOOP("SettingsDialog", "autosave auto save")
+        ),
     ),
     Setting(
         key_path=("with_image_data",),
@@ -296,6 +300,10 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         group="AI assist",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Polygon detail")),
         kind="int",
+        search_aliases=cast(
+            str,
+            QT_TRANSLATE_NOOP("SettingsDialog", "smooth smoothness simplify outline"),
+        ),
         note=cast(
             str,
             QT_TRANSLATE_NOOP(
@@ -320,6 +328,12 @@ SETTINGS: Final[tuple[Setting, ...]] = (
                 "SettingsDialog",
                 "When an AI Assist candidate matches an existing Shape, highlight "
                 "that Shape instead of creating a new Shape.",
+            ),
+        ),
+        search_aliases=cast(
+            str,
+            QT_TRANSLATE_NOOP(
+                "SettingsDialog", "duplicate duplicates avoid duplicates deduplicate"
             ),
         ),
     ),

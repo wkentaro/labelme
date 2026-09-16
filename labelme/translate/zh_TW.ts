@@ -997,6 +997,10 @@ Expected location: {path}</source>
         <translation>自動儲存</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>自動儲存 自動保存</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>將圖像嵌入標籤 JSON 文件中。</translation>
     </message>
@@ -1061,8 +1065,16 @@ Expected location: {path}</source>
         <translation>多邊形細節</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>平滑 光滑 簡化 輪廓</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>值越高，保留的遮罩邊界細節和較小區域越多。</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>重複 避免重複 去除重複</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1185,6 +1197,10 @@ Expected location: {path}</source>
         <translation>當標籤驗證設定為「exact」時，預定義標籤不能為空。請先停用「exact」驗證。</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>請在形狀顏色模式中選擇「{mode}」以編輯此設定。</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>語言</translation>
     </message>
@@ -1213,6 +1229,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings sections</source>
         <translation>設定區段</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>搜尋設定</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>符合的設定</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} 項符合的設定</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>此對話方塊中沒有符合的設定。請嘗試其他關鍵字或清除搜尋。</translation>
     </message>
 </context>
 </TS>

@@ -997,6 +997,10 @@ Beklenen konum: {path}</translation>
         <translation>Otomatik kaydet</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>otomatik kaydet otomatik kayıt</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Görüntüyü etiket JSON dosyasına gömer.</translation>
     </message>
@@ -1061,8 +1065,16 @@ Beklenen konum: {path}</translation>
         <translation>Poligon ayrıntısı</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>yumuşat pürüzsüzlük sadeleştir anahat</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Daha yüksek değerler maske sınırı ayrıntılarını ve küçük bölgeleri daha fazla korur.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>yinelenen kopya tekrarları önle tekrarları kaldır</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1185,6 +1197,10 @@ Beklenen konum: {path}</translation>
         <translation>Etiket doğrulama &apos;exact&apos; olarak ayarlıyken önceden tanımlı etiketler boş olamaz. Önce &apos;exact&apos; doğrulamasını devre dışı bırakın.</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Bu ayarı düzenlemek için Şekil Renk Modunda {mode} seçeneğini seçin.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Dil</translation>
     </message>
@@ -1213,6 +1229,22 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Settings sections</source>
         <translation>Ayar bölümleri</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Ayarlarda ara</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Eşleşen ayarlar</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} eşleşen ayar</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>Bu iletişim kutusunda eşleşen ayar yok. Başka bir terim deneyin veya aramayı temizleyin.</translation>
     </message>
 </context>
 </TS>

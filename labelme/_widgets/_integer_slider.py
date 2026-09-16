@@ -19,6 +19,7 @@ class IntegerSlider(QtWidgets.QWidget):
         self._slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
         self._slider.setRange(minimum, maximum)
         self._slider.setTracking(False)
+        self.setFocusProxy(self._slider)
         self._value_label = QtWidgets.QLabel()
         self._value_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self._value_label.setMinimumWidth(

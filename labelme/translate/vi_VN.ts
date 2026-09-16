@@ -991,6 +991,10 @@ Vị trí dự kiến: {path}</translation>
         <translation>Tự động lưu</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>tự động lưu lưu tự động</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Nhúng hình ảnh vào tệp JSON nhãn.</translation>
     </message>
@@ -1055,8 +1059,16 @@ Vị trí dự kiến: {path}</translation>
         <translation>Độ chi tiết đa giác</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>làm mịn độ mịn đơn giản hóa đường viền</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>Giá trị cao hơn giữ lại nhiều chi tiết đường biên mặt nạ và các vùng nhỏ hơn.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>trùng lặp tránh trùng lặp loại bỏ trùng lặp</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1179,6 +1191,10 @@ Vị trí dự kiến: {path}</translation>
         <translation>Nhãn định sẵn không được để trống khi kiểm tra nhãn được đặt thành &apos;exact&apos;. Vui lòng tắt kiểm tra &apos;exact&apos; trước.</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>Chọn {mode} trong chế độ màu hình để chỉnh sửa cài đặt này.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Ngôn ngữ</translation>
     </message>
@@ -1207,6 +1223,22 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Settings sections</source>
         <translation>Các phần cài đặt</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Tìm kiếm cài đặt</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Cài đặt phù hợp</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} cài đặt phù hợp</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>Không có cài đặt phù hợp trong hộp thoại này. Hãy thử từ khác hoặc xóa tìm kiếm.</translation>
     </message>
 </context>
 </TS>

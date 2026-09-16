@@ -997,6 +997,10 @@ Várt hely: {path}</translation>
         <translation>Automatikus mentés</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>automatikus mentés</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>Beágyazza a képet a címke JSON-fájljába.</translation>
     </message>
@@ -1061,8 +1065,16 @@ Várt hely: {path}</translation>
         <translation>Poligon részletessége</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>simítás simaság egyszerűsítés körvonal</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>A magasabb értékek több részletet őriznek meg a maszk határvonalából és a kisebb területekből.</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>másolat másolatok ismétlődés elkerülése duplikátumok eltávolítása</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1185,6 +1197,10 @@ Várt hely: {path}</translation>
         <translation>Az előre definiált címkék nem lehetnek üresek, amíg a címkeellenőrzés „exact” értékre van állítva. Először kapcsolja ki az „exact” ellenőrzést.</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>A beállítás szerkesztéséhez válassza a(z) {mode} lehetőséget az alakzat színmódjánál.</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>Nyelv</translation>
     </message>
@@ -1213,6 +1229,22 @@ Várt hely: {path}</translation>
     <message>
         <source>Settings sections</source>
         <translation>Beállítások szakaszai</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>Beállítások keresése</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>Egyező beállítások</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} egyező beállítás</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>Nincs egyező beállítás ebben az ablakban. Próbáljon másik kifejezést, vagy törölje a keresést.</translation>
     </message>
 </context>
 </TS>

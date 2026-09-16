@@ -997,6 +997,10 @@ Expected location: {path}</source>
         <translation>自动保存</translation>
     </message>
     <message>
+        <source>autosave auto save</source>
+        <translation>自动保存 自动储存</translation>
+    </message>
+    <message>
         <source>Embeds the image in the label JSON file.</source>
         <translation>将图像嵌入标签 JSON 文件中。</translation>
     </message>
@@ -1061,8 +1065,16 @@ Expected location: {path}</source>
         <translation>多边形细节</translation>
     </message>
     <message>
+        <source>smooth smoothness simplify outline</source>
+        <translation>平滑 光滑 简化 轮廓</translation>
+    </message>
+    <message>
         <source>Higher values preserve more Mask boundary detail and smaller lands.</source>
         <translation>值越高，保留的蒙版边界细节和较小区域越多。</translation>
+    </message>
+    <message>
+        <source>duplicate duplicates avoid duplicates deduplicate</source>
+        <translation>重复 避免重复 去重</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1185,6 +1197,10 @@ Expected location: {path}</source>
         <translation>当标签验证设置为“exact”时，预定义标签不能为空。请先禁用“exact”验证。</translation>
     </message>
     <message>
+        <source>Select {mode} in Shape Color Mode to edit this setting.</source>
+        <translation>请在形状颜色模式中选择“{mode}”以编辑此设置。</translation>
+    </message>
+    <message>
         <source>Language</source>
         <translation>语言</translation>
     </message>
@@ -1213,6 +1229,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings sections</source>
         <translation>设置分区</translation>
+    </message>
+    <message>
+        <source>Search settings</source>
+        <translation>搜索设置</translation>
+    </message>
+    <message>
+        <source>Matching settings</source>
+        <translation>匹配的设置</translation>
+    </message>
+    <message>
+        <source>{count} matching settings</source>
+        <translation>{count} 项匹配的设置</translation>
+    </message>
+    <message>
+        <source>No matching settings in this dialog. Try another term or clear search.</source>
+        <translation>此对话框中没有匹配的设置。请尝试其他关键词或清除搜索。</translation>
     </message>
 </context>
 </TS>
