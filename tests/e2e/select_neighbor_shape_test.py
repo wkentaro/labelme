@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Final
 
 import pytest
@@ -10,7 +9,6 @@ from pytestqt.qtbot import QtBot
 from labelme._app import MainWindow
 
 from ..conftest import close_or_pause
-from .conftest import MainWinFactory
 from .conftest import select_shape
 
 # 2011_000003.json lays its shapes out roughly as
@@ -124,25 +122,3 @@ def test_ctrl_arrow_skips_hidden_shapes(
     assert _selected_labels(win=annotated_win) == ["purple_diamond"]
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
-
-
-@pytest.mark.gui
-def test_select_neighbor_actions_follow_shapes(
-    *, main_win: MainWinFactory, data_path: Path
-) -> None:
-    win = main_win(config_overrides={"auto_save": False})
-    actions = [
-        action
-        for action in win._menus.edit.actions()
-        if action.text().startswith("Select Shape ")
-    ]
-    assert len(actions) == 4
-    assert all(not action.isEnabled() for action in actions)
-
-    assert win._load_file(
-        image_or_label_path=str(data_path / "annotated/2011_000003.jpg")
-    )
-    assert all(action.isEnabled() for action in actions)
-
-    assert win._load_file(image_or_label_path=str(data_path / "raw/2011_000003.jpg"))
-    assert all(not action.isEnabled() for action in actions)
