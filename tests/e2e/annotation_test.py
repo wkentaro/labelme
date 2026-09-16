@@ -359,15 +359,19 @@ def test_annotate_shape_types(
 
     def enter_label_when_visible() -> None:
         if not win._label_dialog.isVisible():
-            QTimer.singleShot(50, enter_label_when_visible)
             return
+        label_timer.stop()
         qtbot.keyClicks(win._label_dialog.edit, label)
         qtbot.wait(50)
         qtbot.keyClick(win._label_dialog.edit, Qt.Key.Key_Enter)
 
-    QTimer.singleShot(0, enter_label_when_visible)
-
-    click(xy=finalize_click, modifier=finalize_modifier)
+    label_timer = QTimer(win)
+    label_timer.timeout.connect(enter_label_when_visible)
+    label_timer.start(50)
+    try:
+        click(xy=finalize_click, modifier=finalize_modifier)
+    finally:
+        label_timer.stop()
 
     shapes = canvas.shapes
     assert len(shapes) >= 1
