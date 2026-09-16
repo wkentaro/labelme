@@ -7,6 +7,7 @@ from typing import Final
 import pytest
 
 from labelme import _config
+from labelme._config._migration import migrate_config
 
 
 def _steer_home(*, monkeypatch: pytest.MonkeyPatch, home: Path) -> None:
@@ -73,14 +74,14 @@ def test_migrate_removes_logger_level(*, tmp_path: Path) -> None:
 )
 def test_migrate_ai_model_name(*, input_name: str, expected_name: str) -> None:
     config: dict = {"ai": {"default": input_name}}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert config["ai"]["default"] == expected_name
 
 
 @pytest.mark.parametrize("model_name", [True, 42, ["Sam"]])
 def test_migrate_tolerates_non_string_ai_default(*, model_name: object) -> None:
     config: dict = {"ai": {"default": model_name}}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert config["ai"]["default"] == model_name
 
 
@@ -127,21 +128,21 @@ _POLYGON_TO_SHAPE_RENAMES: Final = {
 )
 def test_migrate_polygon_shortcut_to_shape(*, old_key: str, new_key: str) -> None:
     config = {"shortcuts": {old_key: "Ctrl+X"}}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert old_key not in config["shortcuts"]
     assert config["shortcuts"][new_key] == "Ctrl+X"
 
 
 def test_migrate_polygon_shortcuts_no_shortcuts_key() -> None:
     config = {}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert "shortcuts" not in config
 
 
 @pytest.mark.parametrize("section", ["shortcuts", "ai"])
 def test_migrate_tolerates_empty_section(*, section: str) -> None:
     config = {section: None}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert config[section] is None
 
 
@@ -163,7 +164,7 @@ def test_load_config_empty_section_keeps_defaults(
 @pytest.mark.parametrize("section", ["shortcuts", "ai"])
 def test_migrate_leaves_malformed_section_for_merge_to_report(*, section: str) -> None:
     config = {section: "oops"}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert config[section] == "oops"
 
 
@@ -186,7 +187,7 @@ def test_migrate_polygon_shortcut_drops_old_key_when_new_key_exists(
     *, old_key: str, new_key: str
 ) -> None:
     config = {"shortcuts": {old_key: "Ctrl+X", new_key: "Ctrl+Y"}}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert config["shortcuts"][new_key] == "Ctrl+Y"
     assert old_key not in config["shortcuts"]
 
@@ -211,7 +212,7 @@ def test_load_config_tolerates_both_polygon_and_shape_shortcuts(
 
 def test_migrate_removes_add_point_to_edge_shortcut() -> None:
     config = {"shortcuts": {"add_point_to_edge": "Ctrl+X"}}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert "add_point_to_edge" not in config["shortcuts"]
 
 
@@ -239,7 +240,7 @@ def test_migrate_ai_crosshair_keys_to_ai_points_to_shape(
     *, ai_polygon: bool, ai_mask: bool, expected: bool
 ) -> None:
     config = {"canvas": {"crosshair": {"ai_polygon": ai_polygon, "ai_mask": ai_mask}}}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     crosshair = config["canvas"]["crosshair"]
     assert "ai_polygon" not in crosshair
     assert "ai_mask" not in crosshair
@@ -250,7 +251,7 @@ def test_migrate_ai_crosshair_keeps_explicit_ai_points_to_shape() -> None:
     config = {
         "canvas": {"crosshair": {"ai_polygon": True, "ai_points_to_shape": False}}
     }
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     crosshair = config["canvas"]["crosshair"]
     assert "ai_polygon" not in crosshair
     assert crosshair["ai_points_to_shape"] is False
@@ -267,7 +268,7 @@ def test_load_config_tolerates_legacy_ai_crosshair_keys(*, tmp_path: Path) -> No
 
 def test_migrate_leaves_malformed_crosshair_for_merge_to_report() -> None:
     config = {"canvas": {"crosshair": "oops"}}
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert config["canvas"]["crosshair"] == "oops"
 
 
@@ -297,7 +298,7 @@ def test_migrate_keep_prev_brightness_contrast(
     *, old_config: dict[str, bool], expected: dict[str, bool]
 ) -> None:
     config = old_config.copy()
-    _config._migrate_config_from_file(config_from_yaml=config)
+    migrate_config(config_from_yaml=config)
     assert config == expected
 
 
