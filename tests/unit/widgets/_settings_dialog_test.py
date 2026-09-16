@@ -937,3 +937,24 @@ def test_escape_closes_with_empty_search(
     dialog._page._search.setText(query)
     qtbot.keyClick(dialog._page._search, QtCore.Qt.Key.Key_Escape)
     assert not dialog.isVisible()
+
+
+@pytest.mark.parametrize("query", ["", "autosave"])
+def test_enter_in_editor_reaches_default_button(
+    *, qtbot: QtBot, dialog: SettingsDialog, applied: Applied, query: str
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    page = dialog._page
+    editor = dialog._editors[("auto_save",)]
+    if query:
+        page._search.setText(query)
+        qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
+        qtbot.keyClick(page._navigation, QtCore.Qt.Key.Key_Tab)
+    else:
+        editor.setFocus()
+    assert editor.hasFocus()
+    qtbot.keyClick(editor, QtCore.Qt.Key.Key_Return)
+    assert not page._navigation.hasFocus()
+    assert not dialog.isVisible()
+    assert applied == []

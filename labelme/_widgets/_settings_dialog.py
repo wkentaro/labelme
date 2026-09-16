@@ -477,8 +477,12 @@ class _SettingsPage(QtWidgets.QWidget):
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
         if watched is self._content and event.type() == QtCore.QEvent.Type.Resize:
             self._place_highlight()
+        # Editors that ignore Return propagate it up through the content widget,
+        # so key handling is limited to the sidebar to keep the default button
+        # and editor focus intact.
         if (
-            isinstance(event, QtGui.QKeyEvent)
+            watched is not self._content
+            and isinstance(event, QtGui.QKeyEvent)
             and event.type() == QtCore.QEvent.Type.KeyPress
         ):
             key = event.key()
