@@ -60,7 +60,6 @@ from ._widgets import LabelDialogEntry
 from ._widgets import LabelDialogField
 from ._widgets import LabelListWidget
 from ._widgets import LabelListWidgetItem
-from ._widgets import NeighborDirection
 from ._widgets import Palette
 from ._widgets import SettingsDialog
 from ._widgets import StatusStats
@@ -179,7 +178,6 @@ class _Actions(NamedTuple):
     hide_all: QtGui.QAction
     show_all: QtGui.QAction
     toggle_all: QtGui.QAction
-    select_neighbor_shape: dict[NeighborDirection, QtGui.QAction]
     open_dir: QtGui.QAction
     zoom_widget_action: QtWidgets.QWidgetAction
     draw: list[tuple[str, QtGui.QAction]]
@@ -719,39 +717,40 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Toggle all shapes"),
         )
 
-        select_neighbor_shape: dict[NeighborDirection, QtGui.QAction] = {
-            "up": action(
+        select_neighbor = self._canvas_widgets.canvas.select_neighbor_shape
+        select_neighbor_actions = (
+            action(
                 text=self.tr("Select Shape Above"),
-                slot=functools.partial(self._select_neighbor_shape, direction="up"),
+                slot=functools.partial(select_neighbor, direction="up"),
                 shortcut=shortcuts["select_shape_up"],
                 tip=self.tr("Select the nearest shape above the selection"),
             ),
-            "down": action(
+            action(
                 text=self.tr("Select Shape Below"),
-                slot=functools.partial(self._select_neighbor_shape, direction="down"),
+                slot=functools.partial(select_neighbor, direction="down"),
                 shortcut=shortcuts["select_shape_down"],
                 tip=self.tr("Select the nearest shape below the selection"),
             ),
-            "left": action(
+            action(
                 text=self.tr("Select Shape to the Left"),
-                slot=functools.partial(self._select_neighbor_shape, direction="left"),
+                slot=functools.partial(select_neighbor, direction="left"),
                 shortcut=shortcuts["select_shape_left"],
                 tip=self.tr("Select the nearest shape left of the selection"),
             ),
-            "right": action(
+            action(
                 text=self.tr("Select Shape to the Right"),
-                slot=functools.partial(self._select_neighbor_shape, direction="right"),
+                slot=functools.partial(select_neighbor, direction="right"),
                 shortcut=shortcuts["select_shape_right"],
                 tip=self.tr("Select the nearest shape right of the selection"),
             ),
-        }
+        )
 
         shapes_present_actions = QtGui.QActionGroup(self)
         shapes_present_actions.setExclusive(False)
         shapes_present_actions.addAction(hide_all)
         shapes_present_actions.addAction(show_all)
         shapes_present_actions.addAction(toggle_all)
-        for select_action in select_neighbor_shape.values():
+        for select_action in select_neighbor_actions:
             shapes_present_actions.addAction(select_action)
 
         def update_shapes_present_actions() -> None:
@@ -822,7 +821,7 @@ class MainWindow(QtWidgets.QMainWindow):
             merge,
             remove_point,
             separator(),
-            *select_neighbor_shape.values(),
+            *select_neighbor_actions,
             separator(),
             keep_prev_action,
         )
@@ -872,7 +871,6 @@ class MainWindow(QtWidgets.QMainWindow):
             hide_all=hide_all,
             show_all=show_all,
             toggle_all=toggle_all,
-            select_neighbor_shape=select_neighbor_shape,
             open_dir=open_dir,
             zoom_widget_action=zoom_widget_action,
             draw=draw,
@@ -1646,9 +1644,6 @@ class MainWindow(QtWidgets.QMainWindow):
             image_or_label_path=current_item.text()
         ):
             self._restore_file_list_state(item=previous_item)
-
-    def _select_neighbor_shape(self, *, direction: NeighborDirection) -> None:
-        self._canvas_widgets.canvas.select_neighbor_shape(direction=direction)
 
     def _on_shape_selection_changed(self, selected_shapes: list[Shape], /) -> None:
         self._docks.label_list.item_selection_changed.disconnect(

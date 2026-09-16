@@ -28,11 +28,12 @@ def _selected_labels(*, win: MainWindow) -> list[str]:
 
 @pytest.mark.gui
 @pytest.mark.parametrize(
-    ("key", "expected_label"),
+    ("shape_index", "key", "expected_label"),
     [
-        pytest.param(Qt.Key.Key_Up, "blue_block", id="up"),
-        pytest.param(Qt.Key.Key_Left, "green_hexagon", id="left"),
-        pytest.param(Qt.Key.Key_Right, "purple_diamond", id="right"),
+        pytest.param(_RED_TRIANGLE, Qt.Key.Key_Up, "blue_block", id="up"),
+        pytest.param(1, Qt.Key.Key_Down, "red_triangle", id="down"),
+        pytest.param(_RED_TRIANGLE, Qt.Key.Key_Left, "green_hexagon", id="left"),
+        pytest.param(_RED_TRIANGLE, Qt.Key.Key_Right, "purple_diamond", id="right"),
     ],
 )
 def test_ctrl_arrow_selects_neighbor_shape(
@@ -40,12 +41,12 @@ def test_ctrl_arrow_selects_neighbor_shape(
     qtbot: QtBot,
     annotated_win: MainWindow,
     pause: bool,
+    shape_index: int,
     key: Qt.Key,
     expected_label: str,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
-    select_shape(qtbot=qtbot, canvas=canvas, shape_index=_RED_TRIANGLE)
-    assert _selected_labels(win=annotated_win) == ["red_triangle"]
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=shape_index)
 
     qtbot.keyClick(canvas, key, modifier=Qt.KeyboardModifier.ControlModifier)
     qtbot.wait(50)
@@ -69,7 +70,9 @@ def test_ctrl_arrow_keeps_selection_when_nothing_lies_that_way(
     canvas = annotated_win._canvas_widgets.canvas
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=_RED_TRIANGLE)
 
-    annotated_win._actions.select_neighbor_shape["down"].trigger()
+    qtbot.keyClick(
+        canvas, Qt.Key.Key_Down, modifier=Qt.KeyboardModifier.ControlModifier
+    )
 
     assert _selected_labels(win=annotated_win) == ["red_triangle"]
 
@@ -114,7 +117,9 @@ def test_ctrl_arrow_skips_hidden_shapes(
     assert not red_triangle.visible
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=GREEN_HEXAGON)
-    annotated_win._actions.select_neighbor_shape["right"].trigger()
+    qtbot.keyClick(
+        canvas, Qt.Key.Key_Right, modifier=Qt.KeyboardModifier.ControlModifier
+    )
 
     assert _selected_labels(win=annotated_win) == ["purple_diamond"]
 
@@ -126,7 +131,12 @@ def test_select_neighbor_actions_follow_shapes(
     *, main_win: MainWinFactory, data_path: Path
 ) -> None:
     win = main_win(config_overrides={"auto_save": False})
-    actions = win._actions.select_neighbor_shape.values()
+    actions = [
+        action
+        for action in win._menus.edit.actions()
+        if action.text().startswith("Select Shape ")
+    ]
+    assert len(actions) == 4
     assert all(not action.isEnabled() for action in actions)
 
     assert win._load_file(

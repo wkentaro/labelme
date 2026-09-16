@@ -144,9 +144,9 @@ _ARROW_KEY_TO_DIRECTION: Final[dict[Qt.Key, QPointF]] = {
     Qt.Key.Key_Right: QPointF(1.0, 0.0),
 }
 
-NeighborDirection = Literal["up", "down", "left", "right"]
+_NeighborDirection = Literal["up", "down", "left", "right"]
 
-_NEIGHBOR_DIRECTION_TO_VECTOR: Final[dict[NeighborDirection, QPointF]] = {
+_NEIGHBOR_DIRECTION_TO_VECTOR: Final[dict[_NeighborDirection, QPointF]] = {
     "up": QPointF(0.0, -1.0),
     "down": QPointF(0.0, 1.0),
     "left": QPointF(-1.0, 0.0),
@@ -1376,7 +1376,7 @@ class Canvas(QtWidgets.QWidget):
         self.selection_changed.emit(shapes)
         self.update()
 
-    def select_neighbor_shape(self, *, direction: NeighborDirection) -> None:
+    def select_neighbor_shape(self, *, direction: _NeighborDirection) -> None:
         """Select the nearest visible shape in `direction` from the selection.
 
         With nothing selected, the shape closest to the image's top-left
