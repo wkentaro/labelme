@@ -39,6 +39,7 @@ mask_polygonization:
   detail: 80
 ai:
   default: Sam2 (balanced)
+  text_model: yoloworld:latest
   suppress_existing_shape_matches: false
 # main
 flag_dock:

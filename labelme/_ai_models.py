@@ -60,6 +60,12 @@ AI_ASSIST_MODEL_OPTIONS: Final[tuple[AiAssistModelOption, ...]] = (
 )
 
 
+AI_TEXT_MODEL_OPTIONS: Final[tuple[tuple[str, str], ...]] = (
+    ("sam3:latest", "SAM3 (smart)"),
+    ("yoloworld:latest", "YOLO-World (fast)"),
+)
+
+
 def find_ai_assist_model_option(*, model_name: str) -> AiAssistModelOption | None:
     for option in AI_ASSIST_MODEL_OPTIONS:
         if option.model_name == model_name:

@@ -1031,6 +1031,10 @@ Beklenen konum: {path}</translation>
         <translation>Şekil noktalarının görüntünün dışına taşmasına izin verir, örn. kısmen görünen nesneler için.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI ile Metinden Açıklama</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Poligon ayrıntısı</translation>
     </message>

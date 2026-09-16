@@ -1025,6 +1025,10 @@ Expected location: {path}</source>
         <translation>به نقاط شکل اجازه می‌دهد فراتر از تصویر امتداد یابند، مثلاً برای اشیای تا حدی قابل مشاهده.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>پیشنهاد هوش مصنوعی</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>جزئیات چندضلعی</translation>
     </message>

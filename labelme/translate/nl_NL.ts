@@ -1025,6 +1025,10 @@ Verwachte locatie: {path}</translation>
         <translation>Laat vormpunten buiten de afbeelding vallen, bijv. voor gedeeltelijk zichtbare objecten.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI Tekst-naar-Annotatie</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Polygoondetail</translation>
     </message>

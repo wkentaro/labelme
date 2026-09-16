@@ -1025,6 +1025,10 @@ Expected location: {path}</source>
         <translation>อนุญาตให้จุดของรูปร่างขยายออกไปนอกภาพ เช่น สำหรับวัตถุที่มองเห็นได้บางส่วน</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI ข้อความสู่แอนโนเทชัน</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>รายละเอียดโพลีกอน</translation>
     </message>

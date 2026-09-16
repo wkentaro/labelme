@@ -64,6 +64,30 @@ def settings_with_label_history(
 
 
 @pytest.mark.gui
+def test_ai_text_model_persists_and_syncs_settings(
+    *, main_win: MainWinFactory, editable_config_file: Path
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    dialog = _open_settings_dialog(win=win)
+    editor = dialog._editors[("ai", "text_model")]
+    assert isinstance(editor, QtWidgets.QComboBox)
+    combo = win._ai_text._model_combo
+    combo.setCurrentIndex(combo.findData("sam3:latest"))
+    assert editor.currentData() == "sam3:latest"
+    win.close()
+
+    reopened = main_win(config_file=editable_config_file)
+    assert reopened._ai_text.get_model_name() == "sam3:latest"
+    reopened_dialog = _open_settings_dialog(win=reopened)
+    reopened_editor = reopened_dialog._editors[("ai", "text_model")]
+    assert isinstance(reopened_editor, QtWidgets.QComboBox)
+    reopened_editor.setCurrentIndex(reopened_editor.findData("yoloworld:latest"))
+    assert reopened._ai_text.get_model_name() == "yoloworld:latest"
+    assert "text_model" not in safe_load(editable_config_file.read_text()).get("ai", {})
+    reopened.close()
+
+
+@pytest.mark.gui
 def test_startup_syncs_first_ai_model_without_rewriting_config(
     *,
     main_win: MainWinFactory,

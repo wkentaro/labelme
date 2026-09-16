@@ -1073,6 +1073,10 @@ Shapes</source>
         <translation>Isi poligon saat menggambar</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>Anotasi dari teks (AI)</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Detail poligon</translation>
     </message>
