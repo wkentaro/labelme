@@ -13,7 +13,6 @@ from ._info_button import InfoButton
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
     model_changed = QtCore.Signal(str)
 
-    _default_model_name: str = "yoloworld:latest"
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
 
@@ -84,15 +83,6 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         model_combo.setAccessibleDescription(self.tr("Text-to-annotation model"))
         for model_id, model_display in AI_TEXT_MODEL_OPTIONS:
             model_combo.addItem(model_display, model_id)
-        model_index = next(
-            (
-                i
-                for i, (mid, _) in enumerate(AI_TEXT_MODEL_OPTIONS)
-                if mid == self._default_model_name
-            ),
-            0,
-        )
-        model_combo.setCurrentIndex(model_index)
         model_combo.currentIndexChanged.connect(
             lambda: self.model_changed.emit(self.get_model_name())
         )

@@ -22,7 +22,7 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
     info_button = widget.findChild(InfoButton)
     assert info_button is not None
 
-    model_name = widget.tr("Model") if sys.platform == "win32" else "YOLO-World (fast)"
+    model_name = widget.tr("Model") if sys.platform == "win32" else "SAM3 (smart)"
     for control, name in (
         (widget._text_input, widget.tr("Prompt")),
         (widget._model_combo, model_name),
@@ -35,7 +35,7 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
         assert interface.text(QtGui.QAccessible.Text.Name) == name
 
     interface = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
-    assert interface.text(QtGui.QAccessible.Text.Value) == "YOLO-World (fast)"
+    assert interface.text(QtGui.QAccessible.Text.Value) == "SAM3 (smart)"
     assert interface.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "Text-to-annotation model"
     )
