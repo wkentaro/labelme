@@ -9,6 +9,7 @@ from typing import cast
 from PySide6.QtCore import QT_TRANSLATE_NOOP
 
 from .._ai_models import AI_ASSIST_MODEL_OPTIONS
+from .._ai_models import AI_TEXT_MODEL_OPTIONS
 
 Group = Literal[
     "Appearance and language",
@@ -281,6 +282,14 @@ SETTINGS: Final[tuple[Setting, ...]] = (
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam2 (accuracy)")),
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam3")),
         ),
+    ),
+    Setting(
+        key_path=("ai", "text_model"),
+        group="AI assist",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "AI Text-to-Annotation")),
+        kind="enum",
+        choices=tuple(model_name for model_name, _ in AI_TEXT_MODEL_OPTIONS),
+        choice_labels=tuple(display_name for _, display_name in AI_TEXT_MODEL_OPTIONS),
     ),
     Setting(
         key_path=("mask_polygonization", "detail"),

@@ -1025,6 +1025,10 @@ Local esperado: {path}</translation>
         <translation>Permite que os pontos das formas se estendam além da imagem, por ex. para objetos parcialmente visíveis.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>Texto para Anotação IA</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Detalhe do polígono</translation>
     </message>

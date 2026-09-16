@@ -1,21 +1,18 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import ClassVar
 
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
+from .._ai_models import AI_TEXT_MODEL_OPTIONS
 from ._info_button import InfoButton
 
 
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
-    _available_models: ClassVar[list[tuple[str, str]]] = [
-        ("sam3:latest", "SAM3 (smart)"),
-        ("yoloworld:latest", "YOLO-World (fast)"),
-    ]
-    _default_model_name: str = "yoloworld:latest"
+    model_changed = QtCore.Signal(str)
+
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
 
@@ -84,17 +81,11 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         # Windows needs an explicit name; Unix exposes the selected option instead.
         model_combo.setAccessibleName(self.tr("Model"))
         model_combo.setAccessibleDescription(self.tr("Text-to-annotation model"))
-        for model_id, model_display in self._available_models:
+        for model_id, model_display in AI_TEXT_MODEL_OPTIONS:
             model_combo.addItem(model_display, model_id)
-        model_index = next(
-            (
-                i
-                for i, (mid, _) in enumerate(self._available_models)
-                if mid == self._default_model_name
-            ),
-            0,
+        model_combo.currentIndexChanged.connect(
+            lambda: self.model_changed.emit(self.get_model_name())
         )
-        model_combo.setCurrentIndex(model_index)
         settings_layout.addWidget(model_combo, stretch=1)
 
         # Size and mute these via QFont and a palette role, never a stylesheet:
@@ -145,6 +136,10 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     def get_model_name(self) -> str:
         return self._model_combo.currentData()
+
+    def set_model_name(self, *, model_name: str) -> None:
+        with QtCore.QSignalBlocker(self._model_combo):
+            self._model_combo.setCurrentIndex(self._model_combo.findData(model_name))
 
     def get_model_display_name(self) -> str:
         return self._model_combo.currentText()

@@ -1031,6 +1031,10 @@ Posizione prevista: {path}</translation>
         <translation>Permette ai punti delle forme di estendersi oltre l&apos;immagine, ad es. per oggetti parzialmente visibili.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>Prompt IA</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Dettaglio poligono</translation>
     </message>

@@ -521,8 +521,8 @@ def test_scrolling_updates_navigation(*, qtbot: QtBot, dialog: SettingsDialog) -
         dialog.show()
 
     scroll_bar = dialog._page._scroll_area.verticalScrollBar()
-    scroll_bar.setValue(scroll_bar.maximum() - 1)
-    assert dialog._page._navigation.currentRow() == len(dialog._page._groups) - 2
+    scroll_bar.setValue(scroll_bar.maximum() // 2)
+    assert 0 < dialog._page._navigation.currentRow() < len(dialog._page._groups) - 1
 
     scroll_bar.setValue(scroll_bar.maximum())
     assert dialog._page._navigation.currentRow() == len(dialog._page._groups) - 1

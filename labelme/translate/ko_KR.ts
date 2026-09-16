@@ -1025,6 +1025,10 @@ Expected location: {path}</source>
         <translation>도형의 점이 이미지 밖으로 확장되도록 허용합니다. 예: 부분적으로 보이는 객체.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI 프롬프트</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>폴리곤 세부 수준</translation>
     </message>

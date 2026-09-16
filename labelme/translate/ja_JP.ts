@@ -1039,6 +1039,10 @@ Expected location: {path}</source>
         <translation>図形の点が画像の外まで広がることを許可します（例: 部分的にしか見えない物体）。</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AIプロンプト</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>ポリゴンの詳細度</translation>
     </message>

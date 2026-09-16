@@ -300,6 +300,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_text = AiTextToAnnotationWidget(
             on_submit=self._submit_ai_prompt, parent=self
         )
+        self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"])
+        self._ai_text.model_changed.connect(
+            lambda model_name: self._apply_setting_change(
+                ("ai", "text_model"), model_name
+            )
+        )
         self._ai_text.setEnabled(False)
 
         self._setup_toolbars()
@@ -2805,6 +2811,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self._ai_annotation.set_current_model(
                 model_display=self._config["ai"]["default"]
             )
+        elif key_path == ("ai", "text_model"):
+            self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"])
         elif key_path == ("ai", "suppress_existing_shape_matches"):
             self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
                 enabled=self._config["ai"]["suppress_existing_shape_matches"]

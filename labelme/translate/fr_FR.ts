@@ -1031,6 +1031,10 @@ Emplacement attendu : {path}</translation>
         <translation>Permet aux points des formes de dépasser l&apos;image, par exemple pour les objets partiellement visibles.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>Invite IA</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Détail du polygone</translation>
     </message>

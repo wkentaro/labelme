@@ -1031,6 +1031,10 @@ Expected location: {path}</source>
         <translation>允许形状的点延伸到图像之外，例如用于部分可见的对象。</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI 文本转标注</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>多边形细节</translation>
     </message>

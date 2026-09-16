@@ -1028,6 +1028,10 @@ Expected location: {path}</source>
         <translation>Дозволяє точкам фігур виходити за межі зображення, напр. для частково видимих об&apos;єктів.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI: текст в анотацію</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Деталізація полігона</translation>
     </message>

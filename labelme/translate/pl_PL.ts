@@ -1025,6 +1025,10 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Pozwala punktom kształtu wykraczać poza obraz, np. dla częściowo widocznych obiektów.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI — tekst na adnotację</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Szczegółowość wielokąta</translation>
     </message>

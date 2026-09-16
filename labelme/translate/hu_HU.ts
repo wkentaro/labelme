@@ -1031,6 +1031,10 @@ Várt hely: {path}</translation>
         <translation>Lehetővé teszi, hogy az alakzatpontok túlnyúljanak a képen, pl. részben látható objektumokhoz.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI prompt</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Poligon részletessége</translation>
     </message>

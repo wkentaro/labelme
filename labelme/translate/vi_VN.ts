@@ -1025,6 +1025,10 @@ Vị trí dự kiến: {path}</translation>
         <translation>Cho phép các điểm của hình vượt ra ngoài ảnh, ví dụ cho các đối tượng hiển thị một phần.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI Văn bản sang Chú thích</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Độ chi tiết đa giác</translation>
     </message>

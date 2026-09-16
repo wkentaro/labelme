@@ -1031,6 +1031,10 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Erlaubt, dass Formpunkte über das Bild hinausragen, z. B. für teilweise sichtbare Objekte.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>KI-Prompt</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Polygondetails</translation>
     </message>

@@ -9,6 +9,7 @@ from typing import cast
 from loguru import logger
 
 from .. import _yaml
+from .._ai_models import AI_TEXT_MODEL_OPTIONS
 from ._shape_color import migrate_shape_color
 from ._shape_color import validate_shape_color
 from ._writer import set_overrides
@@ -66,6 +67,10 @@ def _validate_config_item(*, key_path: tuple[str, ...], value: object) -> None:
             "mask_polygonization.detail must be an integer between 0 and 100, "
             f"but got {value!r}"
         )
+    if key_path == ("ai", "text_model") and value not in (
+        model_name for model_name, _ in AI_TEXT_MODEL_OPTIONS
+    ):
+        raise ValueError(f"Unexpected AI Text Prompt model: {value!r}")
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
     if key != "labels" or value is None:

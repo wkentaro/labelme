@@ -1027,6 +1027,10 @@ Expected location: {path}</source>
         <translation>Επιτρέπει στα σημεία των σχημάτων να εκτείνονται πέρα από την εικόνα, π.χ. για μερικώς ορατά αντικείμενα.</translation>
     </message>
     <message>
+        <source>AI Text-to-Annotation</source>
+        <translation>AI Text-to-Annotation</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Λεπτομέρεια πολυγώνου</translation>
     </message>
