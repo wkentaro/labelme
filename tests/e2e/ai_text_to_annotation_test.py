@@ -22,6 +22,8 @@ from .conftest import show_window_and_wait_for_imagedata
 if TYPE_CHECKING:
     from labelme._app import MainWindow
 
+pytestmark = pytest.mark.usefixtures("cached_ai_models")
+
 _AI_TEXT_MODEL: Final = "yoloworld:latest"
 
 
@@ -91,18 +93,9 @@ def _make_edge_crossing_response(*, texts: list[str]) -> osam.types.GenerateResp
 def _install_mock_session(
     *,
     win: MainWindow,
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch,  # noqa: ARG001 -- retained by response fixtures
     response_fn: Callable[..., osam.types.GenerateResponse],
 ) -> None:
-    class _FakeModelType:
-        @staticmethod
-        def get_size() -> int:
-            return 1
-
-    monkeypatch.setattr(
-        "osam.apis.get_model_type_by_name", lambda _name: _FakeModelType
-    )
-
     mock_session = MagicMock()
     mock_session.model_name = _AI_TEXT_MODEL
     mock_session.run = MagicMock(

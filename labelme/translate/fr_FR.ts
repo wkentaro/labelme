@@ -935,6 +935,104 @@ Emplacement attendu : {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Gérer les modèles…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Télécharger un modèle…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Choisir un modèle…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Indisponible : {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Téléchargez des modèles pour utiliser l’IA hors ligne. Vous pouvez continuer à annoter pendant les téléchargements.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Points</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Rectangles</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Invites textuelles</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>L’utilisation de SAM3 est soumise à la SAM License, notamment aux contrôles commerciaux et aux restrictions d’utilisation finale. Lisez l’intégralité de l’accord avant tout téléchargement ou utilisation.</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>Télécharger ou annuler {model}</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Supprimer</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>Supprimer {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>Téléchargement de {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Non téléchargé</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>Licence : {license} · &lt;a href=&quot;{source}&quot;&gt;Détails du modèle&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Téléchargé</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Échec</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>En attente · position {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Réessayer</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Télécharger</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Supprimer le modèle</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>Supprimer {model} de cet ordinateur ? Les sélections de ce modèle seront effacées. Vos annotations ne changeront pas.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1171,6 +1269,10 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Réglages</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>Modèles d’IA</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

@@ -929,6 +929,104 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>모델 관리…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>모델 다운로드…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>모델 선택…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>사용 불가: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>모델을 다운로드하면 오프라인에서 AI를 사용할 수 있습니다. 다운로드 중에도 주석 작업을 계속할 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>점</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>상자</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>텍스트 프롬프트</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>SAM3 사용에는 무역 통제 및 최종 용도 제한을 포함한 SAM License가 적용됩니다. 다운로드하거나 사용하기 전에 전체 계약을 읽어 주세요.</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>{model} 다운로드 또는 취소</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>삭제</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>{model} 삭제</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>{filename} 다운로드 중 · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>다운로드 안 됨</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>라이선스: {license} · &lt;a href=&quot;{source}&quot;&gt;모델 정보&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>다운로드 완료</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>실패</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>대기 중 · 순서 {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>다시 시도</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>다운로드</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>모델 삭제</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>이 컴퓨터에서 {model}을 삭제할까요? 이 모델의 선택이 해제됩니다. 주석은 변경되지 않습니다.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1165,6 +1263,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>설정</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>AI 모델</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

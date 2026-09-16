@@ -488,7 +488,7 @@ wheels = [
 
 [[package]]
 name = "gdown"
-version = "6.0.0"
+version = "6.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -496,9 +496,9 @@ dependencies = [
     { name = "requests", extra = ["socks"] },
     { name = "tqdm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/72/01/9e0280ba321f73295374765dc3c0b1e03058188a592a48a321376f9eb092/gdown-6.0.0.tar.gz", hash = "sha256:1f1f735a174ef3599fca95786aafac1219b9d85d4c729ccb95e674996c47fd44", size = 262729, upload-time = "2026-04-12T06:37:40.182Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b0/e6/938b4f831a7bacb5ea7c862d92bbab937561f268fbf11ee0cc9716fad769/gdown-6.3.0.tar.gz", hash = "sha256:1f4a4c641ad50654fe4801eacdd0091810f570825bb7b562d37039c7a43c5731", size = 347380, upload-time = "2026-09-16T10:10:16.04Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/91/fd/a382bb6684b1fdbe5cd19aa980a04a67f6c91efd0e1e627f93614fe2d24e/gdown-6.0.0-py3-none-any.whl", hash = "sha256:c82d39a6b09ed7778012515c2fa4ab4dc36d7789300cd0b16b87d3a3e4a09955", size = 18243, upload-time = "2026-04-12T06:37:38.209Z" },
+    { url = "https://files.pythonhosted.org/packages/72/fe/34afee5e481a527169d72a2fcae1139ed4d7edabb1e8b8c6a81a32df8656/gdown-6.3.0-py3-none-any.whl", hash = "sha256:2d71e39962e7ed63d7406e8532d6130ab0b3cc9fb5155372f6d0945fdad21d5c", size = 48304, upload-time = "2026-09-16T10:10:14.787Z" },
 ]
 
 [[package]]
@@ -819,7 +819,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2" },
-    { name = "osam", specifier = ">=0.4.0" },
+    { name = "osam", specifier = ">=0.8.0" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
     { name = "ruamel-yaml", specifier = ">=0.18" },
@@ -1242,7 +1242,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.4.0"
+version = "0.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1253,9 +1253,9 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/04/90/16dcc070796216b6729a93cfbbf12012b92ee54523509aafea546f13b940/osam-0.4.0.tar.gz", hash = "sha256:11b73c8eecd66929d860c1e1a0e5167a352b5f44b5d483d3ff98e98680fd987f", size = 28427843, upload-time = "2026-04-16T13:49:48.695Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/12/2a/b61294fa6a14866f56a88078b482841c98b3609556959d014108f06d5599/osam-0.8.0.tar.gz", hash = "sha256:5fc0b9d2038c8d5507f3a347aa4eeaca9be0c07fe58d688e39a2d93dacda9898", size = 27521346, upload-time = "2026-09-16T11:09:16.924Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/27/d3/937ed798428ea240688ade7a5ea7b3957999ef5ba839193b011a2ccafdea/osam-0.4.0-py3-none-any.whl", hash = "sha256:45cd1979a3b8b4fb19b6d619e7b993b1062f80dda123f268cefbfa500affc1a6", size = 2210418, upload-time = "2026-04-16T13:49:45.481Z" },
+    { url = "https://files.pythonhosted.org/packages/52/81/46b65bee991e172e6720d8b369ac79e1f08fd8dd1e93e63cf99799ea9fd0/osam-0.8.0-py3-none-any.whl", hash = "sha256:a5944da1a50d29b24b101e0f584c89cfa0a973440903675ce2a73bf968521e0b", size = 1430556, upload-time = "2026-09-16T11:09:14.228Z" },
 ]
 
 [[package]]

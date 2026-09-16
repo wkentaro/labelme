@@ -929,6 +929,104 @@ Verwachte locatie: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Modellen beheren…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Een model downloaden…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Een model kiezen…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Niet beschikbaar: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Download modellen om AI offline te gebruiken. U kunt blijven annoteren tijdens het downloaden.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Punten</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Rechthoeken</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Tekstprompts</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>Het gebruik van SAM3 valt onder de SAM License, inclusief handelscontroles en beperkingen op eindgebruik. Lees de volledige overeenkomst voordat u het model downloadt of gebruikt.</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>{model} downloaden of annuleren</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Verwijderen</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>{model} verwijderen</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>{filename} downloaden · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Niet gedownload</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>Licentie: {license} · &lt;a href=&quot;{source}&quot;&gt;Modeldetails&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Gedownload</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Mislukt</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>In wachtrij · positie {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuleren</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Opnieuw proberen</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Downloaden</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Model verwijderen</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>{model} van deze computer verwijderen? De selecties van dit model worden gewist. Uw annotaties blijven ongewijzigd.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1165,6 +1263,10 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Instellingen</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>AI-modellen</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

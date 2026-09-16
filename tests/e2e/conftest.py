@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 from collections.abc import Callable
@@ -7,6 +8,7 @@ from collections.abc import Generator
 from pathlib import Path
 from typing import Final
 
+import osam
 import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -22,6 +24,8 @@ from pytestqt.qtbot import QtBot
 
 import labelme._app
 from labelme.__main__ import main
+from labelme._ai_models import AI_ASSIST_MODEL_OPTIONS
+from labelme._ai_models import AI_TEXT_MODEL_OPTIONS
 from labelme._app import MainWindow
 from labelme._widgets._canvas import Canvas
 from labelme._widgets._label_dialog import LabelDialog
@@ -46,6 +50,26 @@ def session_home(*, tmp_path: Path) -> Path:
     home = tmp_path / "home"
     home.mkdir()
     return home
+
+
+@pytest.fixture
+def cached_ai_models(*, session_home: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    # Model-selection tests need valid local files, but never run real inference.
+    monkeypatch.setenv("HOME", str(session_home))
+    monkeypatch.setenv("USERPROFILE", str(session_home))
+    names = {item.model_name for item in AI_ASSIST_MODEL_OPTIONS}
+    names.update(name for name, _ in AI_TEXT_MODEL_OPTIONS)
+    for name in names:
+        content = name.encode()
+        blob = osam.types.Blob(
+            url="https://example.invalid/model",
+            hash="sha256:" + hashlib.sha256(content).hexdigest(),
+        )
+        Path(blob.path).parent.mkdir(parents=True, exist_ok=True)
+        Path(blob.path).write_bytes(content)
+        monkeypatch.setattr(
+            osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
+        )
 
 
 def image_to_widget_pos(*, canvas: Canvas, image_pos: QPointF) -> QPoint:

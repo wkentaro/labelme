@@ -115,6 +115,7 @@ def settings_with_label_history(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("cached_ai_models")
 def test_ai_text_model_persists_and_syncs_settings(
     *, main_win: MainWinFactory, editable_config_file: Path
 ) -> None:
@@ -139,6 +140,7 @@ def test_ai_text_model_persists_and_syncs_settings(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("cached_ai_models")
 def test_startup_syncs_first_ai_model_without_rewriting_config(
     *,
     main_win: MainWinFactory,
@@ -468,6 +470,7 @@ def test_clearing_labels_is_rejected_when_validate_label_is_exact(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("cached_ai_models")
 def test_setting_controls_revert_when_write_fails(
     *,
     main_win: MainWinFactory,
@@ -550,7 +553,7 @@ def test_settings_dialog_is_deleted_when_opening_text_editor(
 
 
 @pytest.mark.gui
-def test_settings_disabled_with_cli_overrides(
+def test_model_management_available_with_cli_overrides(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(
@@ -559,7 +562,12 @@ def test_settings_disabled_with_cli_overrides(
 
     assert win._config_overrides
     win._open_settings()
-    assert win._settings_dialog is None
+    dialog = win._settings_dialog
+    assert dialog is not None
+    assert not dialog._editors[("auto_save",)].isEnabled()
+    win._open_models()
+    assert dialog._page._navigation.currentRow() == dialog._models_index
+    assert dialog._page._groups[-1].isEnabled()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -751,6 +759,7 @@ def test_label_completion_dialog_change_rebuilds_label_dialog(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("cached_ai_models")
 def test_ai_default_dialog_change_syncs_dock_combo(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -776,6 +785,7 @@ def test_ai_default_dialog_change_syncs_dock_combo(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("cached_ai_models")
 def test_ai_model_choices_follow_point_prompt_mode(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -818,6 +828,7 @@ def test_ai_model_choices_follow_point_prompt_mode(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("cached_ai_models")
 def test_ai_dock_change_persists_and_syncs_settings_dialog(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:

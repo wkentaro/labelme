@@ -929,6 +929,104 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>مدیریت مدل‌ها…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>بارگیری مدل…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>انتخاب مدل…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>در دسترس نیست: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>برای استفادهٔ آفلاین از هوش مصنوعی، مدل‌ها را بارگیری کنید. هنگام بارگیری می‌توانید به حاشیه‌نویسی ادامه دهید.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>نقطه‌ها</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>کادرها</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>درخواست‌های متنی</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>استفاده از SAM3 تابع SAM License است، از جمله کنترل‌های تجاری و محدودیت‌های کاربرد نهایی. پیش از بارگیری یا استفاده، متن کامل توافق‌نامه را بخوانید.</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>بارگیری یا لغو {model}</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>حذف</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>حذف {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>بارگیری {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>بارگیری نشده</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>مجوز: {license} · &lt;a href=&quot;{source}&quot;&gt;جزئیات مدل&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>بارگیری شده</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>ناموفق</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>در صف · جایگاه {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>لغو</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>تلاش دوباره</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>بارگیری</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>حذف مدل</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>{model} از این رایانه حذف شود؟ انتخاب‌های این مدل پاک می‌شوند. حاشیه‌نویسی‌های شما تغییر نمی‌کنند.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1165,6 +1263,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>تنظیمات</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>مدل‌های هوش مصنوعی</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

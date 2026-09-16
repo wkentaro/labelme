@@ -932,6 +932,104 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Управление моделями…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Скачать модель…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Выбрать модель…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Недоступно: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Скачайте модели для работы с ИИ без интернета. Во время загрузки можно продолжать разметку.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Точки</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Рамки</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Текстовые запросы</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>Использование SAM3 регулируется SAM License, включая торговый контроль и ограничения конечного использования. Перед загрузкой или использованием прочитайте соглашение полностью.</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>Скачать {model} или отменить загрузку</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>Удалить {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>Загрузка {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Не скачано</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>Лицензия: {license} · &lt;a href=&quot;{source}&quot;&gt;Сведения о модели&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Скачано</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>В очереди · позиция {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Повторить</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Скачать</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Удалить модель</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>Удалить {model} с этого компьютера? Выбор этой модели будет сброшен. Ваша разметка не изменится.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1168,6 +1266,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>Настройки</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>Модели ИИ</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

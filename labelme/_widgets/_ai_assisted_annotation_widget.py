@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import cast
 
-from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -13,12 +12,14 @@ from .. import _automation
 from .._utils._qt import new_icon
 from ._info_button import InfoButton
 from ._integer_slider import IntegerSlider
+from ._model_picker import ModelPicker
 
 
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     hover_highlight_requested = QtCore.Signal(bool)
+    manage_models_requested = QtCore.Signal()
 
-    _model_combo: QtWidgets.QComboBox
+    _model_combo: ModelPicker
     _output_format_combo: QtWidgets.QComboBox
     _body: QtWidgets.QWidget
 
@@ -44,7 +45,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
     @property
     def current_model_id(self) -> str:
-        return self._model_combo.currentData()
+        return self._model_combo.currentData() or ""
 
     @property
     def is_point_prompt_mode(self) -> bool:
@@ -118,14 +119,17 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         body_layout.setSpacing(0)
         body.setLayout(body_layout)
 
-        self._model_combo = QtWidgets.QComboBox()
+        self._model_combo = ModelPicker(
+            options=[
+                (option.model_name, option.display_name)
+                for option in _ai_models.AI_ASSIST_MODEL_OPTIONS
+            ]
+        )
         # Windows needs an explicit name; Unix exposes the selected option instead.
         self._model_combo.setAccessibleName(self.tr("Model"))
         self._model_combo.setAccessibleDescription(
             self.tr("AI-assisted annotation model")
         )
-        for option in _ai_models.AI_ASSIST_MODEL_OPTIONS:
-            self._model_combo.addItem(option.display_name, option.model_name)
         body_layout.addWidget(self._model_combo)
 
         self._output_format_combo = QtWidgets.QComboBox()
@@ -142,15 +146,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
         layout.addWidget(body)
 
-        model_index = self._model_combo.findText(default_model)
-        if model_index < 0:
-            logger.warning("Default AI model is not found: {!r}", default_model)
-            model_index = 0
-
-        self._model_combo.setCurrentIndex(model_index)
-        self._model_combo.currentIndexChanged.connect(
-            lambda index: on_model_changed(self._model_combo.itemData(index))
-        )
+        self.set_current_model(model_display=default_model)
+        self._model_combo.model_changed.connect(on_model_changed)
+        self._model_combo.manage_requested.connect(self.manage_models_requested)
 
         self._output_format_combo.setCurrentIndex(0)
 
@@ -167,10 +165,18 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self.setMaximumWidth(200)
 
     def set_current_model(self, *, model_display: str) -> None:
-        index = self._model_combo.findText(model_display)
-        if index < 0 or self._model_combo.currentIndex() == index:
-            return
-        self._model_combo.setCurrentIndex(index)
+        model_name = next(
+            (
+                option.model_name
+                for option in _ai_models.AI_ASSIST_MODEL_OPTIONS
+                if option.display_name == model_display
+            ),
+            "",
+        )
+        self._model_combo.set_model_name(model_name=model_name)
+
+    def set_available_models(self, *, available: set[str]) -> None:
+        self._model_combo.set_available_models(available=available)
 
     def set_polygon_detail(self, detail: int, /) -> None:
         with QtCore.QSignalBlocker(self._polygon_detail_slider):
@@ -179,10 +185,15 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     def set_point_prompt_mode(self, *, enabled: bool) -> None:
         self._is_point_prompt_mode = enabled
         model = cast(QtGui.QStandardItemModel, self._model_combo.model())
-        for index, option in enumerate(_ai_models.AI_ASSIST_MODEL_OPTIONS):
+        for index in range(self._model_combo.count()):
+            option = _ai_models.find_ai_assist_model_option(
+                model_name=self._model_combo.itemData(index)
+            )
             item = model.item(index)
             assert item is not None
-            item.setEnabled(not enabled or option.supports_point_prompts)
+            item.setEnabled(
+                option is None or not enabled or option.supports_point_prompts
+            )
 
     def setEnabled(self, a0: bool, /) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
         self._body.setEnabled(a0)

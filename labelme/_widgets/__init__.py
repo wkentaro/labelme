@@ -2,7 +2,6 @@ from ._ai_assisted_annotation_widget import AiAssistedAnnotationWidget
 from ._ai_text_to_annotation_widget import AiTextToAnnotationWidget
 from ._brightness_contrast_dialog import BrightnessContrastDialog
 from ._canvas import Canvas
-from ._download import download_ai_model
 from ._empty_state import EmptyStateWidget
 from ._label_dialog import LabelDialog
 from ._label_dialog import LabelDialogEntry
@@ -34,6 +33,5 @@ __all__ = [
     "ToolBar",
     "UniqueLabelQListWidget",
     "ZoomWidget",
-    "download_ai_model",
     "format_shape_label",
 ]

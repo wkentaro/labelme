@@ -8,16 +8,18 @@ from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
 from ._info_button import InfoButton
+from ._model_picker import ModelPicker
 
 
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
     model_changed = QtCore.Signal(str)
+    manage_models_requested = QtCore.Signal()
 
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
 
     _text_input: QtWidgets.QLineEdit
-    _model_combo: QtWidgets.QComboBox
+    _model_combo: ModelPicker
     _score_spinbox: QtWidgets.QDoubleSpinBox
     _iou_spinbox: QtWidgets.QDoubleSpinBox
     _body: QtWidgets.QWidget
@@ -77,15 +79,12 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         settings_layout.setContentsMargins(0, 0, 0, 0)
         settings_layout.setSpacing(4)
 
-        self._model_combo = model_combo = QtWidgets.QComboBox()
+        self._model_combo = model_combo = ModelPicker(options=AI_TEXT_MODEL_OPTIONS)
         # Windows needs an explicit name; Unix exposes the selected option instead.
         model_combo.setAccessibleName(self.tr("Model"))
         model_combo.setAccessibleDescription(self.tr("Text-to-annotation model"))
-        for model_id, model_display in AI_TEXT_MODEL_OPTIONS:
-            model_combo.addItem(model_display, model_id)
-        model_combo.currentIndexChanged.connect(
-            lambda: self.model_changed.emit(self.get_model_name())
-        )
+        model_combo.model_changed.connect(self.model_changed)
+        model_combo.manage_requested.connect(self.manage_models_requested)
         settings_layout.addWidget(model_combo, stretch=1)
 
         # Size and mute these via QFont and a palette role, never a stylesheet:
@@ -135,11 +134,13 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         return self._text_input.text()
 
     def get_model_name(self) -> str:
-        return self._model_combo.currentData()
+        return self._model_combo.currentData() or ""
 
     def set_model_name(self, *, model_name: str) -> None:
-        with QtCore.QSignalBlocker(self._model_combo):
-            self._model_combo.setCurrentIndex(self._model_combo.findData(model_name))
+        self._model_combo.set_model_name(model_name=model_name)
+
+    def set_available_models(self, *, available: set[str]) -> None:
+        self._model_combo.set_available_models(available=available)
 
     def get_model_display_name(self) -> str:
         return self._model_combo.currentText()

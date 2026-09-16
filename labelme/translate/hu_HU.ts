@@ -935,6 +935,104 @@ Várt hely: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Modellek kezelése…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Modell letöltése…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Modell kiválasztása…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Nem érhető el: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Töltsön le modelleket az AI offline használatához. Letöltés közben folytathatja az annotálást.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Pontok</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Téglalapok</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Szöveges utasítások</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>A SAM3 használatára a SAM License vonatkozik, beleértve a kereskedelmi ellenőrzéseket és a végfelhasználási korlátozásokat. Letöltés vagy használat előtt olvassa el a teljes megállapodást.</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>{model} letöltése vagy megszakítása</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Törlés</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>{model} törlése</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>{filename} letöltése · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Nincs letöltve</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>Licenc: {license} · &lt;a href=&quot;{source}&quot;&gt;Modell részletei&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Letöltve</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Sikertelen</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>Várólistán · {position}. hely</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Mégse</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Újra</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Letöltés</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Modell törlése</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>Törli a(z) {model} modellt erről a számítógépről? A modell kiválasztásai törlődnek. Az annotációk nem változnak.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1171,6 +1269,10 @@ Várt hely: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Beállítások</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>AI-modellek</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

@@ -929,6 +929,104 @@ Oczekiwana lokalizacja: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Zarządzaj modelami…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Pobierz model…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Wybierz model…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Niedostępny: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Pobierz modele, aby korzystać z AI offline. Podczas pobierania możesz kontynuować adnotacje.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Punkty</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Ramki</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Polecenia tekstowe</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>Korzystanie z SAM3 podlega SAM License, w tym kontroli handlu i ograniczeniom końcowego zastosowania. Przed pobraniem lub użyciem przeczytaj całą umowę.</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>Pobierz lub anuluj {model}</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Usuń</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>Usuń {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>Pobieranie {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Nie pobrano</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>Licencja: {license} · &lt;a href=&quot;{source}&quot;&gt;Szczegóły modelu&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Pobrano</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Niepowodzenie</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>W kolejce · pozycja {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Anuluj</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Ponów</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Pobierz</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Usuń model</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>Usunąć {model} z tego komputera? Wybór tego modelu zostanie wyczyszczony. Twoje adnotacje nie ulegną zmianie.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1165,6 +1263,10 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Ustawienia</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>Modele AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

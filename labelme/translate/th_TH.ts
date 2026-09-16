@@ -929,6 +929,104 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>จัดการโมเดล…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>ดาวน์โหลดโมเดล…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>เลือกโมเดล…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>ไม่พร้อมใช้งาน: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>ดาวน์โหลดโมเดลเพื่อใช้ AI แบบออฟไลน์ คุณสามารถทำคำอธิบายประกอบต่อได้ระหว่างการดาวน์โหลด</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>จุด</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>กรอบ</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>พรอมต์ข้อความ</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>การใช้ SAM3 อยู่ภายใต้ SAM License ซึ่งรวมถึงการควบคุมทางการค้าและข้อจำกัดการใช้งานปลายทาง โปรดอ่านข้อตกลงฉบับเต็มก่อนดาวน์โหลดหรือใช้งาน</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>ดาวน์โหลดหรือยกเลิก {model}</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>ลบ</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>ลบ {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>กำลังดาวน์โหลด {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>ยังไม่ได้ดาวน์โหลด</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>สัญญาอนุญาต: {license} · &lt;a href=&quot;{source}&quot;&gt;รายละเอียดโมเดล&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>ดาวน์โหลดแล้ว</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>ล้มเหลว</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>อยู่ในคิว · ลำดับที่ {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>ยกเลิก</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>ลองใหม่</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>ดาวน์โหลด</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>ลบโมเดล</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>ลบ {model} ออกจากคอมพิวเตอร์นี้หรือไม่? การเลือกโมเดลนี้จะถูกล้าง คำอธิบายประกอบของคุณจะไม่เปลี่ยนแปลง</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1165,6 +1263,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>การตั้งค่า</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>โมเดล AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

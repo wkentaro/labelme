@@ -932,6 +932,104 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Керування моделями…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Завантажити модель…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Вибрати модель…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Недоступно: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Завантажте моделі для роботи зі ШІ без інтернету. Під час завантаження можна продовжувати розмітку.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Точки</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Рамки</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Текстові запити</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>Використання SAM3 регулюється SAM License, зокрема торговельним контролем та обмеженнями кінцевого використання. Перед завантаженням або використанням прочитайте угоду повністю.</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>Завантажити {model} або скасувати завантаження</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Видалити</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>Видалити {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>Завантаження {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Не завантажено</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>Ліцензія: {license} · &lt;a href=&quot;{source}&quot;&gt;Відомості про модель&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Завантажено</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Помилка</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>У черзі · позиція {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Повторити</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Завантажити</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Видалити модель</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>Видалити {model} із цього комп’ютера? Вибір цієї моделі буде скинуто. Ваша розмітка не зміниться.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1168,6 +1266,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>Параметри</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>Моделі ШІ</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

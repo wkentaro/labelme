@@ -25,7 +25,9 @@ store (Window State), which is not part of the Config.
 
 - Comment-preserving sparse writes require ruamel.yaml, now the project's only
   YAML library (PyYAML was dropped).
-- The dialog edits the effective Config File, so it is disabled only when
-  `--config` supplies a YAML expression (no file to write to) or when per-session
-  CLI override flags are present. A custom `--config <file>` path (e.g. a
-  `labelmerc` beside a standalone build) is editable.
+- Setting Controls in the dialog edit the effective Config File, so they are
+  disabled when `--config` supplies a YAML expression (no file to write to) or
+  when per-session CLI override flags are present. A custom `--config <file>`
+  path (e.g. a `labelmerc` beside a standalone build) is editable. AI Models
+  remains accessible because downloading and deleting cached model files does
+  not edit command-line Settings.

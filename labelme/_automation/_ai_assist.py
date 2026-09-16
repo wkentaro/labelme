@@ -43,8 +43,13 @@ class AiAssistSession:
         self.polygon_detail = polygon_detail
         self._session = None
 
+    def set_model_name(self, model_name: str, /) -> None:
+        if self.model_name != model_name:
+            self._session = None
+            self.model_name = model_name
+
     def _get_session(self) -> OsamSession:
-        if self._session is None or self._session.model_name != self.model_name:
+        if self._session is None:
             self._session = OsamSession(model_name=self.model_name)
         return self._session
 

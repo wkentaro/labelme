@@ -935,6 +935,104 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>管理模型…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>下载模型…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>选择模型…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>不可用：{model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>下载模型以离线使用 AI。下载期间您可以继续标注。</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>点</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>框</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>文本提示</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>使用 SAM3 须遵守 SAM License，包括贸易管制和最终用途限制。下载或使用前请阅读完整协议。</translation>
+    </message>
+    <message>
+        <source>Download or cancel {model}</source>
+        <translation>下载或取消 {model}</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>删除 {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>正在下载 {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>未下载</translation>
+    </message>
+    <message>
+        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
+        <translation>许可证：{license} · &lt;a href=&quot;{source}&quot;&gt;模型详情&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>已下载</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>失败</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>已排队 · 第 {position} 位</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>重试</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>下载</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>删除模型</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>从此计算机删除 {model}？该模型的选择将被清除。您的标注不会改变。</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1171,6 +1269,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>设置</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>AI 模型</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

@@ -36,7 +36,6 @@ from .._shape import ShapeType
 from . import _canvas_interaction
 from ._canvas_interaction import CursorRole
 from ._canvas_interaction import HitKind
-from ._download import download_ai_model
 from ._shape_render import Palette
 from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
@@ -181,6 +180,8 @@ class _CanvasMode(enum.Enum):
 
 
 class Canvas(QtWidgets.QWidget):
+    ensure_ai_model_ready: Callable[[str], bool]
+
     pixmap: QtGui.QPixmap
     _pixmap_hash: int | None
     _cursor: CursorRole
@@ -292,6 +293,7 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_original_points = np.empty((0, 2))
         self._scale: float = 1.0
         self._ai_assist_session = _automation.AiAssistSession()
+        self.ensure_ai_model_ready = lambda _model_name: False
         self._ai_inference_failed = False
         self._ai_suppress_existing_shape_matches = False
         self._ai_existing_shape_highlights = []
@@ -500,7 +502,7 @@ class Canvas(QtWidgets.QWidget):
     def set_ai_model_name(self, *, model_name: str) -> None:
         if self._ai_assist_session.model_name == model_name:
             return
-        self._ai_assist_session.model_name = model_name
+        self._ai_assist_session.set_model_name(model_name)
         self._clear_ai_existing_shape_highlights()
 
     def set_ai_output_format(
@@ -1181,7 +1183,7 @@ class Canvas(QtWidgets.QWidget):
         mode = self.create_mode
         if mode in _AI_CREATE_MODES:
             model_name = self.get_ai_model_name()
-            if not download_ai_model(model_name=model_name, parent=self):
+            if not self.ensure_ai_model_ready(model_name):
                 return
 
         self._current = _DraftShape(
