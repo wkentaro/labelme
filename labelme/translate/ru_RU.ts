@@ -1054,6 +1054,14 @@ Expected location: {path}</source>
         <translation>Позволяет точкам фигур выходить за пределы изображения, например для частично видимых объектов.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Предопределённые флаги фигур</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Одно имя флага на строку. Шаблоны: ^car$ точно соответствует car, car — префиксу, .* — любой метке.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>ИИ: текст → разметка</translation>
     </message>
@@ -1219,6 +1227,49 @@ Expected location: {path}</source>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Шаблон метки</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Флаги фигуры</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Добавить правило</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Одно имя на строку</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Удалить</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Удалить правило</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Введите шаблон и хотя бы одно имя флага.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Повторяющийся шаблон метки.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Недопустимое регулярное выражение.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Строка {row}: {error} Изменения не применены.</translation>
     </message>
 </context>
 <context>

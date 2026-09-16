@@ -1051,6 +1051,14 @@ Verwachte locatie: {path}</translation>
         <translation>Laat vormpunten buiten de afbeelding vallen, bijv. voor gedeeltelijk zichtbare objecten.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Vooraf gedefinieerde vormvlaggen</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Eén vlagnaam per regel. Patronen: ^car$ komt exact overeen met car, car met een voorvoegsel, .* met elk label.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI Tekst-naar-Annotatie</translation>
     </message>
@@ -1216,6 +1224,49 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Labelpatroon</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Vormvlaggen</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Regel toevoegen</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Eén naam per regel</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Verwijderen</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Regel verwijderen</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Voer een patroon en minstens één vlagnaam in.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Dubbel labelpatroon.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Ongeldige reguliere expressie.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Rij {row}: {error} Wijzigingen zijn niet toegepast.</translation>
     </message>
 </context>
 <context>

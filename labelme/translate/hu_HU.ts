@@ -1057,6 +1057,14 @@ Várt hely: {path}</translation>
         <translation>Lehetővé teszi, hogy az alakzatpontok túlnyúljanak a képen, pl. részben látható objektumokhoz.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Előre megadott alakzatjelzők</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Soronként egy jelzőnév. Minták: ^car$ pontosan a car értékre, car egy előtagra, .* minden címkére illeszkedik.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI prompt</translation>
     </message>
@@ -1222,6 +1230,49 @@ Várt hely: {path}</translation>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Címkeminta</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Alakzatjelzők</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Szabály hozzáadása</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Soronként egy név</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Eltávolítás</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Szabály eltávolítása</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Adjon meg egy mintát és legalább egy jelzőnevet.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Ismétlődő címkeminta.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Érvénytelen reguláris kifejezés.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>{row}. sor: {error} A módosítások nem lettek alkalmazva.</translation>
     </message>
 </context>
 <context>

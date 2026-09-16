@@ -199,7 +199,7 @@ def test_text_prompt_creates_shapes(
     input_file = str(data_path / "raw/2011_000003.jpg")
     win = main_win(
         file_or_dir=input_file,
-        config_overrides=dict(auto_save=True),
+        config_overrides=dict(auto_save=True, label_flags={".*": ["occluded"]}),
         output_dir=str(tmp_path),
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
@@ -224,6 +224,7 @@ def test_text_prompt_creates_shapes(
     labels = {shape.label for shape in canvas.shapes}
     assert labels == expected_labels
     for shape in canvas.shapes:
+        assert shape.flags == {"occluded": False}
         assert shape.shape_type == expected_shape_type
         if shape.shape_type == "oriented_rectangle":
             assert (shape.points >= 0).all()

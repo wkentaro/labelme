@@ -59,6 +59,14 @@ def _validate_config_item(*, key_path: tuple[str, ...], value: object) -> None:
     MASK_POLYGONIZATION_DETAIL_MAX: Final = 100
 
     key = key_path[-1]
+    if key_path == ("label_flags",) and value is not None:
+        if not isinstance(value, dict) or any(
+            not isinstance(pattern, str)
+            or not isinstance(names, list)
+            or any(not isinstance(name, str) for name in names)
+            for pattern, names in value.items()
+        ):
+            raise ValueError("label_flags must map string patterns to lists of strings")
     if key_path == ("mask_polygonization", "detail") and (
         isinstance(value, bool)
         or not isinstance(value, int)

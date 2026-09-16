@@ -43,7 +43,7 @@ from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
 from ._label_file import write_label_file
-from ._label_flags import compile_label_flags
+from ._label_flags import apply_default_flags
 from ._shape import Shape
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
@@ -1499,6 +1499,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._on_inference_failed(f"{type(e).__name__}: {e}")
             return
 
+        apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
         self._commit_shapes([*self._canvas_widgets.canvas.shapes, *shapes])
 
     def reset_state(self) -> None:
@@ -1858,6 +1859,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _insert_shapes(self, shapes: list[Shape], /) -> None:
         if not shapes:
             return
+        apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
         self._commit_shapes([*self._canvas_widgets.canvas.shapes, *shapes])
         self._canvas_widgets.canvas.select_shapes(shapes=shapes)
 
@@ -1958,6 +1960,7 @@ class MainWindow(QtWidgets.QMainWindow):
         shapes = self._canvas_widgets.canvas.set_last_label(
             text=entry.label, flags=entry.flags
         )
+        apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
         for shape in shapes:
             if entry.group_id is not None or shape.group_id is None:
                 shape.group_id = entry.group_id
@@ -2831,6 +2834,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         unique_label_list=self._docks.unique_label_list,
                     ),
                 )
+        elif key_path == ("label_flags",):
+            self._label_dialog.set_flag_rules(flags=self._config["label_flags"])
         elif key_path[0] == "flags":
             # The flag dock otherwise only repopulates on the next image load.
             # Refresh it now additively: add newly predefined flags (unchecked) and
@@ -3171,8 +3176,6 @@ def _shapes_from_dicts(
     shape_dicts: list[ShapeDict],
     label_flags: dict[str, list[str]] | None,
 ) -> list[Shape]:
-    compiled_label_flags = compile_label_flags(label_flags=label_flags)
-
     shapes: list[Shape] = []
     for shape_dict in shape_dicts:
         shape = Shape(
@@ -3185,19 +3188,11 @@ def _shapes_from_dicts(
             closed=True,
         )
 
-        default_flags: dict[str, bool] = {}
-        if isinstance(shape.label, str):
-            for pattern, keys in compiled_label_flags.items():
-                if pattern.match(shape.label):
-                    for key in keys:
-                        default_flags[key] = False
-        else:
-            logger.warning("shape.label is not str: {}", shape.label)
-        shape.flags = default_flags
-        shape.flags.update(shape_dict["flags"])
+        shape.flags = shape_dict["flags"]
         shape.other_data = shape_dict["other_data"]
 
         shapes.append(shape)
+    apply_default_flags(shapes=shapes, label_flags=label_flags)
     return shapes
 
 

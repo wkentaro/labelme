@@ -1103,6 +1103,14 @@ Shapes</source>
         <translation>Isi poligon saat menggambar</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Flag bentuk yang ditentukan sebelumnya</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Satu nama flag per baris. Pola: ^car$ cocok persis dengan car, car cocok dengan awalan, .* cocok dengan setiap label.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>Anotasi dari teks (AI)</translation>
     </message>
@@ -1216,6 +1224,49 @@ Shapes</source>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Pola label</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Flag bentuk</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Tambah aturan</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Satu nama per baris</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Hapus</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Hapus aturan</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Masukkan pola dan setidaknya satu nama flag.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Pola label duplikat.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Ekspresi reguler tidak valid.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Baris {row}: {error} Perubahan belum diterapkan.</translation>
     </message>
 </context>
 <context>

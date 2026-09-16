@@ -1051,6 +1051,14 @@ Expected location: {path}</source>
         <translation>อนุญาตให้จุดของรูปร่างขยายออกไปนอกภาพ เช่น สำหรับวัตถุที่มองเห็นได้บางส่วน</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>แฟล็กรูปร่างที่กำหนดไว้ล่วงหน้า</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>หนึ่งชื่อแฟล็กต่อบรรทัด รูปแบบ: ^car$ ตรงกับ car เท่านั้น, car ตรงกับคำนำหน้า, .* ตรงกับทุกป้ายกำกับ</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI ข้อความสู่แอนโนเทชัน</translation>
     </message>
@@ -1216,6 +1224,49 @@ Expected location: {path}</source>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>รูปแบบป้ายกำกับ</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>แฟล็กรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>เพิ่มกฎ</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>หนึ่งชื่อต่อบรรทัด</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>ลบ</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>ลบกฎ</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>ป้อนรูปแบบและชื่อแฟล็กอย่างน้อยหนึ่งชื่อ</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>รูปแบบป้ายกำกับซ้ำกัน</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>นิพจน์ทั่วไปไม่ถูกต้อง</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>แถว {row}: {error} ยังไม่ได้นำการเปลี่ยนแปลงไปใช้</translation>
     </message>
 </context>
 <context>

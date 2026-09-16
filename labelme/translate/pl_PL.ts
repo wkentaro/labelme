@@ -1051,6 +1051,14 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Pozwala punktom kształtu wykraczać poza obraz, np. dla częściowo widocznych obiektów.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Predefiniowane flagi kształtów</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Jedna nazwa flagi w wierszu. Wzorce: ^car$ pasuje dokładnie do car, car do prefiksu, .* do każdej etykiety.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI — tekst na adnotację</translation>
     </message>
@@ -1216,6 +1224,49 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Wzorzec etykiety</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Flagi kształtu</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Dodaj regułę</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Jedna nazwa w wierszu</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Usuń</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Usuń regułę</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Wpisz wzorzec i co najmniej jedną nazwę flagi.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Powtórzony wzorzec etykiety.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Nieprawidłowe wyrażenie regularne.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Wiersz {row}: {error} Zmiany nie zostały zastosowane.</translation>
     </message>
 </context>
 <context>

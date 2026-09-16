@@ -10,6 +10,7 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._label_flags import compile_label_flags
+from .._label_flags import get_default_flags
 
 LabelDialogField = Literal["label", "flags", "group_id", "description"]
 
@@ -71,6 +72,7 @@ class LabelDialog(QtWidgets.QDialog):
         # them, and an intermediate keystroke that matches no pattern destroys
         # them entirely.
         self._flag_states: dict[str, bool] = {}
+        self._stored_flag_names: tuple[str, ...] = ()
 
         if fit_to_content is None:
             fit_to_content = {"row": False, "column": True}
@@ -263,14 +265,18 @@ class LabelDialog(QtWidgets.QDialog):
                 widget.setParent(None)
                 widget.deleteLater()
 
+    def set_flag_rules(self, *, flags: dict[str, list[str]] | None) -> None:
+        self._flags_spec = compile_label_flags(label_flags=flags)
+
     def _update_flags(self, text: str, /) -> None:
+        if "flags" in self._locked:
+            self._set_flag_checkboxes(flags={})
+            return
         self._flag_states.update(self._collect_flags())
-        flags: dict[str, bool] = {}
-        for pattern, flag_keys in self._flags_spec.items():
-            if not pattern.match(text):
-                continue
-            for key in flag_keys:
-                flags[key] = self._flag_states.get(key, False)
+        flags = get_default_flags(label=text, flags_spec=self._flags_spec)
+        # Rules offer defaults; changing the label must not erase stored data.
+        for key in (*flags, *self._stored_flag_names):
+            flags[key] = self._flag_states.get(key, False)
         self._set_flag_checkboxes(flags=flags)
 
     def add_label_history(self, *, label: str) -> None:
@@ -326,7 +332,8 @@ class LabelDialog(QtWidgets.QDialog):
         # fresh popup starts unchecked. This has to precede setText() below,
         # whose textChanged signal would otherwise re-seed the states from the
         # previous popup's checkboxes; the flags block below rebuilds them.
-        self._flag_states.clear()
+        self._flag_states = dict(flags or {})
+        self._stored_flag_names = tuple(flags or {})
         self._clear_flag_checkboxes()
 
         # A locked field shows nothing: the caller's value is not shared by the
@@ -352,10 +359,7 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.selectAll()
         self.edit_group_id.setText("" if group_id is None else str(group_id))
         self.edit_description.setPlainText(description or "")
-        if flags is None:
-            self._update_flags(text)
-        else:
-            self._set_flag_checkboxes(flags=flags)
+        self._update_flags(text)
 
         # Highlight the suggestion without applying its spelling to the label.
         with QtCore.QSignalBlocker(self.label_list):

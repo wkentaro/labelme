@@ -20,7 +20,7 @@ Group = Literal[
     "Label behavior",
     "AI assist",
 ]
-Kind = Literal["bool", "color", "enum", "int", "str_list", "language"]
+Kind = Literal["bool", "color", "enum", "int", "str_list", "language", "label_flags"]
 
 # Group names double as headings. QT_TRANSLATE_NOOP marks them for
 # pyside6-lupdate under the SettingsDialog context (where they are resolved via
@@ -221,6 +221,20 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         group="Label sources",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Predefined image flags")),
         kind="str_list",
+    ),
+    Setting(
+        key_path=("label_flags",),
+        group="Label sources",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Predefined shape flags")),
+        kind="label_flags",
+        note=cast(
+            str,
+            QT_TRANSLATE_NOOP(
+                "SettingsDialog",
+                "One flag name per line. Patterns: ^car$ matches car exactly, "
+                "car matches a prefix, .* matches every label.",
+            ),
+        ),
     ),
     Setting(
         key_path=("validate_label",),

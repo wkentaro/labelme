@@ -1065,6 +1065,14 @@ Expected location: {path}</source>
         <translation>図形の点が画像の外まで広がることを許可します（例: 部分的にしか見えない物体）。</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>定義済みの図形フラグ</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>フラグ名は1行に1つ入力します。パターン: ^car$ は car と完全一致、car は前方一致、.* はすべてのラベルに一致します。</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AIプロンプト</translation>
     </message>
@@ -1230,6 +1238,49 @@ Expected location: {path}</source>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>ラベルのパターン</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>図形フラグ</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>ルールを追加</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>1行に1つの名前</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>ルールを削除</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>パターンと少なくとも1つのフラグ名を入力してください。</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>ラベルのパターンが重複しています。</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>正規表現が無効です。</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>行 {row}: {error} 変更は適用されていません。</translation>
     </message>
 </context>
 <context>

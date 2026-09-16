@@ -1051,6 +1051,14 @@ Expected location: {path}</source>
         <translation>도형의 점이 이미지 밖으로 확장되도록 허용합니다. 예: 부분적으로 보이는 객체.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>미리 정의된 도형 플래그</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>한 줄에 플래그 이름 하나를 입력합니다. 패턴: ^car$는 car와 정확히 일치하고, car는 접두사와 일치하며, .*는 모든 레이블과 일치합니다.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI 프롬프트</translation>
     </message>
@@ -1216,6 +1224,49 @@ Expected location: {path}</source>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>레이블 패턴</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>도형 플래그</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>규칙 추가</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>한 줄에 이름 하나</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>제거</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>규칙 제거</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>패턴과 하나 이상의 플래그 이름을 입력하세요.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>중복된 레이블 패턴입니다.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>잘못된 정규 표현식입니다.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>{row}행: {error} 변경 사항이 적용되지 않았습니다.</translation>
     </message>
 </context>
 <context>

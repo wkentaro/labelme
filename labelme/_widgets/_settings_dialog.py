@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import typing
 from collections.abc import Callable
 from collections.abc import Sequence
@@ -117,6 +118,144 @@ class _PlainTextEdit(QtWidgets.QPlainTextEdit):
     def focusOutEvent(self, e: QtGui.QFocusEvent, /) -> None:
         super().focusOutEvent(e)
         self.commit()
+
+
+class _LabelFlagsEditor(QtWidgets.QWidget):
+    value_changed = QtCore.Signal(object)
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._value: dict[str, list[str]] | None = None
+        self._rows: list[
+            tuple[QtWidgets.QLineEdit, _PlainTextEdit, QtWidgets.QPushButton]
+        ] = []
+        self._grid = QtWidgets.QGridLayout()
+        self._grid.setColumnStretch(0, 1)
+        self._grid.setColumnStretch(1, 2)
+        self._grid.addWidget(QtWidgets.QLabel(self.tr("Label pattern")), 0, 0)
+        self._grid.addWidget(QtWidgets.QLabel(self.tr("Shape flags")), 0, 1)
+        self._error = QtWidgets.QLabel()
+        self._error.setWordWrap(True)
+        self._error.setTextFormat(QtCore.Qt.TextFormat.PlainText)
+        self._error.hide()
+        self._add_button = QtWidgets.QPushButton(self.tr("Add rule"))
+        self._add_button.setAutoDefault(False)
+        self._add_button.clicked.connect(self._add_empty_rule)
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addLayout(self._grid)
+        layout.addWidget(self._error)
+        layout.addWidget(self._add_button, alignment=QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.setFocusProxy(self._add_button)
+
+    def set_value(self, *, value: dict[str, list[str]] | None) -> None:
+        # A successful write syncs back into this control while it has focus.
+        # Keep the current fields alive so typing and cursor position survive.
+        if value == self._value:
+            return
+        self._value = value
+        for row in self._rows:
+            for widget in row:
+                self._grid.removeWidget(widget)
+                widget.deleteLater()
+        self._rows.clear()
+        for pattern, names in (value or {}).items():
+            self._add_rule(pattern=pattern, names=names)
+        self.setFocusProxy(self._rows[0][0] if self._rows else self._add_button)
+        self._validate()
+
+    def _add_empty_rule(self) -> None:
+        self._add_rule(pattern="", names=[])
+        self._validate()
+        self._rows[-1][0].setFocus()
+
+    def _add_rule(self, *, pattern: str, names: list[str]) -> None:
+        pattern_edit = QtWidgets.QLineEdit(pattern)
+        pattern_edit.setAccessibleName(self.tr("Label pattern"))
+        flags_edit = _PlainTextEdit()
+        flags_edit.setAccessibleName(self.tr("Shape flags"))
+        flags_edit.setPlaceholderText(self.tr("One name per line"))
+        flags_edit.setPlainText("\n".join(names))
+        flags_edit.mark_committed()
+        flags_edit.setFixedHeight(72)
+        flags_edit.setTabChangesFocus(True)
+        remove = QtWidgets.QPushButton(self.tr("Remove"))
+        remove.setAutoDefault(False)
+        remove.setAccessibleName(self.tr("Remove rule"))
+        row = (pattern_edit, flags_edit, remove)
+        self._rows.append(row)
+        for column, widget in enumerate(row):
+            self._grid.addWidget(
+                widget,
+                len(self._rows),
+                column,
+                alignment=QtCore.Qt.AlignmentFlag.AlignTop,
+            )
+        pattern_edit.textChanged.connect(self._validate)
+        flags_edit.textChanged.connect(self._validate)
+        pattern_edit.editingFinished.connect(self.commit)
+        flags_edit.editing_finished.connect(self.commit)
+        remove.clicked.connect(lambda: self._remove_rule(row=row))
+        previous = self._rows[-2][2] if len(self._rows) > 1 else self
+        for widget in (*row, self._add_button):
+            QtWidgets.QWidget.setTabOrder(previous, widget)
+            previous = widget
+        self.setFocusProxy(self._rows[0][0])
+
+    def _remove_rule(
+        self, *, row: tuple[QtWidgets.QLineEdit, _PlainTextEdit, QtWidgets.QPushButton]
+    ) -> None:
+        self._rows.remove(row)
+        for widget in row:
+            self._grid.removeWidget(widget)
+            widget.deleteLater()
+        for index, remaining in enumerate(self._rows, start=1):
+            for column, widget in enumerate(remaining):
+                self._grid.addWidget(
+                    widget,
+                    index,
+                    column,
+                    alignment=QtCore.Qt.AlignmentFlag.AlignTop,
+                )
+        self.setFocusProxy(self._rows[0][0] if self._rows else self._add_button)
+        self._add_button.setFocus()
+        self.commit()
+
+    def _validate(self) -> dict[str, list[str]] | None:
+        rules: dict[str, list[str]] = {}
+        error = ""
+        for index, (pattern_edit, flags_edit, _) in enumerate(self._rows, start=1):
+            pattern = pattern_edit.text()
+            names = _parse_str_list(edit=flags_edit)
+            if not pattern or not names:
+                error = self.tr("Enter a pattern and at least one flag name.")
+            elif pattern in rules:
+                error = self.tr("Duplicate label pattern.")
+            else:
+                try:
+                    re.compile(pattern)
+                except re.error:
+                    error = self.tr("Invalid regular expression.")
+            if error:
+                error = self.tr(
+                    "Row {row}: {error} Changes have not been applied."
+                ).format(row=index, error=error)
+                break
+            assert names is not None
+            rules[pattern] = names
+        self._error.setText(error)
+        self._error.setVisible(bool(error))
+        self.setAccessibleDescription(error)
+        return None if error else rules
+
+    def commit(self) -> None:
+        rules = self._validate()
+        if rules is None:
+            return
+        value = rules or None
+        if value != self._value:
+            self._value = value
+            self.value_changed.emit(value)
 
 
 class _ColorSwatchButton(QtWidgets.QPushButton):
@@ -660,7 +799,7 @@ class SettingsDialog(QtWidgets.QDialog):
         # does not always move focus first, so apply pending input explicitly.
         # commit() is a no-op when the text is unchanged.
         for editor in self._editors.values():
-            if isinstance(editor, _PlainTextEdit):
+            if isinstance(editor, _PlainTextEdit | _LabelFlagsEditor):
                 editor.commit()
         super().accept()
 
@@ -733,7 +872,7 @@ class SettingsDialog(QtWidgets.QDialog):
             row_font = QtGui.QFont(self.font())
             row_font.setPointSizeF(row_font.pointSizeF())
             row.setFont(row_font)
-            if setting.kind == "str_list":
+            if setting.kind in ("str_list", "label_flags"):
                 row_layout = QtWidgets.QVBoxLayout(row)
                 row_layout.addWidget(label_cell)
                 row_layout.addWidget(editor)
@@ -862,6 +1001,13 @@ class SettingsDialog(QtWidgets.QDialog):
                 lambda: self._pick_color(key_path=setting.key_path, swatch=swatch)
             )
             return swatch
+        if setting.kind == "label_flags":
+            flags_editor = _LabelFlagsEditor()
+            self._set_editor_value(editor=flags_editor, value=value)
+            flags_editor.value_changed.connect(
+                lambda rules: self._apply(setting.key_path, rules)
+            )
+            return flags_editor
         if setting.kind == "str_list":
             edit = _PlainTextEdit()
             edit.setPlaceholderText(self.tr("one item per line"))
@@ -958,6 +1104,9 @@ class SettingsDialog(QtWidgets.QDialog):
             items = value if isinstance(value, list) else []
             editor.setPlainText("\n".join(str(item) for item in items))
             editor.mark_committed()
+        elif isinstance(editor, _LabelFlagsEditor):
+            assert value is None or isinstance(value, dict)
+            editor.set_value(value=typing.cast(dict[str, list[str]] | None, value))
         elif isinstance(editor, _ColorSwatchButton):
             editor.set_rgb(_parse_rgb(value=value))
 

@@ -1053,6 +1053,14 @@ Expected location: {path}</source>
         <translation>Επιτρέπει στα σημεία των σχημάτων να εκτείνονται πέρα από την εικόνα, π.χ. για μερικώς ορατά αντικείμενα.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Προκαθορισμένες σημαίες σχημάτων</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Ένα όνομα σημαίας ανά γραμμή. Μοτίβα: ^car$ αντιστοιχεί ακριβώς στο car, car σε πρόθεμα, .* σε κάθε ετικέτα.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI Text-to-Annotation</translation>
     </message>
@@ -1218,6 +1226,49 @@ Expected location: {path}</source>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Μοτίβο ετικέτας</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Σημαίες σχήματος</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Προσθήκη κανόνα</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Ένα όνομα ανά γραμμή</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Αφαίρεση</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Αφαίρεση κανόνα</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Εισαγάγετε ένα μοτίβο και τουλάχιστον ένα όνομα σημαίας.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Διπλότυπο μοτίβο ετικέτας.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Μη έγκυρη κανονική έκφραση.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Γραμμή {row}: {error} Οι αλλαγές δεν εφαρμόστηκαν.</translation>
     </message>
 </context>
 <context>

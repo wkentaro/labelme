@@ -19,7 +19,7 @@ A boolean tag attached to the Image as a whole, used for image-level classificat
 _Avoid_: tag, attribute, image label.
 
 **Shape Flag**:
-A boolean attribute attached to one Shape (e.g. `occluded`, `truncated`). Same data shape as a Flag but a different concept — it qualifies a single Shape, not the Image.
+A boolean attribute attached to one Shape (e.g. `occluded`, `truncated`). Same data shape as a Flag but a different concept — it qualifies a single Shape, not the Image. Label-matching rules offer defaults; changing the rules or the Label does not erase Shape Flags already carried by a Shape.
 _Avoid_: flag (unqualified), attribute, modifier.
 
 **Label**:
