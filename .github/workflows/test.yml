@@ -13,6 +13,18 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
+  config-migrations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.12'
+      - run: make setup
+      - run: make check_config_migrations
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
