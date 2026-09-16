@@ -646,6 +646,36 @@ Shapes</source>
         <translation>Érvénytelen reguláris kifejezés. Az előző keresés marad érvényben.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>A beállításait nem sikerült betölteni.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Egyelőre használhatja az alapértelmezett beállításokat. A visszaállítás előtt biztonsági másolat készül a konfigurációs fájlról.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>Parancssori beállítások</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Biztonsági mentés és visszaállítás</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Folytatás az alapértékekkel</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Nem sikerült visszaállítani a konfigurációs fájlt.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>A konfiguráció biztonsági másolata ide lett mentve: %s</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>A maszk kimenet nem érhető el</translation>
     </message>
@@ -768,14 +798,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>A kép túl nagy a megnyitáshoz: {width}x{height} pixelhez körülbelül {required} MB szükséges, de a dekódolási korlát {limit} MB. Ossza fel a képet csempékre (például a gdal_retile.py segítségével), vagy nyisson meg egy kisebb másolatot.</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>Konfigurációs Hibák</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Hibák találhatók a konfiguráció betöltése közben. Kérjük, tekintse át az alábbi hibákat, és töltse újra a konfigurációt, vagy hagyja figyelmen kívül a hibás sorokat.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

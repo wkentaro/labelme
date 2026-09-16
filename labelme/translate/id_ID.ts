@@ -607,6 +607,36 @@
         <translation>Ekspresi reguler tidak valid. Pencarian sebelumnya tetap digunakan.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Pengaturan Anda tidak dapat dimuat.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Anda dapat menggunakan pengaturan bawaan untuk saat ini. Sebelum reset, salinan cadangan file konfigurasi Anda akan disimpan.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>Pengaturan baris perintah</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Cadangkan dan reset</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Lanjutkan dengan bawaan</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>File konfigurasi tidak dapat diatur ulang.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Cadangan konfigurasi disimpan ke %s</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Keluaran mask tidak tersedia</translation>
     </message>
@@ -737,14 +767,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Pertahankan kecerahan/kontras sebelumnya</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>Error Konfigurasi</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Terjadi error saat memuat konfigurasi. Silakan periksa error di bawah ini dan muat ulang konfigurasi Anda atau abaikan baris yang bermasalah.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

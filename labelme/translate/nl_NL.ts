@@ -632,6 +632,36 @@ Shapes</source>
         <translation>Ongeldige reguliere expressie. De vorige zoekopdracht blijft actief.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Uw instellingen konden niet worden geladen.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>Opdrachtregelinstellingen</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Back-up maken en resetten</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Doorgaan met standaardinstellingen</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Het configuratiebestand kon niet worden hersteld.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Back-up van de configuratie opgeslagen in %s</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskeruitvoer niet beschikbaar</translation>
     </message>
@@ -762,14 +792,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Vorige Helderheid/Contrast Behouden</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>Configuratiefouten</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Er zijn fouten gevonden bij het laden van de configuratie. Bekijk de onderstaande fouten en herlaad uw configuratie of negeer de foutieve regels.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

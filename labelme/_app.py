@@ -194,6 +194,17 @@ class _Menus(NamedTuple):
     label_list: QtWidgets.QMenu
 
 
+def _try_load_config(
+    *, config_file: Path | None, config_overrides: dict
+) -> dict | None:
+    try:
+        return _config.load_config(
+            config_file=config_file, config_overrides=config_overrides
+        )
+    except Exception:
+        return None
+
+
 class MainWindow(QtWidgets.QMainWindow):
     _config_file: Path | None
     _config: dict
@@ -1311,33 +1322,66 @@ class MainWindow(QtWidgets.QMainWindow):
     def _load_config(
         self, *, config_file: Path | None, config_overrides: dict | None
     ) -> tuple[Path | None, dict]:
+        overrides = config_overrides or {}
         try:
-            config = _config.load_config(
-                config_file=config_file, config_overrides=config_overrides or {}
+            return config_file, _config.load_config(
+                config_file=config_file, config_overrides=overrides
             )
-        except Exception as e:
-            logger.warning("Failed to load config: {}", e)
-            msg_box = QMessageBox(self)
-            msg_box.setIcon(QMessageBox.Icon.Warning)
-            msg_box.setWindowTitle(self.tr("Configuration Errors"))
-            msg_box.setText(
-                self.tr(
-                    "Errors were found while loading the configuration. "
-                    "Please review the errors below and reload your configuration or "
-                    "ignore the erroneous lines."
-                )
-            )
-            msg_box.setInformativeText(str(e))
-            msg_box.setStandardButtons(QMessageBox.StandardButton.Ignore)
-            msg_box.setModal(False)
-            msg_box.show()
+        except Exception as error:
+            logger.warning("Failed to load config: {}", error)
+            message = str(error)
 
-            config_file = None
-            config_overrides = {}
-            config = _config.load_config(
-                config_file=config_file, config_overrides=config_overrides
+        fallback = _try_load_config(config_file=None, config_overrides=overrides)
+        # Command-line errors must never be repaired by deleting file settings,
+        # so offer a reset only when the file fails on its own.
+        can_reset = (
+            fallback is not None
+            and config_file is not None
+            and _try_load_config(config_file=config_file, config_overrides={}) is None
+        )
+        if fallback is None:
+            fallback = _config.load_config(config_file=None, config_overrides={})
+
+        msg_box = QMessageBox(self)
+        msg_box.setIcon(QMessageBox.Icon.Warning)
+        msg_box.setWindowTitle(__appname__)
+        msg_box.setTextFormat(Qt.TextFormat.PlainText)
+        msg_box.setText(self.tr("Your settings couldn’t be loaded."))
+        source = str(config_file) if config_file else self.tr("Command-line settings")
+        msg_box.setInformativeText(
+            self.tr(
+                "You can use default settings for now. Resetting saves a backup "
+                "of your configuration file first."
             )
-        return config_file, config
+            + f"\n\n{source}\n{message}"
+        )
+        keep_file = msg_box.addButton(
+            self.tr("Continue with defaults"), QMessageBox.ButtonRole.AcceptRole
+        )
+        reset_all = msg_box.addButton(
+            self.tr("Back up and reset"), QMessageBox.ButtonRole.ResetRole
+        )
+        reset_all.setEnabled(can_reset)
+        msg_box.setDefaultButton(keep_file)
+        msg_box.setEscapeButton(keep_file)
+        while True:
+            msg_box.exec()
+            if msg_box.clickedButton() is not reset_all:
+                return None, fallback
+            assert config_file is not None
+            try:
+                backup = _config.reset_config(config_file=config_file)
+            except Exception as error:
+                msg_box.setInformativeText(
+                    self.tr("Could not reset the Config File.\n%s") % error
+                )
+                continue
+            QMessageBox.information(
+                self,
+                self.tr("Back up and reset"),
+                self.tr("Configuration backup saved to %s") % backup.resolve(),
+            )
+            return config_file, fallback
 
     # Support Functions
 

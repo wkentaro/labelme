@@ -638,6 +638,36 @@ Shapes</source>
         <translation>正規表示式無效。保留上一次搜尋條件。</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>無法載入你的設定。</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>你可以暫時使用預設值。重設前會先儲存設定檔的備份。</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>命令列設定</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>備份並重設</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>使用預設值繼續</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>無法重設設定檔。
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>設定備份已儲存至 %s</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>遮罩輸出無法使用</translation>
     </message>
@@ -768,14 +798,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>保留之前的亮度/對比度</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>設定錯誤</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>載入設定時發現錯誤。請檢查以下錯誤並重新載入設定，或忽略錯誤的行。</translation>
     </message>
     <message>
         <source>Reset Layout</source>

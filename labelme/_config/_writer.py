@@ -77,6 +77,17 @@ def _atomic_write(*, config_file: Path, content: str) -> None:
         raise
 
 
+def reset_config(*, config_file: Path) -> Path:
+    fd, backup = tempfile.mkstemp(
+        dir=config_file.parent, prefix=f"{config_file.name}.", suffix=".bak"
+    )
+    # Copy before clearing so a failed backup never loses the original.
+    with os.fdopen(fd, "wb") as f:
+        f.write(config_file.read_bytes())
+    _atomic_write(config_file=config_file, content="")
+    return Path(backup)
+
+
 def set_overrides(
     *, config_file: Path, overrides: Sequence[tuple[Sequence[str], object]]
 ) -> None:

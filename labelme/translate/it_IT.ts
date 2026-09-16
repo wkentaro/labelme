@@ -638,6 +638,36 @@ forme</translation>
         <translation>Espressione regolare non valida. Viene mantenuta la ricerca precedente.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Impossibile caricare le tue impostazioni.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Per ora puoi usare le impostazioni predefinite. Prima del ripristino verrà salvata una copia di backup del file di configurazione.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>Impostazioni della riga di comando</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Esegui backup e ripristina</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Continua con i valori predefiniti</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Impossibile ripristinare il file di configurazione.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Backup della configurazione salvato in %s</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Output maschera non disponibile</translation>
     </message>
@@ -768,14 +798,6 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Mantieni luminosità/contrasto precedenti</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>Errori di Configurazione</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Sono stati trovati errori durante il caricamento della configurazione. Si prega di esaminare gli errori sottostanti e ricaricare la configurazione o ignorare le righe errate.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

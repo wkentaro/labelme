@@ -632,6 +632,36 @@ Shapes</source>
         <translation>Biểu thức chính quy không hợp lệ. Giữ nguyên tìm kiếm trước đó.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Không thể tải cài đặt của bạn.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Bạn có thể dùng cài đặt mặc định lúc này. Trước khi đặt lại, một bản sao lưu của tệp cấu hình sẽ được lưu.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>Cài đặt dòng lệnh</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Sao lưu và đặt lại</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Tiếp tục với mặc định</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Không thể đặt lại tệp cấu hình.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Đã lưu bản sao lưu cấu hình vào %s</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Không có đầu ra mặt nạ</translation>
     </message>
@@ -762,14 +792,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Giữ Độ sáng/Độ tương phản Trước đó</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>Lỗi Cấu hình</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Đã phát hiện lỗi khi tải cấu hình. Vui lòng xem các lỗi bên dưới rồi tải lại cấu hình hoặc bỏ qua những dòng có lỗi.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

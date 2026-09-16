@@ -12,9 +12,10 @@ from .._ai_models import AI_TEXT_MODEL_OPTIONS
 from ._migration import migrate_config
 from ._shape_color import migrate_shape_color
 from ._shape_color import validate_shape_color
+from ._writer import reset_config
 from ._writer import set_overrides
 
-__all__ = ["get_user_config_file", "load_config", "set_overrides"]
+__all__ = ["get_user_config_file", "load_config", "reset_config", "set_overrides"]
 
 here = Path(__file__).resolve().parent
 

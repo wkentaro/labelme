@@ -365,3 +365,19 @@ def test_set_overrides_preserves_malformed_external_edits(
             config_file=config_file, overrides=[(("auto_save",), False)]
         )
     assert config_file.read_text() == original
+
+
+def test_reset_config_backup_failure_keeps_original_file(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    original = b"auto_save: broken\n"
+    config_file.write_bytes(original)
+
+    def fail(*_args: object, **_kwargs: object) -> None:
+        raise OSError("disk unavailable")
+
+    monkeypatch.setattr(_config._writer.tempfile, "mkstemp", fail)
+    with pytest.raises(OSError, match="disk unavailable"):
+        _config.reset_config(config_file=config_file)
+    assert config_file.read_bytes() == original
