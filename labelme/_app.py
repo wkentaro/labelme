@@ -723,24 +723,28 @@ class MainWindow(QtWidgets.QMainWindow):
                 text=self.tr("Select Shape Above"),
                 slot=functools.partial(select_neighbor, key=Qt.Key.Key_Up),
                 shortcut=shortcuts["select_shape_up"],
+                icon="phosphor/arrow-up.svg",
                 tip=self.tr("Select the nearest shape above the selection"),
             ),
             action(
                 text=self.tr("Select Shape Below"),
                 slot=functools.partial(select_neighbor, key=Qt.Key.Key_Down),
                 shortcut=shortcuts["select_shape_down"],
+                icon="phosphor/arrow-down.svg",
                 tip=self.tr("Select the nearest shape below the selection"),
             ),
             action(
                 text=self.tr("Select Shape to the Left"),
                 slot=functools.partial(select_neighbor, key=Qt.Key.Key_Left),
                 shortcut=shortcuts["select_shape_left"],
+                icon="phosphor/arrow-left.svg",
                 tip=self.tr("Select the nearest shape left of the selection"),
             ),
             action(
                 text=self.tr("Select Shape to the Right"),
                 slot=functools.partial(select_neighbor, key=Qt.Key.Key_Right),
                 shortcut=shortcuts["select_shape_right"],
+                icon="phosphor/arrow-right.svg",
                 tip=self.tr("Select the nearest shape right of the selection"),
             ),
         )
