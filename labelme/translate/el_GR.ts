@@ -482,6 +482,38 @@ Shapes</source>
         <translation>Εναλλαγή όλων των σχημάτων</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Επιλογή σχήματος επάνω</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Επιλογή του πλησιέστερου σχήματος επάνω από την επιλογή</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Επιλογή σχήματος κάτω</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Επιλογή του πλησιέστερου σχήματος κάτω από την επιλογή</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Επιλογή σχήματος αριστερά</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Επιλογή του πλησιέστερου σχήματος αριστερά από την επιλογή</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Επιλογή σχήματος δεξιά</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Επιλογή του πλησιέστερου σχήματος δεξιά από την επιλογή</translation>
+    </message>
+    <message>
         <source>Zoom</source>
         <translation>Εστίαση</translation>
     </message>

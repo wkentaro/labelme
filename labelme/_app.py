@@ -717,20 +717,54 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Toggle all shapes"),
         )
 
-        visibility_actions = QtGui.QActionGroup(self)
-        visibility_actions.setExclusive(False)
-        visibility_actions.addAction(hide_all)
-        visibility_actions.addAction(show_all)
-        visibility_actions.addAction(toggle_all)
+        select_neighbor = self._canvas_widgets.canvas.select_neighbor_shape
+        select_neighbor_actions = (
+            action(
+                text=self.tr("Select Shape Above"),
+                slot=functools.partial(select_neighbor, key=Qt.Key.Key_Up),
+                shortcut=shortcuts["select_shape_up"],
+                icon="phosphor/arrow-up.svg",
+                tip=self.tr("Select the nearest shape above the selection"),
+            ),
+            action(
+                text=self.tr("Select Shape Below"),
+                slot=functools.partial(select_neighbor, key=Qt.Key.Key_Down),
+                shortcut=shortcuts["select_shape_down"],
+                icon="phosphor/arrow-down.svg",
+                tip=self.tr("Select the nearest shape below the selection"),
+            ),
+            action(
+                text=self.tr("Select Shape to the Left"),
+                slot=functools.partial(select_neighbor, key=Qt.Key.Key_Left),
+                shortcut=shortcuts["select_shape_left"],
+                icon="phosphor/arrow-left.svg",
+                tip=self.tr("Select the nearest shape left of the selection"),
+            ),
+            action(
+                text=self.tr("Select Shape to the Right"),
+                slot=functools.partial(select_neighbor, key=Qt.Key.Key_Right),
+                shortcut=shortcuts["select_shape_right"],
+                icon="phosphor/arrow-right.svg",
+                tip=self.tr("Select the nearest shape right of the selection"),
+            ),
+        )
 
-        def update_visibility_actions() -> None:
-            visibility_actions.setEnabled(not self.has_no_shapes())
+        shapes_present_actions = QtGui.QActionGroup(self)
+        shapes_present_actions.setExclusive(False)
+        shapes_present_actions.addAction(hide_all)
+        shapes_present_actions.addAction(show_all)
+        shapes_present_actions.addAction(toggle_all)
+        for select_action in select_neighbor_actions:
+            shapes_present_actions.addAction(select_action)
+
+        def update_shapes_present_actions() -> None:
+            shapes_present_actions.setEnabled(not self.has_no_shapes())
 
         label_model = self._docks.label_list.model()
-        label_model.rowsInserted.connect(update_visibility_actions)
-        label_model.rowsRemoved.connect(update_visibility_actions)
-        label_model.modelReset.connect(update_visibility_actions)
-        update_visibility_actions()
+        label_model.rowsInserted.connect(update_shapes_present_actions)
+        label_model.rowsRemoved.connect(update_shapes_present_actions)
+        label_model.modelReset.connect(update_shapes_present_actions)
+        update_shapes_present_actions()
 
         zoom_widget_action = QtWidgets.QWidgetAction(image_actions)
         zoom_box_layout = QtWidgets.QVBoxLayout()
@@ -790,6 +824,8 @@ class MainWindow(QtWidgets.QMainWindow):
             delete,
             merge,
             remove_point,
+            separator(),
+            *select_neighbor_actions,
             separator(),
             keep_prev_action,
         )

@@ -568,6 +568,38 @@ Shapes</source>
         <translation>그리는 동안 다각형 채우기</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>위쪽 도형 선택</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>선택 영역 위쪽에서 가장 가까운 도형 선택</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>아래쪽 도형 선택</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>선택 영역 아래쪽에서 가장 가까운 도형 선택</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>왼쪽 도형 선택</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>선택 영역 왼쪽에서 가장 가까운 도형 선택</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>오른쪽 도형 선택</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>선택 영역 오른쪽에서 가장 가까운 도형 선택</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+휠로 캔버스를 확대/축소합니다</translation>
     </message>

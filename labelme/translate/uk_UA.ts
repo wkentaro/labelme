@@ -483,6 +483,38 @@ Shapes</source>
         <translation>Переключити всі фігури</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Вибрати фігуру вище</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Вибрати найближчу фігуру над виділенням</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Вибрати фігуру нижче</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Вибрати найближчу фігуру під виділенням</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Вибрати фігуру ліворуч</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Вибрати найближчу фігуру ліворуч від виділення</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Вибрати фігуру праворуч</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Вибрати найближчу фігуру праворуч від виділення</translation>
+    </message>
+    <message>
         <source>Zoom</source>
         <translation>Збільшити</translation>
     </message>

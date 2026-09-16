@@ -125,3 +125,7 @@ shortcuts:
   show_all_shapes:
   hide_all_shapes:
   toggle_all_shapes: T
+  select_shape_up: Ctrl+Up
+  select_shape_down: Ctrl+Down
+  select_shape_left: Ctrl+Left
+  select_shape_right: Ctrl+Right

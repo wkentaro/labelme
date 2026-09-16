@@ -574,6 +574,38 @@ les formes</translation>
         <translation>Remplir le polygone pendant le dessin</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Sélectionner la forme au-dessus</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Sélectionner la forme la plus proche au-dessus de la sélection</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Sélectionner la forme en dessous</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Sélectionner la forme la plus proche en dessous de la sélection</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Sélectionner la forme à gauche</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Sélectionner la forme la plus proche à gauche de la sélection</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Sélectionner la forme à droite</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Sélectionner la forme la plus proche à droite de la sélection</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+Molette zoome le canevas</translation>
     </message>

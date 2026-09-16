@@ -568,6 +568,38 @@ Shapes</source>
         <translation>Wypełniaj wielokąt podczas rysowania</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Zaznacz kształt powyżej</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Zaznacz najbliższy kształt powyżej zaznaczenia</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Zaznacz kształt poniżej</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Zaznacz najbliższy kształt poniżej zaznaczenia</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Zaznacz kształt po lewej</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Zaznacz najbliższy kształt na lewo od zaznaczenia</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Zaznacz kształt po prawej</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Zaznacz najbliższy kształt na prawo od zaznaczenia</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+kółko powiększa płótno</translation>
     </message>

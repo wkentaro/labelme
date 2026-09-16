@@ -574,6 +574,38 @@ Shapes</source>
         <translation>Çizerken çokgeni doldur</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Üstteki şekli seç</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Seçimin üstündeki en yakın şekli seç</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Alttaki şekli seç</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Seçimin altındaki en yakın şekli seç</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Soldaki şekli seç</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Seçimin solundaki en yakın şekli seç</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Sağdaki şekli seç</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Seçimin sağındaki en yakın şekli seç</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+Tekerlek tuvali yakınlaştırır</translation>
     </message>

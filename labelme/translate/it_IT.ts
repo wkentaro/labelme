@@ -574,6 +574,38 @@ forme</translation>
         <translation>Riempire il poligono durante il disegno</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>Seleziona forma sopra</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>Seleziona la forma più vicina sopra la selezione</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>Seleziona forma sotto</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>Seleziona la forma più vicina sotto la selezione</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>Seleziona forma a sinistra</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>Seleziona la forma più vicina a sinistra della selezione</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>Seleziona forma a destra</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>Seleziona la forma più vicina a destra della selezione</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+Rotella ingrandisce la tela</translation>
     </message>

@@ -1367,6 +1367,45 @@ class Canvas(QtWidgets.QWidget):
         self.selection_changed.emit(shapes)
         self.update()
 
+    def select_neighbor_shape(self, *, key: Qt.Key) -> None:
+        """Select the nearest visible shape in the arrow key's direction.
+
+        With nothing selected, the shape closest to the image's top-left
+        corner is selected instead. When no visible shape lies within the
+        90-degree cone opening that way, the selection is left as it is.
+        """
+        candidates = [
+            shape
+            for shape in self.shapes
+            if shape.visible and shape not in self.selected_shapes
+        ]
+        if not self.selected_shapes:
+            if candidates:
+                self.select_shapes(
+                    shapes=[
+                        min(
+                            candidates,
+                            key=lambda s: _shape_bounds(shape=s)
+                            .center()
+                            .manhattanLength(),
+                        )
+                    ]
+                )
+            return
+        origin = _compute_shapes_bounds(shapes=self.selected_shapes).center()
+        vector = _ARROW_KEY_TO_DIRECTION[key]
+        scored: list[tuple[float, Shape]] = []
+        for shape in candidates:
+            delta = _shape_bounds(shape=shape).center() - origin
+            along = delta.x() * vector.x() + delta.y() * vector.y()
+            sideways = abs(delta.x() * vector.y() - delta.y() * vector.x())
+            # Only the 90-degree cone counts as "that way", and sideways drift
+            # costs double so a same-row neighbor beats a nearer diagonal one.
+            if 0 < along and sideways <= along:
+                scored.append((along + 2 * sideways, shape))
+        if scored:
+            self.select_shapes(shapes=[min(scored, key=lambda t: t[0])[1]])
+
     def _select_shape_point(
         self, point: QPointF, /, *, multiple_selection_mode: bool
     ) -> None:

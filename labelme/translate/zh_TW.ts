@@ -574,6 +574,38 @@ Shapes</source>
         <translation>繪製時填滿多邊形</translation>
     </message>
     <message>
+        <source>Select Shape Above</source>
+        <translation>選取上方形狀</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape above the selection</source>
+        <translation>選取選取形狀上方最近的形狀</translation>
+    </message>
+    <message>
+        <source>Select Shape Below</source>
+        <translation>選取下方形狀</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape below the selection</source>
+        <translation>選取選取形狀下方最近的形狀</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Left</source>
+        <translation>選取左側形狀</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape left of the selection</source>
+        <translation>選取選取形狀左側最近的形狀</translation>
+    </message>
+    <message>
+        <source>Select Shape to the Right</source>
+        <translation>選取右側形狀</translation>
+    </message>
+    <message>
+        <source>Select the nearest shape right of the selection</source>
+        <translation>選取選取形狀右側最近的形狀</translation>
+    </message>
+    <message>
         <source>Ctrl+Wheel zooms the canvas</source>
         <translation>Ctrl+滾輪縮放畫布</translation>
     </message>
