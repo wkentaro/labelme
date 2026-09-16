@@ -632,6 +632,36 @@ Shapes</source>
         <translation>잘못된 정규 표현식입니다. 이전 검색 조건을 유지합니다.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>설정을 불러올 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>지금은 기본 설정을 사용할 수 있습니다. 초기화하기 전에 설정 파일의 백업을 저장합니다.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>명령줄 설정</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>백업 후 초기화</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>기본 설정으로 계속</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>설정 파일을 초기화할 수 없습니다.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>설정 백업을 %s에 저장했습니다</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>마스크 출력을 사용할 수 없음</translation>
     </message>
@@ -762,14 +792,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>이전 밝기/대비 유지</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>구성 오류</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>구성을 불러오는 중 오류가 발견되었습니다. 아래 오류를 검토하고 구성을 다시 불러오거나 잘못된 줄을 무시하세요.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

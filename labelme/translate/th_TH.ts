@@ -632,6 +632,36 @@ Shapes</source>
         <translation>นิพจน์ทั่วไปไม่ถูกต้อง ใช้การค้นหาก่อนหน้า</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>ไม่สามารถโหลดการตั้งค่าของคุณได้</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>การตั้งค่าบรรทัดคำสั่ง</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>สำรองข้อมูลและรีเซ็ต</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>ใช้ค่าเริ่มต้นต่อไป</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>ไม่สามารถรีเซ็ตไฟล์การตั้งค่าได้
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>บันทึกข้อมูลสำรองการตั้งค่าไปยัง %s แล้ว</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>ไม่สามารถสร้างเอาต์พุตมาสก์ได้</translation>
     </message>
@@ -762,14 +792,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>คงความสว่าง/คอนทราสต์ก่อนหน้า</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>ข้อผิดพลาดการตั้งค่า</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>พบข้อผิดพลาดขณะโหลดการตั้งค่า กรุณาตรวจสอบด้านล่าง แล้วโหลดการตั้งค่าใหม่หรือข้ามบรรทัดที่มีข้อผิดพลาด</translation>
     </message>
     <message>
         <source>Reset Layout</source>

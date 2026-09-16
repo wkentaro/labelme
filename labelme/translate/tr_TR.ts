@@ -638,6 +638,36 @@ Shapes</source>
         <translation>Geçersiz düzenli ifade. Önceki arama korunuyor.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Ayarlarınız yüklenemedi.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>Komut satırı ayarları</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Yedekle ve sıfırla</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Varsayılanlarla devam et</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Yapılandırma dosyası sıfırlanamadı.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Yapılandırma yedeği %s konumuna kaydedildi</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maske çıktısı kullanılamıyor</translation>
     </message>
@@ -768,14 +798,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Önceki Parlaklık/Kontrastı Koru</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>Yapılandırma Hataları</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Yapılandırma yüklenirken hatalar bulundu. Lütfen aşağıdaki hataları gözden geçirin ve yapılandırmanızı yeniden yükleyin veya hatalı satırları yok sayın.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

@@ -579,12 +579,8 @@ Shapes</source>
         <translation>Список файлів</translation>
     </message>
     <message>
-        <source>Configuration Errors</source>
-        <translation>Помилки конфігурації</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Під час завантаження конфігурації виявлено помилки. Перегляньте наведені нижче помилки та перезавантажте свою конфігурацію або проігноруйте помилкові рядки.</translation>
+        <source>Command-line settings</source>
+        <translation>Налаштування командного рядка</translation>
     </message>
     <message>
         <source>Mask Output Unavailable</source>
@@ -817,6 +813,32 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Виберіть мітку, щоб почати малювати нею. Натисніть &apos;Esc&apos;, щоб зняти виділення.</translation>
+    </message>
+    <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Не вдалося завантажити ваші налаштування.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Поки що можна використовувати типові налаштування. Перед скиданням буде збережено резервну копію вашого файлу конфігурації.</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Створити копію та скинути</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Продовжити з типовими налаштуваннями</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Не вдалося скинути файл конфігурації.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Резервну копію конфігурації збережено в %s</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>

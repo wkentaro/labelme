@@ -632,6 +632,36 @@ Shapes</source>
         <translation>Nieprawidłowe wyrażenie regularne. Zachowano poprzednie wyszukiwanie.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Nie udało się wczytać ustawień.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Na razie możesz używać ustawień domyślnych. Przed resetowaniem zostanie zapisana kopia zapasowa pliku konfiguracyjnego.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>Ustawienia wiersza poleceń</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Utwórz kopię i zresetuj</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Kontynuuj z ustawieniami domyślnymi</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Nie udało się zresetować pliku konfiguracji.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Kopia zapasowa konfiguracji została zapisana w %s</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Wyjście maski niedostępne</translation>
     </message>
@@ -762,14 +792,6 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Zachowaj poprzednią jasność/kontrast</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>Błędy konfiguracji</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Podczas wczytywania konfiguracji wykryto błędy. Sprawdź błędy poniżej, a następnie wczytaj konfigurację ponownie lub zignoruj błędne wiersze.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

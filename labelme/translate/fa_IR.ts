@@ -632,6 +632,36 @@ Shapes</source>
         <translation>عبارت منظم نامعتبر است. جستجوی قبلی حفظ می‌شود.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>تنظیمات شما بارگیری نشد.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>تنظیمات خط فرمان</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>پشتیبان‌گیری و بازنشانی</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>ادامه با پیش‌فرض‌ها</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>بازنشانی فایل پیکربندی ممکن نشد.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>نسخه پشتیبان پیکربندی در %s ذخیره شد</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>خروجی ماسک در دسترس نیست</translation>
     </message>
@@ -762,14 +792,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>نگه داشتن روشنایی/کنتراست قبلی</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>خطاهای پیکربندی</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>هنگام بارگیری پیکربندی خطاهایی یافت شد. لطفاً خطاهای زیر را بررسی کنید و پیکربندی خود را مجدداً بارگیری کنید یا خطوط نادرست را نادیده بگیرید.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

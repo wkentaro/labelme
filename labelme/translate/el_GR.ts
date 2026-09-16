@@ -578,12 +578,8 @@ Shapes</source>
         <translation>Λίστα αρχείων</translation>
     </message>
     <message>
-        <source>Configuration Errors</source>
-        <translation>Σφάλματα διαμόρφωσης</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Βρέθηκαν σφάλματα κατά τη φόρτωση της διαμόρφωσης. Ελέγξτε τα παρακάτω σφάλματα και φορτώστε ξανά τη διαμόρφωσή σας ή αγνοήστε τις λανθασμένες γραμμές.</translation>
+        <source>Command-line settings</source>
+        <translation>Ρυθμίσεις γραμμής εντολών</translation>
     </message>
     <message>
         <source>Mask Output Unavailable</source>
@@ -816,6 +812,32 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Επιλέξτε μια ετικέτα για να ξεκινήσετε να σχεδιάζετε με αυτήν. Πατήστε &apos;Esc&apos; για να αποεπιλέξετε την ετικέτα.</translation>
+    </message>
+    <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Δεν ήταν δυνατή η φόρτωση των ρυθμίσεών σας.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Μπορείτε προς το παρόν να χρησιμοποιήσετε τις προεπιλεγμένες ρυθμίσεις. Πριν από την επαναφορά θα αποθηκευτεί ένα αντίγραφο ασφαλείας του αρχείου διαμόρφωσής σας.</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Αντίγραφο και επαναφορά</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Συνέχεια με προεπιλογές</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Δεν ήταν δυνατή η επαναφορά του αρχείου ρυθμίσεων.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Το αντίγραφο ασφαλείας των ρυθμίσεων αποθηκεύτηκε στο %s</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>

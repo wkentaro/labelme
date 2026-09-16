@@ -646,6 +646,36 @@ Shapes</source>
         <translation>正規表現が無効です。前の検索条件を維持します。</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>設定を読み込めませんでした。</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>今回は初期設定で続行できます。リセットする場合は、先に設定ファイルのバックアップを保存します。</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>コマンドラインの設定</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>バックアップしてリセット</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>初期設定で続行</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>設定ファイルをリセットできませんでした。
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>設定ファイルのバックアップを %s に保存しました</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>マスク出力は利用できません</translation>
     </message>
@@ -776,14 +806,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>前の明るさ/コントラストを保持</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>設定エラー</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>設定の読み込み中にエラーが見つかりました。以下のエラーを確認し、設定を再読み込みするか、エラーのある行を無視してください。</translation>
     </message>
     <message>
         <source>Reset Layout</source>

@@ -646,6 +646,36 @@ Formen</translation>
         <translation>Ungültiger regulärer Ausdruck. Die vorherige Suche bleibt aktiv.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Ihre Einstellungen konnten nicht geladen werden.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Sie können vorerst die Standardeinstellungen verwenden. Vor dem Zurücksetzen wird eine Sicherung Ihrer Konfigurationsdatei gespeichert.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>Befehlszeileneinstellungen</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Sichern und zurücksetzen</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Mit Standardwerten fortfahren</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Die Konfigurationsdatei konnte nicht zurückgesetzt werden.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Sicherung der Konfiguration gespeichert unter %s</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskenausgabe nicht verfügbar</translation>
     </message>
@@ -768,14 +798,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>The image is too large to open: {width}x{height} pixels needs about {required} MB, but the decode limit is {limit} MB. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>Das Bild ist zu groß zum Öffnen: {width}x{height} Pixel benötigen etwa {required} MB, aber das Dekodierlimit beträgt {limit} MB. Teilen Sie das Bild in Kacheln auf (zum Beispiel mit gdal_retile.py) oder öffnen Sie eine kleinere Kopie.</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>Konfigurationsfehler</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Beim Laden der Konfiguration wurden Fehler gefunden. Bitte überprüfen Sie die folgenden Fehler und laden Sie Ihre Konfiguration neu oder ignorieren Sie die fehlerhaften Zeilen.</translation>
     </message>
     <message>
         <source>Reset Layout</source>

@@ -638,6 +638,36 @@ les formes</translation>
         <translation>Expression régulière invalide. La recherche précédente est conservée.</translation>
     </message>
     <message>
+        <source>Your settings couldn’t be loaded.</source>
+        <translation>Vos paramètres n’ont pas pu être chargés.</translation>
+    </message>
+    <message>
+        <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
+        <translation>Vous pouvez utiliser les paramètres par défaut pour le moment. Une sauvegarde de votre fichier de configuration sera enregistrée avant la réinitialisation.</translation>
+    </message>
+    <message>
+        <source>Command-line settings</source>
+        <translation>Paramètres de la ligne de commande</translation>
+    </message>
+    <message>
+        <source>Back up and reset</source>
+        <translation>Sauvegarder et réinitialiser</translation>
+    </message>
+    <message>
+        <source>Continue with defaults</source>
+        <translation>Continuer avec les valeurs par défaut</translation>
+    </message>
+    <message>
+        <source>Could not reset the Config File.
+%s</source>
+        <translation>Impossible de réinitialiser le fichier de configuration.
+%s</translation>
+    </message>
+    <message>
+        <source>Configuration backup saved to %s</source>
+        <translation>Sauvegarde de la configuration enregistrée dans %s</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Sortie de masque indisponible</translation>
     </message>
@@ -768,14 +798,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Conserver les réglages de luminosité/contraste</translation>
-    </message>
-    <message>
-        <source>Configuration Errors</source>
-        <translation>Erreurs de Configuration</translation>
-    </message>
-    <message>
-        <source>Errors were found while loading the configuration. Please review the errors below and reload your configuration or ignore the erroneous lines.</source>
-        <translation>Des erreurs ont été trouvées lors du chargement de la configuration. Veuillez examiner les erreurs ci-dessous et recharger votre configuration ou ignorer les lignes erronées.</translation>
     </message>
     <message>
         <source>Reset Layout</source>
