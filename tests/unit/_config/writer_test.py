@@ -252,15 +252,6 @@ def test_raises_when_parent_key_is_not_a_mapping(*, tmp_path: Path) -> None:
         )
 
 
-def test_overwrites_when_top_level_is_not_a_mapping(*, tmp_path: Path) -> None:
-    config_file = tmp_path / ".labelmerc"
-    config_file.write_text("- one\n- two\n", encoding="utf-8")
-
-    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], False)])
-
-    assert _parse(config_file) == {"auto_save": False}
-
-
 def test_empties_file_when_last_override_pruned(*, tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
     config_file.write_text("auto_save: false\n", encoding="utf-8")
@@ -359,3 +350,18 @@ def test_write_failure_leaves_no_temp_file(
 
     assert not config_file.exists()
     assert list(tmp_path.iterdir()) == []
+
+
+@pytest.mark.parametrize("original", ["labels: [unclosed\n", "- cat\n", "false\n"])
+def test_set_overrides_preserves_malformed_external_edits(
+    *,
+    tmp_path: Path,
+    original: str,
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text(original)
+    with pytest.raises(ValueError):
+        _config.set_overrides(
+            config_file=config_file, overrides=[(("auto_save",), False)]
+        )
+    assert config_file.read_text() == original

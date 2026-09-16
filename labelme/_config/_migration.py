@@ -10,6 +10,9 @@ from ._shape_color import migrate_shape_color
 
 def migrate_config(*, config_from_yaml: dict) -> None:
     migrate_shape_color(config=config_from_yaml)
+    if "instance_label_auto_increment" in config_from_yaml:
+        logger.info("Migrating old config: removing instance_label_auto_increment")
+        del config_from_yaml["instance_label_auto_increment"]
     keep_prev_brightness: bool = config_from_yaml.pop("keep_prev_brightness", False)
     keep_prev_contrast: bool = config_from_yaml.pop("keep_prev_contrast", False)
     if keep_prev_brightness or keep_prev_contrast:
@@ -19,23 +22,27 @@ def migrate_config(*, config_from_yaml: dict) -> None:
             keep_prev_brightness,
             keep_prev_contrast,
         )
-        config_from_yaml["keep_prev_brightness_contrast"] = True
+        config_from_yaml.setdefault("keep_prev_brightness_contrast", True)
 
     if "store_data" in config_from_yaml:
         logger.info("Migrating old config: store_data -> with_image_data")
-        config_from_yaml["with_image_data"] = config_from_yaml.pop("store_data")
+        config_from_yaml.setdefault(
+            "with_image_data", config_from_yaml.pop("store_data")
+        )
 
     if "logger_level" in config_from_yaml:
         logger.info("Migrating old config: removing logger_level")
         del config_from_yaml["logger_level"]
 
-    # A malformed section (e.g. `shortcuts: oops`) is left untouched here so the
-    # merge in _update_dict reports it as a config error instead of crashing.
+    # Leave malformed sections for validation.
     shortcuts = config_from_yaml.get("shortcuts")
     if not isinstance(shortcuts, dict):
         shortcuts = {}
-    if shortcuts.pop("add_point_to_edge", None):
-        logger.info("Migrating old config: removing shortcuts.add_point_to_edge")
+    # These actions were removed; neither their old nor renamed shortcuts apply.
+    for key in ("add_point", "add_point_to_edge", "edit_line_color", "edit_fill_color"):
+        if key in shortcuts:
+            logger.info("Migrating old config: removing shortcuts.{}", key)
+            del shortcuts[key]
 
     ai = config_from_yaml.get("ai")
     if (
@@ -83,8 +90,7 @@ def migrate_config(*, config_from_yaml: dict) -> None:
         )
         shortcuts[new_key] = old_value
 
-    # A malformed canvas/crosshair section is left untouched so the merge in
-    # _update_dict reports it as a config error instead of crashing.
+    # Leave malformed sections for validation.
     canvas = config_from_yaml.get("canvas")
     crosshair = canvas.get("crosshair") if isinstance(canvas, dict) else None
     if not isinstance(crosshair, dict):

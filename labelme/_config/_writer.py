@@ -10,9 +10,10 @@ from typing import Final
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
 from ruamel.yaml.comments import CommentedSeq
+from ruamel.yaml.error import YAMLError
 
 from .. import _yaml
-from ._shape_color import migrate_shape_color
+from ._migration import migrate_config
 from ._shape_color import validate_shape_color
 
 here = Path(__file__).resolve().parent
@@ -82,18 +83,22 @@ def set_overrides(
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.indent(mapping=2, sequence=4, offset=2)
-    doc = (
-        yaml.load(config_file.read_text(encoding="utf-8"))
-        if config_file.exists()
-        else None
-    )
-    if not isinstance(doc, CommentedMap):
+    try:
+        doc = (
+            yaml.load(config_file.read_text(encoding="utf-8"))
+            if config_file.exists()
+            else None
+        )
+    except YAMLError as error:
+        raise ValueError(f"Could not read the Config File: {error}") from error
+    if doc is None:
         doc = CommentedMap()
+    if not isinstance(doc, CommentedMap):
+        raise ValueError("The Config File must contain a mapping of settings")
     writes_shape_color = any(
         key_path and key_path[0] == "shape_color" for key_path, _value in overrides
     )
-    if writes_shape_color:
-        migrate_shape_color(config=doc)
+    migrate_config(config_from_yaml=doc)
 
     # All overrides mutate the in-memory doc before the single write below, so a
     # bad key anywhere in the batch leaves the file untouched (all-or-nothing).
