@@ -1,11 +1,17 @@
 from __future__ import annotations
 
+import gc
 import hashlib
+import shutil
 import threading
+import weakref
 from pathlib import Path
+from typing import ClassVar
 
 import osam
 import pytest
+from osam.types import GenerateRequest
+from osam.types import GenerateResponse
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -16,6 +22,18 @@ from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
 from .conftest import MainWinFactory
+from .conftest import click_canvas_fraction
+from .conftest import show_window_and_wait_for_imagedata
+
+
+class _LocalSam3(osam.types.Model):
+    name = "sam3:latest"
+    metadata = osam.apis.get_model_metadata(name)
+    _blobs: ClassVar[dict[str, osam.types.Blob]] = {}
+
+    def generate(self, request: GenerateRequest) -> GenerateResponse:  # noqa: GR005 -- upstream API
+        assert self._inference_sessions["model"].get_providers()
+        return GenerateResponse(model=request.model, annotations=[])
 
 
 @pytest.mark.gui
@@ -88,6 +106,88 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert reopened._ai_text.get_model_name() == ""
     assert reopened._ai_annotation.current_model_id == ""
     assert requests == ["/slow"]
+
+
+@pytest.mark.gui
+def test_delete_releases_loaded_assist_and_text_sessions(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    tmp_path: Path,
+    data_path: Path,
+    session_home: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("HOME", str(session_home))
+    monkeypatch.setenv("USERPROFILE", str(session_home))
+    artifact = Path(osam.apis.__file__).parent / "_data/non_maximum_suppression.onnx"
+    content = artifact.read_bytes()
+    blob = osam.types.Blob(
+        url="https://example.invalid/local.onnx",
+        hash="sha256:" + hashlib.sha256(content).hexdigest(),
+    )
+    Path(blob.path).parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(artifact, blob.path)
+    monkeypatch.setattr(_LocalSam3, "_blobs", {"model": blob})
+    monkeypatch.setattr(
+        osam.apis,
+        "registered_model_types",
+        [
+            _LocalSam3 if model.name == _LocalSam3.name else model
+            for model in osam.apis.registered_model_types
+        ],
+    )
+    config = tmp_path / "config.yaml"
+    config.write_text("ai:\n  default: Sam3\n  text_model: sam3:latest\n")
+    win = main_win(file_or_dir=data_path / "raw/2011_000003.jpg", config_file=config)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    canvas.load_shapes(shapes=[Shape(label="cat")])
+
+    win._switch_canvas_mode(edit=False, create_mode="ai_box_to_shape")
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.25, 0.25))
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.75, 0.75))
+    win._switch_canvas_mode(edit=False, create_mode="rectangle")
+    win._ai_text._text_input.setText("cat")
+    run = next(
+        button
+        for button in win._ai_text.findChildren(QtWidgets.QToolButton)
+        if button.text() == "Run"
+    )
+    run.click()
+
+    assist_session = canvas._ai_assist_session._session
+    text_session = win._text_osam_session
+    assert assist_session is not None and assist_session._model is not None
+    assert text_session is not None and text_session._model is not None
+    assist_model = weakref.ref(assist_session._model)
+    text_model = weakref.ref(text_session._model)
+    del assist_session, text_session
+
+    monkeypatch.setattr(
+        QtWidgets.QMessageBox,
+        "question",
+        lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
+    )
+    win._open_models()
+    dialog = win._settings_dialog
+    assert dialog is not None
+    models = dialog.findChild(ModelsWidget)
+    assert models is not None
+    models._rows[_LocalSam3.name][2].click()
+    gc.collect()
+
+    assert assist_model() is None
+    assert text_model() is None
+    assert not Path(blob.path).exists()
+    assert win._ai_text.get_model_name() == ""
+    assert canvas.get_ai_model_name() == ""
+    assert [shape.label for shape in canvas.shapes] == ["cat"]
+    win.close()
+    reopened = main_win(config_file=config)
+    assert reopened._ai_text.get_model_name() == ""
+    assert reopened._ai_annotation.current_model_id == ""
+    assert not Path(blob.path).exists()
 
 
 @pytest.mark.gui
