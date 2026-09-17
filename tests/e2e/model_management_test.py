@@ -135,6 +135,9 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     models = dialog.findChild(ModelsWidget)
     assert models is not None
     status, download, _, details = models._rows[name]
+    # Large platform fonts can already require scrolling on the offscreen display.
+    QtWidgets.QApplication.processEvents()
+    initial_scroll_maximum = dialog._page._scroll_area.horizontalScrollBar().maximum()
     download.click()
     qtbot.waitUntil(
         lambda: win._model_manager.get_state(name) == "failed", timeout=20_000
@@ -142,7 +145,11 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     assert status.text() == "Failed"
     assert download.text() == "Retry"
     assert download.accessibleName() == "Retry EfficientSam (speed)"
-    assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
+    QtWidgets.QApplication.processEvents()
+    assert (
+        dialog._page._scroll_area.horizontalScrollBar().maximum()
+        == initial_scroll_maximum
+    )
     assert details.isVisible()
 
     messages = []
@@ -176,6 +183,10 @@ def test_model_links_follow_live_theme_contrast(
         for label in models.findChildren(QtWidgets.QLabel)
         if label.openExternalLinks()
     )
+    # Subpixel antialiasing adds colored fringes even to neutral text on Linux.
+    font = link.font()
+    font.setStyleStrategy(QtGui.QFont.StyleStrategy.NoSubpixelAntialias)
+    link.setFont(font)
     qtbot.waitUntil(dialog.isActiveWindow)
     for foreground, background in (("white", "black"), ("black", "white")):
         palette = dialog.palette()
