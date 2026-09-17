@@ -935,6 +935,112 @@ Erwarteter Speicherort: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Modelle verwalten…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Modell herunterladen…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Modell auswählen…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Nicht verfügbar: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Downloading…</source>
+        <translation>Wird heruntergeladen…</translation>
+    </message>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Laden Sie Modelle herunter, um KI offline zu nutzen. Während des Downloads können Sie weiter annotieren.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Punkte</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Rechtecke</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Text-Prompts</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>Die Nutzung von SAM3 unterliegt der SAM License, einschließlich Handelskontrollen und Einschränkungen der Endnutzung. Lesen Sie vor dem Herunterladen oder der Nutzung die vollständige Vereinbarung.</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>{model} löschen</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>{filename} wird heruntergeladen · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Nicht heruntergeladen</translation>
+    </message>
+    <message>
+        <source>License: {license}</source>
+        <translation>Lizenz: {license}</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Details…</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Heruntergeladen</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>In Warteschlange · Position {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Erneut versuchen</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Download fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Modell löschen</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>{model} von diesem Computer löschen? Die Auswahl dieses Modells wird aufgehoben. Ihre Annotationen bleiben unverändert.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1171,6 +1277,10 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Einstellungen</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>KI-Modelle</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

@@ -935,6 +935,112 @@ Beklenen konum: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Modelleri yönet…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Model indir…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Model seç…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Kullanılamıyor: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Downloading…</source>
+        <translation>İndiriliyor…</translation>
+    </message>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Yapay zekâyı çevrimdışı kullanmak için modelleri indirin. İndirme sırasında etiketlemeye devam edebilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Noktalar</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Kutular</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Metin istemleri</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>SAM3 kullanımı, ticaret kontrolleri ve son kullanım kısıtlamaları dahil olmak üzere SAM License koşullarına tabidir. İndirmeden veya kullanmadan önce sözleşmenin tamamını okuyun.</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>{model} modelini sil</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>{filename} indiriliyor · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>İndirilmedi</translation>
+    </message>
+    <message>
+        <source>License: {license}</source>
+        <translation>Lisans: {license}</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Ayrıntılar…</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>İndirildi</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Başarısız</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>Sırada · konum {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Yeniden dene</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>İndir</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>İndirme başarısız oldu. Bağlantınızı kontrol edip yeniden deneyin.</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Modeli sil</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>{model} bu bilgisayardan silinsin mi? Bu modele ait seçimler temizlenecek. Etiketlemeleriniz değişmeyecek.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1171,6 +1277,10 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Ayarlar</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>Yapay zekâ modelleri</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

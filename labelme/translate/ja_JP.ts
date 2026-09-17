@@ -943,6 +943,112 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>モデルを管理…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>モデルをダウンロード…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>モデルを選択…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>利用不可: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Downloading…</source>
+        <translation>ダウンロード中…</translation>
+    </message>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>モデルをダウンロードすると、オフラインでAIを利用できます。ダウンロード中もアノテーションを続けられます。</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>点</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>ボックス</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>テキストプロンプト</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>SAM3の利用には、貿易管理および最終用途の制限を含むSAM Licenseが適用されます。ダウンロードまたは利用する前に、契約全文をお読みください。</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>削除</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>{model} を削除</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>{filename} をダウンロード中 · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>未ダウンロード</translation>
+    </message>
+    <message>
+        <source>License: {license}</source>
+        <translation>ライセンス: {license}</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>詳細…</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>ダウンロード済み</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>失敗</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>待機中 · {position} 番目</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>再試行</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>ダウンロード</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>ダウンロードに失敗しました。接続を確認して再試行してください。</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>モデルを削除</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>このコンピューターから {model} を削除しますか？このモデルの選択が解除されます。アノテーションは変更されません。</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1179,6 +1285,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>設定</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>AIモデル</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

@@ -97,7 +97,7 @@ def test_first_listed_default_resolves(
     assert widget.current_model_id == "efficientsam:10m"
 
 
-def test_unknown_default_falls_back_to_first_model(
+def test_unknown_default_leaves_model_unselected(
     *, qtbot: QtBot, models: list[str], formats: list[AiOutputFormat]
 ) -> None:
     widget = _make_widget(
@@ -107,7 +107,7 @@ def test_unknown_default_falls_back_to_first_model(
         default_model="does-not-exist",
         details=None,
     )
-    assert widget.current_model_id == "efficientsam:10m"
+    assert widget.current_model_id == ""
 
 
 def test_selecting_another_model_fires_callback(

@@ -931,6 +931,112 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Διαχείριση μοντέλων…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Λήψη μοντέλου…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Επιλογή μοντέλου…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Μη διαθέσιμο: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Downloading…</source>
+        <translation>Λήψη…</translation>
+    </message>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Κατεβάστε μοντέλα για χρήση της AI χωρίς σύνδεση. Μπορείτε να συνεχίσετε τον σχολιασμό κατά τη λήψη.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Σημεία</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Πλαίσια</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Προτροπές κειμένου</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>Η χρήση του SAM3 υπόκειται στη SAM License, συμπεριλαμβανομένων των εμπορικών ελέγχων και των περιορισμών τελικής χρήσης. Διαβάστε ολόκληρη τη συμφωνία πριν από τη λήψη ή τη χρήση.</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Διαγραφή</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>Διαγραφή του {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>Λήψη {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Δεν έχει ληφθεί</translation>
+    </message>
+    <message>
+        <source>License: {license}</source>
+        <translation>Άδεια: {license}</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Λεπτομέρειες…</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Έχει ληφθεί</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Αποτυχία</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>Σε αναμονή · θέση {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Άκυρο</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Επανάληψη</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Λήψη</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Η λήψη απέτυχε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Διαγραφή μοντέλου</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>Να διαγραφεί το {model} από αυτόν τον υπολογιστή; Οι επιλογές αυτού του μοντέλου θα διαγραφούν. Οι σχολιασμοί σας δεν θα αλλάξουν.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1167,6 +1273,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>Ρυθμίσεις</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>Μοντέλα AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

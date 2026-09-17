@@ -19,7 +19,6 @@ from typing import cast
 
 import natsort
 import numpy as np
-import osam
 from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -44,6 +43,7 @@ from ._label_file import read_image_file
 from ._label_file import read_label_file
 from ._label_file import write_label_file
 from ._label_flags import apply_default_flags
+from ._model_manager import ModelManager
 from ._shape import Shape
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
@@ -66,9 +66,9 @@ from ._widgets import StatusStats
 from ._widgets import ToolBar
 from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
-from ._widgets import download_ai_model
 from ._widgets import format_shape_label
 from ._widgets._label_list_widget import LABEL_COLOR_ROLE
+from ._widgets._models_widget import ModelsWidget
 
 
 class _ZoomMode(enum.Enum):
@@ -289,7 +289,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._menus = self._setup_menus()
 
         self._ai_annotation = AiAssistedAnnotationWidget(
-            default_model=self._config["ai"]["default"],
+            default_model=self._config["ai"]["default"] or "",
             polygon_detail=self._config["mask_polygonization"]["detail"],
             on_model_changed=self._on_ai_model_changed,
             on_output_format_changed=self._canvas_widgets.canvas.set_ai_output_format,
@@ -311,7 +311,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_text = AiTextToAnnotationWidget(
             on_submit=self._submit_ai_prompt, parent=self
         )
-        self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"])
+        self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"] or "")
         self._ai_text.model_changed.connect(
             lambda model_name: self._apply_setting_change(
                 ("ai", "text_model"), model_name
@@ -322,6 +322,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._setup_toolbars()
 
         self._status_bar = self._setup_status_bar()
+        self._model_manager = ModelManager(parent=self)
+        self._model_manager.changed.connect(self._refresh_model_availability)
+        self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
+        self._ai_annotation.manage_models_requested.connect(self._open_models)
+        self._ai_text.manage_models_requested.connect(self._open_models)
+        self._refresh_model_availability()
 
         self._setup_app_state(file_or_dir=file_or_dir, output_dir=output_dir)
 
@@ -923,7 +929,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if settings_editable
                 else self.tr("Settings are managed via --config for this session")
             ),
-            enabled=settings_editable,
+            enabled=True,
         )
         open_config.setMenuRole(QtGui.QAction.MenuRole.PreferencesRole)
         help_ = action(
@@ -1454,10 +1460,8 @@ class MainWindow(QtWidgets.QMainWindow):
         texts = self._ai_text.get_text_prompt().split(",")
 
         model_name: str = self._ai_text.get_model_name()
-        model_type = osam.apis.get_model_type_by_name(model_name)
-        if model_type.get_size() is None:
-            if not download_ai_model(model_name=model_name, parent=self):
-                return
+        if not self._ensure_ai_model_ready(model_name):
+            return
         if (
             self._text_osam_session is None
             or self._text_osam_session.model_name != model_name
@@ -2471,6 +2475,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             a0.ignore()
             return
+        self._model_manager.shutdown()
         self._window_state.setValue(WINDOW_SIZE_KEY, self.size())
         self._window_state.setValue(WINDOW_POSITION_KEY, self.pos())
         self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())
@@ -2858,10 +2863,15 @@ class MainWindow(QtWidgets.QMainWindow):
             old_label_dialog.deleteLater()
         elif key_path == ("ai", "default"):
             self._ai_annotation.set_current_model(
-                model_display=self._config["ai"]["default"]
+                model_display=self._config["ai"]["default"] or ""
+            )
+            self._canvas_widgets.canvas.set_ai_model_name(
+                model_name=self._ai_annotation.current_model_id
             )
         elif key_path == ("ai", "text_model"):
-            self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"])
+            self._ai_text.set_model_name(
+                model_name=self._config["ai"]["text_model"] or ""
+            )
         elif key_path == ("ai", "suppress_existing_shape_matches"):
             self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
                 enabled=self._config["ai"]["suppress_existing_shape_matches"]
@@ -2895,9 +2905,60 @@ class MainWindow(QtWidgets.QMainWindow):
             flags[item.text()] = item.checkState() == Qt.CheckState.Checked
         return flags
 
-    def _open_settings(self) -> None:
-        if not self._is_settings_editable:
+    def _ensure_ai_model_ready(self, model_name: str, /) -> bool:
+        if model_name and self._model_manager.is_ready(model_name):
+            return True
+        self._open_models()
+        return False
+
+    def _refresh_model_availability(self) -> None:
+        available = {
+            name
+            for name in self._model_manager.models
+            if self._model_manager.is_ready(name)
+        }
+        self._ai_annotation.set_available_models(available=available)
+        self._ai_text.set_available_models(available=available)
+        self._ai_annotation.set_point_prompt_mode(
+            enabled=self._ai_annotation.is_point_prompt_mode
+        )
+        self._canvas_widgets.canvas.set_ai_model_name(
+            model_name=self._ai_annotation.current_model_id
+        )
+
+    def _remove_ai_model(self, model_name: str, /) -> None:
+        option = _ai_models.find_ai_assist_model_option(model_name=model_name)
+        overrides = []
+        if option is not None and self._config["ai"]["default"] == option.display_name:
+            overrides.append((("ai", "default"), None))
+        if self._config["ai"]["text_model"] == model_name:
+            overrides.append((("ai", "text_model"), None))
+        if (
+            overrides
+            and self._is_settings_editable
+            and not self._try_set_overrides(overrides=overrides)
+        ):
             return
+        for key_path, value in overrides:
+            self._set_setting_value(key_path=key_path, value=value)
+            self._sync_setting_controls(key_path=key_path)
+        if (
+            self._text_osam_session is not None
+            and self._text_osam_session.model_name == model_name
+        ):
+            self._text_osam_session = None
+        if self._canvas_widgets.canvas.get_ai_model_name() == model_name:
+            self._canvas_widgets.canvas.set_ai_model_name(model_name="")
+
+        self._model_manager.remove(model_name)
+
+    def _open_models(self) -> None:
+        self._open_settings()
+        assert self._settings_dialog is not None
+        self._settings_dialog.show_models()
+        self._model_manager.refresh()
+
+    def _open_settings(self) -> None:
         # Keep a single dialog instance; it edits self._config by reference, so
         # reopening it shows the current values without rebuilding.
         if self._settings_dialog is None:
@@ -2906,6 +2967,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 apply_setting=self._apply_setting_change,
                 preview_shape_color=self._preview_shape_color,
                 open_as_text=self._open_config_file,
+                models_widget=ModelsWidget(
+                    manager=self._model_manager, remove_model=self._remove_ai_model
+                ),
+                settings_editable=self._is_settings_editable,
                 parent=self,
             )
         self._set_point_prompt_mode(enabled=self._ai_annotation.is_point_prompt_mode)
@@ -2914,8 +2979,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._settings_dialog.activateWindow()
 
     def _open_config_file(self) -> None:
-        # Only reachable from the Settings dialog, which opens solely when the
-        # config is an editable file (see _is_settings_editable).
+        # Command-line overrides cannot be edited through a config file.
         assert self._config_file is not None
         config_file: Path = self._config_file
 

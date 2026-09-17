@@ -58,6 +58,7 @@ def ai_model_combo(*, raw_win: MainWindow) -> QComboBox:
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("cached_ai_models")
 def test_ai_points_mode_disables_sam3(
     *,
     raw_win: MainWindow,
@@ -77,6 +78,7 @@ def test_ai_points_mode_disables_sam3(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("cached_ai_models")
 def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
     *,
     raw_win: MainWindow,
@@ -297,7 +299,6 @@ def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
         ),
     ],
 )
-@pytest.mark.usefixtures("close_failed_download_dialog")
 def test_annotate_shape_types(
     *,
     main_win: MainWinFactory,
@@ -329,8 +330,18 @@ def test_annotate_shape_types(
 
     label = "test_shape"
     canvas = win._canvas_widgets.canvas
-    canvas.set_ai_model_name(model_name=AI_MODEL)
     if ai_output_format is not None:
+        manager = win._model_manager
+        manager.enqueue(AI_MODEL)
+        # Files land before the manager announces them; wait for the state so
+        # the picker has been repopulated.
+        qtbot.waitUntil(
+            lambda: manager.get_state(AI_MODEL) in {"downloaded", "failed"},
+            timeout=120_000,
+        )
+        assert manager.get_state(AI_MODEL) == "downloaded", manager.errors.get(AI_MODEL)
+        picker = win._ai_annotation._model_combo
+        picker.setCurrentIndex(picker.findData(AI_MODEL))
         canvas.set_ai_output_format(ai_output_format)
 
     canvas_size = canvas.size()
@@ -359,15 +370,19 @@ def test_annotate_shape_types(
 
     def enter_label_when_visible() -> None:
         if not win._label_dialog.isVisible():
-            QTimer.singleShot(50, enter_label_when_visible)
             return
+        label_timer.stop()
         qtbot.keyClicks(win._label_dialog.edit, label)
         qtbot.wait(50)
         qtbot.keyClick(win._label_dialog.edit, Qt.Key.Key_Enter)
 
-    QTimer.singleShot(0, enter_label_when_visible)
-
-    click(xy=finalize_click, modifier=finalize_modifier)
+    label_timer = QTimer(win)
+    label_timer.timeout.connect(enter_label_when_visible)
+    label_timer.start(50)
+    try:
+        click(xy=finalize_click, modifier=finalize_modifier)
+    finally:
+        label_timer.stop()
 
     shapes = canvas.shapes
     assert len(shapes) >= 1

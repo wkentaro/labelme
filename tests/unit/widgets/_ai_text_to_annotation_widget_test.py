@@ -13,6 +13,7 @@ from labelme._widgets._info_button import InfoButton
 def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
     widget = AiTextToAnnotationWidget(on_submit=lambda _checked: None)
     qtbot.addWidget(widget)
+    widget.set_model_name(model_name="sam3:latest")
 
     run_button = next(
         button

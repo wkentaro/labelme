@@ -1139,14 +1139,11 @@ def ai_points_harness(
     downloads: list[str] = []
     rejected_models: list[str] = []
 
-    def _download_ai_model(*, model_name: str, parent: Canvas) -> bool:
-        del parent
+    def ensure_ready(model_name: str, /) -> bool:
         downloads.append(model_name)
         return True
 
-    monkeypatch.setattr(
-        "labelme._widgets._canvas.download_ai_model", _download_ai_model
-    )
+    monkeypatch.setattr(canvas, "ensure_ai_model_ready", ensure_ready)
     canvas.point_prompt_rejected.connect(rejected_models.append)
     canvas.resize(_WIDTH, _HEIGHT)
     canvas.set_editing(value=False)
@@ -2432,7 +2429,7 @@ def test_ai_preview_follows_input_without_inference_during_paint(
         return proposal
 
     monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
-    monkeypatch.setattr("labelme._widgets._canvas.download_ai_model", lambda **_: True)
+    monkeypatch.setattr(canvas, "ensure_ai_model_ready", lambda _: True)
     canvas.set_editing(value=False, create_mode="ai_points_to_shape")
     canvas.show()
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
@@ -2498,7 +2495,7 @@ def test_ai_preview_refreshes_when_proposal_inputs_change(
         return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
 
     monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
-    monkeypatch.setattr("labelme._widgets._canvas.download_ai_model", lambda **_: True)
+    monkeypatch.setattr(canvas, "ensure_ai_model_ready", lambda _: True)
     canvas.set_editing(value=False, create_mode="ai_points_to_shape")
     canvas.show()
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
@@ -2557,7 +2554,7 @@ def test_ai_preview_clears_when_replacement_is_unavailable(
         return proposal
 
     monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
-    monkeypatch.setattr("labelme._widgets._canvas.download_ai_model", lambda **_: True)
+    monkeypatch.setattr(canvas, "ensure_ai_model_ready", lambda _: True)
     canvas.set_editing(value=False, create_mode="ai_points_to_shape")
     canvas.show()
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
@@ -2582,7 +2579,7 @@ def test_square_drawing_commits_ai_box_prompt(
     *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     # Download and inference are external to box geometry.
-    monkeypatch.setattr("labelme._widgets._canvas.download_ai_model", lambda **_: True)
+    monkeypatch.setattr(canvas, "ensure_ai_model_ready", lambda _: True)
     prompts: list[list[QPointF]] = []
 
     def propose_shapes(*, points: list[QPointF], **_: object) -> AiAssistProposal:

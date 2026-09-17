@@ -92,11 +92,11 @@ def test_MainWindow_config(
     assert win._config["labels"] == ["bird"]
     assert win._config_file == config_file
 
-    # Overrides are present, so settings are not editable and opening the
-    # dialog is a no-op regardless of whether a config file backs the session.
+    # Command-line values remain read-only while model management stays available.
     assert win._is_settings_editable is False
     win._open_settings()
-    assert win._settings_dialog is None
+    assert win._settings_dialog is not None
+    assert not win._settings_dialog._editors[("auto_save",)].isEnabled()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

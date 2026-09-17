@@ -929,10 +929,120 @@ Shapes</source>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Kelola model…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Unduh model…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Pilih model…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Tidak tersedia: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Downloading…</source>
+        <translation>Mengunduh…</translation>
+    </message>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Unduh model untuk menggunakan AI secara offline. Anda dapat terus membuat anotasi selama pengunduhan.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Titik</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Kotak</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Prompt teks</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>Penggunaan SAM3 tunduk pada SAM License, termasuk kontrol perdagangan dan pembatasan penggunaan akhir. Baca perjanjian lengkap sebelum mengunduh atau menggunakannya.</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Hapus</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>Hapus {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>Mengunduh {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Belum diunduh</translation>
+    </message>
+    <message>
+        <source>License: {license}</source>
+        <translation>Lisensi: {license}</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Detail…</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Sudah diunduh</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Gagal</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>Dalam antrean · posisi {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Batal</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Coba lagi</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Unduh</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Unduhan gagal. Periksa koneksi Anda dan coba lagi.</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Hapus model</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>Hapus {model} dari komputer ini? Pilihan model ini akan dihapus. Anotasi Anda tidak akan berubah.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Settings</source>
         <translation>Pengaturan</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>Model AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

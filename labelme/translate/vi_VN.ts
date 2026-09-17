@@ -929,6 +929,112 @@ Vị trí dự kiến: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Quản lý mô hình…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Tải mô hình…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Chọn mô hình…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Không khả dụng: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Downloading…</source>
+        <translation>Đang tải xuống…</translation>
+    </message>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Tải mô hình để dùng AI ngoại tuyến. Bạn có thể tiếp tục chú thích trong khi tải xuống.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Điểm</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Khung</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Lời nhắc văn bản</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>Việc sử dụng SAM3 tuân theo SAM License, bao gồm các biện pháp kiểm soát thương mại và hạn chế về mục đích sử dụng cuối cùng. Hãy đọc toàn bộ thỏa thuận trước khi tải xuống hoặc sử dụng.</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Xóa</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>Xóa {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>Đang tải {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Chưa tải xuống</translation>
+    </message>
+    <message>
+        <source>License: {license}</source>
+        <translation>Giấy phép: {license}</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Chi tiết…</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Đã tải xuống</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Thất bại</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>Đang chờ · vị trí {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Hủy</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Thử lại</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Tải xuống</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Tải xuống không thành công. Kiểm tra kết nối và thử lại.</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Xóa mô hình</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>Xóa {model} khỏi máy tính này? Các lựa chọn mô hình này sẽ bị xóa. Chú thích của bạn sẽ không thay đổi.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1165,6 +1271,10 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Cài đặt</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>Mô hình AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

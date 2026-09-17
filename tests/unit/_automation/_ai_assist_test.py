@@ -95,7 +95,7 @@ def test_point_prompt_uses_best_answer_and_reuses_session(
     _propose(session, prompt_kind="points", existing_shapes=None)
     assert created_model_names == ["a"]
 
-    session.model_name = "b"
+    session.set_model_name("b")
     _propose(session, prompt_kind="points", existing_shapes=None)
     assert created_model_names == ["a", "b"]
 

@@ -929,6 +929,112 @@ Local esperado: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelPicker</name>
+    <message>
+        <source>Manage models…</source>
+        <translation>Gerenciar modelos…</translation>
+    </message>
+    <message>
+        <source>Download a model…</source>
+        <translation>Baixar um modelo…</translation>
+    </message>
+    <message>
+        <source>Choose a model…</source>
+        <translation>Escolher um modelo…</translation>
+    </message>
+    <message>
+        <source>Unavailable: {model}</source>
+        <translation>Indisponível: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsWidget</name>
+    <message>
+        <source>Downloading…</source>
+        <translation>Baixando…</translation>
+    </message>
+    <message>
+        <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
+        <translation>Baixe modelos para usar a IA offline. Você pode continuar anotando durante os downloads.</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Pontos</translation>
+    </message>
+    <message>
+        <source>Boxes</source>
+        <translation>Caixas</translation>
+    </message>
+    <message>
+        <source>Text prompts</source>
+        <translation>Comandos de texto</translation>
+    </message>
+    <message>
+        <source>SAM3 use is subject to the SAM License, including trade-control and end-use restrictions. Read the full agreement before downloading or using it.</source>
+        <translation>O uso do SAM3 está sujeito à SAM License, incluindo controles comerciais e restrições de uso final. Leia o contrato completo antes de baixar ou usar.</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Excluir</translation>
+    </message>
+    <message>
+        <source>Delete {model}</source>
+        <translation>Excluir {model}</translation>
+    </message>
+    <message>
+        <source>Downloading {filename} · {done} / {total}</source>
+        <translation>Baixando {filename} · {done} / {total}</translation>
+    </message>
+    <message>
+        <source>Not downloaded</source>
+        <translation>Não baixado</translation>
+    </message>
+    <message>
+        <source>License: {license}</source>
+        <translation>Licença: {license}</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Detalhes…</translation>
+    </message>
+    <message>
+        <source>Downloaded</source>
+        <translation>Baixado</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Falhou</translation>
+    </message>
+    <message>
+        <source>Queued · position {position}</source>
+        <translation>Na fila · posição {position}</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <source>Retry</source>
+        <translation>Tentar novamente</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Baixar</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Falha no download. Verifique sua conexão e tente novamente.</translation>
+    </message>
+    <message>
+        <source>Delete model</source>
+        <translation>Excluir modelo</translation>
+    </message>
+    <message>
+        <source>Delete {model} from this computer? Its selections will be cleared. Your annotations will not change.</source>
+        <translation>Excluir {model} deste computador? As seleções deste modelo serão apagadas. Suas anotações não serão alteradas.</translation>
+    </message>
+</context>
+<context>
     <name>SettingsDialog</name>
     <message>
         <source>Color theme</source>
@@ -1165,6 +1271,10 @@ Local esperado: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Configurações</translation>
+    </message>
+    <message>
+        <source>AI Models</source>
+        <translation>Modelos de IA</translation>
     </message>
     <message>
         <source>Open config file as text…</source>
