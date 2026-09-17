@@ -716,7 +716,7 @@ def test_search_preserves_visual_order_after_direct_matches(
     assert paths.index(("color_theme",)) < paths.index(("shape_color", "mode"))
 
 
-def test_search_disabled_result_explains_prerequisite_without_enabling_it(
+def test_search_disabled_result_explains_prerequisite_and_lets_tab_move_on(
     *, qtbot: QtBot, dialog: SettingsDialog, applied: Applied
 ) -> None:
     page = dialog._page
@@ -738,6 +738,8 @@ def test_search_disabled_result_explains_prerequisite_without_enabling_it(
         )
         == page._status.text()
     )
+    qtbot.keyClick(page._navigation, QtCore.Qt.Key.Key_Tab)
+    assert dialog.focusWidget() is not page._navigation
     assert applied == []
 
 

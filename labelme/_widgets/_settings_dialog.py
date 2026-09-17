@@ -641,8 +641,14 @@ class _SettingsPage(QtWidgets.QWidget):
 
     def focusNextPrevChild(self, next: bool, /) -> bool:  # noqa: FBT001 -- QWidget override
         # Tab from an activated result enters that setting rather than the
-        # first editor on the page.
-        if next and self._destination is not None and self._navigation.hasFocus():
+        # first editor on the page. A disabled setting refuses focus, so
+        # consuming Tab for it would strand focus in the result list.
+        if (
+            next
+            and self._destination is not None
+            and self._destination.isEnabled()
+            and self._navigation.hasFocus()
+        ):
             self._destination.setFocus(QtCore.Qt.FocusReason.TabFocusReason)
             return True
         return super().focusNextPrevChild(next)
