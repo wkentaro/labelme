@@ -11,6 +11,7 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
+from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
@@ -68,6 +69,8 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
         "question",
         lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
     )
+    canvas = win._canvas_widgets.canvas
+    canvas.load_shapes(shapes=[Shape(label="cat")])
     win._open_models()
     models._rows[name][2].click()
     assert not Path(blob.path).exists()
@@ -79,7 +82,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert win._ai_text.get_model_name() == ""
     assert win._canvas_widgets.canvas.get_ai_model_name() == ""
     assert safe_load(config.read_text())["ai"] == {"default": None, "text_model": None}
-    assert not win._canvas_widgets.canvas.shapes
+    assert [shape.label for shape in canvas.shapes] == ["cat"]
     win.close()
     reopened = main_win(config_file=config)
     assert reopened._ai_text.get_model_name() == ""
