@@ -25,8 +25,8 @@ _CONTEXT_FONT_SCALE: typing.Final = 0.85
 
 class _SearchResultDelegate(QtWidgets.QStyledItemDelegate):
     # Search results carry "name\nsection" as their text; the section is drawn
-    # smaller and muted so the setting name stays primary. Section items have no
-    # user data and keep the default single-line rendering.
+    # smaller and muted so the setting name stays primary. Section results keep
+    # the default single-line rendering.
     def paint(
         self,
         painter: QtGui.QPainter,
@@ -34,7 +34,7 @@ class _SearchResultDelegate(QtWidgets.QStyledItemDelegate):
         index: QtCore.QModelIndex | QtCore.QPersistentModelIndex,
         /,
     ) -> None:
-        if index.data(QtCore.Qt.ItemDataRole.UserRole) is None:
+        if not isinstance(index.data(QtCore.Qt.ItemDataRole.UserRole), list | tuple):
             super().paint(painter, option, index)
             return
         opt = QtWidgets.QStyleOptionViewItem(option)
@@ -448,6 +448,8 @@ class _SettingsPage(QtWidgets.QWidget):
         self._search.textChanged.connect(self._update_search)
         self._search.installEventFilter(self)
         navigation.installEventFilter(self)
+        for widget in content.findChildren(QtWidgets.QWidget):
+            widget.installEventFilter(self)
 
         self.setFocusProxy(self._search)
         for before, after in pairwise([self._search, navigation, *editors.values()]):
@@ -527,9 +529,28 @@ class _SettingsPage(QtWidgets.QWidget):
                     )
                 )
                 self._navigation.addItem(item)
+            for index, group in enumerate(self._groups):
+                if any(group.isAncestorOf(editor) for editor in self._editors.values()):
+                    continue
+                text = " ".join(
+                    [
+                        group.title(),
+                        *(
+                            label.text()
+                            for label in group.findChildren(QtWidgets.QLabel)
+                        ),
+                    ]
+                ).casefold()
+                if all(term in text for term in self._search.text().casefold().split()):
+                    item = QtWidgets.QListWidgetItem(group.title())
+                    item.setData(QtCore.Qt.ItemDataRole.UserRole, index)
+                    item.setData(
+                        QtCore.Qt.ItemDataRole.AccessibleTextRole, group.title()
+                    )
+                    self._navigation.addItem(item)
         message = (
-            self.tr("{count} matching settings").format(count=len(matches))
-            if matches
+            self.tr("{count} matching settings").format(count=self._navigation.count())
+            if self._navigation.count()
             else self.tr(
                 "No matching settings in this dialog. Try another term or clear search."
             )
@@ -563,7 +584,13 @@ class _SettingsPage(QtWidgets.QWidget):
         if not self._search.text().strip():
             self._scroll_to_group(self._navigation.row(item))
             return
-        key_path = tuple(item.data(QtCore.Qt.ItemDataRole.UserRole))
+        destination = item.data(QtCore.Qt.ItemDataRole.UserRole)
+        if isinstance(destination, int):
+            self.clear_search()
+            self._scroll_to_group(destination)
+            self._navigation.setFocus(QtCore.Qt.FocusReason.OtherFocusReason)
+            return
+        key_path = tuple(destination)
         editor = self._editors[key_path]
         row = editor.parentWidget()
         assert row is not None
@@ -623,16 +650,37 @@ class _SettingsPage(QtWidgets.QWidget):
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
         if watched is self._content and event.type() == QtCore.QEvent.Type.Resize:
             self._place_highlight()
+        if (
+            event.type() == QtCore.QEvent.Type.FocusIn
+            and isinstance(watched, QtWidgets.QWidget)
+            and self._content.isAncestorOf(watched)
+        ):
+            self._scroll_area.ensureWidgetVisible(watched)
         # Editors that ignore Return propagate it up through the content widget,
         # so key handling is limited to the sidebar to keep the default button
         # and editor focus intact.
         if (
-            watched is not self._content
+            watched in (self._search, self._navigation)
             and isinstance(event, QtGui.QKeyEvent)
             and event.type() == QtCore.QEvent.Type.KeyPress
         ):
             key = event.key()
             searching = bool(self._search.text().strip())
+            if (
+                watched is self._navigation
+                and key == QtCore.Qt.Key.Key_Tab
+                and not searching
+                and self._navigation.currentRow() >= 0
+            ):
+                group = self._groups[self._navigation.currentRow()]
+                for widget in group.findChildren(QtWidgets.QWidget):
+                    if (
+                        widget.isEnabled()
+                        and widget.isVisible()
+                        and widget.focusPolicy() & QtCore.Qt.FocusPolicy.TabFocus
+                    ):
+                        widget.setFocus(QtCore.Qt.FocusReason.TabFocusReason)
+                        return True
             if (
                 watched is self._search
                 and searching

@@ -950,6 +950,10 @@ Shapes</source>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>Mengunduh…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>Unduh model untuk menggunakan AI secara offline. Anda dapat terus membuat anotasi selama pengunduhan.</translation>
     </message>
@@ -970,10 +974,6 @@ Shapes</source>
         <translation>Penggunaan SAM3 tunduk pada SAM License, termasuk kontrol perdagangan dan pembatasan penggunaan akhir. Baca perjanjian lengkap sebelum mengunduh atau menggunakannya.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>Unduh atau batalkan {model}</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Hapus</translation>
     </message>
@@ -992,6 +992,10 @@ Shapes</source>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>Lisensi: {license} · &lt;a href=&quot;{source}&quot;&gt;Detail model&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Detail…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1016,6 +1020,10 @@ Shapes</source>
     <message>
         <source>Download</source>
         <translation>Unduh</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Unduhan gagal. Periksa koneksi Anda dan coba lagi.</translation>
     </message>
     <message>
         <source>Delete model</source>

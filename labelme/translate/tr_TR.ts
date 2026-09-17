@@ -956,6 +956,10 @@ Beklenen konum: {path}</translation>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>İndiriliyor…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>Yapay zekâyı çevrimdışı kullanmak için modelleri indirin. İndirme sırasında etiketlemeye devam edebilirsiniz.</translation>
     </message>
@@ -976,10 +980,6 @@ Beklenen konum: {path}</translation>
         <translation>SAM3 kullanımı, ticaret kontrolleri ve son kullanım kısıtlamaları dahil olmak üzere SAM License koşullarına tabidir. İndirmeden veya kullanmadan önce sözleşmenin tamamını okuyun.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>{model} modelini indir veya iptal et</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
@@ -998,6 +998,10 @@ Beklenen konum: {path}</translation>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>Lisans: {license} · &lt;a href=&quot;{source}&quot;&gt;Model ayrıntıları&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Ayrıntılar…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1022,6 +1026,10 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Download</source>
         <translation>İndir</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>İndirme başarısız oldu. Bağlantınızı kontrol edip yeniden deneyin.</translation>
     </message>
     <message>
         <source>Delete model</source>

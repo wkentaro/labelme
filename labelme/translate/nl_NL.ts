@@ -950,6 +950,10 @@ Verwachte locatie: {path}</translation>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>Downloaden…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>Download modellen om AI offline te gebruiken. U kunt blijven annoteren tijdens het downloaden.</translation>
     </message>
@@ -970,10 +974,6 @@ Verwachte locatie: {path}</translation>
         <translation>Het gebruik van SAM3 valt onder de SAM License, inclusief handelscontroles en beperkingen op eindgebruik. Lees de volledige overeenkomst voordat u het model downloadt of gebruikt.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>{model} downloaden of annuleren</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Verwijderen</translation>
     </message>
@@ -992,6 +992,10 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>Licentie: {license} · &lt;a href=&quot;{source}&quot;&gt;Modeldetails&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Details…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1016,6 +1020,10 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Download</source>
         <translation>Downloaden</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Download mislukt. Controleer uw verbinding en probeer het opnieuw.</translation>
     </message>
     <message>
         <source>Delete model</source>

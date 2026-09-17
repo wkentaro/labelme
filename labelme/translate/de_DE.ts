@@ -956,6 +956,10 @@ Erwarteter Speicherort: {path}</translation>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>Wird heruntergeladen…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>Laden Sie Modelle herunter, um KI offline zu nutzen. Während des Downloads können Sie weiter annotieren.</translation>
     </message>
@@ -976,10 +980,6 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Die Nutzung von SAM3 unterliegt der SAM License, einschließlich Handelskontrollen und Einschränkungen der Endnutzung. Lesen Sie vor dem Herunterladen oder der Nutzung die vollständige Vereinbarung.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>{model} herunterladen oder abbrechen</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
@@ -998,6 +998,10 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>Lizenz: {license} · &lt;a href=&quot;{source}&quot;&gt;Modelldetails&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Details…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1022,6 +1026,10 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Download</source>
         <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Download fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.</translation>
     </message>
     <message>
         <source>Delete model</source>

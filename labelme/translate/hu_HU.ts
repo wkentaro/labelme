@@ -956,6 +956,10 @@ Várt hely: {path}</translation>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>Letöltés…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>Töltsön le modelleket az AI offline használatához. Letöltés közben folytathatja az annotálást.</translation>
     </message>
@@ -976,10 +980,6 @@ Várt hely: {path}</translation>
         <translation>A SAM3 használatára a SAM License vonatkozik, beleértve a kereskedelmi ellenőrzéseket és a végfelhasználási korlátozásokat. Letöltés vagy használat előtt olvassa el a teljes megállapodást.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>{model} letöltése vagy megszakítása</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Törlés</translation>
     </message>
@@ -998,6 +998,10 @@ Várt hely: {path}</translation>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>Licenc: {license} · &lt;a href=&quot;{source}&quot;&gt;Modell részletei&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Részletek…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1022,6 +1026,10 @@ Várt hely: {path}</translation>
     <message>
         <source>Download</source>
         <translation>Letöltés</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>A letöltés sikertelen. Ellenőrizze a kapcsolatot, és próbálja újra.</translation>
     </message>
     <message>
         <source>Delete model</source>

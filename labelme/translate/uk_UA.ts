@@ -953,6 +953,10 @@ Expected location: {path}</source>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>Завантаження…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>Завантажте моделі для роботи зі ШІ без інтернету. Під час завантаження можна продовжувати розмітку.</translation>
     </message>
@@ -973,10 +977,6 @@ Expected location: {path}</source>
         <translation>Використання SAM3 регулюється SAM License, зокрема торговельним контролем та обмеженнями кінцевого використання. Перед завантаженням або використанням прочитайте угоду повністю.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>Завантажити {model} або скасувати завантаження</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Видалити</translation>
     </message>
@@ -995,6 +995,10 @@ Expected location: {path}</source>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>Ліцензія: {license} · &lt;a href=&quot;{source}&quot;&gt;Відомості про модель&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Подробиці…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1019,6 +1023,10 @@ Expected location: {path}</source>
     <message>
         <source>Download</source>
         <translation>Завантажити</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Не вдалося завантажити. Перевірте з’єднання та спробуйте ще раз.</translation>
     </message>
     <message>
         <source>Delete model</source>

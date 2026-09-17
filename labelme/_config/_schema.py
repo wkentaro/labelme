@@ -283,10 +283,11 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         group="AI assist",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Default model")),
         kind="enum",
-        choices=tuple(option.display_name for option in AI_ASSIST_MODEL_OPTIONS),
+        choices=(None, *(option.display_name for option in AI_ASSIST_MODEL_OPTIONS)),
         # pyside6-lupdate needs literal markers here. A schema test keeps these
         # translation declarations aligned with the shared non-Qt model list.
         choice_labels=(
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "(none)")),
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "EfficientSam (speed)")),
             cast(
                 str,
@@ -306,8 +307,11 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         group="AI assist",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "AI Text-to-Annotation")),
         kind="enum",
-        choices=tuple(model_name for model_name, _ in AI_TEXT_MODEL_OPTIONS),
-        choice_labels=tuple(display_name for _, display_name in AI_TEXT_MODEL_OPTIONS),
+        choices=(None, *(model_name for model_name, _ in AI_TEXT_MODEL_OPTIONS)),
+        choice_labels=(
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "(none)")),
+            *(display_name for _, display_name in AI_TEXT_MODEL_OPTIONS),
+        ),
     ),
     Setting(
         key_path=("mask_polygonization", "detail"),

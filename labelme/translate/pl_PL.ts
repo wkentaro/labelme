@@ -950,6 +950,10 @@ Oczekiwana lokalizacja: {path}</translation>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>Pobieranie…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>Pobierz modele, aby korzystać z AI offline. Podczas pobierania możesz kontynuować adnotacje.</translation>
     </message>
@@ -970,10 +974,6 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Korzystanie z SAM3 podlega SAM License, w tym kontroli handlu i ograniczeniom końcowego zastosowania. Przed pobraniem lub użyciem przeczytaj całą umowę.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>Pobierz lub anuluj {model}</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Usuń</translation>
     </message>
@@ -992,6 +992,10 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>Licencja: {license} · &lt;a href=&quot;{source}&quot;&gt;Szczegóły modelu&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Szczegóły…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1016,6 +1020,10 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Download</source>
         <translation>Pobierz</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Pobieranie nie powiodło się. Sprawdź połączenie i spróbuj ponownie.</translation>
     </message>
     <message>
         <source>Delete model</source>

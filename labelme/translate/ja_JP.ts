@@ -964,6 +964,10 @@ Expected location: {path}</source>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>ダウンロード中…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>モデルをダウンロードすると、オフラインでAIを利用できます。ダウンロード中もアノテーションを続けられます。</translation>
     </message>
@@ -984,10 +988,6 @@ Expected location: {path}</source>
         <translation>SAM3の利用には、貿易管理および最終用途の制限を含むSAM Licenseが適用されます。ダウンロードまたは利用する前に、契約全文をお読みください。</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>{model} のダウンロードまたはキャンセル</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
@@ -1006,6 +1006,10 @@ Expected location: {path}</source>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>ライセンス: {license} · &lt;a href=&quot;{source}&quot;&gt;モデルの詳細&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>詳細…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1030,6 +1034,10 @@ Expected location: {path}</source>
     <message>
         <source>Download</source>
         <translation>ダウンロード</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>ダウンロードに失敗しました。接続を確認して再試行してください。</translation>
     </message>
     <message>
         <source>Delete model</source>

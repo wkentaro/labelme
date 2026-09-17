@@ -950,6 +950,10 @@ Vị trí dự kiến: {path}</translation>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>Đang tải xuống…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>Tải mô hình để dùng AI ngoại tuyến. Bạn có thể tiếp tục chú thích trong khi tải xuống.</translation>
     </message>
@@ -970,10 +974,6 @@ Vị trí dự kiến: {path}</translation>
         <translation>Việc sử dụng SAM3 tuân theo SAM License, bao gồm các biện pháp kiểm soát thương mại và hạn chế về mục đích sử dụng cuối cùng. Hãy đọc toàn bộ thỏa thuận trước khi tải xuống hoặc sử dụng.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>Tải xuống hoặc hủy {model}</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Xóa</translation>
     </message>
@@ -992,6 +992,10 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>Giấy phép: {license} · &lt;a href=&quot;{source}&quot;&gt;Chi tiết mô hình&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Chi tiết…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1016,6 +1020,10 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Download</source>
         <translation>Tải xuống</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Tải xuống không thành công. Kiểm tra kết nối và thử lại.</translation>
     </message>
     <message>
         <source>Delete model</source>

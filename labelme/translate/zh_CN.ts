@@ -956,6 +956,10 @@ Expected location: {path}</source>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>正在下载…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>下载模型以离线使用 AI。下载期间您可以继续标注。</translation>
     </message>
@@ -976,10 +980,6 @@ Expected location: {path}</source>
         <translation>使用 SAM3 须遵守 SAM License，包括贸易管制和最终用途限制。下载或使用前请阅读完整协议。</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>下载或取消 {model}</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
@@ -998,6 +998,10 @@ Expected location: {path}</source>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>许可证：{license} · &lt;a href=&quot;{source}&quot;&gt;模型详情&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>详情…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1022,6 +1026,10 @@ Expected location: {path}</source>
     <message>
         <source>Download</source>
         <translation>下载</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>下载失败。请检查网络连接并重试。</translation>
     </message>
     <message>
         <source>Delete model</source>

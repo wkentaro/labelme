@@ -4,6 +4,8 @@ import html
 from collections.abc import Callable
 
 import osam
+from PySide6 import QtCore
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
@@ -18,8 +20,15 @@ class ModelsWidget(QtWidgets.QWidget):
         super().__init__()
         self._manager = manager
         self._remove_model = remove_model
+        self._links: dict[QtWidgets.QLabel, str] = {}
         self._rows: dict[
-            str, tuple[QtWidgets.QLabel, QtWidgets.QPushButton, QtWidgets.QPushButton]
+            str,
+            tuple[
+                QtWidgets.QLabel,
+                QtWidgets.QPushButton,
+                QtWidgets.QPushButton,
+                QtWidgets.QPushButton,
+            ],
         ] = {}
         layout = QtWidgets.QVBoxLayout(self)
         description = QtWidgets.QLabel(
@@ -53,11 +62,19 @@ class ModelsWidget(QtWidgets.QWidget):
                 self.tr(
                     'License: {license} · <a href="{source}">Model details</a>'
                 ).format(
-                    license=html.escape(metadata.license_name),
+                    license=(
+                        f'<a href="{html.escape(metadata.license_url, quote=True)}">'
+                        f"{html.escape(metadata.license_name)}</a>"
+                    ),
                     source=html.escape(metadata.source_url, quote=True),
                 )
             )
             license_link.setWordWrap(True)
+            self._links[license_link] = license_link.text()
+            license_link.setTextInteractionFlags(
+                QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse
+                | QtCore.Qt.TextInteractionFlag.LinksAccessibleByKeyboard
+            )
             license_link.setOpenExternalLinks(True)
             row_layout.addWidget(license_link, 2, 0, 1, 2)
             if name == "sam3:latest":
@@ -71,12 +88,10 @@ class ModelsWidget(QtWidgets.QWidget):
                 notice.setWordWrap(True)
                 row_layout.addWidget(notice, 3, 0, 1, 2)
             status = QtWidgets.QLabel()
+            status.setTextFormat(QtCore.Qt.TextFormat.PlainText)
             status.setWordWrap(True)
             row_layout.addWidget(status, 4, 0, 1, 2)
             download = QtWidgets.QPushButton()
-            download.setAccessibleName(
-                self.tr("Download or cancel {model}").format(model=display)
-            )
             download.clicked.connect(
                 lambda _checked=False, model=name: self._download_or_cancel(model)
             )
@@ -85,16 +100,34 @@ class ModelsWidget(QtWidgets.QWidget):
             remove.clicked.connect(
                 lambda _checked=False, model=name: self._delete(model)
             )
+            details = QtWidgets.QPushButton(self.tr("Details…"))
+            details.setAccessibleName(f"{details.text()} {display}")
+            details.clicked.connect(
+                lambda _checked=False, model=name: self._show_error(model)
+            )
             buttons = QtWidgets.QHBoxLayout()
             buttons.addWidget(download)
             buttons.addWidget(remove)
+            buttons.addWidget(details)
             buttons.addStretch()
             row_layout.addLayout(buttons, 5, 0, 1, 2)
             layout.addWidget(row)
-            self._rows[name] = status, download, remove
+            self._rows[name] = status, download, remove, details
         manager.changed.connect(self.refresh)
         manager.progress_changed.connect(self._refresh_progress)
         self.refresh()
+        self._sync_link_color()
+
+    def changeEvent(self, event: QtCore.QEvent, /) -> None:
+        super().changeEvent(event)
+        if event.type() == QtCore.QEvent.Type.PaletteChange:
+            self._sync_link_color()
+
+    def _sync_link_color(self) -> None:
+        # Underlines identify links; the text color keeps them readable in both themes.
+        color = self.palette().color(QtGui.QPalette.ColorRole.WindowText).name()
+        for label, text in self._links.items():
+            label.setText(text.replace("<a ", f'<a style="color: {color}" '))
 
     def refresh(self) -> None:
         manager = self._manager
@@ -103,7 +136,7 @@ class ModelsWidget(QtWidgets.QWidget):
             "downloaded": self.tr("Downloaded"),
             "failed": self.tr("Failed"),
         }
-        for name, (status, download, remove) in self._rows.items():
+        for name, (status, download, remove, details) in self._rows.items():
             state = manager.get_state(name)
             if state == "queued":
                 text = self.tr("Queued · position {position}").format(
@@ -113,8 +146,7 @@ class ModelsWidget(QtWidgets.QWidget):
                 text = self._describe_transfer()
             else:
                 text = labels[state]
-            if state == "failed":
-                text += ": " + manager.errors.get(name, "")
+            details.setVisible(state == "failed")
             status.setText(text)
             download.setText(
                 self.tr("Cancel")
@@ -124,6 +156,7 @@ class ModelsWidget(QtWidgets.QWidget):
                 else self.tr("Download")
             )
             download.setEnabled(state != "downloaded")
+            download.setAccessibleName(f"{download.text()} {manager.models[name]}")
             remove.setEnabled(state == "downloaded")
 
     def _refresh_progress(self) -> None:
@@ -133,6 +166,8 @@ class ModelsWidget(QtWidgets.QWidget):
 
     def _describe_transfer(self) -> str:
         filename, done, total = self._manager.progress
+        if not filename:
+            return self.tr("Downloading…")
         locale = self.locale()
         return self.tr("Downloading {filename} · {done} / {total}").format(
             filename=filename,
@@ -146,6 +181,17 @@ class ModelsWidget(QtWidgets.QWidget):
         else:
             self._manager.enqueue(model_name)
 
+    def _show_error(self, model_name: str, /) -> None:
+        message = QtWidgets.QMessageBox(self)
+        message.setWindowTitle(self.tr("Failed"))
+        message.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+        message.setText(self._manager.models[model_name])
+        message.setInformativeText(
+            self.tr("Download failed. Check your connection and retry.")
+        )
+        message.setDetailedText(self._manager.errors.get(model_name, ""))
+        message.exec()
+
     def _delete(self, model_name: str, /) -> None:
         answer = QtWidgets.QMessageBox.question(
             self,
@@ -155,8 +201,8 @@ class ModelsWidget(QtWidgets.QWidget):
                 "Your annotations will not change."
             ).format(model=self._manager.models[model_name]),
             QtWidgets.QMessageBox.StandardButton.Yes
-            | QtWidgets.QMessageBox.StandardButton.No,
-            QtWidgets.QMessageBox.StandardButton.No,
+            | QtWidgets.QMessageBox.StandardButton.Cancel,
+            QtWidgets.QMessageBox.StandardButton.Cancel,
         )
         if answer == QtWidgets.QMessageBox.StandardButton.Yes:
             try:

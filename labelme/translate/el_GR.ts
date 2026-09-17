@@ -952,6 +952,10 @@ Expected location: {path}</source>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>Λήψη…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>Κατεβάστε μοντέλα για χρήση της AI χωρίς σύνδεση. Μπορείτε να συνεχίσετε τον σχολιασμό κατά τη λήψη.</translation>
     </message>
@@ -972,10 +976,6 @@ Expected location: {path}</source>
         <translation>Η χρήση του SAM3 υπόκειται στη SAM License, συμπεριλαμβανομένων των εμπορικών ελέγχων και των περιορισμών τελικής χρήσης. Διαβάστε ολόκληρη τη συμφωνία πριν από τη λήψη ή τη χρήση.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>Λήψη ή ακύρωση του {model}</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Διαγραφή</translation>
     </message>
@@ -994,6 +994,10 @@ Expected location: {path}</source>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>Άδεια: {license} · &lt;a href=&quot;{source}&quot;&gt;Λεπτομέρειες μοντέλου&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>Λεπτομέρειες…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1018,6 +1022,10 @@ Expected location: {path}</source>
     <message>
         <source>Download</source>
         <translation>Λήψη</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>Η λήψη απέτυχε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</translation>
     </message>
     <message>
         <source>Delete model</source>

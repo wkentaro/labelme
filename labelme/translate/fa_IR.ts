@@ -950,6 +950,10 @@ Expected location: {path}</source>
 <context>
     <name>ModelsWidget</name>
     <message>
+        <source>Downloading…</source>
+        <translation>در حال بارگیری…</translation>
+    </message>
+    <message>
         <source>Download models to use AI offline. You can keep annotating while downloads run.</source>
         <translation>برای استفادهٔ آفلاین از هوش مصنوعی، مدل‌ها را بارگیری کنید. هنگام بارگیری می‌توانید به حاشیه‌نویسی ادامه دهید.</translation>
     </message>
@@ -970,10 +974,6 @@ Expected location: {path}</source>
         <translation>استفاده از SAM3 تابع SAM License است، از جمله کنترل‌های تجاری و محدودیت‌های کاربرد نهایی. پیش از بارگیری یا استفاده، متن کامل توافق‌نامه را بخوانید.</translation>
     </message>
     <message>
-        <source>Download or cancel {model}</source>
-        <translation>بارگیری یا لغو {model}</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>حذف</translation>
     </message>
@@ -992,6 +992,10 @@ Expected location: {path}</source>
     <message>
         <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
         <translation>مجوز: {license} · &lt;a href=&quot;{source}&quot;&gt;جزئیات مدل&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>Details…</source>
+        <translation>جزئیات…</translation>
     </message>
     <message>
         <source>Downloaded</source>
@@ -1016,6 +1020,10 @@ Expected location: {path}</source>
     <message>
         <source>Download</source>
         <translation>بارگیری</translation>
+    </message>
+    <message>
+        <source>Download failed. Check your connection and retry.</source>
+        <translation>دانلود ناموفق بود. اتصال خود را بررسی کنید و دوباره تلاش کنید.</translation>
     </message>
     <message>
         <source>Delete model</source>
