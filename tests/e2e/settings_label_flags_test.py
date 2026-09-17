@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 
 import pytest
+from PySide6 import QtCore
+from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._widgets._settings_dialog import _LabelFlagsEditor
@@ -14,6 +16,47 @@ from .conftest import click_canvas_fraction
 from .conftest import draw_triangle
 from .conftest import schedule_on_dialog
 from .conftest import show_window_and_wait_for_imagedata
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("close_action", ["button", "escape", "window"])
+def test_closing_untouched_shape_flag_settings_preserves_rules_exactly(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    tmp_path: Path,
+    close_action: str,
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    original = (
+        b"label_flags:\n"
+        b'  "^car$":\n'
+        b'    - " leading"\n'
+        b'    - "trailing "\n'
+        b'    - "embedded\\nnewline"\n'
+    )
+    expected_rules = {"^car$": [" leading", "trailing ", "embedded\nnewline"]}
+    config_file.write_bytes(original)
+    win = main_win(config_file=config_file)
+
+    win._open_settings()
+    settings = win._settings_dialog
+    assert settings is not None
+    if close_action == "button":
+        close_button = next(
+            button
+            for button in settings.findChildren(QtWidgets.QPushButton)
+            if button.text() == "Close"
+        )
+        qtbot.mouseClick(close_button, QtCore.Qt.MouseButton.LeftButton)
+    elif close_action == "escape":
+        qtbot.keyClick(settings, QtCore.Qt.Key.Key_Escape)
+    else:
+        settings.close()
+
+    assert not settings.isVisible()
+    assert config_file.read_bytes() == original
+    assert win._config["label_flags"] == expected_rules
 
 
 @pytest.mark.gui

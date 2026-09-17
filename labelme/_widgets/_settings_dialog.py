@@ -130,6 +130,7 @@ class _LabelFlagsEditor(QtWidgets.QWidget):
         self._rows: list[
             tuple[QtWidgets.QLineEdit, _PlainTextEdit, QtWidgets.QPushButton]
         ] = []
+        self._committed_rows: tuple[tuple[str, str], ...] = ()
         self._grid = QtWidgets.QGridLayout()
         self._grid.setColumnStretch(0, 1)
         self._grid.setColumnStretch(1, 2)
@@ -166,6 +167,9 @@ class _LabelFlagsEditor(QtWidgets.QWidget):
         self._rows.clear()
         for pattern, names in (value or {}).items():
             self._add_rule(pattern=pattern, names=names)
+        self._committed_rows = tuple(
+            (pattern.text(), flags.toPlainText()) for pattern, flags, _ in self._rows
+        )
         self.setFocusProxy(self._rows[0][0] if self._rows else self._add_button)
         self._validate()
 
@@ -256,9 +260,16 @@ class _LabelFlagsEditor(QtWidgets.QWidget):
         return None if error else rules
 
     def commit(self) -> None:
+        rows = tuple(
+            (pattern.text(), flags.toPlainText()) for pattern, flags, _ in self._rows
+        )
+        # Only parse edits because the controls cannot represent every valid raw name.
+        if rows == self._committed_rows:
+            return
         rules = self._validate()
         if rules is None:
             return
+        self._committed_rows = rows
         value = rules or None
         if value != self._value:
             self._value = value
