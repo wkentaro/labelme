@@ -990,8 +990,8 @@ Expected location: {path}</source>
         <translation>بارگیری نشده</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>مجوز: {license} · &lt;a href=&quot;{source}&quot;&gt;جزئیات مدل&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>مجوز: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

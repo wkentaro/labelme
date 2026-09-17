@@ -990,8 +990,8 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Nie pobrano</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Licencja: {license} · &lt;a href=&quot;{source}&quot;&gt;Szczegóły modelu&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Licencja: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

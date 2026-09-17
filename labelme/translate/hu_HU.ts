@@ -996,8 +996,8 @@ Várt hely: {path}</translation>
         <translation>Nincs letöltve</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Licenc: {license} · &lt;a href=&quot;{source}&quot;&gt;Modell részletei&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Licenc: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

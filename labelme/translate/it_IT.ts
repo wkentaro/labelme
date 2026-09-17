@@ -996,8 +996,8 @@ Posizione prevista: {path}</translation>
         <translation>Non scaricato</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Licenza: {license} · &lt;a href=&quot;{source}&quot;&gt;Dettagli del modello&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Licenza: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

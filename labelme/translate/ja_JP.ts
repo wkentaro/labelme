@@ -1004,8 +1004,8 @@ Expected location: {path}</source>
         <translation>未ダウンロード</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>ライセンス: {license} · &lt;a href=&quot;{source}&quot;&gt;モデルの詳細&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>ライセンス: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

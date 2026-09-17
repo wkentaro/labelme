@@ -993,8 +993,8 @@ Expected location: {path}</source>
         <translation>Не скачано</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Лицензия: {license} · &lt;a href=&quot;{source}&quot;&gt;Сведения о модели&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Лицензия: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

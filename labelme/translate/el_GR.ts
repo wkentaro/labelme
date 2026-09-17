@@ -992,8 +992,8 @@ Expected location: {path}</source>
         <translation>Δεν έχει ληφθεί</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Άδεια: {license} · &lt;a href=&quot;{source}&quot;&gt;Λεπτομέρειες μοντέλου&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Άδεια: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

@@ -996,8 +996,8 @@ Emplacement attendu : {path}</translation>
         <translation>Non téléchargé</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Licence : {license} · &lt;a href=&quot;{source}&quot;&gt;Détails du modèle&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Licence : {license}</translation>
     </message>
     <message>
         <source>Details…</source>

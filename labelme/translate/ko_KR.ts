@@ -990,8 +990,8 @@ Expected location: {path}</source>
         <translation>다운로드 안 됨</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>라이선스: {license} · &lt;a href=&quot;{source}&quot;&gt;모델 정보&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>라이선스: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

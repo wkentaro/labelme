@@ -990,8 +990,8 @@ Local esperado: {path}</translation>
         <translation>Não baixado</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Licença: {license} · &lt;a href=&quot;{source}&quot;&gt;Detalhes do modelo&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Licença: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

@@ -990,8 +990,8 @@ Ubicación esperada: {path}</translation>
         <translation>Sin descargar</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Licencia: {license} · &lt;a href=&quot;{source}&quot;&gt;Detalles del modelo&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Licencia: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

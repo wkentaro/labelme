@@ -59,14 +59,11 @@ class ModelsWidget(QtWidgets.QWidget):
             row_layout.addWidget(QtWidgets.QLabel(" · ".join(capabilities)), 1, 0, 1, 2)
             metadata = osam.apis.get_model_metadata(name)
             license_link = QtWidgets.QLabel(
-                self.tr(
-                    'License: {license} · <a href="{source}">Model details</a>'
-                ).format(
+                self.tr("License: {license}").format(
                     license=(
                         f'<a href="{html.escape(metadata.license_url, quote=True)}">'
                         f"{html.escape(metadata.license_name)}</a>"
                     ),
-                    source=html.escape(metadata.source_url, quote=True),
                 )
             )
             license_link.setWordWrap(True)

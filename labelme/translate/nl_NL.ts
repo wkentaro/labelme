@@ -990,8 +990,8 @@ Verwachte locatie: {path}</translation>
         <translation>Niet gedownload</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Licentie: {license} · &lt;a href=&quot;{source}&quot;&gt;Modeldetails&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Licentie: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

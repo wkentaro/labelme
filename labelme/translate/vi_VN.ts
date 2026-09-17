@@ -990,8 +990,8 @@ Vị trí dự kiến: {path}</translation>
         <translation>Chưa tải xuống</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Giấy phép: {license} · &lt;a href=&quot;{source}&quot;&gt;Chi tiết mô hình&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Giấy phép: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

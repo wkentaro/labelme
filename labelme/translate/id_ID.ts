@@ -990,8 +990,8 @@ Shapes</source>
         <translation>Belum diunduh</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Lisensi: {license} · &lt;a href=&quot;{source}&quot;&gt;Detail model&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Lisensi: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

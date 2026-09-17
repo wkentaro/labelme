@@ -996,8 +996,8 @@ Expected location: {path}</source>
         <translation>尚未下載</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>授權條款：{license} · &lt;a href=&quot;{source}&quot;&gt;模型詳細資訊&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>授權條款：{license}</translation>
     </message>
     <message>
         <source>Details…</source>

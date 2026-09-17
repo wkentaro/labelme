@@ -996,8 +996,8 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Nicht heruntergeladen</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Lizenz: {license} · &lt;a href=&quot;{source}&quot;&gt;Modelldetails&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Lizenz: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

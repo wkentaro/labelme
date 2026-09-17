@@ -990,8 +990,8 @@ Expected location: {path}</source>
         <translation>ยังไม่ได้ดาวน์โหลด</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>สัญญาอนุญาต: {license} · &lt;a href=&quot;{source}&quot;&gt;รายละเอียดโมเดล&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>สัญญาอนุญาต: {license}</translation>
     </message>
     <message>
         <source>Details…</source>

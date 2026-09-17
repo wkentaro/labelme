@@ -996,8 +996,8 @@ Beklenen konum: {path}</translation>
         <translation>İndirilmedi</translation>
     </message>
     <message>
-        <source>License: {license} · &lt;a href=&quot;{source}&quot;&gt;Model details&lt;/a&gt;</source>
-        <translation>Lisans: {license} · &lt;a href=&quot;{source}&quot;&gt;Model ayrıntıları&lt;/a&gt;</translation>
+        <source>License: {license}</source>
+        <translation>Lisans: {license}</translation>
     </message>
     <message>
         <source>Details…</source>
