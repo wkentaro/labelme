@@ -196,6 +196,15 @@ pyinstaller labelme/labelme/__main__.py \
   --onedir
 ```
 
+## Development
+
+Install [just](https://just.systems/man/en/packages.html) 1.58.0 or newer and
+[uv](https://docs.astral.sh/uv/getting-started/installation/). Recipes use Bash;
+on Windows, install Git for Windows and make its Bash available on `PATH`.
+
+Run `just` to list commands and their arguments. Common commands are
+`just setup`, `just lint`, and `just test`.
+
 ## Acknowledgement
 
 This repo is the fork of [mpitid/pylabelme](https://github.com/mpitid/pylabelme).

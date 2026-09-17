@@ -131,7 +131,7 @@ def main() -> None:
         for problem in problems:
             logger.error(problem)
         logger.error(
-            "run `make update_translate`, translate any new strings, "
+            "run `just update_translate`, translate any new strings, "
             "and commit the result"
         )
         sys.exit(1)

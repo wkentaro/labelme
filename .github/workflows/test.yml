@@ -20,11 +20,14 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - uses: extractions/setup-just@4a174aa1487e2bcb3f86a8fe24a05361a4f4fff1
+        with:
+          just-version: 1.58.0
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: '3.12'
-      - run: make setup
-      - run: make check_config_migrations
+      - run: just setup
+      - run: just check_config_migrations
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
@@ -35,13 +38,16 @@ jobs:
         python-version: ['3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v7
+      - uses: extractions/setup-just@4a174aa1487e2bcb3f86a8fe24a05361a4f4fff1
+        with:
+          just-version: 1.58.0
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
       - shell: bash
         run: |
-          make setup
+          just setup
       - uses: awalsh128/cache-apt-pkgs-action@v1
         if: matrix.os == 'ubuntu-latest'
         with:
@@ -63,9 +69,9 @@ jobs:
           MPLBACKEND: agg
         run: |
           if [ "$RUNNER_OS" = Linux ]; then
-            xvfb-run -a make test
+            xvfb-run -a just test
           else
-            make test
+            just test
           fi
       - name: Run examples
         shell: bash
@@ -111,13 +117,16 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
+      - uses: extractions/setup-just@4a174aa1487e2bcb3f86a8fe24a05361a4f4fff1
+        with:
+          just-version: 1.58.0
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: '3.12'
           activate-environment: true
       - shell: bash
         run: |
-          make setup
+          just setup
       - uses: awalsh128/cache-apt-pkgs-action@v1
         with:
           packages: xvfb libegl1 libxkbcommon0 libxcb-cursor0 libgl1
@@ -127,4 +136,4 @@ jobs:
         env:
           MPLBACKEND: agg
         run: |-
-          xvfb-run -a make test PYTEST_ARGS="-m network --numprocesses=1"
+          xvfb-run -a just test "-m network --numprocesses=1"

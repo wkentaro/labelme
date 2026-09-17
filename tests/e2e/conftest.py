@@ -31,7 +31,7 @@ _DEFAULT_WINDOW_SIZE: Final = QSize(800, 600)
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
     # The reference pixels are rendered on Linux, and Qt rendering can differ
-    # across platforms. Gating on the marker here keeps one plain `make test`
+    # across platforms. Gating on the marker here keeps one plain `just test`
     # correct on every OS, locally and in CI.
     if sys.platform == "linux":
         return
