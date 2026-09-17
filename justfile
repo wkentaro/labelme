@@ -78,7 +78,7 @@ release version=env("VERSION", ""):
             echo "usage: just release X.Y.Z" >&2
         fi
         echo "recent releases:" >&2
-        git tag --sort=-v:refname | sed -n "1,5{s/^/  /;p}" >&2
+        git tag --sort=-v:refname | sed -n "1,5s/^/  /p" >&2
         exit 1
     fi
     uv run towncrier build --yes --version "$version"
