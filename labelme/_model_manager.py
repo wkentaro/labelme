@@ -91,9 +91,6 @@ class ModelManager(QtCore.QObject):
         self._start_next()
 
     def _start_next(self) -> None:
-        # ponytail: a cancelled pull keeps the slot until its thread exits, so
-        # the next download, and quitting, wait up to the transfer timeout
-        # while a server stalls; detach the thread if that delay ever matters.
         if self._closed or self._pull is not None or not self.queue:
             return
         self.active = self.queue.pop(0)

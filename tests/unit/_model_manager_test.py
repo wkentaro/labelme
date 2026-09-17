@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import threading
+import time
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -119,6 +120,32 @@ def test_cancel_keeps_completed_files_and_quit_discards_queue(
         assert requests == ["/slow", "/slow"]
     finally:
         reopened.shutdown()
+
+
+def test_shutdown_interrupts_stalled_download(
+    *,
+    manager: ModelManager,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    download_server: tuple[str, list[str], threading.Event],
+) -> None:
+    origin, _, release = download_server
+    name = "efficientsam:10m"
+    monkeypatch.setattr(
+        osam.apis.get_model_type_by_name(name),
+        "_blobs",
+        {"model": _make_blob(url=origin + "/large")},
+    )
+    manager.enqueue(name)
+    # Consume the entire initial body so the worker is left waiting on a server
+    # that sends nothing more.
+    qtbot.waitUntil(lambda: manager.progress[1] == 2**20)
+    started_at = time.monotonic()
+    manager.shutdown()
+    # The server gives up on its own after a few seconds, which would also end
+    # the transfer; only a prompt return proves cancellation interrupted it.
+    assert time.monotonic() - started_at < 2
+    assert not release.is_set()
 
 
 def test_existing_files_count_as_downloaded_until_deleted(
