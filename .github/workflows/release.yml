@@ -15,8 +15,11 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v7
+      - uses: extractions/setup-just@4a174aa1487e2bcb3f86a8fe24a05361a4f4fff1
+        with:
+          just-version: 1.58.0
       - uses: astral-sh/setup-uv@v7
-      - run: make check_translate
+      - run: just check_translate
       - name: Validate release artifacts
         uses: ./.github/actions/artifact-install-smoke
       - uses: pypa/gh-action-pypi-publish@release/v1

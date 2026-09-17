@@ -9,9 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: extractions/setup-just@4a174aa1487e2bcb3f86a8fe24a05361a4f4fff1
+        with:
+          just-version: 1.58.0
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: '3.12'
-      - run: make setup
-      - run: make lint
-      - run: make check_translate
+      - run: just setup
+      - run: just lint
+      - run: just check_translate
