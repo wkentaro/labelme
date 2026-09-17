@@ -8,6 +8,7 @@ import PIL.Image
 import pytest
 import tifffile
 
+from labelme import _label_file
 from labelme._label_file import read_image_file
 
 
@@ -39,10 +40,23 @@ def test_corrupt_tiff_raises_os_error(*, tmp_path: Path) -> None:
         read_image_file(filename=str(path))
 
 
-def test_jpeg_returns_raw_bytes(*, tmp_path: Path) -> None:
+def test_jpeg_returns_raw_bytes(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     path = _make_image(tmp_path, filename="test.jpg", mode="RGB")
+    opened: list[PIL.Image.Image] = []
+    open_image = _label_file._imread
+
+    def track_open_image(filename: str, /) -> PIL.Image.Image:
+        image = open_image(filename)
+        opened.append(image)
+        return image
+
+    monkeypatch.setattr(_label_file, "_imread", track_open_image)
     data = read_image_file(filename=str(path))
     assert data == path.read_bytes()
+    assert len(opened) == 1
+    assert getattr(opened[0], "fp") is None
 
 
 def test_png_returns_raw_bytes(*, tmp_path: Path) -> None:
