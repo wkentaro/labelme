@@ -28,13 +28,16 @@ The triage axis records whose turn it is:
 
 A non-draft pull request with no verdict is ready for an agent to finalize. A draft is still being built or iterated. `needs-info` is shared with issues and means the pull request is waiting on an outside human.
 
-After finalizing a pull request, an agent applies exactly one mutually exclusive verdict:
+After reviewing a pull request, an agent applies exactly one mutually exclusive verdict:
 
 | Verdict | Meaning |
 | ------------------ | ------------------------------------------------------------------------- |
 | `recommend-merge` | Agent endorses it for maintainer review and merge |
 | `recommend-close` | Agent recommends that the maintainer review and close it |
 | `recommend-triage` | Code is sound, but the maintainer must make the product or scope decision |
+| `needs-changes` | Review found defects; the author must revise and push |
+
+`needs-changes` stands in for GitHub's native "changes requested", which is unavailable when the reviewer is the author or an agent acting under the author's account. Put the defects in the review comments, not the label.
 
 `maintainer-approved` records an explicit maintainer decision to merge after required checks pass. Apply it only at the maintainer's direction; it may coexist with an agent verdict because the labels record different authorities.
 
