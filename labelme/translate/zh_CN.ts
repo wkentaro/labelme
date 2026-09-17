@@ -1057,6 +1057,14 @@ Expected location: {path}</source>
         <translation>允许形状的点延伸到图像之外，例如用于部分可见的对象。</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>预定义形状标志</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>每行一个标志名称。模式：^car$ 精确匹配 car，car 匹配前缀，.* 匹配所有标签。</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI 文本转标注</translation>
     </message>
@@ -1222,6 +1230,49 @@ Expected location: {path}</source>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>标签模式</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>形状标志</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>添加规则</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>每行一个名称</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>移除</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>移除规则</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>请输入模式和至少一个标志名称。</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>标签模式重复。</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>正则表达式无效。</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>第 {row} 行：{error} 更改尚未应用。</translation>
     </message>
 </context>
 <context>

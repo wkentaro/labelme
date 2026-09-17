@@ -15,6 +15,7 @@ from labelme._config import load_config
 from labelme._widgets._integer_slider import IntegerSlider
 from labelme._widgets._settings_dialog import SettingsDialog
 from labelme._widgets._settings_dialog import _ColorSwatchButton
+from labelme._widgets._settings_dialog import _LabelFlagsEditor
 from labelme._widgets._settings_dialog import _PlainTextEdit
 
 Applied = list[tuple[tuple[str, ...], object]]
@@ -958,3 +959,53 @@ def test_enter_in_editor_reaches_default_button(
     assert not page._navigation.hasFocus()
     assert not dialog.isVisible()
     assert applied == []
+
+
+@pytest.mark.parametrize("saved_rules", [None, {"^car$": ["occluded"]}])
+def test_shape_flag_write_failure_restores_saved_rules(
+    *,
+    qtbot: QtBot,
+    applied: Applied,
+    saved_rules: dict[str, list[str]] | None,
+) -> None:
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        applied=applied,
+        overrides={"label_flags": saved_rules},
+        succeed=False,
+        previewed=None,
+    )
+    editor = dialog._editors[("label_flags",)]
+    assert isinstance(editor, _LabelFlagsEditor)
+    if saved_rules is None:
+        editor._add_button.click()
+        editor._rows[0][0].setText("^car$")
+    editor._rows[0][1].setPlainText("truncated")
+    editor.commit()
+    assert applied == [(("label_flags",), {"^car$": ["truncated"]})]
+    if saved_rules is None:
+        assert editor._rows == []
+        assert editor.focusProxy() is editor._add_button
+    else:
+        assert editor._rows[0][1].toPlainText() == "occluded"
+
+
+def test_shape_flag_validation_preserves_accessible_note(
+    *,
+    dialog: SettingsDialog,
+) -> None:
+    editor = dialog._editors[("label_flags",)]
+    assert isinstance(editor, _LabelFlagsEditor)
+    note = editor.accessibleDescription()
+    assert "One flag name per line" in note
+    editor._add_button.click()
+    assert editor.accessibleDescription() == f"{note} {editor._error.text()}"
+    pattern, flags, remove = editor._rows[0]
+    pattern.setText("car(")
+    flags.setPlainText("occluded")
+    assert "Invalid regular expression" in editor.accessibleDescription()
+    assert editor.accessibleDescription().count(note) == 1
+    pattern.setText("^car$")
+    assert editor.accessibleDescription() == note
+    remove.click()
+    assert editor.accessibleDescription() == note

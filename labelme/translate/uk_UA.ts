@@ -1054,6 +1054,14 @@ Expected location: {path}</source>
         <translation>Дозволяє точкам фігур виходити за межі зображення, напр. для частково видимих об&apos;єктів.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Попередньо визначені прапорці фігур</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Одна назва прапорця на рядок. Шаблони: ^car$ точно відповідає car, car — префіксу, .* — будь-якій мітці.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI: текст в анотацію</translation>
     </message>
@@ -1219,6 +1227,49 @@ Expected location: {path}</source>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Шаблон мітки</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Прапорці фігури</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Додати правило</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Одна назва на рядок</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Видалити</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Видалити правило</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Введіть шаблон і принаймні одну назву прапорця.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Повторюваний шаблон мітки.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Неприпустимий регулярний вираз.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Рядок {row}: {error} Зміни не застосовано.</translation>
     </message>
 </context>
 <context>

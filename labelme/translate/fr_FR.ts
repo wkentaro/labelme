@@ -1057,6 +1057,14 @@ Emplacement attendu : {path}</translation>
         <translation>Permet aux points des formes de dépasser l&apos;image, par exemple pour les objets partiellement visibles.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Indicateurs de forme prédéfinis</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Un nom d’indicateur par ligne. Motifs : ^car$ correspond exactement à car, car à un préfixe, .* à toute étiquette.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>Invite IA</translation>
     </message>
@@ -1222,6 +1230,49 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RVB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Motif d’étiquette</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Indicateurs de forme</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Ajouter une règle</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Un nom par ligne</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Supprimer</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Supprimer la règle</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Saisissez un motif et au moins un nom d’indicateur.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Motif d’étiquette en double.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Expression régulière non valide.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Ligne {row} : {error} Les modifications n’ont pas été appliquées.</translation>
     </message>
 </context>
 <context>

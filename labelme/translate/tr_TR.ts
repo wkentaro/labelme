@@ -1057,6 +1057,14 @@ Beklenen konum: {path}</translation>
         <translation>Şekil noktalarının görüntünün dışına taşmasına izin verir, örn. kısmen görünen nesneler için.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Önceden tanımlı şekil bayrakları</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Her satıra bir bayrak adı. Desenler: ^car$ tam olarak car ile, car bir önekle, .* her etiketle eşleşir.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI ile Metinden Açıklama</translation>
     </message>
@@ -1222,6 +1230,49 @@ Beklenen konum: {path}</translation>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Etiket deseni</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Şekil bayrakları</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Kural ekle</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Her satıra bir ad</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kaldır</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Kuralı kaldır</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Bir desen ve en az bir bayrak adı girin.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Yinelenen etiket deseni.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Geçersiz düzenli ifade.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Satır {row}: {error} Değişiklikler uygulanmadı.</translation>
     </message>
 </context>
 <context>

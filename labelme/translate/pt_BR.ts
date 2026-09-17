@@ -1051,6 +1051,14 @@ Local esperado: {path}</translation>
         <translation>Permite que os pontos das formas se estendam além da imagem, por ex. para objetos parcialmente visíveis.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Sinalizadores de forma predefinidos</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Um nome de sinalizador por linha. Padrões: ^car$ corresponde exatamente a car, car a um prefixo, .* a qualquer rótulo.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>Texto para Anotação IA</translation>
     </message>
@@ -1216,6 +1224,49 @@ Local esperado: {path}</translation>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Padrão de rótulo</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Sinalizadores de forma</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Adicionar regra</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Um nome por linha</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Remover</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Remover regra</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Insira um padrão e pelo menos um nome de sinalizador.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Padrão de rótulo duplicado.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Expressão regular inválida.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Linha {row}: {error} As alterações não foram aplicadas.</translation>
     </message>
 </context>
 <context>

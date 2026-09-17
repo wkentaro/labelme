@@ -1051,6 +1051,14 @@ Expected location: {path}</source>
         <translation>به نقاط شکل اجازه می‌دهد فراتر از تصویر امتداد یابند، مثلاً برای اشیای تا حدی قابل مشاهده.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>پرچم‌های از پیش تعریف‌شدهٔ شکل</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>هر نام پرچم در یک خط. الگوها: ^car$ دقیقاً با car، car با پیشوند و .* با هر برچسب مطابقت دارد.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>پیشنهاد هوش مصنوعی</translation>
     </message>
@@ -1216,6 +1224,49 @@ Expected location: {path}</source>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>الگوی برچسب</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>پرچم‌های شکل</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>افزودن قانون</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>هر نام در یک خط</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>حذف</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>حذف قانون</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>یک الگو و حداقل یک نام پرچم وارد کنید.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>الگوی برچسب تکراری است.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>عبارت باقاعده نامعتبر است.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>ردیف {row}: {error} تغییرات اعمال نشده‌اند.</translation>
     </message>
 </context>
 <context>

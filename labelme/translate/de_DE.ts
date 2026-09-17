@@ -1057,6 +1057,14 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Erlaubt, dass Formpunkte über das Bild hinausragen, z. B. für teilweise sichtbare Objekte.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Vordefinierte Form-Flags</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Ein Flag-Name pro Zeile. Muster: ^car$ passt genau auf car, car auf ein Präfix, .* auf jedes Label.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>KI-Prompt</translation>
     </message>
@@ -1222,6 +1230,49 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Label-Muster</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Form-Flags</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Regel hinzufügen</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Ein Name pro Zeile</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Entfernen</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Regel entfernen</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Geben Sie ein Muster und mindestens einen Flag-Namen ein.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Doppeltes Label-Muster.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Ungültiger regulärer Ausdruck.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Zeile {row}: {error} Änderungen wurden nicht angewendet.</translation>
     </message>
 </context>
 <context>

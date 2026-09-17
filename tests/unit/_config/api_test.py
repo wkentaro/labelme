@@ -543,3 +543,11 @@ def test_load_config_rejects_invalid_shape_color(
             config_file=None,
             config_overrides={"shape_color": shape_color},
         )
+
+
+@pytest.mark.parametrize(
+    "value", [[], "car", {"car": "occluded"}, {"car": [1]}, {1: []}]
+)
+def test_reject_malformed_shape_flag_rules(*, value: object) -> None:
+    with pytest.raises(ValueError, match="label_flags must map"):
+        _config.load_config(config_file=None, config_overrides={"label_flags": value})

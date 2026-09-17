@@ -1051,6 +1051,14 @@ Vị trí dự kiến: {path}</translation>
         <translation>Cho phép các điểm của hình vượt ra ngoài ảnh, ví dụ cho các đối tượng hiển thị một phần.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Cờ hình dạng định sẵn</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Mỗi dòng một tên cờ. Mẫu: ^car$ khớp chính xác với car, car khớp tiền tố, .* khớp mọi nhãn.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>AI Văn bản sang Chú thích</translation>
     </message>
@@ -1216,6 +1224,49 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Mẫu nhãn</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Cờ hình dạng</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Thêm quy tắc</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Mỗi dòng một tên</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Xóa</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Xóa quy tắc</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Nhập một mẫu và ít nhất một tên cờ.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Mẫu nhãn bị trùng.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Biểu thức chính quy không hợp lệ.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Dòng {row}: {error} Các thay đổi chưa được áp dụng.</translation>
     </message>
 </context>
 <context>

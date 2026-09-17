@@ -1051,6 +1051,14 @@ Ubicación esperada: {path}</translation>
         <translation>Permite que los puntos de las formas se extiendan más allá de la imagen, p. ej. para objetos parcialmente visibles.</translation>
     </message>
     <message>
+        <source>Predefined shape flags</source>
+        <translation>Indicadores de forma predefinidos</translation>
+    </message>
+    <message>
+        <source>One flag name per line. Patterns: ^car$ matches car exactly, car matches a prefix, .* matches every label.</source>
+        <translation>Un nombre de indicador por línea. Patrones: ^car$ coincide exactamente con car, car con un prefijo, .* con cualquier etiqueta.</translation>
+    </message>
+    <message>
         <source>AI Text-to-Annotation</source>
         <translation>Indicación IA</translation>
     </message>
@@ -1216,6 +1224,49 @@ Ubicación esperada: {path}</translation>
     <message>
         <source>RGB: {red}, {green}, {blue}</source>
         <translation>RGB: {red}, {green}, {blue}</translation>
+    </message>
+</context>
+<context>
+    <name>_LabelFlagsEditor</name>
+    <message>
+        <source>Label pattern</source>
+        <translation>Patrón de etiqueta</translation>
+    </message>
+    <message>
+        <source>Shape flags</source>
+        <translation>Indicadores de forma</translation>
+    </message>
+    <message>
+        <source>Add rule</source>
+        <translation>Añadir regla</translation>
+    </message>
+    <message>
+        <source>One name per line</source>
+        <translation>Un nombre por línea</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Eliminar</translation>
+    </message>
+    <message>
+        <source>Remove rule</source>
+        <translation>Eliminar regla</translation>
+    </message>
+    <message>
+        <source>Enter a pattern and at least one flag name.</source>
+        <translation>Introduzca un patrón y al menos un nombre de indicador.</translation>
+    </message>
+    <message>
+        <source>Duplicate label pattern.</source>
+        <translation>Patrón de etiqueta duplicado.</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression.</source>
+        <translation>Expresión regular no válida.</translation>
+    </message>
+    <message>
+        <source>Row {row}: {error} Changes have not been applied.</source>
+        <translation>Fila {row}: {error} Los cambios no se han aplicado.</translation>
     </message>
 </context>
 <context>
