@@ -25,6 +25,43 @@ class _LoadedModel:
 
 
 @pytest.mark.gui
+def test_recommended_models_are_explained_before_all_models(
+    *, main_win: MainWinFactory
+) -> None:
+    win = main_win()
+    win._open_models()
+    dialog = win._settings_dialog
+    assert dialog is not None
+    models = dialog.findChild(ModelsWidget)
+    assert models is not None
+    layout = models.layout()
+    assert layout is not None
+
+    headings = {
+        label.text(): label
+        for label in models.findChildren(QtWidgets.QLabel)
+        if label.text() in {"Recommended", "All models"}
+    }
+    assert set(headings) == {"Recommended", "All models"}
+    sam2_row = models._rows["sam2:latest"][0].parentWidget()
+    sam3_row = models._rows["sam3:latest"][0].parentWidget()
+    efficient_sam_row = models._rows["efficientsam:10m"][0].parentWidget()
+    assert sam2_row is not None
+    assert sam3_row is not None
+    assert efficient_sam_row is not None
+    assert (
+        layout.indexOf(headings["Recommended"])
+        < layout.indexOf(sam2_row)
+        < layout.indexOf(sam3_row)
+        < layout.indexOf(headings["All models"])
+        < layout.indexOf(efficient_sam_row)
+    )
+    labels = {label.text() for label in models.findChildren(QtWidgets.QLabel)}
+    assert "Best balance of speed and quality for point and box prompts." in labels
+    assert "Best for text prompts and finding multiple objects." in labels
+
+
+@pytest.mark.gui
 def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     *,
     main_win: MainWinFactory,

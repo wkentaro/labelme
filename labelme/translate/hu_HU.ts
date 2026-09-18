@@ -996,6 +996,22 @@ Várt hely: {path}</translation>
         <translation>Nincs letöltve</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>A sebesség és a minőség legjobb egyensúlya pont- és keretpromptokhoz.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Legjobb szöveges promptokhoz és több objektum megkereséséhez.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Ajánlott</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Összes modell</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Licenc: {license}</translation>
     </message>

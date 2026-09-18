@@ -993,6 +993,22 @@ Expected location: {path}</source>
         <translation>Не скачано</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>Оптимальный баланс скорости и качества для запросов точками и рамками.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Лучше всего подходит для текстовых запросов и поиска нескольких объектов.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Рекомендуемые</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Все модели</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Лицензия: {license}</translation>
     </message>

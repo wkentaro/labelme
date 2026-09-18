@@ -996,6 +996,22 @@ Beklenen konum: {path}</translation>
         <translation>İndirilmedi</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>Nokta ve kutu istemleri için en iyi hız ve kalite dengesi.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Metin istemleri ve birden fazla nesneyi bulmak için en iyisi.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Önerilen</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Tüm modeller</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Lisans: {license}</translation>
     </message>

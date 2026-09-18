@@ -996,6 +996,22 @@ Posizione prevista: {path}</translation>
         <translation>Non scaricato</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>Il miglior equilibrio tra velocità e qualità per prompt con punti e riquadri.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Ideale per prompt testuali e per trovare più oggetti.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Consigliati</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Tutti i modelli</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Licenza: {license}</translation>
     </message>

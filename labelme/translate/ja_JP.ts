@@ -1004,6 +1004,22 @@ Expected location: {path}</source>
         <translation>未ダウンロード</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>点およびボックスプロンプトで速度と品質のバランスに優れています。</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>テキストプロンプトや複数オブジェクトの検出に最適です。</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>おすすめ</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>すべてのモデル</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>ライセンス: {license}</translation>
     </message>

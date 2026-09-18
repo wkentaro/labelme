@@ -990,6 +990,22 @@ Vị trí dự kiến: {path}</translation>
         <translation>Chưa tải xuống</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>Cân bằng tốt nhất giữa tốc độ và chất lượng cho lời nhắc bằng điểm và khung.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Phù hợp nhất cho lời nhắc văn bản và tìm nhiều đối tượng.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Đề xuất</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Tất cả mô hình</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Giấy phép: {license}</translation>
     </message>

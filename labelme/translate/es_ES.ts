@@ -990,6 +990,22 @@ Ubicación esperada: {path}</translation>
         <translation>Sin descargar</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>El mejor equilibrio entre velocidad y calidad para indicaciones de puntos y cuadros.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Ideal para indicaciones de texto y para encontrar varios objetos.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Recomendados</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Todos los modelos</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Licencia: {license}</translation>
     </message>

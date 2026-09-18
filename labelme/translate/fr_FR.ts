@@ -996,6 +996,22 @@ Emplacement attendu : {path}</translation>
         <translation>Non téléchargé</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>Meilleur équilibre entre vitesse et qualité pour les invites par points et cadres.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Idéal pour les invites textuelles et la détection de plusieurs objets.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Recommandés</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Tous les modèles</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Licence : {license}</translation>
     </message>
