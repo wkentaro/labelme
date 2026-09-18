@@ -990,6 +990,22 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Nie pobrano</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>Najlepsza równowaga szybkości i jakości dla podpowiedzi punktowych i prostokątnych.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Najlepszy do podpowiedzi tekstowych i znajdowania wielu obiektów.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Polecane</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Wszystkie modele</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Licencja: {license}</translation>
     </message>

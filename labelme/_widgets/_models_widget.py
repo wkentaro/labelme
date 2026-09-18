@@ -31,6 +31,7 @@ class ModelsWidget(QtWidgets.QWidget):
             ],
         ] = {}
         layout = QtWidgets.QVBoxLayout(self)
+        layout.setSpacing(0)
         description = QtWidgets.QLabel(
             self.tr(
                 "Download models to use AI offline. "
@@ -39,7 +40,35 @@ class ModelsWidget(QtWidgets.QWidget):
         )
         description.setWordWrap(True)
         layout.addWidget(description)
-        for name, display in manager.models.items():
+        recommendations = {
+            "sam2:latest": self.tr(
+                "Best balance of speed and quality for point and box prompts."
+            ),
+            "sam3:latest": self.tr(
+                "Best for text prompts and finding multiple objects."
+            ),
+        }
+        layout.addSpacing(12)
+        heading = QtWidgets.QLabel(self.tr("Recommended"))
+        heading_font = heading.font()
+        heading_font.setBold(True)
+        heading_font.setPointSizeF(heading_font.pointSizeF() * 1.15)
+        heading.setFont(heading_font)
+        layout.addWidget(heading)
+        layout.addSpacing(4)
+        all_models = [name for name in manager.models if name not in recommendations]
+        for model_index, name in enumerate([*recommendations, *all_models]):
+            if model_index == len(recommendations):
+                layout.addSpacing(20)
+                heading = QtWidgets.QLabel(self.tr("All models"))
+                heading.setFont(heading_font)
+                layout.addWidget(heading)
+                layout.addSpacing(4)
+            elif model_index:
+                separator = QtWidgets.QFrame()
+                separator.setFrameShape(QtWidgets.QFrame.Shape.HLine)
+                layout.addWidget(separator)
+            display = manager.models[name]
             row = QtWidgets.QWidget()
             row_layout = QtWidgets.QGridLayout(row)
             row_layout.setContentsMargins(0, 12, 0, 12)
@@ -48,6 +77,10 @@ class ModelsWidget(QtWidgets.QWidget):
             font.setBold(True)
             title.setFont(font)
             row_layout.addWidget(title, 0, 0)
+            if name in recommendations:
+                reason = QtWidgets.QLabel(recommendations[name])
+                reason.setWordWrap(True)
+                row_layout.addWidget(reason, 1, 0, 1, 2)
             option = find_ai_assist_model_option(model_name=name)
             capabilities = []
             if option is not None:
@@ -56,7 +89,7 @@ class ModelsWidget(QtWidgets.QWidget):
                 capabilities.append(self.tr("Boxes"))
             if name in {model for model, _ in AI_TEXT_MODEL_OPTIONS}:
                 capabilities.append(self.tr("Text prompts"))
-            row_layout.addWidget(QtWidgets.QLabel(" · ".join(capabilities)), 1, 0, 1, 2)
+            row_layout.addWidget(QtWidgets.QLabel(" · ".join(capabilities)), 2, 0, 1, 2)
             metadata = osam.apis.get_model_metadata(name)
             license_link = QtWidgets.QLabel(
                 self.tr("License: {license}").format(
@@ -73,7 +106,7 @@ class ModelsWidget(QtWidgets.QWidget):
                 | QtCore.Qt.TextInteractionFlag.LinksAccessibleByKeyboard
             )
             license_link.setOpenExternalLinks(True)
-            row_layout.addWidget(license_link, 2, 0, 1, 2)
+            row_layout.addWidget(license_link, 3, 0, 1, 2)
             if name == "sam3:latest":
                 notice = QtWidgets.QLabel(
                     self.tr(
@@ -83,11 +116,11 @@ class ModelsWidget(QtWidgets.QWidget):
                     )
                 )
                 notice.setWordWrap(True)
-                row_layout.addWidget(notice, 3, 0, 1, 2)
+                row_layout.addWidget(notice, 4, 0, 1, 2)
             status = QtWidgets.QLabel()
             status.setTextFormat(QtCore.Qt.TextFormat.PlainText)
             status.setWordWrap(True)
-            row_layout.addWidget(status, 4, 0, 1, 2)
+            row_layout.addWidget(status, 5, 0, 1, 2)
             download = QtWidgets.QPushButton()
             download.clicked.connect(
                 lambda _checked=False, model=name: self._download_or_cancel(model)
@@ -107,7 +140,7 @@ class ModelsWidget(QtWidgets.QWidget):
             buttons.addWidget(remove)
             buttons.addWidget(details)
             buttons.addStretch()
-            row_layout.addLayout(buttons, 5, 0, 1, 2)
+            row_layout.addLayout(buttons, 6, 0, 1, 2)
             layout.addWidget(row)
             self._rows[name] = status, download, remove, details
         manager.changed.connect(self.refresh)

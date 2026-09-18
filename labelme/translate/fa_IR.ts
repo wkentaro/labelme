@@ -990,6 +990,22 @@ Expected location: {path}</source>
         <translation>بارگیری نشده</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>بهترین تعادل سرعت و کیفیت برای اعلان‌های نقطه‌ای و کادری.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>بهترین گزینه برای اعلان‌های متنی و یافتن چندین شیء.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>پیشنهادی</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>همه مدل‌ها</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>مجوز: {license}</translation>
     </message>

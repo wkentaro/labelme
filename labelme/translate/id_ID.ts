@@ -990,6 +990,22 @@ Shapes</source>
         <translation>Belum diunduh</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>Keseimbangan terbaik antara kecepatan dan kualitas untuk prompt titik dan kotak.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Terbaik untuk prompt teks dan menemukan beberapa objek.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Direkomendasikan</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Semua model</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Lisensi: {license}</translation>
     </message>

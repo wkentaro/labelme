@@ -990,6 +990,22 @@ Expected location: {path}</source>
         <translation>다운로드 안 됨</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>점 및 상자 프롬프트에 가장 적합한 속도와 품질의 균형을 제공합니다.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>텍스트 프롬프트와 여러 객체 찾기에 가장 적합합니다.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>추천</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>모든 모델</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>라이선스: {license}</translation>
     </message>

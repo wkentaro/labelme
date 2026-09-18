@@ -996,6 +996,22 @@ Expected location: {path}</source>
         <translation>尚未下載</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>點提示和框提示下速度與品質的最佳平衡。</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>最適合文字提示和尋找多個物件。</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>推薦</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>所有模型</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>授權條款：{license}</translation>
     </message>

@@ -992,6 +992,22 @@ Expected location: {path}</source>
         <translation>Δεν έχει ληφθεί</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>Καλύτερη ισορροπία ταχύτητας και ποιότητας για προτροπές σημείων και πλαισίων.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Ιδανικό για προτροπές κειμένου και τον εντοπισμό πολλών αντικειμένων.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Προτεινόμενα</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Όλα τα μοντέλα</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Άδεια: {license}</translation>
     </message>

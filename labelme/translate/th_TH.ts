@@ -990,6 +990,22 @@ Expected location: {path}</source>
         <translation>ยังไม่ได้ดาวน์โหลด</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>สมดุลความเร็วและคุณภาพได้ดีที่สุดสำหรับพรอมต์แบบจุดและกรอบ</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>เหมาะที่สุดสำหรับพรอมต์ข้อความและการค้นหาวัตถุหลายชิ้น</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>แนะนำ</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>โมเดลทั้งหมด</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>สัญญาอนุญาต: {license}</translation>
     </message>

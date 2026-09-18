@@ -990,6 +990,22 @@ Verwachte locatie: {path}</translation>
         <translation>Niet gedownload</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>De beste balans tussen snelheid en kwaliteit voor punt- en kaderprompts.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Het beste voor tekstprompts en het vinden van meerdere objecten.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Aanbevolen</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Alle modellen</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Licentie: {license}</translation>
     </message>

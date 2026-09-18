@@ -996,6 +996,22 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Nicht heruntergeladen</translation>
     </message>
     <message>
+        <source>Best balance of speed and quality for point and box prompts.</source>
+        <translation>Bestes Verhältnis von Geschwindigkeit und Qualität für Punkt- und Box-Prompts.</translation>
+    </message>
+    <message>
+        <source>Best for text prompts and finding multiple objects.</source>
+        <translation>Am besten für Text-Prompts und das Finden mehrerer Objekte.</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Empfohlen</translation>
+    </message>
+    <message>
+        <source>All models</source>
+        <translation>Alle Modelle</translation>
+    </message>
+    <message>
         <source>License: {license}</source>
         <translation>Lizenz: {license}</translation>
     </message>
