@@ -1,6 +1,14 @@
 from __future__ import annotations
 
-import threading
+import importlib
+import multiprocessing
+import os
+import shutil
+import tempfile
+from multiprocessing.connection import Connection
+from multiprocessing.process import BaseProcess
+from multiprocessing.synchronize import Event
+from pathlib import Path
 
 import osam
 from PySide6 import QtCore
@@ -9,28 +17,149 @@ from ._ai_models import AI_ASSIST_MODEL_OPTIONS
 from ._ai_models import AI_TEXT_MODEL_OPTIONS
 
 
-class _Pull(QtCore.QThread):
+def _pull_model(
+    blobs: dict[str, osam.types.Blob],
+    cache_root: Path,
+    cancel: Event,
+    connection: Connection,
+    /,
+) -> None:
+    cached_download = importlib.import_module("gdown.cached_download")
+    cached_download.cache_root = str(cache_root)
+    # Verified downloads are staged on the destination filesystem, so an
+    # uncooperative worker cannot expose a partially published model file.
+    cached_download.shutil.move = os.replace  # ty: ignore[invalid-assignment]
+
+    def report_progress(filename: str, done: int, total: int | None) -> None:
+        connection.send(("progress", filename, done, total))
+
+    try:
+        for blob in blobs.values():
+            blob.pull(
+                progress=report_progress,
+                cancel=cancel,  # ty: ignore[invalid-argument-type]
+            )
+    except osam.types.PullCancelledError:
+        connection.send(("cancelled",))
+    except Exception as error:
+        connection.send(("error", str(error)))
+    else:
+        connection.send(("done",))
+    finally:
+        connection.close()
+
+
+class _Pull(QtCore.QObject):
     model_name: str
-    cancel: threading.Event
     error: str | None
     # Byte counts exceed a C++ int for multi-GiB weights, so pass them as objects.
     progress = QtCore.Signal(str, object, object)
+    finished = QtCore.Signal()
 
     def __init__(self, *, model_name: str, parent: QtCore.QObject) -> None:
         super().__init__(parent)
         self.model_name = model_name
-        self.cancel = threading.Event()
         self.error: str | None = None
+        self._completed = False
+        self._stopped = False
+        blobs = osam.apis.get_model_type_by_name(model_name)._blobs.copy()
+        first_blob = next(iter(blobs.values()))
+        first_path = Path(first_blob.path)
+        blob_root = (
+            first_path.parent.parent if first_blob.attachments else first_path.parent
+        )
+        blob_root.mkdir(parents=True, exist_ok=True)
+        self._cache_root = Path(
+            tempfile.mkdtemp(prefix=".labelme-pull-", dir=blob_root)
+        )
 
-    def run(self) -> None:
+        context = multiprocessing.get_context("spawn")
+        self._cancel = context.Event()
+        self._connection, child_connection = context.Pipe(duplex=False)
+        self._process: BaseProcess = context.Process(
+            target=_pull_model,
+            args=(
+                blobs,
+                self._cache_root,
+                self._cancel,
+                child_connection,
+            ),
+            daemon=True,
+        )
+        self._child_connection = child_connection
+        self._timer = QtCore.QTimer(self)
+        self._timer.setInterval(20)
+        self._timer.timeout.connect(self._poll)
+
+    def start(self) -> None:
         try:
-            osam.apis.get_model_type_by_name(self.model_name).pull(
-                progress=self.progress.emit, cancel=self.cancel
-            )
-        except osam.types.PullCancelledError:
-            pass
-        except Exception as error:
-            self.error = str(error)
+            self._process.start()
+        except Exception:
+            self._connection.close()
+            self._child_connection.close()
+            shutil.rmtree(self._cache_root, ignore_errors=True)
+            raise
+        self._child_connection.close()
+        self._timer.start()
+
+    def revoke(self) -> None:
+        self._cancel.set()
+
+    def stop(self) -> bool:
+        self.revoke()
+        self._timer.stop()
+        self._process.join(timeout=0.1)
+        if self._process.is_alive():
+            self._process.terminate()
+            self._process.join(timeout=0.5)
+        if self._process.is_alive():
+            self._process.kill()
+            self._process.join(timeout=0.5)
+        if self._process.is_alive():
+            self.error = "Failed to stop the model download process."
+            self._timer.start()
+            return False
+        self._stopped = True
+        self._receive_messages()
+        self._connection.close()
+        self._process.close()
+        shutil.rmtree(self._cache_root, ignore_errors=True)
+        return True
+
+    def _poll(self) -> None:
+        if self._stopped:
+            return
+        self._receive_messages()
+        if self._process.is_alive():
+            return
+        self._process.join()
+        self._receive_messages()
+        exitcode = self._process.exitcode
+        self._process.close()
+        self._connection.close()
+        shutil.rmtree(self._cache_root, ignore_errors=True)
+        self._timer.stop()
+        self._stopped = True
+        if not self._completed and self.error is None:
+            self.error = f"Model download process exited with code {exitcode}."
+        self.finished.emit()
+
+    def _receive_messages(self) -> None:
+        while True:
+            try:
+                if not self._connection.poll():
+                    return
+                message = self._connection.recv()
+            except (EOFError, OSError):
+                return
+            if message[0] == "progress":
+                if not self._stopped:
+                    _, filename, done, total = message
+                    self.progress.emit(filename, done, total)
+            elif message[0] == "error":
+                self.error = message[1]
+            elif message[0] in {"cancelled", "done"}:
+                self._completed = True
 
 
 class ModelManager(QtCore.QObject):
@@ -98,7 +227,17 @@ class ModelManager(QtCore.QObject):
         self._pull = _Pull(model_name=self.active, parent=self)
         self._pull.progress.connect(self._on_progress)
         self._pull.finished.connect(self._on_finished)
-        self._pull.start()
+        try:
+            self._pull.start()
+        except Exception as error:
+            pull = self._pull
+            self._pull = None
+            self.active = None
+            self.errors[pull.model_name] = str(error)
+            pull.deleteLater()
+            self.changed.emit()
+            self._start_next()
+            return
         self.changed.emit()
 
     def _on_progress(self, filename: str, done: object, total: object, /) -> None:
@@ -110,36 +249,57 @@ class ModelManager(QtCore.QObject):
         assert self._pull is not None
         pull = self._pull
         self._pull = None
-        pull.deleteLater()
         if pull.model_name == self.active:
             self.active = None
-            if pull.error:
+            if pull.error is not None:
                 self.errors[pull.model_name] = pull.error
+        pull.deleteLater()
         self.changed.emit()
         self._start_next()
+
+    def _stop_active_pull(self) -> bool:
+        assert self._pull is not None
+        pull = self._pull
+        if not pull.stop():
+            assert pull.error is not None
+            self.errors[pull.model_name] = pull.error
+            return False
+        self._pull = None
+        self.active = None
+        if pull.error is not None:
+            self.errors[pull.model_name] = pull.error
+        pull.deleteLater()
+        return True
 
     def cancel(self, model_name: str, /) -> None:
         if model_name in self.queue:
             self.queue.remove(model_name)
             self.changed.emit()
         elif model_name == self.active:
-            assert self._pull is not None
-            self._pull.cancel.set()
-            self.active = None
+            stopped = self._stop_active_pull()
             self.changed.emit()
+            if stopped:
+                self._start_next()
 
     def remove(self, model_name: str, /) -> None:
-        self.cancel(model_name)
+        if model_name in self.queue:
+            self.queue.remove(model_name)
+        elif model_name == self.active:
+            if not self._stop_active_pull():
+                self.changed.emit()
+                return
         try:
             osam.apis.get_model_type_by_name(model_name).remove()
         finally:
             self.errors.pop(model_name, None)
             self.changed.emit()
+            self._start_next()
 
-    def shutdown(self) -> None:
+    def shutdown(self) -> bool:
         self._closed = True
+        if self._pull is not None and not self._stop_active_pull():
+            self._closed = False
+            return False
         self.queue.clear()
         self.active = None
-        if self._pull is not None:
-            self._pull.cancel.set()
-            self._pull.wait()
+        return True

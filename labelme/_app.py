@@ -2475,7 +2475,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             a0.ignore()
             return
-        self._model_manager.shutdown()
+        if not self._model_manager.shutdown():
+            a0.ignore()
+            return
         self._window_state.setValue(WINDOW_SIZE_KEY, self.size())
         self._window_state.setValue(WINDOW_POSITION_KEY, self.pos())
         self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import io
+import multiprocessing
 import os
 import sys
 import traceback
@@ -410,4 +411,5 @@ def main() -> None:
 
 # this main block is required to generate executable by pyinstaller
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
     main()
