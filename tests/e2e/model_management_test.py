@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import threading
+import weakref
 from pathlib import Path
 
 import osam
@@ -11,11 +12,16 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
+from labelme import _automation
 from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
 from .conftest import MainWinFactory
+
+
+class _LoadedModel:
+    pass
 
 
 @pytest.mark.gui
@@ -88,6 +94,71 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert reopened._ai_text.get_model_name() == ""
     assert reopened._ai_annotation.current_model_id == ""
     assert requests == ["/slow"]
+
+
+@pytest.mark.gui
+def test_delete_releases_loaded_assist_and_text_sessions(
+    *,
+    main_win: MainWinFactory,
+    tmp_path: Path,
+    session_home: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("HOME", str(session_home))
+    monkeypatch.setenv("USERPROFILE", str(session_home))
+    name = "sam3:latest"
+    content = b"weights"
+    blob = osam.types.Blob(
+        url="https://example.invalid/local.onnx",
+        hash="sha256:" + hashlib.sha256(content).hexdigest(),
+    )
+    Path(blob.path).parent.mkdir(parents=True, exist_ok=True)
+    Path(blob.path).write_bytes(content)
+    monkeypatch.setattr(
+        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
+    )
+    config = tmp_path / "config.yaml"
+    config.write_text("ai:\n  default: Sam3\n  text_model: sam3:latest\n")
+    win = main_win(config_file=config)
+    canvas = win._canvas_widgets.canvas
+    canvas.load_shapes(shapes=[Shape(label="cat")])
+
+    assist_session = _automation.OsamSession(model_name=name)
+    text_session = _automation.OsamSession(model_name=name)
+    assist_loaded = _LoadedModel()
+    text_loaded = _LoadedModel()
+    setattr(assist_session, "_model", assist_loaded)
+    setattr(text_session, "_model", text_loaded)
+    canvas._ai_assist_session._session = assist_session
+    win._text_osam_session = text_session
+    assist_model = weakref.ref(assist_loaded)
+    text_model = weakref.ref(text_loaded)
+    del assist_loaded, text_loaded
+    del assist_session, text_session
+
+    monkeypatch.setattr(
+        QtWidgets.QMessageBox,
+        "question",
+        lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
+    )
+    win._open_models()
+    dialog = win._settings_dialog
+    assert dialog is not None
+    models = dialog.findChild(ModelsWidget)
+    assert models is not None
+    models._rows[name][2].click()
+
+    assert assist_model() is None
+    assert text_model() is None
+    assert not Path(blob.path).exists()
+    assert win._ai_text.get_model_name() == ""
+    assert canvas.get_ai_model_name() == ""
+    assert [shape.label for shape in canvas.shapes] == ["cat"]
+    win.close()
+    reopened = main_win(config_file=config)
+    assert reopened._ai_text.get_model_name() == ""
+    assert reopened._ai_annotation.current_model_id == ""
+    assert not Path(blob.path).exists()
 
 
 @pytest.mark.gui
