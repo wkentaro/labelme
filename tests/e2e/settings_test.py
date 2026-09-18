@@ -83,7 +83,7 @@ def test_settings_search_navigation_and_explicit_edits_persist_and_sync_menu(
     qtbot.keyClick(search, Qt.Key.Key_Return)
     slider = dialog._editors[("mask_polygonization", "detail")]
     assert dialog._page._navigation.hasFocus()
-    assert win._config["mask_polygonization"]["detail"] == 80
+    assert win._config["mask_polygonization"]["detail"] == 60
     qtbot.mouseClick(
         slider.focusProxy(),
         Qt.MouseButton.LeftButton,
@@ -861,13 +861,13 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
     assert isinstance(settings_slider, IntegerSlider)
 
     toolbar_slider = win._ai_annotation._polygon_detail_slider
-    toolbar_slider.set_value(60)
+    toolbar_slider.set_value(40)
 
-    assert win._config["mask_polygonization"]["detail"] == 60
-    assert settings_slider.value == 60
-    assert win._canvas_widgets.canvas._ai_assist_session.polygon_detail == 60
+    assert win._config["mask_polygonization"]["detail"] == 40
+    assert settings_slider.value == 40
+    assert win._canvas_widgets.canvas._ai_assist_session.polygon_detail == 40
     persisted = safe_load(editable_config_file.read_text())
-    assert persisted["mask_polygonization"]["detail"] == 60
+    assert persisted["mask_polygonization"]["detail"] == 40
 
     settings_slider.set_value(70)
 

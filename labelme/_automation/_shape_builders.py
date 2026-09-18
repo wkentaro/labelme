@@ -17,7 +17,7 @@ from ._geometry import compute_oriented_rectangle_from_mask
 from ._geometry import compute_polygons_from_mask
 from ._types import AiOutputFormat
 
-_DEFAULT_POLYGON_DETAIL: Final[int] = 80
+_DEFAULT_POLYGON_DETAIL: Final[int] = 60
 
 
 @dataclass

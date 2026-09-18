@@ -104,7 +104,7 @@ def test_default_model_name_and_output_format() -> None:
     session = AiAssistSession()
     assert session.model_name == "sam2:latest"
     assert session.output_format == "polygon"
-    assert session.polygon_detail == 80
+    assert session.polygon_detail == 60
 
     session.model_name = "efficientsam:latest"
     session.output_format = "mask"

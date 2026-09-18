@@ -112,11 +112,11 @@ def test_polygon_detail_slider_applies_integer_value(
 ) -> None:
     slider = dialog._editors[("mask_polygonization", "detail")]
     assert isinstance(slider, IntegerSlider)
-    assert slider.value == 80
+    assert slider.value == 60
 
-    slider.set_value(60)
+    slider.set_value(40)
 
-    assert (("mask_polygonization", "detail"), 60) in applied
+    assert (("mask_polygonization", "detail"), 40) in applied
 
 
 def test_unbounded_integer_edit_accepts_python_ints(

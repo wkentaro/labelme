@@ -281,7 +281,7 @@ def test_compute_polygons_from_mask_traces_rectangle_extent_in_xy_order() -> Non
     mask = np.zeros((5, 9), dtype=bool)
     mask[1:4, 1:8] = True
 
-    [polygon] = compute_polygons_from_mask(mask=mask)
+    [polygon] = compute_polygons_from_mask(mask=mask, detail=100)
 
     assert polygon.min(axis=0) == pytest.approx([0.5, 0.5], abs=0.001)
     assert polygon.max(axis=0) == pytest.approx([7.5, 3.5], abs=0.001)
@@ -292,7 +292,7 @@ def test_compute_polygons_from_mask_returns_every_disconnected_land() -> None:
     mask[1:5, 1:7] = True
     mask[6:9, 8:11] = True
 
-    polygons = compute_polygons_from_mask(mask=mask)
+    polygons = compute_polygons_from_mask(mask=mask, detail=100)
 
     assert len(polygons) == 2
     extents = np.array(
@@ -406,7 +406,7 @@ def test_compute_polygons_from_mask_keeps_half_pixel_boundary_at_image_edge() ->
     # pulled in by a pixel.
     mask = np.ones((5, 9), dtype=bool)
 
-    [polygon] = compute_polygons_from_mask(mask=mask)
+    [polygon] = compute_polygons_from_mask(mask=mask, detail=100)
 
     assert polygon.min(axis=0) == pytest.approx([0.0, 0.0])
     assert polygon.max(axis=0) == pytest.approx([8.5, 4.5], abs=0.001)
