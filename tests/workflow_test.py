@@ -13,7 +13,7 @@ _REPO_ROOT: Final = Path(__file__).parents[1]
 
 
 @pytest.mark.skipif(sys.platform != "darwin", reason="requires BSD sed")
-def test_release_without_version_suggests_next_version(tmp_path: Path) -> None:
+def test_release_without_version_suggests_next_version(*, tmp_path: Path) -> None:
     (tmp_path / "changelog.d").mkdir()
     (tmp_path / "changelog.d" / "1.fixed.md").write_text("Fixed a bug.\n")
     subprocess.run(["git", "init", "--quiet"], cwd=tmp_path, check=True)
