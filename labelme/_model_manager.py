@@ -62,30 +62,19 @@ class _Pull(QtCore.QObject):
         self.error: str | None = None
         self._completed = False
         self._stopped = False
-        blobs = osam.apis.get_model_type_by_name(model_name)._blobs.copy()
-        first_blob = next(iter(blobs.values()))
+        self._blobs = osam.apis.get_model_type_by_name(model_name)._blobs.copy()
+        first_blob = next(iter(self._blobs.values()))
         first_path = Path(first_blob.path)
-        blob_root = (
+        self._blob_root = (
             first_path.parent.parent if first_blob.attachments else first_path.parent
         )
-        blob_root.mkdir(parents=True, exist_ok=True)
-        self._cache_root = Path(
-            tempfile.mkdtemp(prefix=".labelme-pull-", dir=blob_root)
-        )
+        self._cache_root: Path | None = None
 
         context = multiprocessing.get_context("spawn")
         self._cancel = context.Event()
         self._connection, child_connection = context.Pipe(duplex=False)
-        self._process: BaseProcess = context.Process(
-            target=_pull_model,
-            args=(
-                blobs,
-                self._cache_root,
-                self._cancel,
-                child_connection,
-            ),
-            daemon=True,
-        )
+        self._process: BaseProcess | None = None
+        self._context = context
         self._child_connection = child_connection
         self._timer = QtCore.QTimer(self)
         self._timer.setInterval(20)
@@ -93,11 +82,26 @@ class _Pull(QtCore.QObject):
 
     def start(self) -> None:
         try:
+            self._blob_root.mkdir(parents=True, exist_ok=True)
+            self._cache_root = Path(
+                tempfile.mkdtemp(prefix=".labelme-pull-", dir=self._blob_root)
+            )
+            self._process = self._context.Process(
+                target=_pull_model,
+                args=(
+                    self._blobs,
+                    self._cache_root,
+                    self._cancel,
+                    self._child_connection,
+                ),
+                daemon=True,
+            )
             self._process.start()
         except Exception:
             self._connection.close()
             self._child_connection.close()
-            shutil.rmtree(self._cache_root, ignore_errors=True)
+            if self._cache_root is not None:
+                shutil.rmtree(self._cache_root, ignore_errors=True)
             raise
         self._child_connection.close()
         self._timer.start()
@@ -106,6 +110,7 @@ class _Pull(QtCore.QObject):
         self._cancel.set()
 
     def stop(self) -> bool:
+        assert self._process is not None
         self.revoke()
         self._timer.stop()
         self._process.join(timeout=0.1)
@@ -123,10 +128,12 @@ class _Pull(QtCore.QObject):
         self._receive_messages()
         self._connection.close()
         self._process.close()
+        assert self._cache_root is not None
         shutil.rmtree(self._cache_root, ignore_errors=True)
         return True
 
     def _poll(self) -> None:
+        assert self._process is not None
         if self._stopped:
             return
         self._receive_messages()
@@ -137,6 +144,7 @@ class _Pull(QtCore.QObject):
         exitcode = self._process.exitcode
         self._process.close()
         self._connection.close()
+        assert self._cache_root is not None
         shutil.rmtree(self._cache_root, ignore_errors=True)
         self._timer.stop()
         self._stopped = True

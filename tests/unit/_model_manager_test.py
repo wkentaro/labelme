@@ -96,6 +96,21 @@ def test_queue_continues_after_failure_and_retry_goes_last(
     assert requests.count("/slow") == 1
 
 
+def test_cache_setup_failure_marks_model_as_failed(
+    *, manager: ModelManager, tmp_path: Path
+) -> None:
+    model_root = tmp_path / ".cache" / "osam" / "models"
+    model_root.parent.mkdir(parents=True)
+    model_root.write_text("not a directory")
+    name = "efficientsam:10m"
+
+    manager.enqueue(name)
+
+    assert manager.get_state(name) == "failed"
+    assert manager.active is None
+    assert not manager.queue
+
+
 def test_cancel_keeps_completed_files_and_quit_discards_queue(
     *,
     manager: ModelManager,
