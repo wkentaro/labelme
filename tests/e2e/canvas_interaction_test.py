@@ -852,7 +852,8 @@ def test_select_mask_shape_by_click(
 
     raw_image_path = data_path / "raw/2011_000003.jpg"
     img_b64 = base64.b64encode(raw_image_path.read_bytes()).decode("utf-8")
-    image_width, image_height = PIL.Image.open(raw_image_path).size
+    with PIL.Image.open(raw_image_path) as image:
+        image_width, image_height = image.size
 
     fixture_json = tmp_path / "mask_fixture.json"
     fixture_json.write_text(
