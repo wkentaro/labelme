@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## 7.7.0 - 2026-09-18
+
+### Changed
+
+- Highlight SAM 2 Balanced and SAM 3 as recommended AI model downloads. ([#2719](https://github.com/wkentaro/labelme/pull/2719))
+- Lower the default Polygon detail from 80 to 60 so AI-generated polygons have fewer vertices to adjust by hand. ([#2720](https://github.com/wkentaro/labelme/pull/2720))
+
 ## 7.6.0 - 2026-09-18
 
 ### Added
