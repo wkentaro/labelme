@@ -88,6 +88,10 @@ type = [
 
 [tool.pytest.ini_options]
 addopts = "-m 'not network'"
+filterwarnings = [
+  "error::ResourceWarning",
+  "error::pytest.PytestUnraisableExceptionWarning",
+]
 qt_api = "pyside6"
 markers = [
   "gui: mark a test as a GUI test.",
