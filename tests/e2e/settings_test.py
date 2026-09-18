@@ -83,7 +83,6 @@ def test_settings_search_navigation_and_explicit_edits_persist_and_sync_menu(
     qtbot.keyClick(search, Qt.Key.Key_Return)
     slider = dialog._editors[("mask_polygonization", "detail")]
     assert dialog._page._navigation.hasFocus()
-    assert win._config["mask_polygonization"]["detail"] == 60
     qtbot.mouseClick(
         slider.focusProxy(),
         Qt.MouseButton.LeftButton,

@@ -108,11 +108,19 @@ def test_existing_shape_suppression_is_disabled_by_default(
 
 
 def test_polygon_detail_slider_applies_integer_value(
-    *, dialog: SettingsDialog, applied: Applied
+    *, qtbot: QtBot, applied: Applied
 ) -> None:
+    initial = 70
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        applied=applied,
+        overrides={"mask_polygonization": {"detail": initial}},
+        succeed=True,
+        previewed=None,
+    )
     slider = dialog._editors[("mask_polygonization", "detail")]
     assert isinstance(slider, IntegerSlider)
-    assert slider.value == 60
+    assert slider.value == initial
 
     slider.set_value(40)
 

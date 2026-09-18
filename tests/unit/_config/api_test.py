@@ -109,6 +109,12 @@ def test_load_config_rejects_invalid_polygon_detail(
         _config.load_config(config_file=config_file, config_overrides={})
 
 
+def test_load_config_ships_polygon_detail_default() -> None:
+    config = _config.load_config(config_file=None, config_overrides={})
+
+    assert config["mask_polygonization"]["detail"] == 60
+
+
 _POLYGON_TO_SHAPE_RENAMES: Final = {
     "edit_polygon": "edit_shape",
     "delete_polygon": "delete_shape",
