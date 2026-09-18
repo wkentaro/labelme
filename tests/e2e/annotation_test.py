@@ -37,6 +37,7 @@ def prepare_efficient_sam_cache(
 ) -> Iterator[Path]:
     model_home = tmp_path_factory.mktemp("efficient_sam")
     model_cache = model_home / ".cache/osam/models/blobs"
+    # The package shadows this submodule with a re-exported function.
     cached_download = importlib.import_module("gdown.cached_download")
     with (
         mock.patch.dict(
@@ -57,10 +58,10 @@ def prepare_efficient_sam_cache(
         model_type = osam.apis.get_model_type_by_name(_AI_MODEL)
         model_type.pull()
         assert model_type.get_size() is not None
+        fetch.reset_mock()
         yield model_cache
 
-    urls = [call.kwargs["url"] for call in fetch.call_args_list]
-    assert urls and len(urls) == len(set(urls))
+    assert not fetch.called, "a case re-downloaded the model"
 
 
 @pytest.fixture()
@@ -385,7 +386,7 @@ def test_annotate_shape_types(
     if ai_output_format is not None:
         manager = win._model_manager
         manager.enqueue(_AI_MODEL)
-        # Keep the download path exercised so an incomplete artifact still fails.
+        # Ensure the app recognizes the copied cache before selecting the model.
         qtbot.waitUntil(
             lambda: manager.get_state(_AI_MODEL) in {"downloaded", "failed"},
             timeout=120_000,
