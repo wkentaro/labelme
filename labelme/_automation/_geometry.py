@@ -248,7 +248,7 @@ def _simplify_contour(
 
 
 def compute_polygons_from_mask(
-    *, mask: NDArray[np.bool_], detail: int = 60
+    *, mask: NDArray[np.bool_], detail: int
 ) -> list[NDArray[np.float32]]:
     if not 0 <= detail <= _DETAIL_MAX:
         raise ValueError(f"detail must be between 0 and 100, got {detail}")

@@ -20,6 +20,7 @@ def test_shapes_from_detections_rectangle_uses_bbox() -> None:
     [shape] = shapes_from_detections(
         detections=[Detection(bbox=(10, 20, 30, 50))],
         shape_type="rectangle",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "rectangle"
@@ -31,6 +32,7 @@ def test_shapes_from_detections_rectangle_without_bbox_is_dropped() -> None:
     shapes = shapes_from_detections(
         detections=[Detection(mask=np.ones((5, 5), dtype=bool))],
         shape_type="rectangle",
+        polygon_detail=60,
     )
 
     assert shapes == []
@@ -45,6 +47,7 @@ def test_shapes_from_detections_circle_with_mask_uses_centroid_and_area() -> Non
             )
         ],
         shape_type="circle",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "circle"
@@ -61,6 +64,7 @@ def test_shapes_from_detections_circle_without_mask_falls_back_to_inscribed() ->
     [shape] = shapes_from_detections(
         detections=[Detection(bbox=(0, 0, 10, 20))],
         shape_type="circle",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "circle"
@@ -84,6 +88,7 @@ def test_shapes_from_detections_oriented_rectangle_with_mask_uses_min_area_rect(
             )
         ],
         shape_type="oriented_rectangle",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "oriented_rectangle"
@@ -96,6 +101,7 @@ def test_shapes_from_detections_oriented_rectangle_without_mask_falls_back() -> 
     [shape] = shapes_from_detections(
         detections=[Detection(bbox=(0, 0, 10, 20))],
         shape_type="oriented_rectangle",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "oriented_rectangle"
@@ -114,6 +120,7 @@ def test_shapes_from_detections_oriented_rectangle_with_rotated_mask(
     [shape] = shapes_from_detections(
         detections=[Detection(bbox=(50, 100, 90, 140), mask=rotated_rectangle_mask)],
         shape_type="oriented_rectangle",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "oriented_rectangle"
@@ -135,6 +142,7 @@ def test_shapes_from_detections_oriented_rectangle_with_square_mask() -> None:
     [shape] = shapes_from_detections(
         detections=[Detection(bbox=(0, 0, 10, 10), mask=np.ones((11, 11), dtype=bool))],
         shape_type="oriented_rectangle",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "oriented_rectangle"
@@ -149,6 +157,7 @@ def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None
     [shape] = shapes_from_detections(
         detections=[Detection(mask=np.ones((11, 11), dtype=bool))],
         shape_type="oriented_rectangle",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "oriented_rectangle"
@@ -172,12 +181,14 @@ def test_shapes_from_detections_bounds_edge_crossing_oriented_rectangle() -> Non
     [raw_shape] = shapes_from_detections(
         detections=[Detection(mask=mask)],
         shape_type="oriented_rectangle",
+        polygon_detail=60,
     )
 
     [shape] = shapes_from_detections(
         detections=[Detection(mask=mask)],
         shape_type="oriented_rectangle",
         image_size=(7, 6),
+        polygon_detail=60,
     )
 
     assert (raw_shape.points[:, 0] > 7).any()
@@ -194,6 +205,7 @@ def test_shapes_from_detections_drops_oriented_rectangle_outside_image() -> None
         detections=[Detection(bbox=(-10, 10, -1, 20))],
         shape_type="oriented_rectangle",
         image_size=(100, 100),
+        polygon_detail=60,
     )
 
     assert shapes == []
@@ -203,6 +215,7 @@ def test_shapes_from_detections_polygon_with_mask_traces_contour() -> None:
     [shape] = shapes_from_detections(
         detections=[Detection(mask=np.ones((20, 20), dtype=bool))],
         shape_type="polygon",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "polygon"
@@ -214,8 +227,7 @@ def test_shapes_from_detections_polygon_simplifies_pixel_stair_steps() -> None:
     mask[20:80, 30:70] = True
 
     [shape] = shapes_from_detections(
-        detections=[Detection(mask=mask)],
-        shape_type="polygon",
+        detections=[Detection(mask=mask)], shape_type="polygon", polygon_detail=60
     )
 
     assert len(shape.points) == 4
@@ -227,8 +239,7 @@ def test_shapes_from_detections_polygon_keeps_disconnected_regions() -> None:
     mask[60:90, 60:90] = True
 
     shapes = shapes_from_detections(
-        detections=[Detection(mask=mask)],
-        shape_type="polygon",
+        detections=[Detection(mask=mask)], shape_type="polygon", polygon_detail=60
     )
 
     assert len(shapes) == 2
@@ -242,8 +253,7 @@ def test_shapes_from_detections_polygon_drops_hole() -> None:
     mask[30:70, 30:70] = False
 
     [shape] = shapes_from_detections(
-        detections=[Detection(mask=mask)],
-        shape_type="polygon",
+        detections=[Detection(mask=mask)], shape_type="polygon", polygon_detail=60
     )
 
     polygon_mask = shape_to_mask(
@@ -261,8 +271,7 @@ def test_shapes_from_detections_polygon_drops_lands_within_deviation() -> None:
     mask[2, 2] = True
 
     shapes = shapes_from_detections(
-        detections=[Detection(mask=mask)],
-        shape_type="polygon",
+        detections=[Detection(mask=mask)], shape_type="polygon", polygon_detail=60
     )
 
     assert shapes == []
@@ -300,6 +309,7 @@ def test_shapes_from_detections_polygon_with_bbox_offsets_contour() -> None:
             Detection(bbox=(10, 20, 30, 40), mask=mask),
         ],
         shape_type="polygon",
+        polygon_detail=60,
     )
 
     assert offset.shape_type == "polygon"
@@ -311,6 +321,7 @@ def test_shapes_from_detections_mask_uses_rounded_bbox_corners() -> None:
     [shape] = shapes_from_detections(
         detections=[Detection(bbox=(10.4, 20.6, 30.9, 50.1), mask=mask)],
         shape_type="mask",
+        polygon_detail=60,
     )
 
     assert shape.shape_type == "mask"
@@ -328,6 +339,7 @@ def test_shapes_from_detections_mask_drops_empty_mask() -> None:
             Detection(bbox=(10, 20, 30, 50), mask=np.zeros((31, 21), dtype=bool))
         ],
         shape_type="mask",
+        polygon_detail=60,
     )
     assert shapes == []
 
@@ -340,8 +352,7 @@ def test_shapes_from_detections_without_bbox_or_mask_is_dropped(
     # Every shape type needs a bbox, a mask, or both; with neither there is
     # nothing to derive geometry from, so the detection is dropped.
     shapes = shapes_from_detections(
-        detections=[Detection()],
-        shape_type=shape_type,
+        detections=[Detection()], shape_type=shape_type, polygon_detail=60
     )
 
     assert shapes == []

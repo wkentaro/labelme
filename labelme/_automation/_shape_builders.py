@@ -17,8 +17,6 @@ from ._geometry import compute_oriented_rectangle_from_mask
 from ._geometry import compute_polygons_from_mask
 from ._types import AiOutputFormat
 
-_DEFAULT_POLYGON_DETAIL: Final[int] = 60
-
 
 @dataclass
 class Detection:
@@ -210,7 +208,9 @@ MASK_REQUIRED_SHAPE_TYPES: Final[frozenset[AiOutputFormat]] = frozenset(
         detection=Detection(bbox=(0, 0, 1, 1), mask=None),
         shape_type=shape_type,
         image_size=None,
-        polygon_detail=_DEFAULT_POLYGON_DETAIL,
+        # A detection without a mask never reaches polygonization, so the
+        # value is unread here.
+        polygon_detail=0,
     )
 )
 
@@ -220,7 +220,7 @@ def shapes_from_detections(
     detections: list[Detection],
     shape_type: AiOutputFormat,
     image_size: tuple[int, int] | None = None,
-    polygon_detail: int = _DEFAULT_POLYGON_DETAIL,
+    polygon_detail: int,
 ) -> list[Shape]:
     shapes: list[Shape] = []
     next_group_id = 1
