@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 
 import pytest
+from PySide6 import QtCore
+from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._widgets._settings_dialog import _LabelFlagsEditor
@@ -13,7 +15,49 @@ from .conftest import MainWinFactory
 from .conftest import click_canvas_fraction
 from .conftest import draw_triangle
 from .conftest import schedule_on_dialog
+from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("close_action", ["button", "escape", "window"])
+def test_closing_untouched_shape_flag_settings_preserves_rules_exactly(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    tmp_path: Path,
+    close_action: str,
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    original = (
+        b"label_flags:\n"
+        b'  "^car$":\n'
+        b'    - " leading"\n'
+        b'    - "trailing "\n'
+        b'    - "embedded\\nnewline"\n'
+    )
+    expected_rules = {"^car$": [" leading", "trailing ", "embedded\nnewline"]}
+    config_file.write_bytes(original)
+    win = main_win(config_file=config_file)
+
+    win._open_settings()
+    settings = win._settings_dialog
+    assert settings is not None
+    if close_action == "button":
+        close_button = next(
+            button
+            for button in settings.findChildren(QtWidgets.QPushButton)
+            if button.text() == "Close"
+        )
+        qtbot.mouseClick(close_button, QtCore.Qt.MouseButton.LeftButton)
+    elif close_action == "escape":
+        qtbot.keyClick(settings, QtCore.Qt.Key.Key_Escape)
+    else:
+        settings.close()
+
+    assert not settings.isVisible()
+    assert config_file.read_bytes() == original
+    assert win._config["label_flags"] == expected_rules
 
 
 @pytest.mark.gui
@@ -109,6 +153,68 @@ def test_shape_flag_settings_apply_without_changing_existing_annotation(
     win.close()
     reopened = main_win(config_file=config_file)
     assert reopened._config["label_flags"] is None
+
+
+@pytest.mark.gui
+def test_shape_flag_rules_apply_to_copies_without_changing_original(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    tmp_path: Path,
+    data_path: Path,
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text(
+        "auto_save: false\nlabel_flags:\n  ^amber_kite$: [reviewed]\n"
+    )
+    annotation_path = tmp_path / "annotation.json"
+    annotation = json.loads((data_path / "annotated/2011_000003.json").read_text())
+    annotation["imagePath"] = str(data_path / "annotated/2011_000003.jpg")
+    annotation["shapes"] = annotation["shapes"][:1]
+    annotation["shapes"][0]["flags"] = {"reviewed": True}
+    annotation_path.write_text(json.dumps(annotation))
+
+    win = main_win(config_file=config_file, file_or_dir=annotation_path)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    select_shape(qtbot=qtbot, canvas=canvas)
+    win._actions.copy.trigger()
+
+    win._open_settings()
+    settings = win._settings_dialog
+    assert settings is not None
+    editor = settings._editors[("label_flags",)]
+    assert isinstance(editor, _LabelFlagsEditor)
+    _, flags, _ = editor._rows[0]
+    flags.setPlainText("needs_review")
+    settings.accept()
+
+    original_flags = {"reviewed": True}
+    copied_flags = {"needs_review": False, "reviewed": True}
+    assert [shape.flags for shape in canvas.shapes] == [original_flags]
+
+    win._actions.duplicate.trigger()
+    win._actions.paste.trigger()
+    assert [shape.flags for shape in canvas.shapes] == [
+        original_flags,
+        copied_flags,
+        copied_flags,
+    ]
+
+    win._actions.undo.trigger()
+    assert [shape.flags for shape in canvas.shapes] == [original_flags, copied_flags]
+    win._actions.paste.trigger()
+
+    assert win.save_labels(label_path=str(annotation_path))
+    saved = json.loads(annotation_path.read_text())
+    assert [shape["flags"] for shape in saved["shapes"]] == [
+        original_flags,
+        copied_flags,
+        copied_flags,
+    ]
+
+    assert win._load_file(image_or_label_path=str(annotation_path))
+    assert [shape.flags for shape in canvas.shapes] == [copied_flags] * 3
 
 
 @pytest.mark.gui
