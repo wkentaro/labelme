@@ -9,6 +9,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## 7.6.0 - 2026-09-18
+
+### Added
+
+- Navigate between neighboring shapes from the Edit menu or with configurable Ctrl+Arrow shortcuts (Command+Arrow on macOS). ([#2692](https://github.com/wkentaro/labelme/pull/2692))
+- Manage AI models in Settings with background downloads, a cancellable queue, model license links, and deletion. Annotation model pickers now show downloaded models. ([#2698](https://github.com/wkentaro/labelme/pull/2698))
+- Search Settings by name, config key, or related terms in English and the current UI language, then jump directly to a control with the mouse or keyboard. ([#2700](https://github.com/wkentaro/labelme/pull/2700))
+- Offer to reset an invalid configuration to defaults, saving a backup first and showing its path. ([#2702](https://github.com/wkentaro/labelme/pull/2702))
+- Configure predefined Shape Flags in Settings with Label patterns, one flag name per line, live updates, and inline validation. Existing Shape Flags are preserved when rules or Labels change. ([#2704](https://github.com/wkentaro/labelme/pull/2704))
+
+### Changed
+
+- Delete selected shapes immediately without a confirmation dialog; use Undo to restore them. ([#2689](https://github.com/wkentaro/labelme/pull/2689))
+- Remove the default Ctrl+P (⌘P on macOS) shortcut for Keep Previous Annotation; the option remains available in the menu and its shortcut can still be customized. ([#2693](https://github.com/wkentaro/labelme/pull/2693))
+- Use theme-aware neutral icons for Delete Shapes and Delete Selected Vertex, consistent with other editing actions. ([#2695](https://github.com/wkentaro/labelme/pull/2695))
+
+### Fixed
+
+- Explain missing images referenced by annotations with the expected location, and move the underlying error into expandable Details. ([#2686](https://github.com/wkentaro/labelme/pull/2686))
+- Fixed the missing icon on the Merge Shapes action. ([#2687](https://github.com/wkentaro/labelme/pull/2687))
+- Restore icons for Copy to Clipboard and Paste from Clipboard in the Edit and canvas context menus. ([#2694](https://github.com/wkentaro/labelme/pull/2694))
+- Remember the AI Text Prompt model across restarts and keep its Settings control synchronized with the annotation panel. ([#2697](https://github.com/wkentaro/labelme/pull/2697))
+- Preserve supported settings when upgrading from older versions, and prevent retired overrides from returning after settings are saved. ([#2701](https://github.com/wkentaro/labelme/pull/2701))
+- Closing the application or cancelling or deleting a model now stops stalled downloads promptly without allowing them to recreate removed files. ([#2710](https://github.com/wkentaro/labelme/pull/2710))
+- Avoided native macOS shutdown crashes by restricting onnxruntime to compatible releases. ([#2711](https://github.com/wkentaro/labelme/pull/2711))
+- Opening and closing Settings without edits no longer normalizes or splits Shape Flag names. ([#2712](https://github.com/wkentaro/labelme/pull/2712))
+- Image files are now closed promptly after reading so they can be moved or deleted on platforms that lock open files. ([#2715](https://github.com/wkentaro/labelme/pull/2715))
+
 ## 7.5.0 - 2026-09-14
 
 ### Added
