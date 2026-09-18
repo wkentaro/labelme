@@ -36,7 +36,7 @@ class AiAssistSession:
         *,
         model_name: str = "sam2:latest",
         output_format: AiOutputFormat = "polygon",
-        polygon_detail: int = 80,
+        polygon_detail: int = 60,
     ) -> None:
         self.model_name = model_name
         self.output_format = output_format

@@ -894,7 +894,7 @@ def test_changing_polygon_detail_requests_preview_repaint(
     update = Mock()
     monkeypatch.setattr(canvas, "update", update)
 
-    canvas.set_ai_polygon_detail(detail=60)
+    canvas.set_ai_polygon_detail(detail=40)
 
     update.assert_called_once_with()
 

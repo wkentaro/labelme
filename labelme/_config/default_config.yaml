@@ -36,7 +36,7 @@ shape:
   point_size: 8
   show_labels: false
 mask_polygonization:
-  detail: 80
+  detail: 60
 ai:
   default: Sam2 (balanced)
   text_model: yoloworld:latest

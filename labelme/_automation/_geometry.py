@@ -169,8 +169,8 @@ def _compute_signed_area(points: NDArray[np.float64], /) -> float:
 
 
 def _compute_polygon_deviation(*, detail: int) -> float:
-    # The default maps to half a pixel; the curve reserves finer control near
-    # the detailed end, where small slider changes are most visible.
+    # The curve reserves finer control near the detailed end, where small
+    # slider changes are most visible.
     detail_loss = (_DETAIL_MAX - detail) / 20
     return 0.5 * detail_loss**1.5
 
@@ -248,7 +248,7 @@ def _simplify_contour(
 
 
 def compute_polygons_from_mask(
-    *, mask: NDArray[np.bool_], detail: int = 80
+    *, mask: NDArray[np.bool_], detail: int = 60
 ) -> list[NDArray[np.float32]]:
     if not 0 <= detail <= _DETAIL_MAX:
         raise ValueError(f"detail must be between 0 and 100, got {detail}")
