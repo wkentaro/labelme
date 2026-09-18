@@ -44,7 +44,7 @@ check_config_migrations:
     uv run python -m tools.check_config_migrations
 
 # Run tests with coverage
-coverage: (test "--cov=labelme --cov-report=term-missing")
+coverage: (test "--numprocesses=auto --cov=labelme --cov-report=term-missing")
 
 # Prepare a release
 [script]

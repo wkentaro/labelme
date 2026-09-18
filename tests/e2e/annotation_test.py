@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+import importlib
+import os
+import shutil
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Final
+from unittest import mock
 
+import osam
 import pytest
 from PySide6.QtCore import QPoint
 from PySide6.QtCore import Qt
@@ -20,6 +26,55 @@ from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
+
+# Smallest available model (~40MB) keeps the network suite fast.
+_AI_MODEL: Final = "efficientsam:10m"
+
+
+@pytest.fixture(scope="module")
+def prepare_efficient_sam_cache(
+    *, tmp_path_factory: pytest.TempPathFactory
+) -> Iterator[Path]:
+    model_home = tmp_path_factory.mktemp("efficient_sam")
+    model_cache = model_home / ".cache/osam/models/blobs"
+    # The package shadows this submodule with a re-exported function.
+    cached_download = importlib.import_module("gdown.cached_download")
+    with (
+        mock.patch.dict(
+            os.environ,
+            {
+                "HOME": str(model_home),
+                "USERPROFILE": str(model_home),
+                "OSAM_BLOB_ENDPOINT": "direct",
+            },
+        ),
+        mock.patch.object(
+            cached_download, "cache_root", str(model_home / ".cache/gdown")
+        ),
+        mock.patch.object(
+            cached_download, "download", wraps=cached_download.download
+        ) as fetch,
+    ):
+        model_type = osam.apis.get_model_type_by_name(_AI_MODEL)
+        model_type.pull()
+        assert model_type.get_size() is not None
+        fetch.reset_mock()
+        yield model_cache
+
+    assert not fetch.called, "a case re-downloaded the model"
+
+
+@pytest.fixture()
+def reuse_efficient_sam_model(
+    *,
+    request: pytest.FixtureRequest,
+    session_home: Path,
+    ai_output_format: AiOutputFormat | None,
+) -> None:
+    if ai_output_format is None:
+        return
+    model_cache = request.getfixturevalue("prepare_efficient_sam_cache")
+    shutil.copytree(model_cache, session_home / ".cache/osam/models/blobs")
 
 
 @pytest.mark.gui
@@ -130,6 +185,7 @@ def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
 
 
 @pytest.mark.gui
+@pytest.mark.usefixtures("reuse_efficient_sam_model")
 @pytest.mark.parametrize(
     (
         "create_mode",
@@ -313,9 +369,6 @@ def test_annotate_shape_types(
     expected_num_points: int | None,
     ai_output_format: AiOutputFormat | None,
 ) -> None:
-    # Smallest available model (~40MB) to keep download and inference fast.
-    AI_MODEL: Final = "efficientsam:10m"
-
     expected_shape_type = ai_output_format if ai_output_format else create_mode
 
     input_file = str(data_path / "raw/2011_000003.jpg")
@@ -332,16 +385,17 @@ def test_annotate_shape_types(
     canvas = win._canvas_widgets.canvas
     if ai_output_format is not None:
         manager = win._model_manager
-        manager.enqueue(AI_MODEL)
-        # Files land before the manager announces them; wait for the state so
-        # the picker has been repopulated.
+        manager.enqueue(_AI_MODEL)
+        # Ensure the app recognizes the copied cache before selecting the model.
         qtbot.waitUntil(
-            lambda: manager.get_state(AI_MODEL) in {"downloaded", "failed"},
+            lambda: manager.get_state(_AI_MODEL) in {"downloaded", "failed"},
             timeout=120_000,
         )
-        assert manager.get_state(AI_MODEL) == "downloaded", manager.errors.get(AI_MODEL)
+        assert manager.get_state(_AI_MODEL) == "downloaded", manager.errors.get(
+            _AI_MODEL
+        )
         picker = win._ai_annotation._model_combo
-        picker.setCurrentIndex(picker.findData(AI_MODEL))
+        picker.setCurrentIndex(picker.findData(_AI_MODEL))
         canvas.set_ai_output_format(ai_output_format)
 
     canvas_size = canvas.size()
