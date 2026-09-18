@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import base64
-import contextlib
 import io
 import json
 import math
@@ -255,11 +254,8 @@ def read_image_file(*, filename: str) -> bytes:
 
 def _read_image_file(*, filename: str) -> bytes:
     t_start = time.time()
-    with contextlib.ExitStack() as stack:
-        image_pil = stack.enter_context(_imread(filename))
+    with _imread(filename) as image_pil:
         oriented: PIL.Image.Image = _utils.apply_exif_orientation(image_pil)
-        if oriented is not image_pil:
-            stack.callback(oriented.close)
 
         ext = Path(filename).suffix.lower()
         if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
@@ -272,9 +268,9 @@ def _read_image_file(*, filename: str) -> bytes:
                 )
                 fmt = "PNG" if has_transparency else "JPEG"
                 if fmt == "JPEG" and oriented.mode == "P":
-                    oriented = stack.enter_context(oriented.convert("RGB"))
+                    oriented = oriented.convert("RGB")
                 elif fmt == "PNG" and oriented.mode == "PA":
-                    oriented = stack.enter_context(oriented.convert("RGBA"))
+                    oriented = oriented.convert("RGBA")
                 oriented.save(fp=f, format=fmt, quality=95)
                 f.seek(0)
                 image_data = f.read()
