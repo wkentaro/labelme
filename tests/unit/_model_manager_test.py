@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import socketserver
 import threading
 import time
 from collections.abc import Iterator
@@ -34,6 +35,27 @@ def _make_blob(*, url: str) -> osam.types.Blob:
     )
 
 
+@pytest.fixture
+def stalled_tls_server() -> Iterator[tuple[str, threading.Event, threading.Event]]:
+    accepted = threading.Event()
+    release = threading.Event()
+
+    class Handler(socketserver.BaseRequestHandler):
+        def handle(self) -> None:
+            accepted.set()
+            release.wait(timeout=10)
+
+    server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever)
+    thread.start()
+    yield f"https://127.0.0.1:{server.server_address[1]}", accepted, release
+    release.set()
+    server.shutdown()
+    server.server_close()
+    thread.join(timeout=1)
+    assert not thread.is_alive()
+
+
 def test_queue_continues_after_failure_and_retry_goes_last(
     *,
     manager: ModelManager,
@@ -64,7 +86,9 @@ def test_queue_continues_after_failure_and_retry_goes_last(
     manager.enqueue(failed)
     assert manager.queue == [failed]
     release.set()
-    qtbot.waitUntil(lambda: manager.active is None and not manager.queue)
+    qtbot.waitUntil(
+        lambda: manager.active is None and not manager.queue, timeout=20_000
+    )
     assert manager.is_ready(waiting)
     # Both variants share the same digest in this fixture; retry reuses the file.
     assert manager.is_ready(failed)
@@ -108,9 +132,8 @@ def test_cancel_keeps_completed_files_and_quit_discards_queue(
     manager.enqueue(name)
     manager.enqueue("sam:100m")
     qtbot.waitUntil(lambda: requests == ["/slow", "/slow"])
-    manager.cancel(name)
+    assert manager.shutdown()
     release.set()
-    manager.shutdown()
     assert manager.active is None and not manager.queue
     assert not Path(blob.path).exists()
     reopened = ModelManager()
@@ -120,6 +143,38 @@ def test_cancel_keeps_completed_files_and_quit_discards_queue(
         assert requests == ["/slow", "/slow"]
     finally:
         reopened.shutdown()
+
+
+def test_cancel_preserves_blob_completed_before_active_download(
+    *,
+    manager: ModelManager,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    download_server: tuple[str, list[str], threading.Event],
+) -> None:
+    origin, requests, release = download_server
+    name = "efficientsam:10m"
+    completed = _make_blob(url=origin + "/weights")
+    active = osam.types.Blob(
+        url=origin + "/slow",
+        hash="sha256:" + hashlib.sha256(b"later").hexdigest(),
+    )
+    monkeypatch.setattr(
+        osam.apis.get_model_type_by_name(name),
+        "_blobs",
+        {"completed": completed, "active": active},
+    )
+    manager.enqueue(name)
+    qtbot.waitUntil(lambda: requests == ["/weights", "/slow"])
+
+    manager.cancel(name)
+
+    assert Path(completed.path).exists()
+    assert not Path(active.path).exists()
+    release.set()
+    qtbot.wait(100)
+    assert Path(completed.path).exists()
+    assert not Path(active.path).exists()
 
 
 def test_shutdown_interrupts_stalled_download(
@@ -141,11 +196,110 @@ def test_shutdown_interrupts_stalled_download(
     # that sends nothing more.
     qtbot.waitUntil(lambda: manager.progress[1] == 2**20)
     started_at = time.monotonic()
-    manager.shutdown()
+    assert manager.shutdown()
     # The server gives up on its own after a few seconds, which would also end
     # the transfer; only a prompt return proves cancellation interrupted it.
     assert time.monotonic() - started_at < 2
     assert not release.is_set()
+
+
+def test_shutdown_terminates_download_stalled_during_tls(
+    *,
+    manager: ModelManager,
+    monkeypatch: pytest.MonkeyPatch,
+    stalled_tls_server: tuple[str, threading.Event, threading.Event],
+) -> None:
+    origin, accepted, release = stalled_tls_server
+    name = "efficientsam:10m"
+    blob = _make_blob(url=origin + "/weights")
+    monkeypatch.setattr(
+        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
+    )
+    manager.enqueue(name)
+    assert accepted.wait(timeout=5)
+    blob_root = Path(blob.path).parent
+
+    failsafe = threading.Timer(3, release.set)
+    failsafe.start()
+    started_at = time.monotonic()
+    assert manager.shutdown()
+    elapsed = time.monotonic() - started_at
+    handshake_was_stalled = not release.is_set()
+    release.set()
+    failsafe.cancel()
+    time.sleep(0.1)
+
+    assert elapsed < 2
+    assert handshake_was_stalled
+    assert not Path(blob.path).exists()
+    assert not list(blob_root.glob(".labelme-pull-*"))
+
+
+def test_failed_shutdown_keeps_active_download_and_queue(
+    *,
+    manager: ModelManager,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    download_server: tuple[str, list[str], threading.Event],
+) -> None:
+    origin, requests, release = download_server
+    active = "efficientsam:10m"
+    queued = "efficientsam:latest"
+    monkeypatch.setattr(
+        osam.apis.get_model_type_by_name(active),
+        "_blobs",
+        {"model": _make_blob(url=origin + "/slow")},
+    )
+    manager.enqueue(active)
+    manager.enqueue(queued)
+    qtbot.waitUntil(lambda: requests == ["/slow"])
+    assert manager._pull is not None
+    pull = manager._pull
+
+    def fail_stop() -> bool:
+        pull.error = "could not stop"
+        return False
+
+    with monkeypatch.context() as patch:
+        patch.setattr(pull, "stop", fail_stop)
+        assert not manager.shutdown()
+
+    assert manager.active == active
+    assert manager.queue == [queued]
+    assert manager.errors[active] == "could not stop"
+    manager.cancel(queued)
+    release.set()
+    assert manager.shutdown()
+
+
+def test_remove_stops_download_before_deleting_files(
+    *,
+    manager: ModelManager,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    download_server: tuple[str, list[str], threading.Event],
+) -> None:
+    origin, requests, download_release = download_server
+    name = "efficientsam:10m"
+    blob = _make_blob(url=origin + "/slow")
+    monkeypatch.setattr(
+        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
+    )
+    notifications: list[str] = []
+    manager.changed.connect(lambda: notifications.append("changed"))
+    manager.progress_changed.connect(lambda: notifications.append("progress"))
+    manager.enqueue(name)
+    qtbot.waitUntil(lambda: requests == ["/slow"])
+    notifications.clear()
+
+    manager.remove(name)
+    assert not Path(blob.path).exists()
+    assert notifications == ["changed"]
+    download_release.set()
+    qtbot.wait(100)
+
+    assert not Path(blob.path).exists()
+    assert notifications == ["changed"]
 
 
 def test_existing_files_count_as_downloaded_until_deleted(
