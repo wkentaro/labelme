@@ -680,6 +680,10 @@ Shapes</source>
         <translation>A konfiguráció biztonsági másolata ide lett mentve: %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Mentés…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>A maszk kimenet nem érhető el</translation>
     </message>

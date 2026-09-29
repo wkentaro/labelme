@@ -46,6 +46,7 @@ from ._label_flags import apply_default_flags
 from ._model_manager import ModelManager
 from ._save_request import SaveRequest
 from ._save_request import write_save_request
+from ._save_writer import SaveWriter
 from ._shape import Shape
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
@@ -326,6 +327,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._setup_toolbars()
 
         self._status_bar = self._setup_status_bar()
+        self._save_revision = 0
+        self._auto_save_path: str | None = None
+        self._save_writer = SaveWriter(parent=self)
+        self._save_writer.finished.connect(self._on_save_finished)
         self._model_manager = ModelManager(parent=self)
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
@@ -1428,25 +1433,61 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def mark_dirty(self) -> None:
+        self._save_revision += 1
         self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
-
-        if self._actions.save_auto.isChecked():
-            assert self._image_path is not None
-            label_path = _resolve_label_path(
-                image_or_label_path=self._image_path,
-                output_dir=self._output_dir,
-            )
-            if self.save_labels(
-                label_path=label_path,
-                show_error=False,
-            ):
-                self.mark_clean()
-                return
-        if self._failed_save_path is None:
-            self._status_bar.save.clear()
         self._is_changed = True
         self._actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
+        if self._actions.save_auto.isChecked():
+            assert self._image_path is not None
+            self._queue_auto_save(
+                label_path=self._auto_save_path
+                or _resolve_label_path(
+                    image_or_label_path=self._image_path, output_dir=self._output_dir
+                )
+            )
+        elif self._failed_save_path is None:
+            self._status_bar.save.clear()
+
+    def _queue_auto_save(self, *, label_path: str) -> None:
+        try:
+            snapshot = self._capture_save_snapshot(label_path=label_path)
+        except (LabelFileError, OSError, ValueError) as error:
+            self._show_save_failure(label_path=label_path, error=error)
+            return
+        self._status_bar.save.setText(self.tr("Saving…"))
+        self._status_bar.save.setToolTip(label_path)
+        self._status_bar.retry.hide()
+        self._save_writer.submit(snapshot=snapshot, revision=self._save_revision)
+
+    def _on_save_finished(
+        self, snapshot: SaveSnapshot, revision: int, error: Exception | None, /
+    ) -> None:
+        # Older writes may finish after further edits; only the latest revision
+        # can clear the dirty marker or replace its failure status.
+        if revision != self._save_revision:
+            return
+        if error is not None:
+            self._show_save_failure(label_path=snapshot.filename, error=error)
+            return
+        self._record_saved_snapshot(snapshot)
+        self.mark_clean()
+
+    def _wait_for_save(self) -> None:
+        if not self._save_writer.is_busy:
+            return
+        dialog = QtWidgets.QProgressDialog(self.tr("Saving…"), "", 0, 0, self)
+        dialog.setCancelButton(None)
+        dialog.setWindowModality(Qt.WindowModality.WindowModal)
+        dialog.setMinimumDuration(0)
+        self._save_writer.idle.connect(dialog.accept)
+        try:
+            # Dismissing the progress window cannot bypass the write barrier.
+            while self._save_writer.is_busy:
+                dialog.exec()
+        finally:
+            self._save_writer.idle.disconnect(dialog.accept)
+            dialog.deleteLater()
 
     def mark_clean(self) -> None:
         canvas = self._canvas_widgets.canvas
@@ -1520,6 +1561,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._commit_shapes([*self._canvas_widgets.canvas.shapes, *shapes])
 
     def reset_state(self) -> None:
+        self._auto_save_path = None
         self._docks.label_list.clear()
         self._annotation = None
         self._image = QtGui.QImage()
@@ -1874,12 +1916,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._status_bar.retry.show()
 
     def _retry_save(self) -> None:
-        if self._failed_save_path is not None and self.save_labels(
-            label_path=self._failed_save_path, show_error=False
-        ):
-            self.mark_clean()
+        if self._failed_save_path is not None:
+            self._queue_auto_save(label_path=self._failed_save_path)
 
     def save_labels(self, *, label_path: str, show_error: bool = True) -> bool:
+        self._save_writer.discard_pending()
+        self._wait_for_save()
         try:
             request = self._capture_save_request(label_path=label_path)
             write_save_request(request)
@@ -2512,6 +2554,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._model_manager.shutdown():
             a0.ignore()
             return
+        self._save_writer.shutdown()
         self._window_state.setValue(WINDOW_SIZE_KEY, self.size())
         self._window_state.setValue(WINDOW_POSITION_KEY, self.pos())
         self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())
@@ -2626,8 +2669,11 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.warning("label_path={!r} is empty, so cannot save", label_path)
             return
 
-        if self.save_labels(label_path=label_path):
-            self.mark_clean()
+        if not self.save_labels(label_path=label_path):
+            return
+        if save_as:
+            self._auto_save_path = label_path
+        self.mark_clean()
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
@@ -2684,6 +2730,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._confirm_deletion(message=msg):
             return
 
+        self._save_writer.discard_pending()
+        self._wait_for_save()
         annotation_path = Path(self.current_label_file_path())
         if not annotation_path.exists():
             return
@@ -3046,6 +3094,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return Path(label_file).exists()
 
     def _can_continue(self) -> bool:
+        self._wait_for_save()
         if not self._is_changed:
             return True
         prompt_text = self.tr('Keep the annotation changes for "{}"?').format(

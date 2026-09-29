@@ -666,6 +666,10 @@ Shapes</source>
         <translation>نسخه پشتیبان پیکربندی در %s ذخیره شد</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>در حال ذخیره…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>خروجی ماسک در دسترس نیست</translation>
     </message>

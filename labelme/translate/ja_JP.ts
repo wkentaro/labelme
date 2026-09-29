@@ -680,6 +680,10 @@ Shapes</source>
         <translation>設定ファイルのバックアップを %s に保存しました</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>保存中…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>マスク出力は利用できません</translation>
     </message>

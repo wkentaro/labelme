@@ -666,6 +666,10 @@ Shapes</source>
         <translation>Đã lưu bản sao lưu cấu hình vào %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Đang lưu…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Không có đầu ra mặt nạ</translation>
     </message>

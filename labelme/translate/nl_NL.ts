@@ -666,6 +666,10 @@ Shapes</source>
         <translation>Back-up van de configuratie opgeslagen in %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Opslaan…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskeruitvoer niet beschikbaar</translation>
     </message>

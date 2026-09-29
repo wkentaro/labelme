@@ -641,6 +641,10 @@
         <translation>Cadangan konfigurasi disimpan ke %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Menyimpan…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Keluaran mask tidak tersedia</translation>
     </message>

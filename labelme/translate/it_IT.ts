@@ -672,6 +672,10 @@ forme</translation>
         <translation>Backup della configurazione salvato in %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Salvataggio…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Output maschera non disponibile</translation>
     </message>

@@ -672,6 +672,10 @@ Shapes</source>
         <translation>Yapılandırma yedeği %s konumuna kaydedildi</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Kaydediliyor…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maske çıktısı kullanılamıyor</translation>
     </message>

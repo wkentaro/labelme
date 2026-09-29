@@ -672,6 +672,10 @@ Shapes</source>
         <translation>設定備份已儲存至 %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>儲存中…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>遮罩輸出無法使用</translation>
     </message>

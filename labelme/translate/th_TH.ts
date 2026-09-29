@@ -666,6 +666,10 @@ Shapes</source>
         <translation>บันทึกข้อมูลสำรองการตั้งค่าไปยัง %s แล้ว</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>กำลังบันทึก…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>ไม่สามารถสร้างเอาต์พุตมาสก์ได้</translation>
     </message>

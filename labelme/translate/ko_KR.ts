@@ -666,6 +666,10 @@ Shapes</source>
         <translation>설정 백업을 %s에 저장했습니다</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>저장 중…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>마스크 출력을 사용할 수 없음</translation>
     </message>

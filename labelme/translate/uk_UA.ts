@@ -587,6 +587,10 @@ Shapes</source>
         <translation>Налаштування командного рядка</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Збереження…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Вивід маски недоступний</translation>
     </message>

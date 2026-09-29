@@ -666,6 +666,10 @@ Shapes</source>
         <translation>Kopia zapasowa konfiguracji została zapisana w %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Zapisywanie…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Wyjście maski niedostępne</translation>
     </message>

@@ -586,6 +586,10 @@ Shapes</source>
         <translation>Ρυθμίσεις γραμμής εντολών</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Αποθήκευση…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
     </message>

@@ -672,6 +672,10 @@ Shapes</source>
         <translation>配置备份已保存至 %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>正在保存…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>掩膜输出不可用</translation>
     </message>

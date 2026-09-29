@@ -672,6 +672,10 @@ les formes</translation>
         <translation>Sauvegarde de la configuration enregistrée dans %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Enregistrement…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Sortie de masque indisponible</translation>
     </message>

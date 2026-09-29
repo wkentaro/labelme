@@ -651,6 +651,10 @@ Shapes</source>
         <translation>Резервная копия конфигурации сохранена в %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Сохранение…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Вывод маски недоступен</translation>
     </message>

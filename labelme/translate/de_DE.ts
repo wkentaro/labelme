@@ -680,6 +680,10 @@ Formen</translation>
         <translation>Sicherung der Konfiguration gespeichert unter %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Speichern…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskenausgabe nicht verfügbar</translation>
     </message>

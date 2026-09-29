@@ -666,6 +666,10 @@ Shapes</source>
         <translation>Copia de seguridad de la configuración guardada en %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Guardando…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Salida de máscara no disponible</translation>
     </message>
