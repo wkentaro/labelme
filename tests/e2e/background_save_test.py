@@ -163,3 +163,87 @@ def test_failed_background_save_retries_only_on_request_or_edit(
         lambda *_a, **_k: QtWidgets.QMessageBox.StandardButton.Discard,
     )
     assert raw_win._can_continue()
+
+
+def test_retry_preserves_failed_save_as_destination(
+    *,
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    raw_win._actions.save_auto.setChecked(True)
+    _edit(win=raw_win, x=1)
+    qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
+    old_path = Path(raw_win.current_label_file_path())
+    destination = tmp_path / "renamed.json"
+    original = SaveSnapshot.write
+
+    def fail(_snapshot: SaveSnapshot, /) -> None:
+        raise PermissionError("read-only output")
+
+    monkeypatch.setattr(raw_win, "prompt_save_file_path", lambda: str(destination))
+    monkeypatch.setattr(raw_win, "show_error_message", lambda **_kwargs: 0)
+    monkeypatch.setattr(SaveSnapshot, "write", fail)
+    raw_win._save_label_file(save_as=True)
+    assert raw_win._status_bar.save.text() == "Save failed"
+    monkeypatch.setattr(SaveSnapshot, "write", original)
+    raw_win._status_bar.retry.click()
+    qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
+    _edit(win=raw_win, x=2)
+    qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
+    assert json.loads(destination.read_text())["shapes"][0]["points"][0][0] == 2
+    assert json.loads(old_path.read_text())["shapes"][0]["points"][0][0] == 1
+
+
+def test_edit_during_manual_retry_does_not_leave_saving_status(
+    *,
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+) -> None:
+    entered, release, _writes = blocked_writer
+    raw_win._actions.save_auto.setChecked(False)
+    _edit(win=raw_win, x=1)
+    raw_win._show_save_failure(
+        label_path=raw_win.current_label_file_path(),
+        error=PermissionError("read-only output"),
+    )
+    raw_win._status_bar.retry.click()
+    qtbot.waitUntil(entered.is_set)
+    _edit(win=raw_win, x=2)
+    release.set()
+    qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
+    assert raw_win._is_changed
+    assert raw_win._status_bar.save.text() == "Unsaved changes"
+    assert raw_win._status_bar.retry.isVisible()
+    raw_win._status_bar.retry.click()
+    qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
+    assert not raw_win._is_changed
+
+
+def test_output_directory_replaces_save_as_target_for_open_json(
+    *,
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    raw_win._actions.save_auto.setChecked(True)
+    _edit(win=raw_win, x=1)
+    qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
+    assert raw_win._load_file(image_or_label_path=raw_win.current_label_file_path())
+    assert raw_win._file_list_image_path is None
+    previous = tmp_path / "previous.json"
+    monkeypatch.setattr(raw_win, "prompt_save_file_path", lambda: str(previous))
+    raw_win._save_label_file(save_as=True)
+    output = tmp_path / "other-output"
+    output.mkdir()
+    monkeypatch.setattr(
+        QtWidgets.QFileDialog, "getExistingDirectory", lambda *_a, **_k: str(output)
+    )
+    raw_win.prompt_output_dir()
+    _edit(win=raw_win, x=2)
+    qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
+    assert Path(raw_win.current_label_file_path()).parent == output
+    assert json.loads(previous.read_text())["shapes"][0]["points"][0][0] == 1

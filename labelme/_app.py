@@ -1446,8 +1446,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     image_or_label_path=self._image_path, output_dir=self._output_dir
                 )
             )
-        elif self._failed_save_path is None:
-            self._status_bar.save.clear()
+        else:
+            self._status_bar.save.setText(self.tr("Unsaved changes"))
+            self._status_bar.retry.setVisible(self._failed_save_path is not None)
 
     def _queue_auto_save(self, *, label_path: str) -> None:
         try:
@@ -2648,6 +2649,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._output_dir = previous_output_dir
             return
 
+        self._auto_save_path = None
         self.statusBar().showMessage(
             self.tr("%s . Annotations will be saved/loaded in %s")
             % ("Change Annotations Dir", self._output_dir)
@@ -2669,11 +2671,11 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.warning("label_path={!r} is empty, so cannot save", label_path)
             return
 
-        if not self.save_labels(label_path=label_path):
-            return
         if save_as:
+            # Keep the chosen destination through failure, Retry, and later edits.
             self._auto_save_path = label_path
-        self.mark_clean()
+        if self.save_labels(label_path=label_path):
+            self.mark_clean()
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
