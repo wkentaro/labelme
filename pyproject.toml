@@ -87,6 +87,8 @@ type = [
 ]
 
 [tool.pytest.ini_options]
+# Show blocked GUI and worker stacks before CI reaches its job timeout.
+faulthandler_timeout = 60
 addopts = "-m 'not network'"
 filterwarnings = [
   "error::ResourceWarning",
