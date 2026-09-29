@@ -609,6 +609,10 @@ Shapes</source>
         <translation>%s запущен.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Повторить</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Выберите метку, чтобы начать рисовать ею. Нажмите &apos;Esc&apos;, чтобы снять выделение.</translation>
     </message>
@@ -665,6 +669,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Неверная метка &apos;{}&apos; с типом проверки &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Сохранено</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Не удалось сохранить</translation>
     </message>
     <message>
         <source>Error saving label data</source>

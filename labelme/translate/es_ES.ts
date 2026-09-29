@@ -624,6 +624,10 @@ Shapes</source>
         <translation>%s iniciado.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Reintentar</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Elija una etiqueta para empezar a dibujar con ella. Pulse &apos;Esc&apos; para borrar la selección.</translation>
     </message>
@@ -680,6 +684,14 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Etiqueta no válida &apos;{}&apos; con tipo de validación &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Guardado</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Error al guardar</translation>
     </message>
     <message>
         <source>Error saving label data</source>

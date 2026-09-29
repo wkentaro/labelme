@@ -599,6 +599,10 @@
         <translation>%s dimulai.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Coba lagi</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Pilih label untuk mulai menggambar dengannya. Tekan &apos;Esc&apos; untuk menghapus pilihan.</translation>
     </message>
@@ -655,6 +659,14 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Label &apos;{}&apos; tidak valid dengan tipe validasi &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Tersimpan</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Gagal menyimpan</translation>
     </message>
     <message>
         <source>Error saving label data</source>

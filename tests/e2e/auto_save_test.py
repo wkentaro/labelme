@@ -264,9 +264,12 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
         vertices=_VERTICES,
     )
 
-    assert len(errors_shown) == 1
-    assert errors_shown[0][0] == _raw_auto_save_win.tr("Error saving label data")
-    assert "read-only output directory" in errors_shown[0][1]
+    assert errors_shown == []
+    assert _raw_auto_save_win._status_bar.save.text() == "Save failed"
+    assert "read-only output directory" in _raw_auto_save_win._status_bar.save.toolTip()
+    assert _raw_auto_save_win._status_bar.retry.isVisible()
+    _raw_auto_save_win._canvas_widgets.canvas.status_updated.emit("Move a vertex")
+    assert _raw_auto_save_win._status_bar.save.text() == "Save failed"
     assert _raw_auto_save_win.windowTitle().endswith("*")
     assert _raw_auto_save_win._actions.save.isEnabled()
     assert _raw_auto_save_win._actions.save_auto.isChecked()
@@ -278,7 +281,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
 
-    assert len(errors_shown) == 1
+    assert errors_shown == []
 
     close_prompts: list[bool] = []
 
@@ -298,7 +301,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     monkeypatch.setattr(
         _raw_auto_save_win, "prompt_save_file_path", lambda: str(label_file)
     )
-    _raw_auto_save_win._actions.save.trigger()
+    _raw_auto_save_win._status_bar.retry.click()
 
     qtbot.waitUntil(label_file.exists, timeout=3000)
     assert_labelfile_sanity(str(label_file))
@@ -316,7 +319,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
 
-    assert len(errors_shown) == 2
+    assert errors_shown == []
 
     monkeypatch.setattr(
         QMessageBox,
@@ -327,7 +330,7 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
 
 
 @pytest.mark.gui
-def test_failed_auto_save_shows_error_again_after_target_changes(
+def test_failed_auto_save_stays_nonmodal_after_target_changes(
     *,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
@@ -363,7 +366,7 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
-    assert errors_shown == [True]
+    assert errors_shown == []
 
     new_output_dir = tmp_path / "new-output"
     new_output_dir.mkdir()
@@ -371,11 +374,11 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
 
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
-    assert errors_shown == [True, True]
+    assert errors_shown == []
 
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
-    assert errors_shown == [True, True]
+    assert errors_shown == []
 
     image_path = _raw_auto_save_win._image_path
     assert image_path is not None
@@ -393,7 +396,7 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
         label="cat",
         vertices=_VERTICES,
     )
-    assert errors_shown == [True, True, True]
+    assert errors_shown == []
 
     monkeypatch.setattr(
         QMessageBox,

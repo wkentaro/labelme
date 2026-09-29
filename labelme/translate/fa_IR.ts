@@ -624,6 +624,10 @@ Shapes</source>
         <translation>%s راه‌اندازی شد.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>تلاش دوباره</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>یک برچسب را انتخاب کنید تا با آن شروع به ترسیم کنید. برای لغو انتخاب، &apos;Esc&apos; را فشار دهید.</translation>
     </message>
@@ -680,6 +684,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>برچسب نامعتبر &apos;{}&apos; با نوع اعتبارسنجی &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>ذخیره شد</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>ذخیره ناموفق بود</translation>
     </message>
     <message>
         <source>Error saving label data</source>

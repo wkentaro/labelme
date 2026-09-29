@@ -630,6 +630,10 @@ forme</translation>
         <translation>%s avviato.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Riprova</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Scegliere un&apos;etichetta per iniziare a disegnare con essa. Premere &apos;Esc&apos; per annullare la selezione.</translation>
     </message>
@@ -686,6 +690,14 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Etichetta non valida &apos;{}&apos; con tipo di validazione &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Salvato</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Salvataggio non riuscito</translation>
     </message>
     <message>
         <source>Error saving label data</source>

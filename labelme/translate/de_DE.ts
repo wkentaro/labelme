@@ -638,6 +638,10 @@ Formen</translation>
         <translation>%s gestartet.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Erneut versuchen</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Wählen Sie ein Label aus, um damit zu zeichnen. Drücken Sie &apos;Esc&apos;, um die Auswahl aufzuheben.</translation>
     </message>
@@ -694,6 +698,14 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Ungültiges Label &apos;{}&apos; mit Validierungstyp &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Gespeichert</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Speichern fehlgeschlagen</translation>
     </message>
     <message>
         <source>Error saving label data</source>

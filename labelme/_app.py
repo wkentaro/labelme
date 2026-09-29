@@ -97,6 +97,8 @@ WINDOW_LAYOUT_KEY: Final[str] = "window/state"
 class _StatusBarWidgets(NamedTuple):
     message: QtWidgets.QLabel
     stats: StatusStats
+    save: QtWidgets.QLabel
+    retry: QtWidgets.QToolButton
 
 
 class _CanvasWidgets(NamedTuple):
@@ -234,7 +236,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _image: QtGui.QImage
     _annotation: Annotation | None
     _label_file_path: str | None
-    _last_failed_auto_save_path: str | None
+    _failed_save_path: str | None
     _image_path: str | None
     _file_list_image_path: str | None
     _loaded_image_paths: list[str]
@@ -1081,7 +1083,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image = QtGui.QImage()
         self._annotation = None
         self._label_file_path = None
-        self._last_failed_auto_save_path = None
+        self._failed_save_path = None
         self._image_path = None
         self._file_list_image_path = None
         self._loaded_image_paths = []
@@ -1139,8 +1141,16 @@ class MainWindow(QtWidgets.QMainWindow):
         stats = StatusStats()
         self.statusBar().addWidget(message, 1)
         self.statusBar().addWidget(stats, 0)
+        save = QtWidgets.QLabel()
+        save.setTextFormat(Qt.TextFormat.PlainText)
+        retry = QtWidgets.QToolButton()
+        retry.setText(self.tr("Retry"))
+        retry.clicked.connect(self._retry_save)
+        retry.hide()
+        self.statusBar().addPermanentWidget(save)
+        self.statusBar().addPermanentWidget(retry)
         self.statusBar().show()
-        return _StatusBarWidgets(message=message, stats=stats)
+        return _StatusBarWidgets(message=message, stats=stats, save=save, retry=retry)
 
     def _setup_canvas(self) -> _CanvasWidgets:
         zoom_widget = ZoomWidget()
@@ -1428,11 +1438,12 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             if self.save_labels(
                 label_path=label_path,
-                show_error=self._last_failed_auto_save_path != label_path,
+                show_error=False,
             ):
                 self.mark_clean()
                 return
-            self._last_failed_auto_save_path = label_path
+        if self._failed_save_path is None:
+            self._status_bar.save.clear()
         self._is_changed = True
         self._actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
@@ -1515,7 +1526,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image_path = None
         self._file_list_image_path = None
         self._label_file_path = None
-        self._last_failed_auto_save_path = None
+        self._failed_save_path = None
+        self._status_bar.save.clear()
+        self._status_bar.retry.hide()
         self._canvas_widgets.canvas.reset_state()
 
     # Callbacks
@@ -1848,14 +1861,30 @@ class MainWindow(QtWidgets.QMainWindow):
             raise RuntimeError("There are duplicate files.")
         if items:
             items[0].setCheckState(Qt.CheckState.Checked)
-        self._last_failed_auto_save_path = None
+        self._failed_save_path = None
+        self._status_bar.save.setText(self.tr("Saved"))
+        self._status_bar.save.setToolTip(snapshot.filename)
+        self._status_bar.retry.hide()
         self._actions.delete_file.setEnabled(True)
+
+    def _show_save_failure(self, *, label_path: str, error: Exception) -> None:
+        self._failed_save_path = label_path
+        self._status_bar.save.setText(self.tr("Save failed"))
+        self._status_bar.save.setToolTip(f"{label_path}\n{error}")
+        self._status_bar.retry.show()
+
+    def _retry_save(self) -> None:
+        if self._failed_save_path is not None and self.save_labels(
+            label_path=self._failed_save_path, show_error=False
+        ):
+            self.mark_clean()
 
     def save_labels(self, *, label_path: str, show_error: bool = True) -> bool:
         try:
             request = self._capture_save_request(label_path=label_path)
             write_save_request(request)
         except (LabelFileError, OSError, ValueError) as e:
+            self._show_save_failure(label_path=label_path, error=e)
             if show_error:
                 self.show_error_message(
                     title=self.tr("Error saving label data"),
@@ -2660,6 +2689,9 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         annotation_path.unlink()
+        self._failed_save_path = None
+        self._status_bar.save.clear()
+        self._status_bar.retry.hide()
         logger.info(f"Label file is removed: {annotation_path}")
 
         item = self._docks.file_list.currentItem()

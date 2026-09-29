@@ -11,8 +11,9 @@ writes and failed loads without adding physical-storage latency to every edit.
 
 - A failed save leaves the previous Annotation File intact and the in-memory
   Annotation dirty.
-- Repeated auto-save failures show one error until a save succeeds or the target
-  path changes, instead of interrupting every edit.
+- Auto-save failures remain visible in the status bar with Retry, without
+  interrupting editing. The next edit or an explicit retry attempts another save;
+  there is no retry timer.
 - Loading and validation use staged state; the visible session changes only
   after the replacement Image and Annotation are ready.
 - A corrupt adjacent Annotation File blocks opening its Image instead of

@@ -624,6 +624,10 @@ Shapes</source>
         <translation>%s เริ่มทำงานแล้ว</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>ลองใหม่</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>เลือกป้ายกำกับเพื่อเริ่มวาดด้วยป้ายนั้น กด &apos;Esc&apos; เพื่อล้างการเลือก</translation>
     </message>
@@ -680,6 +684,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>เลเบล &apos;{}&apos; ไม่ถูกต้อง ประเภทการตรวจ &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>บันทึกแล้ว</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>บันทึกไม่สำเร็จ</translation>
     </message>
     <message>
         <source>Error saving label data</source>

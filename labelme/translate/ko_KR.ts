@@ -624,6 +624,10 @@ Shapes</source>
         <translation>%s가 시작되었습니다.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>다시 시도</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>그리기를 시작할 라벨을 선택하세요. &apos;Esc&apos;를 눌러 선택을 해제합니다.</translation>
     </message>
@@ -680,6 +684,14 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>검증 유형 &apos;{}&apos;에 대한 잘못된 레이블 &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>저장됨</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>저장 실패</translation>
     </message>
     <message>
         <source>Error saving label data</source>

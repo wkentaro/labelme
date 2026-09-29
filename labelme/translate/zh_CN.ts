@@ -630,6 +630,10 @@ Shapes</source>
         <translation>%s 已启动。</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>重试</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>选择一个标签以开始用它绘制。按 &apos;Esc&apos; 清除选择。</translation>
     </message>
@@ -686,6 +690,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>标签“{}”不符合“{}”验证类型</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>已保存</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>保存失败</translation>
     </message>
     <message>
         <source>Error saving label data</source>

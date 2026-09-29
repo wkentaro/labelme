@@ -624,6 +624,10 @@ Shapes</source>
         <translation>%s gestart.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Opnieuw proberen</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Kies een label om ermee te tekenen. Druk op &apos;Esc&apos; om de selectie op te heffen.</translation>
     </message>
@@ -680,6 +684,14 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Ongeldig label &apos;{}&apos; met validatietype &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Opgeslagen</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Opslaan mislukt</translation>
     </message>
     <message>
         <source>Error saving label data</source>

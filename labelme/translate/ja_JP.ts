@@ -638,6 +638,10 @@ Shapes</source>
         <translation>%s を起動しました</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>再試行</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>ラベルを選択して描画を開始します。&apos;Esc&apos;キーを押すと選択が解除されます。</translation>
     </message>
@@ -694,6 +698,14 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>ラベル &apos;{}&apos; は検証タイプ &apos;{}&apos; では無効です</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>保存済み</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>保存に失敗しました</translation>
     </message>
     <message>
         <source>Error saving label data</source>
