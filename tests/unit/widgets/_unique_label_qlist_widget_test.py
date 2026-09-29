@@ -82,3 +82,15 @@ def test_press_on_empty_area_clears_selection(
     )
 
     assert selected_widget.selectedItems() == []
+
+
+def test_lookup_matches_literal_case_sensitive_labels(
+    *, widget: UniqueLabelQListWidget
+) -> None:
+    labels = ["cat", "Cat", "cat*", "cat (1)", "<cat>&", "猫"]
+    for label in labels:
+        widget.add_label_item(label=label, color=(255, 0, 0))
+    for index, label in enumerate(labels):
+        assert widget.find_label_item(label=label) is widget.item(index)
+    assert widget.find_label_item(label="CAT") is None
+    assert widget.find_label_item(label="cat?") is None
