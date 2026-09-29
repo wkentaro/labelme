@@ -110,3 +110,30 @@ def test_overlapping_vertex_pixels_match_except_antialiased_edges(
     # 99% of this image within one channel value, including the hover pattern.
     difference = np.abs(actual - expected)
     assert np.mean(np.all(difference <= 1, axis=-1)) >= 0.99
+
+
+@pytest.mark.parametrize("ratio", [1, 2])
+def test_overlapping_translucent_draft_vertices_match_combined_paths(
+    *, qapp: QApplication, ratio: int
+) -> None:
+    assert qapp is not None
+    theta = np.linspace(0, 2 * np.pi, 300, endpoint=False)
+    shape = Shape(points=np.c_[150 + 35 * np.cos(theta), 150 + 35 * np.sin(theta)])
+    context = ShapeRenderContext(
+        scale=1,
+        palette=dataclasses.replace(
+            Palette.from_rgb((0, 255, 0)), line=QtGui.QColor(0, 255, 0, 128)
+        ),
+        point_size=8,
+        point_type="round",
+        selected=False,
+        fill=False,
+        highlight=None,
+        rotation_highlight=None,
+    )
+    with patch.object(
+        _shape_render, "_paint_filled_vertices", _paint_combined_vertices
+    ):
+        expected = _render(shape=shape, context=context, ratio=ratio)
+    actual = _render(shape=shape, context=context, ratio=ratio)
+    assert np.max(np.abs(actual - expected)) <= 1

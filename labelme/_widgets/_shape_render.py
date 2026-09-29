@@ -221,16 +221,30 @@ def _paint_filled_vertices(
     vertices: list[_Vertex],
     fill: QtGui.QColor,
 ) -> None:
-    # Stroking thousands of overlapping subpaths is expensive. Draw each
-    # outline directly, but keep the shared fill's overlap and highlight rules.
+    # Independent translucent strokes accumulate opacity where markers overlap.
+    # Keep their combined outline, and only split ordinary opaque strokes.
+    pen = painter.pen()
+    draw_individually = (
+        pen.color().alphaF() == 1
+        and pen.style() == QtCore.Qt.PenStyle.SolidLine
+        and painter.opacity() == 1
+        and painter.brush().style() == QtCore.Qt.BrushStyle.NoBrush
+        and painter.compositionMode()
+        == QtGui.QPainter.CompositionMode.CompositionMode_SourceOver
+    )
     path = QtGui.QPainterPath()
     for rect, point_type in vertices:
         if point_type == "round":
-            painter.drawEllipse(rect)
+            if draw_individually:
+                painter.drawEllipse(rect)
             path.addEllipse(rect)
         else:
-            painter.drawRect(rect)
+            if draw_individually:
+                painter.drawRect(rect)
             path.addRect(rect)
+    if not draw_individually:
+        painter.drawPath(path)
+    # The shared fill retains the holes and highlights where markers overlap.
     painter.fillPath(path, fill)
 
 
