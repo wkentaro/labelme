@@ -160,16 +160,15 @@ def _paint_mask(
     )
 
 
+_Vertex = tuple[QtCore.QRectF, Literal["square", "round"]]
+
+
 @dataclasses.dataclass(frozen=True)
 class _ShapePaths:
     line: QtGui.QPainterPath = dataclasses.field(default_factory=QtGui.QPainterPath)
-    vertices: QtGui.QPainterPath = dataclasses.field(default_factory=QtGui.QPainterPath)
-    negative_vertices: QtGui.QPainterPath = dataclasses.field(
-        default_factory=QtGui.QPainterPath
-    )
-    rotation_vertices: QtGui.QPainterPath = dataclasses.field(
-        default_factory=QtGui.QPainterPath
-    )
+    vertices: list[_Vertex] = dataclasses.field(default_factory=list)
+    negative_vertices: list[_Vertex] = dataclasses.field(default_factory=list)
+    rotation_vertices: list[_Vertex] = dataclasses.field(default_factory=list)
     orientation_arrow: QtGui.QPainterPath = dataclasses.field(
         default_factory=QtGui.QPainterPath
     )
@@ -187,15 +186,19 @@ def _paint_shape_points(
     painter.drawPath(paths.line)
     _paint_filled_vertices(
         painter=painter,
-        path=paths.vertices,
-        highlighted=context.highlight is not None,
-        palette=palette,
+        vertices=paths.vertices,
+        fill=palette.hvertex_fill
+        if context.highlight is not None
+        else palette.vertex_fill,
     )
     _paint_filled_vertices(
         painter=painter,
-        path=paths.rotation_vertices,
-        highlighted=context.rotation_highlight is not None,
-        palette=palette,
+        vertices=paths.rotation_vertices,
+        fill=(
+            palette.hvertex_fill
+            if context.rotation_highlight is not None
+            else palette.vertex_fill
+        ),
     )
     if context.fill and shape.shape_type not in ["line", "linestrip", "points", "mask"]:
         fill = palette.select_fill if context.selected else palette.fill
@@ -204,24 +207,30 @@ def _paint_shape_points(
         painter.setPen(QtGui.QPen(palette.vertex_fill, _OUTLINE_WIDTH))
         painter.drawPath(paths.orientation_arrow)
 
-    if paths.negative_vertices.length() > 0:
+    if paths.negative_vertices:
         neg_color = QtGui.QColor(255, 0, 0, 255)
         painter.setPen(QtGui.QPen(neg_color, _OUTLINE_WIDTH))
-        painter.drawPath(paths.negative_vertices)
-        painter.fillPath(paths.negative_vertices, neg_color)
+        _paint_filled_vertices(
+            painter=painter, vertices=paths.negative_vertices, fill=neg_color
+        )
 
 
 def _paint_filled_vertices(
     *,
     painter: QtGui.QPainter,
-    path: QtGui.QPainterPath,
-    highlighted: bool,
-    palette: Palette,
+    vertices: list[_Vertex],
+    fill: QtGui.QColor,
 ) -> None:
-    if path.length() == 0:
-        return
-    fill = palette.hvertex_fill if highlighted else palette.vertex_fill
-    painter.drawPath(path)
+    # Stroking thousands of overlapping subpaths is expensive. Draw each
+    # outline directly, but keep the shared fill's overlap and highlight rules.
+    path = QtGui.QPainterPath()
+    for rect, point_type in vertices:
+        if point_type == "round":
+            painter.drawEllipse(rect)
+            path.addEllipse(rect)
+        else:
+            painter.drawRect(rect)
+            path.addRect(rect)
     painter.fillPath(path, fill)
 
 
@@ -237,9 +246,9 @@ def _resolve_vertex_style(
     return default_size, default_point_type
 
 
-def _build_shape_point_path(
+def _append_shape_vertex(
     *,
-    path: QtGui.QPainterPath,
+    vertices: list[_Vertex],
     shape: Shape,
     context: ShapeRenderContext,
     vertex_index: int,
@@ -251,12 +260,12 @@ def _build_shape_point_path(
         default_point_type=context.point_type,
     )
     pos = QtCore.QPointF(*(shape.points[vertex_index] * context.scale))
-    _draw_vertex(path=path, pos=pos, size=size, point_type=point_type)
+    _append_vertex(vertices=vertices, pos=pos, size=size, point_type=point_type)
 
 
-def _build_shape_rotation_point_path(
+def _append_shape_rotation_vertex(
     *,
-    path: QtGui.QPainterPath,
+    vertices: list[_Vertex],
     shape: Shape,
     context: ShapeRenderContext,
     vertex_index: int,
@@ -269,23 +278,20 @@ def _build_shape_rotation_point_path(
     )
     handle = get_rotation_handle(shape=shape, index=vertex_index)
     pos = QtCore.QPointF(*(handle * context.scale))
-    _draw_vertex(path=path, pos=pos, size=size, point_type=point_type)
+    _append_vertex(vertices=vertices, pos=pos, size=size, point_type=point_type)
 
 
-def _draw_vertex(
+def _append_vertex(
     *,
-    path: QtGui.QPainterPath,
+    vertices: list[_Vertex],
     pos: QtCore.QPointF,
     size: float,
     point_type: Literal["square", "round"],
 ) -> None:
     half = size / 2.0
-    if point_type == "square":
-        path.addRect(pos.x() - half, pos.y() - half, size, size)
-    elif point_type == "round":
-        path.addEllipse(pos, half, half)
-    else:
-        raise ValueError(f"Unsupported vertex shape: {point_type}")
+    vertices.append(
+        (QtCore.QRectF(pos.x() - half, pos.y() - half, size, size), point_type)
+    )
 
 
 def _build_shape_oriented_rectangle_arrow_path(
@@ -318,9 +324,9 @@ def _build_shape_points_paths(
     if shape.shape_type == "points":
         # Prompt points are standalone markers; their outline only bounds them.
         for i, point_label in enumerate(shape.point_labels):
-            path = paths.vertices if point_label == 1 else paths.negative_vertices
-            _build_shape_point_path(
-                path=path, shape=shape, context=context, vertex_index=i
+            vertices = paths.vertices if point_label == 1 else paths.negative_vertices
+            _append_shape_vertex(
+                vertices=vertices, shape=shape, context=context, vertex_index=i
             )
         return paths
 
@@ -334,16 +340,16 @@ def _build_shape_points_paths(
     ):
         return paths
     for i in range(len(points)):
-        _build_shape_point_path(
-            path=paths.vertices, shape=shape, context=context, vertex_index=i
+        _append_shape_vertex(
+            vertices=paths.vertices, shape=shape, context=context, vertex_index=i
         )
     if (
         shape.shape_type == "oriented_rectangle"
         and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
     ):
         for i in range(len(points)):
-            _build_shape_rotation_point_path(
-                path=paths.rotation_vertices,
+            _append_shape_rotation_vertex(
+                vertices=paths.rotation_vertices,
                 shape=shape,
                 context=context,
                 vertex_index=i,
