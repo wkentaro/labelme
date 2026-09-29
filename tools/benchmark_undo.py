@@ -25,9 +25,9 @@ def main() -> None:
     parser.add_argument("--shapes", type=int, default=1)
     parser.add_argument("--vertices", type=int, default=10000)
     parser.add_argument("--samples", type=int, default=20)
-    parser.add_argument("--unique-labels", action="store_true")
+    parser.add_argument("--labels", type=int, default=5)
     args = parser.parse_args()
-    if min(args.shapes, args.vertices, args.samples) < 1:
+    if min(args.shapes, args.vertices, args.samples, args.labels) < 1:
         parser.error("counts must be positive")
     app = QtWidgets.QApplication([])
     with tempfile.TemporaryDirectory() as directory:
@@ -49,12 +49,12 @@ def main() -> None:
             )
         canvas = win._canvas_widgets.canvas
         theta = np.linspace(0, 2 * np.pi, args.vertices, endpoint=False)
-        points = np.column_stack((500 + 100 * np.cos(theta), 500 + 100 * np.sin(theta)))
+        points = np.column_stack((50 + 40 * np.cos(theta), 50 + 40 * np.sin(theta)))
         win._load_shapes(
             [
                 Shape(
-                    label=f"object-{i}" if args.unique_labels else "object",
-                    points=points + i,
+                    label=f"object-{i % args.labels}",
+                    points=points + [i % 10 * 90, i // 10 * 90],
                     closed=True,
                 )
                 for i in range(args.shapes)
