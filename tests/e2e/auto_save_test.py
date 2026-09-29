@@ -11,6 +11,7 @@ from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
 import labelme._app
+import labelme._save_snapshot
 from labelme._app import MainWindow
 from labelme._widgets._shape_render import bounds as _shape_bounds
 
@@ -247,12 +248,14 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
 
     monkeypatch.setattr(QMessageBox, "critical", _record_critical)
 
-    original_write_label_file = labelme._app.write_label_file
+    original_write_label_file = labelme._save_snapshot.write_label_file
 
     def _raise_permission_error(*_args: object, **_kwargs: object) -> None:
         raise PermissionError("read-only output directory")
 
-    monkeypatch.setattr(labelme._app, "write_label_file", _raise_permission_error)
+    monkeypatch.setattr(
+        labelme._save_snapshot, "write_label_file", _raise_permission_error
+    )
 
     draw_and_commit_polygon(
         qtbot=qtbot,
@@ -289,7 +292,9 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     assert close_prompts == [True]
     assert _raw_auto_save_win.isVisible()
 
-    monkeypatch.setattr(labelme._app, "write_label_file", original_write_label_file)
+    monkeypatch.setattr(
+        labelme._save_snapshot, "write_label_file", original_write_label_file
+    )
     monkeypatch.setattr(
         _raw_auto_save_win, "prompt_save_file_path", lambda: str(label_file)
     )
@@ -305,7 +310,9 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     assert not _raw_auto_save_win.windowTitle().endswith("*")
     assert not _raw_auto_save_win._actions.save.isEnabled()
 
-    monkeypatch.setattr(labelme._app, "write_label_file", _raise_permission_error)
+    monkeypatch.setattr(
+        labelme._save_snapshot, "write_label_file", _raise_permission_error
+    )
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
 
@@ -339,7 +346,9 @@ def test_failed_auto_save_shows_error_again_after_target_changes(
     def _raise_permission_error(*_args: object, **_kwargs: object) -> None:
         raise PermissionError("read-only output directory")
 
-    monkeypatch.setattr(labelme._app, "write_label_file", _raise_permission_error)
+    monkeypatch.setattr(
+        labelme._save_snapshot, "write_label_file", _raise_permission_error
+    )
 
     draw_and_commit_polygon(
         qtbot=qtbot,

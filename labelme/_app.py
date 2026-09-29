@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import enum
 import functools
 import math
@@ -41,9 +42,9 @@ from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
-from ._label_file import write_label_file
 from ._label_flags import apply_default_flags
 from ._model_manager import ModelManager
+from ._save_snapshot import SaveSnapshot
 from ._shape import Shape
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
@@ -1813,45 +1814,46 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             widget.addItem(item)
 
-    def save_labels(self, *, label_path: str, show_error: bool = True) -> bool:
-        shapes = [
-            _shape_to_dict(s)
-            for item in self._docks.label_list
-            if (s := item.shape()) is not None
-        ]
-        flags = self._read_flag_dock_states()
-        try:
-            assert self._image_path
-            assert self._annotation is not None
-            label_dir = Path(label_path).parent
-            label_dir.mkdir(parents=True, exist_ok=True)
-            annotation = Annotation(
+    def _capture_save_snapshot(self, *, label_path: str) -> SaveSnapshot:
+        assert self._image_path
+        assert self._annotation is not None
+        return SaveSnapshot(
+            filename=label_path,
+            annotation=Annotation(
                 image_path=_resolve_stored_image_path(
-                    image_path=self._image_path, label_dir=label_dir
+                    image_path=self._image_path, label_dir=Path(label_path).parent
                 ),
                 image_data=self._annotation.image_data,
-                shapes=shapes,
-                flags=flags,
-                other_data=self._annotation.other_data,
-            )
-            write_label_file(
-                filename=label_path,
-                annotation=annotation,
-                image_height=self._image.height(),
-                image_width=self._image.width(),
-                save_image_data=self._config["with_image_data"],
-            )
-            self._label_file_path = label_path
-            items = self._docks.file_list.findItems(
-                self._image_path, Qt.MatchFlag.MatchExactly
-            )
-            if len(items) > 1:
-                raise RuntimeError("There are duplicate files.")
-            if items:
-                items[0].setCheckState(Qt.CheckState.Checked)
-            self._last_failed_auto_save_path = None
-            self._actions.delete_file.setEnabled(True)
-            return True
+                shapes=[
+                    _shape_to_dict(shape)
+                    for item in self._docks.label_list
+                    if (shape := item.shape()) is not None
+                ],
+                flags=self._read_flag_dock_states(),
+                other_data=copy.deepcopy(self._annotation.other_data),
+            ),
+            image_height=self._image.height(),
+            image_width=self._image.width(),
+            save_image_data=self._config["with_image_data"],
+        )
+
+    def _record_saved_snapshot(self, snapshot: SaveSnapshot, /) -> None:
+        assert self._image_path is not None
+        self._label_file_path = snapshot.filename
+        items = self._docks.file_list.findItems(
+            self._image_path, Qt.MatchFlag.MatchExactly
+        )
+        if len(items) > 1:
+            raise RuntimeError("There are duplicate files.")
+        if items:
+            items[0].setCheckState(Qt.CheckState.Checked)
+        self._last_failed_auto_save_path = None
+        self._actions.delete_file.setEnabled(True)
+
+    def save_labels(self, *, label_path: str, show_error: bool = True) -> bool:
+        try:
+            snapshot = self._capture_save_snapshot(label_path=label_path)
+            snapshot.write()
         except (LabelFileError, OSError, ValueError) as e:
             if show_error:
                 self.show_error_message(
@@ -1859,6 +1861,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     message=self.tr("<b>%s</b>") % e,
                 )
             return False
+        self._record_saved_snapshot(snapshot)
+        return True
 
     def _insert_shapes(self, shapes: list[Shape], /) -> None:
         if not shapes:
@@ -3335,11 +3339,11 @@ def _shape_to_dict(shape: Shape, /) -> ShapeDict:
         label=shape.label,
         points=shape.points.tolist(),
         shape_type=shape.shape_type,
-        flags=shape.flags or {},
+        flags=dict(shape.flags or {}),
         description=shape.description or "",
         group_id=shape.group_id,
-        mask=shape.mask,
-        other_data=shape.other_data,
+        mask=None if shape.mask is None else shape.mask.copy(),
+        other_data=copy.deepcopy(shape.other_data),
     )
 
 
