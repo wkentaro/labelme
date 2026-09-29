@@ -247,3 +247,27 @@ def test_output_directory_replaces_save_as_target_for_open_json(
     qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
     assert Path(raw_win.current_label_file_path()).parent == output
     assert json.loads(previous.read_text())["shapes"][0]["points"][0][0] == 1
+
+
+def test_manual_save_supersedes_pending_edits_and_marks_clean(
+    *,
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    entered, release, _writes = blocked_writer
+    monkeypatch.setattr(
+        QtWidgets.QMessageBox,
+        "question",
+        lambda *_a, **_k: QtWidgets.QMessageBox.StandardButton.Discard,
+    )
+    _edit(win=raw_win, x=1)
+    qtbot.waitUntil(entered.is_set)
+    _edit(win=raw_win, x=2)
+    path = raw_win.current_label_file_path()
+    QtCore.QTimer.singleShot(50, release.set)
+    assert raw_win.save_labels(label_path=path)
+    assert json.loads(Path(path).read_text())["shapes"][0]["points"][0][0] == 2
+    assert not raw_win._is_changed
+    assert not raw_win._save_writer.is_busy

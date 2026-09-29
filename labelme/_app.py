@@ -1472,7 +1472,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_save_failure(label_path=snapshot.filename, error=error)
             return
         self._record_saved_snapshot(snapshot)
-        self.mark_clean()
 
     def _wait_for_save(self) -> None:
         if not self._save_writer.is_busy:
@@ -1909,6 +1908,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._status_bar.save.setToolTip(label_path)
         self._status_bar.retry.hide()
         self._actions.delete_file.setEnabled(True)
+        self.mark_clean()
 
     def _show_save_failure(self, *, label_path: str, error: Exception) -> None:
         self._failed_save_path = label_path
@@ -2674,8 +2674,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if save_as:
             # Keep the chosen destination through failure, Retry, and later edits.
             self._auto_save_path = label_path
-        if self.save_labels(label_path=label_path):
-            self.mark_clean()
+        self.save_labels(label_path=label_path)
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
