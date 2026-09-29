@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 from PySide6 import QtCore
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
@@ -269,5 +270,66 @@ def test_manual_save_supersedes_pending_edits_and_marks_clean(
     QtCore.QTimer.singleShot(50, release.set)
     assert raw_win.save_labels(label_path=path)
     assert json.loads(Path(path).read_text())["shapes"][0]["points"][0][0] == 2
+    assert not raw_win._is_changed
+    assert not raw_win._save_writer.is_busy
+
+
+def test_save_barrier_defers_completion_until_dialog_events_are_processed(
+    *,
+    raw_win: MainWindow,
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    entered, release, _writes = blocked_writer
+    _edit(win=raw_win, x=1)
+    assert entered.wait(5)
+    writer = raw_win._save_writer
+    writer._timer.stop()
+    assert writer._active is not None
+    release.set()
+    writer._active[2].result(timeout=5)
+
+    class CompletingDialog(QtWidgets.QProgressDialog):
+        def showEvent(self, event: QtGui.QShowEvent, /) -> None:
+            super().showEvent(event)
+            writer._poll()
+
+        def exec(self) -> int:
+            # Deliver completion while showing, before the nested event loop.
+            # Inspect visibility instead of entering a loop that could hang.
+            self.show()
+            assert not writer.is_busy
+            assert self.isVisible()
+            QtCore.QCoreApplication.processEvents()
+            assert not self.isVisible()
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+    monkeypatch.setattr(QtWidgets, "QProgressDialog", CompletingDialog)
+    raw_win._wait_for_save()
+    assert not raw_win._is_changed
+
+
+def test_manual_save_waits_for_first_auto_save_before_choosing_path(
+    *,
+    raw_win: MainWindow,
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    entered, release, writes = blocked_writer
+    _edit(win=raw_win, x=1)
+    assert entered.wait(5)
+    assert raw_win._label_file_path is None
+
+    def reject_prompt() -> str:
+        pytest.fail("The first auto-save already has a destination")
+
+    monkeypatch.setattr(raw_win, "prompt_save_file_path", reject_prompt)
+    QtCore.QTimer.singleShot(50, release.set)
+    raw_win._save_label_file(save_as=False)
+    assert raw_win._label_file_path == writes[0].filename
+    assert (
+        json.loads(Path(writes[0].filename).read_text())["shapes"][0]["points"][0][0]
+        == 1
+    )
     assert not raw_win._is_changed
     assert not raw_win._save_writer.is_busy

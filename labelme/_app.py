@@ -1480,7 +1480,10 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog.setCancelButton(None)
         dialog.setWindowModality(Qt.WindowModality.WindowModal)
         dialog.setMinimumDuration(0)
-        self._save_writer.idle.connect(dialog.accept)
+        # Completion while the dialog opens must wait for its event loop.
+        self._save_writer.idle.connect(
+            dialog.accept, Qt.ConnectionType.QueuedConnection
+        )
         try:
             # Dismissing the progress window cannot bypass the write barrier.
             while self._save_writer.is_busy:
@@ -2660,6 +2663,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _save_label_file(self, *, save_as: bool) -> None:
         assert not self._image.isNull(), "cannot save empty image"
+        self._wait_for_save()
 
         label_path: str | None = None
         if not save_as and self._label_file_path is not None:
