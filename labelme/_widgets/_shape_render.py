@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import typing
 from typing import Final
 from typing import Literal
@@ -100,10 +101,96 @@ def render_shape(
         _paint_mask(painter=painter, shape=shape, context=context)
 
     if len(shape.points) > 0:
-        _paint_shape_points(painter=painter, shape=shape, context=context)
+        if not _paint_cached_polygon(painter=painter, shape=shape, context=context):
+            _paint_shape_points(painter=painter, shape=shape, context=context)
 
     if context.show_label:
         _paint_label(painter=painter, shape=shape, context=context)
+
+
+def _paint_cached_polygon(
+    *, painter: QtGui.QPainter, shape: Shape, context: ShapeRenderContext
+) -> bool:
+    MIN_CACHED_VERTICES: Final = 256
+    MAX_CACHED_PIXELS: Final = 512 * 1024
+    if shape.shape_type != "polygon" or len(shape.points) < MIN_CACHED_VERTICES:
+        return False
+    if (
+        painter.brush().style() != QtCore.Qt.BrushStyle.NoBrush
+        or painter.viewport() != painter.window()
+        or painter.worldTransform().type().value
+        > QtGui.QTransform.TransformationType.TxTranslate.value
+        or painter.opacity() != 1
+        or painter.compositionMode()
+        != QtGui.QPainter.CompositionMode.CompositionMode_SourceOver
+    ):
+        return False
+    device = painter.device()
+    ratio = device.devicePixelRatioF()
+    margin = context.point_size * 2 + _OUTLINE_WIDTH + 2
+    low = shape.points.min(axis=0) * context.scale - margin
+    high = shape.points.max(axis=0) * context.scale + margin
+    transform = painter.deviceTransform()
+    bounds = transform.mapRect(
+        QtCore.QRectF(QtCore.QPointF(*low), QtCore.QPointF(*high))
+    ).toAlignedRect()
+    bounds &= QtCore.QRect(
+        0, 0, int(device.width() * ratio), int(device.height() * ratio)
+    )
+    if bounds.isEmpty():
+        return True
+    if bounds.width() * bounds.height() > MAX_CACHED_PIXELS:
+        return False
+
+    # Undo creates new objects, and vertex edits mutate arrays in place. Content
+    # keys reuse prior drawings without retaining shapes or trusting identities.
+    digest = hashlib.blake2b(shape.points.tobytes(), digest_size=20)
+    digest.update(
+        repr(
+            (
+                shape.closed,
+                context,
+                (
+                    transform.m11(),
+                    transform.m12(),
+                    transform.m21(),
+                    transform.m22(),
+                    transform.dx(),
+                    transform.dy(),
+                ),
+                bounds,
+                painter.renderHints(),
+                painter.pen().color().rgba(),
+                painter.pen().widthF(),
+                painter.pen().style(),
+                painter.brush().style(),
+            )
+        ).encode()
+    )
+    key = "labelme-polygon-" + digest.hexdigest()
+    pixmap = QtGui.QPixmap()
+    if not QtGui.QPixmapCache.find(key, pixmap):
+        image = QtGui.QImage(
+            bounds.size(), QtGui.QImage.Format.Format_ARGB32_Premultiplied
+        )
+        image.fill(QtCore.Qt.GlobalColor.transparent)
+        raster = QtGui.QPainter(image)
+        raster.setRenderHints(painter.renderHints())
+        raster.setPen(painter.pen())
+        raster.setBrush(painter.brush())
+        raster.translate(-bounds.x(), -bounds.y())
+        raster.setWorldTransform(transform, combine=True)
+        _paint_shape_points(painter=raster, shape=shape, context=context)
+        raster.end()
+        pixmap = QtGui.QPixmap.fromImage(image)
+        # Qt's existing cache bounds memory and evicts old zoom/highlight states.
+        QtGui.QPixmapCache.insert(key, pixmap)
+    painter.save()
+    painter.resetTransform()
+    painter.scale(1 / ratio, 1 / ratio)
+    painter.drawPixmap(bounds.topLeft(), pixmap)
+    painter.restore()
+    return True
 
 
 def _paint_label(
