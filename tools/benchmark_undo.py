@@ -26,6 +26,7 @@ def main() -> None:
     parser.add_argument("--vertices", type=int, default=10000)
     parser.add_argument("--samples", type=int, default=20)
     parser.add_argument("--unique-labels", action="store_true")
+    parser.add_argument("--cold-history", action="store_true")
     args = parser.parse_args()
     if min(args.shapes, args.vertices, args.samples) < 1:
         parser.error("counts must be positive")
@@ -61,15 +62,20 @@ def main() -> None:
             ],
             replace=True,
         )
+        canvas.setParent(None)
+        canvas.setFixedSize(1000, 1000)
+        canvas.scale = 1
+        canvas.show()
+        app.processEvents()
         canvas.shape_backups = collections.deque(maxlen=args.samples + 2)
         canvas.backup_shapes()
         for _ in range(args.samples):
             canvas.shapes[0].points[0, 0] += 1
             canvas.backup_shapes()
-        canvas.setParent(None)
-        canvas.setFixedSize(1000, 1000)
-        canvas.scale = 1
-        canvas.show()
+            if not args.cold_history:
+                canvas.update()
+                app.processEvents()
+        canvas.update()
         app.processEvents()
         timings = []
         for step in range(args.samples):

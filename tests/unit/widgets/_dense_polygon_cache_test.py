@@ -6,6 +6,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 from PySide6 import QtGui
+from PySide6 import QtWidgets
 from PySide6.QtWidgets import QApplication
 
 from labelme._shape import Shape
@@ -81,3 +82,41 @@ def test_cached_polygon_matches_direct_paint_after_edits(
                 shape=shape.copy(), context=context, ratio=ratio, offset=offset
             )
         np.testing.assert_array_equal(actual, repeated)
+
+
+def test_cached_polygon_matches_paint_in_offset_child(*, qapp: QApplication) -> None:
+    assert qapp is not None
+    theta = np.linspace(0, 2 * np.pi, 300, endpoint=False)
+    shape = Shape(
+        points=np.c_[75 + 40 * np.cos(theta), 75 + 40 * np.sin(theta)], closed=True
+    )
+    context = ShapeRenderContext(
+        scale=1,
+        palette=Palette.from_rgb((240, 20, 40)),
+        point_size=8,
+        point_type="round",
+        selected=False,
+        fill=True,
+        highlight=None,
+        rotation_highlight=None,
+    )
+
+    class PolygonWidget(QtWidgets.QWidget):
+        def paintEvent(self, event: QtGui.QPaintEvent, /) -> None:
+            del event
+            painter = QtGui.QPainter(self)
+            painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+            _shape_render.render_shape(painter=painter, shape=shape, context=context)
+            painter.end()
+
+    parent = QtWidgets.QWidget()
+    parent.resize(400, 400)
+    child = PolygonWidget(parent)
+    child.setGeometry(80, 90, 200, 200)
+    with patch.object(_shape_render, "_paint_cached_polygon", return_value=False):
+        expected = parent.grab().toImage()
+    actual = parent.grab().toImage()
+    expected_pixels = np.frombuffer(expected.bits(), dtype=np.uint8).astype(int)
+    actual_pixels = np.frombuffer(actual.bits(), dtype=np.uint8).astype(int)
+    assert np.max(np.abs(actual_pixels - expected_pixels)) <= 1
+    parent.close()

@@ -125,8 +125,6 @@ def _paint_cached_polygon(
         != QtGui.QPainter.CompositionMode.CompositionMode_SourceOver
     ):
         return False
-    device = painter.device()
-    ratio = device.devicePixelRatioF()
     margin = context.point_size * 2 + _OUTLINE_WIDTH + 2
     low = shape.points.min(axis=0) * context.scale - margin
     high = shape.points.max(axis=0) * context.scale + margin
@@ -134,9 +132,6 @@ def _paint_cached_polygon(
     bounds = transform.mapRect(
         QtCore.QRectF(QtCore.QPointF(*low), QtCore.QPointF(*high))
     ).toAlignedRect()
-    bounds &= QtCore.QRect(
-        0, 0, int(device.width() * ratio), int(device.height() * ratio)
-    )
     if bounds.isEmpty():
         return True
     if bounds.width() * bounds.height() > MAX_CACHED_PIXELS:
@@ -167,6 +162,11 @@ def _paint_cached_polygon(
             )
         ).encode()
     )
+    # Ten dense shapes plus viewed undo states exceed Qt's default 10 MiB
+    # budget on Retina displays. Keep a bounded budget large enough for reuse.
+    CACHE_KIB: Final = 32 * 1024
+    if QtGui.QPixmapCache.cacheLimit() < CACHE_KIB:
+        QtGui.QPixmapCache.setCacheLimit(CACHE_KIB)
     key = "labelme-polygon-" + digest.hexdigest()
     pixmap = QtGui.QPixmap()
     if not QtGui.QPixmapCache.find(key, pixmap):
@@ -187,7 +187,7 @@ def _paint_cached_polygon(
         QtGui.QPixmapCache.insert(key, pixmap)
     painter.save()
     painter.resetTransform()
-    painter.scale(1 / ratio, 1 / ratio)
+    painter.setWorldTransform(painter.deviceTransform().inverted()[0])
     painter.drawPixmap(bounds.topLeft(), pixmap)
     painter.restore()
     return True
