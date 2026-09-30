@@ -44,7 +44,8 @@ from ._label_file import read_image_file
 from ._label_file import read_label_file
 from ._label_flags import apply_default_flags
 from ._model_manager import ModelManager
-from ._save_snapshot import SaveSnapshot
+from ._save_request import SaveRequest
+from ._save_request import write_save_request
 from ._shape import Shape
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
@@ -1814,10 +1815,10 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             widget.addItem(item)
 
-    def _capture_save_snapshot(self, *, label_path: str) -> SaveSnapshot:
+    def _capture_save_request(self, *, label_path: str) -> SaveRequest:
         assert self._image_path
         assert self._annotation is not None
-        return SaveSnapshot(
+        return SaveRequest(
             filename=label_path,
             annotation=Annotation(
                 image_path=_resolve_stored_image_path(
@@ -1837,9 +1838,9 @@ class MainWindow(QtWidgets.QMainWindow):
             save_image_data=self._config["with_image_data"],
         )
 
-    def _record_saved_snapshot(self, snapshot: SaveSnapshot, /) -> None:
+    def _record_saved_annotation(self, *, label_path: str) -> None:
         assert self._image_path is not None
-        self._label_file_path = snapshot.filename
+        self._label_file_path = label_path
         items = self._docks.file_list.findItems(
             self._image_path, Qt.MatchFlag.MatchExactly
         )
@@ -1852,8 +1853,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def save_labels(self, *, label_path: str, show_error: bool = True) -> bool:
         try:
-            snapshot = self._capture_save_snapshot(label_path=label_path)
-            snapshot.write()
+            request = self._capture_save_request(label_path=label_path)
+            write_save_request(request)
         except (LabelFileError, OSError, ValueError) as e:
             if show_error:
                 self.show_error_message(
@@ -1861,7 +1862,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     message=self.tr("<b>%s</b>") % e,
                 )
             return False
-        self._record_saved_snapshot(snapshot)
+        self._record_saved_annotation(label_path=request.filename)
         return True
 
     def _insert_shapes(self, shapes: list[Shape], /) -> None:
