@@ -201,7 +201,7 @@ def test_merge_mask_shapes(
     assert win._actions.merge.isEnabled()
 
     win._actions.merge.trigger()
-    qtbot.wait(50)
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
 
     assert len(canvas.shapes) == 1
     merged = canvas.shapes[0]

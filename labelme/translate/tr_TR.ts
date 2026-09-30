@@ -630,6 +630,10 @@ Shapes</source>
         <translation>%s başlatıldı.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Yeniden dene</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Çizime başlamak için bir etiket seçin. Seçimi temizlemek için &apos;Esc&apos; tuşuna basın.</translation>
     </message>
@@ -668,6 +672,10 @@ Shapes</source>
         <translation>Yapılandırma yedeği %s konumuna kaydedildi</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Kaydediliyor…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Maske çıktısı kullanılamıyor</translation>
     </message>
@@ -686,6 +694,14 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>&apos;{}&apos; etiketi &apos;{}&apos; doğrulama türüne göre geçersiz</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Kaydedildi</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Kaydetme başarısız</translation>
     </message>
     <message>
         <source>Error saving label data</source>

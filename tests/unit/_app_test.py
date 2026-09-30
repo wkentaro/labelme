@@ -419,7 +419,7 @@ def test_shape_to_dict_maps_all_fields() -> None:
         "mask": None,
         "other_data": {"source": "human"},
     }
-    assert result["other_data"] is shape.other_data
+    assert result["other_data"] is not shape.other_data
 
 
 @pytest.mark.parametrize(
@@ -448,7 +448,7 @@ def test_shape_to_dict_coalesces_optional_flags_and_description(
     assert result["description"] == expected_description
 
 
-def test_shape_to_dict_passes_mask_through_unchanged() -> None:
+def test_shape_to_dict_copies_mask() -> None:
     mask = np.zeros((2, 2), dtype=bool)
     shape = Shape(
         label="cat",
@@ -457,7 +457,9 @@ def test_shape_to_dict_passes_mask_through_unchanged() -> None:
         points=np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float64),
     )
 
-    assert _app._shape_to_dict(shape)["mask"] is mask
+    result = _app._shape_to_dict(shape)["mask"]
+    assert result is not mask
+    np.testing.assert_array_equal(result, mask)
 
 
 def test_shape_to_dict_requires_label() -> None:

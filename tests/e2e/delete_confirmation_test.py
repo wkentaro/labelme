@@ -117,6 +117,7 @@ def test_delete_shapes_without_confirmation_and_undo(
     canvas.shapes[0].flags = {"reviewed": True}
     win._commit_shapes(canvas.shapes)
     label_file = tmp_path / Path(ANNOTATED_FILE_NAME).name
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     with open(label_file) as f:
         saved_shapes = json.load(f)["shapes"]
     labels = [shape.label for shape in canvas.shapes]
@@ -140,6 +141,7 @@ def test_delete_shapes_without_confirmation_and_undo(
         timeout=SHAPE_TIMEOUT_MS,
     )
 
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     with open(label_file) as f:
         assert json.load(f)["shapes"] == saved_shapes[delete_count:]
 
@@ -149,6 +151,7 @@ def test_delete_shapes_without_confirmation_and_undo(
 
     assert [shape.label for shape in canvas.shapes] == labels
     assert _get_shape_list_labels(win=win) == rows
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     with open(label_file) as f:
         assert json.load(f)["shapes"] == saved_shapes
 

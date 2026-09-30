@@ -555,6 +555,10 @@ Shapes</source>
         <translation>%s розпочато.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Повторити</translation>
+    </message>
+    <message>
         <source>Flags</source>
         <translation>Прапори</translation>
     </message>
@@ -583,6 +587,10 @@ Shapes</source>
         <translation>Налаштування командного рядка</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Збереження…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Вивід маски недоступний</translation>
     </message>
@@ -601,6 +609,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Недійсна мітка &quot;{}&quot; з типом перевірки &quot;{}&quot;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Збережено</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Не вдалося зберегти</translation>
     </message>
     <message>
         <source>Error saving label data</source>

@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 from PySide6.QtWidgets import QFileDialog
+from pytestqt.qtbot import QtBot
 
 from labelme._shape import Shape
 
@@ -178,7 +179,7 @@ def test_drawing_tool_survives_file_transitions(
 @pytest.mark.gui
 @pytest.mark.parametrize("auto_save", [False, True])
 def test_delete_file_follows_carried_annotation_save_state(
-    *, main_win: MainWinFactory, data_path: Path, auto_save: bool
+    *, main_win: MainWinFactory, data_path: Path, auto_save: bool, qtbot: QtBot
 ) -> None:
     win = main_win(
         file_or_dir=data_path / "annotated/2011_000003.jpg",
@@ -190,13 +191,14 @@ def test_delete_file_follows_carried_annotation_save_state(
     assert win._load_file(image_or_label_path=str(image_path))
     win.mark_clean()
     assert [shape.label for shape in win._canvas_widgets.canvas.shapes] == labels
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     assert image_path.with_suffix(".json").exists() == auto_save
     assert win._actions.delete_file.isEnabled() == auto_save
 
 
 @pytest.mark.gui
 def test_delete_file_enables_after_first_auto_save(
-    *, main_win: MainWinFactory, data_path: Path
+    *, main_win: MainWinFactory, data_path: Path, qtbot: QtBot
 ) -> None:
     image_path = data_path / "raw/2011_000003.jpg"
     win = main_win(file_or_dir=image_path, config_overrides={"auto_save": True})
@@ -204,5 +206,6 @@ def test_delete_file_enables_after_first_auto_save(
     win._insert_shapes(
         [Shape(label="point", shape_type="point", points=np.array([[20.0, 20.0]]))]
     )
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     assert image_path.with_suffix(".json").exists()
     assert win._actions.delete_file.isEnabled()

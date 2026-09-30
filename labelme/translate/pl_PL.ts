@@ -624,6 +624,10 @@ Shapes</source>
         <translation>%s uruchomiono.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Ponów</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Wybierz etykietę, aby zacząć nią rysować. Naciśnij &apos;Esc&apos;, aby wyczyścić zaznaczenie.</translation>
     </message>
@@ -662,6 +666,10 @@ Shapes</source>
         <translation>Kopia zapasowa konfiguracji została zapisana w %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Zapisywanie…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Wyjście maski niedostępne</translation>
     </message>
@@ -680,6 +688,14 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Nieprawidłowa etykieta &apos;{}&apos; dla typu walidacji &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Zapisano</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Zapisywanie nie powiodło się</translation>
     </message>
     <message>
         <source>Error saving label data</source>

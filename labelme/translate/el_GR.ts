@@ -554,6 +554,10 @@ Shapes</source>
         <translation>%s ξεκίνησε.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Επανάληψη</translation>
+    </message>
+    <message>
         <source>Flags</source>
         <translation>Σημάνσεις</translation>
     </message>
@@ -582,6 +586,10 @@ Shapes</source>
         <translation>Ρυθμίσεις γραμμής εντολών</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Αποθήκευση…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
     </message>
@@ -600,6 +608,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Μη έγκυρη ετικέτα &apos;{}&apos; με τύπο επικύρωσης &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Αποθηκεύτηκε</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Η αποθήκευση απέτυχε</translation>
     </message>
     <message>
         <source>Error saving label data</source>

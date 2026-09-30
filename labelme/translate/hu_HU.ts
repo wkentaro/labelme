@@ -638,6 +638,10 @@ Shapes</source>
         <translation>%s elindítva.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Újra</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Válasszon egy címkét a rajzolás megkezdéséhez. Az &apos;Esc&apos; billentyűvel megszüntetheti a kijelölést.</translation>
     </message>
@@ -676,6 +680,10 @@ Shapes</source>
         <translation>A konfiguráció biztonsági másolata ide lett mentve: %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Mentés…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>A maszk kimenet nem érhető el</translation>
     </message>
@@ -694,6 +702,14 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Érvénytelen címke &apos;{}&apos; &apos;{}&apos; validációs típussal</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Mentve</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>A mentés sikertelen</translation>
     </message>
     <message>
         <source>Error saving label data</source>

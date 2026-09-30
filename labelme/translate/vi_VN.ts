@@ -624,6 +624,10 @@ Shapes</source>
         <translation>%s đã khởi động.</translation>
     </message>
     <message>
+        <source>Retry</source>
+        <translation>Thử lại</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Chọn một nhãn để bắt đầu vẽ với nhãn đó. Nhấn &apos;Esc&apos; để xóa lựa chọn.</translation>
     </message>
@@ -662,6 +666,10 @@ Shapes</source>
         <translation>Đã lưu bản sao lưu cấu hình vào %s</translation>
     </message>
     <message>
+        <source>Saving…</source>
+        <translation>Đang lưu…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Không có đầu ra mặt nạ</translation>
     </message>
@@ -680,6 +688,14 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Nhãn không hợp lệ &apos;{}&apos; với loại xác thực &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Saved</source>
+        <translation>Đã lưu</translation>
+    </message>
+    <message>
+        <source>Save failed</source>
+        <translation>Lưu thất bại</translation>
     </message>
     <message>
         <source>Error saving label data</source>
