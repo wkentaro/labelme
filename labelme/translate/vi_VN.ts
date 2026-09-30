@@ -620,6 +620,14 @@ Shapes</source>
         <translation>Trợ giúp(&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Công cụ khác</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Công cụ hình dạng khác</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s đã khởi động.</translation>
     </message>
@@ -1363,6 +1371,13 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Cờ hình ảnh định sẵn</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Thao tác khác</translation>
     </message>
 </context>
 <context>

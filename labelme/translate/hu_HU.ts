@@ -634,6 +634,14 @@ Shapes</source>
         <translation>&amp;Súgó</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>További eszközök</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>További alakzateszközök</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s elindítva.</translation>
     </message>
@@ -1369,6 +1377,13 @@ Várt hely: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Előre definiált képjelzők</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>További műveletek</translation>
     </message>
 </context>
 <context>

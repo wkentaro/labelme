@@ -74,6 +74,21 @@ def test_toolbar_object_name_uses_title(*, qtbot: QtBot) -> None:
     assert tb.objectName() == "MyBarToolBar"
 
 
+@pytest.mark.parametrize("overflow_label", [None, "More tools", "More shape tools"])
+def test_toolbar_overflow_has_accessible_name(
+    *, qtbot: QtBot, overflow_label: str | None
+) -> None:
+    toolbar = ToolBar(title="Test", actions=[], overflow_label=overflow_label)
+    qtbot.addWidget(toolbar)
+    overflow = toolbar.findChild(QtWidgets.QToolButton, "qt_toolbar_ext_button")
+    assert overflow is not None
+    interface = QtGui.QAccessible.queryAccessibleInterface(overflow)
+    assert interface is not None
+    assert interface.text(QtGui.QAccessible.Text.Name) == (
+        overflow_label or "More actions"
+    )
+
+
 # --- movable / floatable ---
 
 

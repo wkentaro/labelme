@@ -620,6 +620,14 @@ Shapes</source>
         <translation>도움말(&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>추가 도구</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>추가 도형 도구</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s가 시작되었습니다.</translation>
     </message>
@@ -1363,6 +1371,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>사전 정의된 이미지 플래그</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>추가 작업</translation>
     </message>
 </context>
 <context>

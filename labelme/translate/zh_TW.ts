@@ -626,6 +626,14 @@ Shapes</source>
         <translation>說明(&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>更多工具</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>更多形狀工具</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s 已啟動。</translation>
     </message>
@@ -1369,6 +1377,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>預定義影像標記</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>更多操作</translation>
     </message>
 </context>
 <context>

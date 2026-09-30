@@ -605,6 +605,14 @@ Shapes</source>
         <translation>&amp;Справка</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Другие инструменты</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Другие инструменты фигур</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s запущен.</translation>
     </message>
@@ -1366,6 +1374,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Предустановленные флаги изображения</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Другие действия</translation>
     </message>
 </context>
 <context>

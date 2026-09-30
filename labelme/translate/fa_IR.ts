@@ -620,6 +620,14 @@ Shapes</source>
         <translation>راهنما(&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>ابزارهای بیشتر</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>ابزارهای بیشتر برای شکل‌ها</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s راه‌اندازی شد.</translation>
     </message>
@@ -1363,6 +1371,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>پرچم‌های تصویر از پیش تعریف‌شده</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>اقدام‌های بیشتر</translation>
     </message>
 </context>
 <context>

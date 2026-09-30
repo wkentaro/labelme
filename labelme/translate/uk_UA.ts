@@ -551,6 +551,14 @@ Shapes</source>
         <translation>&amp;Довідка</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Інші інструменти</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Інші інструменти фігур</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s розпочато.</translation>
     </message>
@@ -1366,6 +1374,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Попередньо визначені прапорці зображення</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Інші дії</translation>
     </message>
 </context>
 <context>

@@ -1031,6 +1031,7 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.ToolBarArea.TopToolBarArea,
             ToolBar(
                 title="Tools",
+                overflow_label=self.tr("More tools"),
                 actions=[
                     self._actions.open,
                     self._actions.open_dir,
@@ -1059,6 +1060,7 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.ToolBarArea.LeftToolBarArea,
             ToolBar(
                 title="CreateShapeTools",
+                overflow_label=self.tr("More shape tools"),
                 actions=[
                     *[
                         a
