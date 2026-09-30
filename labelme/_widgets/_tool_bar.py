@@ -16,6 +16,7 @@ class ToolBar(QtWidgets.QToolBar):
         orientation: Qt.Orientation = Qt.Orientation.Horizontal,
         button_style: Qt.ToolButtonStyle = Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
         font_base: QtGui.QFont | None = None,
+        overflow_label: str | None = None,
     ) -> None:
         OBJECT_NAME_SUFFIX: Final = "ToolBar"
         FONT_SCALE_FACTOR: Final = 0.8
@@ -31,6 +32,9 @@ class ToolBar(QtWidgets.QToolBar):
         self.setFloatable(False)
         self.setOrientation(orientation)
         self.setToolButtonStyle(button_style)
+        overflow = self.findChild(QtWidgets.QToolButton, "qt_toolbar_ext_button")
+        if overflow is not None:
+            overflow.setAccessibleName(overflow_label or self.tr("More actions"))
 
         layout = self.layout()
         if layout is not None:

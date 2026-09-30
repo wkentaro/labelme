@@ -620,6 +620,14 @@ Shapes</source>
         <translation>도움말(&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>추가 도구</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>추가 도형 도구</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s가 시작되었습니다.</translation>
     </message>
@@ -862,6 +870,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
 Please select a different model or use AI-Box mode.</source>
         <translation>%s은(는) 포인트 프롬프트를 지원하지 않습니다.
 다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>주석 파일 삭제 오류</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1359,6 +1371,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>사전 정의된 이미지 플래그</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>추가 작업</translation>
     </message>
 </context>
 <context>

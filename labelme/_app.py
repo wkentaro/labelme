@@ -1031,6 +1031,7 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.ToolBarArea.TopToolBarArea,
             ToolBar(
                 title="Tools",
+                overflow_label=self.tr("More tools"),
                 actions=[
                     self._actions.open,
                     self._actions.open_dir,
@@ -1059,6 +1060,7 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.ToolBarArea.LeftToolBarArea,
             ToolBar(
                 title="CreateShapeTools",
+                overflow_label=self.tr("More shape tools"),
                 actions=[
                     *[
                         a
@@ -2754,10 +2756,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._save_writer.discard_pending()
         self._wait_for_save()
         annotation_path = Path(self.current_label_file_path())
-        if not annotation_path.exists():
+        try:
+            annotation_path.unlink()
+        except FileNotFoundError:
             return
-
-        annotation_path.unlink()
+        except OSError as error:
+            self.show_error_message(
+                title=self.tr("Error deleting label file"), message=str(error)
+            )
+            return
         self._failed_save_path = None
         self._status_bar.save.clear()
         self._status_bar.retry.hide()

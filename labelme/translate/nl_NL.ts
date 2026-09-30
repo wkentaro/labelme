@@ -620,6 +620,14 @@ Shapes</source>
         <translation>&amp;Help</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Meer gereedschappen</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Meer vormgereedschappen</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s gestart.</translation>
     </message>
@@ -862,6 +870,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
 Please select a different model or use AI-Box mode.</source>
         <translation>%s ondersteunt geen puntinvoer.
 Selecteer een ander model of gebruik de AI-Box-modus.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>Fout bij het verwijderen van het annotatiebestand</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1359,6 +1371,13 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Voorgedefinieerde afbeeldingsvlaggen</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Meer acties</translation>
     </message>
 </context>
 <context>

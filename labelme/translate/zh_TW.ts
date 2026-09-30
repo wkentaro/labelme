@@ -626,6 +626,14 @@ Shapes</source>
         <translation>說明(&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>更多工具</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>更多形狀工具</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s 已啟動。</translation>
     </message>
@@ -868,6 +876,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s 不支援點提示。
 請選擇其他模型或使用 AI-Box 模式。</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>刪除標註檔案時發生錯誤</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1365,6 +1377,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>預定義影像標記</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>更多操作</translation>
     </message>
 </context>
 <context>

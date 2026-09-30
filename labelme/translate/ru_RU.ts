@@ -605,6 +605,14 @@ Shapes</source>
         <translation>&amp;Справка</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Другие инструменты</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Другие инструменты фигур</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s запущен.</translation>
     </message>
@@ -865,6 +873,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s не поддерживает точечные запросы.
 Выберите другую модель или используйте режим AI-Box.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>Ошибка удаления файла аннотаций</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1362,6 +1374,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Предустановленные флаги изображения</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Другие действия</translation>
     </message>
 </context>
 <context>

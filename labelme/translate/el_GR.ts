@@ -550,6 +550,14 @@ Shapes</source>
         <translation>Βοήθεια</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Περισσότερα εργαλεία</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Περισσότερα εργαλεία σχημάτων</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s ξεκίνησε.</translation>
     </message>
@@ -864,6 +872,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s δεν υποστηρίζει εντολές σημείων.
 Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>Σφάλμα διαγραφής αρχείου επισημείωσης</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1361,6 +1373,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Προκαθορισμένες σημαίες εικόνας</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Περισσότερες ενέργειες</translation>
     </message>
 </context>
 <context>

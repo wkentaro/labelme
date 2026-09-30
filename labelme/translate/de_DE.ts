@@ -634,6 +634,14 @@ Formen</translation>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Weitere Werkzeuge</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Weitere Formwerkzeuge</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s gestartet.</translation>
     </message>
@@ -868,6 +876,10 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
 Please select a different model or use AI-Box mode.</source>
         <translation>%s unterstützt keine Punkt-Eingaben.
 Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>Fehler beim Löschen der Annotationsdatei</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1365,6 +1377,13 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Vordefinierte Bild-Flags</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Weitere Aktionen</translation>
     </message>
 </context>
 <context>

@@ -626,6 +626,14 @@ forme</translation>
         <translation>&amp;Aiuto</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Altri strumenti</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Altri strumenti per le forme</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s avviato.</translation>
     </message>
@@ -868,6 +876,10 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
 Please select a different model or use AI-Box mode.</source>
         <translation>%s non supporta i prompt a punti.
 Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>Errore durante l’eliminazione del file di annotazione</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1365,6 +1377,13 @@ Posizione prevista: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Flag immagine predefiniti</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Altre azioni</translation>
     </message>
 </context>
 <context>

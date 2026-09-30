@@ -634,6 +634,14 @@ Shapes</source>
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>その他のツール</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>その他の図形ツール</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s を起動しました</translation>
     </message>
@@ -876,6 +884,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
 Please select a different model or use AI-Box mode.</source>
         <translation>%s はポイントプロンプトに対応していません。
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>アノテーションファイルの削除エラー</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1373,6 +1385,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>定義済み画像フラグ</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>その他の操作</translation>
     </message>
 </context>
 <context>

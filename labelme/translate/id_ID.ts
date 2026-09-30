@@ -595,6 +595,14 @@
         <translation>Bantuan (&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Alat lainnya</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Alat bentuk lainnya</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s dimulai.</translation>
     </message>
@@ -837,6 +845,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
 Please select a different model or use AI-Box mode.</source>
         <translation>%s tidak mendukung point prompt.
 Silakan pilih model lain atau gunakan mode AI-Box.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>Gagal menghapus berkas anotasi</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1359,6 +1371,13 @@ Shapes</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Bendera gambar yang telah ditentukan</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Tindakan lainnya</translation>
     </message>
 </context>
 <context>

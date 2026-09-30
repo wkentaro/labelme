@@ -111,6 +111,39 @@ def test_delete_label_file_keeps_image(
 
 
 @pytest.mark.gui
+def test_failed_delete_preserves_annotation_and_reports_error(
+    *,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    critical_messages: list[str],
+) -> None:
+    label_path = Path(annotated_win.current_label_file_path())
+    original_bytes = label_path.read_bytes()
+    annotated_win._actions.save_auto.setChecked(False)
+    annotated_win._canvas_widgets.canvas.shapes[0].label = "unsaved edit"
+    annotated_win.mark_dirty()
+    shapes = annotated_win._canvas_widgets.canvas.shapes[:]
+    original_unlink = Path.unlink
+
+    def reject_unlink(path: Path, /, *, missing_ok: bool = False) -> None:
+        if path == label_path:
+            raise PermissionError("read-only directory")
+        original_unlink(path, missing_ok=missing_ok)
+
+    monkeypatch.setattr(Path, "unlink", reject_unlink)
+    monkeypatch.setattr(annotated_win, "_confirm_deletion", lambda **_kwargs: True)
+    annotated_win.delete_file()
+
+    assert label_path.read_bytes() == original_bytes
+    assert annotated_win._canvas_widgets.canvas.shapes == shapes
+    assert annotated_win._is_changed
+    assert annotated_win._actions.delete_file.isEnabled()
+    assert len(critical_messages) == 1
+    assert "read-only directory" in critical_messages[0]
+    annotated_win.mark_clean()
+
+
+@pytest.mark.gui
 def test_delete_file_respects_output_dir(
     *,
     main_win: MainWinFactory,

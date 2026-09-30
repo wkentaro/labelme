@@ -634,6 +634,14 @@ Shapes</source>
         <translation>&amp;Súgó</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>További eszközök</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>További alakzateszközök</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s elindítva.</translation>
     </message>
@@ -868,6 +876,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
 Please select a different model or use AI-Box mode.</source>
         <translation>%s nem támogatja a pont alapú promptokat.
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>Hiba az annotációs fájl törlésekor</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1365,6 +1377,13 @@ Várt hely: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Előre definiált képjelzők</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>További műveletek</translation>
     </message>
 </context>
 <context>

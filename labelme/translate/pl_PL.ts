@@ -620,6 +620,14 @@ Shapes</source>
         <translation>&amp;Pomoc</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Więcej narzędzi</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Więcej narzędzi kształtów</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s uruchomiono.</translation>
     </message>
@@ -862,6 +870,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
 Please select a different model or use AI-Box mode.</source>
         <translation>%s nie obsługuje poleceń punktowych.
 Wybierz inny model lub użyj trybu AI-Box.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>Błąd usuwania pliku adnotacji</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1359,6 +1371,13 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Predefiniowane flagi obrazu</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Więcej działań</translation>
     </message>
 </context>
 <context>

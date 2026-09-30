@@ -620,6 +620,14 @@ Shapes</source>
         <translation>راهنما(&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>ابزارهای بیشتر</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>ابزارهای بیشتر برای شکل‌ها</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s راه‌اندازی شد.</translation>
     </message>
@@ -862,6 +870,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s از دستورات نقطه‌ای پشتیبانی نمی‌کند.
 لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>خطا در حذف فایل برچسب</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1359,6 +1371,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>پرچم‌های تصویر از پیش تعریف‌شده</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>اقدام‌های بیشتر</translation>
     </message>
 </context>
 <context>

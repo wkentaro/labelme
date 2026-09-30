@@ -620,6 +620,14 @@ Shapes</source>
         <translation>ช่วยเหลือ (&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>เครื่องมือเพิ่มเติม</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>เครื่องมือรูปทรงเพิ่มเติม</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s เริ่มทำงานแล้ว</translation>
     </message>
@@ -862,6 +870,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s ไม่รองรับการกำหนดจุด
 กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>เกิดข้อผิดพลาดขณะลบไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1359,6 +1371,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>แฟล็กรูปภาพที่กำหนดไว้ล่วงหน้า</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>การดำเนินการเพิ่มเติม</translation>
     </message>
 </context>
 <context>

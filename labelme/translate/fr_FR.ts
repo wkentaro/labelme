@@ -626,6 +626,14 @@ les formes</translation>
         <translation>&amp;Aide</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Autres outils</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Autres outils de formes</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s démarré.</translation>
     </message>
@@ -868,6 +876,10 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
 Please select a different model or use AI-Box mode.</source>
         <translation>%s ne prend pas en charge les invites par points.
 Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation>
+    </message>
+    <message>
+        <source>Error deleting label file</source>
+        <translation>Erreur lors de la suppression du fichier d’annotations</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1365,6 +1377,13 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Indicateurs d&apos;image prédéfinis</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Autres actions</translation>
     </message>
 </context>
 <context>
