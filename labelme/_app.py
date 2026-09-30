@@ -1863,7 +1863,7 @@ class MainWindow(QtWidgets.QMainWindow):
             items[0].setCheckState(Qt.CheckState.Checked)
         self._failed_save_path = None
         self._status_bar.save.setText(self.tr("Saved"))
-        self._status_bar.save.setToolTip(snapshot.filename)
+        self._status_bar.save.setToolTip(label_path)
         self._status_bar.retry.hide()
         self._actions.delete_file.setEnabled(True)
 
