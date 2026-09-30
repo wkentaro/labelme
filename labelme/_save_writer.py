@@ -26,6 +26,11 @@ class SaveWriter(QtCore.QObject):
     def is_busy(self) -> bool:
         return self._active is not None
 
+    def get_latest_path(self) -> str | None:
+        if self._pending is not None:
+            return self._pending[0].filename
+        return None if self._active is None else self._active[0].filename
+
     def submit(self, *, request: SaveRequest, revision: int) -> None:
         if self._active is None:
             self._active = (

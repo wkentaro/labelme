@@ -317,7 +317,7 @@ def test_save_barrier_defers_completion_until_dialog_events_are_processed(
     assert not raw_win._is_changed
 
 
-def test_manual_save_waits_for_first_auto_save_before_choosing_path(
+def test_manual_save_uses_first_auto_save_destination(
     *,
     raw_win: MainWindow,
     blocked_writer: tuple[threading.Event, threading.Event, list[SaveRequest]],
@@ -341,3 +341,56 @@ def test_manual_save_waits_for_first_auto_save_before_choosing_path(
     )
     assert not raw_win._is_changed
     assert not raw_win._save_writer.is_busy
+
+
+@pytest.mark.parametrize("action", ["save", "save_as", "cancel_save_as"])
+def test_manual_save_action_supersedes_pending_edits_after_choosing_path(
+    *,
+    raw_win: MainWindow,
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveRequest]],
+    qtbot: QtBot,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    action: str,
+) -> None:
+    entered, release, writes = blocked_writer
+    _edit(win=raw_win, x=1)
+    qtbot.waitUntil(entered.is_set)
+    _edit(win=raw_win, x=2)
+    _edit(win=raw_win, x=3)
+    old_path = Path(writes[0].filename)
+    new_path = tmp_path / "save-as.json"
+
+    def choose_path() -> str:
+        assert action != "save", "The first auto-save already has a destination"
+        assert raw_win._save_writer.is_busy
+        return str(new_path) if action == "save_as" else ""
+
+    monkeypatch.setattr(raw_win, "prompt_save_file_path", choose_path)
+    QtCore.QTimer.singleShot(50, release.set)
+    raw_win._save_label_file(save_as=action != "save")
+    if action == "cancel_save_as":
+        assert raw_win._save_writer.is_busy
+        assert raw_win._is_changed
+        assert raw_win._auto_save_path is None
+        qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
+
+    destination = new_path if action == "save_as" else old_path
+    assert [request.annotation.shapes[0]["points"][0][0] for request in writes] == [
+        1,
+        3,
+    ]
+    assert [request.filename for request in writes] == [
+        str(old_path),
+        str(destination),
+    ]
+    assert json.loads(destination.read_text())["shapes"][0]["points"][0][0] == 3
+    if action == "save_as":
+        assert json.loads(old_path.read_text())["shapes"][0]["points"][0][0] == 1
+        assert raw_win._auto_save_path == str(new_path)
+    else:
+        assert not new_path.exists()
+    assert raw_win._label_file_path == str(destination)
+    assert not raw_win._is_changed
+    assert not raw_win._save_writer.is_busy
+    assert raw_win._status_bar.save.text() == "Saved"

@@ -2663,11 +2663,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _save_label_file(self, *, save_as: bool) -> None:
         assert not self._image.isNull(), "cannot save empty image"
-        self._wait_for_save()
 
         label_path: str | None = None
-        if not save_as and self._label_file_path is not None:
-            label_path = self._label_file_path
+        if not save_as:
+            # A first auto-save already owns a destination, even before it finishes.
+            label_path = self._save_writer.get_latest_path() or self._label_file_path
         if label_path is None:
             label_path = self.prompt_save_file_path()
 
