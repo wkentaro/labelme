@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from collections.abc import Callable
 from pathlib import Path
 
@@ -8,11 +9,54 @@ from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
+from labelme._label_file import read_label_file
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
+
+
+@pytest.mark.gui
+@pytest.mark.skipif(os.name == "nt", reason="directory symlinks require privileges")
+@pytest.mark.parametrize("use_image_alias", [False, True])
+def test_save_through_directory_alias_reopens_source_image(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    use_image_alias: bool,
+) -> None:
+    project = tmp_path / "nested" / "project"
+    (project / "labels").mkdir(parents=True)
+    alias = tmp_path / "alias"
+    alias.symlink_to(project, target_is_directory=True)
+    image_path = data_path / "raw" / "2011_000003.jpg"
+    if use_image_alias:
+        (project / "image.jpg").symlink_to(image_path)
+        image_path = alias / "image.jpg"
+    win = main_win(
+        file_or_dir=str(image_path), config_overrides={"with_image_data": False}
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert win._annotation is not None
+    image_data = win._annotation.image_data
+    label_path = alias / "labels" / "saved.json"
+
+    assert win.save_labels(label_path=str(label_path))
+    saved = read_label_file(filename=str(label_path))
+    assert saved.image_data == image_data
+    assert (label_path.parent / saved.image_path).samefile(image_path)
+    if use_image_alias:
+        assert saved.image_path == "../image.jpg"
+    assert win._load_file(image_or_label_path=str(label_path))
+    assert win._annotation is not None
+    assert win._annotation.image_data == image_data
+    assert win._image_path is not None
+    assert Path(win._image_path).samefile(image_path)
+    assert win.save_labels(label_path=str(label_path))
+    assert read_label_file(filename=str(label_path)).image_data == image_data
 
 
 @pytest.mark.gui

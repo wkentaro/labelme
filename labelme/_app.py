@@ -2375,9 +2375,13 @@ class MainWindow(QtWidgets.QMainWindow):
             # The relative path stored in the Annotation File may carry "." or ".."
             # components, which would survive the join and break the
             # exact-string comparisons against the file list.
-            image_path = os.path.normpath(
-                str(Path(label_path).parent / annotation.image_path)
-            )
+            stored_image = Path(label_path).parent / annotation.image_path
+            image_path = os.path.normpath(str(stored_image))
+            # Following symlinks first keeps parent traversal on its intended target.
+            if os.path.realpath(image_path) != os.path.realpath(stored_image):
+                image_path = os.path.join(
+                    os.path.realpath(stored_image.parent), stored_image.name
+                )
             label_file_path = label_path
             shapes = _shapes_from_dicts(
                 shape_dicts=annotation.shapes,
@@ -3421,7 +3425,16 @@ def _resolve_label_path(*, image_or_label_path: str, output_dir: Path | None) ->
 
 def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
     try:
-        return os.path.relpath(image_path, label_dir)
+        image = Path(image_path)
+        relative_path = os.path.relpath(image_path, label_dir)
+        if os.path.realpath(label_dir / relative_path) != os.path.realpath(image):
+            # Parent traversal follows directory symlinks, unlike lexical path math.
+            # Keep valid project links and the source filename when correcting it.
+            relative_path = os.path.relpath(
+                os.path.join(os.path.realpath(image.parent), image.name),
+                os.path.realpath(label_dir),
+            )
+        return relative_path
     except ValueError:
         # Windows drives have no relative path between them; an absolute path
         # costs portability but beats failing the save.
