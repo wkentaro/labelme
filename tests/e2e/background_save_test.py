@@ -12,28 +12,32 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
+import labelme._app
+import labelme._save_writer
 from labelme._app import MainWindow
-from labelme._save_snapshot import SaveSnapshot
+from labelme._save_request import SaveRequest
 from labelme._shape import Shape
 
 
 @pytest.fixture
 def blocked_writer(
     *, raw_win: MainWindow, monkeypatch: pytest.MonkeyPatch
-) -> Iterator[tuple[threading.Event, threading.Event, list[SaveSnapshot]]]:
+) -> Iterator[tuple[threading.Event, threading.Event, list[SaveRequest]]]:
     entered = threading.Event()
     release = threading.Event()
-    writes: list[SaveSnapshot] = []
-    original = SaveSnapshot.write
+    writes: list[SaveRequest] = []
+    original = labelme._save_writer.write_save_request
 
-    def write(snapshot: SaveSnapshot, /) -> None:
-        writes.append(snapshot)
+    def write(request: SaveRequest, /) -> None:
+        writes.append(request)
         if len(writes) == 1:
             entered.set()
             assert release.wait(5), "test did not release the writer"
-        original(snapshot)
+        original(request)
 
-    monkeypatch.setattr(SaveSnapshot, "write", write)
+    monkeypatch.setattr(labelme._save_writer, "write_save_request", write)
+
+    monkeypatch.setattr(labelme._app, "write_save_request", write)
     raw_win._actions.save_auto.setChecked(True)
     yield entered, release, writes
     release.set()
@@ -49,7 +53,7 @@ def _edit(*, win: MainWindow, x: float) -> None:
 def test_background_save_coalesces_and_keeps_newer_edits_dirty(
     *,
     raw_win: MainWindow,
-    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveRequest]],
     qtbot: QtBot,
 ) -> None:
     entered, release, writes = blocked_writer
@@ -79,7 +83,7 @@ def test_background_save_coalesces_and_keeps_newer_edits_dirty(
 def test_transitions_wait_for_active_writer(
     *,
     raw_win: MainWindow,
-    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveRequest]],
     qtbot: QtBot,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -132,13 +136,15 @@ def test_failed_background_save_retries_only_on_request_or_edit(
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    attempts: list[SaveSnapshot] = []
+    attempts: list[SaveRequest] = []
 
-    def fail(snapshot: SaveSnapshot, /) -> None:
-        attempts.append(snapshot)
+    def fail(request: SaveRequest, /) -> None:
+        attempts.append(request)
         raise PermissionError("read-only output")
 
-    monkeypatch.setattr(SaveSnapshot, "write", fail)
+    monkeypatch.setattr(labelme._save_writer, "write_save_request", fail)
+
+    monkeypatch.setattr(labelme._app, "write_save_request", fail)
     raw_win._actions.save_auto.setChecked(True)
     _edit(win=raw_win, x=1)
     qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
@@ -178,17 +184,19 @@ def test_retry_preserves_failed_save_as_destination(
     qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
     old_path = Path(raw_win.current_label_file_path())
     destination = tmp_path / "renamed.json"
-    original = SaveSnapshot.write
+    original = labelme._save_writer.write_save_request
 
-    def fail(_snapshot: SaveSnapshot, /) -> None:
+    def fail(_request: SaveRequest, /) -> None:
         raise PermissionError("read-only output")
 
     monkeypatch.setattr(raw_win, "prompt_save_file_path", lambda: str(destination))
     monkeypatch.setattr(raw_win, "show_error_message", lambda **_kwargs: 0)
-    monkeypatch.setattr(SaveSnapshot, "write", fail)
+    monkeypatch.setattr(labelme._save_writer, "write_save_request", fail)
+    monkeypatch.setattr(labelme._app, "write_save_request", fail)
     raw_win._save_label_file(save_as=True)
     assert raw_win._status_bar.save.text() == "Save failed"
-    monkeypatch.setattr(SaveSnapshot, "write", original)
+    monkeypatch.setattr(labelme._save_writer, "write_save_request", original)
+    monkeypatch.setattr(labelme._app, "write_save_request", original)
     raw_win._status_bar.retry.click()
     qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
     _edit(win=raw_win, x=2)
@@ -201,7 +209,7 @@ def test_edit_during_manual_retry_does_not_leave_saving_status(
     *,
     raw_win: MainWindow,
     qtbot: QtBot,
-    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveRequest]],
 ) -> None:
     entered, release, _writes = blocked_writer
     raw_win._actions.save_auto.setChecked(False)
@@ -254,7 +262,7 @@ def test_manual_save_supersedes_pending_edits_and_marks_clean(
     *,
     raw_win: MainWindow,
     qtbot: QtBot,
-    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveRequest]],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     entered, release, _writes = blocked_writer
@@ -277,7 +285,7 @@ def test_manual_save_supersedes_pending_edits_and_marks_clean(
 def test_save_barrier_defers_completion_until_dialog_events_are_processed(
     *,
     raw_win: MainWindow,
-    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveRequest]],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     entered, release, _writes = blocked_writer
@@ -312,7 +320,7 @@ def test_save_barrier_defers_completion_until_dialog_events_are_processed(
 def test_manual_save_waits_for_first_auto_save_before_choosing_path(
     *,
     raw_win: MainWindow,
-    blocked_writer: tuple[threading.Event, threading.Event, list[SaveSnapshot]],
+    blocked_writer: tuple[threading.Event, threading.Event, list[SaveRequest]],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     entered, release, writes = blocked_writer

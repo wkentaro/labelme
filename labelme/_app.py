@@ -1452,26 +1452,26 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _queue_auto_save(self, *, label_path: str) -> None:
         try:
-            snapshot = self._capture_save_snapshot(label_path=label_path)
+            request = self._capture_save_request(label_path=label_path)
         except (LabelFileError, OSError, ValueError) as error:
             self._show_save_failure(label_path=label_path, error=error)
             return
         self._status_bar.save.setText(self.tr("Saving…"))
         self._status_bar.save.setToolTip(label_path)
         self._status_bar.retry.hide()
-        self._save_writer.submit(snapshot=snapshot, revision=self._save_revision)
+        self._save_writer.submit(request=request, revision=self._save_revision)
 
     def _on_save_finished(
-        self, snapshot: SaveSnapshot, revision: int, error: Exception | None, /
+        self, request: SaveRequest, revision: int, error: Exception | None, /
     ) -> None:
         # Older writes may finish after further edits; only the latest revision
         # can clear the dirty marker or replace its failure status.
         if revision != self._save_revision:
             return
         if error is not None:
-            self._show_save_failure(label_path=snapshot.filename, error=error)
+            self._show_save_failure(label_path=request.filename, error=error)
             return
-        self._record_saved_snapshot(snapshot)
+        self._record_saved_annotation(label_path=request.filename)
 
     def _wait_for_save(self) -> None:
         if not self._save_writer.is_busy:

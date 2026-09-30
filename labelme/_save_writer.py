@@ -5,7 +5,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 from PySide6 import QtCore
 
-from ._save_snapshot import SaveSnapshot
+from ._save_request import SaveRequest
+from ._save_request import write_save_request
 
 
 class SaveWriter(QtCore.QObject):
@@ -15,8 +16,8 @@ class SaveWriter(QtCore.QObject):
     def __init__(self, *, parent: QtCore.QObject) -> None:
         super().__init__(parent)
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="save")
-        self._active: tuple[SaveSnapshot, int, Future[None]] | None = None
-        self._pending: tuple[SaveSnapshot, int] | None = None
+        self._active: tuple[SaveRequest, int, Future[None]] | None = None
+        self._pending: tuple[SaveRequest, int] | None = None
         self._timer = QtCore.QTimer(self)
         self._timer.setInterval(10)
         self._timer.timeout.connect(self._poll)
@@ -25,12 +26,16 @@ class SaveWriter(QtCore.QObject):
     def is_busy(self) -> bool:
         return self._active is not None
 
-    def submit(self, *, snapshot: SaveSnapshot, revision: int) -> None:
+    def submit(self, *, request: SaveRequest, revision: int) -> None:
         if self._active is None:
-            self._active = (snapshot, revision, self._executor.submit(snapshot.write))
+            self._active = (
+                request,
+                revision,
+                self._executor.submit(write_save_request, request),
+            )
             self._timer.start()
         else:
-            self._pending = (snapshot, revision)
+            self._pending = (request, revision)
 
     def discard_pending(self) -> None:
         self._pending = None
@@ -38,7 +43,7 @@ class SaveWriter(QtCore.QObject):
     def _poll(self) -> None:
         if self._active is None or not self._active[2].done():
             return
-        snapshot, revision, future = self._active
+        request, revision, future = self._active
         self._active = None
         error = future.exception()
         if self._pending is None:
@@ -46,9 +51,9 @@ class SaveWriter(QtCore.QObject):
         else:
             pending, pending_revision = self._pending
             self._pending = None
-            self.submit(snapshot=pending, revision=pending_revision)
+            self.submit(request=pending, revision=pending_revision)
         # Poll on the GUI thread; the worker never calls Qt or live document code.
-        self.finished.emit(snapshot, revision, error)
+        self.finished.emit(request, revision, error)
         if self._active is None:
             self.idle.emit()
 
