@@ -870,6 +870,10 @@ Please select a different model or use AI-Box mode.</source>
 Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>Açıklama dosyası silinirken hata oluştu</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>Görüntü bulunamadı</translation>
     </message>

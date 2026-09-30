@@ -870,6 +870,10 @@ Please select a different model or use AI-Box mode.</source>
 Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>Fehler beim Löschen der Annotationsdatei</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>Bild nicht gefunden</translation>
     </message>

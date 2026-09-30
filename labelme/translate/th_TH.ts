@@ -864,6 +864,10 @@ Please select a different model or use AI-Box mode.</source>
 กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>เกิดข้อผิดพลาดขณะลบไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>ไม่พบรูปภาพ</translation>
     </message>
