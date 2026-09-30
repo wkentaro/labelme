@@ -50,6 +50,52 @@ def _edit(*, win: MainWindow, x: float) -> None:
     )
 
 
+@pytest.mark.parametrize(
+    "failure", [None, PermissionError("read-only output"), SystemExit("writer stopped")]
+)
+def test_background_save_delivers_completion_on_gui_thread(
+    *,
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    failure: BaseException | None,
+) -> None:
+    monkeypatch.setattr(
+        QtWidgets.QMessageBox,
+        "question",
+        lambda *_a, **_k: QtWidgets.QMessageBox.StandardButton.Discard,
+    )
+    worker_on_gui_thread: list[bool] = []
+    completions: list[tuple[bool, object]] = []
+    original = labelme._save_writer.write_save_request
+
+    def write(request: SaveRequest, /) -> None:
+        worker_on_gui_thread.append(QtCore.QThread.currentThread() == raw_win.thread())
+        if failure is not None:
+            raise failure
+        original(request)
+
+    monkeypatch.setattr(labelme._save_writer, "write_save_request", write)
+    writer = raw_win._save_writer
+    writer.finished.connect(
+        lambda _request, _revision, error: completions.append(
+            (QtCore.QThread.currentThread() == raw_win.thread(), error)
+        )
+    )
+    raw_win._actions.save_auto.setChecked(True)
+    _edit(win=raw_win, x=1)
+    assert writer._pool.waitForDone(5000)
+    assert writer.is_busy
+    assert not completions
+    qtbot.waitUntil(lambda: not writer.is_busy)
+    assert worker_on_gui_thread == [False]
+    assert completions == [(True, failure)]
+    assert raw_win._is_changed == (failure is not None)
+    assert raw_win._status_bar.save.text() == (
+        "Saved" if failure is None else "Save failed"
+    )
+
+
 def test_background_save_coalesces_and_keeps_newer_edits_dirty(
     *,
     raw_win: MainWindow,
@@ -292,15 +338,15 @@ def test_save_barrier_defers_completion_until_dialog_events_are_processed(
     _edit(win=raw_win, x=1)
     assert entered.wait(5)
     writer = raw_win._save_writer
-    writer._timer.stop()
-    assert writer._active is not None
     release.set()
-    writer._active[2].result(timeout=5)
+    assert writer._pool.waitForDone(5000)
 
     class CompletingDialog(QtWidgets.QProgressDialog):
         def showEvent(self, event: QtGui.QShowEvent, /) -> None:
             super().showEvent(event)
-            writer._poll()
+            QtCore.QCoreApplication.sendPostedEvents(
+                writer, QtCore.QEvent.Type.MetaCall
+            )
 
         def exec(self) -> int:
             # Deliver completion while showing, before the nested event loop.

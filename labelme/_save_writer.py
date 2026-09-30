@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from concurrent.futures import Future
-from concurrent.futures import ThreadPoolExecutor
+import functools
 
 from PySide6 import QtCore
 
@@ -9,18 +8,33 @@ from ._save_request import SaveRequest
 from ._save_request import write_save_request
 
 
+def _write_and_notify(
+    request: SaveRequest, completed: QtCore.SignalInstance, /
+) -> None:
+    try:
+        write_save_request(request)
+    except BaseException as error:
+        # Every worker failure must release the GUI's save barrier.
+        completed.emit(error)
+    else:
+        completed.emit(None)
+
+
 class SaveWriter(QtCore.QObject):
     finished = QtCore.Signal(object, int, object)
     idle = QtCore.Signal()
+    _completed = QtCore.Signal(object)
 
     def __init__(self, *, parent: QtCore.QObject) -> None:
         super().__init__(parent)
-        self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="save")
-        self._active: tuple[SaveRequest, int, Future[None]] | None = None
+        self._pool = QtCore.QThreadPool(self)
+        self._pool.setMaxThreadCount(1)
+        self._active: tuple[SaveRequest, int] | None = None
         self._pending: tuple[SaveRequest, int] | None = None
-        self._timer = QtCore.QTimer(self)
-        self._timer.setInterval(10)
-        self._timer.timeout.connect(self._poll)
+        # Save state belongs to the GUI thread, even if a write finishes immediately.
+        self._completed.connect(
+            self._on_finished, QtCore.Qt.ConnectionType.QueuedConnection
+        )
 
     @property
     def is_busy(self) -> bool:
@@ -33,35 +47,29 @@ class SaveWriter(QtCore.QObject):
 
     def submit(self, *, request: SaveRequest, revision: int) -> None:
         if self._active is None:
-            self._active = (
-                request,
-                revision,
-                self._executor.submit(write_save_request, request),
+            self._active = (request, revision)
+            self._pool.start(
+                functools.partial(_write_and_notify, request, self._completed)
             )
-            self._timer.start()
         else:
             self._pending = (request, revision)
 
     def discard_pending(self) -> None:
         self._pending = None
 
-    def _poll(self) -> None:
-        if self._active is None or not self._active[2].done():
-            return
-        request, revision, future = self._active
+    @QtCore.Slot(object)
+    def _on_finished(self, error: BaseException | None, /) -> None:
+        assert self._active is not None
+        request, revision = self._active
         self._active = None
-        error = future.exception()
-        if self._pending is None:
-            self._timer.stop()
-        else:
+        if self._pending is not None:
             pending, pending_revision = self._pending
             self._pending = None
             self.submit(request=pending, revision=pending_revision)
-        # Poll on the GUI thread; the worker never calls Qt or live document code.
         self.finished.emit(request, revision, error)
         if self._active is None:
             self.idle.emit()
 
     def shutdown(self) -> None:
         assert self._active is None and self._pending is None
-        self._executor.shutdown(wait=True)
+        self._pool.waitForDone()

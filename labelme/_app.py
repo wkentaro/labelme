@@ -1462,7 +1462,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._save_writer.submit(request=request, revision=self._save_revision)
 
     def _on_save_finished(
-        self, request: SaveRequest, revision: int, error: Exception | None, /
+        self, request: SaveRequest, revision: int, error: BaseException | None, /
     ) -> None:
         # Older writes may finish after further edits; only the latest revision
         # can clear the dirty marker or replace its failure status.
@@ -1913,7 +1913,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete_file.setEnabled(True)
         self.mark_clean()
 
-    def _show_save_failure(self, *, label_path: str, error: Exception) -> None:
+    def _show_save_failure(self, *, label_path: str, error: BaseException) -> None:
         self._failed_save_path = label_path
         self._status_bar.save.setText(self.tr("Save failed"))
         self._status_bar.save.setToolTip(f"{label_path}\n{error}")
