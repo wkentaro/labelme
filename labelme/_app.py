@@ -2482,6 +2482,7 @@ class MainWindow(QtWidgets.QMainWindow):
             is_initial_load=True,
         )
         self._actions.image.setEnabled(True)
+        self._sync_navigation_actions()
         # A load never pulls the keyboard out of the File List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
@@ -2578,25 +2579,40 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # User Dialogs #
 
-    def _open_prev_image(self) -> None:
-        row_prev: int = self._docks.file_list.currentRow() - 1
-        if row_prev < 0:
-            logger.debug("there is no prev image")
-            return
+    def _get_neighbor_image_path(self, *, step: Literal[-1, 1]) -> str | None:
+        paths = self._loaded_image_paths
+        current_path = self._file_list_image_path
+        # Closing an Image retains its selected row as the navigation origin.
+        if current_path is None and (item := self._docks.file_list.currentItem()):
+            current_path = item.text()
+        try:
+            current = paths.index(current_path or "")
+        except ValueError:
+            current = -1
+        # Filtering can hide the active row; navigation still follows directory order.
+        indices = (
+            range(current - 1, -1, -1) if step == -1 else range(current + 1, len(paths))
+        )
+        return next(
+            (paths[i] for i in indices if self._file_search_pattern.search(paths[i])),
+            None,
+        )
 
-        logger.debug("setting current row to {:d}", row_prev)
-        self._docks.file_list.setCurrentRow(row_prev)
-        self._docks.file_list.repaint()
+    def _sync_navigation_actions(self) -> None:
+        self._actions.open_prev_img.setEnabled(
+            self._get_neighbor_image_path(step=-1) is not None
+        )
+        self._actions.open_next_img.setEnabled(
+            self._get_neighbor_image_path(step=1) is not None
+        )
+
+    def _open_prev_image(self) -> None:
+        if (path := self._get_neighbor_image_path(step=-1)) is not None:
+            self._docks.file_list.setCurrentRow(self.image_list.index(path))
 
     def _open_next_image(self) -> None:
-        row_next: int = self._docks.file_list.currentRow() + 1
-        if row_next >= self._docks.file_list.count():
-            logger.debug("there is no next image")
-            return
-
-        logger.debug("setting current row to {:d}", row_next)
-        self._docks.file_list.setCurrentRow(row_next)
-        self._docks.file_list.repaint()
+        if (path := self._get_neighbor_image_path(step=1)) is not None:
+            self._docks.file_list.setCurrentRow(self.image_list.index(path))
 
     def _open_file_with_dialog(self) -> None:
         if not self._can_continue():
@@ -2704,6 +2720,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.setEnabled(False)
         self._canvas_widgets.surface.setCurrentWidget(self._canvas_widgets.empty_state)
         self._docks.file_list.setFocus()
+        self._sync_navigation_actions()
 
     def current_label_file_path(self) -> str:
         assert self._image_path is not None
@@ -3266,10 +3283,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._refresh_file_list()
 
         visible_image_paths = self.image_list
-        if len(visible_image_paths) > 1:
-            self._actions.open_next_img.setEnabled(True)
-            self._actions.open_prev_img.setEnabled(True)
-
         for image_path in new_files:
             if image_path in visible_image_paths:
                 self._docks.file_list.setCurrentRow(
@@ -3279,9 +3292,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
 
     def _import_images_from_dir(self, *, root_dir: str | None) -> None:
-        self._actions.open_next_img.setEnabled(True)
-        self._actions.open_prev_img.setEnabled(True)
-
         if not root_dir:
             return
 
@@ -3311,6 +3321,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self._file_list_image_path in image_paths:
                 file_list.setCurrentRow(image_paths.index(self._file_list_image_path))
 
+        self._sync_navigation_actions()
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
