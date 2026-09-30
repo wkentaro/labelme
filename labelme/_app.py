@@ -2581,8 +2581,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _get_neighbor_image_path(self, *, step: Literal[-1, 1]) -> str | None:
         paths = self._loaded_image_paths
+        current_path = self._file_list_image_path
+        # Closing an Image retains its selected row as the navigation origin.
+        if current_path is None and (item := self._docks.file_list.currentItem()):
+            current_path = item.text()
         try:
-            current = paths.index(self._file_list_image_path or "")
+            current = paths.index(current_path or "")
         except ValueError:
             current = -1
         # Filtering can hide the active row; navigation still follows directory order.
