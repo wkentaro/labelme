@@ -178,7 +178,7 @@ def test_auto_save_on_undo(
     qtbot.waitUntil(label_file.exists)
 
     _auto_save_win.undo_shape_edit()
-    qtbot.wait(50)
+    qtbot.waitUntil(lambda: not _auto_save_win._save_writer.is_busy)
 
     restored_center = _shape_bounds(shape=canvas.shapes[0]).center()
     assert abs(restored_center.x() - original_center.x()) < 1.0
