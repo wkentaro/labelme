@@ -878,6 +878,10 @@ Please select a different model or use AI-Box mode.</source>
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>アノテーションファイルの削除エラー</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>画像が見つかりません</translation>
     </message>

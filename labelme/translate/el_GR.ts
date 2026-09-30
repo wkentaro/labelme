@@ -866,6 +866,10 @@ Please select a different model or use AI-Box mode.</source>
 Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>Σφάλμα διαγραφής αρχείου επισημείωσης</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>Η εικόνα δεν βρέθηκε</translation>
     </message>

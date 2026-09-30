@@ -870,6 +870,10 @@ Please select a different model or use AI-Box mode.</source>
 请另选模型，或改用 AI-Box 模式。</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>删除标注文件出错</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>找不到图像</translation>
     </message>

@@ -864,6 +864,10 @@ Please select a different model or use AI-Box mode.</source>
 다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>주석 파일 삭제 오류</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>이미지를 찾을 수 없음</translation>
     </message>

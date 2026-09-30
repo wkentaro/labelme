@@ -870,6 +870,10 @@ Please select a different model or use AI-Box mode.</source>
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>Hiba az annotációs fájl törlésekor</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>A kép nem található</translation>
     </message>

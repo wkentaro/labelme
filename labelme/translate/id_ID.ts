@@ -839,6 +839,10 @@ Please select a different model or use AI-Box mode.</source>
 Silakan pilih model lain atau gunakan mode AI-Box.</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>Gagal menghapus berkas anotasi</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>Gambar tidak ditemukan</translation>
     </message>

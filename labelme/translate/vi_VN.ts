@@ -864,6 +864,10 @@ Please select a different model or use AI-Box mode.</source>
 Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
     </message>
     <message>
+        <source>Error deleting label file</source>
+        <translation>Lỗi khi xóa tệp chú thích</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>Không tìm thấy ảnh</translation>
     </message>
