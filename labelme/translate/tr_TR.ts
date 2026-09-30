@@ -626,6 +626,14 @@ Shapes</source>
         <translation>&amp;Yardım</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Diğer araçlar</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Diğer şekil araçları</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s başlatıldı.</translation>
     </message>
@@ -1369,6 +1377,13 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Önceden tanımlı görüntü bayrakları</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Diğer işlemler</translation>
     </message>
 </context>
 <context>

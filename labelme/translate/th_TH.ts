@@ -620,6 +620,14 @@ Shapes</source>
         <translation>ช่วยเหลือ (&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>เครื่องมือเพิ่มเติม</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>เครื่องมือรูปทรงเพิ่มเติม</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s เริ่มทำงานแล้ว</translation>
     </message>
@@ -1363,6 +1371,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>แฟล็กรูปภาพที่กำหนดไว้ล่วงหน้า</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>การดำเนินการเพิ่มเติม</translation>
     </message>
 </context>
 <context>

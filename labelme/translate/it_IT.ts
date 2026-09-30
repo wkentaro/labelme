@@ -626,6 +626,14 @@ forme</translation>
         <translation>&amp;Aiuto</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Altri strumenti</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Altri strumenti per le forme</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s avviato.</translation>
     </message>
@@ -1369,6 +1377,13 @@ Posizione prevista: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Flag immagine predefiniti</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Altre azioni</translation>
     </message>
 </context>
 <context>

@@ -595,6 +595,14 @@
         <translation>Bantuan (&amp;H)</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Alat lainnya</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Alat bentuk lainnya</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s dimulai.</translation>
     </message>
@@ -1363,6 +1371,13 @@ Shapes</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Bendera gambar yang telah ditentukan</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Tindakan lainnya</translation>
     </message>
 </context>
 <context>

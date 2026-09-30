@@ -550,6 +550,14 @@ Shapes</source>
         <translation>Βοήθεια</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Περισσότερα εργαλεία</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Περισσότερα εργαλεία σχημάτων</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s ξεκίνησε.</translation>
     </message>
@@ -1365,6 +1373,13 @@ Expected location: {path}</source>
     <message>
         <source>Predefined image flags</source>
         <translation>Προκαθορισμένες σημαίες εικόνας</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Περισσότερες ενέργειες</translation>
     </message>
 </context>
 <context>

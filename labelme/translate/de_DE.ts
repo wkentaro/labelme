@@ -634,6 +634,14 @@ Formen</translation>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Weitere Werkzeuge</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Weitere Formwerkzeuge</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s gestartet.</translation>
     </message>
@@ -1369,6 +1377,13 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Vordefinierte Bild-Flags</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Weitere Aktionen</translation>
     </message>
 </context>
 <context>

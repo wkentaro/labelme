@@ -620,6 +620,14 @@ Shapes</source>
         <translation>&amp;Ayuda</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Más herramientas</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Más herramientas de formas</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s iniciado.</translation>
     </message>
@@ -1363,6 +1371,13 @@ Ubicación esperada: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Banderas de imagen predefinidas</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Más acciones</translation>
     </message>
 </context>
 <context>

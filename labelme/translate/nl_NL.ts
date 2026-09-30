@@ -620,6 +620,14 @@ Shapes</source>
         <translation>&amp;Help</translation>
     </message>
     <message>
+        <source>More tools</source>
+        <translation>Meer gereedschappen</translation>
+    </message>
+    <message>
+        <source>More shape tools</source>
+        <translation>Meer vormgereedschappen</translation>
+    </message>
+    <message>
         <source>%s started.</source>
         <translation>%s gestart.</translation>
     </message>
@@ -1363,6 +1371,13 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Predefined image flags</source>
         <translation>Voorgedefinieerde afbeeldingsvlaggen</translation>
+    </message>
+</context>
+<context>
+    <name>ToolBar</name>
+    <message>
+        <source>More actions</source>
+        <translation>Meer acties</translation>
     </message>
 </context>
 <context>
