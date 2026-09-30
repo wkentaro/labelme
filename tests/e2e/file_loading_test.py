@@ -15,6 +15,7 @@ from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
+from labelme._label_file import read_label_file
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
@@ -441,6 +442,47 @@ def test_failed_navigation_restores_selected_source_item(
     assert "[1/2]" in win.windowTitle()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("use_output_dir", [False, True])
+def test_auto_save_uses_source_image_when_embedded_path_differs(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    create_annotated_session_image: Path,
+    tmp_path: Path,
+    critical_messages: list[str],
+    use_output_dir: bool,
+) -> None:
+    image_path = create_annotated_session_image
+    output_dir = tmp_path / "output" if use_output_dir else image_path.parent
+    output_dir.mkdir(exist_ok=True)
+    label_path = output_dir / image_path.with_suffix(".json").name
+    annotation_data = json.loads(image_path.with_suffix(".json").read_text())
+    annotation_data["imagePath"] = "embedded-source.jpg"
+    annotation_data["imageData"] = base64.b64encode(image_path.read_bytes()).decode()
+    label_path.write_text(json.dumps(annotation_data))
+    win = main_win(
+        file_or_dir=image_path.parent,
+        config_overrides={"auto_save": True},
+        output_dir=output_dir if use_output_dir else None,
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    item = win._docks.file_list.currentItem()
+    assert item is not None
+    item.setCheckState(Qt.CheckState.Unchecked)
+    win._canvas_widgets.canvas.shapes[0].label = "updated"
+    win.mark_dirty()
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+
+    assert json.loads(label_path.read_text())["shapes"][0]["label"] == "updated"
+    assert not (output_dir / "embedded-source.json").exists()
+    assert item.checkState() == Qt.CheckState.Checked
+    assert win.current_label_file_path() == str(label_path)
+    assert read_label_file(filename=str(label_path)).image_data
+    assert win._load_file(image_or_label_path=str(image_path))
+    assert critical_messages == []
 
 
 @pytest.mark.gui
