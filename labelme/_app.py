@@ -1443,7 +1443,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self._queue_auto_save(
                 label_path=self._auto_save_path
                 or _resolve_label_path(
-                    image_or_label_path=self._image_path, output_dir=self._output_dir
+                    image_or_label_path=self._file_list_image_path or self._image_path,
+                    output_dir=self._output_dir,
                 )
             )
         else:
@@ -1880,7 +1881,8 @@ class MainWindow(QtWidgets.QMainWindow):
             filename=label_path,
             annotation=Annotation(
                 image_path=_resolve_stored_image_path(
-                    image_path=self._image_path, label_dir=Path(label_path).parent
+                    image_path=self._file_list_image_path or self._image_path,
+                    label_dir=Path(label_path).parent,
                 ),
                 image_data=self._annotation.image_data,
                 shapes=[
@@ -1900,7 +1902,7 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         self._label_file_path = label_path
         items = self._docks.file_list.findItems(
-            self._image_path, Qt.MatchFlag.MatchExactly
+            self._file_list_image_path or self._image_path, Qt.MatchFlag.MatchExactly
         )
         if len(items) > 1:
             raise RuntimeError("There are duplicate files.")
@@ -2686,7 +2688,7 @@ class MainWindow(QtWidgets.QMainWindow):
             parent=self,
             caption=self.tr("Choose File"),
             dir=_resolve_label_path(
-                image_or_label_path=self._image_path,
+                image_or_label_path=self._file_list_image_path or self._image_path,
                 output_dir=self._output_dir,
             ),
             filter=self.tr("Label files (*%s)") % LABEL_FILE_SUFFIX,
@@ -2710,7 +2712,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._label_file_path is not None:
             return self._label_file_path
         return _resolve_label_path(
-            image_or_label_path=self._image_path, output_dir=self._output_dir
+            image_or_label_path=self._file_list_image_path or self._image_path,
+            output_dir=self._output_dir,
         )
 
     def _confirm_deletion(self, *, message: str) -> bool:
