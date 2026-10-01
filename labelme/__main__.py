@@ -389,7 +389,11 @@ def main() -> None:
     app.setStyle("Fusion")  # for consistent appearance across platforms
     apply_color_theme(theme=color_theme)
     app.setApplicationName(__appname__)
-    app.setWindowIcon(new_icon("icon-256.png"))
+    # On macOS the window icon replaces the Dock icon, which needs Apple's
+    # padded rounded shape rather than the full-bleed square.
+    app.setWindowIcon(
+        new_icon("icon-macos-512.png" if sys.platform == "darwin" else "icon-256.png")
+    )
     app.installTranslator(translator)
     win = MainWindow(
         config_file=config_file,
