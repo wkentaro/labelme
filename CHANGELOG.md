@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## 7.8.0 - 2026-10-02
+
+### Changed
+
+- Save annotations in the background during editing, with revision-aware save status and safe waiting before navigation, closing, Save As, or deletion. Manual Save and Save As replace pending auto-save snapshots; canceling Save As preserves them. ([#2729](https://github.com/wkentaro/labelme/pull/2729))
+- Refreshed the app icon with the new Labelme logo, using a rounded macOS-style icon in the Dock. ([#2739](https://github.com/wkentaro/labelme/pull/2739))
+
+### Fixed
+
+- Reduce undo delays in images with many distinct labels. ([#2725](https://github.com/wkentaro/labelme/pull/2725))
+- Keep auto-save failures visible in the status bar with a Retry action. ([#2727](https://github.com/wkentaro/labelme/pull/2727))
+- Speed up annotation redraws by drawing vertex outlines individually while preserving overlapping marker fills and highlights. ([#2731](https://github.com/wkentaro/labelme/pull/2731))
+- Fix Annotation save destinations, stored image references, and File List checkmarks when embedded metadata differs from the selected Image. ([#2733](https://github.com/wkentaro/labelme/pull/2733))
+- Fix Previous and Next navigation when filtering hides the active Image, and disable navigation actions without a visible neighbor. ([#2734](https://github.com/wkentaro/labelme/pull/2734))
+- Preserve the current Annotation and unsaved edits after Annotation File deletion fails, and show an error dialog instead of closing the application. ([#2735](https://github.com/wkentaro/labelme/pull/2735))
+- Give toolbar overflow controls distinct accessible names for screen readers. ([#2736](https://github.com/wkentaro/labelme/pull/2736))
+- Keep Image references valid when saving and reopening Annotation Files through directory aliases, including macOS `/tmp` and `/private/tmp`. ([#2738](https://github.com/wkentaro/labelme/pull/2738))
+
 ## 7.7.0 - 2026-09-18
 
 ### Changed
