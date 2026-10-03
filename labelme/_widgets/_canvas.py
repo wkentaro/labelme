@@ -2078,10 +2078,9 @@ class Canvas(QtWidgets.QWidget):
         self._set_ai_existing_shape_highlights(shapes=[])
 
     def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
-        pixmap_arr = _utils.img_qt_to_arr(pixmap.toImage())
         self.pixmap = pixmap
         self._drag_anchor = None
-        self._pixmap_hash = hash(pixmap_arr.tobytes())
+        self._pixmap_hash = pixmap.cacheKey()
         # A new image is a fresh inference context that should surface its own
         # first failure rather than staying muted by the prior image's latch.
         self._ai_inference_failed = False

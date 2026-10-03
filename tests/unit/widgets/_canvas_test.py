@@ -1402,6 +1402,13 @@ def test_load_pixmap_rearms_inference_failure_report(*, canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
+def test_load_pixmap_records_cache_key(*, canvas: Canvas) -> None:
+    pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
+    canvas.load_pixmap(pixmap=pixmap)
+    assert canvas._pixmap_hash == pixmap.cacheKey()
+
+
+@pytest.mark.gui
 def test_create_mode_switch_retypes_one_point_partial(*, canvas: Canvas) -> None:
     # Retype must update _current.shape_type and _line.shape_type, but must
     # NOT re-seed _line.points (which would alias both slots and break the
