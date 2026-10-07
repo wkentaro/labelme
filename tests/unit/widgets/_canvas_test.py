@@ -8,6 +8,7 @@ from typing import Final
 from unittest.mock import Mock
 
 import numpy as np
+import osam
 import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -1399,6 +1400,59 @@ def test_load_pixmap_rearms_inference_failure_report(*, canvas: Canvas) -> None:
     canvas._ai_inference_failed = True
     canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT))
     assert canvas._ai_inference_failed is False
+
+
+@pytest.mark.gui
+def test_load_pixmap_defers_image_hash(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
+    monkeypatch.setattr(
+        pixmap, "toImage", Mock(side_effect=AssertionError("Image converted on load"))
+    )
+    canvas._pixmap_hash = 1
+    canvas.load_pixmap(pixmap=pixmap)
+    assert canvas._pixmap_hash is None
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("change", ["pixels", "dimensions"])
+def test_ai_embedding_is_reused_after_reloading_image(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch, change: str
+) -> None:
+    model = Mock()
+    model.name = "fake-model"
+    model.encode_image.return_value = osam.types.ImageEmbedding(
+        original_height=_HEIGHT,
+        original_width=_WIDTH,
+        embedding=np.zeros((1, 1, 1), dtype=np.float32),
+    )
+    model.generate.return_value = osam.types.GenerateResponse(
+        model=model.name, annotations=[]
+    )
+    monkeypatch.setattr(
+        canvas._ai_assist_session._get_session(), "_get_or_load_model", lambda: model
+    )
+    first = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_RGB32)
+    first.fill(Qt.GlobalColor.red)
+    second = QtGui.QImage(
+        _WIDTH if change == "pixels" else _HEIGHT,
+        _HEIGHT if change == "pixels" else _WIDTH,
+        QtGui.QImage.Format.Format_RGB32,
+    )
+    second.fill(Qt.GlobalColor.blue if change == "pixels" else Qt.GlobalColor.red)
+    keys: list[int] = []
+    for image, expected_encode_calls in [(first, 1), (second, 2), (first, 2)]:
+        # Fresh image data, as file navigation creates, rather than a shared pixmap.
+        pixmap = QtGui.QPixmap.fromImage(image.copy())
+        keys.append(pixmap.cacheKey())
+        canvas.reset_state()
+        canvas.load_pixmap(pixmap=pixmap)
+        canvas._propose_ai_shapes(
+            prompt_kind="points", points=[QPointF(10, 10)], point_labels=[1]
+        )
+        assert model.encode_image.call_count == expected_encode_calls
+    assert len(set(keys)) == 3
 
 
 @pytest.mark.gui

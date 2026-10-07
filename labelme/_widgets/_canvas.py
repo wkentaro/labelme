@@ -533,6 +533,8 @@ class Canvas(QtWidgets.QWidget):
         point_labels: Sequence[int],
     ) -> _automation.AiAssistProposal:
         image: np.ndarray = _utils.img_qt_to_rgb_arr(self.pixmap.toImage())
+        if self._pixmap_hash is None:
+            self._pixmap_hash = hash((image.shape, image.tobytes()))
         proposal = self._ai_assist_session.propose_shapes(
             image=image,
             image_id=str(self._pixmap_hash),
@@ -1759,7 +1761,7 @@ class Canvas(QtWidgets.QWidget):
             self._ai_assist_session.polygon_detail,
             self._ai_suppress_existing_shape_matches,
             self._allow_out_of_bounds_points,
-            self._pixmap_hash,
+            self.pixmap.cacheKey(),
             tuple(self.shapes),
         )
         if key == self._ai_points_preview_key:
@@ -2078,10 +2080,9 @@ class Canvas(QtWidgets.QWidget):
         self._set_ai_existing_shape_highlights(shapes=[])
 
     def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
-        pixmap_arr = _utils.img_qt_to_arr(pixmap.toImage())
         self.pixmap = pixmap
         self._drag_anchor = None
-        self._pixmap_hash = hash(pixmap_arr.tobytes())
+        self._pixmap_hash = None
         # A new image is a fresh inference context that should surface its own
         # first failure rather than staying muted by the prior image's latch.
         self._ai_inference_failed = False
