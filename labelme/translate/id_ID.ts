@@ -165,6 +165,10 @@
         <translation>Klik untuk menambahkan titik</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Bentuk terkunci</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + Klik untuk menghapus titik</translation>
     </message>
@@ -491,6 +495,30 @@
         <translation>Gabungkan bentuk mask terpilih menjadi satu</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Kunci Bentuk</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Kunci atau buka kunci bentuk yang dipilih</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Kunci Semua Bentuk</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Kunci semua bentuk untuk mencegah pengeditan</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Buka Kunci Semua Bentuk</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Buka kunci semua bentuk untuk mengizinkan pengeditan</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Hapus Simpul Terpilih</translation>
     </message>
@@ -691,6 +719,18 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>AI inference failed: %s</source>
         <translation>Inferensi AI gagal: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Buka Kunci Bentuk</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Buka Kunci Bentuk</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Kunci Bentuk</translation>
     </message>
     <message>
         <source>Large image</source>

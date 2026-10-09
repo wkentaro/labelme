@@ -161,6 +161,10 @@
         <translation>Натисніть, щоб додати точку</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Фігура заблокована</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move point</source>
         <translation>Натисніть і перетягніть, щоб перемістити точку</translation>
     </message>
@@ -362,6 +366,30 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Об&apos;єднати вибрані фігури-маски в одну</translation>
+    </message>
+    <message>
+        <source>Lock Shape</source>
+        <translation>Заблокувати фігуру</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Заблокувати або розблокувати вибрані фігури</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Заблокувати всі фігури</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Заблокувати всі фігури для запобігання редагуванню</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Розблокувати всі фігури</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Розблокувати всі фігури для дозволу редагування</translation>
     </message>
     <message>
         <source>Undo last point</source>
@@ -637,6 +665,18 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>Інференс ШІ не вдався: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Розблокувати фігури</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Розблокувати фігуру</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Заблокувати фігури</translation>
     </message>
     <message>
         <source>Large image</source>

@@ -165,6 +165,10 @@
         <translation>クリックで頂点を追加</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>図形はロックされています</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + クリックで頂点を削除</translation>
     </message>
@@ -529,6 +533,30 @@ Shapes</source>
         <translation>選択したマスク図形を1つに結合</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>図形をロック</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>選択した図形をロックまたはロック解除</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>すべての図形をロック</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>すべての図形をロックして編集を防止</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>すべての図形のロックを解除</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>すべての図形のロックを解除して編集を許可</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>選択した頂点を削除</translation>
     </message>
@@ -730,6 +758,18 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI推論に失敗しました: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>図形のロックを解除</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>図形のロックを解除</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>図形をロック</translation>
     </message>
     <message>
         <source>Large image</source>

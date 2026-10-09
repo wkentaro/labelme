@@ -157,6 +157,10 @@
         <translation>Kattintson pont hozzáadásához</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Alakzat zárolva</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move point</source>
         <translation>Kattintson és húzza a pont mozgatásához</translation>
     </message>
@@ -538,6 +542,30 @@ Shapes</source>
         <translation>A kijelölt maszk alakzatok egyesítése eggyé</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Alakzat zárolása</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Kiválasztott alakzatok zárolása vagy feloldása</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Összes alakzat zárolása</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Összes alakzat zárolása a szerkesztés megakadályozásához</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Összes alakzat feloldása</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Összes alakzat feloldása a szerkesztés engedélyezéséhez</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Kijelölt csúcspont törlése</translation>
     </message>
@@ -730,6 +758,18 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>AI inference failed: %s</source>
         <translation>Az MI-következtetés sikertelen volt: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Alakzatok feloldása</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Alakzat feloldása</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Alakzatok zárolása</translation>
     </message>
     <message>
         <source>Large image</source>

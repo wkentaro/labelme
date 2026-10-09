@@ -165,6 +165,10 @@
         <translation>Cliquer pour ajouter un point</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>La forme est verrouillée</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + MAJ + Cliquer pour supprimer le point</translation>
     </message>
@@ -522,6 +526,30 @@ les formes</translation>
         <translation>Fusionner les formes de masque sélectionnées en une seule</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Verrouiller la forme</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Verrouiller ou déverrouiller les formes sélectionnées</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Verrouiller toutes les formes</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Verrouiller toutes les formes pour empêcher les modifications</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Déverrouiller toutes les formes</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Déverrouiller toutes les formes pour permettre les modifications</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Supprimer le sommet sélectionné</translation>
     </message>
@@ -722,6 +750,18 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>AI inference failed: %s</source>
         <translation>Échec de l&apos;inférence IA : %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Déverrouiller les formes</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Déverrouiller la forme</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Verrouiller les formes</translation>
     </message>
     <message>
         <source>Large image</source>

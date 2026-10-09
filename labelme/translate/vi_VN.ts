@@ -165,6 +165,10 @@
         <translation>Nhấn để thêm điểm</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Hình dạng đã bị khóa</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + Nhấn để xóa điểm</translation>
     </message>
@@ -516,6 +520,30 @@ Shapes</source>
         <translation>Gộp các hình dạng mask đã chọn thành một</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Khóa Hình dạng</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Khóa hoặc mở khóa các hình dạng đã chọn</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Khóa Tất cả Hình dạng</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Khóa tất cả hình dạng để ngăn chỉnh sửa</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Mở khóa Tất cả Hình dạng</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Mở khóa tất cả hình dạng để cho phép chỉnh sửa</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Xóa Đỉnh đã Chọn</translation>
     </message>
@@ -716,6 +744,18 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>AI inference failed: %s</source>
         <translation>Suy luận AI thất bại: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Mở khóa Hình dạng</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Mở khóa Hình dạng</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Khóa Hình dạng</translation>
     </message>
     <message>
         <source>Large image</source>

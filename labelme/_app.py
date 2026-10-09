@@ -155,6 +155,9 @@ class _Actions(NamedTuple):
     paste: QtGui.QAction
     duplicate: QtGui.QAction
     merge: QtGui.QAction
+    toggle_shape_lock: QtGui.QAction
+    lock_all_shapes: QtGui.QAction
+    unlock_all_shapes: QtGui.QAction
     undo_last_point: QtGui.QAction
     undo: QtGui.QAction
     add_point_to_edge: QtGui.QAction
@@ -518,11 +521,18 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Insert the clipboard shapes into this image"),
             enabled=False,
         )
+
+        def _duplicate_selected() -> None:
+            duplicates: list[Shape] = []
+            for s in self._canvas_widgets.canvas.selected_shapes:
+                dup = s.copy()
+                dup.locked = False
+                duplicates.append(dup)
+            self._insert_shapes(duplicates)
+
         duplicate = action(
             text=self.tr("Duplicate Shapes"),
-            slot=lambda: self._insert_shapes(
-                [s.copy() for s in self._canvas_widgets.canvas.selected_shapes]
-            ),
+            slot=_duplicate_selected,
             shortcut=shortcuts["duplicate_shape"],
             icon="phosphor/copy.svg",
             tip=self.tr("Create a duplicate of the selected shapes"),
@@ -534,6 +544,27 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/unite-duotone.svg",
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
+        )
+        toggle_shape_lock = action(
+            text=self.tr("Lock Shape"),
+            slot=self.toggle_shape_lock,
+            shortcut=shortcuts.get("toggle_shape_lock", "L"),
+            tip=self.tr("Lock or unlock the selected shapes"),
+            enabled=False,
+        )
+        lock_all_shapes = action(
+            text=self.tr("Lock All Shapes"),
+            slot=functools.partial(self.toggle_shape_lock, all_shapes=True, value=True),
+            shortcut=shortcuts.get("lock_all_shapes"),
+            tip=self.tr("Lock all shapes to prevent editing"),
+        )
+        unlock_all_shapes = action(
+            text=self.tr("Unlock All Shapes"),
+            slot=functools.partial(
+                self.toggle_shape_lock, all_shapes=True, value=False
+            ),
+            shortcut=shortcuts.get("unlock_all_shapes"),
+            tip=self.tr("Unlock all shapes to allow editing"),
         )
         undo_last_point = action(
             text=self.tr("Undo last point"),
@@ -786,6 +817,8 @@ class MainWindow(QtWidgets.QMainWindow):
         shapes_present_actions.addAction(hide_all)
         shapes_present_actions.addAction(show_all)
         shapes_present_actions.addAction(toggle_all)
+        shapes_present_actions.addAction(lock_all_shapes)
+        shapes_present_actions.addAction(unlock_all_shapes)
         for select_action in select_neighbor_actions:
             shapes_present_actions.addAction(select_action)
 
@@ -843,6 +876,7 @@ class MainWindow(QtWidgets.QMainWindow):
             edit,
             delete,
             merge,
+            toggle_shape_lock,
             add_point_to_edge,
             remove_point,
         )
@@ -855,6 +889,9 @@ class MainWindow(QtWidgets.QMainWindow):
             edit,
             delete,
             merge,
+            toggle_shape_lock,
+            lock_all_shapes,
+            unlock_all_shapes,
             remove_point,
             separator(),
             *select_neighbor_actions,
@@ -879,6 +916,9 @@ class MainWindow(QtWidgets.QMainWindow):
             paste=paste,
             duplicate=duplicate,
             merge=merge,
+            toggle_shape_lock=toggle_shape_lock,
+            lock_all_shapes=lock_all_shapes,
+            unlock_all_shapes=unlock_all_shapes,
             undo_last_point=undo_last_point,
             undo=undo,
             remove_point=remove_point,
@@ -953,7 +993,13 @@ class MainWindow(QtWidgets.QMainWindow):
         view_menu = self.menuBar().addMenu(self.tr("&View"))
         help_menu = self.menuBar().addMenu(self.tr("&Help"))
         label_menu = QtWidgets.QMenu()
-        label_menu.addActions((self._actions.edit, self._actions.delete))
+        label_menu.addActions(
+            (
+                self._actions.edit,
+                self._actions.toggle_shape_lock,
+                self._actions.delete,
+            )
+        )
         self._docks.label_list.setContextMenuPolicy(
             Qt.ContextMenuPolicy.CustomContextMenu
         )
@@ -1786,6 +1832,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.merge.setEnabled(can_merge_shapes(selected_shapes))
         self._actions.copy.setEnabled(n_selected)
         self._actions.edit.setEnabled(n_selected)
+        self._actions.toggle_shape_lock.setEnabled(n_selected)
+        self._update_lock_action_text()
 
     def add_label(self, *, shape: Shape) -> None:
         assert shape.label is not None
@@ -2266,6 +2314,50 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setCheckState(
                 Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
             )
+
+    def _update_lock_action_text(self) -> None:
+        selected_shapes = self._canvas_widgets.canvas.selected_shapes
+        if not selected_shapes:
+            self._actions.toggle_shape_lock.setText(self.tr("Lock Shape"))
+            return
+        all_locked = all(s.locked for s in selected_shapes)
+        is_plural = len(selected_shapes) > 1
+        if all_locked:
+            self._actions.toggle_shape_lock.setText(
+                self.tr("Unlock Shapes") if is_plural else self.tr("Unlock Shape")
+            )
+        else:
+            self._actions.toggle_shape_lock.setText(
+                self.tr("Lock Shapes") if is_plural else self.tr("Lock Shape")
+            )
+
+    def toggle_shape_lock(
+        self, *, all_shapes: bool = False, value: bool | None = None
+    ) -> None:
+        if all_shapes:
+            target_shapes = list(self._canvas_widgets.canvas.shapes)
+        else:
+            target_shapes = list(self._canvas_widgets.canvas.selected_shapes)
+        if not target_shapes:
+            return
+
+        if value is None:
+            value = any(not s.locked for s in target_shapes)
+
+        changed = False
+        for shape in target_shapes:
+            if shape.locked != value:
+                shape.locked = value
+                changed = True
+
+        if changed:
+            self._canvas_widgets.canvas.set_shapes_locked(
+                shapes=target_shapes, value=value
+            )
+            self._canvas_widgets.canvas.backup_shapes()
+            self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
+            self.mark_dirty()
+            self._update_lock_action_text()
 
     def _read_annotation_file(self, *, label_path: str) -> Annotation | None:
         try:
@@ -3360,6 +3452,10 @@ def _shapes_from_dicts(
 ) -> list[Shape]:
     shapes: list[Shape] = []
     for shape_dict in shape_dicts:
+        other_data = dict(shape_dict["other_data"])
+        locked = bool(
+            shape_dict.get("locked", False) or other_data.pop("locked", False)
+        )
         shape = Shape(
             label=shape_dict["label"],
             shape_type=cast(ShapeType, shape_dict["shape_type"]),
@@ -3368,10 +3464,11 @@ def _shapes_from_dicts(
             mask=shape_dict["mask"],
             points=np.array(shape_dict["points"], dtype=np.float64),
             closed=True,
+            locked=locked,
         )
 
         shape.flags = shape_dict["flags"]
-        shape.other_data = shape_dict["other_data"]
+        shape.other_data = other_data
 
         shapes.append(shape)
     apply_default_flags(shapes=shapes, label_flags=label_flags)
@@ -3456,6 +3553,11 @@ def _make_image_list_item(
 
 def _shape_to_dict(shape: Shape, /) -> ShapeDict:
     assert shape.label is not None
+    other_data = copy.deepcopy(shape.other_data)
+    if shape.locked:
+        other_data["locked"] = True
+    else:
+        other_data.pop("locked", None)
     return ShapeDict(
         label=shape.label,
         points=shape.points.tolist(),
@@ -3464,7 +3566,7 @@ def _shape_to_dict(shape: Shape, /) -> ShapeDict:
         description=shape.description or "",
         group_id=shape.group_id,
         mask=None if shape.mask is None else shape.mask.copy(),
-        other_data=copy.deepcopy(shape.other_data),
+        other_data=other_data,
     )
 
 

@@ -165,6 +165,10 @@
         <translation>Klik om punt toe te voegen</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Vorm is vergrendeld</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + Klik om punt te verwijderen</translation>
     </message>
@@ -516,6 +520,30 @@ Shapes</source>
         <translation>Geselecteerde maskervormen samenvoegen tot één</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Vorm vergrendelen</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Geselecteerde vormen vergrendelen of ontgrendelen</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Alle vormen vergrendelen</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Vergrendel alle vormen om bewerking te voorkomen</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Alle vormen ontgrendelen</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Ontgrendel alle vormen om bewerking toe te staan</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Geselecteerd hoekpunt verwijderen</translation>
     </message>
@@ -716,6 +744,18 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI-inferentie mislukt: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Vormen ontgrendelen</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Vorm ontgrendelen</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Vormen vergrendelen</translation>
     </message>
     <message>
         <source>Large image</source>

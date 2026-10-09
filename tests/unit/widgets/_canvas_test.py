@@ -2739,3 +2739,153 @@ def test_hover_transitions_repaint(
         painted.clear()
         canvas.set_editing(value=True)
         qtbot.waitUntil(lambda: bool(painted))
+
+
+@pytest.mark.gui
+def test_locked_shape_ignores_drag_and_keyboard(*, canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(20.0, 20.0), (40.0, 40.0)], dtype=np.float64),
+        closed=True,
+        locked=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas.selected_shapes = [shape]
+    canvas._prev_point = QPointF(20.0, 20.0)
+    canvas._record_drag_anchor(shapes=[shape], click=canvas._prev_point)
+
+    canvas._drag_selected_shapes(pos=QPointF(50.0, 50.0))
+    np.testing.assert_array_equal(shape.points, [(20.0, 20.0), (40.0, 40.0)])
+    assert not canvas._is_moving_shape
+
+    canvas._move_by_keyboard(offset=QPointF(10.0, 10.0))
+    np.testing.assert_array_equal(shape.points, [(20.0, 20.0), (40.0, 40.0)])
+    assert not canvas._is_moving_shape
+
+
+@pytest.mark.gui
+def test_locked_shape_ignores_vertex_and_rotation_drag(*, canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([(10.0, 10.0), (30.0, 10.0), (20.0, 30.0)], dtype=np.float64),
+        closed=True,
+        locked=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas.hovered_shape = shape
+    canvas._hovered_vertex = 0
+
+    canvas._drag_hovered_vertex(pos=QPointF(50.0, 50.0), is_shift_pressed=False)
+    np.testing.assert_array_equal(
+        shape.points, [(10.0, 10.0), (30.0, 10.0), (20.0, 30.0)]
+    )
+
+    canvas._bounded_move_vertex(
+        shape=shape, vertex_index=1, pos=QPointF(90.0, 90.0), is_shift_pressed=False
+    )
+    np.testing.assert_array_equal(
+        shape.points, [(10.0, 10.0), (30.0, 10.0), (20.0, 30.0)]
+    )
+
+    canvas._hovered_rotation = 0
+    canvas._rotation_original_points = shape.points.copy()
+    canvas._rotation_center = np.array([20.0, 20.0])
+    canvas._rotation_initial_angle = 0.0
+    canvas._drag_hovered_rotation_point(pos=QPointF(50.0, 50.0))
+    np.testing.assert_array_equal(
+        shape.points, [(10.0, 10.0), (30.0, 10.0), (20.0, 30.0)]
+    )
+
+
+@pytest.mark.gui
+def test_locked_shape_ignores_topology_edits(*, canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([(10.0, 10.0), (30.0, 10.0), (30.0, 30.0), (10.0, 30.0)]),
+        closed=True,
+        locked=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas._last_hovered_shape = shape
+    canvas._last_hovered_edge = 0
+    canvas._prev_move_point = QPointF(20.0, 10.0)
+
+    canvas.add_point_to_edge()
+    assert len(shape.points) == 4
+
+    canvas._last_hovered_vertex = 0
+    removed = canvas.remove_selected_point()
+    assert not removed
+    assert len(shape.points) == 4
+
+
+@pytest.mark.gui
+def test_locked_shape_hover_and_highlight(*, canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([(10.0, 10.0), (30.0, 10.0), (20.0, 30.0)], dtype=np.float64),
+        closed=True,
+        locked=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas.set_editing(value=True)
+
+    status_messages: list[str] = []
+    canvas._highlight_hover_shape(
+        pos=QPointF(10.0, 10.0), status_messages=status_messages
+    )
+
+    assert canvas.hovered_shape is shape
+    assert canvas._hovered_vertex is None
+    assert canvas._hovered_edge is None
+    assert canvas._hovered_rotation is None
+    assert any("locked" in msg.lower() for msg in status_messages)
+
+
+@pytest.mark.gui
+def test_partial_selection_with_locked_shape(*, canvas: Canvas) -> None:
+    locked = Shape(
+        label="locked",
+        shape_type="rectangle",
+        points=np.array([(10.0, 10.0), (20.0, 20.0)], dtype=np.float64),
+        closed=True,
+        locked=True,
+    )
+    unlocked = Shape(
+        label="unlocked",
+        shape_type="rectangle",
+        points=np.array([(30.0, 30.0), (40.0, 40.0)], dtype=np.float64),
+        closed=True,
+        locked=False,
+    )
+    canvas.load_shapes(shapes=[locked, unlocked])
+    canvas.selected_shapes = [locked, unlocked]
+    canvas._prev_point = QPointF(35.0, 35.0)
+    canvas._record_drag_anchor(shapes=canvas.selected_shapes, click=canvas._prev_point)
+
+    canvas._drag_selected_shapes(pos=QPointF(45.0, 45.0))
+    # Locked shape did not move
+    np.testing.assert_array_equal(locked.points, [(10.0, 10.0), (20.0, 20.0)])
+    # Unlocked shape moved
+    np.testing.assert_allclose(unlocked.points, [(40.0, 40.0), (50.0, 50.0)])
+
+
+@pytest.mark.gui
+def test_canvas_set_shape_locked(*, canvas: Canvas) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(10.0, 10.0), (20.0, 20.0)], dtype=np.float64),
+        closed=True,
+        locked=False,
+    )
+    canvas.load_shapes(shapes=[shape])
+    assert not shape.locked
+
+    canvas.set_shape_locked(shape=shape, value=True)
+    assert shape.locked
+
+    canvas.set_shape_locked(shape=shape, value=False)
+    assert not shape.locked
+
+    canvas.set_shapes_locked(shapes=[shape], value=True)
+    assert shape.locked

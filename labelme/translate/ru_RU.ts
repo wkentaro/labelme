@@ -165,6 +165,10 @@
         <translation>Нажмите, чтобы добавить точку</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Фигура заблокирована</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + нажатие — удалить точку</translation>
     </message>
@@ -501,6 +505,30 @@ Shapes</source>
         <translation>Объединить выбранные фигуры-маски в одну</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Заблокировать фигуру</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Заблокировать или разблокировать выбранные фигуры</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Заблокировать все фигуры</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Заблокировать все фигуры для предотвращения редактирования</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Разблокировать все фигуры</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Разблокировать все фигуры для разрешения редактирования</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Удалить выбранную вершину</translation>
     </message>
@@ -701,6 +729,18 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>Инференс ИИ не удался: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Разблокировать фигуры</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Разблокировать фигуру</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Заблокировать фигуры</translation>
     </message>
     <message>
         <source>Large image</source>

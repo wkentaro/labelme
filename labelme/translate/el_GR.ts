@@ -161,6 +161,10 @@
         <translation>Κάντε κλικ για να προσθέσετε πόντο</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Το σχήμα είναι κλειδωμένο</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move point</source>
         <translation>Πάτημα και μεταφορά για μετακίνηση αυτού του σημείου</translation>
     </message>
@@ -362,6 +366,30 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Συγχώνευση των επιλεγμένων σχημάτων μάσκας σε ένα</translation>
+    </message>
+    <message>
+        <source>Lock Shape</source>
+        <translation>Κλείδωμα σχήματος</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Κλείδωμα ή ξεκλείδωμα των επιλεγμένων σχημάτων</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Κλείδωμα όλων των σχημάτων</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Κλείδωμα όλων των σχημάτων για αποτροπή επεξεργασίας</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Ξεκλείδωμα όλων των σχημάτων</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Ξεκλείδωμα όλων των σχημάτων για δυνατότητα επεξεργασίας</translation>
     </message>
     <message>
         <source>Undo last point</source>
@@ -636,6 +664,18 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>Η συμπερασματική επεξεργασία ΤΝ απέτυχε: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Ξεκλείδωμα σχημάτων</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Ξεκλείδωμα σχήματος</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Κλείδωμα σχημάτων</translation>
     </message>
     <message>
         <source>Large image</source>

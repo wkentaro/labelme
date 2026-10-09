@@ -895,6 +895,8 @@ class Canvas(QtWidgets.QWidget):
     def _drag_hovered_vertex(self, *, pos: QPointF, is_shift_pressed: bool) -> None:
         assert self._hovered_vertex is not None
         assert self.hovered_shape is not None
+        if self.hovered_shape.locked:
+            return
         self._bounded_move_vertex(
             shape=self.hovered_shape,
             vertex_index=self._hovered_vertex,
@@ -906,6 +908,8 @@ class Canvas(QtWidgets.QWidget):
 
     def _drag_hovered_rotation_point(self, *, pos: QPointF) -> None:
         assert self.hovered_shape is not None
+        if self.hovered_shape.locked:
+            return
         assert len(self._rotation_original_points) > 0, (
             "_capture_rotation_anchors must be called before dragging"
         )
@@ -936,10 +940,11 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_original_points = self.hovered_shape.points.copy()
 
     def _drag_selected_shapes(self, *, pos: QPointF) -> None:
+        movable_shapes = [s for s in self.selected_shapes if not s.locked]
+        if not movable_shapes:
+            return
         self._apply_cursor(CursorRole.MOVE)
-        self._drag_shapes(
-            shapes=self.selected_shapes, cursor=pos, constrain_cursor=True
-        )
+        self._drag_shapes(shapes=movable_shapes, cursor=pos, constrain_cursor=True)
         self.update()
         self._is_moving_shape = True
 
@@ -963,6 +968,17 @@ class Canvas(QtWidgets.QWidget):
                 hovered_vertex=None,
                 hovered_rotation=None,
             )
+            return
+
+        if target.shape.locked:
+            self._set_highlight(
+                hovered_shape=target.shape,
+                hovered_edge=None,
+                hovered_vertex=None,
+                hovered_rotation=None,
+            )
+            self._apply_cursor(CursorRole.DEFAULT)
+            status_messages.append(self.tr("Shape is locked"))
             return
 
         if target.kind is HitKind.VERTEX:
@@ -1022,7 +1038,7 @@ class Canvas(QtWidgets.QWidget):
         shape = self._last_hovered_shape
         index = self._last_hovered_edge
         point = self._prev_move_point
-        if shape is None or index is None or point is None:
+        if shape is None or index is None or point is None or shape.locked:
             return
         shape.insert_point(i=index, point=(point.x(), point.y()))
         self._highlight_vertex(index=index, mode="move")
@@ -1036,7 +1052,12 @@ class Canvas(QtWidgets.QWidget):
     def remove_selected_point(self) -> bool:
         shape = self._last_hovered_shape
         index = self._last_hovered_vertex
-        if shape is None or index is None or not shape.can_remove_point():
+        if (
+            shape is None
+            or index is None
+            or shape.locked
+            or not shape.can_remove_point()
+        ):
             return False
         shape.remove_point(i=index)
         self._clear_highlight_state()
@@ -1219,7 +1240,11 @@ class Canvas(QtWidgets.QWidget):
         if self._maybe_modify_polygon_topology(modifiers=modifiers):
             # remove_selected_point already repainted; just consume the press.
             return
-        if self._is_rotation_point_selected():
+        if (
+            self._is_rotation_point_selected()
+            and self.hovered_shape is not None
+            and not self.hovered_shape.locked
+        ):
             self._capture_rotation_anchors()
         self._select_shape_point(
             pos,
@@ -1232,6 +1257,8 @@ class Canvas(QtWidgets.QWidget):
         # Returns True only when the press is consumed as a terminal edit (a point
         # removal), so the caller skips point selection and starts no drag. Adding
         # a point intentionally falls through so the new vertex can be dragged.
+        if self._last_hovered_shape is not None and self._last_hovered_shape.locked:
+            return False
         if self._is_edge_selected() and modifiers == Qt.KeyboardModifier.AltModifier:
             self.add_point_to_edge()
             return False
@@ -1453,6 +1480,7 @@ class Canvas(QtWidgets.QWidget):
         return None
 
     def _record_drag_anchor(self, *, shapes: list[Shape], click: QPointF) -> None:
+        shapes = [s for s in shapes if not s.locked]
         if not shapes:
             self._drag_anchor = None
             return
@@ -1477,6 +1505,8 @@ class Canvas(QtWidgets.QWidget):
         pos: QPointF,
         is_shift_pressed: bool,
     ) -> None:
+        if shape.locked:
+            return
         if vertex_index >= len(shape.points):
             logger.warning(
                 "vertex_index is out of range: vertex_index={:d}, len(points)={:d}",
@@ -1508,6 +1538,8 @@ class Canvas(QtWidgets.QWidget):
     def _bounded_move_oriented_rectangle_vertex(
         self, *, shape: Shape, vertex_index: int, pos: QPointF
     ) -> None:
+        if shape.locked:
+            return
         assert len(shape.points) == ORIENTED_RECTANGLE_POINT_COUNT
         corners = tuple(QPointF(*point) for point in shape.points)
         new_corners = _reproject_oriented_rectangle_corners(
@@ -1523,6 +1555,9 @@ class Canvas(QtWidgets.QWidget):
     def _drag_shapes(
         self, *, shapes: list[Shape], cursor: QPointF, constrain_cursor: bool
     ) -> None:
+        shapes = [s for s in shapes if not s.locked]
+        if not shapes:
+            return
         if constrain_cursor and self._should_constrain_to_pixmap(cursor):
             return
 
@@ -1948,10 +1983,11 @@ class Canvas(QtWidgets.QWidget):
         a0.accept()
 
     def _move_by_keyboard(self, *, offset: QPointF) -> None:
-        if not self.selected_shapes:
+        movable_shapes = [s for s in self.selected_shapes if not s.locked]
+        if not movable_shapes:
             return
         self._drag_shapes(
-            shapes=self.selected_shapes,
+            shapes=movable_shapes,
             cursor=self._prev_point + offset,
             constrain_cursor=False,
         )
@@ -2101,6 +2137,32 @@ class Canvas(QtWidgets.QWidget):
         if shape.visible == value:
             return
         shape.visible = value
+        self.update()
+
+    def set_shape_locked(self, *, shape: Shape, value: bool) -> None:
+        if shape.locked == value:
+            return
+        shape.locked = value
+        if shape.locked and self.hovered_shape is shape:
+            self._hovered_vertex = None
+            self._hovered_edge = None
+            self._hovered_rotation = None
+            self._release_cursor()
+        self.update()
+
+    def set_shapes_locked(self, *, shapes: Sequence[Shape], value: bool) -> None:
+        changed = False
+        for s in shapes:
+            if s.locked != value:
+                s.locked = value
+                changed = True
+        if not changed:
+            return
+        if self.hovered_shape is not None and self.hovered_shape.locked:
+            self._hovered_vertex = None
+            self._hovered_edge = None
+            self._hovered_rotation = None
+            self._release_cursor()
         self.update()
 
     def _apply_cursor(self, role: CursorRole, /) -> None:

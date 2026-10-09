@@ -165,6 +165,10 @@
         <translation>Kliknij, aby dodać punkt</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Kształt jest zablokowany</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + Klik — usuń punkt</translation>
     </message>
@@ -516,6 +520,30 @@ Shapes</source>
         <translation>Scal zaznaczone kształty maski w jeden</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Zablokuj kształt</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Zablokuj lub odblokuj zaznaczone kształty</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Zablokuj wszystkie kształty</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Zablokuj wszystkie kształty, aby zapobiec edycji</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Odblokuj wszystkie kształty</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Odblokuj wszystkie kształty, aby umożliwić edycję</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Usuń zaznaczony wierzchołek</translation>
     </message>
@@ -716,6 +744,18 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>AI inference failed: %s</source>
         <translation>Wnioskowanie AI nie powiodło się: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Odblokuj kształty</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Odblokuj kształt</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Zablokuj kształty</translation>
     </message>
     <message>
         <source>Large image</source>
