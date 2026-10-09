@@ -1226,6 +1226,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         canvas.shape_moved.connect(self.mark_dirty)
         canvas.selection_changed.connect(self._on_shape_selection_changed)
+        canvas.shape_double_clicked.connect(self._edit_label)
         canvas.drawing_polygon.connect(self._on_drawing_polygon_changed)
 
         empty_state = EmptyStateWidget(
