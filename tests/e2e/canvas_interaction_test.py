@@ -835,6 +835,60 @@ def test_right_click_on_shape_opens_context_menu(
 
 
 @pytest.mark.gui
+def test_double_click_on_shape_edits_label(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    pause: bool,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    label_dialog = annotated_win._label_dialog
+    shape = canvas.shapes[_SHAPE_INDEX]
+    new_label = "edited_by_double_click"
+    assert shape.label != new_label
+
+    submit_label_dialog(qtbot=qtbot, label_dialog=label_dialog, label=new_label)
+
+    bounds_center = _shape_bounds(shape=shape).center()
+    pos = image_to_widget_pos(canvas=canvas, image_pos=bounds_center)
+    qtbot.mouseMove(canvas, pos=pos)
+    qtbot.wait(50)
+    qtbot.mouseDClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
+    qtbot.waitUntil(lambda: not label_dialog.isVisible(), timeout=3000)
+
+    assert shape.label == new_label
+    assert canvas.selected_shapes == [shape]
+    item = annotated_win._docks.label_list.find_item_by_shape(shape=shape)
+    assert item is not None
+    assert item.text() == new_label
+    assert annotated_win._is_changed
+
+    annotated_win.mark_clean()
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_double_click_on_empty_canvas_does_not_open_dialog(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    pause: bool,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    label_dialog = annotated_win._label_dialog
+
+    pos = QPoint(5, 5)
+    qtbot.mouseMove(canvas, pos=pos)
+    qtbot.wait(50)
+    qtbot.mouseDClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
+    qtbot.wait(100)
+
+    assert not label_dialog.isVisible()
+
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
 def test_select_mask_shape_by_click(
     *,
     main_win: MainWinFactory,

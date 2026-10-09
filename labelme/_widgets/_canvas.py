@@ -209,6 +209,7 @@ class Canvas(QtWidgets.QWidget):
     point_prompt_rejected = QtCore.Signal(str)
     degenerate_shape_rejected = QtCore.Signal()
     selection_changed = QtCore.Signal(list)
+    shape_double_clicked = QtCore.Signal(Shape)
     shape_moved = QtCore.Signal()
     drawing_polygon = QtCore.Signal(bool)
     vertex_selected = QtCore.Signal(bool)
@@ -1360,14 +1361,24 @@ class Canvas(QtWidgets.QWidget):
         }.get(self.create_mode, MIN_POLYGON_POINT_COUNT)
         return len(self._current.points) >= minimum_points
 
-    def mouseDoubleClickEvent(self, _a0: QtGui.QMouseEvent, /) -> None:
-        if self._double_click != "close":
+    def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent, /) -> None:
+        if self.mode == _CanvasMode.CREATE:
+            if self._double_click == "close" and self._can_close_shape():
+                self._finalize()
             return
-        if not self._can_close_shape():
+        if self.mode != _CanvasMode.EDIT or a0.button() != Qt.MouseButton.LeftButton:
             return
-        self._finalize()
+        pos: QPointF = self.transform_widget_point_to_image(a0.position())
+        shape = self._find_shape_at_point(pos) or self.hovered_shape
+        if shape is None:
+            return
+        if self.selected_shapes != [shape]:
+            self.select_shapes(shapes=[shape])
+        self._hovered_shape_is_selected = False
+        self.shape_double_clicked.emit(shape)
 
     def select_shapes(self, *, shapes: list[Shape]) -> None:
+        self.selected_shapes = shapes
         self.selection_changed.emit(shapes)
         self.update()
 
