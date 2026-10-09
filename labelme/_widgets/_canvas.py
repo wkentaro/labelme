@@ -186,8 +186,10 @@ class Canvas(QtWidgets.QWidget):
     _pixmap_hash: int | None
     _cursor: CursorRole
     shapes: list[Shape]
-    context_menu: QtWidgets.QMenu
+    shape_context_menu: QtWidgets.QMenu
+    canvas_context_menu: QtWidgets.QMenu
     context_menu_origin: QtCore.QPoint | None
+    _right_click_shape: Shape | None
     shape_backups: collections.deque[list[Shape]]
     _is_moving_shape: bool
     selected_shapes: list[Shape]
@@ -306,10 +308,20 @@ class Canvas(QtWidgets.QWidget):
         self._point_type: Literal["square", "round"] = "round"
         self._draft_palette = _DEFAULT_PALETTE
         self._palette_cache = {}
-        self.context_menu = QtWidgets.QMenu()
+        self.shape_context_menu = QtWidgets.QMenu()
+        self.canvas_context_menu = QtWidgets.QMenu()
         self.context_menu_origin = None
+        self._right_click_shape = None
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
+
+    @property
+    def context_menu(self) -> QtWidgets.QMenu:
+        return self.shape_context_menu
+
+    @context_menu.setter
+    def context_menu(self, menu: QtWidgets.QMenu, /) -> None:
+        self.shape_context_menu = menu
 
     def set_fill_drawing(self, *, value: bool) -> None:
         self._fill_drawing = value
@@ -1065,7 +1077,7 @@ class Canvas(QtWidgets.QWidget):
             self._press_left(pos=pos, event=event)
             return
         if button == Qt.MouseButton.RightButton and self.mode == _CanvasMode.EDIT:
-            self._press_right(pos=pos, event=event)
+            self._press_right(pos=pos)
             return
         if button == Qt.MouseButton.MiddleButton and (
             self._is_image_overflowing_viewport() or not self._view_offset.isNull()
@@ -1241,16 +1253,14 @@ class Canvas(QtWidgets.QWidget):
             return self.remove_selected_point()
         return False
 
-    def _press_right(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        if _should_reselect_on_right_press(
-            selected_shapes=self.selected_shapes, hovered_shape=self.hovered_shape
-        ):
-            self._select_shape_point(
-                pos,
-                multiple_selection_mode=event.modifiers()
-                == Qt.KeyboardModifier.ControlModifier,
-            )
-            self.update()
+    def _press_right(self, *, pos: QPointF) -> None:
+        shape = self._find_shape_at_point(pos) or self.hovered_shape
+        if shape is None:
+            self._right_click_shape = None
+        else:
+            if shape not in self.selected_shapes:
+                self.select_shapes(shapes=[shape])
+            self._right_click_shape = shape
         self._prev_point = pos
 
     def _begin_pan(self, *, event: QtGui.QMouseEvent) -> None:
@@ -1277,8 +1287,20 @@ class Canvas(QtWidgets.QWidget):
     def _release_right(self, *, event: QtGui.QMouseEvent) -> None:
         self._release_cursor()
         self.context_menu_origin = self.mapToGlobal(event.position().toPoint())
+        pos: QPointF = self.transform_widget_point_to_image(event.position())
+        shape = (
+            self._right_click_shape
+            or self._find_shape_at_point(pos)
+            or self.hovered_shape
+        )
+        self._right_click_shape = None
+        menu = (
+            self.shape_context_menu
+            if (shape is not None and self.mode == _CanvasMode.EDIT)
+            else self.canvas_context_menu
+        )
         try:
-            self.context_menu.exec(self.context_menu_origin)  # type: ignore
+            menu.exec(self.context_menu_origin)  # ty: ignore[invalid-argument-type]
         finally:
             self.context_menu_origin = None
 
@@ -1368,6 +1390,7 @@ class Canvas(QtWidgets.QWidget):
         self._finalize()
 
     def select_shapes(self, *, shapes: list[Shape]) -> None:
+        self.selected_shapes = shapes
         self.selection_changed.emit(shapes)
         self.update()
 
