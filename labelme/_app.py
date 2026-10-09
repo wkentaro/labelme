@@ -3436,8 +3436,8 @@ def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
             )
         return relative_path
     except ValueError:
-        # Windows drives have no relative path between them; an absolute path
-        # costs portability but beats failing the save.
+        # Windows drives and UNC shares have no relative path between them; an
+        # absolute path costs portability but beats failing the save.
         return os.path.abspath(image_path)
 
 
