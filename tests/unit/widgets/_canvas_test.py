@@ -2739,3 +2739,117 @@ def test_hover_transitions_repaint(
         painted.clear()
         canvas.set_editing(value=True)
         qtbot.waitUntil(lambda: bool(painted))
+
+
+@pytest.mark.gui
+def test_double_click_shape_emits_signal(*, canvas: Canvas) -> None:
+    shape = Shape(
+        label="dog",
+        shape_type="rectangle",
+        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas.set_editing(value=True)
+
+    received: list[Shape] = []
+    canvas.shape_double_clicked.connect(received.append)
+
+    widget_pos = canvas.transform_image_point_to_widget(QPointF(20.0, 20.0))
+    event = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonDblClick,
+        widget_pos,
+        widget_pos,
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    canvas.mouseDoubleClickEvent(event)
+
+    assert len(received) == 1
+    assert received[0] is shape
+    assert canvas.selected_shapes == [shape]
+
+
+@pytest.mark.gui
+def test_double_click_empty_canvas_does_not_emit_signal(*, canvas: Canvas) -> None:
+    shape = Shape(
+        label="dog",
+        shape_type="rectangle",
+        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas.set_editing(value=True)
+
+    received: list[Shape] = []
+    canvas.shape_double_clicked.connect(received.append)
+
+    widget_pos = canvas.transform_image_point_to_widget(QPointF(80.0, 40.0))
+    event = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonDblClick,
+        widget_pos,
+        widget_pos,
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    canvas.mouseDoubleClickEvent(event)
+
+    assert len(received) == 0
+
+
+@pytest.mark.gui
+def test_double_click_right_button_does_not_emit_signal(*, canvas: Canvas) -> None:
+    shape = Shape(
+        label="dog",
+        shape_type="rectangle",
+        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas.set_editing(value=True)
+
+    received: list[Shape] = []
+    canvas.shape_double_clicked.connect(received.append)
+
+    widget_pos = canvas.transform_image_point_to_widget(QPointF(20.0, 20.0))
+    event = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonDblClick,
+        widget_pos,
+        widget_pos,
+        Qt.MouseButton.RightButton,
+        Qt.MouseButton.RightButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    canvas.mouseDoubleClickEvent(event)
+
+    assert len(received) == 0
+
+
+@pytest.mark.gui
+def test_double_click_in_create_mode_finalizes_shape(*, canvas: Canvas) -> None:
+    canvas.set_editing(value=False)
+    canvas.create_mode = "polygon"
+    canvas._current = _DraftShape(
+        points=(QPointF(10.0, 10.0), QPointF(30.0, 10.0), QPointF(20.0, 30.0)),
+        point_labels=(1, 1, 1),
+    )
+
+    received: list[Shape] = []
+    canvas.shape_double_clicked.connect(received.append)
+
+    widget_pos = canvas.transform_image_point_to_widget(QPointF(20.0, 30.0))
+    event = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonDblClick,
+        widget_pos,
+        widget_pos,
+        Qt.MouseButton.LeftButton,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    canvas.mouseDoubleClickEvent(event)
+
+    assert len(received) == 0
+    assert canvas._current is None
+    assert len(canvas.shapes) == 1
