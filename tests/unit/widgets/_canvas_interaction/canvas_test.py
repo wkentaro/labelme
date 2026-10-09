@@ -339,7 +339,7 @@ def test_right_release_executes_context_menu(
     canvas.scale = 1.0
     calls: list[int] = []
     monkeypatch.setattr(
-        canvas.context_menu,
+        canvas.canvas_context_menu,
         "exec",
         lambda _pos=None: calls.append(0),
     )
@@ -352,11 +352,49 @@ def test_right_release_executes_context_menu(
 
 
 @pytest.mark.gui
+def test_right_release_on_shape_executes_shape_context_menu(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    shape = Shape(
+        label="dog",
+        shape_type="rectangle",
+        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas.set_editing(value=True)
+    canvas.scale = 1.0
+
+    shape_calls: list[int] = []
+    canvas_calls: list[int] = []
+    monkeypatch.setattr(
+        canvas.shape_context_menu,
+        "exec",
+        lambda _pos=None: shape_calls.append(0),
+    )
+    monkeypatch.setattr(
+        canvas.canvas_context_menu,
+        "exec",
+        lambda _pos=None: canvas_calls.append(0),
+    )
+
+    pos = _image_to_widget(canvas=canvas, img_x=20, img_y=20)
+    canvas.mousePressEvent(_make_press_event(pos=pos))
+    canvas.mouseReleaseEvent(_make_release_event(pos=pos))
+
+    assert shape_calls == [0]
+    assert canvas_calls == []
+    assert canvas.selected_shapes == [shape]
+
+
+@pytest.mark.gui
 def test_right_menu_failure_restores_origin(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(
-        canvas.context_menu,
+        canvas.canvas_context_menu,
         "exec",
         lambda _pos=None: (_ for _ in ()).throw(RuntimeError("menu failed")),
     )
