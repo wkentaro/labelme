@@ -169,6 +169,10 @@
         <translation>คลิกเพื่อเพิ่มจุด</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>รูปร่างถูกล็อก</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + คลิกเพื่อลบจุด</translation>
     </message>
@@ -516,6 +520,30 @@ Shapes</source>
         <translation>รวมรูปร่างมาสก์ที่เลือกเป็นรูปร่างเดียว</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>ล็อกรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>ล็อกหรือปลดล็อกรูปร่างที่เลือก</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>ล็อกรูปร่างทั้งหมด</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>ล็อกรูปร่างทั้งหมดเพื่อป้องกันการแก้ไข</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>ปลดล็อกรูปร่างทั้งหมด</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>ปลดล็อกรูปร่างทั้งหมดเพื่ออนุญาตให้แก้ไข</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>ลบจุดยอดที่เลือก</translation>
     </message>
@@ -716,6 +744,18 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>การอนุมานของ AI ล้มเหลว: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>ปลดล็อกรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>ปลดล็อกรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>ล็อกรูปร่าง</translation>
     </message>
     <message>
         <source>Large image</source>

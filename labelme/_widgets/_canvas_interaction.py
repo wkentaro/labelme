@@ -49,6 +49,8 @@ def find_hover_target(
 
     # Pass 1: vertex proximity
     for shape in candidates:
+        if shape.locked:
+            continue
         idx = nearest_vertex_index(
             shape=shape, point=point, image_epsilon=image_epsilon
         )
@@ -57,6 +59,8 @@ def find_hover_target(
 
     # Pass 2: rotation handle proximity
     for shape in candidates:
+        if shape.locked:
+            continue
         idx = nearest_rotation_point_index(
             shape=shape, point=point, image_epsilon=image_epsilon
         )
@@ -65,7 +69,7 @@ def find_hover_target(
 
     # Pass 3: edge proximity (only shapes that support adding a point)
     for shape in candidates:
-        if not shape.can_add_point():
+        if shape.locked or not shape.can_add_point():
             continue
         idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)
         if idx is not None:

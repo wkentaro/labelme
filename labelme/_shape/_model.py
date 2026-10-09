@@ -55,6 +55,7 @@ class Shape:
     other_data: dict[str, Any] = dataclasses.field(default_factory=dict)
     closed: bool = False
     visible: bool = True
+    locked: bool = False
 
     def __post_init__(self) -> None:
         if self.shape_type not in typing.get_args(ShapeType):

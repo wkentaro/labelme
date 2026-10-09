@@ -165,6 +165,10 @@
         <translation>점 추가를 위해 클릭</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>도형이 잠겨 있습니다</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + 클릭으로 점 삭제</translation>
     </message>
@@ -516,6 +520,30 @@ Shapes</source>
         <translation>선택한 마스크 도형을 하나로 병합</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>도형 잠금</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>선택한 도형 잠금 또는 잠금 해제</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>모든 도형 잠금</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>모든 도형을 잠가 편집 방지</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>모든 도형 잠금 해제</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>모든 도형의 잠금을 해제하여 편집 허용</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>선택한 꼭짓점 삭제</translation>
     </message>
@@ -716,6 +744,18 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI 추론 실패: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>도형 잠금 해제</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>도형 잠금 해제</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>도형 잠금</translation>
     </message>
     <message>
         <source>Large image</source>

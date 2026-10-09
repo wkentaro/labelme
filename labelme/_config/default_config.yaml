@@ -123,6 +123,9 @@ shortcuts:
   edit_label: Ctrl+E
   toggle_keep_prev_mode:
   remove_selected_point: [Meta+H, Backspace]
+  toggle_shape_lock: L
+  lock_all_shapes:
+  unlock_all_shapes:
   show_all_shapes:
   hide_all_shapes:
   toggle_all_shapes: T

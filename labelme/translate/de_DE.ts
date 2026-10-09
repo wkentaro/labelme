@@ -157,6 +157,10 @@
         <translation>Klicken zum Hinzufügen eines Punktes</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Form ist gesperrt</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move point</source>
         <translation>Klicken und ziehen zum Verschieben des Punktes</translation>
     </message>
@@ -538,6 +542,30 @@ Formen</translation>
         <translation>Ausgewählte Maskenformen zu einer zusammenführen</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Form sperren</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Ausgewählte Formen sperren oder entsperren</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Alle Formen sperren</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Alle Formen sperren, um Bearbeitung zu verhindern</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Alle Formen entsperren</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Alle Formen entsperren, um Bearbeitung zu ermöglichen</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Ausgewählten Eckpunkt löschen</translation>
     </message>
@@ -730,6 +758,18 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>AI inference failed: %s</source>
         <translation>KI-Inferenz fehlgeschlagen: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Formen entsperren</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Form entsperren</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Formen sperren</translation>
     </message>
     <message>
         <source>Large image</source>

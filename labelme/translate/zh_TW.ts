@@ -165,6 +165,10 @@
         <translation>點擊以添加點</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>形狀已鎖定</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + 點擊以刪除點</translation>
     </message>
@@ -522,6 +526,30 @@ Shapes</source>
         <translation>將選取的遮罩形狀合併為一個</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>鎖定形狀</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>鎖定或解鎖選取的形狀</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>鎖定所有形狀</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>鎖定所有形狀以防止編輯</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>解鎖所有形狀</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>解鎖所有形狀以允許編輯</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>刪除選取的頂點</translation>
     </message>
@@ -722,6 +750,18 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI 推理失敗: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>解鎖形狀</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>解鎖形狀</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>鎖定形狀</translation>
     </message>
     <message>
         <source>Large image</source>

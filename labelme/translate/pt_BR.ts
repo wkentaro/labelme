@@ -165,6 +165,10 @@
         <translation>Clique para adicionar um ponto</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>A forma está bloqueada</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + Clique para excluir o ponto</translation>
     </message>
@@ -516,6 +520,30 @@ Shapes</source>
         <translation>Mesclar as formas de máscara selecionadas em uma</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Bloquear Forma</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Bloquear ou desbloquear as formas selecionadas</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Bloquear Todas as Formas</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Bloquear todas as formas para evitar edição</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Desbloquear Todas as Formas</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Desbloquear todas as formas para permitir edição</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Excluir Vértice Selecionado</translation>
     </message>
@@ -716,6 +744,18 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>AI inference failed: %s</source>
         <translation>Falha na inferência de IA: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Desbloquear Formas</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Desbloquear Forma</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Bloquear Formas</translation>
     </message>
     <message>
         <source>Large image</source>

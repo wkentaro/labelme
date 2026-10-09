@@ -165,6 +165,10 @@
         <translation>Nokta eklemek için tıklayın</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Şekil kilitli</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>Noktayı silmek için ALT + SHIFT + Click</translation>
     </message>
@@ -522,6 +526,30 @@ Shapes</source>
         <translation>Seçili maske şekillerini tek şekilde birleştir</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>Şekli Kilitle</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>Seçili şekilleri kilitle veya kilidini aç</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>Tüm Şekilleri Kilitle</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>Düzenlemeyi önlemek için tüm şekilleri kilitle</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>Tüm Şekillerin Kilidini Aç</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>Düzenlemeye izin vermek için tüm şekillerin kilidini aç</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Seçili Köşe Noktasını Sil</translation>
     </message>
@@ -722,6 +750,18 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>AI inference failed: %s</source>
         <translation>Yapay zeka çıkarımı başarısız oldu: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Şekillerin Kilidini Aç</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>Şeklin Kilidini Aç</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Şekilleri Kilitle</translation>
     </message>
     <message>
         <source>Large image</source>

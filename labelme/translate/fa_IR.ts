@@ -165,6 +165,10 @@
         <translation>کلیک برای افزودن نقطه</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>شکل قفل شده است</translation>
+    </message>
+    <message>
         <source>ALT + SHIFT + Click to delete point</source>
         <translation>ALT + SHIFT + کلیک برای حذف نقطه</translation>
     </message>
@@ -516,6 +520,30 @@ Shapes</source>
         <translation>ادغام شکل‌های ماسک انتخاب شده در یک شکل</translation>
     </message>
     <message>
+        <source>Lock Shape</source>
+        <translation>قفل شکل</translation>
+    </message>
+    <message>
+        <source>Lock or unlock the selected shapes</source>
+        <translation>قفل یا باز کردن قفل شکل‌های انتخاب شده</translation>
+    </message>
+    <message>
+        <source>Lock All Shapes</source>
+        <translation>قفل همه شکل‌ها</translation>
+    </message>
+    <message>
+        <source>Lock all shapes to prevent editing</source>
+        <translation>قفل همه شکل‌ها برای جلوگیری از ویرایش</translation>
+    </message>
+    <message>
+        <source>Unlock All Shapes</source>
+        <translation>باز کردن قفل همه شکل‌ها</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes to allow editing</source>
+        <translation>باز کردن قفل همه شکل‌ها برای اجازه ویرایش</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>حذف رأس انتخاب‌شده</translation>
     </message>
@@ -716,6 +744,18 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>استنتاج هوش مصنوعی ناموفق بود: %s</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>باز کردن قفل شکل‌ها</translation>
+    </message>
+    <message>
+        <source>Unlock Shape</source>
+        <translation>باز کردن قفل شکل</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>قفل شکل‌ها</translation>
     </message>
     <message>
         <source>Large image</source>
