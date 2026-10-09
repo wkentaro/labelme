@@ -59,7 +59,6 @@ dev = [
   "pytest-xdist>=3.8.0",
   "ruff~=0.12.11",
   "taplo>=0.9.3",
-  "twine>=6.1.0",
   "ty>=0.0.31",
   "types-pillow>=10.2.0.20240822",
   "typos>=1.45.0",
