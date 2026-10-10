@@ -732,6 +732,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>AI推論に失敗しました: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>画像を指定…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>大きな画像</translation>
     </message>

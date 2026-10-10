@@ -724,6 +724,10 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
         <translation>Inferenza IA non riuscita: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Individua immagine…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Immagine grande</translation>
     </message>

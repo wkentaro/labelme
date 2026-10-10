@@ -308,18 +308,46 @@ def _check_image_dimensions(
         )
 
 
-def read_label_file(*, filename: str) -> Annotation:
+def resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
+    try:
+        image = Path(image_path)
+        relative_path = os.path.relpath(image_path, label_dir)
+        if os.path.realpath(label_dir / relative_path) != os.path.realpath(image):
+            # Parent traversal follows directory symlinks, unlike lexical path math.
+            # Keep valid project links and the source filename when correcting it.
+            relative_path = os.path.relpath(
+                os.path.join(os.path.realpath(image.parent), image.name),
+                os.path.realpath(label_dir),
+            )
+        return relative_path
+    except ValueError:
+        # Windows drives have no relative path between them; an absolute path
+        # costs portability but beats failing the save.
+        return os.path.abspath(image_path)
+
+
+def read_label_file(
+    *,
+    filename: str,
+    image_filename: str | None = None,
+) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
-        image_path = PureWindowsPath(raw["imagePath"]).as_posix()
-        if raw["imageData"] is None:
+        if image_filename is not None:
+            image_data = read_image_file(filename=image_filename)
+            image_path = resolve_stored_image_path(
+                image_path=image_filename, label_dir=Path(filename).parent
+            )
+        elif raw["imageData"] is None:
+            image_path = PureWindowsPath(raw["imagePath"]).as_posix()
             resolved_image_path = str(Path(filename).parent / image_path)
             try:
                 image_data = read_image_file(filename=resolved_image_path)
             except FileNotFoundError as e:
                 raise ImageNotFoundError(image_path=resolved_image_path) from e
         else:
+            image_path = PureWindowsPath(raw["imagePath"]).as_posix()
             image_data = base64.b64decode(raw["imageData"])
         _check_image_dimensions(
             image_data=image_data,

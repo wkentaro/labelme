@@ -732,6 +732,10 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>KI-Inferenz fehlgeschlagen: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Bild suchen…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Großes Bild</translation>
     </message>

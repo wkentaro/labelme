@@ -724,6 +724,10 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>Échec de l&apos;inférence IA : %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Localiser l&apos;image…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Grande image</translation>
     </message>

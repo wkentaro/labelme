@@ -718,6 +718,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>استنتاج هوش مصنوعی ناموفق بود: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>یافتن تصویر…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>تصویر بزرگ</translation>
     </message>

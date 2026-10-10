@@ -42,6 +42,7 @@ from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
+from ._label_file import resolve_stored_image_path
 from ._label_flags import apply_default_flags
 from ._model_manager import ModelManager
 from ._save_request import SaveRequest
@@ -2267,14 +2268,81 @@ class MainWindow(QtWidgets.QMainWindow):
                 Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
             )
 
-    def _read_annotation_file(self, *, label_path: str) -> Annotation | None:
+    def _read_annotation_file(
+        self, *, label_path: str
+    ) -> tuple[Annotation, bool] | None:
         try:
-            return read_label_file(filename=label_path)
+            return read_label_file(filename=label_path), False
+        except ImageNotFoundError as e:
+            return self._recover_missing_image(label_path=label_path, exc=e)
         except LabelFileError as e:
             self._show_file_open_error(
                 path=label_path, file_kind="label", exc=e, extra=None
             )
             return None
+
+    def _recover_missing_image(
+        self, *, label_path: str, exc: ImageNotFoundError
+    ) -> tuple[Annotation, bool] | None:
+        dialog = QtWidgets.QMessageBox(self)
+        dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+        dialog.setWindowTitle(self.tr("Image not found"))
+        dialog.setTextFormat(Qt.TextFormat.PlainText)
+        dialog.setText(
+            self.tr(
+                'This annotation refers to "{name}", but that image could not '
+                "be found.\n\nExpected location: {path}"
+            ).format(name=Path(exc.image_path).name, path=exc.image_path)
+        )
+        dialog.setDetailedText(str(exc.__cause__))
+        locate_button = dialog.addButton(
+            self.tr("Locate Image…"),
+            QtWidgets.QMessageBox.ButtonRole.ActionRole,
+        )
+        cancel_button = dialog.addButton(QtWidgets.QMessageBox.StandardButton.Cancel)
+        dialog.setDefaultButton(cancel_button)
+        dialog.setEscapeButton(cancel_button)
+        dialog.exec()
+        if dialog.clickedButton() is not locate_button:
+            self.show_status_message(
+                self.tr("Failed to load: {path}").format(path=label_path)
+            )
+            return None
+
+        start_dir = (
+            str(Path(exc.image_path).parent)
+            if Path(exc.image_path).parent.exists()
+            else str(Path(label_path).parent)
+        )
+        formats = [
+            f"*.{fmt.toStdString()}"
+            for fmt in QtGui.QImageReader.supportedImageFormats()
+        ]
+        filters = self.tr("Images and annotation files (%s)") % " ".join(
+            formats + [f"*{LABEL_FILE_SUFFIX}"]
+        )
+        replacement_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            self.tr("Locate Image…"),
+            start_dir,
+            filters,
+        )
+        if not replacement_path:
+            self.show_status_message(
+                self.tr("Failed to load: {path}").format(path=label_path)
+            )
+            return None
+
+        try:
+            annotation = read_label_file(
+                filename=label_path, image_filename=replacement_path
+            )
+        except (LabelFileError, OSError) as err:
+            self._show_file_open_error(
+                path=replacement_path, file_kind="image", exc=err, extra=None
+            )
+            return None
+        return annotation, True
 
     def _read_image_as_annotation(self, *, image_path: str) -> Annotation | None:
         try:
@@ -2369,9 +2437,10 @@ class MainWindow(QtWidgets.QMainWindow):
             output_dir=self._output_dir,
         )
         if QtCore.QFile.exists(label_path):
-            annotation = self._read_annotation_file(label_path=label_path)
-            if annotation is None:
+            read_result = self._read_annotation_file(label_path=label_path)
+            if read_result is None:
                 return False
+            annotation, recovered = read_result
             # The relative path stored in the Annotation File may carry "." or ".."
             # components, which would survive the join and break the
             # exact-string comparisons against the file list.
@@ -2391,6 +2460,7 @@ class MainWindow(QtWidgets.QMainWindow):
             annotation = self._read_image_as_annotation(image_path=image_or_label_path)
             if annotation is None:
                 return False
+            recovered = False
             image_path = image_or_label_path
             label_file_path = None
             shapes = []
@@ -2453,7 +2523,7 @@ class MainWindow(QtWidgets.QMainWindow):
         carry_prev_shapes = bool(prev_shapes) and not shapes
         self._load_shapes(prev_shapes if carry_prev_shapes else shapes, replace=True)
         self._load_flags(flags=annotation.flags, widget=self._docks.flag_list)
-        if carry_prev_shapes:
+        if carry_prev_shapes or recovered:
             self.mark_dirty()
         else:
             self.mark_clean()
@@ -3424,21 +3494,7 @@ def _resolve_label_path(*, image_or_label_path: str, output_dir: Path | None) ->
 
 
 def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
-    try:
-        image = Path(image_path)
-        relative_path = os.path.relpath(image_path, label_dir)
-        if os.path.realpath(label_dir / relative_path) != os.path.realpath(image):
-            # Parent traversal follows directory symlinks, unlike lexical path math.
-            # Keep valid project links and the source filename when correcting it.
-            relative_path = os.path.relpath(
-                os.path.join(os.path.realpath(image.parent), image.name),
-                os.path.realpath(label_dir),
-            )
-        return relative_path
-    except ValueError:
-        # Windows drives have no relative path between them; an absolute path
-        # costs portability but beats failing the save.
-        return os.path.abspath(image_path)
+    return resolve_stored_image_path(image_path=image_path, label_dir=label_dir)
 
 
 def _make_image_list_item(

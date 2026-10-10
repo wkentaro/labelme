@@ -718,6 +718,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>การอนุมานของ AI ล้มเหลว: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>ระบุตำแหน่งรูปภาพ…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>รูปภาพขนาดใหญ่</translation>
     </message>

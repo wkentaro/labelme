@@ -718,6 +718,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>AI-inferentie mislukt: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Afbeelding zoeken…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Grote afbeelding</translation>
     </message>

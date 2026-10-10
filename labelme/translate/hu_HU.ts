@@ -732,6 +732,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Az MI-következtetés sikertelen volt: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Kép megkeresése…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Nagyméretű kép</translation>
     </message>

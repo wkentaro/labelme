@@ -724,6 +724,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Yapay zeka çıkarımı başarısız oldu: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Görüntüyü bul…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Büyük görüntü</translation>
     </message>
