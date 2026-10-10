@@ -3,6 +3,8 @@ from __future__ import annotations
 import base64
 import json
 import shutil
+import struct
+import zlib
 from collections.abc import Callable
 from pathlib import Path
 from typing import Literal
@@ -222,6 +224,49 @@ def test_MainWindow_prompts_when_image_exceeds_decode_limit(
     else:
         assert raw_win._annotation is annotation_before
         assert raw_win._image_path == image_path_before
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_MainWindow_rejects_oversized_image_from_header_instantly(
+    *,
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    tmp_path: Path,
+    critical_messages: list[str],
+    pause: bool,
+) -> None:
+    def make_chunk(chunk_type: bytes, data: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(data))
+            + chunk_type
+            + data
+            + struct.pack(">I", zlib.crc32(chunk_type + data) & 0xFFFFFFFF)
+        )
+
+    ihdr = struct.pack(">IIBBBBB", 37296, 49319, 8, 2, 0, 0, 0)
+    png_bytes = (
+        b"\x89PNG\r\n\x1a\n"
+        + make_chunk(b"IHDR", ihdr)
+        + make_chunk(b"IDAT", b"")
+        + make_chunk(b"IEND", b"")
+    )
+    image_path = tmp_path / "oversized.png"
+    image_path.write_bytes(png_bytes)
+
+    annotation_before = raw_win._annotation
+    image_path_before = raw_win._image_path
+
+    loaded = raw_win._load_file(image_or_label_path=str(image_path))
+
+    assert loaded is False
+    assert len(critical_messages) == 1
+    assert "37296x49319" in critical_messages[0]
+    assert "32767" in critical_messages[0]
+    assert "gdal_retile.py" in critical_messages[0]
+    assert raw_win._annotation is annotation_before
+    assert raw_win._image_path == image_path_before
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 

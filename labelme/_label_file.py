@@ -213,6 +213,28 @@ class ImageNotFoundError(LabelFileReadError):
         self.image_path = image_path
 
 
+RASTER_MAX_SIDE: Final = 32767
+
+
+class ImageTooLargeError(OSError):
+    """Raised when an image's dimensions exceed Qt raster engine display limits."""
+
+    width: int
+    height: int
+    max_side: int
+
+    def __init__(self, *, width: int, height: int, max_side: int) -> None:
+        super().__init__(
+            f"The image is too large to open: {width}x{height} pixels exceeds the "
+            f"{max_side} pixel per-side limit of the raster engine. Raising the "
+            "decode limit will not help. Split the image into tiles (for example "
+            "with gdal_retile.py) or open a smaller copy."
+        )
+        self.width = width
+        self.height = height
+        self.max_side = max_side
+
+
 class LabelFileWriteError(LabelFileError):
     """Wraps an underlying I/O failure during save."""
 
@@ -418,6 +440,12 @@ def _imread(filename: str, /) -> PIL.Image.Image:
     image_pil: PIL.Image.Image | None = None
     try:
         image_pil = PIL.Image.open(filename)
+        width, height = image_pil.size
+        if max(width, height) > RASTER_MAX_SIDE:
+            image_pil.close()
+            raise ImageTooLargeError(
+                width=width, height=height, max_side=RASTER_MAX_SIDE
+            )
         if image_pil.mode not in DISPLAYABLE_MODES:
             raise PIL.UnidentifiedImageError
         return image_pil
@@ -432,6 +460,14 @@ def _imread(filename: str, /) -> PIL.Image.Image:
 def _imread_tiff(filename: str, /) -> PIL.Image.Image:
     MULTI_CHANNEL_NDIM: Final = 3
     RGB_CHANNEL_COUNT: Final = 3
+
+    with tifffile.TiffFile(filename) as tif:
+        page = tif.pages[0]
+        height, width = page.shape[:2]
+        if max(width, height) > RASTER_MAX_SIDE:
+            raise ImageTooLargeError(
+                width=width, height=height, max_side=RASTER_MAX_SIDE
+            )
 
     img_arr: NDArray = tifffile.imread(filename)
 
