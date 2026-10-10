@@ -35,8 +35,10 @@ from . import _automation
 from . import _config
 from . import _utils
 from ._label_file import LABEL_FILE_SUFFIX
+from ._label_file import RASTER_MAX_SIDE
 from ._label_file import Annotation
 from ._label_file import ImageNotFoundError
+from ._label_file import ImageTooLargeError
 from ._label_file import LabelFileError
 from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
@@ -87,7 +89,7 @@ _AI_CREATE_MODES: Final[tuple[str, ...]] = (
 )
 # Qt's raster paint engine cannot handle an image whose width or height
 # exceeds this, regardless of how high the allocation limit is raised.
-_RASTER_MAX_SIDE: Final = 32767
+_RASTER_MAX_SIDE: Final = RASTER_MAX_SIDE
 
 # Keys of the Window State store, shared by the restore, reset, and close paths.
 WINDOW_SIZE_KEY: Final[str] = "window/size"
@@ -3188,6 +3190,19 @@ class MainWindow(QtWidgets.QMainWindow):
             message = self.tr(
                 "The selected image file could not be opened: {path}"
             ).format(path=path)
+        if isinstance(exc, ImageTooLargeError):
+            extra = QtCore.QCoreApplication.translate(
+                "MainWindow",
+                "The image is too large to open: {width}x{height} pixels exceeds the "
+                "{max_side} pixel per-side limit of the raster engine. Raising the "
+                "decode limit will not help. Split the image into tiles (for example "
+                "with gdal_retile.py) or open a smaller copy.",
+            ).format(
+                width=exc.width,
+                height=exc.height,
+                max_side=exc.max_side,
+            )
+            exc = None
         if exc is not None:
             message = f"{message}\n\n{exc}"
         if extra:

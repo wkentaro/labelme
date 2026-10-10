@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import io
+import struct
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -8,6 +10,8 @@ import PIL.Image
 import pytest
 import tifffile
 
+from labelme._label_file import RASTER_MAX_SIDE
+from labelme._label_file import ImageTooLargeError
 from labelme._label_file import read_image_file
 
 
@@ -144,3 +148,55 @@ def test_two_band_tiff_falls_back_to_first_band(*, tmp_path: Path) -> None:
     data = read_image_file(filename=str(path))
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert image.size == (64, 64)
+
+
+def test_read_image_file_rejects_oversized_png_from_header(*, tmp_path: Path) -> None:
+    def make_chunk(chunk_type: bytes, data: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(data))
+            + chunk_type
+            + data
+            + struct.pack(">I", zlib.crc32(chunk_type + data) & 0xFFFFFFFF)
+        )
+
+    ihdr = struct.pack(">IIBBBBB", 37296, 49319, 8, 2, 0, 0, 0)
+    png_bytes = (
+        b"\x89PNG\r\n\x1a\n"
+        + make_chunk(b"IHDR", ihdr)
+        + make_chunk(b"IDAT", b"")
+        + make_chunk(b"IEND", b"")
+    )
+    path = tmp_path / "oversized.png"
+    path.write_bytes(png_bytes)
+
+    with pytest.raises(ImageTooLargeError) as exc_info:
+        read_image_file(filename=str(path))
+
+    assert exc_info.value.width == 37296
+    assert exc_info.value.height == 49319
+    assert exc_info.value.max_side == RASTER_MAX_SIDE
+    assert "37296x49319" in str(exc_info.value)
+    assert str(RASTER_MAX_SIDE) in str(exc_info.value)
+    assert "gdal_retile.py" in str(exc_info.value)
+
+
+def test_read_image_file_rejects_oversized_tiff_from_header(*, tmp_path: Path) -> None:
+    # Little-endian TIFF header: 'II', 42, IFD offset 8
+    header = b"II\x2a\x00\x08\x00\x00\x00"
+    num_tags = struct.pack("<H", 2)
+    # Tag 256: ImageWidth LONG=49319, Tag 257: ImageLength LONG=37296
+    tag_width = struct.pack("<HHII", 256, 4, 1, 49319)
+    tag_height = struct.pack("<HHII", 257, 4, 1, 37296)
+    next_ifd = b"\x00\x00\x00\x00"
+    tiff_bytes = header + num_tags + tag_width + tag_height + next_ifd
+
+    path = tmp_path / "oversized.tif"
+    path.write_bytes(tiff_bytes)
+
+    with pytest.raises(ImageTooLargeError) as exc_info:
+        read_image_file(filename=str(path))
+
+    assert exc_info.value.width == 49319
+    assert exc_info.value.height == 37296
+    assert exc_info.value.max_side == RASTER_MAX_SIDE
+    assert "49319x37296" in str(exc_info.value)
