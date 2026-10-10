@@ -674,6 +674,29 @@ def test_write_label_file_atomically_replaces_existing_file(
     assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
 
 
+def test_write_label_file_overwrites_orphaned_sibling_temp_file(
+    *,
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+) -> None:
+    orphaned_temp = Path(f"{existing_label_file}.tmp")
+    orphaned_temp.write_text("abandoned crash content", encoding="utf-8")
+
+    write_label_file(
+        filename=str(existing_label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert not orphaned_temp.exists()
+    assert json.loads(existing_label_file.read_text(encoding="utf-8"))["imagePath"] == (
+        "new.jpg"
+    )
+    assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
+
+
 @pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
 def test_write_label_file_preserves_existing_file_mode(
     *,
