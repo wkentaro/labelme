@@ -392,6 +392,11 @@ def write_label_file(
         # A failed save must leave the previous file intact, so write next to
         # it and rename over it only once the temporary file closed cleanly.
         # Windows cannot represent POSIX modes, so preservation is POSIX-only.
+        #
+        # A deterministic sibling path (`<filename>.tmp`) ensures that an abrupt
+        # process kill (e.g., SIGKILL, power failure) between temp-file creation
+        # and rename will be cleanly overwritten and replaced by the next save
+        # to the same file without accumulating unbounded temporary files.
         try:
             existing_mode = (
                 None if os.name == "nt" else stat.S_IMODE(os.stat(filename).st_mode)
