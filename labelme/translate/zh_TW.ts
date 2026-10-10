@@ -724,6 +724,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>AI 推理失敗: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>尋找影像…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>大型影像</translation>
     </message>

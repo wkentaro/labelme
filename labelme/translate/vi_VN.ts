@@ -718,6 +718,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Suy luận AI thất bại: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Định vị hình ảnh…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Ảnh lớn</translation>
     </message>

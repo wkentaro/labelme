@@ -283,6 +283,8 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
         dialog = QtWidgets.QApplication.activeModalWidget()
         assert isinstance(dialog, QtWidgets.QMessageBox)
         messages.append((dialog.windowTitle(), dialog.text(), dialog.detailedText()))
+        button_texts = [b.text() for b in dialog.buttons()]
+        assert any("Locate Image" in text for text in button_texts)
         dialog.accept()
 
     QTimer.singleShot(0, capture_error)

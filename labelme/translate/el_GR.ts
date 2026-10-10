@@ -638,6 +638,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Η συμπερασματική επεξεργασία ΤΝ απέτυχε: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Εντοπισμός εικόνας…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Μεγάλη εικόνα</translation>
     </message>

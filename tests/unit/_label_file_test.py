@@ -1003,3 +1003,68 @@ def test_check_image_dimensions_raises_on_mismatch(
             expected_height=expected_height,
             expected_width=expected_width,
         )
+
+
+def test_read_label_file_with_replacement_image_success(
+    *, data_path: Path, tmp_path: Path
+) -> None:
+    # Set up an annotation that references a non-existent image
+    source_img = data_path / "raw" / "2011_000003.jpg"
+    replacement_img = tmp_path / "replacement.jpg"
+    shutil.copy(source_img, replacement_img)
+
+    json_path = tmp_path / "annotation.json"
+    raw_json = {
+        "version": "6.0.0",
+        "flags": {},
+        "shapes": [
+            {
+                "label": "cat",
+                "points": [[10.0, 10.0], [20.0, 20.0]],
+                "shape_type": "rectangle",
+            }
+        ],
+        "imagePath": "non_existent_image.jpg",
+        "imageData": None,
+        "imageHeight": 338,
+        "imageWidth": 500,
+    }
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(raw_json, f)
+
+    # Calling without replacement fails
+    with pytest.raises(LabelFileReadError, match="Image not found"):
+        read_label_file(filename=str(json_path))
+
+    # Calling with replacement image succeeds
+    annotation = read_label_file(
+        filename=str(json_path), image_filename=str(replacement_img)
+    )
+    assert annotation.image_path == "replacement.jpg"
+    assert len(annotation.image_data) > 0
+    assert len(annotation.shapes) == 1
+    assert annotation.shapes[0]["label"] == "cat"
+
+
+def test_read_label_file_with_replacement_image_dimension_mismatch(
+    *, data_path: Path, tmp_path: Path
+) -> None:
+    source_img = data_path / "raw" / "2011_000003.jpg"
+    replacement_img = tmp_path / "replacement.jpg"
+    shutil.copy(source_img, replacement_img)
+
+    json_path = tmp_path / "annotation.json"
+    raw_json = {
+        "version": "6.0.0",
+        "flags": {},
+        "shapes": [],
+        "imagePath": "non_existent_image.jpg",
+        "imageData": None,
+        "imageHeight": 999,  # Mismatched expected height
+        "imageWidth": 500,
+    }
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(raw_json, f)
+
+    with pytest.raises(LabelFileReadError, match="imageHeight mismatch"):
+        read_label_file(filename=str(json_path), image_filename=str(replacement_img))

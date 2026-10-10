@@ -703,6 +703,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Инференс ИИ не удался: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Найти изображение…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Большое изображение</translation>
     </message>

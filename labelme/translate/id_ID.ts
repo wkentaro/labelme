@@ -693,6 +693,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Inferensi AI gagal: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Cari Gambar…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Gambar besar</translation>
     </message>

@@ -718,6 +718,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Wnioskowanie AI nie powiodło się: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Zlokalizuj obraz…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Duży obraz</translation>
     </message>

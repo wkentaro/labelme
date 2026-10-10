@@ -718,6 +718,10 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
         <translation>Falha na inferência de IA: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Localizar imagem…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>Imagem grande</translation>
     </message>

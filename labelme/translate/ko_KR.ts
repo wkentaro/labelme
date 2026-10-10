@@ -718,6 +718,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>AI 추론 실패: %s</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>이미지 찾기…</translation>
+    </message>
+    <message>
         <source>Large image</source>
         <translation>큰 이미지</translation>
     </message>
