@@ -202,14 +202,13 @@ def main() -> None:
             continue
 
         viz = img
-        if masks:
-            labels, captions, masks = zip(
-                *[
-                    (class_name_to_id[cnm], cnm, msk)
-                    for (cnm, gid), msk in masks.items()
-                    if cnm in class_name_to_id
-                ]
-            )
+        instances = [
+            (class_name_to_id[cnm], cnm, msk)
+            for (cnm, gid), msk in masks.items()
+            if cnm in class_name_to_id
+        ]
+        if instances:
+            labels, captions, masks = zip(*instances)
             viz = imgviz.instances2rgb(
                 image=img,
                 labels=labels,
