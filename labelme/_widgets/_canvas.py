@@ -209,6 +209,7 @@ class Canvas(QtWidgets.QWidget):
     point_prompt_rejected = QtCore.Signal(str)
     degenerate_shape_rejected = QtCore.Signal()
     selection_changed = QtCore.Signal(list)
+    shape_double_clicked = QtCore.Signal()
     shape_moved = QtCore.Signal()
     drawing_polygon = QtCore.Signal(bool)
     vertex_selected = QtCore.Signal(bool)
@@ -1360,12 +1361,26 @@ class Canvas(QtWidgets.QWidget):
         }.get(self.create_mode, MIN_POLYGON_POINT_COUNT)
         return len(self._current.points) >= minimum_points
 
-    def mouseDoubleClickEvent(self, _a0: QtGui.QMouseEvent, /) -> None:
-        if self._double_click != "close":
+    def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent, /) -> None:
+        if self.mode == _CanvasMode.CREATE:
+            if self._double_click == "close" and self._can_close_shape():
+                self._finalize()
             return
-        if not self._can_close_shape():
+        if a0.button() != Qt.MouseButton.LeftButton:
             return
-        self._finalize()
+        pos: QPointF = self.transform_widget_point_to_image(a0.position())
+        # Like a click, a hovered vertex wins over a body lying under it.
+        shape = (
+            self.hovered_shape
+            if self._hovered_vertex is not None
+            else self._find_shape_at_point(pos)
+        )
+        if shape is None:
+            return
+        self.select_shapes(shapes=[shape])
+        # The first click may have armed deselect-on-release for this shape.
+        self._hovered_shape_is_selected = False
+        self.shape_double_clicked.emit()
 
     def select_shapes(self, *, shapes: list[Shape]) -> None:
         self.selection_changed.emit(shapes)
