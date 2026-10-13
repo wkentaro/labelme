@@ -1369,7 +1369,12 @@ class Canvas(QtWidgets.QWidget):
         if a0.button() != Qt.MouseButton.LeftButton:
             return
         pos: QPointF = self.transform_widget_point_to_image(a0.position())
-        shape = self._find_shape_at_point(pos) or self.hovered_shape
+        # Like a click, a hovered vertex wins over a body lying under it.
+        shape = (
+            self.hovered_shape
+            if self._hovered_vertex is not None
+            else self._find_shape_at_point(pos)
+        )
         if shape is None:
             return
         self.select_shapes(shapes=[shape])

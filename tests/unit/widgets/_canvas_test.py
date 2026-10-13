@@ -2801,6 +2801,29 @@ def test_double_click_shape_selects_it_and_emits_signal(
 
 
 @pytest.mark.gui
+def test_double_click_vertex_selects_its_shape_not_the_enclosing_one(
+    *, qtbot: QtBot, editing_canvas: Canvas
+) -> None:
+    canvas = editing_canvas
+    inner = _make_polygon()
+    outer = Shape(
+        shape_type="rectangle",
+        points=np.array([(0, 0), (50, 50)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[inner, outer])
+
+    _double_click_canvas(
+        qtbot=qtbot,
+        canvas=canvas,
+        image_pos=QPointF(10.0, 10.0),
+        button=Qt.MouseButton.LeftButton,
+    )
+
+    assert canvas.selected_shapes == [inner]
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize(
     ("image_pos", "button"),
     [
