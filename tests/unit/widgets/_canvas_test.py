@@ -2741,115 +2741,105 @@ def test_hover_transitions_repaint(
         qtbot.waitUntil(lambda: bool(painted))
 
 
+def _double_click_canvas(
+    *,
+    qtbot: QtBot,
+    canvas: Canvas,
+    image_pos: QPointF,
+    button: Qt.MouseButton,
+) -> None:
+    # A real double-click arrives as press, release, double-click, release.
+    pos = canvas.transform_image_point_to_widget(image_pos).toPoint()
+    qtbot.mouseMove(canvas, pos)
+    qtbot.mouseClick(canvas, button, pos=pos)
+    qtbot.mouseDClick(canvas, button, pos=pos)
+    qtbot.mouseRelease(canvas, button, pos=pos)
+
+
+@pytest.fixture()
+def editing_canvas(*, qtbot: QtBot, canvas: Canvas) -> Canvas:
+    # Hovering needs mouse-move events, which only a shown widget receives.
+    with qtbot.waitExposed(canvas):
+        canvas.show()
+    canvas.load_shapes(shapes=[_make_polygon()])
+    # The main window owns the selection and writes it back like this.
+    canvas.selection_changed.connect(
+        lambda shapes: setattr(canvas, "selected_shapes", shapes)
+    )
+    return canvas
+
+
 @pytest.mark.gui
-def test_double_click_shape_emits_signal(*, canvas: Canvas) -> None:
-    shape = Shape(
-        label="dog",
-        shape_type="rectangle",
-        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
-        closed=True,
+@pytest.mark.parametrize(
+    "image_pos",
+    [
+        pytest.param(QPointF(20.0, 20.0), id="inside"),
+        # Just outside the outline, so only the hovered vertex finds the shape.
+        pytest.param(QPointF(9.0, 9.0), id="vertex"),
+    ],
+)
+@pytest.mark.parametrize("is_selected", [False, True])
+def test_double_click_shape_selects_it_and_emits_signal(
+    *, qtbot: QtBot, editing_canvas: Canvas, image_pos: QPointF, is_selected: bool
+) -> None:
+    canvas = editing_canvas
+    shape = canvas.shapes[0]
+    if is_selected:
+        canvas.select_shapes(shapes=[shape])
+    emitted = Mock()
+    canvas.shape_double_clicked.connect(emitted)
+
+    _double_click_canvas(
+        qtbot=qtbot,
+        canvas=canvas,
+        image_pos=image_pos,
+        button=Qt.MouseButton.LeftButton,
     )
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
 
-    received: list[Shape] = []
-    canvas.shape_double_clicked.connect(received.append)
-
-    widget_pos = canvas.transform_image_point_to_widget(QPointF(20.0, 20.0))
-    event = QtGui.QMouseEvent(
-        QtCore.QEvent.Type.MouseButtonDblClick,
-        widget_pos,
-        widget_pos,
-        Qt.MouseButton.LeftButton,
-        Qt.MouseButton.LeftButton,
-        Qt.KeyboardModifier.NoModifier,
-    )
-    canvas.mouseDoubleClickEvent(event)
-
-    assert len(received) == 1
-    assert received[0] is shape
+    emitted.assert_called_once_with()
     assert canvas.selected_shapes == [shape]
 
 
 @pytest.mark.gui
-def test_double_click_empty_canvas_does_not_emit_signal(*, canvas: Canvas) -> None:
-    shape = Shape(
-        label="dog",
-        shape_type="rectangle",
-        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
-        closed=True,
-    )
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
+@pytest.mark.parametrize(
+    ("image_pos", "button"),
+    [
+        pytest.param(QPointF(80.0, 40.0), Qt.MouseButton.LeftButton, id="empty"),
+        pytest.param(QPointF(20.0, 20.0), Qt.MouseButton.MiddleButton, id="middle"),
+    ],
+)
+def test_double_click_does_not_emit_signal(
+    *,
+    qtbot: QtBot,
+    editing_canvas: Canvas,
+    image_pos: QPointF,
+    button: Qt.MouseButton,
+) -> None:
+    canvas = editing_canvas
+    emitted = Mock()
+    canvas.shape_double_clicked.connect(emitted)
 
-    received: list[Shape] = []
-    canvas.shape_double_clicked.connect(received.append)
+    _double_click_canvas(qtbot=qtbot, canvas=canvas, image_pos=image_pos, button=button)
 
-    widget_pos = canvas.transform_image_point_to_widget(QPointF(80.0, 40.0))
-    event = QtGui.QMouseEvent(
-        QtCore.QEvent.Type.MouseButtonDblClick,
-        widget_pos,
-        widget_pos,
-        Qt.MouseButton.LeftButton,
-        Qt.MouseButton.LeftButton,
-        Qt.KeyboardModifier.NoModifier,
-    )
-    canvas.mouseDoubleClickEvent(event)
-
-    assert len(received) == 0
+    emitted.assert_not_called()
 
 
 @pytest.mark.gui
-def test_double_click_right_button_does_not_emit_signal(*, canvas: Canvas) -> None:
-    shape = Shape(
-        label="dog",
-        shape_type="rectangle",
-        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
-        closed=True,
-    )
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
-
-    received: list[Shape] = []
-    canvas.shape_double_clicked.connect(received.append)
-
-    widget_pos = canvas.transform_image_point_to_widget(QPointF(20.0, 20.0))
-    event = QtGui.QMouseEvent(
-        QtCore.QEvent.Type.MouseButtonDblClick,
-        widget_pos,
-        widget_pos,
-        Qt.MouseButton.RightButton,
-        Qt.MouseButton.RightButton,
-        Qt.KeyboardModifier.NoModifier,
-    )
-    canvas.mouseDoubleClickEvent(event)
-
-    assert len(received) == 0
-
-
-@pytest.mark.gui
-def test_double_click_in_create_mode_finalizes_shape(*, canvas: Canvas) -> None:
+def test_double_click_in_create_mode_finalizes_shape(
+    *, qtbot: QtBot, canvas: Canvas
+) -> None:
     canvas.set_editing(value=False)
     canvas.create_mode = "polygon"
     canvas._current = _DraftShape(
         points=(QPointF(10.0, 10.0), QPointF(30.0, 10.0), QPointF(20.0, 30.0)),
         point_labels=(1, 1, 1),
     )
+    emitted = Mock()
+    canvas.shape_double_clicked.connect(emitted)
 
-    received: list[Shape] = []
-    canvas.shape_double_clicked.connect(received.append)
+    pos = canvas.transform_image_point_to_widget(QPointF(20.0, 30.0)).toPoint()
+    qtbot.mouseDClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
 
-    widget_pos = canvas.transform_image_point_to_widget(QPointF(20.0, 30.0))
-    event = QtGui.QMouseEvent(
-        QtCore.QEvent.Type.MouseButtonDblClick,
-        widget_pos,
-        widget_pos,
-        Qt.MouseButton.LeftButton,
-        Qt.MouseButton.LeftButton,
-        Qt.KeyboardModifier.NoModifier,
-    )
-    canvas.mouseDoubleClickEvent(event)
-
-    assert len(received) == 0
+    emitted.assert_not_called()
     assert canvas._current is None
     assert len(canvas.shapes) == 1
