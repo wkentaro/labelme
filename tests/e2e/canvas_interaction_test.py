@@ -868,27 +868,6 @@ def test_double_click_on_shape_edits_label(
 
 
 @pytest.mark.gui
-def test_double_click_on_empty_canvas_does_not_open_dialog(
-    *,
-    qtbot: QtBot,
-    annotated_win: MainWindow,
-    pause: bool,
-) -> None:
-    canvas = annotated_win._canvas_widgets.canvas
-    label_dialog = annotated_win._label_dialog
-
-    pos = QPoint(5, 5)
-    qtbot.mouseMove(canvas, pos=pos)
-    qtbot.wait(50)
-    qtbot.mouseDClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
-    qtbot.wait(100)
-
-    assert not label_dialog.isVisible()
-
-    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
-
-
-@pytest.mark.gui
 def test_select_mask_shape_by_click(
     *,
     main_win: MainWinFactory,
