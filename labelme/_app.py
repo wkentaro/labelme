@@ -155,6 +155,7 @@ class _Actions(NamedTuple):
     paste: QtGui.QAction
     duplicate: QtGui.QAction
     merge: QtGui.QAction
+    lock: QtGui.QAction
     undo_last_point: QtGui.QAction
     undo: QtGui.QAction
     add_point_to_edge: QtGui.QAction
@@ -535,6 +536,14 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
         )
+        lock = action(
+            text=self.tr("Lock Shapes"),
+            slot=self._toggle_selected_shapes_lock,
+            shortcut=shortcuts["lock_shape"],
+            icon="phosphor/lock.svg",
+            tip=self.tr("Lock the selected shapes against editing, or unlock them"),
+            enabled=False,
+        )
         undo_last_point = action(
             text=self.tr("Undo last point"),
             slot=self._canvas_widgets.canvas.undo_last_point,
@@ -843,6 +852,7 @@ class MainWindow(QtWidgets.QMainWindow):
             edit,
             delete,
             merge,
+            lock,
             add_point_to_edge,
             remove_point,
         )
@@ -855,6 +865,7 @@ class MainWindow(QtWidgets.QMainWindow):
             edit,
             delete,
             merge,
+            lock,
             remove_point,
             separator(),
             *select_neighbor_actions,
@@ -879,6 +890,7 @@ class MainWindow(QtWidgets.QMainWindow):
             paste=paste,
             duplicate=duplicate,
             merge=merge,
+            lock=lock,
             undo_last_point=undo_last_point,
             undo=undo,
             remove_point=remove_point,
@@ -953,7 +965,9 @@ class MainWindow(QtWidgets.QMainWindow):
         view_menu = self.menuBar().addMenu(self.tr("&View"))
         help_menu = self.menuBar().addMenu(self.tr("&Help"))
         label_menu = QtWidgets.QMenu()
-        label_menu.addActions((self._actions.edit, self._actions.delete))
+        label_menu.addActions(
+            (self._actions.edit, self._actions.delete, self._actions.lock)
+        )
         self._docks.label_list.setContextMenuPolicy(
             Qt.ContextMenuPolicy.CustomContextMenu
         )
@@ -1669,9 +1683,13 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _edit_label(self) -> None:
-        items = self._docks.label_list.selected_items()
+        items = [
+            item
+            for item in self._docks.label_list.selected_items()
+            if not cast(Shape, item.shape()).locked
+        ]
         if not items:
-            logger.warning("No label is selected, so cannot edit label.")
+            logger.warning("No unlocked label is selected, so cannot edit label.")
             return
 
         shapes = [cast(Shape, item.shape()) for item in items]
@@ -1782,11 +1800,30 @@ class MainWindow(QtWidgets.QMainWindow):
             self._label_selection_changed
         )
         n_selected = len(selected_shapes) > 0
-        self._actions.delete.setEnabled(n_selected)
+        # Locked shapes stay selectable, but only unlocked ones can be altered.
+        n_unlocked = any(not shape.locked for shape in selected_shapes)
+        self._actions.delete.setEnabled(n_unlocked)
         self._actions.duplicate.setEnabled(n_selected)
         self._actions.merge.setEnabled(can_merge_shapes(selected_shapes))
         self._actions.copy.setEnabled(n_selected)
-        self._actions.edit.setEnabled(n_selected)
+        self._actions.edit.setEnabled(n_unlocked)
+        self._actions.lock.setEnabled(n_selected)
+        self._actions.lock.setText(
+            self.tr("Unlock Shapes")
+            if n_selected and not n_unlocked
+            else self.tr("Lock Shapes")
+        )
+
+    def _toggle_selected_shapes_lock(self) -> None:
+        canvas = self._canvas_widgets.canvas
+        shapes = list(canvas.selected_shapes)
+        value = any(not shape.locked for shape in shapes)
+        for shape in shapes:
+            shape.locked = value
+        # Reloading resets hover state, so no handle hovered before the lock
+        # stays grabbable, and it rebuilds the Label List rows with their icon.
+        self._commit_shapes(canvas.shapes)
+        canvas.select_shapes(shapes=shapes)
 
     def add_label(self, *, shape: Shape) -> None:
         assert shape.label is not None
@@ -1949,6 +1986,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if not shapes:
             return
         apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
+        # A pasted or duplicated copy of a locked shape starts out editable.
+        for shape in shapes:
+            shape.locked = False
         self._commit_shapes([*self._canvas_widgets.canvas.shapes, *shapes])
         self._canvas_widgets.canvas.select_shapes(shapes=shapes)
 
@@ -2452,6 +2492,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # Record one baseline state. Loading carried-forward shapes separately
         # would create a false Undo step that discards them before any edit.
         carry_prev_shapes = bool(prev_shapes) and not shapes
+        if carry_prev_shapes:
+            # A lock approves a shape on its own image, not on the next one.
+            for shape in prev_shapes:
+                shape.locked = False
         self._load_shapes(prev_shapes if carry_prev_shapes else shapes, replace=True)
         self._load_flags(flags=annotation.flags, widget=self._docks.flag_list)
         if carry_prev_shapes:

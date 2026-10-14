@@ -173,6 +173,10 @@
         <translation>ALT + Натисніть, щоб створити точку на фігурі</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Фігуру заблоковано</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Натисніть і перетягніть, щоб перемістити фігуру</translation>
     </message>
@@ -362,6 +366,14 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Об&apos;єднати вибрані фігури-маски в одну</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Заблокувати фігури</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>Заблокувати вибрані фігури від редагування або розблокувати їх</translation>
     </message>
     <message>
         <source>Undo last point</source>
@@ -617,6 +629,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Недійсна мітка &quot;{}&quot; з типом перевірки &quot;{}&quot;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Розблокувати фігури</translation>
     </message>
     <message>
         <source>Saved</source>

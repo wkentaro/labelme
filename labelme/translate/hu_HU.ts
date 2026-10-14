@@ -169,6 +169,10 @@
         <translation>ALT + Kattintás pont létrehozásához az alakzaton</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Az alakzat zárolva van</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Kattintson és húzza az alakzat mozgatásához</translation>
     </message>
@@ -538,6 +542,14 @@ Shapes</source>
         <translation>A kijelölt maszk alakzatok egyesítése eggyé</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>Alakzatok zárolása</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>A kijelölt alakzatok zárolása a szerkesztés ellen, vagy a zárolás feloldása</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Kijelölt csúcspont törlése</translation>
     </message>
@@ -710,6 +722,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Érvénytelen címke &apos;{}&apos; &apos;{}&apos; validációs típussal</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Alakzatok feloldása</translation>
     </message>
     <message>
         <source>Saved</source>

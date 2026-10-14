@@ -12,6 +12,7 @@ def can_merge_shapes(shapes: list[Shape], /) -> bool:
     return (
         len(shapes) > 1
         and all(s.shape_type == "mask" and s.mask is not None for s in shapes)
+        and not any(s.locked for s in shapes)
         and len({s.label for s in shapes}) == 1
     )
 

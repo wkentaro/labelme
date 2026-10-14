@@ -113,6 +113,10 @@
         <translation>Nhấn và kéo để di chuyển điểm</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Hình dạng đã bị khóa</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Nhấn và kéo để di chuyển hình dạng</translation>
     </message>
@@ -516,6 +520,14 @@ Shapes</source>
         <translation>Gộp các hình dạng mask đã chọn thành một</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>Khóa Hình dạng</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>Khóa các hình dạng đã chọn để không thể chỉnh sửa, hoặc mở khóa</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Xóa Đỉnh đã Chọn</translation>
     </message>
@@ -696,6 +708,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Nhãn không hợp lệ &apos;{}&apos; với loại xác thực &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Mở khóa Hình dạng</translation>
     </message>
     <message>
         <source>Saved</source>

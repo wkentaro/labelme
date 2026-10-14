@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 from collections.abc import Iterator
 from typing import Final
 from typing import NamedTuple
@@ -11,6 +12,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QStyle
 
+from .. import _utils
 from .._shape import Shape
 
 LABEL_COLOR_ROLE: Final = Qt.ItemDataRole.UserRole.value + 1
@@ -28,6 +30,12 @@ def format_shape_label(*, shape: Shape) -> str:
 
 
 _INVALID_MODEL_INDEX: Final = QtCore.QModelIndex()
+
+
+@functools.cache
+def _lock_icon() -> QtGui.QIcon:
+    # Shared by every locked row, so the SVG is read and rasterized once.
+    return _utils.new_icon("phosphor/lock.svg")
 
 
 class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
@@ -121,6 +129,9 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
     def set_shape(self, *, shape: Shape | None) -> None:
         self.setData(shape, Qt.ItemDataRole.UserRole)
+        self.setIcon(
+            _lock_icon() if shape is not None and shape.locked else QtGui.QIcon()
+        )
 
     def set_label(self, *, text: str, color: tuple[int, int, int]) -> None:
         self.setText(text)

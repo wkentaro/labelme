@@ -113,6 +113,10 @@
         <translation>點按 &amp; 拖曳以移動點</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>形狀已鎖定</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>點擊並拖拽以移動形狀</translation>
     </message>
@@ -522,6 +526,14 @@ Shapes</source>
         <translation>將選取的遮罩形狀合併為一個</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>鎖定形狀</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>鎖定選取的形狀以防止編輯，或解除鎖定</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>刪除選取的頂點</translation>
     </message>
@@ -702,6 +714,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>標籤「{}」不符合「{}」驗證類型</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>解鎖形狀</translation>
     </message>
     <message>
         <source>Saved</source>

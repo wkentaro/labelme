@@ -113,6 +113,10 @@
         <translation>Нажмите и перетащите, чтобы переместить точку</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Фигура заблокирована</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Нажмите и перетащите, чтобы переместить фигуру</translation>
     </message>
@@ -501,6 +505,14 @@ Shapes</source>
         <translation>Объединить выбранные фигуры-маски в одну</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>Заблокировать фигуры</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>Заблокировать выбранные фигуры от редактирования или разблокировать их</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Удалить выбранную вершину</translation>
     </message>
@@ -681,6 +693,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Неверная метка &apos;{}&apos; с типом проверки &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Разблокировать фигуры</translation>
     </message>
     <message>
         <source>Saved</source>
