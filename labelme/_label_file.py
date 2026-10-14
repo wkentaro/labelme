@@ -161,8 +161,9 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
         except (OSError, ValueError) as e:
             raise ValueError(f"mask must be base64-encoded PNG: {e}") from e
 
+    # Only a missing key means unlocked; a null would unlock a shape silently.
     locked: bool = False
-    if shape_json_obj.get("locked") is not None:
+    if "locked" in shape_json_obj:
         if not isinstance(shape_json_obj["locked"], bool):
             raise TypeError(f"locked must be bool: {shape_json_obj['locked']}")
         locked = shape_json_obj["locked"]

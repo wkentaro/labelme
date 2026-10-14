@@ -1024,13 +1024,14 @@ def test_shape_codec_round_trips_locked() -> None:
     assert _dump_shape_to_json_obj(shape=locked)["locked"] is True
 
 
-def test_load_shape_json_obj_rejects_non_bool_locked() -> None:
+@pytest.mark.parametrize("locked", ["yes", 1, None])
+def test_load_shape_json_obj_rejects_non_bool_locked(*, locked: object) -> None:
     with pytest.raises(TypeError, match="locked must be bool"):
         _load_shape_json_obj(
             shape_json_obj={
                 "label": "cat",
                 "points": [[1, 2], [3, 4]],
                 "shape_type": "rectangle",
-                "locked": "yes",
+                "locked": locked,
             }
         )
