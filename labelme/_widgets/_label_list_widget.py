@@ -184,6 +184,9 @@ class LabelListWidget(QtWidgets.QListView):
         self.setModel(self._model)
 
         self.setItemDelegate(TrailingColorDotDelegate())
+        # Match the lock icon to the text, so a locked row is no taller than others.
+        icon_side = self.fontMetrics().ascent()
+        self.setIconSize(QtCore.QSize(icon_side, icon_side))
         self.setSelectionMode(
             QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
