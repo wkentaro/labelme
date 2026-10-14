@@ -33,6 +33,8 @@ def test_locked_shape_resists_edits_and_survives_reopen(
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     shape = canvas.shapes[0]
     points = shape.points.copy()
+    label_list = win._docks.label_list
+    row_height = label_list.sizeHintForRow(0)
 
     win._actions.lock.trigger()
 
@@ -40,13 +42,9 @@ def test_locked_shape_resists_edits_and_survives_reopen(
     assert win._actions.lock.text() == "Unlock Shapes"
     assert not win._actions.delete.isEnabled()
     assert not win._actions.edit.isEnabled()
-    label_list = win._docks.label_list
-    # The lock trails the row's text, so a locked row keeps its height.
-    assert label_list.sizeHintForRow(0) == label_list.sizeHintForRow(1)
-    assert (
-        label_list.sizeHintForIndex(label_list.model().index(0, 0)).width()
-        > label_list.sizeHintForIndex(label_list.model().index(1, 0)).width()
-    )
+    # Every row reserves the lock slot, so locking leaves the row height alone.
+    assert label_list.sizeHintForRow(0) == row_height
+    assert label_list.sizeHintForRow(1) == row_height
 
     body = image_to_widget_pos(
         canvas=canvas,
