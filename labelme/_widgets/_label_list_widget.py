@@ -38,12 +38,10 @@ def _lock_icon() -> QtGui.QIcon:
     return _utils.new_icon("phosphor/lock.svg")
 
 
-def _row_shape(
-    index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, /
-) -> Shape | None:
+def _is_locked_row(index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, /) -> bool:
     # The delegate also serves the unique label list, whose rows hold no Shape.
     shape = index.data(Qt.ItemDataRole.UserRole)
-    return shape if isinstance(shape, Shape) else None
+    return isinstance(shape, Shape) and shape.locked
 
 
 class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
@@ -60,8 +58,8 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
             size.setWidth(
                 size.width() + option.fontMetrics.horizontalAdvance(self._DOT)
             )
-        if _row_shape(index) is not None:
-            # Room for the lock slot; the height stays that of an icon-less row,
+        if _is_locked_row(index):
+            # Room for the lock; the height stays that of an icon-less row,
             # since the style pads any row that has an icon.
             size.setWidth(size.width() + option.fontMetrics.ascent())
         return size
@@ -80,14 +78,13 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
 
         opt = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
-        shape = _row_shape(index)
-        if shape is not None:
-            # Every Shape row reserves the lock slot, locked or not, so locking
-            # a Shape does not move the start of its text.
+        if _is_locked_row(index):
+            # Only locked rows get the icon, so the common unlocked row wastes no
+            # space; it is added at paint time to keep the row height unchanged.
             side = opt.fontMetrics.ascent()
             opt.features |= QtWidgets.QStyleOptionViewItem.ViewItemFeature.HasDecoration
             opt.decorationSize = QtCore.QSize(side, side)
-            opt.icon = _lock_icon() if shape.locked else QtGui.QIcon()
+            opt.icon = _lock_icon()
         widget_style = (
             opt.widget.style() if opt.widget else QtWidgets.QApplication.style()
         )

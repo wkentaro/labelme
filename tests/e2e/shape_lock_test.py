@@ -42,7 +42,7 @@ def test_locked_shape_resists_edits_and_survives_reopen(
     assert win._actions.lock.text() == "Unlock Shapes"
     assert not win._actions.delete.isEnabled()
     assert not win._actions.edit.isEnabled()
-    # Every row reserves the lock slot, so locking leaves the row height alone.
+    # The lock is drawn inside the row, so locking leaves the row height alone.
     assert label_list.sizeHintForRow(0) == row_height
     assert label_list.sizeHintForRow(1) == row_height
 
