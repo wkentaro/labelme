@@ -40,7 +40,13 @@ def test_locked_shape_resists_edits_and_survives_reopen(
     assert win._actions.lock.text() == "Unlock Shapes"
     assert not win._actions.delete.isEnabled()
     assert not win._actions.edit.isEnabled()
-    assert not win._docks.label_list.find_item_by_shape(shape=shape).icon().isNull()
+    label_list = win._docks.label_list
+    # The lock trails the row's text, so a locked row keeps its height.
+    assert label_list.sizeHintForRow(0) == label_list.sizeHintForRow(1)
+    assert (
+        label_list.sizeHintForIndex(label_list.model().index(0, 0)).width()
+        > label_list.sizeHintForIndex(label_list.model().index(1, 0)).width()
+    )
 
     body = image_to_widget_pos(
         canvas=canvas,

@@ -38,6 +38,16 @@ def _lock_icon() -> QtGui.QIcon:
     return _utils.new_icon("phosphor/lock.svg")
 
 
+def _is_locked_row(index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, /) -> bool:
+    # The delegate also serves the unique label list, whose rows hold no Shape.
+    shape = index.data(Qt.ItemDataRole.UserRole)
+    return isinstance(shape, Shape) and shape.locked
+
+
+def _lock_width(*, font_metrics: QtGui.QFontMetrics) -> int:
+    return font_metrics.horizontalAdvance(" ") + font_metrics.ascent()
+
+
 class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
     _DOT: Final = " ●"
 
@@ -52,6 +62,8 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
             size.setWidth(
                 size.width() + option.fontMetrics.horizontalAdvance(self._DOT)
             )
+        if _is_locked_row(index):
+            size.setWidth(size.width() + _lock_width(font_metrics=option.fontMetrics))
         return size
 
     def paint(
@@ -81,7 +93,13 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
             + 1
         )
         dot_width = opt.fontMetrics.horizontalAdvance(self._DOT)
-        available_width = max(0, text_rect.width() - 2 * text_margin - dot_width)
+        # The lock trails the dot instead of leading the row as a decoration
+        # icon, which would make a locked row taller and indent its text.
+        locked = _is_locked_row(index)
+        lock_width = _lock_width(font_metrics=opt.fontMetrics) if locked else 0
+        available_width = max(
+            0, text_rect.width() - 2 * text_margin - dot_width - lock_width
+        )
 
         # The dot is painted here rather than appended to opt.text, so that Qt
         # never draws the glyph in the text color underneath it: the two draws
@@ -104,6 +122,24 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
         painter.setPen(color)
         painter.drawText(dot_rect, opt.displayAlignment, self._DOT)
         painter.restore()
+
+        if not locked:
+            return
+        side = opt.fontMetrics.ascent()
+        lock_rect = QtCore.QRect(
+            dot_rect.right() + 1 + lock_width - side,
+            text_rect.center().y() - side // 2,
+            side,
+            side,
+        )
+        _lock_icon().paint(
+            painter,
+            lock_rect,
+            Qt.AlignmentFlag.AlignCenter,
+            QtGui.QIcon.Mode.Selected
+            if opt.state & QStyle.StateFlag.State_Selected
+            else QtGui.QIcon.Mode.Normal,
+        )
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):
@@ -129,9 +165,6 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
     def set_shape(self, *, shape: Shape | None) -> None:
         self.setData(shape, Qt.ItemDataRole.UserRole)
-        self.setIcon(
-            _lock_icon() if shape is not None and shape.locked else QtGui.QIcon()
-        )
 
     def set_label(self, *, text: str, color: tuple[int, int, int]) -> None:
         self.setText(text)
@@ -184,9 +217,6 @@ class LabelListWidget(QtWidgets.QListView):
         self.setModel(self._model)
 
         self.setItemDelegate(TrailingColorDotDelegate())
-        # Match the lock icon to the text, so a locked row is no taller than others.
-        icon_side = self.fontMetrics().ascent()
-        self.setIconSize(QtCore.QSize(icon_side, icon_side))
         self.setSelectionMode(
             QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
