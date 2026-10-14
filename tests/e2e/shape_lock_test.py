@@ -122,3 +122,28 @@ def test_shapes_carried_to_the_next_image_are_unlocked(
     assert len(canvas.shapes) == 5
     assert not any(shape.locked for shape in canvas.shapes)
     win.mark_clean()
+
+
+@pytest.mark.gui
+def test_lock_leaves_an_unfinished_shape_alone(
+    *,
+    annotated_win: MainWindow,
+    qtbot: QtBot,
+) -> None:
+    win = annotated_win
+    canvas = win._canvas_widgets.canvas
+    win._switch_canvas_mode(edit=False, create_mode="polygon")
+    qtbot.mouseClick(
+        canvas,
+        Qt.MouseButton.LeftButton,
+        pos=image_to_widget_pos(canvas=canvas, image_pos=QPointF(20, 20)),
+    )
+    assert canvas.is_drawing
+    item = win._docks.label_list.find_item_by_shape(shape=canvas.shapes[0])
+    win._docks.label_list.select_item(item=item)
+
+    win._actions.lock.trigger()
+
+    assert canvas.is_drawing
+    assert not canvas.shapes[0].locked
+    win.mark_clean()

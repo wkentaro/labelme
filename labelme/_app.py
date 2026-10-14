@@ -1816,6 +1816,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _toggle_selected_shapes_lock(self) -> None:
         canvas = self._canvas_widgets.canvas
+        if canvas.is_drawing:
+            # Reloading the shapes below would discard the unfinished shape.
+            return
         shapes = list(canvas.selected_shapes)
         value = any(not shape.locked for shape in shapes)
         for shape in shapes:
