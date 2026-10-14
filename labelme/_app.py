@@ -3373,6 +3373,7 @@ def _shapes_from_dicts(
 
         shape.flags = shape_dict["flags"]
         shape.other_data = shape_dict["other_data"]
+        shape.locked = shape_dict["locked"]
 
         shapes.append(shape)
     apply_default_flags(shapes=shapes, label_flags=label_flags)
@@ -3465,6 +3466,7 @@ def _shape_to_dict(shape: Shape, /) -> ShapeDict:
         description=shape.description or "",
         group_id=shape.group_id,
         mask=None if shape.mask is None else shape.mask.copy(),
+        locked=shape.locked,
         other_data=copy.deepcopy(shape.other_data),
     )
 

@@ -261,6 +261,7 @@ def _make_shape_dict(*, label: str, flags: dict[str, bool]) -> ShapeDict:
         description="",
         group_id=None,
         mask=None,
+        locked=False,
         other_data={},
     )
 
@@ -381,6 +382,7 @@ def test_shapes_from_dicts_carries_over_the_shape_fields() -> None:
         description="a parked car",
         group_id=7,
         mask=mask,
+        locked=False,
         other_data={"score": 0.9},
     )
 
@@ -405,6 +407,7 @@ def test_shape_to_dict_maps_all_fields() -> None:
         description="a cat",
         points=np.array([[0.0, 1.0], [2.0, 3.0]], dtype=np.float64),
         other_data={"source": "human"},
+        locked=True,
     )
 
     result = _app._shape_to_dict(shape)
@@ -417,6 +420,7 @@ def test_shape_to_dict_maps_all_fields() -> None:
         "description": "a cat",
         "group_id": 3,
         "mask": None,
+        "locked": True,
         "other_data": {"source": "human"},
     }
     assert result["other_data"] is not shape.other_data

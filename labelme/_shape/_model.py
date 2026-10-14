@@ -53,6 +53,7 @@ class Shape:
         default_factory=lambda: np.empty((0,), dtype=np.int_)
     )
     other_data: dict[str, Any] = dataclasses.field(default_factory=dict)
+    locked: bool = False
     closed: bool = False
     visible: bool = True
 
