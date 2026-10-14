@@ -1347,8 +1347,9 @@ class Canvas(QtWidgets.QWidget):
             hovered_shape=self.hovered_shape,
             shapes=self.shapes,
         )
-        if moved is not None and moved.locked:
-            # A drag begun on a locked shape moves the rest of the selection.
+        if self._is_moving_shape and (moved is None or moved.locked):
+            # Hover says nothing here: it was cleared by a reload, or it rests
+            # on a locked shape. A body drag moves the unlocked selection.
             moved = next(iter(self._movable_selected_shapes()), None)
         if moved is None:
             return

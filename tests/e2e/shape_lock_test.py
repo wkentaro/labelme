@@ -147,3 +147,38 @@ def test_lock_leaves_an_unfinished_shape_alone(
     assert canvas.is_drawing
     assert not canvas.shapes[0].locked
     win.mark_clean()
+
+
+@pytest.mark.gui
+def test_drag_right_after_unlock_is_recorded(
+    *,
+    annotated_win: MainWindow,
+    qtbot: QtBot,
+) -> None:
+    win = annotated_win
+    canvas = win._canvas_widgets.canvas
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    shape = canvas.shapes[0]
+    points = shape.points.copy()
+    win._actions.lock.trigger()
+    win._actions.lock.trigger()
+    assert not shape.locked
+    start = image_to_widget_pos(
+        canvas=canvas,
+        image_pos=QPointF(float(points[:, 0].mean()), float(points[:, 1].mean())),
+    )
+
+    # No pointer move before the press, so the canvas has no hovered shape.
+    with qtbot.waitSignal(canvas.shape_moved, timeout=1000):
+        drag_canvas(
+            qtbot=qtbot,
+            canvas=canvas,
+            button=Qt.MouseButton.LeftButton,
+            start=start,
+            end=start + QPoint(30, 30),
+        )
+
+    assert not (shape.points == points).all()
+    win.undo_shape_edit()
+    assert (canvas.shapes[0].points == points).all()
+    win.mark_clean()
