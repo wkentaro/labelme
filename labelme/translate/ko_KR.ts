@@ -113,6 +113,10 @@
         <translation>클릭하고 드래그하여 점 이동</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>도형이 잠겨 있습니다</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>클릭하고 드래그하여 도형 이동</translation>
     </message>
@@ -516,6 +520,14 @@ Shapes</source>
         <translation>선택한 마스크 도형을 하나로 병합</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>도형 잠금</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>선택한 도형을 편집할 수 없도록 잠그거나 잠금 해제</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>선택한 꼭짓점 삭제</translation>
     </message>
@@ -696,6 +708,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>검증 유형 &apos;{}&apos;에 대한 잘못된 레이블 &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>도형 잠금 해제</translation>
     </message>
     <message>
         <source>Saved</source>

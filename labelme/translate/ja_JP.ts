@@ -113,6 +113,10 @@
         <translation>クリック &amp; ドラッグで頂点を移動</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>図形はロックされています</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>クリック &amp; ドラッグで図形を移動</translation>
     </message>
@@ -529,6 +533,14 @@ Shapes</source>
         <translation>選択したマスク図形を1つに結合</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>図形をロック</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>選択した図形を編集できないようにロック、またはロックを解除</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>選択した頂点を削除</translation>
     </message>
@@ -710,6 +722,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>ラベル &apos;{}&apos; は検証タイプ &apos;{}&apos; では無効です</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>図形のロックを解除</translation>
     </message>
     <message>
         <source>Saved</source>

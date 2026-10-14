@@ -34,6 +34,7 @@ def test_shapes_to_label_raises_clear_error_for_unknown_label() -> None:
         description="",
         group_id=None,
         mask=None,
+        locked=False,
         other_data={},
     )
     with pytest.raises(ValueError, match="shape labels not in the provided labels"):
@@ -56,6 +57,7 @@ def test_shapes_to_label_places_mask_shape_at_its_bbox() -> None:
         description="",
         group_id=None,
         mask=patch,
+        locked=False,
         other_data={},
     )
     cls, ins = shape_module.shapes_to_label(
@@ -78,6 +80,7 @@ def test_shapes_to_label_raises_when_mask_shape_has_no_ndarray() -> None:
         description="",
         group_id=None,
         mask=None,
+        locked=False,
         other_data={},
     )
     with pytest.raises(ValueError, match=r"shape\['mask'\] must be numpy.ndarray"):
@@ -96,6 +99,7 @@ def test_shapes_to_label_groups_instances_by_label_and_group_id() -> None:
             description="",
             group_id=group_id,
             mask=None,
+            locked=False,
             other_data={},
         )
 
@@ -124,6 +128,7 @@ def _mask_shape(*, points: list[list[float]], mask: NDArray[np.bool_]) -> ShapeD
         description="",
         group_id=None,
         mask=mask,
+        locked=False,
         other_data={},
     )
 

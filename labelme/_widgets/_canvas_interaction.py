@@ -47,8 +47,11 @@ def find_hover_target(
     # converted here rather than scaling every shape's points.
     image_epsilon = epsilon / scale
 
+    # A locked shape offers no vertex, rotation handle, or edge to grab.
+    editable = [shape for shape in candidates if not shape.locked]
+
     # Pass 1: vertex proximity
-    for shape in candidates:
+    for shape in editable:
         idx = nearest_vertex_index(
             shape=shape, point=point, image_epsilon=image_epsilon
         )
@@ -56,7 +59,7 @@ def find_hover_target(
             return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
 
     # Pass 2: rotation handle proximity
-    for shape in candidates:
+    for shape in editable:
         idx = nearest_rotation_point_index(
             shape=shape, point=point, image_epsilon=image_epsilon
         )
@@ -64,7 +67,7 @@ def find_hover_target(
             return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
 
     # Pass 3: edge proximity (only shapes that support adding a point)
-    for shape in candidates:
+    for shape in editable:
         if not shape.can_add_point():
             continue
         idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)

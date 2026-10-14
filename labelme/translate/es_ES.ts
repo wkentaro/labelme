@@ -113,6 +113,10 @@
         <translation>Haz clic y arrastra para mover el punto</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>La forma está bloqueada</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Haz clic y arrastra para mover la forma</translation>
     </message>
@@ -516,6 +520,14 @@ Shapes</source>
         <translation>Combinar las formas de máscara seleccionadas en una</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>Bloquear formas</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>Bloquear las formas seleccionadas para impedir su edición, o desbloquearlas</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Eliminar vértice seleccionado</translation>
     </message>
@@ -696,6 +708,10 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Etiqueta no válida &apos;{}&apos; con tipo de validación &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Desbloquear formas</translation>
     </message>
     <message>
         <source>Saved</source>

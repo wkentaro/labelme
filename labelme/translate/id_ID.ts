@@ -113,6 +113,10 @@
         <translation>Klik &amp; seret untuk memindahkan titik</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Bentuk terkunci</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Klik &amp; seret untuk memindahkan bentuk</translation>
     </message>
@@ -491,6 +495,14 @@
         <translation>Gabungkan bentuk mask terpilih menjadi satu</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>Kunci Bentuk</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>Kunci bentuk terpilih agar tidak dapat diedit, atau buka kuncinya</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Hapus Simpul Terpilih</translation>
     </message>
@@ -671,6 +683,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Label &apos;{}&apos; tidak valid dengan tipe validasi &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Buka Kunci Bentuk</translation>
     </message>
     <message>
         <source>Saved</source>

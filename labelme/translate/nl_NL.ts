@@ -113,6 +113,10 @@
         <translation>Klik en sleep om punt te verplaatsen</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Vorm is vergrendeld</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Klik en sleep om vorm te verplaatsen</translation>
     </message>
@@ -516,6 +520,14 @@ Shapes</source>
         <translation>Geselecteerde maskervormen samenvoegen tot één</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>Vormen Vergrendelen</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>Geselecteerde vormen vergrendelen tegen bewerken, of ontgrendelen</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Geselecteerd hoekpunt verwijderen</translation>
     </message>
@@ -696,6 +708,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Ongeldig label &apos;{}&apos; met validatietype &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Vormen Ontgrendelen</translation>
     </message>
     <message>
         <source>Saved</source>

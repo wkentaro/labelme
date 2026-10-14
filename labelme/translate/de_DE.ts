@@ -169,6 +169,10 @@
         <translation>ALT + Klick zum Erstellen eines Punktes auf der Form</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Form ist gesperrt</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Klicken und ziehen zum Verschieben der Form</translation>
     </message>
@@ -538,6 +542,14 @@ Formen</translation>
         <translation>Ausgewählte Maskenformen zu einer zusammenführen</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>Formen sperren</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>Ausgewählte Formen gegen Bearbeitung sperren oder entsperren</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Ausgewählten Eckpunkt löschen</translation>
     </message>
@@ -710,6 +722,10 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Ungültiges Label &apos;{}&apos; mit Validierungstyp &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Formen entsperren</translation>
     </message>
     <message>
         <source>Saved</source>

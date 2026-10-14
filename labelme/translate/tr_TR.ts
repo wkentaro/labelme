@@ -113,6 +113,10 @@
         <translation>Noktayı taşımak için tıklayın &amp; sürükleyin</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Şekil kilitli</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Şekli taşımak için tıklayın &amp; sürükleyin</translation>
     </message>
@@ -522,6 +526,14 @@ Shapes</source>
         <translation>Seçili maske şekillerini tek şekilde birleştir</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>Şekilleri Kilitle</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>Seçili şekilleri düzenlemeye karşı kilitle veya kilidini aç</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Seçili Köşe Noktasını Sil</translation>
     </message>
@@ -702,6 +714,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>&apos;{}&apos; etiketi &apos;{}&apos; doğrulama türüne göre geçersiz</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Şekillerin Kilidini Aç</translation>
     </message>
     <message>
         <source>Saved</source>

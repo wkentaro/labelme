@@ -883,13 +883,15 @@ class Canvas(QtWidgets.QWidget):
         self, *, pos: QPointF, event: QtGui.QMouseEvent
     ) -> None:
         is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
+        if self.hovered_shape is not None and self.hovered_shape.locked:
+            # Hovering already hides a locked shape's handles; never drag one.
+            self._drag_selected_shapes(pos=pos)
+            return
         if self._is_vertex_selected():
             self._drag_hovered_vertex(pos=pos, is_shift_pressed=is_shift_pressed)
             return
         if self._is_rotation_point_selected():
             self._drag_hovered_rotation_point(pos=pos)
-            return
-        if not self.selected_shapes:
             return
         self._drag_selected_shapes(pos=pos)
 
@@ -936,11 +938,15 @@ class Canvas(QtWidgets.QWidget):
         )
         self._rotation_original_points = self.hovered_shape.points.copy()
 
+    def _movable_selected_shapes(self) -> list[Shape]:
+        return [shape for shape in self.selected_shapes if not shape.locked]
+
     def _drag_selected_shapes(self, *, pos: QPointF) -> None:
+        shapes = self._movable_selected_shapes()
+        if not shapes:
+            return
         self._apply_cursor(CursorRole.MOVE)
-        self._drag_shapes(
-            shapes=self.selected_shapes, cursor=pos, constrain_cursor=True
-        )
+        self._drag_shapes(shapes=shapes, cursor=pos, constrain_cursor=True)
         self.update()
         self._is_moving_shape = True
 
@@ -1013,6 +1019,10 @@ class Canvas(QtWidgets.QWidget):
                 hovered_vertex=None,
                 hovered_rotation=None,
             )
+            if target.shape.locked:
+                status_messages.append(self.tr("Shape is locked"))
+                self._release_cursor()
+                return
             status_messages.append(self.tr("Click & drag to move shape"))
             self._apply_cursor(CursorRole.GRAB)
             return
@@ -1023,7 +1033,7 @@ class Canvas(QtWidgets.QWidget):
         shape = self._last_hovered_shape
         index = self._last_hovered_edge
         point = self._prev_move_point
-        if shape is None or index is None or point is None:
+        if shape is None or index is None or point is None or shape.locked:
             return
         shape.insert_point(i=index, point=(point.x(), point.y()))
         self._highlight_vertex(index=index, mode="move")
@@ -1037,7 +1047,12 @@ class Canvas(QtWidgets.QWidget):
     def remove_selected_point(self) -> bool:
         shape = self._last_hovered_shape
         index = self._last_hovered_vertex
-        if shape is None or index is None or not shape.can_remove_point():
+        if (
+            shape is None
+            or index is None
+            or shape.locked
+            or not shape.can_remove_point()
+        ):
             return False
         shape.remove_point(i=index)
         self._clear_highlight_state()
@@ -1332,6 +1347,10 @@ class Canvas(QtWidgets.QWidget):
             hovered_shape=self.hovered_shape,
             shapes=self.shapes,
         )
+        if self._is_moving_shape and (moved is None or moved.locked):
+            # Hover says nothing here: it was cleared by a reload, or it rests
+            # on a locked shape. A body drag moves the unlocked selection.
+            moved = next(iter(self._movable_selected_shapes()), None)
         if moved is None:
             return
         index = self.shapes.index(moved)
@@ -1452,7 +1471,7 @@ class Canvas(QtWidgets.QWidget):
             )
             self.selection_changed.emit(new_selection)
             self._hovered_shape_is_selected = False
-        self._record_drag_anchor(shapes=self.selected_shapes, click=point)
+        self._record_drag_anchor(shapes=self._movable_selected_shapes(), click=point)
 
     def _find_shape_at_point(self, point: QPointF, /) -> Shape | None:
         query = np.array([point.x(), point.y()])
@@ -1579,12 +1598,12 @@ class Canvas(QtWidgets.QWidget):
         return True
 
     def delete_selected(self) -> list[Shape]:
-        if not self.selected_shapes:
+        removed = self._movable_selected_shapes()
+        if not removed:
             return []
-        removed = list(self.selected_shapes)
-        self.shapes = [s for s in self.shapes if s not in self.selected_shapes]
+        self.shapes = [s for s in self.shapes if s not in removed]
         self.backup_shapes()
-        self.selected_shapes.clear()
+        self.selected_shapes = [s for s in self.selected_shapes if s.locked]
         self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
         return removed
@@ -1963,10 +1982,11 @@ class Canvas(QtWidgets.QWidget):
         a0.accept()
 
     def _move_by_keyboard(self, *, offset: QPointF) -> None:
-        if not self.selected_shapes:
+        shapes = self._movable_selected_shapes()
+        if not shapes:
             return
         self._drag_shapes(
-            shapes=self.selected_shapes,
+            shapes=shapes,
             cursor=self._prev_point + offset,
             constrain_cursor=False,
         )
@@ -2000,12 +2020,9 @@ class Canvas(QtWidgets.QWidget):
             if not modifiers:
                 self._snapping = True
         elif self.mode == _CanvasMode.EDIT:
-            if (
-                self._is_moving_shape
-                and self.selected_shapes
-                and self.selected_shapes[0] in self.shapes
-            ):
-                index = self.shapes.index(self.selected_shapes[0])
+            moved = self._movable_selected_shapes()
+            if self._is_moving_shape and moved and moved[0] in self.shapes:
+                index = self.shapes.index(moved[0])
                 if not np.array_equal(
                     self.shape_backups[-1][index].points, self.shapes[index].points
                 ):

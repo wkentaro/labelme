@@ -113,6 +113,10 @@
         <translation>کلیک و کشیدن برای جابجایی نقطه</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>شکل قفل است</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>کلیک و کشیدن برای جابجایی شکل</translation>
     </message>
@@ -516,6 +520,14 @@ Shapes</source>
         <translation>ادغام شکل‌های ماسک انتخاب شده در یک شکل</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>قفل کردن شکل‌ها</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>قفل کردن شکل‌های انتخاب شده در برابر ویرایش، یا باز کردن قفل آن‌ها</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>حذف رأس انتخاب‌شده</translation>
     </message>
@@ -696,6 +708,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>برچسب نامعتبر &apos;{}&apos; با نوع اعتبارسنجی &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>باز کردن قفل شکل‌ها</translation>
     </message>
     <message>
         <source>Saved</source>

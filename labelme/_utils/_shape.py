@@ -27,6 +27,7 @@ class ShapeDict(TypedDict):
     description: str
     group_id: int | None
     mask: NDArray[np.bool_] | None
+    locked: bool
     other_data: dict
 
 

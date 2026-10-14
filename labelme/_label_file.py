@@ -102,6 +102,7 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
         "flags",
         "description",
         "mask",
+        "locked",
     }
 
     if "label" not in shape_json_obj:
@@ -160,6 +161,13 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
         except (OSError, ValueError) as e:
             raise ValueError(f"mask must be base64-encoded PNG: {e}") from e
 
+    # Only a missing key means unlocked; a null would unlock a shape silently.
+    locked: bool = False
+    if "locked" in shape_json_obj:
+        if not isinstance(shape_json_obj["locked"], bool):
+            raise TypeError(f"locked must be bool: {shape_json_obj['locked']}")
+        locked = shape_json_obj["locked"]
+
     _validate_shape_semantics(shape_type=shape_type, points=points, mask=mask)
 
     other_data = {k: v for k, v in shape_json_obj.items() if k not in SHAPE_KEYS}
@@ -172,6 +180,7 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
         description=description,
         group_id=group_id,
         mask=mask,
+        locked=locked,
         other_data=other_data,
     )
     if set(loaded.keys()) != SHAPE_KEYS | {"other_data"}:
@@ -194,6 +203,9 @@ def _dump_shape_to_json_obj(*, shape: ShapeDict) -> dict[str, Any]:
         if shape["mask"] is None
         else _utils.img_arr_to_b64(shape["mask"].astype(np.uint8)),
     )
+    # Written only when set, so files without locked shapes stay unchanged.
+    if shape["locked"]:
+        json_obj["locked"] = True
     return json_obj
 
 

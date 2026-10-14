@@ -121,6 +121,7 @@ shortcuts:
   undo: Ctrl+Z
   undo_last_point: Ctrl+Z
   edit_label: Ctrl+E
+  lock_shape: Ctrl+Shift+L
   toggle_keep_prev_mode:
   remove_selected_point: [Meta+H, Backspace]
   show_all_shapes:

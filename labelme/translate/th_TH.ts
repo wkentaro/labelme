@@ -113,6 +113,10 @@
         <translation>คลิกและลากเพื่อย้ายจุด</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>รูปร่างถูกล็อกอยู่</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>คลิกและลากเพื่อย้ายรูปร่าง</translation>
     </message>
@@ -516,6 +520,14 @@ Shapes</source>
         <translation>รวมรูปร่างมาสก์ที่เลือกเป็นรูปร่างเดียว</translation>
     </message>
     <message>
+        <source>Lock Shapes</source>
+        <translation>ล็อกรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>ล็อกรูปร่างที่เลือกไม่ให้แก้ไข หรือปลดล็อก</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>ลบจุดยอดที่เลือก</translation>
     </message>
@@ -696,6 +708,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>เลเบล &apos;{}&apos; ไม่ถูกต้อง ประเภทการตรวจ &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>ปลดล็อกรูปร่าง</translation>
     </message>
     <message>
         <source>Saved</source>

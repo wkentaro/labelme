@@ -173,6 +173,10 @@
         <translation>ALT + Κάντε κλικ για να δημιουργήσετε σημείο στο σχήμα</translation>
     </message>
     <message>
+        <source>Shape is locked</source>
+        <translation>Το σχήμα είναι κλειδωμένο</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Κάντε κλικ και σύρετε για να μετακινήσετε το σχήμα</translation>
     </message>
@@ -362,6 +366,14 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Συγχώνευση των επιλεγμένων σχημάτων μάσκας σε ένα</translation>
+    </message>
+    <message>
+        <source>Lock Shapes</source>
+        <translation>Κλείδωμα σχημάτων</translation>
+    </message>
+    <message>
+        <source>Lock the selected shapes against editing, or unlock them</source>
+        <translation>Κλείδωμα των επιλεγμένων σχημάτων έναντι επεξεργασίας ή ξεκλείδωμά τους</translation>
     </message>
     <message>
         <source>Undo last point</source>
@@ -616,6 +628,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Μη έγκυρη ετικέτα &apos;{}&apos; με τύπο επικύρωσης &apos;{}&apos;</translation>
+    </message>
+    <message>
+        <source>Unlock Shapes</source>
+        <translation>Ξεκλείδωμα σχημάτων</translation>
     </message>
     <message>
         <source>Saved</source>

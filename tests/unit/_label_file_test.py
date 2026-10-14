@@ -437,6 +437,7 @@ def test_load_shape_json_obj_parses_all_fields() -> None:
         "description": "a note",
         "group_id": 7,
         "mask": None,
+        "locked": False,
         "other_data": {},
     }
 
@@ -458,6 +459,7 @@ def test_load_shape_json_obj_defaults_absent_optional_fields() -> None:
         "description": "",
         "group_id": None,
         "mask": None,
+        "locked": False,
         "other_data": {},
     }
 
@@ -516,6 +518,7 @@ def test_dump_shape_to_json_obj_without_mask() -> None:
         description="a note",
         group_id=7,
         mask=None,
+        locked=False,
         other_data={"score": 0.9},
     )
 
@@ -542,6 +545,7 @@ def test_shape_codec_round_trips_mask(*, sample_mask: NDArray[np.bool_]) -> None
         description="",
         group_id=None,
         mask=sample_mask,
+        locked=False,
         other_data={},
     )
 
@@ -593,6 +597,7 @@ def test_write_label_file_round_trips_mask_shape(
         description="d",
         group_id=7,
         mask=mask,
+        locked=False,
         other_data={"score": 0.5},
     )
     annotation = Annotation(
@@ -1002,4 +1007,31 @@ def test_check_image_dimensions_raises_on_mismatch(
             image_data=sample_image_data,
             expected_height=expected_height,
             expected_width=expected_width,
+        )
+
+
+def test_shape_codec_round_trips_locked() -> None:
+    json_obj = {"label": "cat", "points": [[1, 2], [3, 4]], "shape_type": "rectangle"}
+
+    unlocked = _load_shape_json_obj(shape_json_obj=json_obj)
+    locked = _load_shape_json_obj(shape_json_obj={**json_obj, "locked": True})
+
+    assert unlocked["locked"] is False
+    assert locked["locked"] is True
+    assert "locked" not in locked["other_data"]
+    # An unlocked shape is written without the key, so existing files are unchanged.
+    assert "locked" not in _dump_shape_to_json_obj(shape=unlocked)
+    assert _dump_shape_to_json_obj(shape=locked)["locked"] is True
+
+
+@pytest.mark.parametrize("locked", ["yes", 1, None])
+def test_load_shape_json_obj_rejects_non_bool_locked(*, locked: object) -> None:
+    with pytest.raises(TypeError, match="locked must be bool"):
+        _load_shape_json_obj(
+            shape_json_obj={
+                "label": "cat",
+                "points": [[1, 2], [3, 4]],
+                "shape_type": "rectangle",
+                "locked": locked,
+            }
         )
