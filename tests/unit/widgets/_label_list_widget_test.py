@@ -70,12 +70,14 @@ def test_label_list_text_matches_stock_delegate_when_selected_unfocused(
         QtGui.QColor("blue"),
     )
 
-    item = LabelListWidgetItem(shape=Shape(label="bottle"))
+    # A row without a Shape, as in the unique label list, so no lock column
+    # shifts the text away from where the stock delegate draws it.
+    item = LabelListWidgetItem()
     item.set_label(text="bottle", color=(0, 255, 0))
     actual = _paint_item(delegate=widget.itemDelegate(), item=item, option=option)
     expected = _paint_item(
         delegate=QtWidgets.QStyledItemDelegate(),
-        item=LabelListWidgetItem(text="bottle", shape=Shape(label="bottle")),
+        item=LabelListWidgetItem(text="bottle"),
         option=option,
     )
 
