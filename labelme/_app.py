@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 import enum
 import functools
-import math
 import operator
 import os
 import platform
@@ -57,6 +56,8 @@ from ._shape import can_merge_shapes
 from ._shape import merge_masks
 from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
+from ._utils import ImageDecodeRequirement
+from ._utils import get_image_decode_requirement
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import BrightnessContrastDialog
@@ -117,12 +118,6 @@ class _ViewportState(NamedTuple):
     zoom_value: float
     scroll_values: dict[Qt.Orientation, int]
     view_offset: QtCore.QPointF
-
-
-class _ImageDecodeRequirement(NamedTuple):
-    width: int
-    height: int
-    required_mb: int
 
 
 class _DockWidgets(NamedTuple):
@@ -2415,7 +2410,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _confirm_large_image_open(
-        self, *, requirement: _ImageDecodeRequirement, limit_mb: int
+        self, *, requirement: ImageDecodeRequirement, limit_mb: int
     ) -> bool:
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setWindowTitle(self.tr("Large image"))
@@ -2521,9 +2516,7 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
-            requirement = _get_image_decode_requirement(
-                image_data=annotation.image_data
-            )
+            requirement = get_image_decode_requirement(image_data=annotation.image_data)
             original_limit = QtGui.QImageReader.allocationLimit()
             if (
                 requirement is not None
@@ -3674,7 +3667,7 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     # None means the failure is not explained by image size, so the caller
     # falls back to the generic unsupported-format message.
 
-    requirement = _get_image_decode_requirement(image_data=image_data)
+    requirement = get_image_decode_requirement(image_data=image_data)
     if requirement is None:
         return None
     width = requirement.width
@@ -3701,33 +3694,6 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
         height=height,
         required=requirement.required_mb,
         limit=limit_mb,
-    )
-
-
-def _get_image_decode_requirement(
-    *, image_data: bytes
-) -> _ImageDecodeRequirement | None:
-    buffer = QtCore.QBuffer()
-    buffer.setData(image_data)
-    buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
-    reader = QtGui.QImageReader(buffer)
-    size = reader.size()
-    if not size.isValid():
-        return None
-    bits_per_pixel = QtGui.QImage.toPixelFormat(
-        reader.imageFormat()  # ty: ignore[no-matching-overload]
-    ).bitsPerPixel()
-    if bits_per_pixel <= 0:
-        return None
-
-    # Match Qt's 32-bit minimum for GUI-backed image allocations.
-    required_mb = (
-        size.width() * size.height() * max(bits_per_pixel, 32) / 8 / 1024 / 1024
-    )
-    return _ImageDecodeRequirement(
-        width=size.width(),
-        height=size.height(),
-        required_mb=math.ceil(required_mb),
     )
 
 

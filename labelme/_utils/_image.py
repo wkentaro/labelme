@@ -5,13 +5,16 @@ from __future__ import annotations
 
 import base64
 import io
+import math
 from typing import Final
+from typing import NamedTuple
 
 import numpy as np
 import PIL.ExifTags
 import PIL.Image
 import PIL.ImageOps
 from numpy.typing import NDArray
+from PySide6 import QtCore
 from PySide6 import QtGui
 
 
@@ -111,3 +114,34 @@ def apply_exif_orientation(image: PIL.Image.Image, /) -> PIL.Image.Image:
         return image.transpose(PIL.Image.ROTATE_90)
     else:
         return image
+
+
+class ImageDecodeRequirement(NamedTuple):
+    width: int
+    height: int
+    required_mb: int
+
+
+def get_image_decode_requirement(*, image_data: bytes) -> ImageDecodeRequirement | None:
+    buffer = QtCore.QBuffer()
+    buffer.setData(image_data)
+    buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
+    reader = QtGui.QImageReader(buffer)
+    size = reader.size()
+    if not size.isValid():
+        return None
+    bits_per_pixel = QtGui.QImage.toPixelFormat(
+        reader.imageFormat()  # ty: ignore[no-matching-overload]
+    ).bitsPerPixel()
+    if bits_per_pixel <= 0:
+        return None
+
+    # Match Qt's 32-bit minimum for GUI-backed image allocations.
+    required_mb = (
+        size.width() * size.height() * max(bits_per_pixel, 32) / 8 / 1024 / 1024
+    )
+    return ImageDecodeRequirement(
+        width=size.width(),
+        height=size.height(),
+        required_mb=math.ceil(required_mb),
+    )

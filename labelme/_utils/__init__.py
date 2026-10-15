@@ -1,4 +1,6 @@
+from ._image import ImageDecodeRequirement
 from ._image import apply_exif_orientation
+from ._image import get_image_decode_requirement
 from ._image import img_arr_to_b64
 from ._image import img_arr_to_data
 from ._image import img_b64_to_arr
@@ -16,9 +18,11 @@ from ._shape import shape_to_mask
 from ._shape import shapes_to_label
 
 __all__ = [
+    "ImageDecodeRequirement",
     "apply_color_theme",
     "apply_exif_orientation",
     "direction_angle",
+    "get_image_decode_requirement",
     "img_arr_to_b64",
     "img_arr_to_data",
     "img_b64_to_arr",
