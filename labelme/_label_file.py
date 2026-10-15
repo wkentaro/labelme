@@ -225,6 +225,8 @@ class ImageNotFoundError(LabelFileReadError):
         self.image_path = image_path
 
 
+# Qt's raster paint engine cannot handle an image whose width or height
+# exceeds this, regardless of how high the allocation limit is raised.
 RASTER_MAX_SIDE: Final = 32767
 
 

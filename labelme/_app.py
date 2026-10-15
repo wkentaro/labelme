@@ -87,9 +87,6 @@ _AI_CREATE_MODES: Final[tuple[str, ...]] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
 )
-# Qt's raster paint engine cannot handle an image whose width or height
-# exceeds this, regardless of how high the allocation limit is raised.
-_RASTER_MAX_SIDE: Final = RASTER_MAX_SIDE
 
 # Keys of the Window State store, shared by the restore, reset, and close paths.
 WINDOW_SIZE_KEY: Final[str] = "window/size"
@@ -2526,7 +2523,7 @@ class MainWindow(QtWidgets.QMainWindow):
             original_limit = QtGui.QImageReader.allocationLimit()
             if (
                 requirement is not None
-                and max(requirement.width, requirement.height) <= _RASTER_MAX_SIDE
+                and max(requirement.width, requirement.height) <= RASTER_MAX_SIDE
                 and 0 < original_limit < requirement.required_mb
             ):
                 if not self._confirm_large_image_open(
@@ -3657,6 +3654,20 @@ def _shape_to_dict(shape: Shape, /) -> ShapeDict:
     )
 
 
+def _make_raster_side_message(*, width: int, height: int) -> str:
+    return QtCore.QCoreApplication.translate(
+        "MainWindow",
+        "The image is too large to open: {width}x{height} pixels exceeds the "
+        "{max_side} pixel per-side limit of the raster engine. Raising the "
+        "decode limit will not help. Split the image into tiles (for example "
+        "with gdal_retile.py) or open a smaller copy.",
+    ).format(
+        width=width,
+        height=height,
+        max_side=RASTER_MAX_SIDE,
+    )
+
+
 def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     # None means the failure is not explained by image size, so the caller
     # falls back to the generic unsupported-format message.
@@ -3667,18 +3678,8 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     width = requirement.width
     height = requirement.height
 
-    if max(width, height) > _RASTER_MAX_SIDE:
-        return QtCore.QCoreApplication.translate(
-            "MainWindow",
-            "The image is too large to open: {width}x{height} pixels exceeds the "
-            "{max_side} pixel per-side limit of the raster engine. Raising the "
-            "decode limit will not help. Split the image into tiles (for example "
-            "with gdal_retile.py) or open a smaller copy.",
-        ).format(
-            width=width,
-            height=height,
-            max_side=_RASTER_MAX_SIDE,
-        )
+    if max(width, height) > RASTER_MAX_SIDE:
+        return _make_raster_side_message(width=width, height=height)
 
     limit_mb = QtGui.QImageReader.allocationLimit()
     if limit_mb <= 0:  # 0 disables the limit
