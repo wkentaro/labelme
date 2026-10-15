@@ -280,6 +280,37 @@ def test_MainWindow_rejects_oversized_image_from_header_instantly(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("open_via", ["image", "label"])
+def test_MainWindow_opens_wide_image_within_decode_limit(
+    *,
+    open_via: Literal["image", "label"],
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    tmp_path: Path,
+    critical_messages: list[str],
+    pause: bool,
+) -> None:
+    image_path = tmp_path / "wide.png"
+    image = QtGui.QImage(40000, 100, QtGui.QImage.Format.Format_Grayscale8)
+    image.fill(0)
+    assert image.save(str(image_path))
+    open_path = image_path
+    if open_via == "label":
+        open_path = tmp_path / "wide.json"
+        open_path.write_text(
+            json.dumps({"imagePath": image_path.name, "imageData": None, "shapes": []})
+        )
+
+    loaded = raw_win._load_file(image_or_label_path=str(open_path))
+
+    assert loaded is True
+    assert critical_messages == []
+    assert raw_win._canvas_widgets.canvas.pixmap.width() == 40000
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize(
     ("invalid_shape", "error_field"),
     [

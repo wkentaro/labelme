@@ -187,7 +187,7 @@ def test_read_image_file_rejects_oversized_png_from_header(*, tmp_path: Path) ->
     path.write_bytes(png_bytes)
 
     with pytest.raises(ImageTooLargeError) as exc_info:
-        read_image_file(filename=str(path))
+        read_image_file(filename=str(path), max_decode_mb=256)
 
     assert exc_info.value.width == 37296
     assert exc_info.value.height == 49319
@@ -210,7 +210,7 @@ def test_read_image_file_rejects_oversized_tiff_from_header(*, tmp_path: Path) -
     path.write_bytes(tiff_bytes)
 
     with pytest.raises(ImageTooLargeError) as exc_info:
-        read_image_file(filename=str(path))
+        read_image_file(filename=str(path), max_decode_mb=256)
 
     assert exc_info.value.width == 49319
     assert exc_info.value.height == 37296
@@ -224,16 +224,28 @@ def test_read_image_file_rejects_oversized_planar_tiff_before_decoding(
     path = tmp_path / "planar.tif"
     tifffile.imwrite(
         str(path),
-        np.zeros((3, 2, 32768), dtype=np.float32),
+        np.zeros((3, 64, 32768), dtype=np.float32),
         photometric="rgb",
         planarconfig="separate",
+        compression="zlib",
     )
     monkeypatch.setattr(
         tifffile, "imread", lambda _filename: pytest.fail("decoded pixels")
     )
 
     with pytest.raises(ImageTooLargeError) as exc_info:
-        read_image_file(filename=str(path))
+        read_image_file(filename=str(path), max_decode_mb=1)
 
     assert exc_info.value.width == 32768
-    assert exc_info.value.height == 2
+    assert exc_info.value.height == 64
+
+
+def test_read_image_file_reads_wide_image_within_decode_limit(
+    *, tmp_path: Path
+) -> None:
+    path = tmp_path / "wide.png"
+    PIL.Image.new("L", (40000, 100)).save(path)
+
+    data = read_image_file(filename=str(path), max_decode_mb=256)
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.size == (40000, 100)

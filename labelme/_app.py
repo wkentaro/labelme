@@ -2388,7 +2388,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _read_annotation_file(self, *, label_path: str) -> Annotation | None:
         try:
-            return read_label_file(filename=label_path)
+            return read_label_file(filename=label_path, max_decode_mb=_max_decode_mb())
         except LabelFileError as e:
             self._show_file_open_error(
                 path=label_path, file_kind="label", exc=e, extra=None
@@ -2397,7 +2397,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _read_image_as_annotation(self, *, image_path: str) -> Annotation | None:
         try:
-            image_data = read_image_file(filename=image_path)
+            image_data = read_image_file(
+                filename=image_path, max_decode_mb=_max_decode_mb()
+            )
         except OSError as e:
             self._show_file_open_error(
                 path=image_path, file_kind="image", exc=e, extra=None
@@ -3646,6 +3648,11 @@ def _shape_to_dict(shape: Shape, /) -> ShapeDict:
         locked=shape.locked,
         other_data=copy.deepcopy(shape.other_data),
     )
+
+
+def _max_decode_mb() -> int | None:
+    limit_mb = QtGui.QImageReader.allocationLimit()
+    return limit_mb if limit_mb > 0 else None  # 0 disables the limit
 
 
 def _make_raster_side_message(*, width: int, height: int) -> str:

@@ -277,18 +277,18 @@ def is_label_file_path(*, filename: str) -> bool:
     return Path(filename).suffix.lower() == LABEL_FILE_SUFFIX
 
 
-def read_image_file(*, filename: str) -> bytes:
+def read_image_file(*, filename: str, max_decode_mb: int | None = None) -> bytes:
     try:
-        return _read_image_file(filename=filename)
+        return _read_image_file(filename=filename, max_decode_mb=max_decode_mb)
     except OSError:
         raise
     except Exception as e:
         raise OSError(f"failed to read image {filename!r}: {e}") from e
 
 
-def _read_image_file(*, filename: str) -> bytes:
+def _read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
     t_start = time.time()
-    with _imread(filename) as image_pil:
+    with _imread(filename, max_decode_mb=max_decode_mb) as image_pil:
         oriented: PIL.Image.Image = _utils.apply_exif_orientation(image_pil)
 
         ext = Path(filename).suffix.lower()
@@ -342,7 +342,7 @@ def _check_image_dimensions(
         )
 
 
-def read_label_file(*, filename: str) -> Annotation:
+def read_label_file(*, filename: str, max_decode_mb: int | None = None) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
@@ -350,7 +350,9 @@ def read_label_file(*, filename: str) -> Annotation:
         if raw["imageData"] is None:
             resolved_image_path = str(Path(filename).parent / image_path)
             try:
-                image_data = read_image_file(filename=resolved_image_path)
+                image_data = read_image_file(
+                    filename=resolved_image_path, max_decode_mb=max_decode_mb
+                )
             except FileNotFoundError as e:
                 raise ImageNotFoundError(image_path=resolved_image_path) from e
         else:
@@ -445,7 +447,20 @@ def write_label_file(
         raise LabelFileWriteError(f"failed to write {filename!r}: {e}") from e
 
 
-def _imread(filename: str, /) -> PIL.Image.Image:
+def _check_decodable(
+    *, width: int, height: int, bytes_per_pixel: float, max_decode_mb: int | None
+) -> None:
+    # Qt refuses to decode past its allocation limit and cannot raise it for an
+    # image over the per-side limit, so decoding such an image is wasted work.
+    # bytes_per_pixel is a lower bound on Qt's decoded format, so this never
+    # rejects an image Qt would accept.
+    if max_decode_mb is None or max(width, height) <= RASTER_MAX_SIDE:
+        return
+    if width * height * bytes_per_pixel > max_decode_mb * 2**20:
+        raise ImageTooLargeError(width=width, height=height, max_side=RASTER_MAX_SIDE)
+
+
+def _imread(filename: str, /, *, max_decode_mb: int | None) -> PIL.Image.Image:
     DISPLAYABLE_MODES: Final = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
 
     ext: str = Path(filename).suffix.lower()
@@ -453,11 +468,16 @@ def _imread(filename: str, /) -> PIL.Image.Image:
     try:
         image_pil = PIL.Image.open(filename)
         width, height = image_pil.size
-        if max(width, height) > RASTER_MAX_SIDE:
-            image_pil.close()
-            raise ImageTooLargeError(
-                width=width, height=height, max_side=RASTER_MAX_SIDE
+        try:
+            _check_decodable(
+                width=width,
+                height=height,
+                bytes_per_pixel=1 / 8 if image_pil.mode == "1" else 1,
+                max_decode_mb=max_decode_mb,
             )
+        except ImageTooLargeError:
+            image_pil.close()
+            raise
         if image_pil.mode not in DISPLAYABLE_MODES:
             raise PIL.UnidentifiedImageError
         return image_pil
@@ -465,22 +485,23 @@ def _imread(filename: str, /) -> PIL.Image.Image:
         if image_pil is not None:
             image_pil.close()
         if ext in (".tif", ".tiff"):
-            return _imread_tiff(filename)
+            return _imread_tiff(filename, max_decode_mb=max_decode_mb)
         raise
 
 
-def _imread_tiff(filename: str, /) -> PIL.Image.Image:
+def _imread_tiff(filename: str, /, *, max_decode_mb: int | None) -> PIL.Image.Image:
     MULTI_CHANNEL_NDIM: Final = 3
     RGB_CHANNEL_COUNT: Final = 3
 
     with tifffile.TiffFile(filename) as tif:
         page = tif.pages.first
         # page.shape leads with the band axis for planar-separate TIFFs.
-        height, width = page.imagelength, page.imagewidth
-        if max(width, height) > RASTER_MAX_SIDE:
-            raise ImageTooLargeError(
-                width=width, height=height, max_side=RASTER_MAX_SIDE
-            )
+        _check_decodable(
+            width=page.imagewidth,
+            height=page.imagelength,
+            bytes_per_pixel=1,
+            max_decode_mb=max_decode_mb,
+        )
         series = tif.series[0]
         img_arr: NDArray = series.asarray()
     # Planar-separate TIFFs put the band axis first.
