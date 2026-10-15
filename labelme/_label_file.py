@@ -474,8 +474,9 @@ def _imread_tiff(filename: str, /) -> PIL.Image.Image:
     RGB_CHANNEL_COUNT: Final = 3
 
     with tifffile.TiffFile(filename) as tif:
-        page = tif.pages[0]
-        height, width = page.shape[:2]
+        page = tif.pages.first
+        # page.shape leads with the band axis for planar-separate TIFFs.
+        height, width = page.imagelength, page.imagewidth
         if max(width, height) > RASTER_MAX_SIDE:
             raise ImageTooLargeError(
                 width=width, height=height, max_side=RASTER_MAX_SIDE

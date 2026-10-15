@@ -217,3 +217,24 @@ def test_read_image_file_rejects_oversized_tiff_from_header(*, tmp_path: Path) -
     assert exc_info.value.height == 37296
     assert exc_info.value.max_side == RASTER_MAX_SIDE
     assert "49319x37296" in str(exc_info.value)
+
+
+def test_read_image_file_rejects_oversized_planar_tiff_before_decoding(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "planar.tif"
+    tifffile.imwrite(
+        str(path),
+        np.zeros((3, 2, 32768), dtype=np.float32),
+        photometric="rgb",
+        planarconfig="separate",
+    )
+    monkeypatch.setattr(
+        tifffile, "imread", lambda _filename: pytest.fail("decoded pixels")
+    )
+
+    with pytest.raises(ImageTooLargeError) as exc_info:
+        read_image_file(filename=str(path))
+
+    assert exc_info.value.width == 32768
+    assert exc_info.value.height == 2
