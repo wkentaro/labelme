@@ -3613,7 +3613,7 @@ def _make_image_list_item(
 ) -> QtWidgets.QListWidgetItem:
     item = QtWidgets.QListWidgetItem(label)
     item.setData(Qt.ItemDataRole.UserRole, image_path)
-    item.setToolTip(image_path)
+    item.setToolTip(os.path.abspath(image_path))
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
     label_path = _resolve_label_path(
         image_or_label_path=image_path, output_dir=output_dir

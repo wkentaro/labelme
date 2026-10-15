@@ -192,3 +192,17 @@ def test_file_list_shows_paths_relative_to_opened_folder(
 
     win._docks.file_search.setText(r"^sub")
     assert win.image_list == [str(raw_dir / "sub/2011_000006.jpg")]
+
+
+@pytest.mark.gui
+def test_file_list_tooltip_is_absolute_for_relative_input(
+    *, main_win: MainWinFactory, data_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(data_path)
+
+    win = main_win(file_or_dir="raw")
+    item = win._docks.file_list.item(0)
+
+    assert item is not None
+    assert item.text() == "2011_000003.jpg"
+    assert item.toolTip() == str(data_path / "raw/2011_000003.jpg")
