@@ -614,8 +614,8 @@ forme</translation>
         <translation>Seleziona la forma più vicina a destra della selezione</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Rotella ingrandisce la tela</translation>
+        <source>Fit to Window</source>
+        <translation>Adatta alla finestra</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -738,6 +738,10 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
     <message>
         <source>AI inference failed: %s</source>
         <translation>Inferenza IA non riuscita: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Adatta alla selezione</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1400,6 +1404,17 @@ Posizione prevista: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Altre azioni</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Rotella ingrandisce la tela</translation>
     </message>
 </context>
 <context>

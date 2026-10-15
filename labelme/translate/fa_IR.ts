@@ -608,8 +608,8 @@ Shapes</source>
         <translation>انتخاب نزدیک‌ترین شکل سمت راست انتخاب</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+چرخ روی بوم بزرگ‌نمایی می‌کند</translation>
+        <source>Fit to Window</source>
+        <translation>تناسب با پنجره</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -732,6 +732,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>استنتاج هوش مصنوعی ناموفق بود: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>تناسب با انتخاب</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1394,6 +1398,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>اقدام‌های بیشتر</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>زوم</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+چرخ روی بوم بزرگ‌نمایی می‌کند</translation>
     </message>
 </context>
 <context>

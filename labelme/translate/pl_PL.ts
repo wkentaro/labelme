@@ -608,8 +608,8 @@ Shapes</source>
         <translation>Zaznacz najbliższy kształt na prawo od zaznaczenia</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+kółko powiększa płótno</translation>
+        <source>Fit to Window</source>
+        <translation>Dopasuj do okna</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -732,6 +732,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>AI inference failed: %s</source>
         <translation>Wnioskowanie AI nie powiodło się: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Dopasuj do zaznaczenia</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1394,6 +1398,17 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Więcej działań</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Powiększenie</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+kółko powiększa płótno</translation>
     </message>
 </context>
 <context>

@@ -608,8 +608,8 @@ Shapes</source>
         <translation>Dichtstbijzijnde vorm rechts van de selectie selecteren</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Wiel zoomt op het canvas</translation>
+        <source>Fit to Window</source>
+        <translation>Aanpassen aan venster</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -732,6 +732,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI-inferentie mislukt: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Aanpassen aan selectie</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1394,6 +1398,17 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Meer acties</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Wiel zoomt op het canvas</translation>
     </message>
 </context>
 <context>

@@ -622,8 +622,8 @@ Shapes</source>
         <translation>選択範囲の右にある最も近い図形を選択</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+ホイールでキャンバスをズームします</translation>
+        <source>Fit to Window</source>
+        <translation>ウィンドウに合わせる</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -746,6 +746,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI推論に失敗しました: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>選択範囲に合わせる</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1408,6 +1412,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>その他の操作</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>ズーム</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+ホイールでキャンバスをズームします</translation>
     </message>
 </context>
 <context>

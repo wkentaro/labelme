@@ -1002,3 +1002,27 @@ def test_fit_selection_shows_whole_image_after_navigation(
     assert win._zoom_mode == _ZoomMode.FIT_SELECTION
     _wait_for_fitted_image(qtbot=qtbot, win=win)
     assert canvas.get_view_offset().isNull()
+
+
+@pytest.mark.gui
+def test_zoom_control_names_mode_and_shows_fit_buttons(*, _win: MainWindow) -> None:
+    caption = _win._zoom_mode_label
+    fit_buttons = {
+        button.defaultAction(): button
+        for button in _win._actions.zoom_widget_action.defaultWidget().findChildren(
+            QtWidgets.QToolButton
+        )
+    }
+    window_button = fit_buttons[_win._actions.fit_window]
+    selection_button = fit_buttons[_win._actions.fit_selection]
+    assert caption.text() == "Fit to Window"
+    assert window_button.isChecked() and not selection_button.isChecked()
+
+    selection_button.click()
+    assert _win._zoom_mode == _ZoomMode.FIT_SELECTION
+    assert caption.text() == "Fit to Selection"
+    assert selection_button.isChecked() and not window_button.isChecked()
+
+    _win._add_zoom(increment=1.1, pos=None)
+    assert caption.text() == "Zoom"
+    assert not window_button.isChecked() and not selection_button.isChecked()

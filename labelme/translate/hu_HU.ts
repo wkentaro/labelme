@@ -622,8 +622,8 @@ Shapes</source>
         <translation>A kijelöléstől jobbra lévő legközelebbi alakzat kijelölése</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>A Ctrl+Görgő nagyítja a vásznat</translation>
+        <source>Fit to Window</source>
+        <translation>Ablakhoz igazítás</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -746,6 +746,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>AI inference failed: %s</source>
         <translation>Az MI-következtetés sikertelen volt: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Kijelöléshez igazítás</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1400,6 +1404,17 @@ Várt hely: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>További műveletek</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Nagyítás</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>A Ctrl+Görgő nagyítja a vásznat</translation>
     </message>
 </context>
 <context>

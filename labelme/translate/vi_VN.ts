@@ -608,8 +608,8 @@ Shapes</source>
         <translation>Chọn hình dạng gần nhất bên phải vùng chọn</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Bánh xe phóng to/thu nhỏ canvas</translation>
+        <source>Fit to Window</source>
+        <translation>Vừa Cửa sổ</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -732,6 +732,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>AI inference failed: %s</source>
         <translation>Suy luận AI thất bại: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Vừa Vùng chọn</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1394,6 +1398,17 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Thao tác khác</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Thu phóng</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Bánh xe phóng to/thu nhỏ canvas</translation>
     </message>
 </context>
 <context>

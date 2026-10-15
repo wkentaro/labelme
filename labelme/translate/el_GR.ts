@@ -534,6 +534,10 @@ Shapes</source>
         <translation>Εστίαση</translation>
     </message>
     <message>
+        <source>Fit to Window</source>
+        <translation>Προσαρμογή παραθύρου</translation>
+    </message>
+    <message>
         <source>&amp;Quit</source>
         <translation>Τερματισμός</translation>
     </message>
@@ -656,6 +660,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>Η συμπερασματική επεξεργασία ΤΝ απέτυχε: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Προσαρμογή στην επιλογή</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -844,10 +852,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Show the image at 100%</source>
         <translation>Εμφάνιση της εικόνας στο 100%</translation>
-    </message>
-    <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Ροδέλα κάνει ζουμ στον καμβά</translation>
     </message>
     <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
@@ -1396,6 +1400,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>Περισσότερες ενέργειες</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Εστίαση</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Ροδέλα κάνει ζουμ στον καμβά</translation>
     </message>
 </context>
 <context>

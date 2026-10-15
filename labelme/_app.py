@@ -227,6 +227,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _canvas_widgets: _CanvasWidgets
     _status_bar: _StatusBarWidgets
     _status_mouse_pos: QtCore.QPointF | None
+    _zoom_mode_label: QtWidgets.QLabel
+    _zoom_mode_captions: dict[_ZoomMode, str]
     _docks: _DockWidgets
     _actions: _Actions
     _persistent_actions: dict[tuple[str, ...], QtGui.QAction]
@@ -281,6 +283,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets = self._setup_canvas()
 
         self._actions = self._setup_actions()
+        self._sync_zoom_mode_actions()
         self._persistent_actions = {
             ("auto_save",): self._actions.save_auto,
             ("with_image_data",): self._actions.save_with_image_data,
@@ -819,21 +822,35 @@ class MainWindow(QtWidgets.QMainWindow):
         label_model.modelReset.connect(update_shapes_present_actions)
         update_shapes_present_actions()
 
-        zoom_widget_action = QtWidgets.QWidgetAction(image_actions)
+        zoom_widget = self._canvas_widgets.zoom_widget
+        # The fit modes sit beside the field as icon buttons; the pressed one is
+        # the active mode.
+        zoom_row = QtWidgets.QHBoxLayout()
+        zoom_row.setSpacing(0)
+        for fit_action in (fit_window, fit_selection):
+            fit_button = QtWidgets.QToolButton()
+            fit_button.setDefaultAction(fit_action)
+            fit_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+            zoom_row.addWidget(fit_button)
+        zoom_row.addWidget(zoom_widget)
+        # The caption names the active fit mode, so the toolbar shows the
+        # sticky zoom state in words.
+        self._zoom_mode_label = QtWidgets.QLabel()
+        self._zoom_mode_captions = {
+            _ZoomMode.FIT_WINDOW: self.tr("Fit to Window"),
+            _ZoomMode.FIT_SELECTION: self.tr("Fit to Selection"),
+            _ZoomMode.MANUAL_ZOOM: self.tr("Zoom"),
+        }
+        self._zoom_mode_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._zoom_mode_label.setBuddy(zoom_widget)
         zoom_box_layout = QtWidgets.QVBoxLayout()
-        zoom_label = QtWidgets.QLabel(self.tr("Zoom"))
-        zoom_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        zoom_label.setBuddy(self._canvas_widgets.zoom_widget)
-        zoom_box_layout.addWidget(zoom_label)
-        zoom_box_layout.addWidget(self._canvas_widgets.zoom_widget)
+        zoom_box_layout.addWidget(self._zoom_mode_label)
+        zoom_box_layout.addLayout(zoom_row)
+        zoom_widget_action = QtWidgets.QWidgetAction(image_actions)
         zoom_widget_action.setDefaultWidget(QtWidgets.QWidget())
         zoom_widget_action.defaultWidget().setLayout(zoom_box_layout)
-        self._canvas_widgets.zoom_widget.setToolTip(
-            self.tr("Ctrl+Wheel zooms the canvas")
-        )
 
         self._zoom_mode = _ZoomMode.FIT_WINDOW
-        fit_window.setChecked(True)
 
         self._canvas_widgets.canvas.vertex_selected.connect(remove_point.setEnabled)
         self._canvas_widgets.canvas.edge_selected.connect(add_point_to_edge.setEnabled)
@@ -1072,8 +1089,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     self._actions.undo,
                     self._actions.brightness_contrast,
                     separator(),
-                    self._actions.fit_window,
-                    self._actions.fit_selection,
                     self._actions.zoom_widget_action,
                     separator(),
                     select_ai_model,
@@ -2296,6 +2311,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.fit_selection.setChecked(
             self._zoom_mode == _ZoomMode.FIT_SELECTION
         )
+        self._zoom_mode_label.setText(self._zoom_mode_captions[self._zoom_mode])
 
     def _on_brightness_contrast_changed(self, qimage: QtGui.QImage, /) -> None:
         self._canvas_widgets.canvas.load_pixmap(

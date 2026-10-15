@@ -622,8 +622,8 @@ Formen</translation>
         <translation>Die nächste Form rechts von der Auswahl auswählen</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Strg+Mausrad zoomt die Leinwand</translation>
+        <source>Fit to Window</source>
+        <translation>An Fenster anpassen</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -746,6 +746,10 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>AI inference failed: %s</source>
         <translation>KI-Inferenz fehlgeschlagen: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>An Auswahl anpassen</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1400,6 +1404,17 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Weitere Aktionen</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Strg+Mausrad zoomt die Leinwand</translation>
     </message>
 </context>
 <context>

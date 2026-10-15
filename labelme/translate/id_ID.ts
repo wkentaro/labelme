@@ -583,8 +583,8 @@
         <translation>Pilih bentuk terdekat di kanan pilihan</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Scroll melakukan zoom pada kanvas</translation>
+        <source>Fit to Window</source>
+        <translation>Sesuaikan Jendela</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -707,6 +707,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>AI inference failed: %s</source>
         <translation>Inferensi AI gagal: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Sesuaikan Pilihan</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1394,6 +1398,17 @@ Shapes</source>
     <message>
         <source>More actions</source>
         <translation>Tindakan lainnya</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Scroll melakukan zoom pada kanvas</translation>
     </message>
 </context>
 <context>
