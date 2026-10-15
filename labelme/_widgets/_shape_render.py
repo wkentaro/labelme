@@ -106,14 +106,62 @@ def render_shape(
         _paint_label(painter=painter, shape=shape, context=context)
 
 
+_LARGEST_HIGHLIGHT: Final = VertexHighlight(index=0, mode="near")
+
+
+def intersects_rect(
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+    rect: QtCore.QRectF,
+) -> bool:
+    # A cheap, conservative test in painter space, so a shape scrolled out of
+    # view costs a few array ops instead of a full render.
+    points = shape.points
+    if len(points) == 0:
+        return True
+    anchor = lo = points.min(axis=0)
+    hi = points.max(axis=0)
+    if shape.shape_type == "circle" and len(points) == CIRCLE_POINT_COUNT:
+        radius = float(np.linalg.norm(points[1] - points[0]))
+        lo = np.minimum(lo, points[0] - radius)
+        hi = np.maximum(hi, points[0] + radius)
+    elif (
+        shape.shape_type == "oriented_rectangle"
+        and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
+    ):
+        arrow = oriented_rectangle_arrow_points(shape=shape)
+        lo = np.minimum(lo, arrow.min(axis=0))
+        hi = np.maximum(hi, arrow.max(axis=0))
+    if shape.mask is not None:
+        hi = np.maximum(hi, points[0] + shape.mask.shape[::-1])
+    largest_marker = context.point_size * _LARGEST_HIGHLIGHT.size_factor
+    pad = largest_marker / 2 + _OUTLINE_WIDTH
+    left, top = lo * context.scale - pad
+    right, bottom = hi * context.scale + pad
+    if context.show_label and shape.label:
+        # _paint_label draws from the points' top-left corner, up and right.
+        metrics = painter.fontMetrics()
+        label_x, label_y = anchor * context.scale
+        top = min(top, label_y - _OUTLINE_WIDTH - metrics.height() - pad)
+        right = max(
+            right,
+            label_x
+            + metrics.horizontalAdvance(
+                _label_text(label=shape.label, group_id=shape.group_id)
+            )
+            + pad,
+        )
+    return rect.intersects(QtCore.QRectF(left, top, right - left, bottom - top))
+
+
 def _paint_label(
     *, painter: QtGui.QPainter, shape: Shape, context: ShapeRenderContext
 ) -> None:
     if not shape.label or len(shape.points) == 0:
         return
-    text = (
-        shape.label if shape.group_id is None else f"{shape.label} ({shape.group_id})"
-    )
+    text = _label_text(label=shape.label, group_id=shape.group_id)
     # Anchor at the points' top-left corner so the label stays close to the
     # shape and tracks pan/zoom; lift it above the outline stroke.
     anchor = shape.points.min(axis=0) * context.scale
@@ -121,6 +169,10 @@ def _paint_label(
     painter.drawText(
         QtCore.QPointF(float(anchor[0]), float(anchor[1]) - _OUTLINE_WIDTH), text
     )
+
+
+def _label_text(*, label: str, group_id: int | None) -> str:
+    return label if group_id is None else f"{label} ({group_id})"
 
 
 def _paint_mask(

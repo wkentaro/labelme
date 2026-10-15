@@ -4,6 +4,7 @@ from typing import Final
 
 import numpy as np
 import pytest
+from PySide6 import QtCore
 from PySide6 import QtGui
 
 from labelme._shape import Shape
@@ -12,6 +13,7 @@ from labelme._widgets._shape_render import Palette
 from labelme._widgets._shape_render import ShapeRenderContext
 from labelme._widgets._shape_render import VertexHighlight
 from labelme._widgets._shape_render import bounds
+from labelme._widgets._shape_render import intersects_rect
 from labelme._widgets._shape_render import is_hit_by_point
 from labelme._widgets._shape_render import render_shape
 
@@ -533,3 +535,68 @@ def test_rotation_highlight_colors_rotation_group_without_coloring_vertices() ->
     assert image.pixelColor(100, 50) == QtGui.QColor(255, 255, 255)
     assert image.pixelColor(150, 100) == QtGui.QColor(255, 255, 255)
     assert image.pixelColor(50, 50) == QtGui.QColor(255, 0, 0)
+
+
+@pytest.mark.parametrize(
+    ("shape_type", "points"),
+    [
+        ("polygon", [[60, 60], [90, 60], [90, 80]]),
+        ("rectangle", [[60, 60], [90, 80]]),
+        ("circle", [[70, 70], [80, 75]]),
+        ("oriented_rectangle", [[60, 60], [64, 60], [64, 62], [60, 62]]),
+        ("point", [[70, 70]]),
+        ("linestrip", [[60, 60], [90, 80], [60, 90]]),
+    ],
+)
+@pytest.mark.usefixtures("qapp")
+def test_intersects_rect_covers_every_painted_pixel(
+    *, shape_type: ShapeType, points: list[list[float]]
+) -> None:
+    shape = _shape(shape_type=shape_type, points=points)
+    shape.group_id = 12345
+    image = _render(
+        shape=shape,
+        show_label=True,
+        scale=1.5,
+        highlight=VertexHighlight(index=0, mode="near"),
+        rotation_highlight=None,
+    )
+    arr = np.array(
+        [
+            [
+                image.pixelColor(x, y) != QtGui.QColor(255, 255, 255)
+                for x in range(_SIZE)
+            ]
+            for y in range(_SIZE)
+        ]
+    )
+    ys, xs = np.nonzero(arr)
+    assert len(xs) > 0
+    painter = QtGui.QPainter(image)
+    context = ShapeRenderContext(
+        scale=1.5,
+        palette=Palette.from_rgb((255, 0, 0)),
+        point_size=8,
+        point_type="round",
+        selected=False,
+        fill=False,
+        highlight=None,
+        rotation_highlight=None,
+        show_label=True,
+    )
+
+    def hits(x: float, y: float) -> bool:
+        rect = QtCore.QRectF(x, y, 1, 1)
+        return intersects_rect(painter=painter, shape=shape, context=context, rect=rect)
+
+    try:
+        for x, y in [
+            (xs.min(), ys[xs.argmin()]),
+            (xs.max(), ys[xs.argmax()]),
+            (xs[ys.argmin()], ys.min()),
+            (xs[ys.argmax()], ys.max()),
+        ]:
+            assert hits(x, y), (x, y)
+        assert not hits(xs.max() + 50, ys.max() + 50)
+    finally:
+        painter.end()
