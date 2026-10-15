@@ -2192,12 +2192,21 @@ class MainWindow(QtWidgets.QMainWindow):
         # Setting the value fires valueChanged, which rescales the canvas.
         self._canvas_widgets.zoom_widget.setValue(value)
 
+        self._move_image_point_to_viewport(
+            image_pos=image_pos, viewport_pos=viewport_pos
+        )
+
+    def _move_image_point_to_viewport(
+        self, *, image_pos: QtCore.QPointF, viewport_pos: QtCore.QPointF
+    ) -> None:
+        canvas = self._canvas_widgets.canvas
+        viewport = self._canvas_widgets.scroll_area.viewport()
+        # Canvas geometry lags a scale change, so map against its size hint.
         target = canvas.transform_image_point_to_widget(
             image_pos, area=canvas.sizeHint()
         )
         current = canvas.mapFrom(viewport, viewport_pos)
-        shift = target - current
-        self._move_canvas_view(step=-shift, constrain_to_center=False)
+        self._move_canvas_view(step=current - target, constrain_to_center=False)
 
     def _set_zoom_to_original(self) -> None:
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
