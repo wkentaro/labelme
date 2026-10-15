@@ -3,7 +3,6 @@ from __future__ import annotations
 import html
 from collections.abc import Callable
 
-import osam
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -90,6 +89,8 @@ class ModelsWidget(QtWidgets.QWidget):
             if name in {model for model, _ in AI_TEXT_MODEL_OPTIONS}:
                 capabilities.append(self.tr("Text prompts"))
             row_layout.addWidget(QtWidgets.QLabel(" · ".join(capabilities)), 2, 0, 1, 2)
+            import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
             metadata = osam.apis.get_model_metadata(name)
             license_link = QtWidgets.QLabel(
                 self.tr("License: {license}").format(

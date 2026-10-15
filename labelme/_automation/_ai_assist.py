@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import TYPE_CHECKING
 
 import numpy as np
-import osam
 from loguru import logger
 from numpy.typing import NDArray
 
@@ -17,6 +17,9 @@ from ._suppression import match_detections_to_existing_shapes
 from ._suppression import suppress_detections_greedy
 from ._types import AiOutputFormat
 from ._types import AiPromptKind
+
+if TYPE_CHECKING:
+    import osam
 
 
 @dataclasses.dataclass(frozen=True)

@@ -9,12 +9,15 @@ from multiprocessing.connection import Connection
 from multiprocessing.process import BaseProcess
 from multiprocessing.synchronize import Event
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-import osam
 from PySide6 import QtCore
 
 from ._ai_models import AI_ASSIST_MODEL_OPTIONS
 from ._ai_models import AI_TEXT_MODEL_OPTIONS
+
+if TYPE_CHECKING:
+    import osam
 
 
 def _pull_model(
@@ -24,6 +27,8 @@ def _pull_model(
     connection: Connection,
     /,
 ) -> None:
+    import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
     cached_download = importlib.import_module("gdown.cached_download")
     cached_download.cache_root = str(cache_root)
     # Verified downloads are staged on the destination filesystem, so an
@@ -62,6 +67,8 @@ class _Pull(QtCore.QObject):
         self.error: str | None = None
         self._completed = False
         self._stopped = False
+        import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
         self._blobs = osam.apis.get_model_type_by_name(model_name)._blobs.copy()
         first_blob = next(iter(self._blobs.values()))
         first_path = Path(first_blob.path)
@@ -201,6 +208,8 @@ class ModelManager(QtCore.QObject):
         # presence is enough; a file corrupted later fails the check on load.
         if model_name not in self.models:
             return False
+        import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
         return osam.apis.get_model_type_by_name(model_name).get_size() is not None
 
     def get_state(self, model_name: str, /) -> str:
@@ -296,6 +305,8 @@ class ModelManager(QtCore.QObject):
             if not self._stop_active_pull():
                 self.changed.emit()
                 return
+        import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
         try:
             osam.apis.get_model_type_by_name(model_name).remove()
         finally:
