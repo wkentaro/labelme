@@ -548,14 +548,6 @@ Shapes</source>
         <translation>Mantener toda la imagen visible al cambiar el tamaño de la ventana</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Ajustar a &amp;ancho</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Igualar el ancho de la imagen al de la ventana al cambiar su tamaño</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Mostrar la imagen más grande</translation>
     </message>

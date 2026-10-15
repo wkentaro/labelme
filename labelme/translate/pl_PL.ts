@@ -548,14 +548,6 @@ Shapes</source>
         <translation>Cały obraz pozostaje widoczny przy zmianie rozmiaru okna</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Dopasuj szerokość (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Szerokość obrazu dopasowuje się do okna przy zmianie jego rozmiaru</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Wyświetl obraz w większym rozmiarze</translation>
     </message>

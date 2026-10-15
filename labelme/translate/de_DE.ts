@@ -570,14 +570,6 @@ Formen</translation>
         <translation>Das ganze Bild sichtbar halten, wenn die Fenstergröße geändert wird</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>&amp;An Breite anpassen</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Die Bildbreite an das Fenster angleichen, wenn dessen Größe geändert wird</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Das Bild größer anzeigen</translation>
     </message>

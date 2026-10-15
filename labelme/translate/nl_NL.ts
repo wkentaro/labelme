@@ -548,14 +548,6 @@ Shapes</source>
         <translation>De hele afbeelding zichtbaar houden wanneer het venster van grootte verandert</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Aanpassen aan &amp;breedte</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>De breedte van de afbeelding gelijk houden aan het venster wanneer het van grootte verandert</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>De afbeelding groter weergeven</translation>
     </message>

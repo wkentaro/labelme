@@ -554,14 +554,6 @@ Shapes</source>
         <translation>Pencere yeniden boyutlandırıldığında görüntünün tamamını görünür tut</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>&amp;Genişliğe Sığdır</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Pencere yeniden boyutlandırıldığında görüntü genişliğini pencereye eşitle</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Görüntüyü daha büyük göster</translation>
     </message>

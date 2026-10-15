@@ -533,14 +533,6 @@ Shapes</source>
         <translation>Всё изображение остаётся видимым при изменении размера окна</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>По &amp;ширине</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Ширина изображения подстраивается под окно при изменении его размера</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Показать изображение крупнее</translation>
     </message>

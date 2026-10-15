@@ -562,14 +562,6 @@ Shapes</source>
         <translation>ウィンドウのサイズ変更時も画像全体を表示し続ける</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>幅に合わせる(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>ウィンドウのサイズ変更時に画像の幅をウィンドウに揃える</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>画像を大きく表示する</translation>
     </message>

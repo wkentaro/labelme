@@ -548,14 +548,6 @@ Shapes</source>
         <translation>نمایان نگه داشتن کل تصویر هنگام تغییر اندازهٔ پنجره</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>تناسب با عرض(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>تطبیق عرض تصویر با پنجره هنگام تغییر اندازهٔ آن</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>نمایش تصویر در اندازهٔ بزرگ‌تر</translation>
     </message>

@@ -822,14 +822,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Διατήρηση ολόκληρης της εικόνας ορατής όταν αλλάζει το μέγεθος του παραθύρου</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Προσαρμογή στο &amp; πλάτος</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Ταίριασμα του πλάτους της εικόνας με το παράθυρο όταν αλλάζει το μέγεθός του</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Εμφάνιση της εικόνας μεγαλύτερης</translation>
     </message>

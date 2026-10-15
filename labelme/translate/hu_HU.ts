@@ -570,14 +570,6 @@ Shapes</source>
         <translation>A teljes kép látható marad az ablak átméretezésekor</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>&amp;Szélességhez igazítás</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>A kép szélessége az ablakhoz igazodik annak átméretezésekor</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>A kép nagyobb megjelenítése</translation>
     </message>

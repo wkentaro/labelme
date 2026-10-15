@@ -554,14 +554,6 @@ les formes</translation>
         <translation>Garder l&apos;image entière visible lorsque la fenêtre est redimensionnée</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Adapter la &amp;largeur</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Aligner la largeur de l&apos;image sur la fenêtre lorsqu&apos;elle est redimensionnée</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Afficher l&apos;image en plus grand</translation>
     </message>

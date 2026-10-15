@@ -62,7 +62,7 @@ def test_save_through_directory_alias_reopens_source_image(
 @pytest.mark.gui
 @pytest.mark.parametrize(
     "set_fit_mode",
-    [MainWindow.set_fit_window_mode, MainWindow.set_fit_width_mode],
+    [MainWindow.set_fit_window_mode],
 )
 def test_close_file(
     *,

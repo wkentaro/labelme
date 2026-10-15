@@ -523,14 +523,6 @@
         <translation>Menjaga seluruh gambar tetap terlihat saat ukuran jendela berubah</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Sesuaikan Lebar (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Menyamakan lebar gambar dengan jendela saat ukurannya berubah</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Menampilkan gambar lebih besar</translation>
     </message>

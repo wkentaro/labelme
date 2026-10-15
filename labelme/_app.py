@@ -76,7 +76,6 @@ from ._widgets._models_widget import ModelsWidget
 
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
-    FIT_WIDTH = enum.auto()
     MANUAL_ZOOM = enum.auto()
 
 
@@ -174,7 +173,6 @@ class _Actions(NamedTuple):
     open_prev_img: QtGui.QAction
     keep_prev_zoom: QtGui.QAction
     fit_window: QtGui.QAction
-    fit_width: QtGui.QAction
     brightness_contrast: QtGui.QAction
     zoom_in: QtGui.QAction
     zoom_out: QtGui.QAction
@@ -684,14 +682,6 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Keep the whole image visible when the window is resized"),
             checkable=True,
         )
-        fit_width = image_action(
-            text=self.tr("Fit to Wi&dth"),
-            slot=self.set_fit_width_mode,
-            shortcut=shortcuts["fit_width"],
-            icon="frame-arrows-horizontal.svg",
-            tip=self.tr("Match the image width to the window when it is resized"),
-            checkable=True,
-        )
         brightness_contrast = image_action(
             text=self.tr("&Brightness Contrast"),
             slot=self.open_brightness_contrast_dialog,
@@ -909,7 +899,6 @@ class MainWindow(QtWidgets.QMainWindow):
             open_prev_img=open_prev_img,
             keep_prev_zoom=keep_prev_zoom,
             fit_window=fit_window,
-            fit_width=fit_width,
             brightness_contrast=brightness_contrast,
             zoom_in=zoom_in,
             zoom_out=zoom_out,
@@ -1016,7 +1005,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._actions.keep_prev_zoom,
                 separator(),
                 self._actions.fit_window,
-                self._actions.fit_width,
                 separator(),
                 self._actions.brightness_contrast,
                 self._actions.toggle_keep_prev_brightness_contrast,
@@ -2229,17 +2217,12 @@ class MainWindow(QtWidgets.QMainWindow):
         target = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
         self._switch_zoom_mode(target)
 
-    def set_fit_width_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
-        target = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
-        self._switch_zoom_mode(target)
-
     def _switch_zoom_mode(self, mode: _ZoomMode, /) -> None:
         self._zoom_mode = mode
         self._adjust_scale()
 
     def _sync_zoom_mode_actions(self) -> None:
         self._actions.fit_window.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
-        self._actions.fit_width.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
 
     def _on_brightness_contrast_changed(self, qimage: QtGui.QImage, /) -> None:
         self._canvas_widgets.canvas.load_pixmap(
@@ -2572,8 +2555,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def _adjust_scale(self) -> None:
         if self._zoom_mode == _ZoomMode.FIT_WINDOW:
             scale = self._fit_window_scale()
-        elif self._zoom_mode == _ZoomMode.FIT_WIDTH:
-            scale = self._fit_width_scale()
         else:
             scale = 1.0
         self._set_zoom(value=scale * 100, pos=None)
@@ -2587,22 +2568,6 @@ class MainWindow(QtWidgets.QMainWindow):
         scale_by_width = available_w / pixmap.width()
         scale_by_height = available_h / pixmap.height()
         return min(scale_by_width, scale_by_height)
-
-    def _fit_width_scale(self) -> float:
-        scroll_area = self._canvas_widgets.scroll_area
-        viewport_size = scroll_area.maximumViewportSize()
-        pixmap = self._canvas_widgets.canvas.pixmap
-        precision = 10 ** self._canvas_widgets.zoom_widget.decimals()
-        available_w = viewport_size.width()
-        scale_percent = available_w / pixmap.width() * 100
-        # The zoom control rounds on assignment; fitting must never round up
-        # far enough to create horizontal overflow.
-        scale_percent = math.floor(scale_percent * precision) / precision
-        if int(pixmap.height() * scale_percent / 100) > viewport_size.height():
-            available_w -= scroll_area.verticalScrollBar().sizeHint().width()
-            scale_percent = available_w / pixmap.width() * 100
-            scale_percent = math.floor(scale_percent * precision) / precision
-        return scale_percent / 100
 
     def _reset_layout(self) -> None:
         self._window_state.remove(WINDOW_LAYOUT_KEY)

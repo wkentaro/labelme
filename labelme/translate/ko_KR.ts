@@ -548,14 +548,6 @@ Shapes</source>
         <translation>창 크기가 바뀌어도 이미지 전체가 보이도록 유지</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>너비에 맞추기(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>창 크기가 바뀔 때 이미지 너비를 창에 맞춤</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>이미지를 더 크게 표시</translation>
     </message>
