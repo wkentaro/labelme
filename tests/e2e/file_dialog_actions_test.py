@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
@@ -194,6 +195,6 @@ def test_open_file_dialog_normalizes_the_reported_path(
     assert win._image_path in win.image_list
     current_item = win._docks.file_list.currentItem()
     assert current_item is not None
-    assert current_item.text() == str(target)
+    assert current_item.data(Qt.ItemDataRole.UserRole) == str(target)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

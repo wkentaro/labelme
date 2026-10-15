@@ -141,7 +141,7 @@ def test_reopening_directory_preserves_session_when_first_image_fails(
     annotation_before = win._annotation
     current_item_before = win._docks.file_list.currentItem()
     assert current_item_before is not None
-    current_path_before = current_item_before.text()
+    current_path_before = current_item_before.data(Qt.ItemDataRole.UserRole)
 
     current_image.write_bytes(b"not an image")
     win._load_from_file_or_dir(file_or_dir=str(current_image.parent))
@@ -150,7 +150,7 @@ def test_reopening_directory_preserves_session_when_first_image_fails(
     assert win._annotation is annotation_before
     current_item = win._docks.file_list.currentItem()
     assert current_item is not None
-    assert current_item.text() == current_path_before
+    assert current_item.data(Qt.ItemDataRole.UserRole) == current_path_before
     assert win._docks.file_list.currentRow() == 0
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -405,7 +405,7 @@ def test_failed_navigation_preserves_current_session(
     assert win._docks.file_list.currentRow() == row_before
     current_item = win._docks.file_list.currentItem()
     assert current_item is not None
-    assert current_item.text() == str(current_image)
+    assert current_item.data(Qt.ItemDataRole.UserRole) == str(current_image)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -437,7 +437,7 @@ def test_failed_navigation_restores_selected_source_item(
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
     current_item = win._docks.file_list.currentItem()
     assert current_item is not None
-    assert current_item.text() == str(current_image)
+    assert current_item.data(Qt.ItemDataRole.UserRole) == str(current_image)
     assert win._docks.file_list.currentRow() == 0
     assert "[1/2]" in win.windowTitle()
 
@@ -508,7 +508,7 @@ def test_direct_image_open_preserves_source_selection(
 
     current_item = win._docks.file_list.currentItem()
     assert current_item is not None
-    assert current_item.text() == str(direct_image)
+    assert current_item.data(Qt.ItemDataRole.UserRole) == str(direct_image)
     assert win._docks.file_list.currentRow() == 1
     assert "[2/2]" in win.windowTitle()
     assert win._image_path != str(direct_image)
@@ -516,7 +516,7 @@ def test_direct_image_open_preserves_source_selection(
     win._docks.file_search.setText(r"02-direct\.jpg$")
     current_item = win._docks.file_list.currentItem()
     assert current_item is not None
-    assert current_item.text() == str(direct_image)
+    assert current_item.data(Qt.ItemDataRole.UserRole) == str(direct_image)
     assert "[1/1]" in win.windowTitle()
 
     win._docks.file_search.clear()
