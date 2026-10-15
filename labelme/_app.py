@@ -1073,6 +1073,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     self._actions.brightness_contrast,
                     separator(),
                     self._actions.fit_window,
+                    self._actions.fit_selection,
                     self._actions.zoom_widget_action,
                     separator(),
                     select_ai_model,
