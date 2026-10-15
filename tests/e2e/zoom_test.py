@@ -897,6 +897,35 @@ def test_fit_selection_waits_for_double_click_on_small_shape(
 
 
 @pytest.mark.gui
+def test_fit_selection_double_click_in_multi_selection_edits_clicked_shape(
+    *, qtbot: QtBot, _win: MainWindow
+) -> None:
+    canvas = _win._canvas_widgets.canvas
+    first, second = canvas.shapes[0], canvas.shapes[1]
+    _win.set_fit_selection_mode(True)
+    canvas.select_shapes(shapes=[first, second])
+    _wait_for_fit_selection(qtbot=qtbot, win=_win)
+    canvas.shape_double_clicked.disconnect(_win._edit_label)
+    edited: list[list] = []
+    canvas.shape_double_clicked.connect(
+        lambda: edited.append(list(canvas.selected_shapes))
+    )
+    pos = image_to_widget_pos(
+        canvas=canvas, image_pos=QPointF(*first.points.mean(axis=0))
+    )
+    qtbot.mouseMove(canvas, pos=pos)
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
+    qtbot.wait(30)
+    qtbot.mouseDClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
+    # QTest sends no release after the double-click event; a real one does.
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=pos)
+
+    assert edited == [[first]]
+    _wait_for_fit_selection(qtbot=qtbot, win=_win)
+
+
+@pytest.mark.gui
 def test_fit_selection_keeps_view_while_dragging_new_selection(
     *, qtbot: QtBot, _win: MainWindow
 ) -> None:
