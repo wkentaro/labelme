@@ -229,8 +229,10 @@ def test_MainWindow_prompts_when_image_exceeds_decode_limit(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("open_via", ["image", "label"])
 def test_MainWindow_rejects_oversized_image_from_header_instantly(
     *,
+    open_via: Literal["image", "label"],
     raw_win: MainWindow,
     qtbot: QtBot,
     tmp_path: Path,
@@ -254,11 +256,17 @@ def test_MainWindow_rejects_oversized_image_from_header_instantly(
     )
     image_path = tmp_path / "oversized.png"
     image_path.write_bytes(png_bytes)
+    open_path = image_path
+    if open_via == "label":
+        open_path = tmp_path / "oversized.json"
+        open_path.write_text(
+            json.dumps({"imagePath": image_path.name, "imageData": None, "shapes": []})
+        )
 
     annotation_before = raw_win._annotation
     image_path_before = raw_win._image_path
 
-    loaded = raw_win._load_file(image_or_label_path=str(image_path))
+    loaded = raw_win._load_file(image_or_label_path=str(open_path))
 
     assert loaded is False
     assert len(critical_messages) == 1

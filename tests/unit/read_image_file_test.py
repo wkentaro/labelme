@@ -194,7 +194,6 @@ def test_read_image_file_rejects_oversized_png_from_header(*, tmp_path: Path) ->
     assert exc_info.value.max_side == RASTER_MAX_SIDE
     assert "37296x49319" in str(exc_info.value)
     assert str(RASTER_MAX_SIDE) in str(exc_info.value)
-    assert "gdal_retile.py" in str(exc_info.value)
 
 
 def test_read_image_file_rejects_oversized_tiff_from_header(*, tmp_path: Path) -> None:

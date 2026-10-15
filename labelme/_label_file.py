@@ -239,10 +239,8 @@ class ImageTooLargeError(OSError):
 
     def __init__(self, *, width: int, height: int, max_side: int) -> None:
         super().__init__(
-            f"The image is too large to open: {width}x{height} pixels exceeds the "
-            f"{max_side} pixel per-side limit of the raster engine. Raising the "
-            "decode limit will not help. Split the image into tiles (for example "
-            "with gdal_retile.py) or open a smaller copy."
+            f"image is {width}x{height} pixels, exceeding the {max_side} pixel "
+            "per-side limit"
         )
         self.width = width
         self.height = height

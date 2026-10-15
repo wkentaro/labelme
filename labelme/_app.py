@@ -40,6 +40,7 @@ from ._label_file import Annotation
 from ._label_file import ImageNotFoundError
 from ._label_file import ImageTooLargeError
 from ._label_file import LabelFileError
+from ._label_file import LabelFileReadError
 from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
 from ._label_file import read_image_file
@@ -3339,20 +3340,13 @@ class MainWindow(QtWidgets.QMainWindow):
             message = self.tr(
                 "The selected image file could not be opened: {path}"
             ).format(path=path)
-        if isinstance(exc, ImageTooLargeError):
-            extra = QtCore.QCoreApplication.translate(
-                "MainWindow",
-                "The image is too large to open: {width}x{height} pixels exceeds the "
-                "{max_side} pixel per-side limit of the raster engine. Raising the "
-                "decode limit will not help. Split the image into tiles (for example "
-                "with gdal_retile.py) or open a smaller copy.",
-            ).format(
-                width=exc.width,
-                height=exc.height,
-                max_side=exc.max_side,
+        # read_label_file wraps the error when the label refers to the image.
+        too_large = exc.__cause__ if isinstance(exc, LabelFileReadError) else exc
+        if isinstance(too_large, ImageTooLargeError):
+            extra = _make_raster_side_message(
+                width=too_large.width, height=too_large.height
             )
-            exc = None
-        if exc is not None:
+        elif exc is not None:
             message = f"{message}\n\n{exc}"
         if extra:
             message = f"{message}\n\n{extra}"
