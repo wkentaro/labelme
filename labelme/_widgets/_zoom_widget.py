@@ -10,6 +10,8 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         self.setRange(1, 1000)
         self.setSuffix(" %")
         self.setValue(100)
+        self.setAccessibleName(self.tr("Zoom"))
+        self.setToolTip(self.tr("Ctrl+Wheel zooms the canvas"))
 
     @property
     def scale(self) -> float:

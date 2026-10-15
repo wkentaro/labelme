@@ -570,6 +570,10 @@ Shapes</source>
         <translation>A teljes kép látható marad az ablak átméretezésekor</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Nagyítás a kijelölt alakzatokra a kijelölés minden változásakor</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>A kép nagyobb megjelenítése</translation>
     </message>
@@ -618,8 +622,8 @@ Shapes</source>
         <translation>A kijelöléstől jobbra lévő legközelebbi alakzat kijelölése</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>A Ctrl+Görgő nagyítja a vásznat</translation>
+        <source>Fit to Window</source>
+        <translation>Ablakhoz igazítás</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -682,6 +686,10 @@ Shapes</source>
         <translation>Folytatás az alapértékekkel</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>&amp;Kijelöléshez igazítás</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Nem sikerült visszaállítani a konfigurációs fájlt.
@@ -738,6 +746,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>AI inference failed: %s</source>
         <translation>Az MI-következtetés sikertelen volt: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Kijelöléshez igazítás</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1392,6 +1404,17 @@ Várt hely: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>További műveletek</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Nagyítás</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>A Ctrl+Görgő nagyítja a vásznat</translation>
     </message>
 </context>
 <context>

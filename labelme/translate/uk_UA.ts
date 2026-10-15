@@ -437,6 +437,10 @@
         <translation>Відкрити попередній (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Масштабувати за вибраними фігурами під час кожної зміни виділення</translation>
+    </message>
+    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>&amp;Яскравість Контраст</translation>
     </message>
@@ -529,6 +533,10 @@ Shapes</source>
     <message>
         <source>Zoom</source>
         <translation>Збільшити</translation>
+    </message>
+    <message>
+        <source>Fit to Window</source>
+        <translation>Припасувати вікно</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -653,6 +661,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>Інференс ШІ не вдався: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>За виділенням</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -823,6 +835,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Усе зображення залишається видимим під час зміни розміру вікна</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>За &amp;виділенням</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Показати зображення більшим</translation>
     </message>
@@ -837,10 +853,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Show the image at 100%</source>
         <translation>Показати зображення в масштабі 100%</translation>
-    </message>
-    <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+колесо масштабує полотно</translation>
     </message>
     <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
@@ -1389,6 +1401,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>Інші дії</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Збільшити</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+колесо масштабує полотно</translation>
     </message>
 </context>
 <context>

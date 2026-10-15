@@ -548,6 +548,10 @@ Shapes</source>
         <translation>De hele afbeelding zichtbaar houden wanneer het venster van grootte verandert</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Inzoomen op de geselecteerde vormen telkens wanneer de selectie verandert</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>De afbeelding groter weergeven</translation>
     </message>
@@ -604,8 +608,8 @@ Shapes</source>
         <translation>Dichtstbijzijnde vorm rechts van de selectie selecteren</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Wiel zoomt op het canvas</translation>
+        <source>Fit to Window</source>
+        <translation>Aanpassen aan venster</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -668,6 +672,10 @@ Shapes</source>
         <translation>Doorgaan met standaardinstellingen</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Aanpassen aan &amp;selectie</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Het configuratiebestand kon niet worden hersteld.
@@ -724,6 +732,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI-inferentie mislukt: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Aanpassen aan selectie</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1386,6 +1398,17 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Meer acties</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Wiel zoomt op het canvas</translation>
     </message>
 </context>
 <context>

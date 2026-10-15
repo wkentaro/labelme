@@ -548,6 +548,10 @@ Shapes</source>
         <translation>แสดงภาพทั้งภาพให้เห็นตลอดเมื่อปรับขนาดหน้าต่าง</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>ซูมไปที่รูปร่างที่เลือกทุกครั้งที่การเลือกเปลี่ยน</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>แสดงภาพให้ใหญ่ขึ้น</translation>
     </message>
@@ -604,8 +608,8 @@ Shapes</source>
         <translation>เลือกรูปร่างที่ใกล้ที่สุดด้านขวาของส่วนที่เลือก</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+ล้อเลื่อน เพื่อซูมแคนวาส</translation>
+        <source>Fit to Window</source>
+        <translation>พอดีหน้าต่าง</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -668,6 +672,10 @@ Shapes</source>
         <translation>ใช้ค่าเริ่มต้นต่อไป</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>พอดีส่วนที่เลือก (&amp;E)</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>ไม่สามารถรีเซ็ตไฟล์การตั้งค่าได้
@@ -724,6 +732,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>การอนุมานของ AI ล้มเหลว: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>พอดีส่วนที่เลือก</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1386,6 +1398,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>การดำเนินการเพิ่มเติม</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>ซูม</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+ล้อเลื่อน เพื่อซูมแคนวาส</translation>
     </message>
 </context>
 <context>

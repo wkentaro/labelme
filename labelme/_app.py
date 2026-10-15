@@ -76,6 +76,7 @@ from ._widgets._models_widget import ModelsWidget
 
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
+    FIT_SELECTION = enum.auto()
     MANUAL_ZOOM = enum.auto()
 
 
@@ -173,6 +174,7 @@ class _Actions(NamedTuple):
     open_prev_img: QtGui.QAction
     keep_prev_zoom: QtGui.QAction
     fit_window: QtGui.QAction
+    fit_selection: QtGui.QAction
     brightness_contrast: QtGui.QAction
     zoom_in: QtGui.QAction
     zoom_out: QtGui.QAction
@@ -218,10 +220,15 @@ class MainWindow(QtWidgets.QMainWindow):
     _is_changed: bool = False
     _shape_clipboard: ShapeClipboard
     _zoom_mode: _ZoomMode
+    _is_canvas_pointer_active: bool = False
+    _is_fit_selection_deferred: bool = False
+    _fit_selection_timer: QtCore.QTimer
     _prev_opened_dir: str | None
     _canvas_widgets: _CanvasWidgets
     _status_bar: _StatusBarWidgets
     _status_mouse_pos: QtCore.QPointF | None
+    _zoom_mode_label: QtWidgets.QLabel
+    _zoom_mode_captions: dict[_ZoomMode, str]
     _docks: _DockWidgets
     _actions: _Actions
     _persistent_actions: dict[tuple[str, ...], QtGui.QAction]
@@ -276,6 +283,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets = self._setup_canvas()
 
         self._actions = self._setup_actions()
+        self._sync_zoom_mode_actions()
         self._persistent_actions = {
             ("auto_save",): self._actions.save_auto,
             ("with_image_data",): self._actions.save_with_image_data,
@@ -343,6 +351,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self._apply_zoom_to_canvas
         )
         self._canvas_widgets.scroll_area.installEventFilter(self)
+        # Fitting between the clicks of a double-click would move the shape
+        # out from under the second click, so wait out the interval.
+        self._fit_selection_timer = QtCore.QTimer(self)
+        self._fit_selection_timer.setSingleShot(True)
+        self._fit_selection_timer.setInterval(
+            QtGui.QGuiApplication.styleHints().mouseDoubleClickInterval()
+        )
+        self._fit_selection_timer.timeout.connect(self._apply_deferred_fit_selection)
+        self._canvas_widgets.canvas.installEventFilter(self)
 
         self.populate_mode_actions()
 
@@ -682,6 +699,14 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Keep the whole image visible when the window is resized"),
             checkable=True,
         )
+        fit_selection = image_action(
+            text=self.tr("Fit to S&election"),
+            slot=self.set_fit_selection_mode,
+            shortcut=shortcuts["fit_selection"],
+            icon="phosphor/scan.svg",
+            tip=self.tr("Zoom to the selected shapes whenever the selection changes"),
+            checkable=True,
+        )
         brightness_contrast = image_action(
             text=self.tr("&Brightness Contrast"),
             slot=self.open_brightness_contrast_dialog,
@@ -797,21 +822,35 @@ class MainWindow(QtWidgets.QMainWindow):
         label_model.modelReset.connect(update_shapes_present_actions)
         update_shapes_present_actions()
 
-        zoom_widget_action = QtWidgets.QWidgetAction(image_actions)
+        zoom_widget = self._canvas_widgets.zoom_widget
+        # The fit modes sit beside the field as icon buttons; the pressed one is
+        # the active mode.
+        zoom_row = QtWidgets.QHBoxLayout()
+        zoom_row.setSpacing(0)
+        for fit_action in (fit_window, fit_selection):
+            fit_button = QtWidgets.QToolButton()
+            fit_button.setDefaultAction(fit_action)
+            fit_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+            zoom_row.addWidget(fit_button)
+        zoom_row.addWidget(zoom_widget)
+        # The caption names the active fit mode, so the toolbar shows the
+        # sticky zoom state in words.
+        self._zoom_mode_label = QtWidgets.QLabel()
+        self._zoom_mode_captions = {
+            _ZoomMode.FIT_WINDOW: self.tr("Fit to Window"),
+            _ZoomMode.FIT_SELECTION: self.tr("Fit to Selection"),
+            _ZoomMode.MANUAL_ZOOM: self.tr("Zoom"),
+        }
+        self._zoom_mode_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._zoom_mode_label.setBuddy(zoom_widget)
         zoom_box_layout = QtWidgets.QVBoxLayout()
-        zoom_label = QtWidgets.QLabel(self.tr("Zoom"))
-        zoom_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        zoom_label.setBuddy(self._canvas_widgets.zoom_widget)
-        zoom_box_layout.addWidget(zoom_label)
-        zoom_box_layout.addWidget(self._canvas_widgets.zoom_widget)
+        zoom_box_layout.addWidget(self._zoom_mode_label)
+        zoom_box_layout.addLayout(zoom_row)
+        zoom_widget_action = QtWidgets.QWidgetAction(image_actions)
         zoom_widget_action.setDefaultWidget(QtWidgets.QWidget())
         zoom_widget_action.defaultWidget().setLayout(zoom_box_layout)
-        self._canvas_widgets.zoom_widget.setToolTip(
-            self.tr("Ctrl+Wheel zooms the canvas")
-        )
 
         self._zoom_mode = _ZoomMode.FIT_WINDOW
-        fit_window.setChecked(True)
 
         self._canvas_widgets.canvas.vertex_selected.connect(remove_point.setEnabled)
         self._canvas_widgets.canvas.edge_selected.connect(add_point_to_edge.setEnabled)
@@ -899,6 +938,7 @@ class MainWindow(QtWidgets.QMainWindow):
             open_prev_img=open_prev_img,
             keep_prev_zoom=keep_prev_zoom,
             fit_window=fit_window,
+            fit_selection=fit_selection,
             brightness_contrast=brightness_contrast,
             zoom_in=zoom_in,
             zoom_out=zoom_out,
@@ -1005,6 +1045,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._actions.keep_prev_zoom,
                 separator(),
                 self._actions.fit_window,
+                self._actions.fit_selection,
                 separator(),
                 self._actions.brightness_contrast,
                 self._actions.toggle_keep_prev_brightness_contrast,
@@ -1048,7 +1089,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     self._actions.undo,
                     self._actions.brightness_contrast,
                     separator(),
-                    self._actions.fit_window,
                     self._actions.zoom_widget_action,
                     separator(),
                     select_ai_model,
@@ -1228,6 +1268,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         canvas.shape_moved.connect(self.mark_dirty)
         canvas.selection_changed.connect(self._on_shape_selection_changed)
+        canvas.shape_moved.connect(self._cancel_deferred_fit_selection)
         canvas.shape_double_clicked.connect(self._edit_label)
         canvas.drawing_polygon.connect(self._on_drawing_polygon_changed)
 
@@ -1801,6 +1842,19 @@ class MainWindow(QtWidgets.QMainWindow):
             if n_selected and not n_unlocked
             else self.tr("Lock Shapes")
         )
+        self._is_fit_selection_deferred = False
+        # An emptied selection keeps the view: grabbing a vertex deselects, and
+        # zooming out then would move the image under the cursor.
+        if self._zoom_mode != _ZoomMode.FIT_SELECTION or not selected_shapes:
+            return
+        if self._is_canvas_pointer_active:
+            # A press can start dragging the shape it just selected, and a
+            # release can be the first half of a double-click, so fit once
+            # the pointer settles without a move.
+            self._is_fit_selection_deferred = True
+            self._fit_selection_timer.start()
+            return
+        self._adjust_scale()
 
     def _toggle_selected_shapes_lock(self) -> None:
         canvas = self._canvas_widgets.canvas
@@ -2192,12 +2246,21 @@ class MainWindow(QtWidgets.QMainWindow):
         # Setting the value fires valueChanged, which rescales the canvas.
         self._canvas_widgets.zoom_widget.setValue(value)
 
+        self._move_image_point_to_viewport(
+            image_pos=image_pos, viewport_pos=viewport_pos
+        )
+
+    def _move_image_point_to_viewport(
+        self, *, image_pos: QtCore.QPointF, viewport_pos: QtCore.QPointF
+    ) -> None:
+        canvas = self._canvas_widgets.canvas
+        viewport = self._canvas_widgets.scroll_area.viewport()
+        # Canvas geometry lags a scale change, so map against its size hint.
         target = canvas.transform_image_point_to_widget(
             image_pos, area=canvas.sizeHint()
         )
         current = canvas.mapFrom(viewport, viewport_pos)
-        shift = target - current
-        self._move_canvas_view(step=-shift, constrain_to_center=False)
+        self._move_canvas_view(step=current - target, constrain_to_center=False)
 
     def _set_zoom_to_original(self) -> None:
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
@@ -2217,12 +2280,38 @@ class MainWindow(QtWidgets.QMainWindow):
         target = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
         self._switch_zoom_mode(target)
 
+    def set_fit_selection_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+        target = _ZoomMode.FIT_SELECTION if value else _ZoomMode.MANUAL_ZOOM
+        self._switch_zoom_mode(target)
+
+    def _end_canvas_pointer_activity(self) -> None:
+        self._is_canvas_pointer_active = False
+
+    def _cancel_deferred_fit_selection(self) -> None:
+        self._is_fit_selection_deferred = False
+
+    def _apply_deferred_fit_selection(self) -> None:
+        if not self._is_fit_selection_deferred:
+            return
+        if QtWidgets.QApplication.mouseButtons() != Qt.MouseButton.NoButton:
+            return  # the release restarts the timer
+        self._is_fit_selection_deferred = False
+        if (
+            self._zoom_mode == _ZoomMode.FIT_SELECTION
+            and self._canvas_widgets.canvas.selected_shapes
+        ):
+            self._adjust_scale()
+
     def _switch_zoom_mode(self, mode: _ZoomMode, /) -> None:
         self._zoom_mode = mode
         self._adjust_scale()
 
     def _sync_zoom_mode_actions(self) -> None:
         self._actions.fit_window.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
+        self._actions.fit_selection.setChecked(
+            self._zoom_mode == _ZoomMode.FIT_SELECTION
+        )
+        self._zoom_mode_label.setText(self._zoom_mode_captions[self._zoom_mode])
 
     def _on_brightness_contrast_changed(self, qimage: QtGui.QImage, /) -> None:
         self._canvas_widgets.canvas.load_pixmap(
@@ -2509,7 +2598,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # The zoom value can be unchanged across images, so update geometry
         # explicitly before restoring positions against the new scroll range.
         self._apply_zoom_to_canvas()
-        if target_viewport is not None:
+        # A load leaves nothing selected, so Fit to Selection shows the whole
+        # image; positions saved while zoomed to a shape no longer apply.
+        if target_viewport is not None and self._zoom_mode != _ZoomMode.FIT_SELECTION:
             for orientation, value in target_viewport.scroll_values.items():
                 self.set_scroll_value(orientation=orientation, value=value)
             self._canvas_widgets.canvas.reset_view_offset()
@@ -2535,6 +2626,23 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
+        if watched is self._canvas_widgets.canvas:
+            if event.type() in (
+                QtCore.QEvent.Type.MouseButtonPress,
+                QtCore.QEvent.Type.MouseButtonDblClick,
+            ):
+                self._is_canvas_pointer_active = True
+                self._fit_selection_timer.stop()
+            elif event.type() == QtCore.QEvent.Type.MouseButtonRelease:
+                # The canvas handles the release after this filter and may
+                # change the selection then, so stay active until it is done.
+                # A modal dialog that swallows a release leaves the flag set;
+                # that only delays the next fit by the timer interval.
+                QtCore.QTimer.singleShot(0, self._end_canvas_pointer_activity)
+                if self._is_fit_selection_deferred:
+                    # The timer fires after the canvas handles this release,
+                    # which reports a finished move through shape_moved.
+                    self._fit_selection_timer.start()
         if (
             watched is self._canvas_widgets.scroll_area
             and event.type() == QtCore.QEvent.Type.Resize
@@ -2553,11 +2661,39 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.scale = self._canvas_widgets.zoom_widget.scale
 
     def _adjust_scale(self) -> None:
-        if self._zoom_mode == _ZoomMode.FIT_WINDOW:
+        if (
+            self._zoom_mode == _ZoomMode.FIT_SELECTION
+            and (bounds := self._canvas_widgets.canvas.get_selected_shapes_bounds())
+            is not None
+        ):
+            self._fit_image_rect(rect=bounds)
+            return
+        if self._zoom_mode in (_ZoomMode.FIT_WINDOW, _ZoomMode.FIT_SELECTION):
             scale = self._fit_window_scale()
         else:
             scale = 1.0
         self._set_zoom(value=scale * 100, pos=None)
+
+    def _fit_image_rect(self, *, rect: QtCore.QRectF) -> None:
+        PADDING_RATIO: Final[float] = 0.15
+        MIN_PADDING: Final[float] = 24.0  # image pixels, so tiny shapes keep context
+        padding = max(max(rect.width(), rect.height()) * PADDING_RATIO, MIN_PADDING)
+        rect = rect.adjusted(-padding, -padding, padding, padding)
+        available = self._canvas_widgets.scroll_area.maximumViewportSize()
+        scale = min(
+            available.width() / rect.width(), available.height() / rect.height()
+        )
+        # The zoom control clamps the value, so center with the applied scale.
+        self._set_zoom(value=scale * 100, pos=None)
+
+        settled = self._canvas_widgets.canvas.compute_settled_viewport_size()
+        assert settled is not None
+        # Scrolling stops at the image edge; the render offset takes the rest,
+        # so a shape at the edge is still centered.
+        self._move_image_point_to_viewport(
+            image_pos=rect.center(),
+            viewport_pos=QtCore.QPointF(settled.width() / 2, settled.height() / 2),
+        )
 
     def _fit_window_scale(self) -> float:
         FIT_WINDOW_SCROLLBAR_MARGIN: Final[float] = 2.0

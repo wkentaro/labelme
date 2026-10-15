@@ -554,6 +554,10 @@ Shapes</source>
         <translation>調整視窗大小時保持整張影像可見</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>每次選取變更時縮放至選取的形狀</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>以較大的尺寸顯示影像</translation>
     </message>
@@ -610,8 +614,8 @@ Shapes</source>
         <translation>選取選取形狀右側最近的形狀</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+滾輪縮放畫布</translation>
+        <source>Fit to Window</source>
+        <translation>適應窗口</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -674,6 +678,10 @@ Shapes</source>
         <translation>使用預設值繼續</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>適應選取範圍(&amp;E)</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>無法重設設定檔。
@@ -730,6 +738,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI 推理失敗: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>適應選取範圍</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1392,6 +1404,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>更多操作</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>縮放</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+滾輪縮放畫布</translation>
     </message>
 </context>
 <context>

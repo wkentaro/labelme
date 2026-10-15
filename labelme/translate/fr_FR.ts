@@ -554,6 +554,10 @@ les formes</translation>
         <translation>Garder l&apos;image entière visible lorsque la fenêtre est redimensionnée</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Zoomer sur les formes sélectionnées à chaque changement de sélection</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Afficher l&apos;image en plus grand</translation>
     </message>
@@ -610,8 +614,8 @@ les formes</translation>
         <translation>Sélectionner la forme la plus proche à droite de la sélection</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Molette zoome le canevas</translation>
+        <source>Fit to Window</source>
+        <translation>Adapter à la fenêtre</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -674,6 +678,10 @@ les formes</translation>
         <translation>Continuer avec les valeurs par défaut</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Adapter à la &amp;sélection</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Impossible de réinitialiser le fichier de configuration.
@@ -730,6 +738,10 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>AI inference failed: %s</source>
         <translation>Échec de l&apos;inférence IA : %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Adapter à la sélection</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1392,6 +1404,17 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Autres actions</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Molette zoome le canevas</translation>
     </message>
 </context>
 <context>

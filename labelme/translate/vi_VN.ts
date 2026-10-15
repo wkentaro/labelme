@@ -548,6 +548,10 @@ Shapes</source>
         <translation>Giữ toàn bộ ảnh luôn hiển thị khi thay đổi kích thước cửa sổ</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Thu phóng đến các hình dạng đã chọn mỗi khi vùng chọn thay đổi</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Hiển thị ảnh lớn hơn</translation>
     </message>
@@ -604,8 +608,8 @@ Shapes</source>
         <translation>Chọn hình dạng gần nhất bên phải vùng chọn</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Bánh xe phóng to/thu nhỏ canvas</translation>
+        <source>Fit to Window</source>
+        <translation>Vừa Cửa sổ</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -668,6 +672,10 @@ Shapes</source>
         <translation>Tiếp tục với mặc định</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Vừa Vùng chọn(&amp;E)</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Không thể đặt lại tệp cấu hình.
@@ -724,6 +732,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>AI inference failed: %s</source>
         <translation>Suy luận AI thất bại: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Vừa Vùng chọn</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1386,6 +1398,17 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Thao tác khác</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Thu phóng</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Bánh xe phóng to/thu nhỏ canvas</translation>
     </message>
 </context>
 <context>

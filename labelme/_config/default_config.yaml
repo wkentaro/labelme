@@ -105,6 +105,7 @@ shortcuts:
   zoom_out: Ctrl+-
   zoom_to_original: Ctrl+0
   fit_window: Ctrl+F
+  fit_selection: Ctrl+Shift+F
   create_polygon: Ctrl+N
   create_rectangle: Ctrl+R
   create_oriented_rectangle:
