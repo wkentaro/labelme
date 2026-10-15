@@ -548,14 +548,6 @@ Shapes</source>
         <translation>Giữ toàn bộ ảnh luôn hiển thị khi thay đổi kích thước cửa sổ</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Vừa Chiều rộng(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Khớp chiều rộng của ảnh với cửa sổ khi thay đổi kích thước</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Hiển thị ảnh lớn hơn</translation>
     </message>

@@ -548,14 +548,6 @@ Shapes</source>
         <translation>แสดงภาพทั้งภาพให้เห็นตลอดเมื่อปรับขนาดหน้าต่าง</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>พอดีความกว้าง (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>ปรับความกว้างของภาพให้เท่ากับหน้าต่างเมื่อปรับขนาดหน้าต่าง</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>แสดงภาพให้ใหญ่ขึ้น</translation>
     </message>

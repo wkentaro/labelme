@@ -226,6 +226,13 @@ def test_load_config_tolerates_removed_add_point_to_edge_shortcut(
     assert "add_point_to_edge" not in config["shortcuts"]
 
 
+def test_load_config_tolerates_removed_fit_width_shortcut(*, tmp_path: Path) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text("shortcuts:\n  fit_width: Ctrl+Shift+F\n")
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert "fit_width" not in config["shortcuts"]
+
+
 @pytest.mark.parametrize(
     ("ai_polygon", "ai_mask", "expected"),
     [

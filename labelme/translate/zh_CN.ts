@@ -554,14 +554,6 @@ Shapes</source>
         <translation>调整窗口大小时保持整幅图像可见</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>适合宽度(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>调整窗口大小时使图像宽度与窗口一致</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>以更大的尺寸显示图像</translation>
     </message>

@@ -823,14 +823,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Усе зображення залишається видимим під час зміни розміру вікна</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>За &amp;шириною</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Ширина зображення підлаштовується під вікно під час зміни його розміру</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Показати зображення більшим</translation>
     </message>

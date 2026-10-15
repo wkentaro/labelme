@@ -548,14 +548,6 @@ Shapes</source>
         <translation>Manter a imagem inteira visível quando a janela for redimensionada</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Ajustar à &amp;Largura</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Igualar a largura da imagem à janela quando ela for redimensionada</translation>
-    </message>
-    <message>
         <source>Make the image appear larger</source>
         <translation>Mostrar a imagem maior</translation>
     </message>

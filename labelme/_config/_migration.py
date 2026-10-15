@@ -39,7 +39,13 @@ def migrate_config(*, config_from_yaml: dict) -> None:
     if not isinstance(shortcuts, dict):
         shortcuts = {}
     # These actions were removed; neither their old nor renamed shortcuts apply.
-    for key in ("add_point", "add_point_to_edge", "edit_line_color", "edit_fill_color"):
+    for key in (
+        "add_point",
+        "add_point_to_edge",
+        "edit_line_color",
+        "edit_fill_color",
+        "fit_width",
+    ):
         if key in shortcuts:
             logger.info("Migrating old config: removing shortcuts.{}", key)
             del shortcuts[key]
