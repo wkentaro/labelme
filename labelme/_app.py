@@ -1988,14 +1988,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def _record_saved_annotation(self, *, label_path: str) -> None:
         assert self._image_path is not None
         self._label_file_path = label_path
-        items = self._docks.file_list.findItems(
-            self._file_list_label(self._file_list_image_path or self._image_path),
-            Qt.MatchFlag.MatchExactly,
-        )
-        if len(items) > 1:
+        image_path = self._file_list_image_path or self._image_path
+        rows = [row for row, path in enumerate(self.image_list) if path == image_path]
+        if len(rows) > 1:
             raise RuntimeError("There are duplicate files.")
-        if items:
-            items[0].setCheckState(Qt.CheckState.Checked)
+        if rows:
+            item = self._docks.file_list.item(rows[0])
+            assert item
+            item.setCheckState(Qt.CheckState.Checked)
         self._failed_save_path = None
         self._status_bar.save.setText(self.tr("Saved"))
         self._status_bar.save.setToolTip(label_path)
