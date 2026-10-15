@@ -222,6 +222,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _zoom_mode: _ZoomMode
     _is_canvas_pressed: bool = False
     _is_fit_selection_deferred: bool = False
+    _fit_selection_timer: QtCore.QTimer
     _prev_opened_dir: str | None
     _canvas_widgets: _CanvasWidgets
     _status_bar: _StatusBarWidgets
@@ -347,6 +348,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self._apply_zoom_to_canvas
         )
         self._canvas_widgets.scroll_area.installEventFilter(self)
+        # Fitting between the clicks of a double-click would move the shape
+        # out from under the second click, so wait out the interval.
+        self._fit_selection_timer = QtCore.QTimer(self)
+        self._fit_selection_timer.setSingleShot(True)
+        self._fit_selection_timer.setInterval(
+            QtGui.QGuiApplication.styleHints().mouseDoubleClickInterval()
+        )
+        self._fit_selection_timer.timeout.connect(self._apply_deferred_fit_selection)
         self._canvas_widgets.canvas.installEventFilter(self)
 
         self.populate_mode_actions()
@@ -1817,14 +1826,21 @@ class MainWindow(QtWidgets.QMainWindow):
             if n_selected and not n_unlocked
             else self.tr("Lock Shapes")
         )
+        self._is_fit_selection_deferred = False
         # An emptied selection keeps the view: grabbing a vertex deselects, and
         # zooming out then would move the image under the cursor.
         if self._zoom_mode != _ZoomMode.FIT_SELECTION or not selected_shapes:
             return
-        if self._is_canvas_pressed:
+        # A modal dialog opened from a press can swallow its release, so the
+        # press flag alone may be stale.
+        if (
+            self._is_canvas_pressed
+            and QtWidgets.QApplication.mouseButtons() != Qt.MouseButton.NoButton
+        ):
             # A press can start dragging the shape it just selected, so fit
             # once the button is released without a move.
             self._is_fit_selection_deferred = True
+            self._fit_selection_timer.start()
             return
         self._adjust_scale()
 
@@ -2262,8 +2278,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def _apply_deferred_fit_selection(self) -> None:
         if not self._is_fit_selection_deferred:
             return
+        if QtWidgets.QApplication.mouseButtons() != Qt.MouseButton.NoButton:
+            return  # the release restarts the timer
         self._is_fit_selection_deferred = False
-        if self._zoom_mode == _ZoomMode.FIT_SELECTION and not self._image.isNull():
+        if (
+            self._zoom_mode == _ZoomMode.FIT_SELECTION
+            and self._canvas_widgets.canvas.selected_shapes
+        ):
             self._adjust_scale()
 
     def _switch_zoom_mode(self, mode: _ZoomMode, /) -> None:
@@ -2590,14 +2611,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
         if watched is self._canvas_widgets.canvas:
-            if event.type() == QtCore.QEvent.Type.MouseButtonPress:
+            if event.type() in (
+                QtCore.QEvent.Type.MouseButtonPress,
+                QtCore.QEvent.Type.MouseButtonDblClick,
+            ):
                 self._is_canvas_pressed = True
+                self._fit_selection_timer.stop()
             elif event.type() == QtCore.QEvent.Type.MouseButtonRelease:
                 self._is_canvas_pressed = False
                 if self._is_fit_selection_deferred:
-                    # Run after the canvas handles the release, which reports
-                    # a finished move through shape_moved.
-                    QtCore.QTimer.singleShot(0, self._apply_deferred_fit_selection)
+                    # The timer fires after the canvas handles this release,
+                    # which reports a finished move through shape_moved.
+                    self._fit_selection_timer.start()
         if (
             watched is self._canvas_widgets.scroll_area
             and event.type() == QtCore.QEvent.Type.Resize
