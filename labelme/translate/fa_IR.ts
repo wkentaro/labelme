@@ -548,6 +548,10 @@ Shapes</source>
         <translation>نمایان نگه داشتن کل تصویر هنگام تغییر اندازهٔ پنجره</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>بزرگ‌نمایی روی شکل‌های انتخاب شده هر بار که انتخاب تغییر می‌کند</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>نمایش تصویر در اندازهٔ بزرگ‌تر</translation>
     </message>
@@ -666,6 +670,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>ادامه با پیش‌فرض‌ها</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>تناسب با انتخاب(&amp;E)</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

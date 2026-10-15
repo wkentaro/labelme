@@ -548,6 +548,10 @@ Shapes</source>
         <translation>แสดงภาพทั้งภาพให้เห็นตลอดเมื่อปรับขนาดหน้าต่าง</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>ซูมไปที่รูปร่างที่เลือกทุกครั้งที่การเลือกเปลี่ยน</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>แสดงภาพให้ใหญ่ขึ้น</translation>
     </message>
@@ -666,6 +670,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>ใช้ค่าเริ่มต้นต่อไป</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>พอดีส่วนที่เลือก (&amp;E)</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

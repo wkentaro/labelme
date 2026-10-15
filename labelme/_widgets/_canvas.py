@@ -352,6 +352,11 @@ class Canvas(QtWidgets.QWidget):
     def get_view_offset(self) -> QPointF:
         return QPointF(self._view_offset)
 
+    def get_selected_shapes_bounds(self) -> QtCore.QRectF | None:
+        if not self.selected_shapes:
+            return None
+        return _compute_shapes_bounds(shapes=self.selected_shapes)
+
     def set_color_resolver(
         self, *, resolver: Callable[[str], tuple[int, int, int]]
     ) -> None:

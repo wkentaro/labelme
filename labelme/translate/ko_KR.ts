@@ -548,6 +548,10 @@ Shapes</source>
         <translation>창 크기가 바뀌어도 이미지 전체가 보이도록 유지</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>선택이 바뀔 때마다 선택한 도형에 맞춰 확대/축소</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>이미지를 더 크게 표시</translation>
     </message>
@@ -666,6 +670,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>기본 설정으로 계속</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>선택 항목에 맞추기(&amp;E)</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

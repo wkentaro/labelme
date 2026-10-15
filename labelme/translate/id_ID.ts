@@ -523,6 +523,10 @@
         <translation>Menjaga seluruh gambar tetap terlihat saat ukuran jendela berubah</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Perbesar ke bentuk terpilih setiap kali pilihan berubah</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Menampilkan gambar lebih besar</translation>
     </message>
@@ -641,6 +645,10 @@
     <message>
         <source>Continue with defaults</source>
         <translation>Lanjutkan dengan bawaan</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Sesuaikan Pilihan (&amp;E)</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

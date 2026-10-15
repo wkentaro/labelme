@@ -570,6 +570,10 @@ Shapes</source>
         <translation>A teljes kép látható marad az ablak átméretezésekor</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Nagyítás a kijelölt alakzatokra a kijelölés minden változásakor</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>A kép nagyobb megjelenítése</translation>
     </message>
@@ -680,6 +684,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>Folytatás az alapértékekkel</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>&amp;Kijelöléshez igazítás</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

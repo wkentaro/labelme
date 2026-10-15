@@ -437,6 +437,10 @@
         <translation>Άνοιγμα προηγούμενου (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Εστίαση στα επιλεγμένα σχήματα κάθε φορά που αλλάζει η επιλογή</translation>
+    </message>
+    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>αντίθεση φωτεινότητας</translation>
     </message>
@@ -820,6 +824,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Keep the whole image visible when the window is resized</source>
         <translation>Διατήρηση ολόκληρης της εικόνας ορατής όταν αλλάζει το μέγεθος του παραθύρου</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Προσαρμογή στην &amp;επιλογή</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>

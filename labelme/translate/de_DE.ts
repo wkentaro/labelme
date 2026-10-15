@@ -570,6 +570,10 @@ Formen</translation>
         <translation>Das ganze Bild sichtbar halten, wenn die Fenstergröße geändert wird</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Bei jeder Änderung der Auswahl auf die ausgewählten Formen zoomen</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Das Bild größer anzeigen</translation>
     </message>
@@ -680,6 +684,10 @@ Formen</translation>
     <message>
         <source>Continue with defaults</source>
         <translation>Mit Standardwerten fortfahren</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>An Aus&amp;wahl anpassen</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

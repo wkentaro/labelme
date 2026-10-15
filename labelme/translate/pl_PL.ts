@@ -548,6 +548,10 @@ Shapes</source>
         <translation>Cały obraz pozostaje widoczny przy zmianie rozmiaru okna</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Powiększenie dopasowuje się do zaznaczonych kształtów przy każdej zmianie zaznaczenia</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Wyświetl obraz w większym rozmiarze</translation>
     </message>
@@ -666,6 +670,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>Kontynuuj z ustawieniami domyślnymi</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Dopasuj do zaznaczenia (&amp;E)</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

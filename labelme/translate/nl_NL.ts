@@ -548,6 +548,10 @@ Shapes</source>
         <translation>De hele afbeelding zichtbaar houden wanneer het venster van grootte verandert</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Inzoomen op de geselecteerde vormen telkens wanneer de selectie verandert</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>De afbeelding groter weergeven</translation>
     </message>
@@ -666,6 +670,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>Doorgaan met standaardinstellingen</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Aanpassen aan &amp;selectie</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

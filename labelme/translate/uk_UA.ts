@@ -437,6 +437,10 @@
         <translation>Відкрити попередній (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Масштабувати за вибраними фігурами під час кожної зміни виділення</translation>
+    </message>
+    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>&amp;Яскравість Контраст</translation>
     </message>
@@ -821,6 +825,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Keep the whole image visible when the window is resized</source>
         <translation>Усе зображення залишається видимим під час зміни розміру вікна</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>За &amp;виділенням</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>

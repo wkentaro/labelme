@@ -554,6 +554,10 @@ Shapes</source>
         <translation>调整窗口大小时保持整幅图像可见</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>每次选择更改时缩放至选中的形状</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>以更大的尺寸显示图像</translation>
     </message>
@@ -672,6 +676,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>使用默认设置继续</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>适合选区(&amp;E)</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

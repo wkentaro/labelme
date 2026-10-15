@@ -554,6 +554,10 @@ les formes</translation>
         <translation>Garder l&apos;image entière visible lorsque la fenêtre est redimensionnée</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Zoomer sur les formes sélectionnées à chaque changement de sélection</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Afficher l&apos;image en plus grand</translation>
     </message>
@@ -672,6 +676,10 @@ les formes</translation>
     <message>
         <source>Continue with defaults</source>
         <translation>Continuer avec les valeurs par défaut</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Adapter à la &amp;sélection</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

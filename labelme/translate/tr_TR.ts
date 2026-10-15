@@ -554,6 +554,10 @@ Shapes</source>
         <translation>Pencere yeniden boyutlandırıldığında görüntünün tamamını görünür tut</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Seçim her değiştiğinde seçili şekillere yakınlaştır</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Görüntüyü daha büyük göster</translation>
     </message>
@@ -672,6 +676,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>Varsayılanlarla devam et</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>&amp;Seçime Sığdır</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

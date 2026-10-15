@@ -562,6 +562,10 @@ Shapes</source>
         <translation>ウィンドウのサイズ変更時も画像全体を表示し続ける</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>選択を変更するたびに選択した図形にズームする</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>画像を大きく表示する</translation>
     </message>
@@ -680,6 +684,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>初期設定で続行</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>選択範囲に合わせる(&amp;E)</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

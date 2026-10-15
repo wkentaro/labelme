@@ -533,6 +533,10 @@ Shapes</source>
         <translation>Всё изображение остаётся видимым при изменении размера окна</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Масштабировать по выбранным фигурам при каждом изменении выделения</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Показать изображение крупнее</translation>
     </message>
@@ -651,6 +655,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>Продолжить с настройками по умолчанию</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>По в&amp;ыделению</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

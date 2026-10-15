@@ -548,6 +548,10 @@ Shapes</source>
         <translation>Manter a imagem inteira visível quando a janela for redimensionada</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Ajustar o zoom às formas selecionadas sempre que a seleção mudar</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>Mostrar a imagem maior</translation>
     </message>
@@ -666,6 +670,10 @@ Shapes</source>
     <message>
         <source>Continue with defaults</source>
         <translation>Continuar com os padrões</translation>
+    </message>
+    <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Ajustar à &amp;Seleção</translation>
     </message>
     <message>
         <source>Could not reset the Config File.

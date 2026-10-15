@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Final
 
+import numpy as np
 import pytest
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -16,7 +17,9 @@ from labelme._app import _ZoomMode
 
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
+from .conftest import drag_canvas
 from .conftest import image_to_widget_pos
+from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 _VIEWPORT_ZOOM: Final[int] = 300
@@ -107,7 +110,7 @@ def test_resize_preserves_zoom_mode(
 
 
 @pytest.mark.gui
-@pytest.mark.parametrize("mode", [_ZoomMode.FIT_WINDOW])
+@pytest.mark.parametrize("mode", [_ZoomMode.FIT_WINDOW, _ZoomMode.FIT_SELECTION])
 @pytest.mark.parametrize("keep_prev_scale", [True, False])
 def test_navigation_recalculates_fit_mode(
     *,
@@ -751,3 +754,197 @@ def test_percentage_entry_preserves_mode_and_updates_canvas(
     qtbot.keyClick(widget, Qt.Key.Key_Return)
     assert scales == pytest.approx([0.01, 0.12, 1.25, 1.255, 1.255])
     assert _win._zoom_mode == mode
+
+
+def _to_viewport(*, win: MainWindow, image_pos: QPointF) -> QPointF:
+    canvas = win._canvas_widgets.canvas
+    viewport = win._canvas_widgets.scroll_area.viewport()
+    return QPointF(
+        canvas.mapTo(viewport, canvas.transform_image_point_to_widget(image_pos))
+    )
+
+
+def _check_fits_selection(*, win: MainWindow) -> None:
+    bounds = win._canvas_widgets.canvas.get_selected_shapes_bounds()
+    assert bounds is not None
+    viewport = win._canvas_widgets.scroll_area.viewport().rect()
+    top_left = _to_viewport(win=win, image_pos=bounds.topLeft())
+    bottom_right = _to_viewport(win=win, image_pos=bounds.bottomRight())
+    center = _to_viewport(win=win, image_pos=bounds.center())
+    assert abs(center.x() - viewport.center().x()) < 2
+    assert abs(center.y() - viewport.center().y()) < 2
+    assert top_left.x() > 0 and top_left.y() > 0
+    assert bottom_right.x() < viewport.width()
+    assert bottom_right.y() < viewport.height()
+    # Padded, but the selection still fills most of one viewport axis.
+    assert (
+        max(
+            (bottom_right.x() - top_left.x()) / viewport.width(),
+            (bottom_right.y() - top_left.y()) / viewport.height(),
+        )
+        > 0.5
+    )
+
+
+def _wait_for_fit_selection(*, qtbot: QtBot, win: MainWindow) -> None:
+    # Scrollbars settle after a layout pass, which shrinks the viewport.
+    qtbot.waitUntil(lambda: _check_fits_selection(win=win))
+
+
+@pytest.mark.gui
+def test_fit_selection_follows_selection(*, qtbot: QtBot, _win: MainWindow) -> None:
+    canvas = _win._canvas_widgets.canvas
+    fit_window_scale = canvas.scale
+    _win.set_fit_selection_mode(True)
+    assert _win._actions.fit_selection.isChecked()
+    assert not _win._actions.fit_window.isChecked()
+    # Nothing is selected yet, so the whole image stays in view.
+    assert canvas.scale == fit_window_scale
+
+    for shape in canvas.shapes:
+        canvas.select_shapes(shapes=[shape])
+        assert canvas.scale > fit_window_scale
+        _wait_for_fit_selection(qtbot=qtbot, win=_win)
+
+    canvas.select_shapes(shapes=canvas.shapes[:2])
+    _wait_for_fit_selection(qtbot=qtbot, win=_win)
+
+
+@pytest.mark.gui
+def test_fit_selection_follows_label_list_arrow_keys(
+    *, qtbot: QtBot, _win: MainWindow
+) -> None:
+    canvas = _win._canvas_widgets.canvas
+    label_list = _win._docks.label_list
+    _win.set_fit_selection_mode(True)
+    canvas.select_shapes(shapes=[canvas.shapes[0]])
+    label_list.setFocus()
+
+    qtbot.keyClick(label_list, Qt.Key.Key_Down)
+
+    assert canvas.selected_shapes == [canvas.shapes[1]]
+    _wait_for_fit_selection(qtbot=qtbot, win=_win)
+
+
+@pytest.mark.gui
+def test_fit_selection_centers_shape_at_image_edge(
+    *, qtbot: QtBot, _win: MainWindow
+) -> None:
+    canvas = _win._canvas_widgets.canvas
+    shape = canvas.shapes[0]
+    shape.points = np.array([[0, 0], [120, 0], [120, 90], [0, 90]], dtype=float)
+    _win.set_fit_selection_mode(True)
+
+    canvas.select_shapes(shapes=[shape])
+
+    _wait_for_fit_selection(qtbot=qtbot, win=_win)
+    # Scrolling alone cannot center a corner shape.
+    assert not canvas.get_view_offset().isNull()
+
+
+@pytest.mark.gui
+def test_fit_selection_keeps_view_when_selection_clears(*, _win: MainWindow) -> None:
+    canvas = _win._canvas_widgets.canvas
+    _win.set_fit_selection_mode(True)
+    canvas.select_shapes(shapes=[canvas.shapes[0]])
+    scale = canvas.scale
+    offset = canvas.get_view_offset()
+    scroll_values = [bar.value() for bar in _win._canvas_widgets.scroll_bars.values()]
+
+    canvas.deselect_shape()
+
+    assert canvas.scale == scale
+    assert canvas.get_view_offset() == offset
+    assert [
+        bar.value() for bar in _win._canvas_widgets.scroll_bars.values()
+    ] == scroll_values
+
+
+@pytest.mark.gui
+def test_fit_selection_fits_clicked_shape_on_release(
+    *, qtbot: QtBot, _win: MainWindow
+) -> None:
+    _win.set_fit_selection_mode(True)
+
+    select_shape(qtbot=qtbot, canvas=_win._canvas_widgets.canvas, shape_index=1)
+
+    _wait_for_fit_selection(qtbot=qtbot, win=_win)
+
+
+@pytest.mark.gui
+def test_fit_selection_keeps_view_while_dragging_new_selection(
+    *, qtbot: QtBot, _win: MainWindow
+) -> None:
+    canvas = _win._canvas_widgets.canvas
+    _win.set_fit_selection_mode(True)
+    scale = canvas.scale
+    shape = canvas.shapes[1]
+    points_before = shape.points.copy()
+    start = image_to_widget_pos(
+        canvas=canvas, image_pos=QPointF(*shape.points.mean(axis=0))
+    )
+
+    drag_canvas(
+        qtbot=qtbot,
+        canvas=canvas,
+        button=Qt.MouseButton.LeftButton,
+        start=start,
+        end=start + QPoint(20, 10),
+    )
+    qtbot.wait(50)
+
+    assert canvas.selected_shapes == [shape]
+    assert not np.array_equal(shape.points, points_before)
+    assert canvas.scale == scale
+
+
+@pytest.mark.gui
+def test_manual_zoom_leaves_fit_selection(*, _win: MainWindow) -> None:
+    canvas = _win._canvas_widgets.canvas
+    _win.set_fit_selection_mode(True)
+    canvas.select_shapes(shapes=[canvas.shapes[0]])
+
+    _win._add_zoom(increment=1.1, pos=None)
+    scale = canvas.scale
+    canvas.select_shapes(shapes=[canvas.shapes[1]])
+
+    assert _win._zoom_mode == _ZoomMode.MANUAL_ZOOM
+    assert not _win._actions.fit_selection.isChecked()
+    assert canvas.scale == scale
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("keep_prev_scale", [True, False])
+def test_fit_selection_shows_whole_image_after_navigation(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    keep_prev_scale: bool,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated"),
+        config_overrides={"keep_prev_scale": keep_prev_scale},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    win.set_fit_selection_mode(True)
+    canvas.select_shapes(shapes=[canvas.shapes[0]])
+    _wait_for_fit_selection(qtbot=qtbot, win=win)
+
+    win._open_next_image()
+    # Keep Previous Zoom decides the mode on an unvisited image, as for Fit
+    # to Width.
+    assert win._zoom_mode == (
+        _ZoomMode.FIT_SELECTION if keep_prev_scale else _ZoomMode.FIT_WINDOW
+    )
+    _wait_for_fitted_image(qtbot=qtbot, win=win)
+    assert canvas.get_view_offset().isNull()
+    win.set_fit_selection_mode(True)
+    canvas.select_shapes(shapes=[canvas.shapes[0]])
+    _wait_for_fit_selection(qtbot=qtbot, win=win)
+
+    win._open_prev_image()
+    assert win._zoom_mode == _ZoomMode.FIT_SELECTION
+    _wait_for_fitted_image(qtbot=qtbot, win=win)
+    assert canvas.get_view_offset().isNull()
