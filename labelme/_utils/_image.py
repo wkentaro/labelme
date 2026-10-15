@@ -126,7 +126,12 @@ def get_image_decode_requirement(*, image_data: bytes) -> ImageDecodeRequirement
     buffer = QtCore.QBuffer()
     buffer.setData(image_data)
     buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
-    reader = QtGui.QImageReader(buffer)
+    return get_reader_decode_requirement(reader=QtGui.QImageReader(buffer))
+
+
+def get_reader_decode_requirement(
+    *, reader: QtGui.QImageReader
+) -> ImageDecodeRequirement | None:
     size = reader.size()
     if not size.isValid():
         return None

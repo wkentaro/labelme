@@ -34,6 +34,7 @@ from . import _ai_models
 from . import _automation
 from . import _config
 from . import _utils
+from ._image_prefetcher import ImagePrefetcher
 from ._label_file import LABEL_FILE_SUFFIX
 from ._label_file import RASTER_MAX_SIDE
 from ._label_file import Annotation
@@ -335,6 +336,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._auto_save_path: str | None = None
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
+        self._image_prefetcher = ImagePrefetcher()
         self._model_manager = ModelManager(parent=self)
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
@@ -2512,7 +2514,15 @@ class MainWindow(QtWidgets.QMainWindow):
             label_file_path = None
             shapes = []
         t0 = time.time()
-        image = QtGui.QImage.fromData(annotation.image_data)
+        image = (
+            None
+            if file_list_image_path is None
+            else self._image_prefetcher.take(
+                image_path=file_list_image_path, image_data=annotation.image_data
+            )
+        )
+        if image is None:
+            image = QtGui.QImage.fromData(annotation.image_data)
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
@@ -2612,6 +2622,16 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._actions.image.setEnabled(True)
         self._sync_navigation_actions()
+        self._image_prefetcher.retain(
+            current=None
+            if file_list_image_path is None
+            else (file_list_image_path, annotation.image_data, image),
+            neighbors=[
+                path
+                for step in (1, -1)
+                if (path := self._get_neighbor_image_path(step=step)) is not None
+            ],
+        )
         # A load never pulls the keyboard out of the File List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
@@ -2716,6 +2736,7 @@ class MainWindow(QtWidgets.QMainWindow):
             a0.ignore()
             return
         self._save_writer.shutdown()
+        self._image_prefetcher.shutdown()
         self._window_state.setValue(WINDOW_SIZE_KEY, self.size())
         self._window_state.setValue(WINDOW_POSITION_KEY, self.pos())
         self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())

@@ -1,6 +1,7 @@
 from ._image import ImageDecodeRequirement
 from ._image import apply_exif_orientation
 from ._image import get_image_decode_requirement
+from ._image import get_reader_decode_requirement
 from ._image import img_arr_to_b64
 from ._image import img_arr_to_data
 from ._image import img_b64_to_arr
@@ -23,6 +24,7 @@ __all__ = [
     "apply_exif_orientation",
     "direction_angle",
     "get_image_decode_requirement",
+    "get_reader_decode_requirement",
     "img_arr_to_b64",
     "img_arr_to_data",
     "img_b64_to_arr",
