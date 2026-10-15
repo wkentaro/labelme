@@ -247,6 +247,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _image_path: str | None
     _file_list_image_path: str | None
     _loaded_image_paths: list[str]
+    _file_list_root_prefix: str | None
     _file_search_pattern: re.Pattern[str]
     _prev_image_path: str | None
     _viewport_states: dict[str, _ViewportState]
@@ -1136,6 +1137,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image_path = None
         self._file_list_image_path = None
         self._loaded_image_paths = []
+        self._file_list_root_prefix = None
         self._file_search_pattern = re.compile("")
         self._prev_image_path = None
         self._viewport_states = {}
@@ -1811,7 +1813,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Qt moves the selection before asking to save or staging the next
         # session, so retain the exact prior UI state for rollback.
         if not self._can_continue() or not self._load_file(
-            image_or_label_path=current_item.text()
+            image_or_label_path=_file_list_item_path(current_item)
         ):
             self._restore_file_list_state(item=previous_item)
 
@@ -1987,7 +1989,8 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         self._label_file_path = label_path
         items = self._docks.file_list.findItems(
-            self._file_list_image_path or self._image_path, Qt.MatchFlag.MatchExactly
+            self._file_list_label(self._file_list_image_path or self._image_path),
+            Qt.MatchFlag.MatchExactly,
         )
         if len(items) > 1:
             raise RuntimeError("There are duplicate files.")
@@ -2741,7 +2744,7 @@ class MainWindow(QtWidgets.QMainWindow):
         current_path = self._file_list_image_path
         # Closing an Image retains its selected row as the navigation origin.
         if current_path is None and (item := self._docks.file_list.currentItem()):
-            current_path = item.text()
+            current_path = _file_list_item_path(item)
         try:
             current = paths.index(current_path or "")
         except ValueError:
@@ -2751,7 +2754,7 @@ class MainWindow(QtWidgets.QMainWindow):
             range(current - 1, -1, -1) if step == -1 else range(current + 1, len(paths))
         )
         return next(
-            (paths[i] for i in indices if self._file_search_pattern.search(paths[i])),
+            (paths[i] for i in indices if self._matches_file_search(paths[i])),
             None,
         )
 
@@ -3374,6 +3377,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
             self._loaded_image_paths = []
+            self._file_list_root_prefix = None
             self._refresh_file_list()
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
@@ -3428,7 +3432,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for i in range(self._docks.file_list.count()):
             item = self._docks.file_list.item(i)
             assert item
-            lst.append(item.text())
+            lst.append(_file_list_item_path(item))
         return lst
 
     def import_dropped_image_files(self, *, image_files: list[str]) -> None:
@@ -3462,14 +3466,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.file_dock.setToolTip("")
 
         self._prev_opened_dir = root_dir
+        # Matches the normpath'd paths _scan_image_files returns.
+        self._file_list_root_prefix = os.path.join(os.path.normpath(root_dir), "")
         self._loaded_image_paths = _scan_image_files(root_dir=root_dir)
         self._refresh_file_list()
 
     def _refresh_file_list(self) -> None:
         image_paths = [
-            path
-            for path in self._loaded_image_paths
-            if self._file_search_pattern.search(path)
+            path for path in self._loaded_image_paths if self._matches_file_search(path)
         ]
 
         file_list = self._docks.file_list
@@ -3478,7 +3482,9 @@ class MainWindow(QtWidgets.QMainWindow):
             for image_path in image_paths:
                 file_list.addItem(
                     _make_image_list_item(
-                        image_path=image_path, output_dir=self._output_dir
+                        image_path=image_path,
+                        label=self._file_list_label(image_path),
+                        output_dir=self._output_dir,
                     )
                 )
             if self._file_list_image_path in image_paths:
@@ -3486,6 +3492,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._sync_navigation_actions()
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
+
+    def _file_list_label(self, image_path: str, /) -> str:
+        # Paths under the opened folder are shown relative to it so the
+        # File List stays readable; the full path stays in the tooltip.
+        prefix = self._file_list_root_prefix
+        if prefix and image_path.startswith(prefix):
+            return image_path[len(prefix) :]
+        return image_path
+
+    def _matches_file_search(self, image_path: str, /) -> bool:
+        return bool(self._file_search_pattern.search(self._file_list_label(image_path)))
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
         self._status_mouse_pos = QtCore.QPointF(mouse_pos)
@@ -3592,9 +3609,11 @@ def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
 
 
 def _make_image_list_item(
-    *, image_path: str, output_dir: Path | None
+    *, image_path: str, label: str, output_dir: Path | None
 ) -> QtWidgets.QListWidgetItem:
-    item = QtWidgets.QListWidgetItem(image_path)
+    item = QtWidgets.QListWidgetItem(label)
+    item.setData(Qt.ItemDataRole.UserRole, image_path)
+    item.setToolTip(image_path)
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
     label_path = _resolve_label_path(
         image_or_label_path=image_path, output_dir=output_dir
@@ -3602,6 +3621,10 @@ def _make_image_list_item(
     has_label = QtCore.QFile.exists(label_path)
     item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
     return item
+
+
+def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:
+    return item.data(Qt.ItemDataRole.UserRole)
 
 
 def _shape_to_dict(shape: Shape, /) -> ShapeDict:
