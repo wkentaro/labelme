@@ -700,7 +700,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Fit to S&election"),
             slot=self.set_fit_selection_mode,
             shortcut=shortcuts["fit_selection"],
-            icon="phosphor/selection.svg",
+            icon="phosphor/scan.svg",
             tip=self.tr("Zoom to the selected shapes whenever the selection changes"),
             checkable=True,
         )
