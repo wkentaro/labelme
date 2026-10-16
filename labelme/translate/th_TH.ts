@@ -92,6 +92,29 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>โฟลเดอร์แอนโนเทชัน</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>โฟลเดอร์เดียวกับรูปภาพ</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>เลือกโฟลเดอร์แอนโนเทชัน…</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>ไม่พบ: %s · โฟลเดอร์เดียวกับรูปภาพ</translation>
+    </message>
+    <message>
+        <source>Next to images</source>
+        <translation>โฟลเดอร์เดียวกับรูปภาพ</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>

@@ -62,6 +62,7 @@ from ._utils import ImageDecodeRequirement
 from ._utils import get_image_decode_requirement
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
+from ._widgets import AnnotationFolderFooter
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
 from ._widgets import EmptyStateWidget
@@ -132,6 +133,7 @@ class _DockWidgets(NamedTuple):
     label_dock: QtWidgets.QDockWidget
     unique_label_list: UniqueLabelQListWidget
     file_dock: QtWidgets.QDockWidget
+    annotation_folder_footer: AnnotationFolderFooter
     file_search: QtWidgets.QLineEdit
     file_search_error: QtWidgets.QLabel
     file_list: QtWidgets.QListWidget
@@ -239,7 +241,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
 
-    _output_dir: Path | None
+    _output_dir_value: Path | None = None
     _image: QtGui.QImage
     _annotation: Annotation | None
     _label_file_path: str | None
@@ -1345,6 +1347,11 @@ class MainWindow(QtWidgets.QMainWindow):
         label.setObjectName("Label List")
         label.setWidget(unique_label_list)
 
+        annotation_folder_footer = AnnotationFolderFooter(
+            on_choose=self.prompt_output_dir, on_next_to_images=self._clear_output_dir
+        )
+        # Shown once a folder is open; see _refresh_file_list.
+        annotation_folder_footer.hide()
         file_search = QtWidgets.QLineEdit()
         file_search.setPlaceholderText(self.tr("Search Filename"))
         file_search.textChanged.connect(self._on_file_search_changed)
@@ -1361,6 +1368,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_list_layout.addWidget(file_search)
         file_list_layout.addWidget(file_search_error)
         file_list_layout.addWidget(file_list)
+        file_list_layout.addWidget(annotation_folder_footer)
         file = QtWidgets.QDockWidget(self.tr("Image List"), self)
         file.setObjectName("Files")
         file_list_container = QtWidgets.QWidget()
@@ -1401,6 +1409,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label_dock=label,
             unique_label_list=unique_label_list,
             file_dock=file,
+            annotation_folder_footer=annotation_folder_footer,
             file_search=file_search,
             file_search_error=file_search_error,
             file_list=file_list,
@@ -2850,18 +2859,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             return
 
-        # Reload the current image against the candidate directory and keep
-        # the previous directory when that reload fails, so a bad candidate
-        # never becomes the autosave target.
-        previous_output_dir = self._output_dir
-        self._output_dir = Path(output_dir)
-        if self._file_list_image_path is not None and not self._load_file(
-            image_or_label_path=self._file_list_image_path
-        ):
-            self._output_dir = previous_output_dir
+        if not self._switch_output_dir(Path(output_dir)):
             return
-
-        self._auto_save_path = None
+        self._docks.annotation_folder_footer.set_missing(None)
         assert self._file_list_root_prefix is not None
         self._remember_output_dir(opened_dir=self._file_list_root_prefix)
         self.statusBar().showMessage(
@@ -2869,7 +2869,37 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.statusBar().show()
 
+    def _clear_output_dir(self) -> None:
+        if not self._can_continue() or not self._switch_output_dir(None):
+            return
+        self._docks.annotation_folder_footer.set_missing(None)
+        if self._file_list_root_prefix is not None:
+            self._remember_output_dir(opened_dir=self._file_list_root_prefix)
+
+    def _switch_output_dir(self, output_dir: Path | None, /) -> bool:
+        # Reload the current image against the candidate directory and keep
+        # the previous directory when that reload fails, so a bad candidate
+        # never becomes the autosave target.
+        previous_output_dir = self._output_dir
+        self._output_dir = output_dir
+        if self._file_list_image_path is not None and not self._load_file(
+            image_or_label_path=self._file_list_image_path
+        ):
+            self._output_dir = previous_output_dir
+            return False
+        self._auto_save_path = None
         self._refresh_file_list()
+        return True
+
+    @property
+    def _output_dir(self) -> Path | None:
+        return self._output_dir_value
+
+    @_output_dir.setter
+    def _output_dir(self, value: Path | None, /) -> None:
+        # The Annotation Folder footer mirrors every change, wherever it comes from.
+        self._output_dir_value = value
+        self._docks.annotation_folder_footer.set_folder(value)
 
     def _save_label_file(self, *, save_as: bool) -> None:
         assert not self._image.isNull(), "cannot save empty image"
@@ -3417,6 +3447,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._loaded_image_paths = []
             self._file_list_root_prefix = None
             self._refresh_file_list()
+            self._docks.annotation_folder_footer.set_missing(None)
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
                 self.tr("Image List is disabled when an annotation file is opened")
@@ -3473,6 +3504,9 @@ class MainWindow(QtWidgets.QMainWindow):
             # The load ran before the Image List knew the neighbors.
             self._prefetch_neighbors()
 
+        # Set only once the open succeeded, so a rolled-back open keeps the
+        # previous session's warning.
+        self._docks.annotation_folder_footer.set_missing(missing_output_dir)
         # Shown last so the loading messages do not replace it.
         if missing_output_dir is not None:
             self.statusBar().showMessage(
@@ -3496,9 +3530,12 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _remember_output_dir(self, *, opened_dir: str) -> None:
-        assert self._output_dir is not None
         folders = self._remembered_output_dirs()
-        folders[os.path.abspath(opened_dir)] = os.path.abspath(self._output_dir)
+        key = os.path.abspath(opened_dir)
+        if self._output_dir is None:
+            folders.pop(key, None)
+        else:
+            folders[key] = os.path.abspath(self._output_dir)
         self._window_state.setValue(ANNOTATION_FOLDERS_KEY, folders)
 
     def _open_dir_with_dialog(self) -> None:
@@ -3569,9 +3606,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._refresh_file_list()
 
     def _refresh_file_list(self) -> None:
-        self._actions.change_output_dir.setEnabled(
-            self._file_list_root_prefix is not None
-        )
+        # The Annotation Folder is remembered per opened folder, so choosing
+        # one needs a folder.
+        has_folder = self._file_list_root_prefix is not None
+        self._actions.change_output_dir.setEnabled(has_folder)
+        self._docks.annotation_folder_footer.setVisible(has_folder)
         image_paths = [
             path for path in self._loaded_image_paths if self._matches_file_search(path)
         ]

@@ -92,6 +92,29 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Папка аннотаций</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>Рядом с изображениями</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Выбрать папку аннотаций…</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Не найдена: %s · рядом с изображениями</translation>
+    </message>
+    <message>
+        <source>Next to images</source>
+        <translation>Рядом с изображениями</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>

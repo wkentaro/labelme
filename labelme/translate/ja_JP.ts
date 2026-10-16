@@ -92,6 +92,29 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>アノテーションフォルダー</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>画像と同じ場所</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>アノテーションフォルダーを選択…</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>見つかりません: %s · 画像と同じ場所</translation>
+    </message>
+    <message>
+        <source>Next to images</source>
+        <translation>画像と同じ場所</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>

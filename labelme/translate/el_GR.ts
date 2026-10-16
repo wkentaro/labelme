@@ -92,6 +92,29 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Φάκελος σχολιασμών</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>Δίπλα στις εικόνες</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Επιλογή φακέλου σχολιασμών…</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Δεν βρέθηκε: %s · δίπλα στις εικόνες</translation>
+    </message>
+    <message>
+        <source>Next to images</source>
+        <translation>Δίπλα στις εικόνες</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>

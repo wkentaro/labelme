@@ -92,6 +92,29 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Annotációs mappa</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>A képek mellett</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Annotációs mappa kiválasztása…</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Nem található: %s · a képek mellett</translation>
+    </message>
+    <message>
+        <source>Next to images</source>
+        <translation>A képek mellett</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>
