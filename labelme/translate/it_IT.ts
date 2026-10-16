@@ -288,10 +288,6 @@
 </translation>
     </message>
     <message>
-        <source>Open image or label file</source>
-        <translation>Apri un&apos;immagine o un file di etichette</translation>
-    </message>
-    <message>
         <source>Open Dir</source>
         <translation>Apri directory</translation>
     </message>
@@ -318,20 +314,8 @@
 </translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Salva le etichette in un file</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Salva &amp;come</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp;Elimina file</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Elimina il file di etichette corrente</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -392,6 +376,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Elimina forme</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Salva il file di annotazioni</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Salva il file di annotazioni con un nuovo nome</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Incorpora immagine nel file di annotazioni</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Salva una copia dell’immagine all’interno del file di annotazioni</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Apri un’immagine o un file di annotazioni</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>&amp;Elimina file di annotazioni</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Elimina il file di annotazioni corrente</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -484,18 +496,6 @@ forme</translation>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Modifica etichetta</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Salva le etichette con un nuovo nome di file</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>Incorpora immagine nel file di etichette</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Salva una copia dell&apos;immagine all&apos;interno del file di etichette</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -728,10 +728,6 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
         <translation>Salvataggio non riuscito</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Errore nel salvataggio dei dati delle etichette</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -742,6 +738,10 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
     <message>
         <source>Fit to Selection</source>
         <translation>Adatta alla selezione</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Errore durante il salvataggio del file di annotazioni</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -792,14 +792,6 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
         <translation>%s . Le annotazioni saranno salvate/caricate in %s</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>File di etichette (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Scegli un file</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Attenzione</translation>
     </message>
@@ -822,6 +814,10 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
     <message>
         <source>Unsaved changes</source>
         <translation>Modifiche non salvate</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Impossibile aprire il file di annotazioni selezionato: {path}</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -898,10 +894,6 @@ Please select a different model or use AI-Box mode.</source>
 Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Errore durante l’eliminazione del file di annotazione</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>Immagine non trovata</translation>
     </message>
@@ -930,16 +922,8 @@ Posizione prevista: {path}</translation>
         <translation>&amp;Mantieni zoom precedente</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Eliminare definitivamente questo file di etichette? Questa azione non può essere annullata.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Formati consentiti: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Impossibile aprire il file di etichette selezionato: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -976,6 +960,22 @@ Posizione prevista: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Le impostazioni sono gestite tramite --config per questa sessione</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>Salva file di annotazioni</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>File di annotazioni (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Eliminare definitivamente questo file di annotazioni? Questa azione non può essere annullata.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Errore durante l’eliminazione del file di annotazioni</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1171,8 +1171,8 @@ Posizione prevista: {path}</translation>
         <translation>salvataggio automatico salva automaticamente</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Incorpora l’immagine nel file JSON delle etichette.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Incorpora immagine nel file di annotazioni</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1259,8 +1259,8 @@ Posizione prevista: {path}</translation>
         <translation>Etichette predefinite</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Incorpora immagine nel file di etichette</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Incorpora l’immagine nel file di annotazioni.</translation>
     </message>
     <message>
         <source>Label validation</source>

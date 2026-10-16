@@ -287,10 +287,6 @@
         <translation>เปิด (&amp;O)</translation>
     </message>
     <message>
-        <source>Open image or label file</source>
-        <translation>เปิดรูปหรือไฟล์เลเบล</translation>
-    </message>
-    <message>
         <source>Open Dir</source>
         <translation>เปิดโฟลเดอร์</translation>
     </message>
@@ -316,20 +312,8 @@
         <translation>บันทึก (&amp;S)</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>บันทึกเลเบลลงไฟล์</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>บันทึกเป็น (&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>ลบไฟล์ (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>ลบไฟล์เลเบลปัจจุบัน</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -390,6 +374,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>ลบรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>บันทึกไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>บันทึกไฟล์คำอธิบายประกอบด้วยชื่อใหม่</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>ฝังรูปภาพในไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>เก็บสำเนาของรูปภาพไว้ในไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>เปิดรูปภาพหรือไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>ลบไฟล์คำอธิบายประกอบ (&amp;D)</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>ลบไฟล์คำอธิบายประกอบปัจจุบัน</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -478,18 +490,6 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>แก้ไขเลเบล (&amp;E)</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>บันทึกเลเบลด้วยชื่อไฟล์ใหม่</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>ฝังรูปภาพในไฟล์เลเบล</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>เก็บสำเนาของรูปภาพไว้ในไฟล์เลเบล</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -722,10 +722,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>บันทึกไม่สำเร็จ</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>เกิดข้อผิดพลาดในการบันทึกข้อมูลเลเบล</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -736,6 +732,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Fit to Selection</source>
         <translation>พอดีส่วนที่เลือก</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -786,14 +786,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s แอนโนเทชันจะถูกบันทึก/โหลดใน %s</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>ไฟล์เลเบล (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>เลือกไฟล์</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>คำเตือน</translation>
     </message>
@@ -816,6 +808,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unsaved changes</source>
         <translation>การเปลี่ยนแปลงที่ยังไม่ได้บันทึก</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>ไม่สามารถเปิดไฟล์คำอธิบายประกอบที่เลือก: {path}</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -892,10 +888,6 @@ Please select a different model or use AI-Box mode.</source>
 กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>เกิดข้อผิดพลาดขณะลบไฟล์คำอธิบายประกอบ</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>ไม่พบรูปภาพ</translation>
     </message>
@@ -924,16 +916,8 @@ Expected location: {path}</source>
         <translation>คงระดับซูมก่อนหน้า (&amp;K)</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>ลบไฟล์เลเบลนี้อย่างถาวร? การกระทำนี้ไม่สามารถยกเลิกได้</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>รูปแบบที่อนุญาต: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>ไม่สามารถเปิดไฟล์ป้ายกำกับที่เลือก: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -970,6 +954,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>บันทึกไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>ไฟล์คำอธิบายประกอบ (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>ลบไฟล์คำอธิบายประกอบนี้อย่างถาวรหรือไม่ การกระทำนี้ไม่สามารถเลิกทำได้</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>เกิดข้อผิดพลาดขณะลบไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1165,8 +1165,8 @@ Expected location: {path}</source>
         <translation>บันทึกอัตโนมัติ บันทึกโดยอัตโนมัติ</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>ฝังรูปภาพไว้ในไฟล์ JSON ของเลเบล</translation>
+        <source>Embed image in annotation file</source>
+        <translation>ฝังรูปภาพในไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1253,8 +1253,8 @@ Expected location: {path}</source>
         <translation>เลเบลที่กำหนดไว้ล่วงหน้า</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>ฝังรูปภาพในไฟล์เลเบล</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>ฝังรูปภาพไว้ในไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>Label validation</source>

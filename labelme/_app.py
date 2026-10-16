@@ -428,7 +428,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._save_label_file(save_as=False),
             shortcut=shortcuts["save"],
             icon="phosphor/floppy-disk.svg",
-            tip=self.tr("Save labels to file"),
+            tip=self.tr("Save the annotation file"),
             enabled=False,
         )
         save_as = image_action(
@@ -436,7 +436,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
             icon="phosphor/floppy-disk.svg",
-            tip=self.tr("Save the labels under a new file name"),
+            tip=self.tr("Save the annotation file under a new name"),
         )
         save_auto = action(
             text=self.tr("Save &Automatically"),
@@ -446,8 +446,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         save_auto.setChecked(self._config["auto_save"])
         save_with_image_data = action(
-            text=self.tr("Embed Image in Label File"),
-            tip=self.tr("Store a copy of the image inside the label file"),
+            text=self.tr("Embed Image in Annotation File"),
+            tip=self.tr("Store a copy of the image inside the annotation file"),
             checkable=True,
             checked=self._config["with_image_data"],
         )
@@ -463,7 +463,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self._open_file_with_dialog,
             shortcut=shortcuts["open"],
             icon="phosphor/folder-open.svg",
-            tip=self.tr("Open image or label file"),
+            tip=self.tr("Open an image or annotation file"),
         )
         open_dir = action(
             text=self.tr("Open Dir"),
@@ -480,11 +480,11 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Close current file"),
         )
         delete_file = action(
-            text=self.tr("&Delete File"),
+            text=self.tr("&Delete Annotation File"),
             slot=self.delete_file,
             shortcut=shortcuts["delete_file"],
             icon="phosphor/file-x.svg",
-            tip=self.tr("Delete current label file"),
+            tip=self.tr("Delete the current annotation file"),
             enabled=False,
         )
         keep_prev_action = action(
@@ -2021,7 +2021,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_save_failure(label_path=label_path, error=e)
             if show_error:
                 self.show_error_message(
-                    title=self.tr("Error saving label data"),
+                    title=self.tr("Error saving annotation file"),
                     message=self.tr("<b>%s</b>") % e,
                 )
             return False
@@ -2880,12 +2880,12 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         label_path, _ = QtWidgets.QFileDialog.getSaveFileName(
             parent=self,
-            caption=self.tr("Choose File"),
+            caption=self.tr("Save Annotation File"),
             dir=_resolve_label_path(
                 image_or_label_path=self._file_list_image_path or self._image_path,
                 output_dir=self._output_dir,
             ),
-            filter=self.tr("Label files (*%s)") % LABEL_FILE_SUFFIX,
+            filter=self.tr("Annotation files (*%s)") % LABEL_FILE_SUFFIX,
         )
         return label_path
 
@@ -2928,7 +2928,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def delete_file(self) -> None:
         msg = self.tr(
-            "Permanently delete this label file? This action cannot be undone."
+            "Permanently delete this annotation file? This action cannot be undone."
         )
         if not self._confirm_deletion(message=msg):
             return
@@ -2942,7 +2942,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         except OSError as error:
             self.show_error_message(
-                title=self.tr("Error deleting label file"), message=str(error)
+                title=self.tr("Error deleting annotation file"), message=str(error)
             )
             return
         self._failed_save_path = None
@@ -3354,7 +3354,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         if file_kind == "label":
             message = self.tr(
-                "The selected label file could not be opened: {path}"
+                "The selected annotation file could not be opened: {path}"
             ).format(path=path)
         else:
             message = self.tr(

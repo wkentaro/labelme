@@ -259,10 +259,6 @@
         <translation>&amp;Зберегти</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Зберегти мітки у файл</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>&amp;Зберегти як</translation>
     </message>
@@ -288,10 +284,6 @@
         <translation>&amp;Відкрити</translation>
     </message>
     <message>
-        <source>Open image or label file</source>
-        <translation>Відкрити файл зображення або мітки</translation>
-    </message>
-    <message>
         <source>Open Dir</source>
         <translation>Відкрити каталог</translation>
     </message>
@@ -302,14 +294,6 @@
     <message>
         <source>Close current file</source>
         <translation>Закрити поточний файл</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp;Видалити файл</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Видалити поточний файл мітки</translation>
     </message>
     <message>
         <source>Keep Previous Annotation</source>
@@ -539,6 +523,34 @@ Shapes</source>
         <translation>Припасувати вікно</translation>
     </message>
     <message>
+        <source>Save the annotation file</source>
+        <translation>Зберегти файл анотацій</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Зберегти файл анотацій під новою назвою</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Вбудувати зображення у файл анотацій</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Зберігає копію зображення всередині файлу анотацій</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Відкрити зображення або файл анотацій</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>&amp;Видалити файл анотацій</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Видалити поточний файл анотацій</translation>
+    </message>
+    <message>
         <source>&amp;Quit</source>
         <translation>&amp;Вийти</translation>
     </message>
@@ -651,10 +663,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Не вдалося зберегти</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Помилка збереження даних мітки</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -665,6 +673,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Fit to Selection</source>
         <translation>За виділенням</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Помилка збереження файлу анотацій</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -715,14 +727,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s . Анотації будуть збережені/завантажені в %s</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>Файли міток (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Виберіть файл</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Увага</translation>
     </message>
@@ -747,6 +751,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Незбережені зміни</translation>
     </message>
     <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Не вдалося відкрити вибраний файл анотацій: {path}</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Вибрати теку зображень</translation>
     </message>
@@ -761,18 +769,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>Багатокутник</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Зберегти мітки під новою назвою файлу</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>Вбудувати зображення у файл мітки</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Зберігає копію зображення всередині файлу мітки</translation>
     </message>
     <message>
         <source>Insert the clipboard shapes into this image</source>
@@ -895,10 +891,6 @@ Please select a different model or use AI-Box mode.</source>
 Будь ласка, виберіть іншу модель або використовуйте режим AI-Box.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Помилка видалення файлу анотацій</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>Зображення не знайдено</translation>
     </message>
@@ -927,16 +919,8 @@ Expected location: {path}</source>
         <translation>&amp;Зберегти попередній масштаб</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Остаточно видалити цей файл мітки? Цю дію неможливо скасувати.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Дозволені формати: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Не вдалося відкрити вибраний файл міток: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -973,6 +957,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Параметри керуються через --config для цього сеансу</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>Зберегти файл анотацій</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Файли анотацій (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Остаточно видалити цей файл анотацій? Цю дію неможливо скасувати.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Помилка видалення файлу анотацій</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1168,8 +1168,8 @@ Expected location: {path}</source>
         <translation>автозбереження автоматичне збереження</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Вбудовує зображення у JSON-файл мітки.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Вбудовувати зображення у файл анотацій</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1256,8 +1256,8 @@ Expected location: {path}</source>
         <translation>Попередньо визначені мітки</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Вбудовувати зображення у файл мітки</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Вбудовує зображення у файл анотацій.</translation>
     </message>
     <message>
         <source>Label validation</source>

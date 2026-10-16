@@ -259,10 +259,6 @@
         <translation>Αποθήκευση</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Αποθήκευση ετικετών σε αρχείο</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Αποθήκευση &amp;Ως</translation>
     </message>
@@ -288,10 +284,6 @@
         <translation>Ανοιγμα</translation>
     </message>
     <message>
-        <source>Open image or label file</source>
-        <translation>Άνοιγμα αρχείου εικόνας ή ετικέτας</translation>
-    </message>
-    <message>
         <source>Open Dir</source>
         <translation>Άνοιγμα Dir</translation>
     </message>
@@ -302,14 +294,6 @@
     <message>
         <source>Close current file</source>
         <translation>Κλείσιμο τρέχοντος αρχείου</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp; Διαγραφή αρχείου</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Διαγραφή τρέχοντος αρχείου ετικέτας</translation>
     </message>
     <message>
         <source>Keep Previous Annotation</source>
@@ -538,6 +522,34 @@ Shapes</source>
         <translation>Προσαρμογή παραθύρου</translation>
     </message>
     <message>
+        <source>Save the annotation file</source>
+        <translation>Αποθήκευση αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Αποθήκευση αρχείου επισημειώσεων με νέο όνομα</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Ενσωμάτωση εικόνας στο αρχείο επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Αποθηκεύει ένα αντίγραφο της εικόνας μέσα στο αρχείο επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Άνοιγμα εικόνας ή αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>&amp;Διαγραφή αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Διαγραφή τρέχοντος αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
         <source>&amp;Quit</source>
         <translation>Τερματισμός</translation>
     </message>
@@ -650,10 +662,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Η αποθήκευση απέτυχε</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Σφάλμα κατά την αποθήκευση δεδομένων ετικέτας</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -664,6 +672,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Fit to Selection</source>
         <translation>Προσαρμογή στην επιλογή</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Σφάλμα αποθήκευσης αρχείου επισημειώσεων</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -714,14 +726,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s . Οι σχολιασμοί θα αποθηκεύονται/φορτώνονται στο %s</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>Αρχεία ετικετών (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Επιλογή αρχείου</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Προσοχή</translation>
     </message>
@@ -746,6 +750,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Μη αποθηκευμένες αλλαγές</translation>
     </message>
     <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Δεν ήταν δυνατό το άνοιγμα του επιλεγμένου αρχείου επισημειώσεων: {path}</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Επιλογή φακέλου εικόνων</translation>
     </message>
@@ -760,18 +768,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>Πολύγωνο</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Αποθήκευση των ετικετών με νέο όνομα αρχείου</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>Ενσωμάτωση εικόνας στο αρχείο ετικέτας</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Αποθηκεύει ένα αντίγραφο της εικόνας μέσα στο αρχείο ετικέτας</translation>
     </message>
     <message>
         <source>Insert the clipboard shapes into this image</source>
@@ -894,10 +890,6 @@ Please select a different model or use AI-Box mode.</source>
 Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Σφάλμα διαγραφής αρχείου επισημείωσης</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>Η εικόνα δεν βρέθηκε</translation>
     </message>
@@ -926,16 +918,8 @@ Expected location: {path}</source>
         <translation>&amp;Διατήρηση προηγούμενου ζουμ</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Οριστική διαγραφή αυτού του αρχείου ετικετών; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Επιτρεπόμενες μορφές: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Δεν ήταν δυνατό το άνοιγμα του επιλεγμένου αρχείου ετικετών: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -972,6 +956,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>Αποθήκευση αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Αρχεία επισημειώσεων (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Οριστική διαγραφή αυτού του αρχείου επισημειώσεων; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Σφάλμα διαγραφής αρχείου επισημειώσεων</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1167,8 +1167,8 @@ Expected location: {path}</source>
         <translation>αυτόματη αποθήκευση</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Ενσωματώνει την εικόνα στο αρχείο JSON της ετικέτας.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Ενσωμάτωση εικόνας στο αρχείο επισημειώσεων</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1255,8 +1255,8 @@ Expected location: {path}</source>
         <translation>Προκαθορισμένες ετικέτες</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Ενσωμάτωση εικόνας στο αρχείο ετικέτας</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Ενσωματώνει την εικόνα στο αρχείο επισημειώσεων.</translation>
     </message>
     <message>
         <source>Label validation</source>

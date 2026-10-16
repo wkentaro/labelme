@@ -288,10 +288,6 @@
 </translation>
     </message>
     <message>
-        <source>Open image or label file</source>
-        <translation>打开图像或标签文件</translation>
-    </message>
-    <message>
         <source>Open Dir</source>
         <translation>打开目录</translation>
     </message>
@@ -318,20 +314,8 @@
 </translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>将标签保存到文件</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>另存为(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>删除文件(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>删除当前标签文件</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -392,6 +376,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>删除形状</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>保存标注文件</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>以新名称保存标注文件</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>将图像嵌入标注文件</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>在标注文件中保存一份图像副本</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>打开图像或标注文件</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>删除标注文件(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>删除当前标注文件</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -484,18 +496,6 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>编辑标签(&amp;E)</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>以新的文件名保存标签</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>将图像嵌入标签文件</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>在标签文件中保存一份图像副本</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -728,10 +728,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>保存失败</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>保存标签数据时出错</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -742,6 +738,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Fit to Selection</source>
         <translation>适合选区</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>保存标注文件时出错</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -792,14 +792,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s。标注将在 %s 中保存或加载</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>标签文件 (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>选择文件</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>注意</translation>
     </message>
@@ -822,6 +814,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unsaved changes</source>
         <translation>尚未保存的更改</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>无法打开所选标注文件: {path}</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -898,10 +894,6 @@ Please select a different model or use AI-Box mode.</source>
 请另选模型，或改用 AI-Box 模式。</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>删除标注文件出错</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>找不到图像</translation>
     </message>
@@ -930,16 +922,8 @@ Expected location: {path}</source>
         <translation>保留上一次的缩放(&amp;K)</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>永久删除该标签文件？此操作无法撤销。</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>支持的格式: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>无法打开所选标签文件: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -976,6 +960,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>本次会话的设置通过 --config 管理</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>保存标注文件</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>标注文件 (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>永久删除该标注文件？此操作无法撤销。</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>删除标注文件出错</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1171,8 +1171,8 @@ Expected location: {path}</source>
         <translation>自动保存 自动储存</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>将图像嵌入标签 JSON 文件中。</translation>
+        <source>Embed image in annotation file</source>
+        <translation>将图像嵌入标注文件</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1259,8 +1259,8 @@ Expected location: {path}</source>
         <translation>预定义标签</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>将图像嵌入标签文件</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>将图像嵌入标注文件中。</translation>
     </message>
     <message>
         <source>Label validation</source>

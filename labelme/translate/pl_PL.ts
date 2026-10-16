@@ -287,10 +287,6 @@
         <translation>&amp;Otwórz</translation>
     </message>
     <message>
-        <source>Open image or label file</source>
-        <translation>Otwórz obraz lub plik etykiet</translation>
-    </message>
-    <message>
         <source>Open Dir</source>
         <translation>Otwórz folder</translation>
     </message>
@@ -316,20 +312,8 @@
         <translation>&amp;Zapisz</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Zapisz etykiety do pliku</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Zapisz &amp;jako</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp;Usuń plik</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Usuń bieżący plik etykiet</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -390,6 +374,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Usuń kształty</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Zapisz plik adnotacji</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Zapisz plik adnotacji pod nową nazwą</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Osadź obraz w pliku adnotacji</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Zapisuje kopię obrazu wewnątrz pliku adnotacji</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Otwórz obraz lub plik adnotacji</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>&amp;Usuń plik adnotacji</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Usuń bieżący plik adnotacji</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -478,18 +490,6 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Edytuj etykietę</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Zapisz etykiety pod nową nazwą pliku</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>Osadź obraz w pliku etykiet</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Zapisuje kopię obrazu wewnątrz pliku etykiet</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -722,10 +722,6 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Zapisywanie nie powiodło się</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Błąd zapisu etykiet</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -736,6 +732,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>Fit to Selection</source>
         <translation>Dopasuj do zaznaczenia</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Błąd zapisu pliku adnotacji</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -786,14 +786,6 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>%s. Adnotacje będą zapisywane/wczytywane w %s</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>Pliki etykiet (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Wybierz plik</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Uwaga</translation>
     </message>
@@ -816,6 +808,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>Unsaved changes</source>
         <translation>Niezapisane zmiany</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Nie można otworzyć wybranego pliku adnotacji: {path}</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -892,10 +888,6 @@ Please select a different model or use AI-Box mode.</source>
 Wybierz inny model lub użyj trybu AI-Box.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Błąd usuwania pliku adnotacji</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>Nie znaleziono obrazu</translation>
     </message>
@@ -924,16 +916,8 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Zachowaj poprzedni zoom (&amp;K)</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Trwale usunąć ten plik etykiet? Tej operacji nie można cofnąć.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Dozwolone formaty: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Nie można otworzyć wybranego pliku etykiet: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -970,6 +954,22 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Ustawienia są zarządzane przez --config w tej sesji</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>Zapisz plik adnotacji</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Pliki adnotacji (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Trwale usunąć ten plik adnotacji? Tej operacji nie można cofnąć.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Błąd usuwania pliku adnotacji</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1165,8 +1165,8 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>autozapis automatyczne zapisywanie</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Osadza obraz w pliku JSON etykiety.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Osadź obraz w pliku adnotacji</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1253,8 +1253,8 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Predefiniowane etykiety</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Osadź obraz w pliku etykiet</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Osadza obraz w pliku adnotacji.</translation>
     </message>
     <message>
         <source>Label validation</source>

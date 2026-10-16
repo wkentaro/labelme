@@ -288,10 +288,6 @@
 </translation>
     </message>
     <message>
-        <source>Open image or label file</source>
-        <translation>Görüntü veya etiket dosyası aç</translation>
-    </message>
-    <message>
         <source>Open Dir</source>
         <translation>Dizin Aç</translation>
     </message>
@@ -318,20 +314,8 @@
 </translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Etiketleri dosyaya kaydet</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>&amp;Farklı Kaydet</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>Dosyayı &amp;Sil</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Geçerli etiket dosyasını sil</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -392,6 +376,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Şekilleri Sil</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Açıklama dosyasını kaydet</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Açıklama dosyasını yeni bir adla kaydet</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Görüntüyü Açıklama Dosyasına Göm</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Görüntünün bir kopyasını açıklama dosyasının içinde saklar</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Görüntü veya açıklama dosyası aç</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>Açıklama Dosyasını &amp;Sil</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Geçerli açıklama dosyasını sil</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -484,18 +496,6 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Etiketi &amp;Düzenle</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Etiketleri yeni bir dosya adıyla kaydet</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>Görüntüyü Etiket Dosyasına Göm</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Görüntünün bir kopyasını etiket dosyasının içinde saklar</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -728,10 +728,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Kaydetme başarısız</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Etiket verileri kaydedilirken hata oluştu</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -742,6 +738,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Fit to Selection</source>
         <translation>Seçime Sığdır</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -792,14 +792,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>%s . Açıklamalar %s dizinine kaydedilecek veya bu dizinden yüklenecek</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>Etiket dosyaları (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Dosya Seç</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Dikkat</translation>
     </message>
@@ -822,6 +814,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Unsaved changes</source>
         <translation>Kaydedilmemiş değişiklikler</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Seçilen açıklama dosyası açılamadı: {path}</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -898,10 +894,6 @@ Please select a different model or use AI-Box mode.</source>
 Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Açıklama dosyası silinirken hata oluştu</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>Görüntü bulunamadı</translation>
     </message>
@@ -930,16 +922,8 @@ Beklenen konum: {path}</translation>
         <translation>Önceki &amp;Yakınlaştırmayı Koru</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Bu etiket dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>İzin verilen biçimler: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Seçilen etiket dosyası açılamadı: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -976,6 +960,22 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Bu oturumda ayarlar --config ile yönetiliyor</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>Açıklama Dosyasını Kaydet</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Açıklama dosyaları (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Bu açıklama dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Açıklama dosyası silinirken hata oluştu</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1171,8 +1171,8 @@ Beklenen konum: {path}</translation>
         <translation>otomatik kaydet otomatik kayıt</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Görüntüyü etiket JSON dosyasına gömer.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Görüntüyü açıklama dosyasına göm</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1259,8 +1259,8 @@ Beklenen konum: {path}</translation>
         <translation>Önceden tanımlı etiketler</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Görüntüyü etiket dosyasına göm</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Görüntüyü açıklama dosyasına gömer.</translation>
     </message>
     <message>
         <source>Label validation</source>
