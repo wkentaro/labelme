@@ -216,16 +216,16 @@
         <translation>Annotation starten</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Öffnen Sie zunächst ein Bild oder einen Ordner mit Bildern.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Ordner öffnen</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Bild öffnen</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Ordner öffnen</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -288,10 +288,6 @@
 </translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>Verzeichnis öffnen</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Nächstes Bild</translation>
     </message>
@@ -316,14 +312,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>Speichern &amp;unter</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>&amp;Ausgabeverzeichnis ändern</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Ändern, wo Annotationen geladen/gespeichert werden</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -516,6 +504,22 @@ Formen</translation>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>&amp;Annotationsordner ändern…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Auswählen, wo Annotationsdateien gelesen und gespeichert werden</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Ordner öffnen…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Ordner mit Bildern öffnen</translation>
     </message>
     <message>
         <source>Copy to Clipboard</source>
@@ -792,14 +796,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>%s - Bild oder Annotationen öffnen</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Annotationen im Verzeichnis speichern/laden</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Annotationen werden in %s gespeichert/geladen</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Achtung</translation>
     </message>
@@ -892,6 +888,14 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
 Please select a different model or use AI-Box mode.</source>
         <translation>%s unterstützt keine Punkt-Eingaben.
 Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Annotationsordner auswählen</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Annotationsordner: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

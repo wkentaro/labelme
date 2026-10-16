@@ -216,16 +216,16 @@
         <translation>Bắt đầu chú thích</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Mở một hình ảnh hoặc thư mục hình ảnh để bắt đầu.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Mở thư mục</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Mở hình ảnh</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Mở thư mục</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -287,10 +287,6 @@
         <translation>Mở(&amp;O)</translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>Mở Thư mục</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Hình ảnh Tiếp theo(&amp;N)</translation>
     </message>
@@ -314,14 +310,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>Lưu thành(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Thay đổi Thư mục Đầu ra(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Thay đổi nơi chú thích được tải/lưu</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -490,6 +478,22 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Chỉnh sửa Nhãn(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Thay đổi thư mục chú thích (&amp;A)…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Chọn nơi đọc và lưu tệp chú thích</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Mở thư mục…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Mở thư mục hình ảnh</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -778,14 +782,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>%s - Mở hình ảnh hoặc chú thích</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Lưu/Tải Chú thích trong Thư mục</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Chú thích sẽ được lưu/tải trong %s</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Chú ý</translation>
     </message>
@@ -886,6 +882,14 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
 Please select a different model or use AI-Box mode.</source>
         <translation>%s không hỗ trợ gợi ý điểm.
 Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Chọn thư mục chú thích</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Thư mục chú thích: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

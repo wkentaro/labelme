@@ -30,6 +30,10 @@ _Avoid_: class, category, tag, name; also avoid "label" to mean the Annotation F
 The on-disk persisted form of one Annotation, stored as JSON. There is one Annotation File per Image. Identified in code as `LabelFile` / `LabelData` for historical reasons — that legacy name is not promoted as glossary vocabulary.
 _Avoid_: label file, JSON file (when more precision is helpful), annotation json.
 
+**Annotation Folder**:
+The folder where Labelme reads and writes Annotation Files instead of next to each Image. Optional and unset by default, so each Annotation File sits next to its Image. When it is set, Labelme does not fall back to an Annotation File next to the Image. Set it with `--output` or Change Annotation Folder…; it lasts for the current session only. Save As can still write the current Image's Annotation File elsewhere.
+_Avoid_: output dir, save dir, label folder, annotations dir.
+
 **Group**:
 A set of Shapes sharing a common `group_id`, marking them as belonging together. The reason for grouping is application-defined — instance segmentation uses it for the visible parts of one occluded object, but the concept is general and not tied to any one use case.
 _Avoid_: instance (it is only one application of grouping), cluster.

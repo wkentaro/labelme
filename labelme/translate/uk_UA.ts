@@ -216,16 +216,16 @@
         <translation>Почати анотування</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Щоб почати, відкрийте зображення або папку із зображеннями.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Відкрити папку</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Відкрити зображення</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Відкрити папку</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -271,21 +271,9 @@
         <translation>Зберегти автоматично</translation>
     </message>
     <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>&amp;Змінити каталог виводу</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Змінити місце завантаження/збереження анотацій</translation>
-    </message>
-    <message>
         <source>&amp;Open
 </source>
         <translation>&amp;Відкрити</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Відкрити каталог</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -539,8 +527,24 @@ Shapes</source>
         <translation>Зберігає копію зображення всередині файлу анотацій</translation>
     </message>
     <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Змінити папку &amp;анотацій…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Вибрати, де читати й зберігати файли анотацій</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Відкрити зображення або файл анотацій</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Відкрити папку…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Відкрити папку із зображеннями</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
@@ -717,14 +721,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>%s - Open Image or Annotations</source>
         <translation>%s - Відкрити зображення або анотації</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Зберегти/завантажити анотації в каталозі</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Анотації будуть збережені/завантажені в %s</translation>
     </message>
     <message>
         <source>Attention</source>
@@ -957,6 +953,14 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Параметри керуються через --config для цього сеансу</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Вибрати папку анотацій</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Папка анотацій: %s</translation>
     </message>
     <message>
         <source>Save Annotation File</source>

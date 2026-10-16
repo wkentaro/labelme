@@ -216,16 +216,16 @@
         <translation>アノテーションを開始</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>画像または画像フォルダーを開いて開始します。</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>フォルダーを開く</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>画像を開く</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>フォルダーを開く</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -288,11 +288,6 @@
 </translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>ディレクトリを
-開く</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>次の
 画像(&amp;N)</translation>
@@ -319,14 +314,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>名前を付けて保存(&amp;A)</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>出力先を変更(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>アノテーションの読み込み/保存先を変更</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -503,6 +490,22 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>ラベルを編集(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>アノテーションフォルダーを変更(&amp;A)…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>アノテーションファイルの読み込みと保存の場所を選択</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>フォルダーを開く…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>画像フォルダーを開く</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -792,14 +795,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>%s - 画像またはアノテーションを開く</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - アノテーションの保存/読み込みディレクトリ</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s - アノテーションは %s に保存/読み込みされます</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>注意</translation>
     </message>
@@ -900,6 +895,14 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
 Please select a different model or use AI-Box mode.</source>
         <translation>%s はポイントプロンプトに対応していません。
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - アノテーションフォルダーを選択</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>アノテーションフォルダー: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

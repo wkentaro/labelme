@@ -216,16 +216,16 @@
         <translation>Начать аннотирование</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Чтобы начать, откройте изображение или папку с изображениями.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Открыть папку</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Открыть изображение</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Открыть папку</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -282,10 +282,6 @@
         <translation>Выйти из приложения</translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>Открыть папку</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Следующее изображение (&amp;N)</translation>
     </message>
@@ -304,14 +300,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>Сохранить как</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Изменить папку вывода (&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Изменить место загрузки/сохранения аннотаций</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -475,6 +463,22 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Редактировать метку</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Изменить папку &amp;аннотаций…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Выбрать, где читать и сохранять файлы аннотаций</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Открыть папку…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Открыть папку с изображениями</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -759,14 +763,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - Открыть изображение или аннотации</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s — сохранять/загружать разметку в папке</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s. Разметка будет сохраняться/загружаться в %s</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Внимание</translation>
     </message>
@@ -889,6 +885,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s не поддерживает точечные запросы.
 Выберите другую модель или используйте режим AI-Box.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Выбрать папку аннотаций</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Папка аннотаций: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

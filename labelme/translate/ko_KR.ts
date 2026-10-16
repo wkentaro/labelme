@@ -216,16 +216,16 @@
         <translation>주석 작업 시작</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>시작하려면 이미지 또는 이미지 폴더를 여세요.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>폴더 열기</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>이미지 열기</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>폴더 열기</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -287,10 +287,6 @@
         <translation>열기(&amp;O)</translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>폴더 열기</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>다음 이미지(&amp;N)</translation>
     </message>
@@ -314,14 +310,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>다른 이름으로 저장(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>출력 폴더 변경(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>주석을 로드/저장할 위치 변경</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -490,6 +478,22 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>레이블 편집(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>주석 폴더 변경(&amp;A)…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>주석 파일을 읽고 저장할 위치 선택</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>폴더 열기…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>이미지 폴더 열기</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -778,14 +782,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>%s - 이미지 또는 주석 열기</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 폴더에 주석 저장/로드</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . 주석이 %s에 저장/로드됩니다</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>주의</translation>
     </message>
@@ -886,6 +882,14 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
 Please select a different model or use AI-Box mode.</source>
         <translation>%s은(는) 포인트 프롬프트를 지원하지 않습니다.
 다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - 주석 폴더 선택</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>주석 폴더: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

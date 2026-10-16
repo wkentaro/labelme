@@ -216,16 +216,16 @@
         <translation>Ξεκινήστε την επισήμανση</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Ανοίξτε μια εικόνα ή έναν φάκελο εικόνων για να ξεκινήσετε.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Άνοιγμα φακέλου</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Άνοιγμα εικόνας</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Άνοιγμα φακέλου</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -271,21 +271,9 @@
         <translation>Αυτόματη αποθήκευση</translation>
     </message>
     <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>&amp;Αλλαγή Οδηγίας Εξόδου</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Αλλαγή του πού φορτώνονται/αποθηκεύονται οι σχολιασμοί</translation>
-    </message>
-    <message>
         <source>&amp;Open
 </source>
         <translation>Ανοιγμα</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Άνοιγμα Dir</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -538,8 +526,24 @@ Shapes</source>
         <translation>Αποθηκεύει ένα αντίγραφο της εικόνας μέσα στο αρχείο επισημειώσεων</translation>
     </message>
     <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Αλλαγή φακέλου &amp;σχολιασμών…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Επιλογή του πού διαβάζονται και αποθηκεύονται τα αρχεία σχολιασμών</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Άνοιγμα εικόνας ή αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Άνοιγμα φακέλου…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Άνοιγμα φακέλου εικόνων</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
@@ -716,14 +720,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>%s - Open Image or Annotations</source>
         <translation>%s - Άνοιγμα εικόνας ή επισημειώσεων</translation>
-    </message>
-    <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Αποθήκευση/Φόρτωση σχολιασμών στον κατάλογο</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Οι σχολιασμοί θα αποθηκεύονται/φορτώνονται στο %s</translation>
     </message>
     <message>
         <source>Attention</source>
@@ -956,6 +952,14 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Επιλογή φακέλου σχολιασμών</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Φάκελος σχολιασμών: %s</translation>
     </message>
     <message>
         <source>Save Annotation File</source>

@@ -216,16 +216,16 @@
         <translation>Inizia ad annotare</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Apri un&apos;immagine o una cartella di immagini per iniziare.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Apri cartella</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Apri immagine</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Apri cartella</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -288,10 +288,6 @@
 </translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>Apri directory</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Immagine &amp;successiva</translation>
     </message>
@@ -316,14 +312,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>Salva &amp;come</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>&amp;Cambia directory di output</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Cambia dove vengono caricate/salvate le annotazioni</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -496,6 +484,22 @@ forme</translation>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Modifica etichetta</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Cambia cartella &amp;annotazioni…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Scegli dove leggere e salvare i file di annotazioni</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Apri cartella…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Apri una cartella di immagini</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -784,14 +788,6 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
         <translation>%s - Apri immagine o annotazioni</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Salva/Carica annotazioni nella directory</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Le annotazioni saranno salvate/caricate in %s</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Attenzione</translation>
     </message>
@@ -892,6 +888,14 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
 Please select a different model or use AI-Box mode.</source>
         <translation>%s non supporta i prompt a punti.
 Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Scegli cartella annotazioni</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Cartella annotazioni: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

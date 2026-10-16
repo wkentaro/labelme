@@ -216,16 +216,16 @@
         <translation>開始標註</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
-        <translation>開啟影像或影像目錄以開始。</translation>
+        <source>Open an image or a folder of images to begin.</source>
+        <translation>開啟影像或影像資料夾以開始。</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>開啟資料夾</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>開啟影像</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>開啟目錄</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -288,10 +288,6 @@
 </translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>開啟資料夾</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>下一張影像(&amp;N)</translation>
     </message>
@@ -316,14 +312,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>另存新檔(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>變更輸出資料夾(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>變更標註的載入與儲存位置</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -496,6 +484,22 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>編輯標籤(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>變更標註資料夾(&amp;A)…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>選擇讀取與儲存標註檔案的位置</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>開啟資料夾…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>開啟影像資料夾</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -784,14 +788,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - 開啟影像或標註</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 在資料夾中儲存或載入標註</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s。標註將在 %s 中儲存或載入</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>注意</translation>
     </message>
@@ -892,6 +888,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s 不支援點提示。
 請選擇其他模型或使用 AI-Box 模式。</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - 選擇標註資料夾</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>標註資料夾：%s</translation>
     </message>
     <message>
         <source>Image not found</source>

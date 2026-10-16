@@ -216,16 +216,16 @@
         <translation>Begin met annoteren</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Open een afbeelding of een map met afbeeldingen om te beginnen.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Map openen</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Afbeelding openen</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Map openen</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -287,10 +287,6 @@
         <translation>&amp;Openen</translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>Map Openen</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Volgende &amp;Afbeelding</translation>
     </message>
@@ -314,14 +310,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>Opslaan &amp;als</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Uitvoermap &amp;wijzigen</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Wijzig waar annotaties worden geladen/opgeslagen</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -490,6 +478,22 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Label &amp;bewerken</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>&amp;Annotatiemap wijzigen…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Kies waar annotatiebestanden worden gelezen en opgeslagen</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Map openen…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Een map met afbeeldingen openen</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -778,14 +782,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>%s - Afbeelding of annotaties openen</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Annotaties Opslaan/Laden in Map</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Annotaties worden opgeslagen/geladen in %s</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Let op</translation>
     </message>
@@ -886,6 +882,14 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
 Please select a different model or use AI-Box mode.</source>
         <translation>%s ondersteunt geen puntinvoer.
 Selecteer een ander model of gebruik de AI-Box-modus.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Annotatiemap kiezen</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Annotatiemap: %s</translation>
     </message>
     <message>
         <source>Image not found</source>
