@@ -150,16 +150,18 @@ def intersects_rect(
         metrics = painter.fontMetrics()
         text = _label_text(label=shape.label, group_id=shape.group_id)
         label_x, label_y = anchor * context.scale
-        # The font's ascent-to-descent box covers descenders; on Windows,
-        # boundingRect(text) came out far larger than the drawn text.
+        # The font's ascent-to-descent box, padded by a line height on every
+        # side: glyphs from a fallback font (stacked marks in Burmese, for
+        # example) overhang it, and on Windows boundingRect(text) came out
+        # far larger than the drawn text.
+        line = metrics.height()
         text_rect = QtCore.QRectF(
             label_x,
             label_y - _OUTLINE_WIDTH - metrics.ascent(),
             metrics.horizontalAdvance(text),
             metrics.ascent() + metrics.descent(),
-        )
-        # One more pixel for anti-aliasing at the glyph edges.
-        extent = extent.united(text_rect.adjusted(-1, -1, 1, 1))
+        ).adjusted(-line, -line, line, line)
+        extent = extent.united(text_rect)
     return rect.intersects(extent)
 
 

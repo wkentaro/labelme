@@ -577,13 +577,28 @@ def test_intersects_rect_covers_mask_contour_outside_mask() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    ("label", "font_pixel_size"),
+    [
+        # Descenders drop below the baseline, past the small vertex markers.
+        ("gjpqy", 40),
+        # Stacked marks, often drawn from a fallback font, overhang the
+        # primary font's ascent and descent.
+        ("\u1019\u103c\u1014\u103a\u1019\u102c", 16),
+    ],
+)
 @pytest.mark.usefixtures("qapp")
-def test_intersects_rect_covers_label_descenders() -> None:
-    # Descenders drop below the baseline, past the small vertex markers.
+def test_intersects_rect_covers_label_glyphs(
+    *, label: str, font_pixel_size: int
+) -> None:
     shape = _shape(shape_type="point", points=[[60, 100]])
-    shape.label = "gjpqy"
+    shape.label = label
     _assert_intersects_every_painted_pixel(
-        shape=shape, scale=1, point_size=1, highlight=None, font_pixel_size=40
+        shape=shape,
+        scale=1,
+        point_size=1,
+        highlight=None,
+        font_pixel_size=font_pixel_size,
     )
 
 
