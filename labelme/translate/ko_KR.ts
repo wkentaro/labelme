@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>주석 폴더</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>이미지와 같은 위치</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>주석 폴더 선택…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{total}개 중 {annotated}개 주석 완료:</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>찾을 수 없음: %s · 이미지와 같은 위치</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{total}개 중 {annotated}개 주석 완료 · 이미지와 같은 위치</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>

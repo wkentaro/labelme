@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Açıklama Klasörü</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>Görüntülerin yanında</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Açıklama Klasörünü Seç…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{total} görüntüden {annotated} tanesi açıklamalı:</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Bulunamadı: %s · görüntülerin yanında</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{total} görüntüden {annotated} tanesi açıklamalı · görüntülerin yanında</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>

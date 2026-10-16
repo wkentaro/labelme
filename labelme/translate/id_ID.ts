@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Folder Anotasi</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>Di samping gambar</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Pilih Folder Anotasi…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} dari {total} dianotasi di</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Tidak ditemukan: %s · di samping gambar</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} dari {total} dianotasi · di samping gambar</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>

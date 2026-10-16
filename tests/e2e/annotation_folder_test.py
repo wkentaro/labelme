@@ -4,10 +4,13 @@ import shutil
 from pathlib import Path
 
 import pytest
+from PySide6 import QtGui
 from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import ANNOTATION_FOLDERS_KEY
+from labelme._app import MainWindow
 
 from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
@@ -124,15 +127,19 @@ def test_annotation_folder_menu_needs_an_opened_folder(
 ) -> None:
     win = main_win()
     change = win._actions.change_output_dir
+    footer = win._docks.annotation_folder_footer
     assert not change.isEnabled()
+    assert not footer.isVisibleTo(win)
 
     win._load_from_file_or_dir(file_or_dir=str(data_path / "raw"))
     assert change.isEnabled()
+    assert footer.isVisibleTo(win)
 
     # An opened annotation file has no folder to remember the choice for.
     label_file = next((data_path / "annotated").glob("*.json"))
     win._load_from_file_or_dir(file_or_dir=str(label_file))
     assert not change.isEnabled()
+    assert not footer.isVisibleTo(win)
 
 
 @pytest.mark.gui
@@ -278,3 +285,263 @@ def test_unsaved_changes_save_before_the_annotation_folder_switches(
     assert len(choices) == 1
     assert not save_dirs
     assert win._output_dir == remembered
+
+
+def _footer_text(win: MainWindow, /) -> str:
+    footer = win._docks.annotation_folder_footer
+    labels = footer.findChildren(QtWidgets.QLabel)
+    return " ".join(
+        label.text() for label in labels if label.isVisibleTo(footer) and label.text()
+    )
+
+
+def _menu_action(win: MainWindow, text: str, /) -> QtGui.QAction:
+    menu = win._docks.annotation_folder_footer.findChild(QtWidgets.QMenu)
+    assert menu is not None
+    for action in menu.actions():
+        if action.text() == text:
+            return action
+    raise AssertionError(text)
+
+
+def _check_states(win: MainWindow, /) -> list[Qt.CheckState]:
+    file_list = win._docks.file_list
+    return [file_list.item(i).checkState() for i in range(file_list.count())]
+
+
+@pytest.mark.gui
+def test_annotation_folder_footer_follows_changes(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    images = data_path / "annotated"
+    annotation_folder = tmp_path / "annotations"
+    annotation_folder.mkdir()
+    _choose_folder(monkeypatch=monkeypatch, folder=annotation_folder)
+
+    win = main_win(file_or_dir=images)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert _footer_text(win) == "3 of 3 annotated · next to images"
+    assert set(_check_states(win)) == {Qt.CheckState.Checked}
+
+    _menu_action(win, "Choose Annotation Folder…").trigger()
+    assert win._output_dir == annotation_folder
+    assert _footer_text(win) == "0 of 3 annotated in annotations"
+    assert set(_check_states(win)) == {Qt.CheckState.Unchecked}
+
+    _menu_action(win, "Next to Images").trigger()
+    assert win._output_dir is None
+    assert _footer_text(win) == "3 of 3 annotated · next to images"
+    assert set(_check_states(win)) == {Qt.CheckState.Checked}
+    assert win._window_state.value(ANNOTATION_FOLDERS_KEY) == {}
+
+
+@pytest.mark.gui
+def test_next_to_images_keeps_annotation_folder_when_unsaved_changes_are_kept(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win(file_or_dir=data_path / "raw", output_dir=tmp_path)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    monkeypatch.setattr(win, "_can_continue", lambda: False)
+
+    _menu_action(win, "Next to Images").trigger()
+
+    assert win._output_dir == tmp_path
+    assert not _menu_action(win, "Next to Images").isChecked()
+
+
+@pytest.mark.gui
+def test_missing_annotation_folder_warns_in_footer_until_changed(
+    *,
+    main_win: MainWinFactory,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
+    images = data_path / "raw"
+    missing = tmp_path / "unmounted"
+
+    win = main_win()
+    win._window_state.setValue(ANNOTATION_FOLDERS_KEY, {str(images): str(missing)})
+    win._load_from_file_or_dir(file_or_dir=str(images))
+    assert _footer_text(win) == "Not found: unmounted · next to images"
+    assert win._docks.annotation_folder_footer.toolTip() == str(missing)
+
+    # Opening another folder replaces the warning.
+    win._load_from_file_or_dir(file_or_dir=str(data_path / "annotated"))
+    assert _footer_text(win) == "3 of 3 annotated · next to images"
+
+
+@pytest.mark.gui
+def test_missing_folder_warning_survives_a_refused_folder(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    critical_messages: list[str],
+) -> None:
+    images = data_path / "raw"
+    missing = tmp_path / "unmounted"
+    broken = tmp_path / "broken"
+    broken.mkdir()
+    (broken / "2011_000003.json").write_text("not json")
+    _choose_folder(monkeypatch=monkeypatch, folder=broken)
+
+    win = main_win()
+    win._window_state.setValue(ANNOTATION_FOLDERS_KEY, {str(images): str(missing)})
+    win._load_from_file_or_dir(file_or_dir=str(images))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    _menu_action(win, "Choose Annotation Folder…").trigger()
+
+    qtbot.waitUntil(lambda: len(critical_messages) == 1)
+    assert win._output_dir is None
+    assert _footer_text(win) == "Not found: unmounted · next to images"
+
+
+@pytest.mark.gui
+def test_missing_folder_warning_survives_a_failed_open(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    critical_messages: list[str],
+) -> None:
+    images = data_path / "raw"
+    missing = tmp_path / "unmounted"
+    corrupt = tmp_path / "other" / "corrupt.jpg"
+    corrupt.parent.mkdir()
+    corrupt.write_bytes(b"not an image")
+
+    win = main_win()
+    win._window_state.setValue(ANNOTATION_FOLDERS_KEY, {str(images): str(missing)})
+    win._load_from_file_or_dir(file_or_dir=str(images))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    win._load_from_file_or_dir(file_or_dir=str(corrupt))
+
+    qtbot.waitUntil(lambda: len(critical_messages) == 1)
+    assert _footer_text(win) == "Not found: unmounted · next to images"
+
+
+@pytest.mark.gui
+def test_footer_counts_annotated_images(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    out = tmp_path / "out"
+    out.mkdir()
+    win = main_win(file_or_dir=data_path / "raw", output_dir=out)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert _footer_text(win) == "0 of 3 annotated in out"
+
+    monkeypatch.setattr(
+        win, "prompt_save_file_path", lambda: str(out / "2011_000003.json")
+    )
+    win._save_label_file(save_as=False)
+    qtbot.waitUntil(lambda: _footer_text(win) == "1 of 3 annotated in out")
+
+    # Images hidden by the search box still count.
+    win._docks.file_search.setText(r"000025")
+    assert _footer_text(win) == "1 of 3 annotated in out"
+
+
+@pytest.mark.gui
+def test_footer_is_hidden_without_images(
+    *, main_win: MainWinFactory, data_path: Path, tmp_path: Path
+) -> None:
+    win = main_win()
+    footer = win._docks.annotation_folder_footer
+    assert not footer.isVisibleTo(win)
+
+    # Dropped images are listed without an opened folder to remember an
+    # Annotation Folder for.
+    win.import_dropped_image_files(
+        image_files=[str(data_path / "raw" / "2011_000003.jpg")]
+    )
+    assert win.image_list
+    assert not footer.isVisibleTo(win)
+
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    win._load_from_file_or_dir(file_or_dir=str(empty))
+    assert not footer.isVisibleTo(win)
+
+
+@pytest.mark.gui
+def test_footer_counts_saves_and_deletes_of_a_hidden_image(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    out = tmp_path / "out"
+    out.mkdir()
+    win = main_win(file_or_dir=data_path / "raw", output_dir=out)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    # The open image is 2011_000003.jpg; hide it from the list.
+    win._docks.file_search.setText(r"000025")
+    assert _footer_text(win) == "0 of 3 annotated in out"
+
+    monkeypatch.setattr(
+        win, "prompt_save_file_path", lambda: str(out / "2011_000003.json")
+    )
+    win._save_label_file(save_as=False)
+    qtbot.waitUntil(lambda: (out / "2011_000003.json").exists())
+    assert _footer_text(win) == "1 of 3 annotated in out"
+
+    monkeypatch.setattr(win, "_confirm_deletion", lambda **_kwargs: True)
+    win.delete_file()
+    assert not (out / "2011_000003.json").exists()
+    assert _footer_text(win) == "0 of 3 annotated in out"
+
+
+@pytest.mark.gui
+def test_footer_recounts_once_per_save(
+    *,
+    main_win: MainWinFactory,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Images sharing a stem all match one Annotation File in a shared
+    # Annotation Folder, so a save re-checks every one of them.
+    images = tmp_path / "images"
+    for name in ("a", "b", "c"):
+        (images / name).mkdir(parents=True)
+        shutil.copy(data_path / "raw" / "2011_000003.jpg", images / name / "frame.jpg")
+    out = tmp_path / "out"
+    out.mkdir()
+    win = main_win(file_or_dir=images, output_dir=out)
+    footer = win._docks.annotation_folder_footer
+    counts: list[tuple[int, int]] = []
+    set_count = footer.set_count
+    monkeypatch.setattr(
+        footer,
+        "set_count",
+        lambda *, annotated, total: (
+            counts.append((annotated, total)),
+            set_count(annotated=annotated, total=total),
+        ),
+    )
+
+    (out / "frame.json").write_text("{}")
+    win._refresh_image_list_checkmarks(label_path=str(out / "frame.json"))
+    assert counts == [(3, 3)]

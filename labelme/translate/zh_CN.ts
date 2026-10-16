@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>标注文件夹</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>与图像在同一位置</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>选择标注文件夹…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>已标注 {annotated}/{total}，位于</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>找不到：%s · 与图像在同一位置</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>已标注 {annotated}/{total} · 与图像在同一位置</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>

@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>پوشهٔ حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>کنار تصاویر</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>انتخاب پوشهٔ حاشیه‌نویسی…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} از {total} حاشیه‌نویسی‌شده در</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>پیدا نشد: %s · کنار تصاویر</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} از {total} حاشیه‌نویسی‌شده · کنار تصاویر</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>

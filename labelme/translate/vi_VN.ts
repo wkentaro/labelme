@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Thư mục chú thích</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>Cùng chỗ với hình ảnh</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Chọn thư mục chú thích…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>Đã chú thích {annotated}/{total} trong</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Không tìm thấy: %s · cùng chỗ với hình ảnh</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>Đã chú thích {annotated}/{total} · cùng chỗ với hình ảnh</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>
