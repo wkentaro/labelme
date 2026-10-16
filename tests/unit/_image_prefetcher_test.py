@@ -63,3 +63,16 @@ def test_decode_rejects_file_replaced_after_reader_opened(
 
     monkeypatch.setattr(_image_prefetcher, "read_image_file", replace_then_read)
     assert _image_prefetcher._decode(str(path)) is None
+
+
+@pytest.mark.usefixtures("qapp")
+def test_retain_drops_current_image_over_cap(*, tmp_path: Path) -> None:
+    # 6000 x 6000 at 32 bits per pixel is about 137 MB, over the 128 MB cap.
+    image = QtGui.QImage(6000, 6000, QtGui.QImage.Format.Format_RGB32)
+    path = str(tmp_path / "big.png")
+    prefetcher = ImagePrefetcher()
+    try:
+        prefetcher.retain(current=(path, b"data", image), neighbors=[])
+        assert prefetcher.take(image_path=path, image_data=b"data") is None
+    finally:
+        prefetcher.shutdown()

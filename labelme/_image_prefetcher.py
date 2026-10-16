@@ -14,13 +14,13 @@ from ._utils import get_reader_decode_requirement
 
 _Decoded = tuple[bytes, QtGui.QImage] | None
 
+# An image larger than this decodes on demand instead, so the cached images
+# stay within a few hundred MB.
+# ponytail: fixed cap, derive it from free memory if large images need prefetch.
+_MAX_CACHED_MB: Final = 128
+
 
 def _decode(image_path: str, /) -> _Decoded:
-    # A neighbor larger than this decodes on demand instead, so two prefetched
-    # neighbors stay within a few hundred MB.
-    # ponytail: fixed cap, derive it from free memory if large images need prefetch.
-    MAX_PREFETCH_MB: Final = 128
-
     # A re-encoded image (EXIF rotation, TIFF, ...) would need decoding from
     # memory, through a Python-wrapped QBuffer whose virtual calls take the GIL
     # inside Qt's locks and can deadlock the GUI thread. Decode only files the
@@ -38,7 +38,7 @@ def _decode(image_path: str, /) -> _Decoded:
         # image is pixel-identical; unlike fromData, read() releases the GIL.
         reader = QtGui.QImageReader(image_path)
         requirement = get_reader_decode_requirement(reader=reader)
-        if requirement is None or requirement.required_mb > MAX_PREFETCH_MB:
+        if requirement is None or requirement.required_mb > _MAX_CACHED_MB:
             return None
         image_data = read_image_file(filename=image_path)
         with open(image_path, "rb") as f:
@@ -76,7 +76,10 @@ class ImagePrefetcher:
         # Keeps exactly these images, so memory stays bounded however far the
         # user navigates; the current one stays decoded for stepping back.
         decoded: dict[str, Future[_Decoded]] = {}
-        if current is not None:
+        if (
+            current is not None
+            and current[2].sizeInBytes() <= _MAX_CACHED_MB * 1024 * 1024
+        ):
             path, image_data, image = current
             decoded[path] = Future()
             decoded[path].set_result((image_data, image))
