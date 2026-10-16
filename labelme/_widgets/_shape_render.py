@@ -135,6 +135,9 @@ def intersects_rect(
         lo = np.minimum(lo, arrow.min(axis=0))
         hi = np.maximum(hi, arrow.max(axis=0))
     if shape.mask is not None:
+        # _paint_mask traces the contour between pixel centers, half a pixel
+        # outside the mask's first row and column.
+        lo = np.minimum(lo, points[0] - 0.5)
         hi = np.maximum(hi, points[0] + shape.mask.shape[::-1])
     largest_marker = context.point_size * _LARGEST_HIGHLIGHT.size_factor
     pad = largest_marker / 2 + _OUTLINE_WIDTH
