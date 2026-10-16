@@ -35,9 +35,12 @@ from . import _automation
 from . import _config
 from . import _utils
 from ._label_file import LABEL_FILE_SUFFIX
+from ._label_file import RASTER_MAX_SIDE
 from ._label_file import Annotation
 from ._label_file import ImageNotFoundError
+from ._label_file import ImageTooLargeError
 from ._label_file import LabelFileError
+from ._label_file import LabelFileReadError
 from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
 from ._label_file import read_image_file
@@ -76,7 +79,7 @@ from ._widgets._models_widget import ModelsWidget
 
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
-    FIT_WIDTH = enum.auto()
+    FIT_SELECTION = enum.auto()
     MANUAL_ZOOM = enum.auto()
 
 
@@ -85,9 +88,6 @@ _AI_CREATE_MODES: Final[tuple[str, ...]] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
 )
-# Qt's raster paint engine cannot handle an image whose width or height
-# exceeds this, regardless of how high the allocation limit is raised.
-_RASTER_MAX_SIDE: Final = 32767
 
 # Keys of the Window State store, shared by the restore, reset, and close paths.
 WINDOW_SIZE_KEY: Final[str] = "window/size"
@@ -174,7 +174,7 @@ class _Actions(NamedTuple):
     open_prev_img: QtGui.QAction
     keep_prev_zoom: QtGui.QAction
     fit_window: QtGui.QAction
-    fit_width: QtGui.QAction
+    fit_selection: QtGui.QAction
     brightness_contrast: QtGui.QAction
     zoom_in: QtGui.QAction
     zoom_out: QtGui.QAction
@@ -220,10 +220,15 @@ class MainWindow(QtWidgets.QMainWindow):
     _is_changed: bool = False
     _shape_clipboard: ShapeClipboard
     _zoom_mode: _ZoomMode
+    _is_canvas_pointer_active: bool = False
+    _is_fit_selection_deferred: bool = False
+    _fit_selection_timer: QtCore.QTimer
     _prev_opened_dir: str | None
     _canvas_widgets: _CanvasWidgets
     _status_bar: _StatusBarWidgets
     _status_mouse_pos: QtCore.QPointF | None
+    _zoom_mode_label: QtWidgets.QLabel
+    _zoom_mode_captions: dict[_ZoomMode, str]
     _docks: _DockWidgets
     _actions: _Actions
     _persistent_actions: dict[tuple[str, ...], QtGui.QAction]
@@ -242,6 +247,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _image_path: str | None
     _file_list_image_path: str | None
     _loaded_image_paths: list[str]
+    _file_list_root_prefix: str | None
     _file_search_pattern: re.Pattern[str]
     _prev_image_path: str | None
     _viewport_states: dict[str, _ViewportState]
@@ -278,6 +284,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets = self._setup_canvas()
 
         self._actions = self._setup_actions()
+        self._sync_zoom_mode_actions()
         self._persistent_actions = {
             ("auto_save",): self._actions.save_auto,
             ("with_image_data",): self._actions.save_with_image_data,
@@ -345,6 +352,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self._apply_zoom_to_canvas
         )
         self._canvas_widgets.scroll_area.installEventFilter(self)
+        # Fitting between the clicks of a double-click would move the shape
+        # out from under the second click, so wait out the interval.
+        self._fit_selection_timer = QtCore.QTimer(self)
+        self._fit_selection_timer.setSingleShot(True)
+        self._fit_selection_timer.setInterval(
+            QtGui.QGuiApplication.styleHints().mouseDoubleClickInterval()
+        )
+        self._fit_selection_timer.timeout.connect(self._apply_deferred_fit_selection)
+        self._canvas_widgets.canvas.installEventFilter(self)
 
         self.populate_mode_actions()
 
@@ -684,12 +700,12 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Keep the whole image visible when the window is resized"),
             checkable=True,
         )
-        fit_width = image_action(
-            text=self.tr("Fit to Wi&dth"),
-            slot=self.set_fit_width_mode,
-            shortcut=shortcuts["fit_width"],
-            icon="frame-arrows-horizontal.svg",
-            tip=self.tr("Match the image width to the window when it is resized"),
+        fit_selection = image_action(
+            text=self.tr("Fit to S&election"),
+            slot=self.set_fit_selection_mode,
+            shortcut=shortcuts["fit_selection"],
+            icon="phosphor/scan.svg",
+            tip=self.tr("Zoom to the selected shapes whenever the selection changes"),
             checkable=True,
         )
         brightness_contrast = image_action(
@@ -807,21 +823,35 @@ class MainWindow(QtWidgets.QMainWindow):
         label_model.modelReset.connect(update_shapes_present_actions)
         update_shapes_present_actions()
 
-        zoom_widget_action = QtWidgets.QWidgetAction(image_actions)
+        zoom_widget = self._canvas_widgets.zoom_widget
+        # The fit modes sit beside the field as icon buttons; the pressed one is
+        # the active mode.
+        zoom_row = QtWidgets.QHBoxLayout()
+        zoom_row.setSpacing(0)
+        for fit_action in (fit_window, fit_selection):
+            fit_button = QtWidgets.QToolButton()
+            fit_button.setDefaultAction(fit_action)
+            fit_button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+            zoom_row.addWidget(fit_button)
+        zoom_row.addWidget(zoom_widget)
+        # The caption names the active fit mode, so the toolbar shows the
+        # sticky zoom state in words.
+        self._zoom_mode_label = QtWidgets.QLabel()
+        self._zoom_mode_captions = {
+            _ZoomMode.FIT_WINDOW: self.tr("Fit to Window"),
+            _ZoomMode.FIT_SELECTION: self.tr("Fit to Selection"),
+            _ZoomMode.MANUAL_ZOOM: self.tr("Zoom"),
+        }
+        self._zoom_mode_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._zoom_mode_label.setBuddy(zoom_widget)
         zoom_box_layout = QtWidgets.QVBoxLayout()
-        zoom_label = QtWidgets.QLabel(self.tr("Zoom"))
-        zoom_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        zoom_label.setBuddy(self._canvas_widgets.zoom_widget)
-        zoom_box_layout.addWidget(zoom_label)
-        zoom_box_layout.addWidget(self._canvas_widgets.zoom_widget)
+        zoom_box_layout.addWidget(self._zoom_mode_label)
+        zoom_box_layout.addLayout(zoom_row)
+        zoom_widget_action = QtWidgets.QWidgetAction(image_actions)
         zoom_widget_action.setDefaultWidget(QtWidgets.QWidget())
         zoom_widget_action.defaultWidget().setLayout(zoom_box_layout)
-        self._canvas_widgets.zoom_widget.setToolTip(
-            self.tr("Ctrl+Wheel zooms the canvas")
-        )
 
         self._zoom_mode = _ZoomMode.FIT_WINDOW
-        fit_window.setChecked(True)
 
         self._canvas_widgets.canvas.vertex_selected.connect(remove_point.setEnabled)
         self._canvas_widgets.canvas.edge_selected.connect(add_point_to_edge.setEnabled)
@@ -909,7 +939,7 @@ class MainWindow(QtWidgets.QMainWindow):
             open_prev_img=open_prev_img,
             keep_prev_zoom=keep_prev_zoom,
             fit_window=fit_window,
-            fit_width=fit_width,
+            fit_selection=fit_selection,
             brightness_contrast=brightness_contrast,
             zoom_in=zoom_in,
             zoom_out=zoom_out,
@@ -1016,7 +1046,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._actions.keep_prev_zoom,
                 separator(),
                 self._actions.fit_window,
-                self._actions.fit_width,
+                self._actions.fit_selection,
                 separator(),
                 self._actions.brightness_contrast,
                 self._actions.toggle_keep_prev_brightness_contrast,
@@ -1060,7 +1090,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     self._actions.undo,
                     self._actions.brightness_contrast,
                     separator(),
-                    self._actions.fit_window,
                     self._actions.zoom_widget_action,
                     separator(),
                     select_ai_model,
@@ -1108,6 +1137,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image_path = None
         self._file_list_image_path = None
         self._loaded_image_paths = []
+        self._file_list_root_prefix = None
         self._file_search_pattern = re.compile("")
         self._prev_image_path = None
         self._viewport_states = {}
@@ -1240,6 +1270,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         canvas.shape_moved.connect(self.mark_dirty)
         canvas.selection_changed.connect(self._on_shape_selection_changed)
+        canvas.shape_moved.connect(self._cancel_deferred_fit_selection)
         canvas.shape_double_clicked.connect(self._edit_label)
         canvas.drawing_polygon.connect(self._on_drawing_polygon_changed)
 
@@ -1782,7 +1813,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Qt moves the selection before asking to save or staging the next
         # session, so retain the exact prior UI state for rollback.
         if not self._can_continue() or not self._load_file(
-            image_or_label_path=current_item.text()
+            image_or_label_path=_file_list_item_path(current_item)
         ):
             self._restore_file_list_state(item=previous_item)
 
@@ -1813,6 +1844,19 @@ class MainWindow(QtWidgets.QMainWindow):
             if n_selected and not n_unlocked
             else self.tr("Lock Shapes")
         )
+        self._is_fit_selection_deferred = False
+        # An emptied selection keeps the view: grabbing a vertex deselects, and
+        # zooming out then would move the image under the cursor.
+        if self._zoom_mode != _ZoomMode.FIT_SELECTION or not selected_shapes:
+            return
+        if self._is_canvas_pointer_active:
+            # A press can start dragging the shape it just selected, and a
+            # release can be the first half of a double-click, so fit once
+            # the pointer settles without a move.
+            self._is_fit_selection_deferred = True
+            self._fit_selection_timer.start()
+            return
+        self._adjust_scale()
 
     def _toggle_selected_shapes_lock(self) -> None:
         canvas = self._canvas_widgets.canvas
@@ -1944,13 +1988,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def _record_saved_annotation(self, *, label_path: str) -> None:
         assert self._image_path is not None
         self._label_file_path = label_path
-        items = self._docks.file_list.findItems(
-            self._file_list_image_path or self._image_path, Qt.MatchFlag.MatchExactly
-        )
-        if len(items) > 1:
+        image_path = self._file_list_image_path or self._image_path
+        rows = [row for row, path in enumerate(self.image_list) if path == image_path]
+        if len(rows) > 1:
             raise RuntimeError("There are duplicate files.")
-        if items:
-            items[0].setCheckState(Qt.CheckState.Checked)
+        if rows:
+            item = self._docks.file_list.item(rows[0])
+            assert item
+            item.setCheckState(Qt.CheckState.Checked)
         self._failed_save_path = None
         self._status_bar.save.setText(self.tr("Saved"))
         self._status_bar.save.setToolTip(label_path)
@@ -2204,12 +2249,21 @@ class MainWindow(QtWidgets.QMainWindow):
         # Setting the value fires valueChanged, which rescales the canvas.
         self._canvas_widgets.zoom_widget.setValue(value)
 
+        self._move_image_point_to_viewport(
+            image_pos=image_pos, viewport_pos=viewport_pos
+        )
+
+    def _move_image_point_to_viewport(
+        self, *, image_pos: QtCore.QPointF, viewport_pos: QtCore.QPointF
+    ) -> None:
+        canvas = self._canvas_widgets.canvas
+        viewport = self._canvas_widgets.scroll_area.viewport()
+        # Canvas geometry lags a scale change, so map against its size hint.
         target = canvas.transform_image_point_to_widget(
             image_pos, area=canvas.sizeHint()
         )
         current = canvas.mapFrom(viewport, viewport_pos)
-        shift = target - current
-        self._move_canvas_view(step=-shift, constrain_to_center=False)
+        self._move_canvas_view(step=current - target, constrain_to_center=False)
 
     def _set_zoom_to_original(self) -> None:
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
@@ -2229,9 +2283,27 @@ class MainWindow(QtWidgets.QMainWindow):
         target = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
         self._switch_zoom_mode(target)
 
-    def set_fit_width_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
-        target = _ZoomMode.FIT_WIDTH if value else _ZoomMode.MANUAL_ZOOM
+    def set_fit_selection_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+        target = _ZoomMode.FIT_SELECTION if value else _ZoomMode.MANUAL_ZOOM
         self._switch_zoom_mode(target)
+
+    def _end_canvas_pointer_activity(self) -> None:
+        self._is_canvas_pointer_active = False
+
+    def _cancel_deferred_fit_selection(self) -> None:
+        self._is_fit_selection_deferred = False
+
+    def _apply_deferred_fit_selection(self) -> None:
+        if not self._is_fit_selection_deferred:
+            return
+        if QtWidgets.QApplication.mouseButtons() != Qt.MouseButton.NoButton:
+            return  # the release restarts the timer
+        self._is_fit_selection_deferred = False
+        if (
+            self._zoom_mode == _ZoomMode.FIT_SELECTION
+            and self._canvas_widgets.canvas.selected_shapes
+        ):
+            self._adjust_scale()
 
     def _switch_zoom_mode(self, mode: _ZoomMode, /) -> None:
         self._zoom_mode = mode
@@ -2239,7 +2311,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _sync_zoom_mode_actions(self) -> None:
         self._actions.fit_window.setChecked(self._zoom_mode == _ZoomMode.FIT_WINDOW)
-        self._actions.fit_width.setChecked(self._zoom_mode == _ZoomMode.FIT_WIDTH)
+        self._actions.fit_selection.setChecked(
+            self._zoom_mode == _ZoomMode.FIT_SELECTION
+        )
+        self._zoom_mode_label.setText(self._zoom_mode_captions[self._zoom_mode])
 
     def _on_brightness_contrast_changed(self, qimage: QtGui.QImage, /) -> None:
         self._canvas_widgets.canvas.load_pixmap(
@@ -2313,7 +2388,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _read_annotation_file(self, *, label_path: str) -> Annotation | None:
         try:
-            return read_label_file(filename=label_path)
+            return read_label_file(filename=label_path, max_decode_mb=_max_decode_mb())
         except LabelFileError as e:
             self._show_file_open_error(
                 path=label_path, file_kind="label", exc=e, extra=None
@@ -2322,7 +2397,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _read_image_as_annotation(self, *, image_path: str) -> Annotation | None:
         try:
-            image_data = read_image_file(filename=image_path)
+            image_data = read_image_file(
+                filename=image_path, max_decode_mb=_max_decode_mb()
+            )
         except OSError as e:
             self._show_file_open_error(
                 path=image_path, file_kind="image", exc=e, extra=None
@@ -2449,7 +2526,7 @@ class MainWindow(QtWidgets.QMainWindow):
             original_limit = QtGui.QImageReader.allocationLimit()
             if (
                 requirement is not None
-                and max(requirement.width, requirement.height) <= _RASTER_MAX_SIDE
+                and max(requirement.width, requirement.height) <= RASTER_MAX_SIDE
                 and 0 < original_limit < requirement.required_mb
             ):
                 if not self._confirm_large_image_open(
@@ -2526,7 +2603,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # The zoom value can be unchanged across images, so update geometry
         # explicitly before restoring positions against the new scroll range.
         self._apply_zoom_to_canvas()
-        if target_viewport is not None:
+        # A load leaves nothing selected, so Fit to Selection shows the whole
+        # image; positions saved while zoomed to a shape no longer apply.
+        if target_viewport is not None and self._zoom_mode != _ZoomMode.FIT_SELECTION:
             for orientation, value in target_viewport.scroll_values.items():
                 self.set_scroll_value(orientation=orientation, value=value)
             self._canvas_widgets.canvas.reset_view_offset()
@@ -2552,6 +2631,23 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
+        if watched is self._canvas_widgets.canvas:
+            if event.type() in (
+                QtCore.QEvent.Type.MouseButtonPress,
+                QtCore.QEvent.Type.MouseButtonDblClick,
+            ):
+                self._is_canvas_pointer_active = True
+                self._fit_selection_timer.stop()
+            elif event.type() == QtCore.QEvent.Type.MouseButtonRelease:
+                # The canvas handles the release after this filter and may
+                # change the selection then, so stay active until it is done.
+                # A modal dialog that swallows a release leaves the flag set;
+                # that only delays the next fit by the timer interval.
+                QtCore.QTimer.singleShot(0, self._end_canvas_pointer_activity)
+                if self._is_fit_selection_deferred:
+                    # The timer fires after the canvas handles this release,
+                    # which reports a finished move through shape_moved.
+                    self._fit_selection_timer.start()
         if (
             watched is self._canvas_widgets.scroll_area
             and event.type() == QtCore.QEvent.Type.Resize
@@ -2570,13 +2666,39 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.scale = self._canvas_widgets.zoom_widget.scale
 
     def _adjust_scale(self) -> None:
-        if self._zoom_mode == _ZoomMode.FIT_WINDOW:
+        if (
+            self._zoom_mode == _ZoomMode.FIT_SELECTION
+            and (bounds := self._canvas_widgets.canvas.get_selected_shapes_bounds())
+            is not None
+        ):
+            self._fit_image_rect(rect=bounds)
+            return
+        if self._zoom_mode in (_ZoomMode.FIT_WINDOW, _ZoomMode.FIT_SELECTION):
             scale = self._fit_window_scale()
-        elif self._zoom_mode == _ZoomMode.FIT_WIDTH:
-            scale = self._fit_width_scale()
         else:
             scale = 1.0
         self._set_zoom(value=scale * 100, pos=None)
+
+    def _fit_image_rect(self, *, rect: QtCore.QRectF) -> None:
+        PADDING_RATIO: Final[float] = 0.15
+        MIN_PADDING: Final[float] = 24.0  # image pixels, so tiny shapes keep context
+        padding = max(max(rect.width(), rect.height()) * PADDING_RATIO, MIN_PADDING)
+        rect = rect.adjusted(-padding, -padding, padding, padding)
+        available = self._canvas_widgets.scroll_area.maximumViewportSize()
+        scale = min(
+            available.width() / rect.width(), available.height() / rect.height()
+        )
+        # The zoom control clamps the value, so center with the applied scale.
+        self._set_zoom(value=scale * 100, pos=None)
+
+        settled = self._canvas_widgets.canvas.compute_settled_viewport_size()
+        assert settled is not None
+        # Scrolling stops at the image edge; the render offset takes the rest,
+        # so a shape at the edge is still centered.
+        self._move_image_point_to_viewport(
+            image_pos=rect.center(),
+            viewport_pos=QtCore.QPointF(settled.width() / 2, settled.height() / 2),
+        )
 
     def _fit_window_scale(self) -> float:
         FIT_WINDOW_SCROLLBAR_MARGIN: Final[float] = 2.0
@@ -2587,22 +2709,6 @@ class MainWindow(QtWidgets.QMainWindow):
         scale_by_width = available_w / pixmap.width()
         scale_by_height = available_h / pixmap.height()
         return min(scale_by_width, scale_by_height)
-
-    def _fit_width_scale(self) -> float:
-        scroll_area = self._canvas_widgets.scroll_area
-        viewport_size = scroll_area.maximumViewportSize()
-        pixmap = self._canvas_widgets.canvas.pixmap
-        precision = 10 ** self._canvas_widgets.zoom_widget.decimals()
-        available_w = viewport_size.width()
-        scale_percent = available_w / pixmap.width() * 100
-        # The zoom control rounds on assignment; fitting must never round up
-        # far enough to create horizontal overflow.
-        scale_percent = math.floor(scale_percent * precision) / precision
-        if int(pixmap.height() * scale_percent / 100) > viewport_size.height():
-            available_w -= scroll_area.verticalScrollBar().sizeHint().width()
-            scale_percent = available_w / pixmap.width() * 100
-            scale_percent = math.floor(scale_percent * precision) / precision
-        return scale_percent / 100
 
     def _reset_layout(self) -> None:
         self._window_state.remove(WINDOW_LAYOUT_KEY)
@@ -2640,7 +2746,7 @@ class MainWindow(QtWidgets.QMainWindow):
         current_path = self._file_list_image_path
         # Closing an Image retains its selected row as the navigation origin.
         if current_path is None and (item := self._docks.file_list.currentItem()):
-            current_path = item.text()
+            current_path = _file_list_item_path(item)
         try:
             current = paths.index(current_path or "")
         except ValueError:
@@ -2650,7 +2756,7 @@ class MainWindow(QtWidgets.QMainWindow):
             range(current - 1, -1, -1) if step == -1 else range(current + 1, len(paths))
         )
         return next(
-            (paths[i] for i in indices if self._file_search_pattern.search(paths[i])),
+            (paths[i] for i in indices if self._matches_file_search(paths[i])),
             None,
         )
 
@@ -3236,7 +3342,13 @@ class MainWindow(QtWidgets.QMainWindow):
             message = self.tr(
                 "The selected image file could not be opened: {path}"
             ).format(path=path)
-        if exc is not None:
+        # read_label_file wraps the error when the label refers to the image.
+        too_large = exc.__cause__ if isinstance(exc, LabelFileReadError) else exc
+        if isinstance(too_large, ImageTooLargeError):
+            extra = _make_raster_side_message(
+                width=too_large.width, height=too_large.height
+            )
+        elif exc is not None:
             message = f"{message}\n\n{exc}"
         if extra:
             message = f"{message}\n\n{extra}"
@@ -3273,6 +3385,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
             self._loaded_image_paths = []
+            self._file_list_root_prefix = None
             self._refresh_file_list()
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
@@ -3327,7 +3440,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for i in range(self._docks.file_list.count()):
             item = self._docks.file_list.item(i)
             assert item
-            lst.append(item.text())
+            lst.append(_file_list_item_path(item))
         return lst
 
     def import_dropped_image_files(self, *, image_files: list[str]) -> None:
@@ -3361,14 +3474,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.file_dock.setToolTip("")
 
         self._prev_opened_dir = root_dir
+        # Matches the normpath'd paths _scan_image_files returns.
+        self._file_list_root_prefix = os.path.join(os.path.normpath(root_dir), "")
         self._loaded_image_paths = _scan_image_files(root_dir=root_dir)
         self._refresh_file_list()
 
     def _refresh_file_list(self) -> None:
         image_paths = [
-            path
-            for path in self._loaded_image_paths
-            if self._file_search_pattern.search(path)
+            path for path in self._loaded_image_paths if self._matches_file_search(path)
         ]
 
         file_list = self._docks.file_list
@@ -3377,7 +3490,9 @@ class MainWindow(QtWidgets.QMainWindow):
             for image_path in image_paths:
                 file_list.addItem(
                     _make_image_list_item(
-                        image_path=image_path, output_dir=self._output_dir
+                        image_path=image_path,
+                        label=self._file_list_label(image_path),
+                        output_dir=self._output_dir,
                     )
                 )
             if self._file_list_image_path in image_paths:
@@ -3385,6 +3500,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._sync_navigation_actions()
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
+
+    def _file_list_label(self, image_path: str, /) -> str:
+        # Paths under the opened folder are shown relative to it so the
+        # File List stays readable; the full path stays in the tooltip.
+        prefix = self._file_list_root_prefix
+        if prefix and image_path.startswith(prefix):
+            return image_path[len(prefix) :]
+        return image_path
+
+    def _matches_file_search(self, image_path: str, /) -> bool:
+        return bool(self._file_search_pattern.search(self._file_list_label(image_path)))
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
         self._status_mouse_pos = QtCore.QPointF(mouse_pos)
@@ -3491,9 +3617,11 @@ def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
 
 
 def _make_image_list_item(
-    *, image_path: str, output_dir: Path | None
+    *, image_path: str, label: str, output_dir: Path | None
 ) -> QtWidgets.QListWidgetItem:
-    item = QtWidgets.QListWidgetItem(image_path)
+    item = QtWidgets.QListWidgetItem(label)
+    item.setData(Qt.ItemDataRole.UserRole, image_path)
+    item.setToolTip(os.path.abspath(image_path))
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
     label_path = _resolve_label_path(
         image_or_label_path=image_path, output_dir=output_dir
@@ -3501,6 +3629,10 @@ def _make_image_list_item(
     has_label = QtCore.QFile.exists(label_path)
     item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
     return item
+
+
+def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:
+    return item.data(Qt.ItemDataRole.UserRole)
 
 
 def _shape_to_dict(shape: Shape, /) -> ShapeDict:
@@ -3518,6 +3650,25 @@ def _shape_to_dict(shape: Shape, /) -> ShapeDict:
     )
 
 
+def _max_decode_mb() -> int | None:
+    limit_mb = QtGui.QImageReader.allocationLimit()
+    return limit_mb if limit_mb > 0 else None  # 0 disables the limit
+
+
+def _make_raster_side_message(*, width: int, height: int) -> str:
+    return QtCore.QCoreApplication.translate(
+        "MainWindow",
+        "The image is too large to open: {width}x{height} pixels exceeds the "
+        "{max_side} pixel per-side limit of the raster engine. Raising the "
+        "decode limit will not help. Split the image into tiles (for example "
+        "with gdal_retile.py) or open a smaller copy.",
+    ).format(
+        width=width,
+        height=height,
+        max_side=RASTER_MAX_SIDE,
+    )
+
+
 def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     # None means the failure is not explained by image size, so the caller
     # falls back to the generic unsupported-format message.
@@ -3528,18 +3679,8 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     width = requirement.width
     height = requirement.height
 
-    if max(width, height) > _RASTER_MAX_SIDE:
-        return QtCore.QCoreApplication.translate(
-            "MainWindow",
-            "The image is too large to open: {width}x{height} pixels exceeds the "
-            "{max_side} pixel per-side limit of the raster engine. Raising the "
-            "decode limit will not help. Split the image into tiles (for example "
-            "with gdal_retile.py) or open a smaller copy.",
-        ).format(
-            width=width,
-            height=height,
-            max_side=_RASTER_MAX_SIDE,
-        )
+    if max(width, height) > RASTER_MAX_SIDE:
+        return _make_raster_side_message(width=width, height=height)
 
     limit_mb = QtGui.QImageReader.allocationLimit()
     if limit_mb <= 0:  # 0 disables the limit

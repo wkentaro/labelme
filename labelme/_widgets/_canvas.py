@@ -356,6 +356,11 @@ class Canvas(QtWidgets.QWidget):
     def get_view_offset(self) -> QPointF:
         return QPointF(self._view_offset)
 
+    def get_selected_shapes_bounds(self) -> QtCore.QRectF | None:
+        if not self.selected_shapes:
+            return None
+        return _compute_shapes_bounds(shapes=self.selected_shapes)
+
     def set_color_resolver(
         self, *, resolver: Callable[[str], tuple[int, int, int]]
     ) -> None:
@@ -2036,11 +2041,31 @@ class Canvas(QtWidgets.QWidget):
     def _compute_canvas_size(self) -> QtCore.QSize:
         if self.pixmap.isNull():
             return super().minimumSizeHint()
-        scaled_w = int(self.pixmap.width() * self.scale)
-        scaled_h = int(self.pixmap.height() * self.scale)
+        scaled = self._compute_scaled_pixmap_size()
+        available = self.compute_settled_viewport_size()
+        if available is None:
+            return scaled
+        return scaled.expandedTo(available)
+
+    def _compute_scaled_pixmap_size(self) -> QtCore.QSize:
+        return QtCore.QSize(
+            int(self.pixmap.width() * self.scale),
+            int(self.pixmap.height() * self.scale),
+        )
+
+    def compute_settled_viewport_size(self) -> QtCore.QSize | None:
+        """Return the viewport size once scrollbars match the current scale.
+
+        The scroll area shows or hides its scrollbars after the next layout
+        pass, so the live viewport size lags a scale change until then.
+        """
+        if self.pixmap.isNull():
+            return None
         scroll_area = self._find_scroll_area()
         if scroll_area is None:
-            return QtCore.QSize(scaled_w, scaled_h)
+            return None
+        scaled = self._compute_scaled_pixmap_size()
+        scaled_w, scaled_h = scaled.width(), scaled.height()
 
         viewport_size = scroll_area.maximumViewportSize()
         h_bar_height = scroll_area.horizontalScrollBar().sizeHint().height()
@@ -2054,7 +2079,7 @@ class Canvas(QtWidgets.QWidget):
 
         available_w = viewport_size.width() - (v_bar_width if needs_v_bar else 0)
         available_h = viewport_size.height() - (h_bar_height if needs_h_bar else 0)
-        return QtCore.QSize(max(scaled_w, available_w), max(scaled_h, available_h))
+        return QtCore.QSize(available_w, available_h)
 
     def sizeHint(self) -> QtCore.QSize:
         return self._compute_canvas_size()

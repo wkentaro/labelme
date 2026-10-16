@@ -554,12 +554,8 @@ forme</translation>
         <translation>Mantiene visibile l&apos;intera immagine quando la finestra viene ridimensionata</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Adatta &amp;larghezza</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Allinea la larghezza dell&apos;immagine alla finestra quando viene ridimensionata</translation>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Esegue lo zoom sulle forme selezionate a ogni cambio di selezione</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -618,8 +614,8 @@ forme</translation>
         <translation>Seleziona la forma più vicina a destra della selezione</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Rotella ingrandisce la tela</translation>
+        <source>Fit to Window</source>
+        <translation>Adatta alla finestra</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -682,6 +678,10 @@ forme</translation>
         <translation>Continua con i valori predefiniti</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Adatta alla &amp;selezione</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Impossibile ripristinare il file di configurazione.
@@ -738,6 +738,10 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
     <message>
         <source>AI inference failed: %s</source>
         <translation>Inferenza IA non riuscita: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Adatta alla selezione</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1400,6 +1404,17 @@ Posizione prevista: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Altre azioni</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Rotella ingrandisce la tela</translation>
     </message>
 </context>
 <context>

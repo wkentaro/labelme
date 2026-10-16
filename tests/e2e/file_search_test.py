@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
@@ -110,7 +111,7 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     assert win.image_list == all_image_paths
     current_item = win._docks.file_list.currentItem()
     assert current_item is not None
-    assert current_item.text() == active_image_path
+    assert current_item.data(Qt.ItemDataRole.UserRole) == active_image_path
     assert win._image_path == active_image_path
     assert win._annotation is active_annotation
     assert [
@@ -167,3 +168,41 @@ def test_invalid_startup_search_leaves_images_available(
     win._docks.file_search.setText(r"2011_000006\.jpg$")
     assert len(win.image_list) == 1
     assert win._docks.file_search_error.isHidden()
+
+
+@pytest.mark.gui
+def test_file_list_shows_paths_relative_to_opened_folder(
+    *, main_win: MainWinFactory, data_path: Path
+) -> None:
+    raw_dir = data_path / "raw"
+    (raw_dir / "sub").mkdir()
+    (raw_dir / "2011_000006.jpg").rename(raw_dir / "sub/2011_000006.jpg")
+
+    win = main_win(file_or_dir=str(raw_dir / "2011_000003.jpg"))
+    file_list = win._docks.file_list
+    items = [file_list.item(row) for row in range(file_list.count())]
+
+    assert [item.text() for item in items] == [
+        "2011_000003.jpg",
+        "2011_000025.jpg",
+        str(Path("sub/2011_000006.jpg")),
+    ]
+    assert [item.toolTip() for item in items] == win.image_list
+    assert all(Path(path).is_absolute() for path in win.image_list)
+
+    win._docks.file_search.setText(r"^sub")
+    assert win.image_list == [str(raw_dir / "sub/2011_000006.jpg")]
+
+
+@pytest.mark.gui
+def test_file_list_tooltip_is_absolute_for_relative_input(
+    *, main_win: MainWinFactory, data_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(data_path)
+
+    win = main_win(file_or_dir="raw")
+    item = win._docks.file_list.item(0)
+
+    assert item is not None
+    assert item.text() == "2011_000003.jpg"
+    assert item.toolTip() == str(data_path / "raw/2011_000003.jpg")

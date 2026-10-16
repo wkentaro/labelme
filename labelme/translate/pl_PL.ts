@@ -548,12 +548,8 @@ Shapes</source>
         <translation>Cały obraz pozostaje widoczny przy zmianie rozmiaru okna</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Dopasuj szerokość (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Szerokość obrazu dopasowuje się do okna przy zmianie jego rozmiaru</translation>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Powiększenie dopasowuje się do zaznaczonych kształtów przy każdej zmianie zaznaczenia</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -612,8 +608,8 @@ Shapes</source>
         <translation>Zaznacz najbliższy kształt na prawo od zaznaczenia</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+kółko powiększa płótno</translation>
+        <source>Fit to Window</source>
+        <translation>Dopasuj do okna</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -676,6 +672,10 @@ Shapes</source>
         <translation>Kontynuuj z ustawieniami domyślnymi</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>Dopasuj do zaznaczenia (&amp;E)</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Nie udało się zresetować pliku konfiguracji.
@@ -732,6 +732,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>AI inference failed: %s</source>
         <translation>Wnioskowanie AI nie powiodło się: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Dopasuj do zaznaczenia</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1394,6 +1398,17 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Więcej działań</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Powiększenie</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+kółko powiększa płótno</translation>
     </message>
 </context>
 <context>

@@ -562,12 +562,8 @@ Shapes</source>
         <translation>ウィンドウのサイズ変更時も画像全体を表示し続ける</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>幅に合わせる(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>ウィンドウのサイズ変更時に画像の幅をウィンドウに揃える</translation>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>選択を変更するたびに選択した図形にズームする</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -626,8 +622,8 @@ Shapes</source>
         <translation>選択範囲の右にある最も近い図形を選択</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+ホイールでキャンバスをズームします</translation>
+        <source>Fit to Window</source>
+        <translation>ウィンドウに合わせる</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -690,6 +686,10 @@ Shapes</source>
         <translation>初期設定で続行</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>選択範囲に合わせる(&amp;E)</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>設定ファイルをリセットできませんでした。
@@ -746,6 +746,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI推論に失敗しました: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>選択範囲に合わせる</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1408,6 +1412,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>その他の操作</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>ズーム</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+ホイールでキャンバスをズームします</translation>
     </message>
 </context>
 <context>

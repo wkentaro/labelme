@@ -548,12 +548,8 @@ Shapes</source>
         <translation>نمایان نگه داشتن کل تصویر هنگام تغییر اندازهٔ پنجره</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>تناسب با عرض(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>تطبیق عرض تصویر با پنجره هنگام تغییر اندازهٔ آن</translation>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>بزرگ‌نمایی روی شکل‌های انتخاب شده هر بار که انتخاب تغییر می‌کند</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -612,8 +608,8 @@ Shapes</source>
         <translation>انتخاب نزدیک‌ترین شکل سمت راست انتخاب</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+چرخ روی بوم بزرگ‌نمایی می‌کند</translation>
+        <source>Fit to Window</source>
+        <translation>تناسب با پنجره</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -676,6 +672,10 @@ Shapes</source>
         <translation>ادامه با پیش‌فرض‌ها</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>تناسب با انتخاب(&amp;E)</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>بازنشانی فایل پیکربندی ممکن نشد.
@@ -732,6 +732,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>استنتاج هوش مصنوعی ناموفق بود: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>تناسب با انتخاب</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1394,6 +1398,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>اقدام‌های بیشتر</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>زوم</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+چرخ روی بوم بزرگ‌نمایی می‌کند</translation>
     </message>
 </context>
 <context>

@@ -533,12 +533,8 @@ Shapes</source>
         <translation>Всё изображение остаётся видимым при изменении размера окна</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>По &amp;ширине</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Ширина изображения подстраивается под окно при изменении его размера</translation>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Масштабировать по выбранным фигурам при каждом изменении выделения</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -597,8 +593,8 @@ Shapes</source>
         <translation>Выбрать ближайшую фигуру справа от выделения</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Колесо масштабирует холст</translation>
+        <source>Fit to Window</source>
+        <translation>По размеру окна</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -661,6 +657,10 @@ Shapes</source>
         <translation>Продолжить с настройками по умолчанию</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>По в&amp;ыделению</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Не удалось сбросить файл конфигурации.
@@ -717,6 +717,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>Инференс ИИ не удался: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>По выделению</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1397,6 +1401,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>Другие действия</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Масштаб</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Колесо масштабирует холст</translation>
     </message>
 </context>
 <context>

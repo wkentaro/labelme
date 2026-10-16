@@ -548,12 +548,8 @@ Shapes</source>
         <translation>창 크기가 바뀌어도 이미지 전체가 보이도록 유지</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>너비에 맞추기(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>창 크기가 바뀔 때 이미지 너비를 창에 맞춤</translation>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>선택이 바뀔 때마다 선택한 도형에 맞춰 확대/축소</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -612,8 +608,8 @@ Shapes</source>
         <translation>선택 영역 오른쪽에서 가장 가까운 도형 선택</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+휠로 캔버스를 확대/축소합니다</translation>
+        <source>Fit to Window</source>
+        <translation>창에 맞추기</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -676,6 +672,10 @@ Shapes</source>
         <translation>기본 설정으로 계속</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>선택 항목에 맞추기(&amp;E)</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>설정 파일을 초기화할 수 없습니다.
@@ -732,6 +732,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>AI inference failed: %s</source>
         <translation>AI 추론 실패: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>선택 항목에 맞추기</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1394,6 +1398,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>추가 작업</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>확대/축소</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+휠로 캔버스를 확대/축소합니다</translation>
     </message>
 </context>
 <context>

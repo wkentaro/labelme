@@ -554,12 +554,8 @@ Shapes</source>
         <translation>Pencere yeniden boyutlandırıldığında görüntünün tamamını görünür tut</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>&amp;Genişliğe Sığdır</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Pencere yeniden boyutlandırıldığında görüntü genişliğini pencereye eşitle</translation>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Seçim her değiştiğinde seçili şekillere yakınlaştır</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -618,8 +614,8 @@ Shapes</source>
         <translation>Seçimin sağındaki en yakın şekli seç</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Tekerlek tuvali yakınlaştırır</translation>
+        <source>Fit to Window</source>
+        <translation>Pencereye Sığdır</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -682,6 +678,10 @@ Shapes</source>
         <translation>Varsayılanlarla devam et</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>&amp;Seçime Sığdır</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Yapılandırma dosyası sıfırlanamadı.
@@ -738,6 +738,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>AI inference failed: %s</source>
         <translation>Yapay zeka çıkarımı başarısız oldu: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Seçime Sığdır</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1400,6 +1404,17 @@ Beklenen konum: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Diğer işlemler</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Yakınlaştırma</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Tekerlek tuvali yakınlaştırır</translation>
     </message>
 </context>
 <context>

@@ -437,6 +437,10 @@
         <translation>Άνοιγμα προηγούμενου (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
     </message>
     <message>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Εστίαση στα επιλεγμένα σχήματα κάθε φορά που αλλάζει η επιλογή</translation>
+    </message>
+    <message>
         <source>&amp;Brightness Contrast</source>
         <translation>αντίθεση φωτεινότητας</translation>
     </message>
@@ -528,6 +532,10 @@ Shapes</source>
     <message>
         <source>Zoom</source>
         <translation>Εστίαση</translation>
+    </message>
+    <message>
+        <source>Fit to Window</source>
+        <translation>Προσαρμογή παραθύρου</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -652,6 +660,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI inference failed: %s</source>
         <translation>Η συμπερασματική επεξεργασία ΤΝ απέτυχε: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>Προσαρμογή στην επιλογή</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -822,12 +834,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Διατήρηση ολόκληρης της εικόνας ορατής όταν αλλάζει το μέγεθος του παραθύρου</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>Προσαρμογή στο &amp; πλάτος</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Ταίριασμα του πλάτους της εικόνας με το παράθυρο όταν αλλάζει το μέγεθός του</translation>
+        <source>Fit to S&amp;election</source>
+        <translation>Προσαρμογή στην &amp;επιλογή</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -844,10 +852,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Show the image at 100%</source>
         <translation>Εμφάνιση της εικόνας στο 100%</translation>
-    </message>
-    <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Ροδέλα κάνει ζουμ στον καμβά</translation>
     </message>
     <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
@@ -1396,6 +1400,17 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>Περισσότερες ενέργειες</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Εστίαση</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Ctrl+Ροδέλα κάνει ζουμ στον καμβά</translation>
     </message>
 </context>
 <context>

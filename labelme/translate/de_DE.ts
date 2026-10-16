@@ -570,12 +570,8 @@ Formen</translation>
         <translation>Das ganze Bild sichtbar halten, wenn die Fenstergröße geändert wird</translation>
     </message>
     <message>
-        <source>Fit to Wi&amp;dth</source>
-        <translation>&amp;An Breite anpassen</translation>
-    </message>
-    <message>
-        <source>Match the image width to the window when it is resized</source>
-        <translation>Die Bildbreite an das Fenster angleichen, wenn dessen Größe geändert wird</translation>
+        <source>Zoom to the selected shapes whenever the selection changes</source>
+        <translation>Bei jeder Änderung der Auswahl auf die ausgewählten Formen zoomen</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -626,8 +622,8 @@ Formen</translation>
         <translation>Die nächste Form rechts von der Auswahl auswählen</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Strg+Mausrad zoomt die Leinwand</translation>
+        <source>Fit to Window</source>
+        <translation>An Fenster anpassen</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -690,6 +686,10 @@ Formen</translation>
         <translation>Mit Standardwerten fortfahren</translation>
     </message>
     <message>
+        <source>Fit to S&amp;election</source>
+        <translation>An Aus&amp;wahl anpassen</translation>
+    </message>
+    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Die Konfigurationsdatei konnte nicht zurückgesetzt werden.
@@ -746,6 +746,10 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>AI inference failed: %s</source>
         <translation>KI-Inferenz fehlgeschlagen: %s</translation>
+    </message>
+    <message>
+        <source>Fit to Selection</source>
+        <translation>An Auswahl anpassen</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -1400,6 +1404,17 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Weitere Aktionen</translation>
+    </message>
+</context>
+<context>
+    <name>ZoomWidget</name>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Ctrl+Wheel zooms the canvas</source>
+        <translation>Strg+Mausrad zoomt die Leinwand</translation>
     </message>
 </context>
 <context>
