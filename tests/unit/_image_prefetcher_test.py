@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import threading
 from pathlib import Path
 
 import numpy as np
@@ -92,3 +93,24 @@ def test_decode_skips_exif_rotated_image_before_converting(
 
     monkeypatch.setattr(_image_prefetcher, "read_image_file", fail)
     assert _image_prefetcher._decode(str(path)) is None
+
+
+@pytest.mark.usefixtures("qapp")
+def test_take_skips_decode_queued_behind_others(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    release = threading.Event()
+
+    def blocked_decode(_image_path: str, /) -> None:
+        release.wait()
+
+    monkeypatch.setattr(_image_prefetcher, "_decode", blocked_decode)
+    prefetcher = ImagePrefetcher()
+    try:
+        # Two workers take the first two; the third waits in the queue.
+        paths = [str(tmp_path / f"{i}.jpg") for i in range(3)]
+        prefetcher.retain(current=None, neighbors=paths)
+        assert prefetcher.take(image_path=paths[2], image_data=b"") is None
+    finally:
+        release.set()
+        prefetcher.shutdown()

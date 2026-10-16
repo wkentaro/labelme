@@ -103,7 +103,11 @@ class ImagePrefetcher:
         future = self._decoded.get(image_path)
         if future is None:
             return None
-        # Waiting on an in-flight decode beats starting a second one.
+        # A decode still queued, behind ones for images the user already left,
+        # would start late; decoding in the foreground is sooner.
+        if future.cancel():
+            return None
+        # Waiting on a running decode beats starting a second one.
         decoded = future.result()
         # The file may have changed since it was prefetched.
         if decoded is None or decoded[0] != image_data:
