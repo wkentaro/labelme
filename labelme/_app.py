@@ -428,7 +428,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._save_label_file(save_as=False),
             shortcut=shortcuts["save"],
             icon="phosphor/floppy-disk.svg",
-            tip=self.tr("Save labels to file"),
+            tip=self.tr("Save the annotation file"),
             enabled=False,
         )
         save_as = image_action(
@@ -436,7 +436,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
             icon="phosphor/floppy-disk.svg",
-            tip=self.tr("Save the labels under a new file name"),
+            tip=self.tr("Save the annotation file under a new name"),
         )
         save_auto = action(
             text=self.tr("Save &Automatically"),
@@ -446,8 +446,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         save_auto.setChecked(self._config["auto_save"])
         save_with_image_data = action(
-            text=self.tr("Embed Image in Label File"),
-            tip=self.tr("Store a copy of the image inside the label file"),
+            text=self.tr("Embed Image in Annotation File"),
+            tip=self.tr("Store a copy of the image inside the annotation file"),
             checkable=True,
             checked=self._config["with_image_data"],
         )
@@ -463,7 +463,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self._open_file_with_dialog,
             shortcut=shortcuts["open"],
             icon="phosphor/folder-open.svg",
-            tip=self.tr("Open image or label file"),
+            tip=self.tr("Open an image or annotation file"),
         )
         open_dir = action(
             text=self.tr("Open Dir"),
@@ -480,11 +480,11 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Close current file"),
         )
         delete_file = action(
-            text=self.tr("&Delete File"),
+            text=self.tr("&Delete Annotation File"),
             slot=self.delete_file,
             shortcut=shortcuts["delete_file"],
             icon="phosphor/file-x.svg",
-            tip=self.tr("Delete current label file"),
+            tip=self.tr("Delete the current annotation file"),
             enabled=False,
         )
         keep_prev_action = action(
@@ -1343,7 +1343,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_list_layout.addWidget(file_search)
         file_list_layout.addWidget(file_search_error)
         file_list_layout.addWidget(file_list)
-        file = QtWidgets.QDockWidget(self.tr("File List"), self)
+        file = QtWidgets.QDockWidget(self.tr("Image List"), self)
         file.setObjectName("Files")
         file_list_container = QtWidgets.QWidget()
         file_list_container.setLayout(file_list_layout)
@@ -2021,7 +2021,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_save_failure(label_path=label_path, error=e)
             if show_error:
                 self.show_error_message(
-                    title=self.tr("Error saving label data"),
+                    title=self.tr("Error saving annotation file"),
                     message=self.tr("<b>%s</b>") % e,
                 )
             return False
@@ -2455,8 +2455,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _load_file(self, *, image_or_label_path: str) -> bool:
         # Qt file dialogs separate with forward slashes even on Windows, while
-        # the file list holds the separator of the platform, so an unnormalized
-        # path would neither select its file list row nor receive the saved
+        # the Image List holds the separator of the platform, so an unnormalized
+        # path would neither select its Image List row nor receive the saved
         # checkmark, which both compare exact strings.
         image_or_label_path = os.path.normpath(image_or_label_path)
         file_list_image_path = (
@@ -2493,7 +2493,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 return False
             # The relative path stored in the Annotation File may carry "." or ".."
             # components, which would survive the join and break the
-            # exact-string comparisons against the file list.
+            # exact-string comparisons against the Image List.
             stored_image = Path(label_path).parent / annotation.image_path
             image_path = os.path.normpath(str(stored_image))
             # Following symlinks first keeps parent traversal on its intended target.
@@ -2623,7 +2623,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.image.setEnabled(True)
         self._sync_navigation_actions()
         self._prefetch_neighbors()
-        # A load never pulls the keyboard out of the File List, whatever drove
+        # A load never pulls the keyboard out of the Image List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
             self._canvas_widgets.canvas.setFocus()
@@ -2880,12 +2880,12 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         label_path, _ = QtWidgets.QFileDialog.getSaveFileName(
             parent=self,
-            caption=self.tr("Choose File"),
+            caption=self.tr("Save Annotation File"),
             dir=_resolve_label_path(
                 image_or_label_path=self._file_list_image_path or self._image_path,
                 output_dir=self._output_dir,
             ),
-            filter=self.tr("Label files (*%s)") % LABEL_FILE_SUFFIX,
+            filter=self.tr("Annotation files (*%s)") % LABEL_FILE_SUFFIX,
         )
         return label_path
 
@@ -2928,7 +2928,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def delete_file(self) -> None:
         msg = self.tr(
-            "Permanently delete this label file? This action cannot be undone."
+            "Permanently delete this annotation file? This action cannot be undone."
         )
         if not self._confirm_deletion(message=msg):
             return
@@ -2942,7 +2942,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         except OSError as error:
             self.show_error_message(
-                title=self.tr("Error deleting label file"), message=str(error)
+                title=self.tr("Error deleting annotation file"), message=str(error)
             )
             return
         self._failed_save_path = None
@@ -3354,7 +3354,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         if file_kind == "label":
             message = self.tr(
-                "The selected label file could not be opened: {path}"
+                "The selected annotation file could not be opened: {path}"
             ).format(path=path)
         else:
             message = self.tr(
@@ -3398,8 +3398,8 @@ class MainWindow(QtWidgets.QMainWindow):
             raise ValueError("file_or_dir cannot be empty")
 
         if is_label_file_path(filename=file_or_dir):
-            # Load before dropping the File List, so a failed load leaves the
-            # previous session and File List untouched.
+            # Load before dropping the Image List, so a failed load leaves the
+            # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
             self._loaded_image_paths = []
@@ -3407,7 +3407,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._refresh_file_list()
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
-                self.tr("File list is disabled when a label file is opened")
+                self.tr("Image List is disabled when an annotation file is opened")
             )
         elif Path(file_or_dir).is_dir():
             self._import_images_from_dir(root_dir=file_or_dir)
@@ -3422,12 +3422,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._load_selected_image(file_list.currentItem(), previous_item)
                 file_list.repaint()
         else:
-            # Load before swapping the File List, so a failed load leaves the
-            # previous session and File List untouched.
+            # Load before swapping the Image List, so a failed load leaves the
+            # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
             self._import_images_from_dir(root_dir=str(Path(file_or_dir).parent))
-            # The load ran before the File List knew the neighbors.
+            # The load ran before the Image List knew the neighbors.
             self._prefetch_neighbors()
 
     def _open_dir_with_dialog(self) -> None:
@@ -3523,7 +3523,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _file_list_label(self, image_path: str, /) -> str:
         # Paths under the opened folder are shown relative to it so the
-        # File List stays readable; the full path stays in the tooltip.
+        # Image List stays readable; the full path stays in the tooltip.
         prefix = self._file_list_root_prefix
         if prefix and image_path.startswith(prefix):
             return image_path[len(prefix) :]

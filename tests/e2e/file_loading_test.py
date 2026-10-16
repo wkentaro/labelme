@@ -900,7 +900,7 @@ def test_opening_one_image_prefetches_its_folder_neighbors(
     win = main_win(file_or_dir=paths[1])
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
-    # The File List fills only after the image loads; its neighbors are
+    # The Image List fills only after the image loads; its neighbors are
     # still scheduled.
     assert set(win._image_prefetcher._decoded) == {str(path) for path in paths}
 

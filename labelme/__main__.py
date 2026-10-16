@@ -235,7 +235,9 @@ def main() -> None:
         choices=_LOGGER_LEVELS,
         help="logger level",
     )
-    parser.add_argument("path", nargs="?", help="image file, label file, or directory")
+    parser.add_argument(
+        "path", nargs="?", help="image file, annotation file, or directory"
+    )
     parser.add_argument(
         "--output",
         help="output directory for saving annotation JSON files",

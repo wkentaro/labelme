@@ -178,7 +178,7 @@ def test_open_file_dialog_normalizes_the_reported_path(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     target = data_path / "raw" / "2011_000006.jpg"
-    # On Windows the dialog reports forward slashes while the file list holds
+    # On Windows the dialog reports forward slashes while the Image List holds
     # backslashes; a redundant "." component is the unnormalized spelling of a
     # listed path that misbehaves the same way on every platform.
     unnormalized = os.sep.join([str(target.parent), os.curdir, target.name])

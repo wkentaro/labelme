@@ -270,8 +270,8 @@
         <translation>Fájlnév keresése</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Fájllista</translation>
+        <source>Image List</source>
+        <translation>Képlista</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -286,10 +286,6 @@
 </source>
         <translation>&amp;Megnyitás
 </translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Kép vagy címke fájl megnyitása</translation>
     </message>
     <message>
         <source>Open Dir</source>
@@ -318,20 +314,8 @@
 </translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Címkék mentése fájlba</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Mentés &amp;másként</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp;Fájl törlése</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Jelenlegi címke fájl törlése</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -396,6 +380,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Alakzatok törlése</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Annotációs fájl mentése</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Annotációs fájl mentése új néven</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Kép beágyazása az annotációs fájlba</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>A kép másolatát az annotációs fájlban tárolja</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Kép vagy annotációs fájl megnyitása</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>Annotációs fájl &amp;törlése</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>A jelenlegi annotációs fájl törlése</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -504,18 +516,6 @@ Shapes</source>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Előző fényerő/kontraszt megtartása</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Címkék mentése új fájlnéven</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>Kép beágyazása a címkefájlba</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>A kép másolatát a címkefájlban tárolja</translation>
     </message>
     <message>
         <source>Copy to Clipboard</source>
@@ -736,10 +736,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>A mentés sikertelen</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Hiba a címke adatok mentésekor</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -750,6 +746,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Fit to Selection</source>
         <translation>Kijelöléshez igazítás</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Hiba az annotációs fájl mentésekor</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -800,14 +800,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>%s . Az annotációk a %s könyvtárban lesznek mentve/betöltve</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>Címke fájlok (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Fájl kiválasztása</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Figyelem</translation>
     </message>
@@ -830,6 +822,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Unsaved changes</source>
         <translation>Nem mentett módosítások</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>A kiválasztott annotációs fájl nem nyitható meg: {path}</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -898,10 +894,6 @@ Please select a different model or use AI-Box mode.</source>
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Hiba az annotációs fájl törlésekor</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>A kép nem található</translation>
     </message>
@@ -914,8 +906,8 @@ Expected location: {path}</source>
 Várt hely: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>A fájllista le van tiltva, ha egy címke fájl van megnyitva</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>A képlista le van tiltva, ha egy annotációs fájl van megnyitva</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -930,16 +922,8 @@ Várt hely: {path}</translation>
         <translation>&amp;Előző nagyítás megtartása</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Véglegesen törli ezt a címke fájlt? Ez a művelet nem vonható vissza.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Megengedett formátumok: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>A kiválasztott címkefájl nem nyitható meg: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -976,6 +960,22 @@ Várt hely: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>A beállítások ebben a munkamenetben --config segítségével vannak kezelve</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>Annotációs fájl mentése</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Annotációs fájlok (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Véglegesen törli ezt az annotációs fájlt? Ez a művelet nem vonható vissza.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Hiba az annotációs fájl törlésekor</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1171,8 +1171,8 @@ Várt hely: {path}</translation>
         <translation>automatikus mentés</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Beágyazza a képet a címke JSON-fájljába.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Kép beágyazása az annotációs fájlba</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1259,8 +1259,8 @@ Várt hely: {path}</translation>
         <translation>Előre definiált címkék</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Kép beágyazása a címkefájlba</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Beágyazza a képet az annotációs fájlba.</translation>
     </message>
     <message>
         <source>Label validation</source>

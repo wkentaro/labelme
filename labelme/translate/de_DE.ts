@@ -270,8 +270,8 @@
         <translation>Dateiname suchen</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Dateiliste</translation>
+        <source>Image List</source>
+        <translation>Bildliste</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -286,10 +286,6 @@
 </source>
         <translation>&amp;Öffnen
 </translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Bild- oder Label-Datei öffnen</translation>
     </message>
     <message>
         <source>Open Dir</source>
@@ -318,20 +314,8 @@
 </translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Labels in Datei speichern</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Speichern &amp;unter</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp;Datei löschen</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Aktuelle Label-Datei löschen</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -396,6 +380,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Formen löschen</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Annotationsdatei speichern</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Annotationsdatei unter neuem Namen speichern</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Bild in Annotationsdatei einbetten</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Speichert eine Kopie des Bildes in der Annotationsdatei</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Bild oder Annotationsdatei öffnen</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>Annotationsdatei &amp;löschen</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Aktuelle Annotationsdatei löschen</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -504,18 +516,6 @@ Formen</translation>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Labels unter einem neuen Dateinamen speichern</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>Bild in Label-Datei einbetten</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Speichert eine Kopie des Bildes in der Label-Datei</translation>
     </message>
     <message>
         <source>Copy to Clipboard</source>
@@ -736,10 +736,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>Speichern fehlgeschlagen</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Fehler beim Speichern der Labeldaten</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -750,6 +746,10 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Fit to Selection</source>
         <translation>An Auswahl anpassen</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Fehler beim Speichern der Annotationsdatei</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -800,14 +800,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>%s . Annotationen werden in %s gespeichert/geladen</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>Label-Dateien (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Datei auswählen</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Achtung</translation>
     </message>
@@ -830,6 +822,10 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Unsaved changes</source>
         <translation>Ungespeicherte Änderungen</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Die ausgewählte Annotationsdatei konnte nicht geöffnet werden: {path}</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -898,10 +894,6 @@ Please select a different model or use AI-Box mode.</source>
 Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Fehler beim Löschen der Annotationsdatei</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>Bild nicht gefunden</translation>
     </message>
@@ -914,8 +906,8 @@ Expected location: {path}</source>
 Erwarteter Speicherort: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Die Dateiliste ist deaktiviert, wenn eine Label-Datei geöffnet ist</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Die Bildliste ist deaktiviert, wenn eine Annotationsdatei geöffnet ist</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -930,16 +922,8 @@ Erwarteter Speicherort: {path}</translation>
         <translation>&amp;Vorherigen Zoom beibehalten</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Diese Label-Datei endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Erlaubte Formate: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Die ausgewählte Label-Datei konnte nicht geöffnet werden: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -976,6 +960,22 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Einstellungen werden für diese Sitzung über --config verwaltet</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>Annotationsdatei speichern</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Annotationsdateien (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Diese Annotationsdatei endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Fehler beim Löschen der Annotationsdatei</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1171,8 +1171,8 @@ Erwarteter Speicherort: {path}</translation>
         <translation>automatisch speichern automatische Speicherung</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Bettet das Bild in die Label-JSON-Datei ein.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Bild in Annotationsdatei einbetten</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1259,8 +1259,8 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Vordefinierte Labels</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Bild in Label-Datei einbetten</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Bettet das Bild in die Annotationsdatei ein.</translation>
     </message>
     <message>
         <source>Label validation</source>

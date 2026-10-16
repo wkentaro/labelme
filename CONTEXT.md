@@ -86,9 +86,13 @@ _Avoid_: bitmap, raster, segmentation map (when you mean just this Shape's pixel
 An input image file (PNG, JPEG, TIFF, etc.) that is the subject of an Annotation. Identified by its path on disk. The in-memory pixel array used while annotating is an implementation concern and not part of this term.
 _Avoid_: photo, picture, file, frame.
 
+**Image List**:
+The dock listing the Images in this session. Opening a folder lists every Image under it, recursively; opening a single Image lists every Image under its parent folder the same way; opening an Annotation File directly empties and disables the list. A row's check mark means only that its Image has an Annotation File; users cannot toggle it. The dock keeps its legacy `file_dock` config key and `Files` object name, so saved layouts and Config Files still apply.
+_Avoid_: file list.
+
 **Label List**:
-The predefined set of allowed Label strings configured for an annotation session (via the `--labels` CLI flag, a labels file, or the user config). The Label List is the *permitted vocabulary*; it is not the same as the Labels that actually appear on Shapes.
-_Avoid_: labels (means actual labels in use), label vocabulary (verbose), classes.
+The dock listing the Labels in this session: the configured Labels (from the `--labels` CLI flag, a labels file, or the Config File) plus every Label used on a Shape since launch. It is append-only: a Label stays after its last Shape is deleted, so it is not the set of Labels on the current Image's Shapes. Label validation (`validate_label`) checks a new Label against it.
+_Avoid_: labels (means the Labels on Shapes), label vocabulary (verbose), classes.
 
 ### Configuration
 

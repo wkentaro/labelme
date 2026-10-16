@@ -270,8 +270,8 @@
         <translation>Tìm kiếm Tên tệp</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Danh sách Tệp</translation>
+        <source>Image List</source>
+        <translation>Danh sách Hình ảnh</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -285,10 +285,6 @@
         <source>&amp;Open
 </source>
         <translation>Mở(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Mở tệp hình ảnh hoặc nhãn</translation>
     </message>
     <message>
         <source>Open Dir</source>
@@ -316,20 +312,8 @@
         <translation>Lưu(&amp;S)</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Lưu nhãn vào tệp</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Lưu thành(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>Xóa(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Xóa tệp nhãn hiện tại</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -390,6 +374,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Xóa Hình dạng</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Lưu tệp chú thích</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Lưu tệp chú thích với tên mới</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Nhúng Hình ảnh vào Tệp chú thích</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Lưu một bản sao của hình ảnh bên trong tệp chú thích</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Mở hình ảnh hoặc tệp chú thích</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>Xóa tệp chú thích(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Xóa tệp chú thích hiện tại</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -478,18 +490,6 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Chỉnh sửa Nhãn(&amp;E)</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Lưu nhãn với tên tệp mới</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>Nhúng Hình ảnh vào Tệp nhãn</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Lưu một bản sao của hình ảnh bên trong tệp nhãn</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -722,10 +722,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Lưu thất bại</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Lỗi khi lưu dữ liệu nhãn</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -736,6 +732,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Fit to Selection</source>
         <translation>Vừa Vùng chọn</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Lỗi khi lưu tệp chú thích</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -786,14 +786,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>%s . Chú thích sẽ được lưu/tải trong %s</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>Tệp nhãn (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Chọn Tệp</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Chú ý</translation>
     </message>
@@ -816,6 +808,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Unsaved changes</source>
         <translation>Thay đổi chưa lưu</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Không thể mở tệp chú thích đã chọn: {path}</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -892,10 +888,6 @@ Please select a different model or use AI-Box mode.</source>
 Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Lỗi khi xóa tệp chú thích</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>Không tìm thấy ảnh</translation>
     </message>
@@ -908,8 +900,8 @@ Expected location: {path}</source>
 Vị trí dự kiến: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Danh sách tệp bị tắt khi mở tệp nhãn</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Danh sách hình ảnh bị tắt khi mở tệp chú thích</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -924,16 +916,8 @@ Vị trí dự kiến: {path}</translation>
         <translation>Giữ &amp;Mức Phóng to Trước đó</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Xóa vĩnh viễn tệp nhãn này? Hành động này không thể hoàn tác.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Định dạng cho phép: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Không thể mở tệp nhãn đã chọn: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -970,6 +954,22 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Cài đặt được quản lý qua --config trong phiên này</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>Lưu tệp chú thích</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Tệp chú thích (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Xóa vĩnh viễn tệp chú thích này? Hành động này không thể hoàn tác.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Lỗi khi xóa tệp chú thích</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1165,8 +1165,8 @@ Vị trí dự kiến: {path}</translation>
         <translation>tự động lưu lưu tự động</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Nhúng hình ảnh vào tệp JSON nhãn.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Nhúng hình ảnh vào tệp chú thích</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1253,8 +1253,8 @@ Vị trí dự kiến: {path}</translation>
         <translation>Nhãn định sẵn</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Nhúng hình ảnh vào tệp nhãn</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Nhúng hình ảnh vào tệp chú thích.</translation>
     </message>
     <message>
         <source>Label validation</source>

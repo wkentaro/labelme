@@ -270,8 +270,8 @@
         <translation>ファイル名で検索</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>ファイル一覧</translation>
+        <source>Image List</source>
+        <translation>画像一覧</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -286,10 +286,6 @@
 </source>
         <translation>開く(&amp;O)
 </translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>画像またはラベルファイルを開く</translation>
     </message>
     <message>
         <source>Open Dir</source>
@@ -321,21 +317,8 @@
 </translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>ラベルをファイルに保存</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>名前を付けて保存(&amp;A)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>ファイルを
-削除(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>現在のラベルファイルを削除</translation>
     </message>
     <message>
         <source>&amp;Change Output Dir</source>
@@ -398,6 +381,35 @@
         <source>Delete Shapes</source>
         <translation>図形を
 削除</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>アノテーションファイルを保存</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>アノテーションファイルを別名で保存</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>画像をアノテーションファイルに埋め込む</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>画像のコピーをアノテーションファイル内に保存します</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>画像またはアノテーションファイルを開く</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>アノテーションファイルを
+削除(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>現在のアノテーションファイルを削除</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -491,18 +503,6 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>ラベルを編集(&amp;E)</translation>
-    </message>
-    <message>
-        <source>Save the labels under a new file name</source>
-        <translation>ラベルを新しいファイル名で保存</translation>
-    </message>
-    <message>
-        <source>Embed Image in Label File</source>
-        <translation>画像をラベルファイルに埋め込む</translation>
-    </message>
-    <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>画像のコピーをラベルファイル内に保存します</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -736,10 +736,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>保存に失敗しました</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>ラベルデータの保存エラー</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -750,6 +746,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Fit to Selection</source>
         <translation>選択範囲に合わせる</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>アノテーションファイルの保存エラー</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -800,14 +800,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>%s - アノテーションは %s に保存/読み込みされます</translation>
     </message>
     <message>
-        <source>Label files (*%s)</source>
-        <translation>ラベルファイル (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>ファイルを選択</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>注意</translation>
     </message>
@@ -830,6 +822,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Unsaved changes</source>
         <translation>未保存の変更</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>選択されたアノテーションファイルを開けませんでした: {path}</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -906,10 +902,6 @@ Please select a different model or use AI-Box mode.</source>
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>アノテーションファイルの削除エラー</translation>
-    </message>
-    <message>
         <source>Image not found</source>
         <translation>画像が見つかりません</translation>
     </message>
@@ -922,8 +914,8 @@ Expected location: {path}</source>
 画像の参照先: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>ラベルファイルを開いている場合、ファイルリストは無効です</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>アノテーションファイルを開いている場合、画像一覧は無効です</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -938,16 +930,8 @@ Expected location: {path}</source>
         <translation>前のズームを保持(&amp;K)</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>このラベルファイルを完全に削除しますか？この操作は元に戻せません。</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>対応形式: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>選択されたラベルファイルを開けませんでした: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -984,6 +968,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>このセッションの設定は --config で管理されています</translation>
+    </message>
+    <message>
+        <source>Save Annotation File</source>
+        <translation>アノテーションファイルを保存</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>アノテーションファイル (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>このアノテーションファイルを完全に削除しますか？この操作は元に戻せません。</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>アノテーションファイルの削除エラー</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1179,8 +1179,8 @@ Expected location: {path}</source>
         <translation>自動保存 オートセーブ</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>画像をラベル JSON ファイルに埋め込みます。</translation>
+        <source>Embed image in annotation file</source>
+        <translation>画像をアノテーションファイルに埋め込む</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1267,8 +1267,8 @@ Expected location: {path}</source>
         <translation>定義済みラベル</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>画像をラベルファイルに埋め込む</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>画像をアノテーションファイルに埋め込みます。</translation>
     </message>
     <message>
         <source>Label validation</source>
