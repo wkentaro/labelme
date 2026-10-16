@@ -2622,16 +2622,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._actions.image.setEnabled(True)
         self._sync_navigation_actions()
-        self._image_prefetcher.retain(
-            current=None
-            if file_list_image_path is None
-            else (file_list_image_path, annotation.image_data, image),
-            neighbors=[
-                path
-                for step in (1, -1)
-                if (path := self._get_neighbor_image_path(step=step)) is not None
-            ],
-        )
+        self._prefetch_neighbors()
         # A load never pulls the keyboard out of the File List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
@@ -2773,6 +2764,18 @@ class MainWindow(QtWidgets.QMainWindow):
         return next(
             (paths[i] for i in indices if self._matches_file_search(paths[i])),
             None,
+        )
+
+    def _prefetch_neighbors(self) -> None:
+        self._image_prefetcher.retain(
+            current=None
+            if self._file_list_image_path is None or self._annotation is None
+            else (self._file_list_image_path, self._annotation.image_data, self._image),
+            neighbors=[
+                path
+                for step in (1, -1)
+                if (path := self._get_neighbor_image_path(step=step)) is not None
+            ],
         )
 
     def _sync_navigation_actions(self) -> None:
@@ -3424,6 +3427,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
             self._import_images_from_dir(root_dir=str(Path(file_or_dir).parent))
+            # The load ran before the File List knew the neighbors.
+            self._prefetch_neighbors()
 
     def _open_dir_with_dialog(self) -> None:
         if not self._can_continue():
