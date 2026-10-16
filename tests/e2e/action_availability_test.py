@@ -177,6 +177,39 @@ def test_drawing_tool_survives_file_transitions(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("transition", ["save", "delete"])
+def test_drawing_tool_survives_manual_save_and_delete(
+    *,
+    main_win: MainWinFactory,
+    data_path: Path,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    transition: str,
+) -> None:
+    win = main_win(
+        file_or_dir=data_path / "annotated/2011_000003.jpg",
+        config_overrides={"auto_save": False},
+    )
+    canvas = win._canvas_widgets.canvas
+    selected_action = dict(win._actions.draw)["polygon"]
+    selected_action.trigger()
+    drawing_mode = canvas.mode
+
+    if transition == "save":
+        win.mark_dirty()
+        win._actions.save.trigger()
+        qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+    else:
+        monkeypatch.setattr(win, "_confirm_deletion", lambda **_kwargs: True)
+        win.delete_file()
+        qtbot.wait(50)
+
+    assert not selected_action.isEnabled()
+    assert canvas.create_mode == "polygon"
+    assert canvas.mode == drawing_mode
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize("auto_save", [False, True])
 def test_delete_file_follows_carried_annotation_save_state(
     *, main_win: MainWinFactory, data_path: Path, auto_save: bool, qtbot: QtBot
