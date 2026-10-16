@@ -230,7 +230,7 @@ def test_read_image_file_rejects_oversized_planar_tiff_before_decoding(
         compression="zlib",
     )
     monkeypatch.setattr(
-        tifffile, "imread", lambda _filename: pytest.fail("decoded pixels")
+        tifffile.TiffPageSeries, "asarray", lambda _self: pytest.fail("decoded pixels")
     )
 
     with pytest.raises(ImageTooLargeError) as exc_info:
