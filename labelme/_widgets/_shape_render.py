@@ -143,20 +143,28 @@ def intersects_rect(
     pad = largest_marker / 2 + _OUTLINE_WIDTH
     left, top = lo * context.scale - pad
     right, bottom = hi * context.scale + pad
+    extent = QtCore.QRectF(left, top, right - left, bottom - top)
     if context.show_label and shape.label:
-        # _paint_label draws from the points' top-left corner, up and right.
+        # _paint_label draws from the points' top-left corner, with the
+        # baseline lifted by the outline width; descenders hang below it.
         metrics = painter.fontMetrics()
+        text = _label_text(label=shape.label, group_id=shape.group_id)
         label_x, label_y = anchor * context.scale
-        top = min(top, label_y - _OUTLINE_WIDTH - metrics.height() - pad)
-        right = max(
-            right,
-            label_x
-            + metrics.horizontalAdvance(
-                _label_text(label=shape.label, group_id=shape.group_id)
+        text_rect = (
+            QtCore.QRectF(metrics.boundingRect(text))
+            .united(
+                QtCore.QRectF(
+                    0,
+                    -metrics.ascent(),
+                    metrics.horizontalAdvance(text),
+                    metrics.height(),
+                )
             )
-            + pad,
+            .translated(label_x, label_y - _OUTLINE_WIDTH)
         )
-    return rect.intersects(QtCore.QRectF(left, top, right - left, bottom - top))
+        # One more pixel for anti-aliasing at the glyph edges.
+        extent = extent.united(text_rect.adjusted(-1, -1, 1, 1))
+    return rect.intersects(extent)
 
 
 def _paint_label(

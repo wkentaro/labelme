@@ -554,33 +554,62 @@ def test_intersects_rect_covers_every_painted_pixel(
 ) -> None:
     shape = _shape(shape_type=shape_type, points=points)
     shape.group_id = 12345
-    image = _render(
+    _assert_intersects_every_painted_pixel(
         shape=shape,
-        show_label=True,
         scale=1.5,
-        highlight=VertexHighlight(index=0, mode="near"),
-        rotation_highlight=None,
-    )
-    arr = np.array(
-        [
-            [
-                image.pixelColor(x, y) != QtGui.QColor(255, 255, 255)
-                for x in range(_SIZE)
-            ]
-            for y in range(_SIZE)
-        ]
-    )
-    ys, xs = np.nonzero(arr)
-    assert len(xs) > 0
-    painter = QtGui.QPainter(image)
-    context = ShapeRenderContext(
-        scale=1.5,
-        palette=Palette.from_rgb((255, 0, 0)),
         point_size=8,
+        highlight=VertexHighlight(index=0, mode="near"),
+        font_pixel_size=None,
+    )
+
+
+@pytest.mark.usefixtures("qapp")
+def test_intersects_rect_covers_mask_contour_outside_mask() -> None:
+    # The contour runs half a pixel left of and above the mask's origin.
+    shape = Shape(
+        label=None,
+        shape_type="mask",
+        points=np.array([[10, 10], [19, 19]], dtype=np.float64),
+    )
+    shape.mask = np.ones((10, 10), dtype=bool)
+    _assert_intersects_every_painted_pixel(
+        shape=shape, scale=10, point_size=1, highlight=None, font_pixel_size=None
+    )
+
+
+@pytest.mark.usefixtures("qapp")
+def test_intersects_rect_covers_label_descenders() -> None:
+    # Descenders drop below the baseline, past the small vertex markers.
+    shape = _shape(shape_type="point", points=[[60, 100]])
+    shape.label = "gjpqy"
+    _assert_intersects_every_painted_pixel(
+        shape=shape, scale=1, point_size=1, highlight=None, font_pixel_size=40
+    )
+
+
+def _assert_intersects_every_painted_pixel(
+    *,
+    shape: Shape,
+    scale: float,
+    point_size: int,
+    highlight: VertexHighlight | None,
+    font_pixel_size: int | None,
+) -> None:
+    image = QtGui.QImage(_SIZE, _SIZE, QtGui.QImage.Format.Format_ARGB32)
+    image.fill(QtGui.QColor(255, 255, 255))
+    painter = QtGui.QPainter(image)
+    if font_pixel_size is not None:
+        font = painter.font()
+        font.setPixelSize(font_pixel_size)
+        painter.setFont(font)
+    context = ShapeRenderContext(
+        scale=scale,
+        palette=Palette.from_rgb((255, 0, 0)),
+        point_size=point_size,
         point_type="round",
         selected=False,
         fill=False,
-        highlight=None,
+        highlight=highlight,
         rotation_highlight=None,
         show_label=True,
     )
@@ -590,49 +619,17 @@ def test_intersects_rect_covers_every_painted_pixel(
         return intersects_rect(painter=painter, shape=shape, context=context, rect=rect)
 
     try:
-        for x, y in [
-            (xs.min(), ys[xs.argmin()]),
-            (xs.max(), ys[xs.argmax()]),
-            (xs[ys.argmin()], ys.min()),
-            (xs[ys.argmax()], ys.max()),
-        ]:
-            assert hits(x, y), (x, y)
-        assert not hits(xs.max() + 50, ys.max() + 50)
-    finally:
-        painter.end()
-
-
-@pytest.mark.usefixtures("qapp")
-def test_intersects_rect_covers_mask_contour_outside_mask() -> None:
-    shape = Shape(
-        label=None,
-        shape_type="mask",
-        points=np.array([[10, 10], [19, 19]], dtype=np.float64),
-    )
-    shape.mask = np.ones((10, 10), dtype=bool)
-    image = QtGui.QImage(250, 250, QtGui.QImage.Format.Format_ARGB32)
-    image.fill(QtGui.QColor(255, 255, 255))
-    painter = QtGui.QPainter(image)
-    context = ShapeRenderContext(
-        scale=10,
-        palette=Palette.from_rgb((255, 0, 0)),
-        point_size=1,
-        point_type="round",
-        selected=False,
-        fill=False,
-        highlight=None,
-        rotation_highlight=None,
-        show_label=False,
-    )
-    try:
+        painter.save()
         render_shape(painter=painter, shape=shape, context=context)
-        # The contour runs at x = 9.5 * scale, left of the mask's origin.
-        assert image.pixelColor(94, 140) != QtGui.QColor(255, 255, 255)
-        assert intersects_rect(
-            painter=painter,
-            shape=shape,
-            context=context,
-            rect=QtCore.QRectF(0, 0, 96, 250),
-        )
+        painter.restore()
+        painted = [
+            (x, y)
+            for y in range(_SIZE)
+            for x in range(_SIZE)
+            if image.pixelColor(x, y) != QtGui.QColor(255, 255, 255)
+        ]
+        assert painted
+        assert [p for p in painted if not hits(*p)] == []
+        assert not hits(_SIZE + 50, _SIZE + 50)
     finally:
         painter.end()
