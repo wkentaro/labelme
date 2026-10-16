@@ -147,3 +147,36 @@ def test_save_whose_name_differs_only_in_case_checks_the_image(
 
     _delete(win=win, monkeypatch=monkeypatch)
     assert _checked(win) == [False, False, False]
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("image_name", "saved_name"),
+    [("..jpg", "..json"), ("café.jpg", "café.json")],
+    ids=["dot-stem", "unicode-form"],
+)
+def test_save_onto_the_annotation_file_of_an_unusual_name_checks_it(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    image_name: str,
+    saved_name: str,
+) -> None:
+    images = tmp_path / "images"
+    images.mkdir()
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", images / "a.jpg")
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", images / image_name)
+    saved = images / saved_name
+    saved.touch()
+    if not (images / f"{Path(image_name).stem}.json").exists():
+        pytest.skip("needs a filesystem that treats both names as one")
+    saved.unlink()
+    win = main_win(file_or_dir=images)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert _checked(win) == [False, False]
+
+    _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=saved)
+    assert sorted(_checked(win)) == [False, True]

@@ -10,6 +10,7 @@ import re
 import subprocess
 import time
 import typing
+import unicodedata
 import webbrowser
 from pathlib import Path
 from typing import Final
@@ -3515,16 +3516,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def _refresh_image_list_checkmarks(self, *, label_path: str) -> None:
         # Save As can write or delete any image's Annotation File, so re-apply
         # the build-time rule to every item that could own this file.
-        # ponytail: matched by file name (casefolded) to keep auto-save cheap on
-        # large folders; an Annotation File symlinked under another name stays
-        # stale until the list is rebuilt. Drop the filter if that matters.
-        name = os.path.basename(label_path).casefold()
+        # ponytail: matched by stem to keep auto-save cheap on large folders; an
+        # Annotation File symlinked under another name stays stale until the
+        # list is rebuilt. Drop the filter if that matters.
+        stem = _comparable_stem(label_path)
         file_list = self._docks.file_list
         for row in range(file_list.count()):
             item = file_list.item(row)
             assert item
-            stem = os.path.splitext(os.path.basename(_file_list_item_path(item)))[0]
-            if f"{stem}{LABEL_FILE_SUFFIX}".casefold() == name:
+            if _comparable_stem(_file_list_item_path(item)) == stem:
                 _set_annotated_check_state(item, output_dir=self._output_dir)
 
     def _file_list_label(self, image_path: str, /) -> str:
@@ -3651,6 +3651,12 @@ def _make_image_list_item(
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
     _set_annotated_check_state(item, output_dir=output_dir)
     return item
+
+
+def _comparable_stem(path: str, /) -> str:
+    # Over-matching only re-checks extra items, so fold the case and Unicode
+    # forms a filesystem may treat as the same name.
+    return unicodedata.normalize("NFC", Path(path).stem).casefold()
 
 
 def _set_annotated_check_state(
