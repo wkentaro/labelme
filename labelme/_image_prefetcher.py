@@ -40,6 +40,13 @@ def _decode(image_path: str, /) -> _Decoded:
         requirement = get_reader_decode_requirement(reader=reader)
         if requirement is None or requirement.required_mb > _MAX_CACHED_MB:
             return None
+        # The loader rotates an EXIF-oriented image and re-encodes it, which
+        # the byte check below would reject; skip that work up front.
+        if (
+            reader.transformation()
+            != QtGui.QImageIOHandler.Transformation.TransformationNone
+        ):
+            return None
         image_data = read_image_file(filename=image_path)
         with open(image_path, "rb") as f:
             if f.read() != image_data:

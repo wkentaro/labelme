@@ -76,3 +76,19 @@ def test_retain_drops_current_image_over_cap(*, tmp_path: Path) -> None:
         assert prefetcher.take(image_path=path, image_data=b"data") is None
     finally:
         prefetcher.shutdown()
+
+
+@pytest.mark.usefixtures("qapp")
+def test_decode_skips_exif_rotated_image_before_converting(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "rotated.jpg"
+    exif = PIL.Image.Exif()
+    exif[0x0112] = 6  # Orientation: rotate 90 degrees clockwise
+    PIL.Image.new("RGB", (8, 4)).save(path, exif=exif)
+
+    def fail(*, filename: str) -> bytes:
+        raise AssertionError(f"converted {filename}")
+
+    monkeypatch.setattr(_image_prefetcher, "read_image_file", fail)
+    assert _image_prefetcher._decode(str(path)) is None
