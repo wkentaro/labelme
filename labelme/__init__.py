@@ -1,4 +1,5 @@
 import importlib.metadata
+import sys
 
 __appname__ = "Labelme"
 
@@ -11,6 +12,9 @@ __version__ = importlib.metadata.version("labelme")
 
 # XXX: has to be imported before PySide6 to load dlls in order on Windows
 # https://github.com/wkentaro/labelme/issues/1564
-import onnxruntime  # noqa: F401
+# Elsewhere osam imports it later, when the window checks which AI models
+# are downloaded.
+if sys.platform == "win32":
+    import onnxruntime  # noqa: F401
 
 __all__: list[str] = []

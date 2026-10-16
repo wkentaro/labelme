@@ -355,6 +355,9 @@ def show_window_and_wait_for_imagedata(*, qtbot: QtBot, win: MainWindow) -> None
 
     def check_image_data() -> None:
         assert win._annotation is not None
+        # A neighbor prefetch decodes straight from its file and holds it
+        # open meanwhile, which blocks deleting it on Windows.
+        assert all(f.done() for f in win._image_prefetcher._decoded.values())
 
     qtbot.waitUntil(check_image_data)
 

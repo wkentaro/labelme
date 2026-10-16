@@ -40,6 +40,7 @@ from ._shape_render import Palette
 from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
 from ._shape_render import bounds as _shape_bounds
+from ._shape_render import intersects_rect
 from ._shape_render import is_hit_by_point
 from ._shape_render import render_shape
 
@@ -1702,12 +1703,25 @@ class Canvas(QtWidgets.QWidget):
         return not self._should_constrain_to_pixmap(cursor)
 
     def _draw_committed_shapes_layer(self, painter: QtGui.QPainter, /) -> None:
+        # Zoomed in, the scroll area shows a small part of the canvas; skip the
+        # shapes outside it. An unshown canvas (offscreen render) has no visible
+        # region, so it paints everything.
+        visible = self.visibleRegion().boundingRect()
+        visible_rect = (
+            None
+            if visible.isEmpty()
+            else painter.transform().inverted()[0].mapRect(QRectF(visible))
+        )
         for shape in self.shapes:
             if not shape.visible:
                 continue
             context = self._render_context(
                 shape=shape, highlighted=shape is self.hovered_shape
             )
+            if visible_rect is not None and not intersects_rect(
+                painter=painter, shape=shape, context=context, rect=visible_rect
+            ):
+                continue
             render_shape(painter=painter, shape=shape, context=context)
 
     def _draw_active_shape_layer(self, painter: QtGui.QPainter, /) -> None:

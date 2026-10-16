@@ -4,6 +4,7 @@ from typing import Final
 
 import numpy as np
 import pytest
+from PySide6 import QtCore
 from PySide6 import QtGui
 
 from labelme._shape import Shape
@@ -12,6 +13,7 @@ from labelme._widgets._shape_render import Palette
 from labelme._widgets._shape_render import ShapeRenderContext
 from labelme._widgets._shape_render import VertexHighlight
 from labelme._widgets._shape_render import bounds
+from labelme._widgets._shape_render import intersects_rect
 from labelme._widgets._shape_render import is_hit_by_point
 from labelme._widgets._shape_render import render_shape
 
@@ -533,3 +535,116 @@ def test_rotation_highlight_colors_rotation_group_without_coloring_vertices() ->
     assert image.pixelColor(100, 50) == QtGui.QColor(255, 255, 255)
     assert image.pixelColor(150, 100) == QtGui.QColor(255, 255, 255)
     assert image.pixelColor(50, 50) == QtGui.QColor(255, 0, 0)
+
+
+@pytest.mark.parametrize(
+    ("shape_type", "points"),
+    [
+        ("polygon", [[60, 60], [90, 60], [90, 80]]),
+        ("rectangle", [[60, 60], [90, 80]]),
+        ("circle", [[70, 70], [80, 75]]),
+        ("oriented_rectangle", [[60, 60], [64, 60], [64, 62], [60, 62]]),
+        ("point", [[70, 70]]),
+        ("linestrip", [[60, 60], [90, 80], [60, 90]]),
+    ],
+)
+@pytest.mark.usefixtures("qapp")
+def test_intersects_rect_covers_every_painted_pixel(
+    *, shape_type: ShapeType, points: list[list[float]]
+) -> None:
+    shape = _shape(shape_type=shape_type, points=points)
+    shape.group_id = 12345
+    _assert_intersects_every_painted_pixel(
+        shape=shape,
+        scale=1.5,
+        point_size=8,
+        highlight=VertexHighlight(index=0, mode="near"),
+        font_pixel_size=None,
+    )
+
+
+@pytest.mark.usefixtures("qapp")
+def test_intersects_rect_covers_mask_contour_outside_mask() -> None:
+    # The contour runs half a pixel left of and above the mask's origin.
+    shape = Shape(
+        label=None,
+        shape_type="mask",
+        points=np.array([[10, 10], [19, 19]], dtype=np.float64),
+    )
+    shape.mask = np.ones((10, 10), dtype=bool)
+    _assert_intersects_every_painted_pixel(
+        shape=shape, scale=10, point_size=1, highlight=None, font_pixel_size=None
+    )
+
+
+@pytest.mark.parametrize(
+    ("label", "font_pixel_size"),
+    [
+        # Descenders drop below the baseline, past the small vertex markers.
+        ("gjpqy", 40),
+        # Stacked marks, often drawn from a fallback font, overhang the
+        # primary font's ascent and descent.
+        ("\u1019\u103c\u1014\u103a\u1019\u102c", 16),
+    ],
+)
+@pytest.mark.usefixtures("qapp")
+def test_intersects_rect_covers_label_glyphs(
+    *, label: str, font_pixel_size: int
+) -> None:
+    shape = _shape(shape_type="point", points=[[60, 100]])
+    shape.label = label
+    _assert_intersects_every_painted_pixel(
+        shape=shape,
+        scale=1,
+        point_size=1,
+        highlight=None,
+        font_pixel_size=font_pixel_size,
+    )
+
+
+def _assert_intersects_every_painted_pixel(
+    *,
+    shape: Shape,
+    scale: float,
+    point_size: int,
+    highlight: VertexHighlight | None,
+    font_pixel_size: int | None,
+) -> None:
+    image = QtGui.QImage(_SIZE, _SIZE, QtGui.QImage.Format.Format_ARGB32)
+    image.fill(QtGui.QColor(255, 255, 255))
+    painter = QtGui.QPainter(image)
+    if font_pixel_size is not None:
+        font = painter.font()
+        font.setPixelSize(font_pixel_size)
+        painter.setFont(font)
+    context = ShapeRenderContext(
+        scale=scale,
+        palette=Palette.from_rgb((255, 0, 0)),
+        point_size=point_size,
+        point_type="round",
+        selected=False,
+        fill=False,
+        highlight=highlight,
+        rotation_highlight=None,
+        show_label=True,
+    )
+
+    def hits(x: float, y: float) -> bool:
+        rect = QtCore.QRectF(x, y, 1, 1)
+        return intersects_rect(painter=painter, shape=shape, context=context, rect=rect)
+
+    try:
+        painter.save()
+        render_shape(painter=painter, shape=shape, context=context)
+        painter.restore()
+        painted = [
+            (x, y)
+            for y in range(_SIZE)
+            for x in range(_SIZE)
+            if image.pixelColor(x, y) != QtGui.QColor(255, 255, 255)
+        ]
+        assert painted
+        assert [p for p in painted if not hits(*p)] == []
+        assert not hits(_SIZE + 50, _SIZE + 50)
+    finally:
+        painter.end()

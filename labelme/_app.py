@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import enum
 import functools
-import math
+import operator
 import os
 import platform
 import re
@@ -34,6 +34,7 @@ from . import _ai_models
 from . import _automation
 from . import _config
 from . import _utils
+from ._image_prefetcher import ImagePrefetcher
 from ._label_file import LABEL_FILE_SUFFIX
 from ._label_file import RASTER_MAX_SIDE
 from ._label_file import Annotation
@@ -56,6 +57,8 @@ from ._shape import can_merge_shapes
 from ._shape import merge_masks
 from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
+from ._utils import ImageDecodeRequirement
+from ._utils import get_image_decode_requirement
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import BrightnessContrastDialog
@@ -116,12 +119,6 @@ class _ViewportState(NamedTuple):
     zoom_value: float
     scroll_values: dict[Qt.Orientation, int]
     view_offset: QtCore.QPointF
-
-
-class _ImageDecodeRequirement(NamedTuple):
-    width: int
-    height: int
-    required_mb: int
 
 
 class _DockWidgets(NamedTuple):
@@ -339,6 +336,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._auto_save_path: str | None = None
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
+        self._image_prefetcher = ImagePrefetcher()
         self._model_manager = ModelManager(parent=self)
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
@@ -2414,7 +2412,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _confirm_large_image_open(
-        self, *, requirement: _ImageDecodeRequirement, limit_mb: int
+        self, *, requirement: ImageDecodeRequirement, limit_mb: int
     ) -> bool:
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setWindowTitle(self.tr("Large image"))
@@ -2516,13 +2514,19 @@ class MainWindow(QtWidgets.QMainWindow):
             label_file_path = None
             shapes = []
         t0 = time.time()
-        image = QtGui.QImage.fromData(annotation.image_data)
+        image = (
+            None
+            if file_list_image_path is None
+            else self._image_prefetcher.take(
+                image_path=file_list_image_path, image_data=annotation.image_data
+            )
+        )
+        if image is None:
+            image = QtGui.QImage.fromData(annotation.image_data)
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
-            requirement = _get_image_decode_requirement(
-                image_data=annotation.image_data
-            )
+            requirement = get_image_decode_requirement(image_data=annotation.image_data)
             original_limit = QtGui.QImageReader.allocationLimit()
             if (
                 requirement is not None
@@ -2618,6 +2622,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._actions.image.setEnabled(True)
         self._sync_navigation_actions()
+        self._prefetch_neighbors()
         # A load never pulls the keyboard out of the File List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
@@ -2722,6 +2727,7 @@ class MainWindow(QtWidgets.QMainWindow):
             a0.ignore()
             return
         self._save_writer.shutdown()
+        self._image_prefetcher.shutdown()
         self._window_state.setValue(WINDOW_SIZE_KEY, self.size())
         self._window_state.setValue(WINDOW_POSITION_KEY, self.pos())
         self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())
@@ -2758,6 +2764,18 @@ class MainWindow(QtWidgets.QMainWindow):
         return next(
             (paths[i] for i in indices if self._matches_file_search(paths[i])),
             None,
+        )
+
+    def _prefetch_neighbors(self) -> None:
+        self._image_prefetcher.retain(
+            current=None
+            if self._file_list_image_path is None or self._annotation is None
+            else (self._file_list_image_path, self._annotation.image_data, self._image),
+            neighbors=[
+                path
+                for step in (1, -1)
+                if (path := self._get_neighbor_image_path(step=step)) is not None
+            ],
         )
 
     def _sync_navigation_actions(self) -> None:
@@ -3409,6 +3427,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
             self._import_images_from_dir(root_dir=str(Path(file_or_dir).parent))
+            # The load ran before the File List knew the neighbors.
+            self._prefetch_neighbors()
 
     def _open_dir_with_dialog(self) -> None:
         if not self._can_continue():
@@ -3673,7 +3693,7 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     # None means the failure is not explained by image size, so the caller
     # falls back to the generic unsupported-format message.
 
-    requirement = _get_image_decode_requirement(image_data=image_data)
+    requirement = get_image_decode_requirement(image_data=image_data)
     if requirement is None:
         return None
     width = requirement.width
@@ -3703,33 +3723,6 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     )
 
 
-def _get_image_decode_requirement(
-    *, image_data: bytes
-) -> _ImageDecodeRequirement | None:
-    buffer = QtCore.QBuffer()
-    buffer.setData(image_data)
-    buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
-    reader = QtGui.QImageReader(buffer)
-    size = reader.size()
-    if not size.isValid():
-        return None
-    bits_per_pixel = QtGui.QImage.toPixelFormat(
-        reader.imageFormat()  # ty: ignore[no-matching-overload]
-    ).bitsPerPixel()
-    if bits_per_pixel <= 0:
-        return None
-
-    # Match Qt's 32-bit minimum for GUI-backed image allocations.
-    required_mb = (
-        size.width() * size.height() * max(bits_per_pixel, 32) / 8 / 1024 / 1024
-    )
-    return _ImageDecodeRequirement(
-        width=size.width(),
-        height=size.height(),
-        required_mb=math.ceil(required_mb),
-    )
-
-
 def _list_supported_image_extensions() -> tuple[str, ...]:
     return tuple(
         f".{fmt.toStdString().lower()}"
@@ -3749,19 +3742,28 @@ def _extract_dropped_image_paths(*, mime: QtCore.QMimeData) -> list[str]:
 def _scan_image_files(*, root_dir: str) -> list[str]:
     extensions = _list_supported_image_extensions()
 
-    images: list[str] = []
+    # (path below root_dir, path) pairs. Every path shares the root_dir prefix,
+    # so sorting by the part below it gives the same order, and natsort's key
+    # cost grows with path depth (~5x faster for a typical absolute root_dir).
+    images: list[tuple[str, str]] = []
     for root, dirs, files in os.walk(root_dir):
+        root_below = os.path.relpath(root, root_dir)
         for file in files:
             if file.lower().endswith(extensions):
-                relative_path = os.path.normpath(os.path.join(root, file))
-                images.append(relative_path)
+                images.append(
+                    (
+                        os.path.normpath(os.path.join(root_below, file)),
+                        os.path.normpath(os.path.join(root, file)),
+                    )
+                )
 
     logger.debug("found {:d} images in {!r}", len(images), root_dir)
     try:
-        return natsort.os_sorted(images)
+        images = natsort.os_sorted(images, key=operator.itemgetter(0))
     except OSError:
         logger.warning(
             "natsort.os_sorted failed (known macOS strxfrm bug), "
             "falling back to locale-unaware natural sort"
         )
-        return natsort.natsorted(images)
+        images = natsort.natsorted(images, key=operator.itemgetter(0))
+    return [path for _, path in images]
