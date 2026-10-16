@@ -785,6 +785,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Berkas anotasi yang dipilih tidak dapat dibuka: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Folder Anotasi tidak ditemukan: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Telusuri Folder Gambar</translation>
     </message>

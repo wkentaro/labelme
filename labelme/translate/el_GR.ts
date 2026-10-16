@@ -750,6 +750,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Δεν ήταν δυνατό το άνοιγμα του επιλεγμένου αρχείου επισημειώσεων: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Ο φάκελος σχολιασμών δεν βρέθηκε: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Επιλογή φακέλου εικόνων</translation>
     </message>

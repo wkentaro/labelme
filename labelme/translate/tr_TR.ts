@@ -816,6 +816,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Seçilen açıklama dosyası açılamadı: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Açıklama Klasörü bulunamadı: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Görüntü Klasörüne Göz At</translation>
     </message>
