@@ -144,3 +144,20 @@ def test_two_band_tiff_falls_back_to_first_band(*, tmp_path: Path) -> None:
     data = read_image_file(filename=str(path))
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert image.size == (64, 64)
+
+
+def test_planar_separate_tiff_keeps_image_size_and_bands(*, tmp_path: Path) -> None:
+    arr = np.zeros((3, 64, 200), dtype=np.float32)
+    for band in range(3):
+        arr[band, :, band * 64 : (band + 1) * 64] = 1  # band i lights block i
+    path = tmp_path / "planar.tif"
+    tifffile.imwrite(str(path), arr, photometric="rgb", planarconfig="separate")
+
+    data = read_image_file(filename=str(path))
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.size == (200, 64)
+        rgb = image.convert("RGB")
+        for band in range(3):
+            pixel = rgb.getpixel((band * 64 + 32, 32))
+            assert pixel[band] > 200
+            assert sum(pixel) - pixel[band] < 50
