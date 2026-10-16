@@ -216,16 +216,16 @@
         <translation>Etiketlemeye başla</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Başlamak için bir görüntü veya görüntü klasörü açın.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Klasör Aç</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Görüntü Aç</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Klasör Aç</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -288,10 +288,6 @@
 </translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>Dizin Aç</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Sonraki Görüntü</translation>
     </message>
@@ -316,14 +312,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>&amp;Farklı Kaydet</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Çıktı Dizinini &amp;Değiştir</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Açıklamaların yüklendiği ve kaydedildiği konumu değiştir</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -496,6 +484,22 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Etiketi &amp;Düzenle</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>&amp;Açıklama Klasörünü Değiştir…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Açıklama dosyalarının okunup kaydedileceği yeri seçin</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Klasör Aç…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Görüntü klasörü aç</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -784,14 +788,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>%s - Görüntü veya Açıklamaları Aç</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Dizine Açıklama Kaydet/Dizinden Açıklama Yükle</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Açıklamalar %s dizinine kaydedilecek veya bu dizinden yüklenecek</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Dikkat</translation>
     </message>
@@ -892,6 +888,14 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
 Please select a different model or use AI-Box mode.</source>
         <translation>%s nokta istemlerini desteklemiyor.
 Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Açıklama Klasörünü Seç</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Açıklama Klasörü: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

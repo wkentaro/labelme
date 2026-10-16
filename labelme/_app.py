@@ -453,11 +453,11 @@ class MainWindow(QtWidgets.QMainWindow):
             checked=self._config["with_image_data"],
         )
         change_output_dir = action(
-            text=self.tr("&Change Output Dir"),
+            text=self.tr("Change &Annotation Folder…"),
             slot=self.prompt_output_dir,
             shortcut=shortcuts["save_to"],
             icon="phosphor/folders.svg",
-            tip=self.tr("Change where annotations are loaded/saved"),
+            tip=self.tr("Choose where annotation files are read and saved"),
         )
         open_ = action(
             text=self.tr("&Open\n"),
@@ -467,11 +467,11 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Open an image or annotation file"),
         )
         open_dir = action(
-            text=self.tr("Open Dir"),
+            text=self.tr("Open Folder…"),
             slot=self._open_dir_with_dialog,
             shortcut=shortcuts["open_dir"],
             icon="phosphor/folder-open.svg",
-            tip=self.tr("Open Dir"),
+            tip=self.tr("Open a folder of images"),
         )
         close = image_action(
             text=self.tr("&Close"),
@@ -2818,7 +2818,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         output_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self,
-            self.tr("%s - Save/Load Annotations in Directory") % __appname__,
+            self.tr("%s - Choose Annotation Folder") % __appname__,
             default_output_dir,
             QtWidgets.QFileDialog.Option.ShowDirsOnly
             | QtWidgets.QFileDialog.Option.DontResolveSymlinks,
@@ -2844,8 +2844,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._auto_save_path = None
         self.statusBar().showMessage(
-            self.tr("%s . Annotations will be saved/loaded in %s")
-            % ("Change Annotations Dir", self._output_dir)
+            self.tr("Annotation Folder: %s") % self._output_dir
         )
         self.statusBar().show()
 

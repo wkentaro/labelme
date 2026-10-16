@@ -216,16 +216,16 @@
         <translation>Annotálás indítása</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>A kezdéshez nyisson meg egy képet vagy egy képeket tartalmazó mappát.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Mappa megnyitása</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Kép megnyitása</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Mappa megnyitása</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -288,10 +288,6 @@
 </translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>Könyvtár megnyitása</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Következő kép</translation>
     </message>
@@ -316,14 +312,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>Mentés &amp;másként</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>&amp;Kimeneti könyvtár módosítása</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Az annotációk betöltési/mentési helyének módosítása</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -516,6 +504,22 @@ Shapes</source>
     <message>
         <source>Keep Previous Brightness/Contrast</source>
         <translation>Előző fényerő/kontraszt megtartása</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>&amp;Annotációs mappa módosítása…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Annotációs fájlok olvasási és mentési helyének kiválasztása</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Mappa megnyitása…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Képeket tartalmazó mappa megnyitása</translation>
     </message>
     <message>
         <source>Copy to Clipboard</source>
@@ -792,14 +796,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>%s - Kép vagy annotációk megnyitása</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Annotációk mentése/betöltése könyvtárból</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Az annotációk a %s könyvtárban lesznek mentve/betöltve</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Figyelem</translation>
     </message>
@@ -892,6 +888,14 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
 Please select a different model or use AI-Box mode.</source>
         <translation>%s nem támogatja a pont alapú promptokat.
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Annotációs mappa kiválasztása</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Annotációs mappa: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

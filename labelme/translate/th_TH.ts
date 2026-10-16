@@ -216,16 +216,16 @@
         <translation>เริ่มการใส่คำอธิบายประกอบ</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>เปิดรูปภาพหรือโฟลเดอร์รูปภาพเพื่อเริ่มต้น</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>เปิดโฟลเดอร์</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>เปิดรูปภาพ</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>เปิดโฟลเดอร์</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -287,10 +287,6 @@
         <translation>เปิด (&amp;O)</translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>เปิดโฟลเดอร์</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>รูปถัดไป (&amp;N)</translation>
     </message>
@@ -314,14 +310,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>บันทึกเป็น (&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>เปลี่ยนโฟลเดอร์ผลลัพธ์ (&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>เปลี่ยนโฟลเดอร์สำหรับโหลด/บันทึกแอนโนเทชัน</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -490,6 +478,22 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>แก้ไขเลเบล (&amp;E)</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>เปลี่ยนโฟลเดอร์แอนโนเทชัน (&amp;A)…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>เลือกตำแหน่งที่จะอ่านและบันทึกไฟล์แอนโนเทชัน</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>เปิดโฟลเดอร์…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>เปิดโฟลเดอร์รูปภาพ</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -778,14 +782,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - เปิดภาพหรือคำอธิบายประกอบ</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - บันทึก/โหลดแอนโนเทชันในโฟลเดอร์</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s แอนโนเทชันจะถูกบันทึก/โหลดใน %s</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>คำเตือน</translation>
     </message>
@@ -886,6 +882,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s ไม่รองรับการกำหนดจุด
 กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - เลือกโฟลเดอร์แอนโนเทชัน</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>โฟลเดอร์แอนโนเทชัน: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

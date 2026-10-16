@@ -236,11 +236,14 @@ def main() -> None:
         help="logger level",
     )
     parser.add_argument(
-        "path", nargs="?", help="image file, annotation file, or directory"
+        "path", nargs="?", help="image file, annotation file, or folder"
     )
     parser.add_argument(
         "--output",
-        help="output directory for saving annotation JSON files",
+        help=(
+            "annotation folder to read and save annotation files in"
+            " (default: next to each image)"
+        ),
     )
     default_config_file = _config.get_user_config_file()
     parser.add_argument(
@@ -359,8 +362,8 @@ def main() -> None:
     if output is not None:
         if is_label_file_path(filename=output):
             parser.error(
-                f"--output expects a directory path, but '{output}' looks like a file."
-                " Remove the .json extension or provide a directory path."
+                f"--output expects a folder path, but '{output}' looks like a file."
+                " Remove the .json extension or provide a folder path."
             )
         output_dir = output
 

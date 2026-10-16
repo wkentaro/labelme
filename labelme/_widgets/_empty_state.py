@@ -51,7 +51,7 @@ class EmptyStateWidget(QtWidgets.QWidget):
         content_layout.addWidget(heading)
 
         explanation = QtWidgets.QLabel(
-            self.tr("Open an image or a directory of images to begin.")
+            self.tr("Open an image or a folder of images to begin.")
         )
         explanation.setObjectName("emptyStateExplanation")
         explanation.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
@@ -70,7 +70,7 @@ class EmptyStateWidget(QtWidgets.QWidget):
         buttons.addWidget(open_image)
 
         open_directory = QtWidgets.QPushButton(
-            new_icon("phosphor/folders.svg"), self.tr("Open Directory")
+            new_icon("phosphor/folders.svg"), self.tr("Open Folder")
         )
         open_directory.setObjectName("emptyStateOpenDirectory")
         open_directory.clicked.connect(on_open_directory)

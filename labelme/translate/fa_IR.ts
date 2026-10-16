@@ -216,16 +216,16 @@
         <translation>برچسب‌گذاری را شروع کنید</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>برای شروع، یک تصویر یا پوشه‌ای از تصاویر را باز کنید.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>باز کردن پوشه</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>باز کردن تصویر</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>باز کردن پوشه</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -287,10 +287,6 @@
         <translation>باز کردن(&amp;O)</translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>باز کردن پوشه</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>تصویر بعدی(&amp;N)</translation>
     </message>
@@ -314,14 +310,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>ذخیره با نام دیگر(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>تغییر مسیر خروجی(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>تغییر محل بارگذاری/ذخیره حاشیه‌نویسی‌ها</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -490,6 +478,22 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>ویرایش برچسب(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>تغییر پوشهٔ حاشیه‌نویسی(&amp;A)…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>انتخاب محل خواندن و ذخیرهٔ پرونده‌های حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>باز کردن پوشه…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>باز کردن پوشه‌ای از تصاویر</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -778,14 +782,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - باز کردن تصویر یا حاشیه‌نویسی‌ها</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - ذخیره/بارگذاری حاشیه‌نویسی‌ها در پوشه</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . حاشیه‌نویسی‌ها در %s ذخیره/بارگذاری خواهند شد</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>توجه</translation>
     </message>
@@ -886,6 +882,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s از دستورات نقطه‌ای پشتیبانی نمی‌کند.
 لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - انتخاب پوشهٔ حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>پوشهٔ حاشیه‌نویسی: %s</translation>
     </message>
     <message>
         <source>Image not found</source>

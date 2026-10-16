@@ -148,14 +148,14 @@ labelme  # just open gui
 # tutorial (single image example)
 cd examples/tutorial
 labelme apc2016_obj3.jpg  # specify image file
-labelme apc2016_obj3.jpg --output annotations/  # save annotation JSON files to a directory
+labelme apc2016_obj3.jpg --output annotations/  # read and save annotation files in an annotation folder
 labelme apc2016_obj3.jpg --with-image-data  # include image data in JSON file
 labelme apc2016_obj3.jpg \
   --labels highland_6539_self_stick_notes,mead_index_cards,kong_air_dog_squeakair_tennis_ball  # specify label list
 
 # semantic segmentation example
 cd examples/semantic_segmentation
-labelme data_annotated/  # Open directory to annotate all images in it
+labelme data_annotated/  # Open a folder to annotate all images in it
 labelme data_annotated/ --labels labels.txt  # specify label list with a file
 ```
 

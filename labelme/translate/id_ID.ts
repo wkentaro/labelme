@@ -216,16 +216,16 @@
         <translation>Mulai anotasi</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
-        <translation>Buka gambar atau direktori gambar untuk memulai.</translation>
+        <source>Open an image or a folder of images to begin.</source>
+        <translation>Buka gambar atau folder gambar untuk memulai.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Buka Folder</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Buka Gambar</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Buka Direktori</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -282,10 +282,6 @@
         <translation>Keluar Aplikasi</translation>
     </message>
     <message>
-        <source>Open Dir</source>
-        <translation>Buka Direktori</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Gambar Berikutnya (&amp;N)</translation>
     </message>
@@ -309,14 +305,6 @@
     <message>
         <source>&amp;Save As</source>
         <translation>&amp;Simpan Sebagai</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Ubah Direktori Output (&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Ubah tempat pengambilan/penyimpanan anotasi</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -437,6 +425,22 @@
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Edit Label</translation>
+    </message>
+    <message>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Ubah Folder Anotasi (&amp;A)…</translation>
+    </message>
+    <message>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Pilih tempat berkas anotasi dibaca dan disimpan</translation>
+    </message>
+    <message>
+        <source>Open Folder…</source>
+        <translation>Buka Folder…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Buka folder gambar</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -753,14 +757,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>%s - Buka Gambar atau Anotasi</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Simpan/Muat Anotasi di Direktori</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s - Anotasi akan disimpan/dimuat di %s</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Perhatian</translation>
     </message>
@@ -861,6 +857,14 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
 Please select a different model or use AI-Box mode.</source>
         <translation>%s tidak mendukung point prompt.
 Silakan pilih model lain atau gunakan mode AI-Box.</translation>
+    </message>
+    <message>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Pilih Folder Anotasi</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Folder Anotasi: %s</translation>
     </message>
     <message>
         <source>Image not found</source>
