@@ -445,7 +445,12 @@ def _imread_tiff(filename: str, /) -> PIL.Image.Image:
     MULTI_CHANNEL_NDIM: Final = 3
     RGB_CHANNEL_COUNT: Final = 3
 
-    img_arr: NDArray = tifffile.imread(filename)
+    with tifffile.TiffFile(filename) as tif:
+        series = tif.series[0]
+        img_arr: NDArray = series.asarray()
+    # Planar-separate TIFFs put the band axis first.
+    if img_arr.ndim == MULTI_CHANNEL_NDIM and series.axes.startswith("S"):
+        img_arr = np.moveaxis(img_arr, 0, -1)
 
     if img_arr.ndim == _SINGLE_CHANNEL_NDIM:
         img_arr_normalized = _normalize_to_uint8(img_arr)
