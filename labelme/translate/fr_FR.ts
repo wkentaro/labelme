@@ -106,12 +106,16 @@
         <translation>Choisir le dossier d’annotations…</translation>
     </message>
     <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} sur {total} annotées dans</translation>
+    </message>
+    <message>
         <source>Not found: %s · next to images</source>
         <translation>Introuvable : %s · à côté des images</translation>
     </message>
     <message>
-        <source>Next to images</source>
-        <translation>À côté des images</translation>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} sur {total} annotées · à côté des images</translation>
     </message>
 </context>
 <context>

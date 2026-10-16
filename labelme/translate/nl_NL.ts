@@ -106,12 +106,16 @@
         <translation>Annotatiemap kiezen…</translation>
     </message>
     <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} van {total} geannoteerd in</translation>
+    </message>
+    <message>
         <source>Not found: %s · next to images</source>
         <translation>Niet gevonden: %s · naast afbeeldingen</translation>
     </message>
     <message>
-        <source>Next to images</source>
-        <translation>Naast afbeeldingen</translation>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} van {total} geannoteerd · naast afbeeldingen</translation>
     </message>
 </context>
 <context>

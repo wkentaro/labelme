@@ -106,12 +106,16 @@
         <translation>選擇標註資料夾…</translation>
     </message>
     <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>已標註 {annotated}/{total}，位於</translation>
+    </message>
+    <message>
         <source>Not found: %s · next to images</source>
         <translation>找不到：%s · 與影像在同一位置</translation>
     </message>
     <message>
-        <source>Next to images</source>
-        <translation>與影像在同一位置</translation>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>已標註 {annotated}/{total} · 與影像在同一位置</translation>
     </message>
 </context>
 <context>

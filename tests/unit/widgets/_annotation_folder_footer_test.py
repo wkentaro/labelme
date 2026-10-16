@@ -24,7 +24,9 @@ def _palette(*, window: str, text: str, highlight: str) -> QtGui.QPalette:
 
 def _text(footer: AnnotationFolderFooter, /) -> str:
     labels = footer.findChildren(QtWidgets.QLabel)
-    return " ".join(label.text() for label in labels if label.text())
+    return " ".join(
+        label.text() for label in labels if label.isVisibleTo(footer) and label.text()
+    )
 
 
 def _menu(footer: AnnotationFolderFooter, /) -> QtWidgets.QMenu:
@@ -72,7 +74,7 @@ def test_states_and_menu(*, qtbot: QtBot) -> None:
     next_to_images, choose = _menu(footer).actions()
     assert choose.text() == "Choose Annotation Folder…"
 
-    assert _text(footer) == "Next to images"
+    assert _text(footer) == "0 of 0 annotated · next to images"
     assert next_to_images.isChecked()
 
     footer.set_folder(Path("/data/out"))
@@ -93,7 +95,7 @@ def test_states_and_menu(*, qtbot: QtBot) -> None:
     assert "Not found" in _text(footer)
 
     footer.set_missing(None)
-    assert _text(footer) == "Next to images"
+    assert _text(footer) == "0 of 0 annotated · next to images"
 
 
 def test_next_to_images_stays_checked_when_the_switch_is_refused(
@@ -107,3 +109,19 @@ def test_next_to_images_stays_checked_when_the_switch_is_refused(
     next_to_images.trigger()
 
     assert not next_to_images.isChecked()
+
+
+def test_count_text(*, qtbot: QtBot) -> None:
+    footer = AnnotationFolderFooter(on_choose=_ignore, on_next_to_images=_ignore)
+    qtbot.addWidget(footer)
+
+    footer.set_count(annotated=3, total=5)
+    assert _text(footer) == "3 of 5 annotated · next to images"
+
+    footer.set_folder(Path("/data/out"))
+    assert _text(footer) == "3 of 5 annotated in out"
+
+    # The warning replaces the count.
+    footer.set_folder(None)
+    footer.set_missing("/mnt/usb/out")
+    assert _text(footer) == "Not found: out · next to images"

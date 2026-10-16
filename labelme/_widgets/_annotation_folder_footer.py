@@ -41,8 +41,11 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
         self.setAccessibleName(self.tr("Annotation Folder"))
         self._folder: Path | None = None
         self._missing: str | None = None
+        self._count = (0, 0)
         self._on_next_to_images_callback = on_next_to_images
 
+        self._count_label = QtWidgets.QLabel()
+        self._count_label.setTextFormat(QtCore.Qt.TextFormat.PlainText)
         self._icon = QtWidgets.QLabel()
         self._text = _ElidedLabel()
         self._text.setTextFormat(QtCore.Qt.TextFormat.PlainText)
@@ -71,11 +74,12 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(6, 2, 2, 2)
         layout.setSpacing(4)
+        layout.addWidget(self._count_label)
         layout.addWidget(self._icon)
         layout.addWidget(self._text, 1)
         layout.addWidget(button)
 
-        self.set_folder(None)
+        self.set_count(annotated=0, total=0)
 
     def set_folder(self, folder: Path | None, /) -> None:
         self._folder = folder
@@ -87,12 +91,21 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
         self._missing = missing
         self._sync()
 
+    def set_count(self, *, annotated: int, total: int) -> None:
+        self._count = (annotated, total)
+        self._sync()
+
     def _sync(self) -> None:
         folder = self._folder
         self._next_to_images.setChecked(folder is None)
         font = self._text.font()
         font.setBold(folder is not None)
         self._text.setFont(font)
+        count = {"annotated": self._count[0], "total": self._count[1]}
+        self._count_label.setVisible(folder is not None)
+        self._count_label.setText(
+            self.tr("{annotated} of {total} annotated in").format(**count)
+        )
         if folder is not None:
             self._text.setText(folder.name or str(folder))
             self._text.setForegroundRole(QtGui.QPalette.ColorRole.WindowText)
@@ -105,7 +118,11 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
             self._text.setForegroundRole(QtGui.QPalette.ColorRole.WindowText)
             self.setToolTip(self._missing)
         else:
-            self._text.setText(self.tr("Next to images"))
+            self._text.setText(
+                self.tr("{annotated} of {total} annotated · next to images").format(
+                    **count
+                )
+            )
             self._text.setForegroundRole(QtGui.QPalette.ColorRole.PlaceholderText)
             self.setToolTip("")
         self._sync_icon()

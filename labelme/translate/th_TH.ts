@@ -106,12 +106,16 @@
         <translation>เลือกโฟลเดอร์แอนโนเทชัน…</translation>
     </message>
     <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>แอนโนเทตแล้ว {annotated} จาก {total} ใน</translation>
+    </message>
+    <message>
         <source>Not found: %s · next to images</source>
         <translation>ไม่พบ: %s · โฟลเดอร์เดียวกับรูปภาพ</translation>
     </message>
     <message>
-        <source>Next to images</source>
-        <translation>โฟลเดอร์เดียวกับรูปภาพ</translation>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>แอนโนเทตแล้ว {annotated} จาก {total} · โฟลเดอร์เดียวกับรูปภาพ</translation>
     </message>
 </context>
 <context>

@@ -106,12 +106,16 @@
         <translation>アノテーションフォルダーを選択…</translation>
     </message>
     <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{total} 件中 {annotated} 件アノテーション済み:</translation>
+    </message>
+    <message>
         <source>Not found: %s · next to images</source>
         <translation>見つかりません: %s · 画像と同じ場所</translation>
     </message>
     <message>
-        <source>Next to images</source>
-        <translation>画像と同じ場所</translation>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{total} 件中 {annotated} 件アノテーション済み · 画像と同じ場所</translation>
     </message>
 </context>
 <context>

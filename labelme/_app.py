@@ -1142,6 +1142,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image_path = None
         self._file_list_image_path = None
         self._loaded_image_paths = []
+        # Annotated images the search box hides, found when the list is
+        # rebuilt and kept current by saves and deletions; the visible ones
+        # are counted from their check marks.
+        self._hidden_annotated_paths: set[str] = set()
         self._file_list_root_prefix = None
         self._file_search_pattern = re.compile("")
         self._prev_image_path = None
@@ -3607,13 +3611,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _refresh_file_list(self) -> None:
         # The Annotation Folder is remembered per opened folder, so choosing
-        # one needs a folder.
+        # one needs a folder, and the footer has nothing to count without
+        # images.
         has_folder = self._file_list_root_prefix is not None
         self._actions.change_output_dir.setEnabled(has_folder)
-        self._docks.annotation_folder_footer.setVisible(has_folder)
-        image_paths = [
-            path for path in self._loaded_image_paths if self._matches_file_search(path)
-        ]
+        self._docks.annotation_folder_footer.setVisible(
+            has_folder and bool(self._loaded_image_paths)
+        )
+        image_paths = []
+        self._hidden_annotated_paths = set()
+        for path in self._loaded_image_paths:
+            if self._matches_file_search(path):
+                image_paths.append(path)
+            elif _has_label_file(image_path=path, output_dir=self._output_dir):
+                self._hidden_annotated_paths.add(path)
 
         file_list = self._docks.file_list
         with QtCore.QSignalBlocker(file_list):
@@ -3629,6 +3640,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self._file_list_image_path in image_paths:
                 file_list.setCurrentRow(image_paths.index(self._file_list_image_path))
 
+        self._update_annotated_count()
         self._sync_navigation_actions()
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
@@ -3645,6 +3657,30 @@ class MainWindow(QtWidgets.QMainWindow):
             assert item
             if _comparable_stem(_file_list_item_path(item)) == stem:
                 _set_annotated_check_state(item, output_dir=self._output_dir)
+
+        # Images hidden by the search box have no item, so keep the count's
+        # record of them by the same rule.
+        for image_path in self._loaded_image_paths:
+            if _comparable_stem(image_path) != stem or self._matches_file_search(
+                image_path
+            ):
+                continue
+            if _has_label_file(image_path=image_path, output_dir=self._output_dir):
+                self._hidden_annotated_paths.add(image_path)
+            else:
+                self._hidden_annotated_paths.discard(image_path)
+        self._update_annotated_count()
+
+    def _update_annotated_count(self) -> None:
+        file_list = self._docks.file_list
+        visible = sum(
+            file_list.item(row).checkState() == Qt.CheckState.Checked
+            for row in range(file_list.count())
+        )
+        self._docks.annotation_folder_footer.set_count(
+            annotated=len(self._hidden_annotated_paths) + visible,
+            total=len(self._loaded_image_paths),
+        )
 
     def _file_list_label(self, image_path: str, /) -> str:
         # Paths under the opened folder are shown relative to it so the
@@ -3781,11 +3817,16 @@ def _comparable_stem(path: str, /) -> str:
 def _set_annotated_check_state(
     item: QtWidgets.QListWidgetItem, /, *, output_dir: Path | None
 ) -> None:
-    label_path = _resolve_label_path(
-        image_or_label_path=_file_list_item_path(item), output_dir=output_dir
+    has_label = _has_label_file(
+        image_path=_file_list_item_path(item), output_dir=output_dir
     )
-    has_label = QtCore.QFile.exists(label_path)
     item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
+
+
+def _has_label_file(*, image_path: str, output_dir: Path | None) -> bool:
+    return QtCore.QFile.exists(
+        _resolve_label_path(image_or_label_path=image_path, output_dir=output_dir)
+    )
 
 
 def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:

@@ -106,12 +106,16 @@
         <translation>Scegli cartella annotazioni…</translation>
     </message>
     <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} di {total} annotate in</translation>
+    </message>
+    <message>
         <source>Not found: %s · next to images</source>
         <translation>Non trovata: %s · accanto alle immagini</translation>
     </message>
     <message>
-        <source>Next to images</source>
-        <translation>Accanto alle immagini</translation>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} di {total} annotate · accanto alle immagini</translation>
     </message>
 </context>
 <context>

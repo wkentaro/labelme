@@ -106,12 +106,16 @@
         <translation>Επιλογή φακέλου σχολιασμών…</translation>
     </message>
     <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} από {total} με σχολιασμούς στο</translation>
+    </message>
+    <message>
         <source>Not found: %s · next to images</source>
         <translation>Δεν βρέθηκε: %s · δίπλα στις εικόνες</translation>
     </message>
     <message>
-        <source>Next to images</source>
-        <translation>Δίπλα στις εικόνες</translation>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} από {total} με σχολιασμούς · δίπλα στις εικόνες</translation>
     </message>
 </context>
 <context>

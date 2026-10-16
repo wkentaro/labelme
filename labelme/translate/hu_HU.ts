@@ -106,12 +106,16 @@
         <translation>Annotációs mappa kiválasztása…</translation>
     </message>
     <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated}/{total} annotálva itt:</translation>
+    </message>
+    <message>
         <source>Not found: %s · next to images</source>
         <translation>Nem található: %s · a képek mellett</translation>
     </message>
     <message>
-        <source>Next to images</source>
-        <translation>A képek mellett</translation>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated}/{total} annotálva · a képek mellett</translation>
     </message>
 </context>
 <context>
