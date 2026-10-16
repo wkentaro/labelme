@@ -1986,14 +1986,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _record_saved_annotation(self, *, label_path: str) -> None:
         assert self._image_path is not None
         self._label_file_path = label_path
-        image_path = self._file_list_image_path or self._image_path
-        rows = [row for row, path in enumerate(self.image_list) if path == image_path]
-        if len(rows) > 1:
-            raise RuntimeError("There are duplicate files.")
-        if rows:
-            item = self._docks.file_list.item(rows[0])
-            assert item
-            item.setCheckState(Qt.CheckState.Checked)
+        self._refresh_image_list_checkmarks(label_path=label_path)
         self._failed_save_path = None
         self._status_bar.save.setText(self.tr("Saved"))
         self._status_bar.save.setToolTip(label_path)
@@ -2950,9 +2943,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._status_bar.retry.hide()
         logger.info(f"Label file is removed: {annotation_path}")
 
-        item = self._docks.file_list.currentItem()
-        if item:
-            item.setCheckState(Qt.CheckState.Unchecked)
+        self._refresh_image_list_checkmarks(label_path=str(annotation_path))
 
         # Only the label file was deleted, not the image: clear the annotations
         # but keep the image on the canvas.
@@ -3521,6 +3512,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self._sync_navigation_actions()
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
+    def _refresh_image_list_checkmarks(self, *, label_path: str) -> None:
+        # Save As can write or delete any image's Annotation File, so re-apply
+        # the build-time rule to every item that could own this file.
+        # ponytail: matched by file name (casefolded) to keep auto-save cheap on
+        # large folders; an Annotation File symlinked under another name stays
+        # stale until the list is rebuilt. Drop the filter if that matters.
+        name = os.path.basename(label_path).casefold()
+        file_list = self._docks.file_list
+        for row in range(file_list.count()):
+            item = file_list.item(row)
+            assert item
+            stem = os.path.splitext(os.path.basename(_file_list_item_path(item)))[0]
+            if f"{stem}{LABEL_FILE_SUFFIX}".casefold() == name:
+                _set_annotated_check_state(item, output_dir=self._output_dir)
+
     def _file_list_label(self, image_path: str, /) -> str:
         # Paths under the opened folder are shown relative to it so the
         # Image List stays readable; the full path stays in the tooltip.
@@ -3643,12 +3649,18 @@ def _make_image_list_item(
     item.setData(Qt.ItemDataRole.UserRole, image_path)
     item.setToolTip(os.path.abspath(image_path))
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+    _set_annotated_check_state(item, output_dir=output_dir)
+    return item
+
+
+def _set_annotated_check_state(
+    item: QtWidgets.QListWidgetItem, /, *, output_dir: Path | None
+) -> None:
     label_path = _resolve_label_path(
-        image_or_label_path=image_path, output_dir=output_dir
+        image_or_label_path=_file_list_item_path(item), output_dir=output_dir
     )
     has_label = QtCore.QFile.exists(label_path)
     item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
-    return item
 
 
 def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:
