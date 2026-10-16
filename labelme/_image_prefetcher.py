@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from concurrent.futures import Future
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -27,19 +28,24 @@ def _decode(image_path: str, /) -> _Decoded:
     # the loader converts them.
     if Path(image_path).suffix.lower() not in (".jpg", ".jpeg", ".png"):
         return None
-    # QImage.fromData decodes through this same reader, so a prefetched image
-    # is pixel-identical; unlike fromData, read() releases the GIL.
-    reader = QtGui.QImageReader(image_path)
-    requirement = get_reader_decode_requirement(reader=reader)
-    if requirement is None or requirement.required_mb > MAX_PREFETCH_MB:
-        return None
     try:
-        image_data = read_image_file(filename=image_path)
-        if _read_bytes(image_path) != image_data:
+        # The reader opens the file at the size check and decodes from that
+        # handle, while the byte checks reopen the path. A file replaced or
+        # rewritten in between changes its stat, so keep the pixels only if
+        # the stat still matches after the decode.
+        before = _stat_identity(image_path)
+        # QImage.fromData decodes through this same reader, so a prefetched
+        # image is pixel-identical; unlike fromData, read() releases the GIL.
+        reader = QtGui.QImageReader(image_path)
+        requirement = get_reader_decode_requirement(reader=reader)
+        if requirement is None or requirement.required_mb > MAX_PREFETCH_MB:
             return None
+        image_data = read_image_file(filename=image_path)
+        with open(image_path, "rb") as f:
+            if f.read() != image_data:
+                return None
         image = reader.read()
-        # The file may have changed while the reader decoded it.
-        if image.isNull() or _read_bytes(image_path) != image_data:
+        if image.isNull() or _stat_identity(image_path) != before:
             return None
     except OSError as e:
         logger.debug("Skipped prefetching {!r}: {}", image_path, e)
@@ -47,9 +53,9 @@ def _decode(image_path: str, /) -> _Decoded:
     return image_data, image
 
 
-def _read_bytes(path: str, /) -> bytes:
-    with open(path, "rb") as f:
-        return f.read()
+def _stat_identity(path: str, /) -> tuple[int, int, int, int]:
+    st = os.stat(path)
+    return st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns
 
 
 class ImagePrefetcher:

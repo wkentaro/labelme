@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -7,7 +8,9 @@ import PIL.Image
 import pytest
 from PySide6 import QtGui
 
+from labelme import _image_prefetcher
 from labelme._image_prefetcher import ImagePrefetcher
+from labelme._label_file import read_image_file
 
 
 @pytest.mark.usefixtures("qapp")
@@ -42,3 +45,21 @@ def test_prefetched_image_matches_decode_and_misses_changed_file(
         assert prefetcher.take(image_path=str(tiff), image_data=data) is None
     finally:
         prefetcher.shutdown()
+
+
+@pytest.mark.usefixtures("qapp")
+def test_decode_rejects_file_replaced_after_reader_opened(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "a.png"
+    PIL.Image.new("RGB", (8, 8), (255, 0, 0)).save(path)
+    replacement = tmp_path / "b.png"
+    PIL.Image.new("RGB", (8, 8), (0, 0, 255)).save(replacement)
+
+    def replace_then_read(*, filename: str) -> bytes:
+        # Atomic replacement while the reader holds the red file open.
+        os.replace(replacement, filename)
+        return read_image_file(filename=filename)
+
+    monkeypatch.setattr(_image_prefetcher, "read_image_file", replace_then_read)
+    assert _image_prefetcher._decode(str(path)) is None
