@@ -619,8 +619,8 @@ Shapes</source>
         <translation>Некоректний регулярний вираз. Збережено попередній пошук.</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Список файлів</translation>
+        <source>Image List</source>
+        <translation>Список зображень</translation>
     </message>
     <message>
         <source>Command-line settings</source>
@@ -903,8 +903,8 @@ Expected location: {path}</source>
 Очікуване розташування: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Список файлів вимкнено, коли відкрито файл міток</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Список зображень вимкнено, коли відкрито файл анотацій</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

@@ -270,8 +270,8 @@
         <translation>Поиск по имени файла</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Список файлов</translation>
+        <source>Image List</source>
+        <translation>Список изображений</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -903,8 +903,8 @@ Expected location: {path}</source>
 Ожидаемое расположение: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Список файлов отключён при открытии файла меток</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Список изображений отключён при открытии файла аннотаций</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

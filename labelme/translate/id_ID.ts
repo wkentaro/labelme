@@ -270,8 +270,8 @@
         <translation>Cari Nama File</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Daftar File</translation>
+        <source>Image List</source>
+        <translation>Daftar Gambar</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -875,8 +875,8 @@ Expected location: {path}</source>
 Lokasi yang diharapkan: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Daftar file dinonaktifkan saat file label dibuka</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Daftar gambar dinonaktifkan saat berkas anotasi dibuka</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

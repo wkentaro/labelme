@@ -270,8 +270,8 @@
         <translation>Dosya Adı Ara</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Dosya Listesi</translation>
+        <source>Image List</source>
+        <translation>Görüntü Listesi</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -906,8 +906,8 @@ Expected location: {path}</source>
 Beklenen konum: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Bir etiket dosyası açıkken dosya listesi devre dışı kalır</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Bir açıklama dosyası açıkken görüntü listesi devre dışı kalır</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

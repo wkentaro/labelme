@@ -1343,7 +1343,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_list_layout.addWidget(file_search)
         file_list_layout.addWidget(file_search_error)
         file_list_layout.addWidget(file_list)
-        file = QtWidgets.QDockWidget(self.tr("File List"), self)
+        file = QtWidgets.QDockWidget(self.tr("Image List"), self)
         file.setObjectName("Files")
         file_list_container = QtWidgets.QWidget()
         file_list_container.setLayout(file_list_layout)
@@ -2455,8 +2455,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _load_file(self, *, image_or_label_path: str) -> bool:
         # Qt file dialogs separate with forward slashes even on Windows, while
-        # the file list holds the separator of the platform, so an unnormalized
-        # path would neither select its file list row nor receive the saved
+        # the Image List holds the separator of the platform, so an unnormalized
+        # path would neither select its Image List row nor receive the saved
         # checkmark, which both compare exact strings.
         image_or_label_path = os.path.normpath(image_or_label_path)
         file_list_image_path = (
@@ -2493,7 +2493,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 return False
             # The relative path stored in the Annotation File may carry "." or ".."
             # components, which would survive the join and break the
-            # exact-string comparisons against the file list.
+            # exact-string comparisons against the Image List.
             stored_image = Path(label_path).parent / annotation.image_path
             image_path = os.path.normpath(str(stored_image))
             # Following symlinks first keeps parent traversal on its intended target.
@@ -2623,7 +2623,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.image.setEnabled(True)
         self._sync_navigation_actions()
         self._prefetch_neighbors()
-        # A load never pulls the keyboard out of the File List, whatever drove
+        # A load never pulls the keyboard out of the Image List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
             self._canvas_widgets.canvas.setFocus()
@@ -3398,8 +3398,8 @@ class MainWindow(QtWidgets.QMainWindow):
             raise ValueError("file_or_dir cannot be empty")
 
         if is_label_file_path(filename=file_or_dir):
-            # Load before dropping the File List, so a failed load leaves the
-            # previous session and File List untouched.
+            # Load before dropping the Image List, so a failed load leaves the
+            # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
             self._loaded_image_paths = []
@@ -3407,7 +3407,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._refresh_file_list()
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
-                self.tr("File list is disabled when a label file is opened")
+                self.tr("Image List is disabled when an annotation file is opened")
             )
         elif Path(file_or_dir).is_dir():
             self._import_images_from_dir(root_dir=file_or_dir)
@@ -3422,12 +3422,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._load_selected_image(file_list.currentItem(), previous_item)
                 file_list.repaint()
         else:
-            # Load before swapping the File List, so a failed load leaves the
-            # previous session and File List untouched.
+            # Load before swapping the Image List, so a failed load leaves the
+            # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
             self._import_images_from_dir(root_dir=str(Path(file_or_dir).parent))
-            # The load ran before the File List knew the neighbors.
+            # The load ran before the Image List knew the neighbors.
             self._prefetch_neighbors()
 
     def _open_dir_with_dialog(self) -> None:
@@ -3523,7 +3523,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _file_list_label(self, image_path: str, /) -> str:
         # Paths under the opened folder are shown relative to it so the
-        # File List stays readable; the full path stays in the tooltip.
+        # Image List stays readable; the full path stays in the tooltip.
         prefix = self._file_list_root_prefix
         if prefix and image_path.startswith(prefix):
             return image_path[len(prefix) :]

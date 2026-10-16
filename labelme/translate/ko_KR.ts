@@ -270,8 +270,8 @@
         <translation>파일명 검색</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>파일 목록</translation>
+        <source>Image List</source>
+        <translation>이미지 목록</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -900,8 +900,8 @@ Expected location: {path}</source>
 예상 위치: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>라벨 파일이 열려 있을 때 파일 목록이 비활성화됩니다</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>주석 파일이 열려 있을 때 이미지 목록이 비활성화됩니다</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

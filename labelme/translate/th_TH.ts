@@ -270,8 +270,8 @@
         <translation>ค้นหาชื่อไฟล์</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>รายการไฟล์</translation>
+        <source>Image List</source>
+        <translation>รายการรูป</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -900,8 +900,8 @@ Expected location: {path}</source>
 ตำแหน่งที่คาดไว้: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>รายการไฟล์ถูกปิดใช้งานเมื่อเปิดไฟล์ป้ายกำกับ</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>รายการรูปถูกปิดใช้งานเมื่อเปิดไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

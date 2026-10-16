@@ -270,8 +270,8 @@
         <translation>ファイル名で検索</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>ファイル一覧</translation>
+        <source>Image List</source>
+        <translation>画像一覧</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -914,8 +914,8 @@ Expected location: {path}</source>
 画像の参照先: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>ラベルファイルを開いている場合、ファイルリストは無効です</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>アノテーションファイルを開いている場合、画像一覧は無効です</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

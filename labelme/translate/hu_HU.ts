@@ -270,8 +270,8 @@
         <translation>Fájlnév keresése</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Fájllista</translation>
+        <source>Image List</source>
+        <translation>Képlista</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -906,8 +906,8 @@ Expected location: {path}</source>
 Várt hely: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>A fájllista le van tiltva, ha egy címke fájl van megnyitva</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>A képlista le van tiltva, ha egy annotációs fájl van megnyitva</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

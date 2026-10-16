@@ -270,8 +270,8 @@
         <translation>Buscar Nome do Arquivo</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Lista de Arquivos</translation>
+        <source>Image List</source>
+        <translation>Lista de Imagens</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -900,8 +900,8 @@ Expected location: {path}</source>
 Local esperado: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>A lista de arquivos está desativada quando um arquivo de rótulos é aberto</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>A lista de imagens está desativada quando um arquivo de anotações é aberto</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

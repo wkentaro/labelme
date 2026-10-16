@@ -618,8 +618,8 @@ Shapes</source>
         <translation>Μη έγκυρη κανονική έκφραση. Διατηρείται η προηγούμενη αναζήτηση.</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Λίστα αρχείων</translation>
+        <source>Image List</source>
+        <translation>Λίστα εικόνων</translation>
     </message>
     <message>
         <source>Command-line settings</source>
@@ -902,8 +902,8 @@ Expected location: {path}</source>
 Αναμενόμενη τοποθεσία: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Η λίστα αρχείων είναι απενεργοποιημένη όταν ανοίγεται ένα αρχείο ετικετών</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Η λίστα εικόνων είναι απενεργοποιημένη όταν ανοίγεται ένα αρχείο επισημειώσεων</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

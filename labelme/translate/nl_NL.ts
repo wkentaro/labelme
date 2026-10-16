@@ -270,8 +270,8 @@
         <translation>Zoek Bestandsnaam</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Bestandslijst</translation>
+        <source>Image List</source>
+        <translation>Afbeeldingenlijst</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -900,8 +900,8 @@ Expected location: {path}</source>
 Verwachte locatie: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>De bestandslijst is uitgeschakeld wanneer een labelbestand is geopend</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>De afbeeldingenlijst is uitgeschakeld wanneer een annotatiebestand is geopend</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

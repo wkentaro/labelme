@@ -270,8 +270,8 @@
         <translation>جستجوی نام فایل</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>فهرست فایل‌ها</translation>
+        <source>Image List</source>
+        <translation>فهرست تصاویر</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -900,8 +900,8 @@ Expected location: {path}</source>
 محل مورد انتظار: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>فهرست فایل‌ها هنگام باز بودن یک فایل برچسب غیرفعال است</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>فهرست تصاویر هنگام باز بودن یک پرونده حاشیه‌نویسی غیرفعال است</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

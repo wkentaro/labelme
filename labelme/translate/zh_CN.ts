@@ -270,8 +270,8 @@
         <translation>搜索文件名</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>文件列表</translation>
+        <source>Image List</source>
+        <translation>图像列表</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -906,8 +906,8 @@ Expected location: {path}</source>
 预期位置：{path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>打开标签文件时，文件列表不可用</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>打开标注文件时，图像列表不可用</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

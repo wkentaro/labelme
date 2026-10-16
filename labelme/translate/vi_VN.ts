@@ -270,8 +270,8 @@
         <translation>Tìm kiếm Tên tệp</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Danh sách Tệp</translation>
+        <source>Image List</source>
+        <translation>Danh sách Hình ảnh</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -900,8 +900,8 @@ Expected location: {path}</source>
 Vị trí dự kiến: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Danh sách tệp bị tắt khi mở tệp nhãn</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Danh sách hình ảnh bị tắt khi mở tệp chú thích</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>

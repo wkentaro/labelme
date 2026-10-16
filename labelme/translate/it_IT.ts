@@ -270,8 +270,8 @@
         <translation>Cerca nome file</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Lista file</translation>
+        <source>Image List</source>
+        <translation>Lista immagini</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -906,8 +906,8 @@ Expected location: {path}</source>
 Posizione prevista: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>L&apos;elenco dei file è disabilitato quando è aperto un file di etichette</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>La lista immagini è disabilitata quando è aperto un file di annotazioni</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
