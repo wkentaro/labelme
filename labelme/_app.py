@@ -97,6 +97,8 @@ _AI_CREATE_MODES: Final[tuple[str, ...]] = (
 WINDOW_SIZE_KEY: Final[str] = "window/size"
 WINDOW_POSITION_KEY: Final[str] = "window/position"
 WINDOW_LAYOUT_KEY: Final[str] = "window/state"
+# Maps each absolute opened folder to its absolute Annotation Folder.
+ANNOTATION_FOLDERS_KEY: Final[str] = "annotationFolders"
 
 
 class _StatusBarWidgets(NamedTuple):
@@ -458,6 +460,8 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["save_to"],
             icon="phosphor/folders.svg",
             tip=self.tr("Choose where annotation files are read and saved"),
+            # The choice is remembered per opened folder, so it needs one.
+            enabled=False,
         )
         open_ = action(
             text=self.tr("&Open\n"),
@@ -1183,8 +1187,21 @@ class MainWindow(QtWidgets.QMainWindow):
         ) and (primary_screen := QtWidgets.QApplication.primaryScreen()):
             self.move(primary_screen.availableGeometry().topLeft())
 
-        if file_or_dir:
-            self._load_from_file_or_dir(file_or_dir=file_or_dir)
+        if not file_or_dir:
+            return
+        if self._output_dir is not None and not is_label_file_path(
+            filename=file_or_dir
+        ):
+            # --output replaces the folder's remembered Annotation Folder, so
+            # opening the folder restores it like any other choice. It must
+            # exist, or the restore would skip it as missing.
+            self._output_dir.mkdir(parents=True, exist_ok=True)
+            self._remember_output_dir(
+                opened_dir=file_or_dir
+                if Path(file_or_dir).is_dir()
+                else str(Path(file_or_dir).parent)
+            )
+        self._load_from_file_or_dir(file_or_dir=file_or_dir)
 
     def _setup_status_bar(self) -> _StatusBarWidgets:
         message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
@@ -1806,15 +1823,17 @@ class MainWindow(QtWidgets.QMainWindow):
         current_item: QtWidgets.QListWidgetItem | None,
         previous_item: QtWidgets.QListWidgetItem | None,
         /,
-    ) -> None:
+    ) -> bool:
         if current_item is None:
-            return
+            return False
         # Qt moves the selection before asking to save or staging the next
         # session, so retain the exact prior UI state for rollback.
         if not self._can_continue() or not self._load_file(
             image_or_label_path=_file_list_item_path(current_item)
         ):
             self._restore_file_list_state(item=previous_item)
+            return False
+        return True
 
     def _on_shape_selection_changed(self, selected_shapes: list[Shape], /) -> None:
         self._docks.label_list.item_selection_changed.disconnect(
@@ -2843,6 +2862,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self._auto_save_path = None
+        assert self._file_list_root_prefix is not None
+        self._remember_output_dir(opened_dir=self._file_list_root_prefix)
         self.statusBar().showMessage(
             self.tr("Annotation Folder: %s") % self._output_dir
         )
@@ -3400,8 +3421,25 @@ class MainWindow(QtWidgets.QMainWindow):
             self._docks.file_dock.setToolTip(
                 self.tr("Image List is disabled when an annotation file is opened")
             )
-        elif Path(file_or_dir).is_dir():
-            self._import_images_from_dir(root_dir=file_or_dir)
+            return
+
+        if Path(file_or_dir).is_dir():
+            # Settle unsaved changes before the Annotation Folder switches, so
+            # a Save still goes where the open image saves. A Discard is final:
+            # loading the folder's first image must not ask again after the
+            # switch.
+            if not self._can_continue():
+                return
+            self.mark_clean()
+            opened_dir = file_or_dir
+            previous_label_path = (
+                self.current_label_file_path() if self._image_path else None
+            )
+            missing_output_dir = self._restore_remembered_output_dir(
+                opened_dir=opened_dir
+            )
+            self._import_images_from_dir(root_dir=opened_dir)
+            loaded = False
             if self.image_list:
                 # Selecting the first row emits no change signal when it is
                 # already current (reopening the same directory), so drive the
@@ -3410,21 +3448,61 @@ class MainWindow(QtWidgets.QMainWindow):
                 previous_item = file_list.currentItem()
                 with QtCore.QSignalBlocker(file_list):
                     file_list.setCurrentRow(0)
-                self._load_selected_image(file_list.currentItem(), previous_item)
+                loaded = self._load_selected_image(
+                    file_list.currentItem(), previous_item
+                )
                 file_list.repaint()
+            # A failed load keeps the previous image open beside the new
+            # folder's Images: the new Annotation Folder serves those Images,
+            # and the open image keeps saving where it did.
+            if not loaded and previous_label_path is not None:
+                self._label_file_path = previous_label_path
+                self._auto_save_path = previous_label_path
         else:
+            opened_dir = str(Path(file_or_dir).parent)
+            previous_output_dir = self._output_dir
+            missing_output_dir = self._restore_remembered_output_dir(
+                opened_dir=opened_dir
+            )
             # Load before swapping the Image List, so a failed load leaves the
             # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
+                self._output_dir = previous_output_dir
                 return
-            self._import_images_from_dir(root_dir=str(Path(file_or_dir).parent))
+            self._import_images_from_dir(root_dir=opened_dir)
             # The load ran before the Image List knew the neighbors.
             self._prefetch_neighbors()
 
-    def _open_dir_with_dialog(self) -> None:
-        if not self._can_continue():
-            return
+        # Shown last so the loading messages do not replace it.
+        if missing_output_dir is not None:
+            self.statusBar().showMessage(
+                self.tr("Annotation Folder not found: %s") % missing_output_dir
+            )
 
+    def _restore_remembered_output_dir(self, *, opened_dir: str) -> str | None:
+        remembered = self._remembered_output_dirs().get(os.path.abspath(opened_dir))
+        # Report a missing folder to the caller but keep its entry: it may be
+        # on a drive that is not mounted right now, and choosing another
+        # folder replaces it.
+        if remembered is not None and not Path(remembered).is_dir():
+            self._output_dir = None
+            return remembered
+        self._output_dir = Path(remembered) if remembered else None
+        return None
+
+    def _remembered_output_dirs(self) -> dict[str, str]:
+        return cast(
+            dict[str, str], self._window_state.value(ANNOTATION_FOLDERS_KEY, {})
+        )
+
+    def _remember_output_dir(self, *, opened_dir: str) -> None:
+        assert self._output_dir is not None
+        folders = self._remembered_output_dirs()
+        folders[os.path.abspath(opened_dir)] = os.path.abspath(self._output_dir)
+        self._window_state.setValue(ANNOTATION_FOLDERS_KEY, folders)
+
+    def _open_dir_with_dialog(self) -> None:
+        # Unsaved changes are settled once a folder is chosen.
         default_open_dir_path: str
         if self._prev_opened_dir and Path(self._prev_opened_dir).exists():
             default_open_dir_path = self._prev_opened_dir
@@ -3491,6 +3569,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._refresh_file_list()
 
     def _refresh_file_list(self) -> None:
+        self._actions.change_output_dir.setEnabled(
+            self._file_list_root_prefix is not None
+        )
         image_paths = [
             path for path in self._loaded_image_paths if self._matches_file_search(path)
         ]

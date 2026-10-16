@@ -810,6 +810,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>فایل حاشیه‌نویسی انتخاب‌شده باز نشد: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>پوشهٔ حاشیه‌نویسی پیدا نشد: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - مرور پوشهٔ تصاویر</translation>
     </message>

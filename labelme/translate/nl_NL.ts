@@ -810,6 +810,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Het geselecteerde annotatiebestand kon niet worden geopend: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Annotatiemap niet gevonden: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Afbeeldingsmap kiezen</translation>
     </message>

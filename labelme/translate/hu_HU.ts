@@ -824,6 +824,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>A kiválasztott annotációs fájl nem nyitható meg: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Az annotációs mappa nem található: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Képmappa tallózása</translation>
     </message>

@@ -824,6 +824,10 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>Die ausgewählte Annotationsdatei konnte nicht geöffnet werden: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Annotationsordner nicht gefunden: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Bilderordner auswählen</translation>
     </message>

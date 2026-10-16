@@ -816,6 +816,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>无法打开所选标注文件: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>找不到标注文件夹：%s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - 浏览图像文件夹</translation>
     </message>

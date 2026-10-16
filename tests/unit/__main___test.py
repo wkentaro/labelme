@@ -66,6 +66,17 @@ def test_output_rejects_json_file_path_case_insensitively(
     assert exc.value.code == 2
 
 
+def test_output_rejects_a_path_that_cannot_be_a_folder(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    regular_file = tmp_path / "notes"
+    regular_file.write_text("")
+    monkeypatch.setattr(sys, "argv", ["labelme", "--output", str(regular_file)])
+    with pytest.raises(SystemExit) as exc:
+        main()
+    assert exc.value.code == 2
+
+
 @pytest.mark.parametrize(
     ("argv", "canonical"),
     [

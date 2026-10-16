@@ -365,6 +365,12 @@ def main() -> None:
                 f"--output expects a folder path, but '{output}' looks like a file."
                 " Remove the .json extension or provide a folder path."
             )
+        # Created up front so it is remembered and restored like any other
+        # Annotation Folder, instead of being skipped as missing.
+        try:
+            Path(output).mkdir(parents=True, exist_ok=True)
+        except OSError as error:
+            parser.error(f"--output cannot be used as a folder: {error}")
         output_dir = output
 
     # Read the language and color theme before QApplication exists so the

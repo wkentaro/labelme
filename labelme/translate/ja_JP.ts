@@ -823,6 +823,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>選択されたアノテーションファイルを開けませんでした: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>アノテーションフォルダーが見つかりません: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - 画像フォルダーを選択</translation>
     </message>

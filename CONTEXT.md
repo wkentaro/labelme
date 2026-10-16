@@ -31,7 +31,7 @@ The on-disk persisted form of one Annotation, stored as JSON. There is one Annot
 _Avoid_: label file, JSON file (when more precision is helpful), annotation json.
 
 **Annotation Folder**:
-The folder where Labelme reads and writes Annotation Files instead of next to each Image. Optional and unset by default, so each Annotation File sits next to its Image. When it is set, Labelme does not fall back to an Annotation File next to the Image. Set it with `--output` or Change Annotation Folder…; it lasts for the current session only. Save As can still write the current Image's Annotation File elsewhere.
+The folder where Labelme reads and writes Annotation Files instead of next to each Image. Optional and unset by default, so each Annotation File sits next to its Image. When it is set, Labelme does not fall back to an Annotation File next to the Image. Set it with `--output` or Change Annotation Folder…. Labelme remembers it per opened folder in the Window State and restores it when that folder, or an Image in it, is opened again; `--output` replaces the remembered folder for the folder it is given with. Choosing one needs an opened folder. A remembered folder that no longer exists is skipped with a status-bar notice and kept for when it returns. Save As can still write the current Image's Annotation File elsewhere.
 _Avoid_: output dir, save dir, label folder, annotations dir.
 
 **Group**:

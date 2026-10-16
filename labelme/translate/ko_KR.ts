@@ -810,6 +810,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>선택한 주석 파일을 열 수 없습니다: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>주석 폴더를 찾을 수 없음: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - 이미지 폴더 찾아보기</translation>
     </message>

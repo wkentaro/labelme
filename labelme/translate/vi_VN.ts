@@ -810,6 +810,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Không thể mở tệp chú thích đã chọn: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Không tìm thấy thư mục chú thích: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Duyệt thư mục hình ảnh</translation>
     </message>

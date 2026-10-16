@@ -810,6 +810,10 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
         <translation>No se pudo abrir el archivo de anotaciones seleccionado: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>No se encuentra la carpeta de anotaciones: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Explorar carpeta de imágenes</translation>
     </message>

@@ -810,6 +810,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>ไม่สามารถเปิดไฟล์คำอธิบายประกอบที่เลือก: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>ไม่พบโฟลเดอร์แอนโนเทชัน: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - เรียกดูโฟลเดอร์ภาพ</translation>
     </message>

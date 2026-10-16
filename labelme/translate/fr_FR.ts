@@ -816,6 +816,10 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>Impossible d’ouvrir le fichier d’annotations sélectionné : {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Dossier d’annotations introuvable : %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Parcourir un dossier d’images</translation>
     </message>

@@ -810,6 +810,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Nie można otworzyć wybranego pliku adnotacji: {path}</translation>
     </message>
     <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Nie znaleziono folderu adnotacji: %s</translation>
+    </message>
+    <message>
         <source>%s - Browse Image Folder</source>
         <translation>%s - Przeglądaj folder obrazów</translation>
     </message>
