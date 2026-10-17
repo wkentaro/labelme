@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import stat
 import tempfile
 from collections.abc import Sequence
 from io import StringIO
@@ -65,12 +66,22 @@ def _prune(*, doc: CommentedMap, key_path: Sequence[str]) -> None:
 
 
 def _atomic_write(*, config_file: Path, content: str) -> None:
+    # Windows cannot represent POSIX modes, so preservation is POSIX-only.
+    try:
+        existing_mode = (
+            None if os.name == "nt" else stat.S_IMODE(config_file.stat().st_mode)
+        )
+    except FileNotFoundError:
+        existing_mode = None
+
     fd, tmp = tempfile.mkstemp(
         dir=config_file.parent, prefix=f"{config_file.name}.", suffix=".tmp"
     )
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write(content)
+        if existing_mode is not None:
+            os.chmod(tmp, existing_mode)
         os.replace(tmp, config_file)
     except BaseException:
         os.unlink(tmp)
