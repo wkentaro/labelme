@@ -921,6 +921,10 @@ Please select a different model or use AI-Box mode.</source>
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Kép keresése…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - Annotációs mappa kiválasztása</translation>
     </message>

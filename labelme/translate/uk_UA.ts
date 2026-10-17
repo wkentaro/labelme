@@ -986,6 +986,10 @@ Expected location: {path}</source>
         <translation>Параметри керуються через --config для цього сеансу</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Знайти зображення…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - Вибрати папку анотацій</translation>
     </message>

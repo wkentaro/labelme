@@ -915,6 +915,10 @@ Please select a different model or use AI-Box mode.</source>
 لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>یافتن تصویر…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - انتخاب پوشهٔ حاشیه‌نویسی</translation>
     </message>
