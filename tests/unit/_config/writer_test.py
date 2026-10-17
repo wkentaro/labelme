@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import stat
 import subprocess
 import sys
 import textwrap
@@ -381,3 +382,25 @@ def test_reset_config_backup_failure_keeps_original_file(
     with pytest.raises(OSError, match="disk unavailable"):
         _config.reset_config(config_file=config_file)
     assert config_file.read_bytes() == original
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
+def test_set_overrides_preserves_existing_file_mode(*, tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("auto_save: true\n", encoding="utf-8")
+    config_file.chmod(0o640)
+
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], False)])
+
+    assert stat.S_IMODE(config_file.stat().st_mode) == 0o640
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
+def test_reset_config_preserves_existing_file_mode(*, tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("auto_save: false\n", encoding="utf-8")
+    config_file.chmod(0o640)
+
+    _config.reset_config(config_file=config_file)
+
+    assert stat.S_IMODE(config_file.stat().st_mode) == 0o640
