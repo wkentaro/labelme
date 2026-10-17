@@ -807,7 +807,7 @@ def test_select_point_shape_by_click(
 
 
 @pytest.mark.gui
-def test_right_click_on_shape_opens_context_menu(
+def test_right_click_on_shape_opens_shape_context_menu(
     *,
     qtbot: QtBot,
     annotated_win: MainWindow,
@@ -815,21 +815,118 @@ def test_right_click_on_shape_opens_context_menu(
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
-    menu_opened: list[int] = []
+    shape_menu_opened: list[int] = []
+    canvas_menu_opened: list[int] = []
     monkeypatch.setattr(
-        canvas.context_menu,
+        canvas.shape_context_menu,
         "exec",
-        lambda *_args, **_kwargs: menu_opened.append(0) or None,
+        lambda *_args, **_kwargs: shape_menu_opened.append(0) or None,
+    )
+    monkeypatch.setattr(
+        canvas.canvas_context_menu,
+        "exec",
+        lambda *_args, **_kwargs: canvas_menu_opened.append(0) or None,
     )
 
-    bounds_center = _shape_bounds(shape=canvas.shapes[_SHAPE_INDEX]).center()
+    shape = canvas.shapes[_SHAPE_INDEX]
+    bounds_center = _shape_bounds(shape=shape).center()
     pos = image_to_widget_pos(canvas=canvas, image_pos=bounds_center)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)
     qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=pos)
     qtbot.wait(50)
 
-    assert menu_opened == [0]
+    assert shape_menu_opened == [0]
+    assert canvas_menu_opened == []
+    assert canvas.selected_shapes == [shape]
+
+    # Verify expected actions are present in shape_context_menu
+    shape_actions = canvas.shape_context_menu.actions()
+    assert annotated_win._actions.edit in shape_actions
+    assert annotated_win._actions.duplicate in shape_actions
+    assert annotated_win._actions.copy in shape_actions
+    assert annotated_win._actions.delete in shape_actions
+    assert annotated_win._actions.add_point_to_edge in shape_actions
+    assert annotated_win._actions.remove_point in shape_actions
+
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_right_click_on_multi_selection_keeps_selection(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    shape_menu_opened: list[int] = []
+    monkeypatch.setattr(
+        canvas.shape_context_menu,
+        "exec",
+        lambda *_args, **_kwargs: shape_menu_opened.append(0) or None,
+    )
+
+    two_shapes = list(canvas.shapes[:2])
+    canvas.select_shapes(shapes=two_shapes)
+    assert len(canvas.selected_shapes) == 2
+
+    bounds_center = _shape_bounds(shape=two_shapes[0]).center()
+    pos = image_to_widget_pos(canvas=canvas, image_pos=bounds_center)
+    qtbot.mouseMove(canvas, pos=pos)
+    qtbot.wait(50)
+    qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=pos)
+    qtbot.wait(50)
+
+    assert shape_menu_opened == [0]
+    assert canvas.selected_shapes == two_shapes
+
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_right_click_on_empty_canvas_opens_canvas_context_menu_keeping_selection(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    shape_menu_opened: list[int] = []
+    canvas_menu_opened: list[int] = []
+    monkeypatch.setattr(
+        canvas.shape_context_menu,
+        "exec",
+        lambda *_args, **_kwargs: shape_menu_opened.append(0) or None,
+    )
+    monkeypatch.setattr(
+        canvas.canvas_context_menu,
+        "exec",
+        lambda *_args, **_kwargs: canvas_menu_opened.append(0) or None,
+    )
+
+    selected_shape = canvas.shapes[_SHAPE_INDEX]
+    canvas.select_shapes(shapes=[selected_shape])
+    assert canvas.selected_shapes == [selected_shape]
+
+    empty_pos = QPoint(5, 5)
+    qtbot.mouseMove(canvas, pos=empty_pos)
+    qtbot.wait(50)
+    qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=empty_pos)
+    qtbot.wait(50)
+
+    assert canvas_menu_opened == [0]
+    assert shape_menu_opened == []
+    assert canvas.selected_shapes == [selected_shape]
+
+    canvas_actions = canvas.canvas_context_menu.actions()
+    assert annotated_win._actions.edit_mode in canvas_actions
+    assert annotated_win._actions.undo in canvas_actions
+    assert annotated_win._actions.paste in canvas_actions
+    for _, draw_action in annotated_win._actions.draw:
+        assert draw_action in canvas_actions
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
