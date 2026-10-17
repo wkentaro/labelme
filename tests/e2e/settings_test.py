@@ -590,12 +590,15 @@ def test_model_management_available_with_cli_overrides(
 
 @pytest.mark.gui
 def test_keep_prev_dialog_toggle_checks_menu_action(
-    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *,
+    settings_dialog: tuple[MainWindow, SettingsDialog],
+    qtbot: QtBot,
+    editable_config_file: Path,
+    pause: bool,
 ) -> None:
-    win = main_win(config_file=editable_config_file)
+    win, dialog = settings_dialog
     assert not win._actions.toggle_keep_prev_mode.isChecked()
 
-    dialog = _open_settings_dialog(win=win)
     checkbox = dialog._editors[("keep_prev",)]
     assert isinstance(checkbox, QtWidgets.QCheckBox)
     checkbox.setChecked(True)
@@ -624,15 +627,14 @@ def test_keep_prev_dialog_toggle_checks_menu_action(
 )
 def test_menu_toggle_persists_and_syncs_settings_dialog(
     *,
-    main_win: MainWinFactory,
+    settings_dialog: tuple[MainWindow, SettingsDialog],
     qtbot: QtBot,
     editable_config_file: Path,
     pause: bool,
     action_name: str,
     key_path: tuple[str, ...],
 ) -> None:
-    win = main_win(config_file=editable_config_file)
-    dialog = _open_settings_dialog(win=win)
+    win, dialog = settings_dialog
     editor = dialog._editors[key_path]
     assert isinstance(editor, QtWidgets.QCheckBox)
 
@@ -654,13 +656,16 @@ def test_menu_toggle_persists_and_syncs_settings_dialog(
 
 @pytest.mark.gui
 def test_fill_drawing_dialog_toggle_applies_to_canvas(
-    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *,
+    settings_dialog: tuple[MainWindow, SettingsDialog],
+    qtbot: QtBot,
+    editable_config_file: Path,
+    pause: bool,
 ) -> None:
-    win = main_win(config_file=editable_config_file)
+    win, dialog = settings_dialog
     canvas = win._canvas_widgets.canvas
     assert canvas._fill_drawing
 
-    dialog = _open_settings_dialog(win=win)
     checkbox = dialog._editors[("canvas", "fill_drawing")]
     assert isinstance(checkbox, QtWidgets.QCheckBox)
     checkbox.setChecked(False)
@@ -777,14 +782,17 @@ def test_label_completion_dialog_change_rebuilds_label_dialog(
 @pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
 def test_ai_default_dialog_change_syncs_dock_combo(
-    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *,
+    settings_dialog: tuple[MainWindow, SettingsDialog],
+    qtbot: QtBot,
+    editable_config_file: Path,
+    pause: bool,
 ) -> None:
-    win = main_win(config_file=editable_config_file)
+    win, dialog = settings_dialog
     assert win._config["ai"]["default"] == "Sam2 (balanced)"
     dock_combo = win._ai_annotation._model_combo
     assert dock_combo.currentText() == "Sam2 (balanced)"
 
-    dialog = _open_settings_dialog(win=win)
     combo = dialog._editors[("ai", "default")]
     assert isinstance(combo, QtWidgets.QComboBox)
     combo.setCurrentIndex(combo.findData("EfficientSam (speed)"))
@@ -803,12 +811,14 @@ def test_ai_default_dialog_change_syncs_dock_combo(
 @pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
 def test_ai_model_choices_follow_point_prompt_mode(
-    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *,
+    settings_dialog: tuple[MainWindow, SettingsDialog],
+    qtbot: QtBot,
+    pause: bool,
 ) -> None:
-    win = main_win(config_file=editable_config_file)
+    win, dialog = settings_dialog
     win._switch_canvas_mode(edit=False, create_mode="ai_points_to_shape")
 
-    dialog = _open_settings_dialog(win=win)
     combo = dialog._editors[("ai", "default")]
     assert isinstance(combo, QtWidgets.QComboBox)
     sam3_index = combo.findData("Sam3")
@@ -846,10 +856,13 @@ def test_ai_model_choices_follow_point_prompt_mode(
 @pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
 def test_ai_dock_change_persists_and_syncs_settings_dialog(
-    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *,
+    settings_dialog: tuple[MainWindow, SettingsDialog],
+    qtbot: QtBot,
+    editable_config_file: Path,
+    pause: bool,
 ) -> None:
-    win = main_win(config_file=editable_config_file)
-    dialog = _open_settings_dialog(win=win)
+    win, dialog = settings_dialog
     settings_combo = dialog._editors[("ai", "default")]
     assert isinstance(settings_combo, QtWidgets.QComboBox)
 
@@ -869,10 +882,13 @@ def test_ai_dock_change_persists_and_syncs_settings_dialog(
 
 @pytest.mark.gui
 def test_polygon_detail_popover_and_settings_stay_in_sync(
-    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+    *,
+    settings_dialog: tuple[MainWindow, SettingsDialog],
+    qtbot: QtBot,
+    editable_config_file: Path,
+    pause: bool,
 ) -> None:
-    win = main_win(config_file=editable_config_file)
-    dialog = _open_settings_dialog(win=win)
+    win, dialog = settings_dialog
     settings_slider = dialog._editors[("mask_polygonization", "detail")]
     assert isinstance(settings_slider, IntegerSlider)
 
