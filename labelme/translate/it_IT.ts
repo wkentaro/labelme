@@ -557,6 +557,26 @@ forme</translation>
         <translation>Unisci le forme maschera selezionate in una</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Converti in</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Converti le forme selezionate in poligoni</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Rettangolo (casella di delimitazione)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Converti le forme selezionate in rettangoli di casella di delimitazione</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Converti le forme selezionate in strisce di linee</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Blocca forme</translation>
     </message>

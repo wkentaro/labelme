@@ -55,6 +55,8 @@ from ._save_writer import SaveWriter
 from ._shape import Shape
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
+from ._shape import convert_shape_geometry
+from ._shape import get_intersection_conversion_targets
 from ._shape import merge_masks
 from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
@@ -157,6 +159,11 @@ class _Actions(NamedTuple):
     paste: QtGui.QAction
     duplicate: QtGui.QAction
     merge: QtGui.QAction
+    convert_to_polygon: QtGui.QAction
+    convert_to_rectangle: QtGui.QAction
+    convert_to_linestrip: QtGui.QAction
+    convert_menu: QtWidgets.QMenu
+    context_convert_menu: QtWidgets.QMenu
     lock: QtGui.QAction
     undo_last_point: QtGui.QAction
     undo: QtGui.QAction
@@ -557,6 +564,46 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
         )
+        edit_convert_menu = QtWidgets.QMenu(self.tr("Convert to"), self)
+        context_convert_menu = QtWidgets.QMenu(self.tr("Convert to"), self)
+        convert_to_polygon = action(
+            text=self.tr("Polygon"),
+            slot=functools.partial(
+                self._convert_selected_shapes, target_type="polygon"
+            ),
+            icon="phosphor/polygon.svg",
+            tip=self.tr("Convert selected shapes to polygons"),
+            enabled=False,
+        )
+        convert_to_rectangle = action(
+            text=self.tr("Rectangle (bounding box)"),
+            slot=functools.partial(
+                self._convert_selected_shapes, target_type="rectangle"
+            ),
+            icon="phosphor/rectangle.svg",
+            tip=self.tr("Convert selected shapes to bounding box rectangles"),
+            enabled=False,
+        )
+        convert_to_linestrip = action(
+            text=self.tr("LineStrip"),
+            slot=functools.partial(
+                self._convert_selected_shapes, target_type="linestrip"
+            ),
+            icon="phosphor/line-segments.svg",
+            tip=self.tr("Convert selected shapes to linestrips"),
+            enabled=False,
+        )
+        conversion_actions = (
+            convert_to_polygon,
+            convert_to_rectangle,
+            convert_to_linestrip,
+        )
+        edit_convert_menu.addActions(conversion_actions)
+        context_convert_menu.addActions(conversion_actions)
+        edit_convert_menu.setEnabled(False)
+        context_convert_menu.setEnabled(False)
+        for act in conversion_actions:
+            act.setVisible(False)
         lock = action(
             text=self.tr("Lock Shapes"),
             slot=self._toggle_selected_shapes_lock,
@@ -887,6 +934,7 @@ class MainWindow(QtWidgets.QMainWindow):
             edit,
             delete,
             merge,
+            context_convert_menu.menuAction(),
             lock,
             add_point_to_edge,
             remove_point,
@@ -900,6 +948,7 @@ class MainWindow(QtWidgets.QMainWindow):
             edit,
             delete,
             merge,
+            edit_convert_menu.menuAction(),
             lock,
             remove_point,
             separator(),
@@ -925,6 +974,11 @@ class MainWindow(QtWidgets.QMainWindow):
             paste=paste,
             duplicate=duplicate,
             merge=merge,
+            convert_to_polygon=convert_to_polygon,
+            convert_to_rectangle=convert_to_rectangle,
+            convert_to_linestrip=convert_to_linestrip,
+            convert_menu=edit_convert_menu,
+            context_convert_menu=context_convert_menu,
             lock=lock,
             undo_last_point=undo_last_point,
             undo=undo,
@@ -1675,6 +1729,7 @@ class MainWindow(QtWidgets.QMainWindow):
             not drawing
             and can_merge_shapes(self._canvas_widgets.canvas.selected_shapes)
         )
+        self._update_shape_conversion_menu(drawing=drawing)
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
@@ -1875,6 +1930,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if n_selected and not n_unlocked
             else self.tr("Lock Shapes")
         )
+        self._update_shape_conversion_menu(drawing=False)
         self._is_fit_selection_deferred = False
         # An emptied selection keeps the view: grabbing a vertex deselects, and
         # zooming out then would move the image under the cursor.
@@ -2079,6 +2135,42 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
         self._commit_shapes(shapes)
         canvas.select_shapes(shapes=[merged])
+
+    def _convert_selected_shapes(self, *, target_type: ShapeType) -> None:
+        canvas = self._canvas_widgets.canvas
+        selected = list(canvas.selected_shapes)
+        valid_targets = get_intersection_conversion_targets(selected)
+        if target_type not in valid_targets:
+            return
+
+        converted_map = {
+            s: convert_shape_geometry(shape=s, target_type=target_type)
+            for s in selected
+        }
+        shapes = [converted_map.get(s, s) for s in canvas.shapes]
+        new_selected = [converted_map[s] for s in selected]
+
+        self._commit_shapes(shapes)
+        canvas.select_shapes(shapes=new_selected)
+
+    def _update_shape_conversion_menu(self, *, drawing: bool) -> None:
+        if drawing:
+            valid_targets: set[ShapeType] = set()
+        else:
+            valid_targets = get_intersection_conversion_targets(
+                self._canvas_widgets.canvas.selected_shapes
+            )
+        has_targets = len(valid_targets) > 0
+        self._actions.convert_to_polygon.setEnabled("polygon" in valid_targets)
+        self._actions.convert_to_polygon.setVisible("polygon" in valid_targets)
+        self._actions.convert_to_rectangle.setEnabled("rectangle" in valid_targets)
+        self._actions.convert_to_rectangle.setVisible("rectangle" in valid_targets)
+        self._actions.convert_to_linestrip.setEnabled("linestrip" in valid_targets)
+        self._actions.convert_to_linestrip.setVisible("linestrip" in valid_targets)
+        self._actions.convert_menu.setEnabled(has_targets)
+        self._actions.context_convert_menu.setEnabled(has_targets)
+        self._actions.convert_menu.menuAction().setEnabled(has_targets)
+        self._actions.context_convert_menu.menuAction().setEnabled(has_targets)
 
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []

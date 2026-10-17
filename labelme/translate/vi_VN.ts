@@ -551,6 +551,26 @@ Shapes</source>
         <translation>Gộp các hình dạng mask đã chọn thành một</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Chuyển đổi thành</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Chuyển đổi các hình đã chọn thành đa giác</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Hình chữ nhật (hộp bao)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Chuyển đổi các hình đã chọn thành hình chữ nhật hộp bao</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Chuyển đổi các hình đã chọn thành đường đa đoạn</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Khóa Hình dạng</translation>
     </message>

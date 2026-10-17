@@ -551,6 +551,26 @@ Shapes</source>
         <translation>ادغام شکل‌های ماسک انتخاب شده در یک شکل</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>تبدیل به</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>تبدیل اشکال انتخاب‌شده به چندضلعی</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>مستطیل (کادر محدودکننده)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>تبدیل اشکال انتخاب‌شده به مستطیل‌های کادر محدودکننده</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>تبدیل اشکال انتخاب‌شده به نوار خط</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>قفل کردن شکل‌ها</translation>
     </message>

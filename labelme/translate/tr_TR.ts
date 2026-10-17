@@ -557,6 +557,26 @@ Shapes</source>
         <translation>Seçili maske şekillerini tek şekilde birleştir</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Seçili şekilleri çokgenlere dönüştür</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Dikdörtgen (sınırlayıcı kutu)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Seçili şekilleri sınırlayıcı kutu dikdörtgenlerine dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Seçili şekilleri çizgi şeritlerine dönüştür</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Şekilleri Kilitle</translation>
     </message>

@@ -498,6 +498,26 @@
         <translation>Gabungkan bentuk mask terpilih menjadi satu</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Konversi ke</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Konversi bentuk terpilih ke poligon</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Persegi Panjang (kotak pembatas)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Konversi bentuk terpilih ke persegi panjang kotak pembatas</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Konversi bentuk terpilih ke garis setrip</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Kunci Bentuk</translation>
     </message>

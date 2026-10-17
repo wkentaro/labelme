@@ -557,6 +557,26 @@ Shapes</source>
         <translation>将选中的掩码形状合并为一个</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>转换为</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>将选中的形状转换为多边形</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>矩形 (边界框)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>将选中的形状转换为边界框矩形</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>将选中的形状转换为折线</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>锁定形状</translation>
     </message>

@@ -573,6 +573,26 @@ Shapes</source>
         <translation>A kijelölt maszk alakzatok egyesítése eggyé</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Átalakítás erre</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Kijelölt alakzatok átalakítása sokszöggé</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Téglalap (befoglaló keret)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Kijelölt alakzatok átalakítása befoglaló téglalappá</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Kijelölt alakzatok átalakítása vonallánccá</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Alakzatok zárolása</translation>
     </message>

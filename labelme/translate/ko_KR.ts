@@ -551,6 +551,26 @@ Shapes</source>
         <translation>선택한 마스크 도형을 하나로 병합</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>변환</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>선택한 모양을 다각형으로 변환</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>직사각형 (경계 상자)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>선택한 모양을 경계 상자 직사각형으로 변환</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>선택한 모양을 라인스트립으로 변환</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>도형 잠금</translation>
     </message>
