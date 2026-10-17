@@ -78,6 +78,7 @@ class ShapeRenderContext:
     highlight: VertexHighlight | None
     rotation_highlight: VertexHighlight | None
     show_label: bool = False
+    show_vertices: bool = True
     line_style: QtCore.Qt.PenStyle = QtCore.Qt.PenStyle.SolidLine
 
 
@@ -408,6 +409,15 @@ def _build_shape_points_paths(
     paths.line.addPath(
         QtGui.QTransform.fromScale(scale, scale).map(_build_outline_path(shape=shape))
     )
+    if not context.show_vertices:
+        if context.highlight is not None:
+            _append_shape_vertex(
+                vertices=paths.vertices,
+                shape=shape,
+                context=context,
+                vertex_index=context.highlight.index,
+            )
+        return paths
     # A mask's corners are not draggable, and an oriented rectangle's first
     # corner is drawn by the drag preview until its first edge is locked.
     if shape.shape_type == "mask" or (
