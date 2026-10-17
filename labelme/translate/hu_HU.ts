@@ -176,6 +176,18 @@
         <translation>Kattintson a kör kerületén lévő pontra</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Kattintson a kör kerületén lévő első pontra</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Kattintson a kör kerületén lévő második pontra</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Kattintson a kör kerületén lévő harmadik pontra a kör befejezéséhez</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Kattintson a téglalap első sarkára</translation>
     </message>
@@ -587,6 +599,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>Törli a kijelölt csúcspontot a sokszögből vagy a töröttvonalból</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Kör (3 pont)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Körök rajzolásának megkezdése 3 ponttal</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

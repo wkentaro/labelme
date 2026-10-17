@@ -188,6 +188,18 @@
         <translation>คลิกจุดบนเส้นรอบวงของวงกลม</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>คลิกจุดแรกบนเส้นรอบวงของวงกลม</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>คลิกจุดที่สองบนเส้นรอบวงของวงกลม</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>คลิกจุดที่สามบนเส้นรอบวงเพื่อเสร็จสิ้นวงกลม</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>คลิกมุมแรกของสี่เหลี่ยม</translation>
     </message>
@@ -565,6 +577,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>ลบจุดยอดที่เลือกออกจากรูปหลายเหลี่ยมหรือเส้นหักมุม</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>วงกลม (3 จุด)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>เริ่มวาดวงกลมด้วย 3 จุด</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

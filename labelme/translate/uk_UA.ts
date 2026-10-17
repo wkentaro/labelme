@@ -176,6 +176,18 @@
         <translation>Натисніть точку на окружності для кола</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Натисніть першу точку на окружності для кола</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Натисніть другу точку на окружності для кола</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Натисніть третю точку на окружності для завершення кола</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Натисніть перший кут для прямокутника</translation>
     </message>
@@ -410,6 +422,14 @@
     <message>
         <source>Start drawing circles</source>
         <translation>Почніть малювати кола</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Коло (3 точки)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Почніть малювати кола за 3 точками</translation>
     </message>
     <message>
         <source>Start drawing lines</source>

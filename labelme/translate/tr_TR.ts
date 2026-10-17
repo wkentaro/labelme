@@ -188,6 +188,18 @@
         <translation>Dairenin çevresindeki bir noktaya tıklayın</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Dairenin çevresindeki birinci noktaya tıklayın</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Dairenin çevresindeki ikinci noktaya tıklayın</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Daireyi tamamlamak için çevresindeki üçüncü noktaya tıklayın</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Dikdörtgenin ilk köşesine tıklayın</translation>
     </message>
@@ -571,6 +583,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>Seçili köşe noktasını çokgenden veya çoklu çizgiden siler</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Daire (3 Nokta)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>3 nokta ile daire çizmeye başla</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

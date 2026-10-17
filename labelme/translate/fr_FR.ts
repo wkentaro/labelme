@@ -188,6 +188,18 @@
         <translation>Cliquer sur un point de la circonférence du cercle</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Cliquer sur le premier point de la circonférence du cercle</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Cliquer sur le deuxième point de la circonférence du cercle</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Cliquer sur le troisième point de la circonférence pour terminer le cercle</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Cliquer sur le premier coin du rectangle</translation>
     </message>
@@ -571,6 +583,14 @@ les formes</translation>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>Supprime le sommet sélectionné du polygone ou de la polyligne</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Cercle (3 points)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Commencer à dessiner des cercles avec 3 points</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

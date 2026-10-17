@@ -188,6 +188,18 @@
         <translation>Nhấn điểm trên chu vi cho hình tròn</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Nhấn điểm thứ nhất trên chu vi cho hình tròn</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Nhấn điểm thứ hai trên chu vi cho hình tròn</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Nhấn điểm thứ ba trên chu vi để hoàn tất hình tròn</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Nhấn góc đầu tiên cho hình chữ nhật</translation>
     </message>
@@ -565,6 +577,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>Xóa đỉnh đã chọn khỏi đa giác hoặc đường gấp khúc</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Hình tròn (3 điểm)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Bắt đầu vẽ hình tròn bằng 3 điểm</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

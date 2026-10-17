@@ -188,6 +188,18 @@
         <translation>Klik titik pada keliling untuk membuat lingkaran</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Klik titik pertama pada keliling untuk membuat lingkaran</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Klik titik kedua pada keliling untuk membuat lingkaran</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Klik titik ketiga pada keliling untuk menyelesaikan lingkaran</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Klik sudut pertama untuk membuat persegi panjang</translation>
     </message>
@@ -512,6 +524,14 @@
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>Menghapus simpul terpilih dari poligon atau garis patah</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Lingkaran (3 Titik)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Mulai menggambar lingkaran dengan 3 titik</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

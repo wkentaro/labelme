@@ -188,6 +188,18 @@
         <translation>单击圆周上的点以确定圆形</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>单击圆周上的第一个点以确定圆形</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>单击圆周上的第二个点以确定圆形</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>单击圆周上的第三个点以完成圆形</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>单击确定矩形的第一个角</translation>
     </message>
@@ -571,6 +583,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>从多边形或折线中删除选中的顶点</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>三点画圆</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>开始通过三点绘制圆形</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
