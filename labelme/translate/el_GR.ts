@@ -424,16 +424,16 @@
         <translation>Επόμενη εικόνα</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Ανοίξτε το επόμενο (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
+        <translation>Ανοίξτε το επόμενο (κρατήστε πατημένο το πλήκτρο Ctrl+Shift για να αντιγράψετε τις ετικέτες)</translation>
     </message>
     <message>
         <source>&amp;Prev Image</source>
         <translation>&amp;Προηγούμενη εικόνα</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Άνοιγμα προηγούμενου (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
+        <translation>Άνοιγμα προηγούμενου (κρατήστε πατημένο το πλήκτρο Ctrl+Shift για να αντιγράψετε τις ετικέτες)</translation>
     </message>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>

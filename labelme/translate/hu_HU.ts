@@ -319,7 +319,7 @@
         <translation>&amp;Következő kép</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
         <translation>Következő megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
     </message>
     <message>
@@ -327,7 +327,7 @@
         <translation>&amp;Előző kép</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
         <translation>Előző megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
     </message>
     <message>

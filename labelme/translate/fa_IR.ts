@@ -318,7 +318,7 @@
         <translation>تصویر بعدی(&amp;N)</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
         <translation>باز کردن بعدی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
     </message>
     <message>
@@ -326,7 +326,7 @@
         <translation>تصویر قبلی(&amp;P)</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
         <translation>باز کردن قبلی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
     </message>
     <message>

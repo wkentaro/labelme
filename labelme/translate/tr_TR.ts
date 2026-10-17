@@ -319,16 +319,16 @@
         <translation>&amp;Sonraki Görüntü</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Sonrakini aç (etiketleri kopyalamak için Ctl+Shift tuşlarını basılı tutun)</translation>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
+        <translation>Sonrakini aç (etiketleri kopyalamak için Ctrl+Shift tuşlarını basılı tutun)</translation>
     </message>
     <message>
         <source>&amp;Prev Image</source>
         <translation>&amp;Önceki Görüntü</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Öncekini aç (etiketleri kopyalamak için Ctl+Shift tuşlarını basılı tutun)</translation>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
+        <translation>Öncekini aç (etiketleri kopyalamak için Ctrl+Shift tuşlarını basılı tutun)</translation>
     </message>
     <message>
         <source>&amp;Save

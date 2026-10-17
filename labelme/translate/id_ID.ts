@@ -313,7 +313,7 @@
         <translation>Gambar Berikutnya (&amp;N)</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
         <translation>Buka Berikutnya (Tahan Ctrl+Shift untuk menyalin label)</translation>
     </message>
     <message>
@@ -321,7 +321,7 @@
         <translation>Gambar Sebelumnya (&amp;P)</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
         <translation>Buka Sebelumnya (Tahan Ctrl+Shift untuk menyalin label)</translation>
     </message>
     <message>

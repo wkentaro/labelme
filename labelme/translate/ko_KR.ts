@@ -318,7 +318,7 @@
         <translation>다음 이미지(&amp;N)</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
         <translation>다음 열기 (Ctrl+Shift를 누르면 레이블 복사)</translation>
     </message>
     <message>
@@ -326,7 +326,7 @@
         <translation>이전 이미지(&amp;P)</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
         <translation>이전 열기 (Ctrl+Shift를 누르면 레이블 복사)</translation>
     </message>
     <message>

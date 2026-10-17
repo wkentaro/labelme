@@ -424,7 +424,7 @@
         <translation>&amp;Наступне зображення</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
         <translation>Відкрити далі (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
     </message>
     <message>
@@ -432,7 +432,7 @@
         <translation>&amp;Попереднє зображення</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
         <translation>Відкрити попередній (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
     </message>
     <message>
