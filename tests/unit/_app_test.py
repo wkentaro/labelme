@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import struct
 import zlib
@@ -500,10 +501,199 @@ def test_resolve_label_path(
 ) -> None:
     assert (
         _app._resolve_label_path(
-            image_or_label_path=image_or_label_path, output_dir=output_dir
+            image_or_label_path=image_or_label_path,
+            output_dir=output_dir,
+            root_dir=None,
         )
         == expected
     )
+
+
+@pytest.mark.parametrize(
+    "image_or_label_path, output_dir, root_dir, expected",
+    [
+        (
+            str(Path("/data/images/a/0001.jpg")),
+            Path("/out"),
+            Path("/data/images"),
+            str(Path("/out/a/0001.json")),
+        ),
+        (
+            str(Path("/data/images/b/0001.jpg")),
+            Path("/out"),
+            Path("/data/images"),
+            str(Path("/out/b/0001.json")),
+        ),
+        (
+            str(Path("/data/images/0001.jpg")),
+            Path("/out"),
+            Path("/data/images"),
+            str(Path("/out/0001.json")),
+        ),
+        (
+            str(Path("/other/0001.jpg")),
+            Path("/out"),
+            Path("/data/images"),
+            str(Path("/out/0001.json")),
+        ),
+        (
+            str(Path("/data/images/a/0001.jpg")),
+            None,
+            Path("/data/images"),
+            str(Path("/data/images/a/0001.json")),
+        ),
+    ],
+    ids=[
+        "subfolder-a-mirrored",
+        "subfolder-b-mirrored",
+        "root-level-image",
+        "outside-root-dir",
+        "no-output-dir-keeps-subfolder",
+    ],
+)
+def test_resolve_label_path_with_root_dir(
+    *,
+    image_or_label_path: str,
+    output_dir: Path | None,
+    root_dir: Path | None,
+    expected: str,
+) -> None:
+    assert (
+        _app._resolve_label_path(
+            image_or_label_path=image_or_label_path,
+            output_dir=output_dir,
+            root_dir=root_dir,
+        )
+        == expected
+    )
+
+
+def test_comparable_stem() -> None:
+    assert _app._comparable_stem("0001.jpg") == "0001"
+    assert _app._comparable_stem("0001.json") == "0001"
+    assert _app._comparable_stem("test_image.PNG") == "test_image"
+    assert _app._comparable_stem("test_image.json") == "test_image"
+
+
+def test_annotation_file_matches_image(*, tmp_path: Path) -> None:
+    img = tmp_path / "images" / "a" / "0001.jpg"
+    img.parent.mkdir(parents=True)
+    img.touch()
+
+    other_img = tmp_path / "images" / "b" / "0001.jpg"
+    other_img.parent.mkdir(parents=True)
+    other_img.touch()
+
+    ann = tmp_path / "annotations" / "0001.json"
+    ann.parent.mkdir(parents=True)
+    ann.write_text(
+        json.dumps({"imagePath": os.path.relpath(img, ann.parent)}),
+        encoding="utf-8",
+    )
+
+    assert _app._annotation_file_matches_image(label_path=str(ann), image_path=str(img))
+    assert not _app._annotation_file_matches_image(
+        label_path=str(ann), image_path=str(other_img)
+    )
+    assert not _app._annotation_file_matches_image(
+        label_path=str(tmp_path / "nonexistent.json"), image_path=str(img)
+    )
+
+
+def test_find_existing_label_path_mirrored_and_legacy_fallback(
+    *, tmp_path: Path
+) -> None:
+    images_dir = tmp_path / "images"
+    a_img = images_dir / "a" / "0001.jpg"
+    b_img = images_dir / "b" / "0001.jpg"
+    a_img.parent.mkdir(parents=True)
+    b_img.parent.mkdir(parents=True)
+    a_img.touch()
+    b_img.touch()
+
+    out_dir = tmp_path / "annotations"
+    out_dir.mkdir(parents=True)
+
+    # Initially neither has an annotation
+    assert (
+        _app._find_existing_label_path(
+            image_path=str(a_img), output_dir=out_dir, root_dir=images_dir
+        )
+        is None
+    )
+    assert (
+        _app._find_existing_label_path(
+            image_path=str(b_img), output_dir=out_dir, root_dir=images_dir
+        )
+        is None
+    )
+
+    # Legacy flat annotation belonging to a_img
+    flat_ann = out_dir / "0001.json"
+    flat_ann.write_text(
+        json.dumps({"imagePath": os.path.relpath(a_img, out_dir)}),
+        encoding="utf-8",
+    )
+
+    # a_img falls back to flat_ann because it matches
+    assert _app._find_existing_label_path(
+        image_path=str(a_img), output_dir=out_dir, root_dir=images_dir
+    ) == str(flat_ann)
+
+    # b_img rejects flat_ann because imagePath does not match!
+    assert (
+        _app._find_existing_label_path(
+            image_path=str(b_img), output_dir=out_dir, root_dir=images_dir
+        )
+        is None
+    )
+
+    # Once a mirrored annotation is created for b_img
+    b_mirrored = out_dir / "b" / "0001.json"
+    b_mirrored.parent.mkdir(parents=True)
+    b_mirrored.write_text(
+        json.dumps({"imagePath": os.path.relpath(b_img, b_mirrored.parent)}),
+        encoding="utf-8",
+    )
+
+    assert _app._find_existing_label_path(
+        image_path=str(b_img), output_dir=out_dir, root_dir=images_dir
+    ) == str(b_mirrored)
+
+
+def test_find_existing_label_path_same_directory_stem_collision(
+    *, tmp_path: Path
+) -> None:
+    x_jpg = tmp_path / "x.jpg"
+    x_png = tmp_path / "x.png"
+    x_jpg.touch()
+    x_png.touch()
+
+    assert _app._has_sibling_stem_collision(image_path=str(x_jpg))
+    assert _app._has_sibling_stem_collision(image_path=str(x_png))
+
+    # x.json saved for x_jpg
+    x_json = tmp_path / "x.json"
+    x_json.write_text(json.dumps({"imagePath": "x.jpg"}), encoding="utf-8")
+
+    assert _app._find_existing_label_path(
+        image_path=str(x_jpg), output_dir=None, root_dir=None
+    ) == str(x_json)
+    # x_png does not mistakenly claim x.json
+    assert (
+        _app._find_existing_label_path(
+            image_path=str(x_png), output_dir=None, root_dir=None
+        )
+        is None
+    )
+
+    # x.png.json saved for x_png
+    x_png_json = tmp_path / "x.png.json"
+    x_png_json.write_text(json.dumps({"imagePath": "x.png"}), encoding="utf-8")
+
+    assert _app._find_existing_label_path(
+        image_path=str(x_png), output_dir=None, root_dir=None
+    ) == str(x_png_json)
 
 
 def test_resolve_stored_image_path_falls_back_to_absolute(
