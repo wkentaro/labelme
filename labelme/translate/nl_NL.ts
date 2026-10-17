@@ -551,6 +551,26 @@ Shapes</source>
         <translation>Geselecteerde maskervormen samenvoegen tot één</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Converteren naar</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Geselecteerde vormen converteren naar polygonen</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Rechthoek (begrenzingsvak)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Geselecteerde vormen converteren naar begrenzingsrechthoeken</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Geselecteerde vormen converteren naar lijnstroken</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Vormen Vergrendelen</translation>
     </message>

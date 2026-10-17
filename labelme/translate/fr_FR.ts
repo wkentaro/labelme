@@ -557,6 +557,26 @@ les formes</translation>
         <translation>Fusionner les formes de masque sélectionnées en une seule</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Convertir en</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Convertir les formes sélectionnées en polygones</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Rectangle (boîte englobante)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Convertir les formes sélectionnées en rectangles de boîte englobante</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Convertir les formes sélectionnées en bandes de lignes</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Verrouiller les formes</translation>
     </message>

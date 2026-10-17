@@ -557,6 +557,26 @@ Shapes</source>
         <translation>將選取的遮罩形狀合併為一個</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>轉換為</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>將選取的形狀轉換為多邊形</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>矩形 (邊界框)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>將選取的形狀轉換為邊界框矩形</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>將選取的形狀轉換為折線</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>鎖定形狀</translation>
     </message>

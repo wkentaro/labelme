@@ -551,6 +551,26 @@ Shapes</source>
         <translation>รวมรูปร่างมาสก์ที่เลือกเป็นรูปร่างเดียว</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>แปลงเป็น</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นรูปหลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>สี่เหลี่ยมผืนผ้า (กรอบขอบเขต)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นสี่เหลี่ยมผืนผ้ากรอบขอบเขต</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นเส้นต่อเนื่อง</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>ล็อกรูปร่าง</translation>
     </message>

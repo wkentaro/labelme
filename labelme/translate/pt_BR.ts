@@ -551,6 +551,26 @@ Shapes</source>
         <translation>Mesclar as formas de máscara selecionadas em uma</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Converter para</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Converter formas selecionadas para polígonos</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Retângulo (caixa delimitadora)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Converter formas selecionadas para retângulos de caixa delimitadora</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Converter formas selecionadas para faixas de linhas</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Bloquear Formas</translation>
     </message>

@@ -563,6 +563,26 @@ Shapes</source>
         <translation>選択したマスク図形を1つに結合</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>変換</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>選択した形状をポリゴンに変換</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>矩形 (バウンディングボックス)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>選択した形状をバウンディングボックス矩形に変換</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>選択した形状をラインストリップに変換</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>図形をロック</translation>
     </message>

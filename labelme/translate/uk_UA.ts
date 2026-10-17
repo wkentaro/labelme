@@ -367,6 +367,26 @@
         <translation>Об&apos;єднати вибрані фігури-маски в одну</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Перетворити на</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Перетворити вибрані фігури на полігони</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Прямокутник (обмежувальна рамка)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Перетворити вибрані фігури на обмежувальні прямокутники</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Перетворити вибрані фігури на ламані лінії</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Заблокувати фігури</translation>
     </message>

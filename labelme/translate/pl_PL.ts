@@ -551,6 +551,26 @@ Shapes</source>
         <translation>Scal zaznaczone kształty maski w jeden</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Konwertuj na</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Konwertuj zaznaczone kształty na wielokąty</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Prostokąt (obwiednia)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Konwertuj zaznaczone kształty na prostokątne obwiednie</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Konwertuj zaznaczone kształty na łamane</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Zablokuj kształty</translation>
     </message>

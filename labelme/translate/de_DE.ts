@@ -573,6 +573,26 @@ Formen</translation>
         <translation>Ausgewählte Maskenformen zu einer zusammenführen</translation>
     </message>
     <message>
+        <source>Convert to</source>
+        <translation>Konvertieren in</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Ausgewählte Formen in Polygone konvertieren</translation>
+    </message>
+    <message>
+        <source>Rectangle (bounding box)</source>
+        <translation>Rechteck (Begrenzungsrahmen)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Ausgewählte Formen in Begrenzungsrahmen-Rechtecke konvertieren</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Ausgewählte Formen in Linienzüge konvertieren</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Formen sperren</translation>
     </message>
