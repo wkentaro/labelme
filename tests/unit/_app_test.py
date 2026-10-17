@@ -625,6 +625,33 @@ def test_default_window_geometry(
     )
 
 
+@pytest.mark.skipif(os.name != "nt", reason="only Windows has UNC paths")
+@pytest.mark.parametrize(
+    ("image_path", "label_dir"),
+    [
+        (r"\\server\share\imgs\img.png", Path(r"C:\labels")),
+        (r"C:\imgs\img.png", Path(r"\\server\share\labels")),
+        (r"\\server\share1\imgs\img.png", Path(r"\\server\share2\labels")),
+        (r"\\server1\share\imgs\img.png", Path(r"\\server2\share\labels")),
+    ],
+    ids=[
+        "unc-image-drive-label-dir",
+        "drive-image-unc-label-dir",
+        "unc-share-mismatch",
+        "unc-server-mismatch",
+    ],
+)
+def test_resolve_stored_image_path_falls_back_across_windows_unc_shares(
+    *,
+    image_path: str,
+    label_dir: Path,
+) -> None:
+    assert (
+        _app._resolve_stored_image_path(image_path=image_path, label_dir=label_dir)
+        == image_path
+    )
+
+
 def test_saved_shapes_equal_ignores_visibility_but_not_saved_fields() -> None:
     def make(
         *, mask: np.ndarray | None, visible: bool = True, locked: bool = False
