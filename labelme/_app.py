@@ -12,6 +12,7 @@ import time
 import typing
 import unicodedata
 import webbrowser
+from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 from typing import Literal
@@ -234,6 +235,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _docks: _DockWidgets
     _actions: _Actions
     _persistent_actions: dict[tuple[str, ...], QtGui.QAction]
+    _live_widget_appliers: dict[tuple[str, ...], Callable[[], None]]
+    _live_widget_prefix_appliers: dict[str, Callable[[], None]]
     _menus: _Menus
     _label_dialog: LabelDialog
     _settings_dialog: SettingsDialog | None = None
@@ -348,6 +351,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_annotation.manage_models_requested.connect(self._open_models)
         self._ai_text.manage_models_requested.connect(self._open_models)
         self._refresh_model_availability()
+
+        self._live_widget_appliers = self._setup_live_widget_appliers()
+        self._live_widget_prefix_appliers = self._setup_live_widget_prefix_appliers()
 
         self._setup_app_state(file_or_dir=file_or_dir, output_dir=output_dir)
 
@@ -3127,96 +3133,145 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         self._apply_to_live_widgets(key_path=key_path)
 
-    def _apply_to_live_widgets(self, *, key_path: tuple[str, ...]) -> None:
-        if key_path == ("color_theme",):
-            # apply_color_theme -> setColorScheme emits colorSchemeChanged, which
-            # drives _retheme; no explicit refresh needed here.
-            _utils.apply_color_theme(theme=self._config["color_theme"])
-        elif key_path in self._persistent_actions:
-            action = self._persistent_actions[key_path]
-            value = self._read_setting_value(key_path=key_path)
-            assert isinstance(value, bool)
-            with QtCore.QSignalBlocker(action):
-                action.setChecked(value)
-            if key_path == ("canvas", "fill_drawing"):
-                self._canvas_widgets.canvas.set_fill_drawing(value=value)
-        elif key_path == ("shape", "show_labels"):
-            canvas = self._canvas_widgets.canvas
-            canvas.set_show_labels(value=self._config["shape"]["show_labels"])
-            canvas.update()
-        elif key_path == ("mask_polygonization", "detail"):
-            detail = self._config["mask_polygonization"]["detail"]
-            self._ai_annotation.set_polygon_detail(detail)
-            self._canvas_widgets.canvas.set_ai_polygon_detail(detail=detail)
-        elif key_path == ("canvas", "allow_out_of_bounds_points"):
-            canvas = self._canvas_widgets.canvas
-            canvas.set_allow_out_of_bounds_points(
-                value=self._config["canvas"]["allow_out_of_bounds_points"]
-            )
-            canvas.update()
-        elif key_path[0] == "shape_color":
-            self._refresh_shape_colors()
-        elif key_path[0] == "labels":
-            # Update predefined labels in place so session history (labels learned
-            # from loaded/created shapes via add_label_history) is preserved, while
-            # a removed predefined label drops from suggestions unless it was used
-            # this session.
-            self._label_dialog.set_predefined_labels(
-                labels=self._config["labels"] or []
-            )
-            # The Label List dock is append-only (a shape's label stays after the
-            # shape is deleted), so add new predefined labels and leave removed
-            # ones until restart.
-            for label in self._config["labels"] or []:
-                if (
-                    self._docks.unique_label_list.find_label_item(label=label)
-                    is not None
-                ):
-                    continue
-                self._docks.unique_label_list.add_label_item(
-                    label=label,
-                    color=self._get_rgb_by_label(
-                        label=label,
-                        unique_label_list=self._docks.unique_label_list,
-                    ),
+    def _setup_live_widget_appliers(
+        self,
+    ) -> dict[tuple[str, ...], Callable[[], None]]:
+        appliers: dict[tuple[str, ...], Callable[[], None]] = {
+            ("color_theme",): self._apply_color_theme,
+            ("shape", "show_labels"): self._apply_shape_show_labels,
+            ("mask_polygonization", "detail"): self._apply_mask_polygonization_detail,
+            (
+                "canvas",
+                "allow_out_of_bounds_points",
+            ): self._apply_canvas_allow_out_of_bounds_points,
+            ("canvas", "fill_drawing"): self._apply_canvas_fill_drawing,
+            ("labels",): self._apply_labels,
+            ("label_flags",): self._apply_label_flags,
+            ("flags",): self._apply_flags,
+            ("sort_labels",): self._recreate_label_dialog,
+            ("show_label_text_field",): self._recreate_label_dialog,
+            ("label_completion",): self._recreate_label_dialog,
+            ("ai", "default"): self._apply_ai_default,
+            ("ai", "text_model"): self._apply_ai_text_model,
+            (
+                "ai",
+                "suppress_existing_shape_matches",
+            ): self._apply_ai_suppress_existing_shape_matches,
+        }
+        for key_path in self._persistent_actions:
+            if key_path not in appliers:
+                appliers[key_path] = functools.partial(
+                    self._sync_persistent_action, key_path=key_path
                 )
-        elif key_path == ("label_flags",):
-            self._label_dialog.set_flag_rules(flags=self._config["label_flags"])
-        elif key_path[0] == "flags":
-            # The flag dock otherwise only repopulates on the next image load.
-            # Refresh it now additively: add newly predefined flags (unchecked) and
-            # keep every flag already in the dock with its checked state. Like the
-            # label docks, a flag removed from the config lingers until the next
-            # image load, so the edit never drops a flag the current image carries.
-            self._load_flags(
-                flags=self._read_flag_dock_states(), widget=self._docks.flag_list
+        return appliers
+
+    def _setup_live_widget_prefix_appliers(
+        self,
+    ) -> dict[str, Callable[[], None]]:
+        return {
+            "shape_color": self._refresh_shape_colors,
+            "labels": self._apply_labels,
+            "flags": self._apply_flags,
+        }
+
+    def _sync_persistent_action(self, *, key_path: tuple[str, ...]) -> None:
+        action = self._persistent_actions[key_path]
+        value = self._read_setting_value(key_path=key_path)
+        assert isinstance(value, bool)
+        with QtCore.QSignalBlocker(action):
+            action.setChecked(value)
+
+    def _apply_canvas_fill_drawing(self) -> None:
+        self._sync_persistent_action(key_path=("canvas", "fill_drawing"))
+        value = self._read_setting_value(key_path=("canvas", "fill_drawing"))
+        assert isinstance(value, bool)
+        self._canvas_widgets.canvas.set_fill_drawing(value=value)
+
+    def _apply_color_theme(self) -> None:
+        # apply_color_theme -> setColorScheme emits colorSchemeChanged, which
+        # drives _retheme; no explicit refresh needed here.
+        _utils.apply_color_theme(theme=self._config["color_theme"])
+
+    def _apply_shape_show_labels(self) -> None:
+        canvas = self._canvas_widgets.canvas
+        canvas.set_show_labels(value=self._config["shape"]["show_labels"])
+        canvas.update()
+
+    def _apply_mask_polygonization_detail(self) -> None:
+        detail = self._config["mask_polygonization"]["detail"]
+        self._ai_annotation.set_polygon_detail(detail)
+        self._canvas_widgets.canvas.set_ai_polygon_detail(detail=detail)
+
+    def _apply_canvas_allow_out_of_bounds_points(self) -> None:
+        canvas = self._canvas_widgets.canvas
+        canvas.set_allow_out_of_bounds_points(
+            value=self._config["canvas"]["allow_out_of_bounds_points"]
+        )
+        canvas.update()
+
+    def _apply_labels(self) -> None:
+        # Update predefined labels in place so session history (labels learned
+        # from loaded/created shapes via add_label_history) is preserved, while
+        # a removed predefined label drops from suggestions unless it was used
+        # this session.
+        self._label_dialog.set_predefined_labels(labels=self._config["labels"] or [])
+        # The Label List dock is append-only (a shape's label stays after the
+        # shape is deleted), so add new predefined labels and leave removed
+        # ones until restart.
+        for label in self._config["labels"] or []:
+            if self._docks.unique_label_list.find_label_item(label=label) is not None:
+                continue
+            self._docks.unique_label_list.add_label_item(
+                label=label,
+                color=self._get_rgb_by_label(
+                    label=label,
+                    unique_label_list=self._docks.unique_label_list,
+                ),
             )
-        elif key_path in (
-            ("sort_labels",),
-            ("show_label_text_field",),
-            ("label_completion",),
-        ):
-            # LabelDialog reads these values only during construction.
-            old_label_dialog = self._label_dialog
-            self._label_dialog = self._make_label_dialog(
-                label_history=old_label_dialog.label_history
-            )
-            old_label_dialog.deleteLater()
-        elif key_path == ("ai", "default"):
-            self._ai_annotation.set_current_model(
-                model_display=self._config["ai"]["default"] or ""
-            )
-            self._canvas_widgets.canvas.set_ai_model_name(
-                model_name=self._ai_annotation.current_model_id
-            )
-        elif key_path == ("ai", "text_model"):
-            self._ai_text.set_model_name(
-                model_name=self._config["ai"]["text_model"] or ""
-            )
-        elif key_path == ("ai", "suppress_existing_shape_matches"):
-            self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
-                enabled=self._config["ai"]["suppress_existing_shape_matches"]
-            )
+
+    def _apply_label_flags(self) -> None:
+        self._label_dialog.set_flag_rules(flags=self._config["label_flags"])
+
+    def _apply_flags(self) -> None:
+        # The flag dock otherwise only repopulates on the next image load.
+        # Refresh it now additively: add newly predefined flags (unchecked) and
+        # keep every flag already in the dock with its checked state. Like the
+        # label docks, a flag removed from the config lingers until the next
+        # image load, so the edit never drops a flag the current image carries.
+        self._load_flags(
+            flags=self._read_flag_dock_states(), widget=self._docks.flag_list
+        )
+
+    def _recreate_label_dialog(self) -> None:
+        # LabelDialog reads these values only during construction.
+        old_label_dialog = self._label_dialog
+        self._label_dialog = self._make_label_dialog(
+            label_history=old_label_dialog.label_history
+        )
+        old_label_dialog.deleteLater()
+
+    def _apply_ai_default(self) -> None:
+        self._ai_annotation.set_current_model(
+            model_display=self._config["ai"]["default"] or ""
+        )
+        self._canvas_widgets.canvas.set_ai_model_name(
+            model_name=self._ai_annotation.current_model_id
+        )
+
+    def _apply_ai_text_model(self) -> None:
+        self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"] or "")
+
+    def _apply_ai_suppress_existing_shape_matches(self) -> None:
+        self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
+            enabled=self._config["ai"]["suppress_existing_shape_matches"]
+        )
+
+    def _apply_to_live_widgets(self, *, key_path: tuple[str, ...]) -> None:
+        applier = self._live_widget_appliers.get(key_path)
+        if applier is None and key_path:
+            applier = self._live_widget_prefix_appliers.get(key_path[0])
+        if applier is not None:
+            applier()
 
     def _refresh_shape_colors(self) -> None:
         unique_labels = self._docks.unique_label_list
