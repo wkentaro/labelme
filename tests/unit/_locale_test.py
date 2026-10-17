@@ -2,8 +2,13 @@ from __future__ import annotations
 
 import ast
 import dataclasses
+import xml.etree.ElementTree as ET
+from pathlib import Path
 from typing import Final
 
+import pytest
+
+import labelme
 from labelme import _locale
 
 
@@ -211,3 +216,110 @@ def build(self, group):
     assert violations[0].argument_expr == "group"
 
 
+def test_tr_calls_repo_wide_use_literals_or_allowlist() -> None:
+    labelme_dir = Path(labelme.__file__).resolve().parent
+    all_violations: list[UntranslatableTrCall] = []
+    matched_allowlist: set[tuple[str, str]] = set()
+
+    for py_path in sorted(labelme_dir.rglob("*.py")):
+        rel_path = py_path.relative_to(labelme_dir).as_posix()
+        source = py_path.read_text(encoding="utf-8")
+        violations, hits = find_untranslatable_tr_calls(
+            source=source, file_path=rel_path
+        )
+        all_violations.extend(violations)
+        matched_allowlist.update(hits)
+
+    if all_violations:
+        details = "\n".join(str(v) for v in all_violations)
+        pytest.fail(
+            f"Found {len(all_violations)} untranslatable non-literal "
+            f"tr() call(s):\n{details}"
+        )
+
+    unused = _ALLOWED_NON_LITERAL_TR_CALLS - matched_allowlist
+    assert not unused, f"Unused allowlist entries: {unused}"
+
+
+def test_qt_translate_noop_calls_use_settings_dialog_context_and_literals() -> None:
+    labelme_dir = Path(labelme.__file__).resolve().parent
+    noop_count = 0
+
+    for py_path in sorted(labelme_dir.rglob("*.py")):
+        tree = ast.parse(py_path.read_text(encoding="utf-8"), filename=str(py_path))
+        rel_path = py_path.relative_to(labelme_dir).as_posix()
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            is_noop = (
+                isinstance(node.func, ast.Name) and node.func.id == "QT_TRANSLATE_NOOP"
+            ) or (
+                isinstance(node.func, ast.Attribute)
+                and node.func.attr == "QT_TRANSLATE_NOOP"
+            )
+            if not is_noop:
+                continue
+
+            noop_count += 1
+            assert len(node.args) >= 2, (
+                f"{rel_path}:{node.lineno}: QT_TRANSLATE_NOOP expects (context, text)"
+            )
+            context_node = node.args[0]
+            text_node = node.args[1]
+            assert isinstance(context_node, ast.Constant) and isinstance(
+                context_node.value, str
+            ), f"{rel_path}:{node.lineno}: context must be a string literal"
+            assert isinstance(text_node, ast.Constant) and isinstance(
+                text_node.value, str
+            ), f"{rel_path}:{node.lineno}: source text must be a string literal"
+            assert context_node.value == "SettingsDialog", (
+                f"{rel_path}:{node.lineno}: expected context 'SettingsDialog', "
+                f"got {context_node.value!r}"
+            )
+
+    assert noop_count > 0, "Expected to find QT_TRANSLATE_NOOP registrations"
+
+
+def test_qt_translate_noop_strings_exist_in_all_translation_catalogs() -> None:
+    labelme_dir = Path(labelme.__file__).resolve().parent
+    registered_texts: set[str] = set()
+
+    for py_path in sorted(labelme_dir.rglob("*.py")):
+        tree = ast.parse(py_path.read_text(encoding="utf-8"), filename=str(py_path))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            is_noop = (
+                isinstance(node.func, ast.Name) and node.func.id == "QT_TRANSLATE_NOOP"
+            ) or (
+                isinstance(node.func, ast.Attribute)
+                and node.func.attr == "QT_TRANSLATE_NOOP"
+            )
+            if not is_noop or len(node.args) < 2:
+                continue
+            text_node = node.args[1]
+            if isinstance(text_node, ast.Constant) and isinstance(text_node.value, str):
+                registered_texts.add(text_node.value)
+
+    assert registered_texts, "No QT_TRANSLATE_NOOP strings found"
+
+    translate_dir = _locale.TRANSLATE_DIR
+    ts_paths = sorted(translate_dir.glob("*.ts"))
+    assert ts_paths, "No translation .ts files found"
+
+    for ts_path in ts_paths:
+        root = ET.parse(ts_path).getroot()
+        catalog_sources: set[str] = set()
+        for ctx in root.findall("context"):
+            name = ctx.find("name")
+            if name is None or name.text != "SettingsDialog":
+                continue
+            for msg in ctx.findall("message"):
+                src = msg.find("source")
+                if src is not None and src.text:
+                    catalog_sources.add(src.text)
+
+        missing = registered_texts - catalog_sources
+        assert not missing, (
+            f"{ts_path.name} is missing SettingsDialog sources: {sorted(missing)}"
+        )
