@@ -313,7 +313,7 @@
         <translation>Следующее изображение (&amp;N)</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
         <translation>Открыть следующее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
     </message>
     <message>
@@ -321,7 +321,7 @@
         <translation>Предыдущее изображение (&amp;P)</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
         <translation>Открыть предыдущее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
     </message>
     <message>

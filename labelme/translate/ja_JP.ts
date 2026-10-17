@@ -320,7 +320,7 @@
 画像(&amp;N)</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
         <translation>次を開く (Ctrl+Shift でラベルをコピー)</translation>
     </message>
     <message>
@@ -329,7 +329,7 @@
 画像(&amp;P)</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
         <translation>前を開く (Ctrl+Shift でラベルをコピー)</translation>
     </message>
     <message>

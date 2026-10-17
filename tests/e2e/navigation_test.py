@@ -116,3 +116,17 @@ def test_image_navigation_while_selecting_shape(
     # }}
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_navigation_action_tooltips_use_ctrl_modifier(
+    *, main_win: MainWinFactory, qtbot: QtBot, pause: bool
+) -> None:
+    win = main_win()
+    next_tip = win._actions.open_next_img.toolTip()
+    prev_tip = win._actions.open_prev_img.toolTip()
+    assert "Ctrl+Shift" in next_tip
+    assert "Ctl" not in next_tip
+    assert "Ctrl+Shift" in prev_tip
+    assert "Ctl" not in prev_tip
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)

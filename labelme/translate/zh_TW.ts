@@ -319,16 +319,16 @@
         <translation>下一張影像(&amp;N)</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>開啟下一張影像（按住 Ctl+Shift 複製標籤）</translation>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
+        <translation>開啟下一張影像（按住 Ctrl+Shift 複製標籤）</translation>
     </message>
     <message>
         <source>&amp;Prev Image</source>
         <translation>上一張影像(&amp;P)</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>開啟上一張影像（按住 Ctl+Shift 複製標籤）</translation>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
+        <translation>開啟上一張影像（按住 Ctrl+Shift 複製標籤）</translation>
     </message>
     <message>
         <source>&amp;Save

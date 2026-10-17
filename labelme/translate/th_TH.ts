@@ -318,7 +318,7 @@
         <translation>รูปถัดไป (&amp;N)</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
         <translation>เปิดรูปถัดไป (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
     </message>
     <message>
@@ -326,7 +326,7 @@
         <translation>รูปก่อนหน้า (&amp;P)</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
         <translation>เปิดรูปก่อนหน้า (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
     </message>
     <message>

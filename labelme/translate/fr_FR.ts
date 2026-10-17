@@ -319,7 +319,7 @@
         <translation>Image &amp;suivante</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
         <translation>Ouvrir la suivante (maintenir Ctrl+Maj pour copier les étiquettes)</translation>
     </message>
     <message>
@@ -327,7 +327,7 @@
         <translation>Image &amp;précédente</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
         <translation>Ouvrir la précédente (maintenir Ctrl+Maj pour copier les étiquettes)</translation>
     </message>
     <message>

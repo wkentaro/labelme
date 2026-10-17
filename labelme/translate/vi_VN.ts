@@ -318,16 +318,16 @@
         <translation>Hình ảnh Tiếp theo(&amp;N)</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Mở tiếp theo (giữ Ctl+Shift để sao chép nhãn)</translation>
+        <source>Open next (hold Ctrl+Shift to copy labels)</source>
+        <translation>Mở tiếp theo (giữ Ctrl+Shift để sao chép nhãn)</translation>
     </message>
     <message>
         <source>&amp;Prev Image</source>
         <translation>Hình ảnh Trước(&amp;P)</translation>
     </message>
     <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Mở trước đó (giữ Ctl+Shift để sao chép nhãn)</translation>
+        <source>Open prev (hold Ctrl+Shift to copy labels)</source>
+        <translation>Mở trước đó (giữ Ctrl+Shift để sao chép nhãn)</translation>
     </message>
     <message>
         <source>&amp;Save
