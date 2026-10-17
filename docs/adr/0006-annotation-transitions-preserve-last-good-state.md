@@ -20,6 +20,12 @@ writes and failed loads without adding physical-storage latency to every edit.
   silently opening an empty Annotation that could overwrite recoverable data.
 - Successful saves do not leave persistent backup files. Recovery history, its
   retention, and its cleanup belong to a separate feature.
+- Atomic writing uses a deterministic sibling `.tmp` file (`<filename>.tmp`) for
+  Annotation Files and sweeps stale temporary files for Config Files. An abrupt
+  process kill (e.g. SIGKILL, power failure) between temp-file creation and rename
+  can leave an orphaned `.tmp` file behind until the next save; arbitrary
+  directory-wide temp file purging in annotation directories is avoided to
+  prevent racing with concurrent writers or removing unrelated user files.
 
 ## Background auto-save
 
