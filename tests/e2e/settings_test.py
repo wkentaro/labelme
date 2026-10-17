@@ -875,3 +875,27 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
     assert win._canvas_widgets.canvas._ai_assist_session.polygon_detail == 70
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_apply_to_live_widgets_table_dispatch(
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+) -> None:
+    win = main_win(config_file=editable_config_file)
+
+    for key_path in win._persistent_actions:
+        assert key_path in win._live_widget_appliers
+
+    called: list[str] = []
+    win._live_widget_appliers[("mock_key",)] = lambda: called.append("exact")
+    win._apply_to_live_widgets(key_path=("mock_key",))
+    assert called == ["exact"]
+
+    win._live_widget_prefix_appliers["mock_prefix"] = lambda: called.append("prefix")
+    win._apply_to_live_widgets(key_path=("mock_prefix", "sub_key"))
+    assert called == ["exact", "prefix"]
+
+    win._apply_to_live_widgets(key_path=("unhandled_key", "leaf"))
+    assert called == ["exact", "prefix"]
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
