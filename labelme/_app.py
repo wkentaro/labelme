@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import enum
 import functools
+import json
 import operator
 import os
 import platform
@@ -13,6 +14,7 @@ import typing
 import unicodedata
 import webbrowser
 from pathlib import Path
+from pathlib import PureWindowsPath
 from typing import Final
 from typing import Literal
 from typing import NamedTuple
@@ -1522,6 +1524,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 or _resolve_label_path(
                     image_or_label_path=self._file_list_image_path or self._image_path,
                     output_dir=self._output_dir,
+                    root_dir=self._file_list_root_prefix,
                 )
             )
         else:
@@ -2509,25 +2512,30 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         t0_load_file = time.time()
-        label_path: str = _resolve_label_path(
-            image_or_label_path=image_or_label_path,
-            output_dir=self._output_dir,
-        )
-        if QtCore.QFile.exists(label_path):
-            annotation = self._read_annotation_file(label_path=label_path)
+        if is_label_file_path(filename=image_or_label_path):
+            existing_label_path: str | None = image_or_label_path
+        else:
+            existing_label_path = _find_existing_label_path(
+                image_path=image_or_label_path,
+                output_dir=self._output_dir,
+                root_dir=self._file_list_root_prefix,
+            )
+
+        if existing_label_path is not None and QtCore.QFile.exists(existing_label_path):
+            annotation = self._read_annotation_file(label_path=existing_label_path)
             if annotation is None:
                 return False
             # The relative path stored in the Annotation File may carry "." or ".."
             # components, which would survive the join and break the
             # exact-string comparisons against the Image List.
-            stored_image = Path(label_path).parent / annotation.image_path
+            stored_image = Path(existing_label_path).parent / annotation.image_path
             image_path = os.path.normpath(str(stored_image))
             # Following symlinks first keeps parent traversal on its intended target.
             if os.path.realpath(image_path) != os.path.realpath(stored_image):
                 image_path = os.path.join(
                     os.path.realpath(stored_image.parent), stored_image.name
                 )
-            label_file_path = label_path
+            label_file_path = existing_label_path
             shapes = _shapes_from_dicts(
                 shape_dicts=annotation.shapes,
                 label_flags=self._config["label_flags"],
@@ -2932,6 +2940,7 @@ class MainWindow(QtWidgets.QMainWindow):
             dir=_resolve_label_path(
                 image_or_label_path=self._file_list_image_path or self._image_path,
                 output_dir=self._output_dir,
+                root_dir=self._file_list_root_prefix,
             ),
             filter=self.tr("Annotation files (*%s)") % LABEL_FILE_SUFFIX,
         )
@@ -2957,6 +2966,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return _resolve_label_path(
             image_or_label_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
+            root_dir=self._file_list_root_prefix,
         )
 
     def _confirm_deletion(self, *, message: str) -> bool:
@@ -3623,7 +3633,11 @@ class MainWindow(QtWidgets.QMainWindow):
         for path in self._loaded_image_paths:
             if self._matches_file_search(path):
                 image_paths.append(path)
-            elif _has_label_file(image_path=path, output_dir=self._output_dir):
+            elif _has_label_file(
+                image_path=path,
+                output_dir=self._output_dir,
+                root_dir=self._file_list_root_prefix,
+            ):
                 self._hidden_annotated_paths.add(path)
 
         file_list = self._docks.file_list
@@ -3635,6 +3649,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         image_path=image_path,
                         label=self._file_list_label(image_path),
                         output_dir=self._output_dir,
+                        root_dir=self._file_list_root_prefix,
                     )
                 )
             if self._file_list_image_path in image_paths:
@@ -3656,7 +3671,11 @@ class MainWindow(QtWidgets.QMainWindow):
             item = file_list.item(row)
             assert item
             if _comparable_stem(_file_list_item_path(item)) == stem:
-                _set_annotated_check_state(item, output_dir=self._output_dir)
+                _set_annotated_check_state(
+                    item,
+                    output_dir=self._output_dir,
+                    root_dir=self._file_list_root_prefix,
+                )
 
         # Images hidden by the search box have no item, so keep the count's
         # record of them by the same rule.
@@ -3665,7 +3684,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 image_path
             ):
                 continue
-            if _has_label_file(image_path=image_path, output_dir=self._output_dir):
+            if _has_label_file(
+                image_path=image_path,
+                output_dir=self._output_dir,
+                root_dir=self._file_list_root_prefix,
+            ):
                 self._hidden_annotated_paths.add(image_path)
             else:
                 self._hidden_annotated_paths.discard(image_path)
@@ -3771,12 +3794,144 @@ def _format_window_title(
     return title
 
 
-def _resolve_label_path(*, image_or_label_path: str, output_dir: Path | None) -> str:
+def _resolve_label_path(
+    *,
+    image_or_label_path: str,
+    output_dir: Path | None,
+    root_dir: str | Path | None,
+) -> str:
     if is_label_file_path(filename=image_or_label_path):
         return image_or_label_path
     image_path = Path(image_or_label_path)
-    parent = output_dir if output_dir is not None else image_path.parent
+    if output_dir is None:
+        parent = image_path.parent
+    elif root_dir is None:
+        parent = output_dir
+    else:
+        try:
+            rel = os.path.relpath(image_path, root_dir)
+            if rel.startswith("..") or os.path.isabs(rel):
+                parent = output_dir
+            else:
+                parent = output_dir / Path(rel).parent
+        except ValueError:
+            parent = output_dir
     return str(parent / f"{image_path.stem}{LABEL_FILE_SUFFIX}")
+
+
+def _resolve_disambiguated_label_path(
+    *,
+    image_path: str,
+    output_dir: Path | None,
+    root_dir: str | Path | None,
+) -> str:
+    p = Path(image_path)
+    if output_dir is None:
+        parent = p.parent
+    elif root_dir is None:
+        parent = output_dir
+    else:
+        try:
+            rel = os.path.relpath(p, root_dir)
+            if rel.startswith("..") or os.path.isabs(rel):
+                parent = output_dir
+            else:
+                parent = output_dir / Path(rel).parent
+        except ValueError:
+            parent = output_dir
+    return str(parent / f"{p.name}{LABEL_FILE_SUFFIX}")
+
+
+def _read_label_file_image_path(label_path: str, /) -> str | None:
+    try:
+        with open(label_path, encoding="utf-8") as f:
+            raw = json.load(f)
+        image_path = raw.get("imagePath")
+        if isinstance(image_path, str):
+            return PureWindowsPath(image_path).as_posix()
+        return None
+    except Exception:
+        return None
+
+
+def _annotation_file_matches_image(*, label_path: str, image_path: str) -> bool:
+    stored_image_rel = _read_label_file_image_path(label_path)
+    if stored_image_rel is None:
+        return False
+    stored_path = Path(label_path).parent / stored_image_rel
+    try:
+        return os.path.samefile(stored_path, image_path)
+    except (OSError, ValueError):
+        return os.path.normcase(os.path.normpath(str(stored_path))) == os.path.normcase(
+            os.path.normpath(image_path)
+        )
+
+
+def _has_sibling_stem_collision(*, image_path: str) -> bool:
+    p = Path(image_path)
+    stem = p.stem.casefold()
+    exts = _list_supported_image_extensions()
+    count = 0
+    try:
+        for entry in p.parent.iterdir():
+            if not (entry.is_file() and entry.name.lower().endswith(exts)):
+                continue
+            if entry.stem.casefold() != stem:
+                continue
+            count += 1
+            if count > 1:
+                return True
+    except OSError:
+        pass
+    return False
+
+
+def _find_existing_label_path(
+    *,
+    image_path: str,
+    output_dir: Path | None,
+    root_dir: str | Path | None,
+) -> str | None:
+    mirrored = _resolve_label_path(
+        image_or_label_path=image_path,
+        output_dir=output_dir,
+        root_dir=root_dir,
+    )
+    if QtCore.QFile.exists(mirrored):
+        if not _has_sibling_stem_collision(image_path=image_path):
+            return mirrored
+        if _annotation_file_matches_image(label_path=mirrored, image_path=image_path):
+            return mirrored
+        disambiguated = _resolve_disambiguated_label_path(
+            image_path=image_path,
+            output_dir=output_dir,
+            root_dir=root_dir,
+        )
+        if QtCore.QFile.exists(disambiguated) and _annotation_file_matches_image(
+            label_path=disambiguated, image_path=image_path
+        ):
+            return disambiguated
+        return None
+
+    # Fallback to disambiguated label file (e.g. x.png.json) if it exists
+    disambiguated = _resolve_disambiguated_label_path(
+        image_path=image_path,
+        output_dir=output_dir,
+        root_dir=root_dir,
+    )
+    if QtCore.QFile.exists(disambiguated) and _annotation_file_matches_image(
+        label_path=disambiguated, image_path=image_path
+    ):
+        return disambiguated
+
+    # Legacy flat fallback when output_dir is set
+    if output_dir is not None:
+        flat = str(output_dir / f"{Path(image_path).stem}{LABEL_FILE_SUFFIX}")
+        if flat != mirrored and QtCore.QFile.exists(flat):
+            if _annotation_file_matches_image(label_path=flat, image_path=image_path):
+                return flat
+
+    return None
 
 
 def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
@@ -3798,13 +3953,17 @@ def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
 
 
 def _make_image_list_item(
-    *, image_path: str, label: str, output_dir: Path | None
+    *,
+    image_path: str,
+    label: str,
+    output_dir: Path | None,
+    root_dir: str | Path | None,
 ) -> QtWidgets.QListWidgetItem:
     item = QtWidgets.QListWidgetItem(label)
     item.setData(Qt.ItemDataRole.UserRole, image_path)
     item.setToolTip(os.path.abspath(image_path))
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-    _set_annotated_check_state(item, output_dir=output_dir)
+    _set_annotated_check_state(item, output_dir=output_dir, root_dir=root_dir)
     return item
 
 
@@ -3815,17 +3974,31 @@ def _comparable_stem(path: str, /) -> str:
 
 
 def _set_annotated_check_state(
-    item: QtWidgets.QListWidgetItem, /, *, output_dir: Path | None
+    item: QtWidgets.QListWidgetItem,
+    /,
+    *,
+    output_dir: Path | None,
+    root_dir: str | Path | None,
 ) -> None:
     has_label = _has_label_file(
-        image_path=_file_list_item_path(item), output_dir=output_dir
+        image_path=_file_list_item_path(item),
+        output_dir=output_dir,
+        root_dir=root_dir,
     )
     item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
 
 
-def _has_label_file(*, image_path: str, output_dir: Path | None) -> bool:
-    return QtCore.QFile.exists(
-        _resolve_label_path(image_or_label_path=image_path, output_dir=output_dir)
+def _has_label_file(
+    *,
+    image_path: str,
+    output_dir: Path | None,
+    root_dir: str | Path | None,
+) -> bool:
+    return (
+        _find_existing_label_path(
+            image_path=image_path, output_dir=output_dir, root_dir=root_dir
+        )
+        is not None
     )
 
 
@@ -3924,16 +4097,32 @@ def _scan_image_files(*, root_dir: str) -> list[str]:
     # so sorting by the part below it gives the same order, and natsort's key
     # cost grows with path depth (~5x faster for a typical absolute root_dir).
     images: list[tuple[str, str]] = []
+    seen_stems: dict[tuple[str, str], str] = {}
+    duplicate_stems: list[tuple[str, str]] = []
     for root, dirs, files in os.walk(root_dir):
         root_below = os.path.relpath(root, root_dir)
         for file in files:
-            if file.lower().endswith(extensions):
-                images.append(
-                    (
-                        os.path.normpath(os.path.join(root_below, file)),
-                        os.path.normpath(os.path.join(root, file)),
-                    )
-                )
+            if not file.lower().endswith(extensions):
+                continue
+            rel_path = os.path.normpath(os.path.join(root_below, file))
+            full_path = os.path.normpath(os.path.join(root, file))
+            images.append((rel_path, full_path))
+
+            stem_key = (
+                root,
+                unicodedata.normalize("NFC", Path(file).stem).casefold(),
+            )
+            if stem_key in seen_stems:
+                duplicate_stems.append((seen_stems[stem_key], full_path))
+            else:
+                seen_stems[stem_key] = full_path
+
+    for first, second in duplicate_stems:
+        logger.warning(
+            "Images share the same directory and stem: {!r} and {!r}",
+            first,
+            second,
+        )
 
     logger.debug("found {:d} images in {!r}", len(images), root_dir)
     try:

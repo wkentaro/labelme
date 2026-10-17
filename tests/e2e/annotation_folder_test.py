@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import json
+import os
 import shutil
 from pathlib import Path
 
+import numpy as np
 import pytest
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -11,6 +14,7 @@ from pytestqt.qtbot import QtBot
 
 from labelme._app import ANNOTATION_FOLDERS_KEY
 from labelme._app import MainWindow
+from labelme._shape import Shape
 
 from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
@@ -521,8 +525,8 @@ def test_footer_recounts_once_per_save(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    # Images sharing a stem all match one Annotation File in a shared
-    # Annotation Folder, so a save re-checks every one of them.
+    # Images sharing a stem each have their own Annotation File in the
+    # Annotation Folder, and a save of one re-checks every same-stem image.
     images = tmp_path / "images"
     for name in ("a", "b", "c"):
         (images / name).mkdir(parents=True)
@@ -542,6 +546,179 @@ def test_footer_recounts_once_per_save(
         ),
     )
 
-    (out / "frame.json").write_text("{}")
-    win._refresh_image_list_checkmarks(label_path=str(out / "frame.json"))
+    for name in ("a", "b", "c"):
+        (out / name).mkdir(parents=True)
+        (out / name / "frame.json").write_text("{}")
+    win._refresh_image_list_checkmarks(label_path=str(out / "a" / "frame.json"))
     assert counts == [(3, 3)]
+
+
+@pytest.mark.gui
+def test_subfolder_images_with_same_name_have_unique_annotation_files(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
+    images = tmp_path / "images"
+    (images / "a").mkdir(parents=True)
+    (images / "b").mkdir(parents=True)
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", images / "a" / "0001.jpg")
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", images / "b" / "0001.jpg")
+
+    out = tmp_path / "annotations"
+    out.mkdir()
+
+    win = main_win(file_or_dir=images, output_dir=out)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    # Initial state: 0 of 2 annotated in annotations, neither is checked
+    assert _footer_text(win) == f"0 of 2 annotated in {out.name}"
+    assert _check_states(win) == [Qt.CheckState.Unchecked, Qt.CheckState.Unchecked]
+
+    # Draw shape on a/0001.jpg (row 0) and save
+    win._commit_shapes(
+        [Shape(label="box_a", points=np.array([[10.0, 10.0], [50.0, 50.0]]))]
+    )
+    win.save_labels(label_path=win.current_label_file_path())
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+
+    # Only a/0001.json is created under annotations/a/
+    assert (out / "a" / "0001.json").exists()
+    assert not (out / "b" / "0001.json").exists()
+    assert not (out / "0001.json").exists()
+
+    # Footer and checkmarks show 1 of 2 annotated
+    assert _footer_text(win) == f"1 of 2 annotated in {out.name}"
+    assert _check_states(win) == [Qt.CheckState.Checked, Qt.CheckState.Unchecked]
+
+    # Select b/0001.jpg (row 1) in the Image List
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(lambda: win._file_list_image_path == str(images / "b" / "0001.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    # b/0001.jpg opens clean with 0 shapes (no leakage from a)
+    assert len(win._canvas_widgets.canvas.shapes) == 0
+
+    # Draw shape on b/0001.jpg and save
+    win._commit_shapes(
+        [Shape(label="box_b", points=np.array([[20.0, 20.0], [60.0, 60.0]]))]
+    )
+    win.save_labels(label_path=win.current_label_file_path())
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+
+    # Both mirrored files exist separately
+    assert (out / "a" / "0001.json").exists()
+    assert (out / "b" / "0001.json").exists()
+    assert _footer_text(win) == f"2 of 2 annotated in {out.name}"
+    assert _check_states(win) == [Qt.CheckState.Checked, Qt.CheckState.Checked]
+
+    # Reopen a/0001.jpg: its shape is intact
+    win._docks.file_list.setCurrentRow(0)
+    qtbot.waitUntil(lambda: win._file_list_image_path == str(images / "a" / "0001.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert len(win._canvas_widgets.canvas.shapes) == 1
+    assert win._canvas_widgets.canvas.shapes[0].label == "box_a"
+
+
+@pytest.mark.gui
+def test_legacy_flat_annotation_folder_backward_compatibility(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
+    images = tmp_path / "images"
+    (images / "a").mkdir(parents=True)
+    (images / "b").mkdir(parents=True)
+    a_img = images / "a" / "0001.jpg"
+    b_img = images / "b" / "0001.jpg"
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", a_img)
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", b_img)
+
+    out = tmp_path / "annotations"
+    out.mkdir()
+    # Create legacy flat annotation matching a_img
+    flat_ann = out / "0001.json"
+    flat_ann.write_text(
+        json.dumps(
+            {
+                "version": "7.8.2",
+                "flags": {},
+                "shapes": [
+                    {
+                        "label": "legacy_box",
+                        "points": [[5.0, 5.0], [25.0, 25.0]],
+                        "group_id": None,
+                        "description": "",
+                        "shape_type": "rectangle",
+                        "flags": {},
+                        "mask": None,
+                    }
+                ],
+                "imagePath": os.path.relpath(a_img, out),
+                "imageData": None,
+                "imageHeight": 338,
+                "imageWidth": 500,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    win = main_win(file_or_dir=images, output_dir=out)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    # Row 0 (a/0001.jpg) is checked via fallback; row 1 (b/0001.jpg) is unchecked
+    assert _check_states(win) == [Qt.CheckState.Checked, Qt.CheckState.Unchecked]
+    assert _footer_text(win) == f"1 of 2 annotated in {out.name}"
+
+    # Row 0 has loaded the legacy shape
+    assert len(win._canvas_widgets.canvas.shapes) == 1
+    assert win._canvas_widgets.canvas.shapes[0].label == "legacy_box"
+
+    # Row 1 opens clean with 0 shapes
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(lambda: win._file_list_image_path == str(b_img))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert len(win._canvas_widgets.canvas.shapes) == 0
+
+
+@pytest.mark.gui
+def test_same_folder_shared_stem_isolation(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
+    images = tmp_path / "images"
+    images.mkdir()
+    x_jpg = images / "x.jpg"
+    x_png = images / "x.png"
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", x_jpg)
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", x_png)
+
+    win = main_win(file_or_dir=images)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    # Initial check states: neither is checked
+    assert _check_states(win) == [Qt.CheckState.Unchecked, Qt.CheckState.Unchecked]
+
+    # Save annotations on row 0 (x.jpg)
+    win._commit_shapes(
+        [Shape(label="shape_jpg", points=np.array([[10.0, 10.0], [30.0, 30.0]]))]
+    )
+    win.save_labels(label_path=win.current_label_file_path())
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+    assert (images / "x.json").exists()
+
+    # Only row 0 is checked; row 1 (x.png) is NOT checked!
+    assert _check_states(win) == [Qt.CheckState.Checked, Qt.CheckState.Unchecked]
+
+    # Select row 1 (x.png): opens clean with 0 shapes
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(lambda: win._file_list_image_path == str(x_png))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert len(win._canvas_widgets.canvas.shapes) == 0
