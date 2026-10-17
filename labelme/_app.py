@@ -1009,6 +1009,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.label_list.customContextMenuRequested.connect(
             self.show_label_list_menu
         )
+        self._docks.unique_label_list.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu
+        )
+        self._docks.unique_label_list.customContextMenuRequested.connect(
+            self.show_unique_label_list_menu
+        )
+        self._docks.unique_label_list.label_remove_requested.connect(
+            self._on_remove_unique_label_requested
+        )
 
         file_menu.addActions(
             (
@@ -1728,6 +1737,92 @@ class MainWindow(QtWidgets.QMainWindow):
             self._menus.label_list.exec(self._label_list_menu_origin)  # ty: ignore[invalid-argument-type]
         finally:
             self._label_list_menu_origin = None
+
+    def show_unique_label_list_menu(self, point: QtCore.QPoint, /) -> None:
+        menu = self._build_unique_label_list_menu(point)
+        global_pos = self._docks.unique_label_list.mapToGlobal(point)
+        # PySide6 types QMenu.exec() argument too narrowly
+        menu.exec(global_pos)  # ty: ignore[invalid-argument-type]
+
+    def _build_unique_label_list_menu(self, point: QtCore.QPoint, /) -> QtWidgets.QMenu:
+        menu = QtWidgets.QMenu(self)
+        item = self._docks.unique_label_list.itemAt(point)
+        active_labels = {
+            shape.label
+            for shape in self._canvas_widgets.canvas.shapes
+            if shape.label is not None
+        }
+        predefined = set(self._config.get("labels") or [])
+
+        if item is not None:
+            self._docks.unique_label_list.setCurrentItem(item)
+            label = cast(str, item.data(Qt.ItemDataRole.UserRole))
+            is_in_use = label in active_labels
+            remove_action = menu.addAction(
+                self.tr("Remove from Label List"),
+                functools.partial(self._remove_unique_label, label=label),
+            )
+            if is_in_use:
+                remove_action.setEnabled(False)
+                remove_action.setToolTip(
+                    self.tr("Cannot remove label currently in use by shapes on canvas")
+                )
+            menu.addSeparator()
+
+        all_unique = set(self._docks.unique_label_list.labels)
+        unused_labels = all_unique - active_labels - predefined
+        clear_action = menu.addAction(
+            self.tr("Clear Unused Labels"),
+            self._clear_unused_unique_labels,
+        )
+        clear_action.setEnabled(bool(unused_labels))
+        if not unused_labels:
+            clear_action.setToolTip(self.tr("No unused labels to clear"))
+
+        return menu
+
+    def _on_remove_unique_label_requested(self, label: str, /) -> None:
+        active_labels = {
+            shape.label
+            for shape in self._canvas_widgets.canvas.shapes
+            if shape.label is not None
+        }
+        if label in active_labels:
+            self.show_error_message(
+                title=self.tr("Cannot Remove Label"),
+                message=self.tr(
+                    "The label '{label}' is in use by shapes on the canvas."
+                ).format(label=label),
+            )
+            return
+        self._remove_unique_label(label=label)
+
+    def _remove_unique_label(self, *, label: str) -> None:
+        self._docks.unique_label_list.remove_label_item(label=label)
+        self._label_dialog.remove_label(label=label)
+        if self._config.get("labels") and label in self._config["labels"]:
+            self._config["labels"].remove(label)
+        self._refresh_shape_colors()
+
+    def _clear_unused_unique_labels(self) -> None:
+        active_labels = {
+            shape.label
+            for shape in self._canvas_widgets.canvas.shapes
+            if shape.label is not None
+        }
+        predefined = set(self._config.get("labels") or [])
+        labels_to_remove = [
+            label
+            for label in self._docks.unique_label_list.labels
+            if label not in active_labels and label not in predefined
+        ]
+        for label in labels_to_remove:
+            self._docks.unique_label_list.remove_label_item(label=label)
+            self._label_dialog.remove_label(label=label)
+        for label in list(self._label_dialog.label_history):
+            if label not in active_labels and label not in predefined:
+                self._label_dialog.remove_label(label=label)
+        self._refresh_shape_colors()
 
     def validate_label(self, *, label: str) -> bool:
         policy = self._config["validate_label"]
