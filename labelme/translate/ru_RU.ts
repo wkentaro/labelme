@@ -188,6 +188,18 @@
         <translation>Нажмите точку на окружности для круга</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Нажмите первую точку на окружности для круга</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Нажмите вторую точку на окружности для круга</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Нажмите третью точку на окружности для завершения круга</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Нажмите первый угол для прямоугольника</translation>
     </message>
@@ -550,6 +562,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>Удаляет выбранную вершину из полигона или ломаной</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Окружность (3 точки)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Начать рисовать окружности по 3 точкам</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

@@ -188,6 +188,18 @@
         <translation>Klik op punt op omtrek voor cirkel</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Klik op eerste punt op omtrek voor cirkel</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Klik op tweede punt op omtrek voor cirkel</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Klik op derde punt op omtrek om cirkel te voltooien</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Klik op eerste hoek voor rechthoek</translation>
     </message>
@@ -565,6 +577,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>Verwijdert het geselecteerde hoekpunt uit de polygoon of polylijn</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Cirkel (3 punten)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Begin met tekenen van cirkels met 3 punten</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

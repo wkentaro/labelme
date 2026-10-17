@@ -188,6 +188,18 @@
         <translation>کلیک روی نقطه روی محیط دایره</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>کلیک روی اولین نقطه روی محیط دایره</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>کلیک روی دومین نقطه روی محیط دایره</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>کلیک روی سومین نقطه روی محیط برای اتمام دایره</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>کلیک روی گوشه اول مستطیل</translation>
     </message>
@@ -565,6 +577,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>رأس انتخاب‌شده را از چندضلعی یا خط شکسته حذف می‌کند</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>دایره (۳ نقطه)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>شروع رسم دایره با ۳ نقطه</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

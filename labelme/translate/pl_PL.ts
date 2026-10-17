@@ -188,6 +188,18 @@
         <translation>Kliknij punkt na obwodzie okręgu</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Kliknij pierwszy punkt na obwodzie okręgu</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Kliknij drugi punkt na obwodzie okręgu</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Kliknij trzeci punkt na obwodzie, aby ukończyć okrąg</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Kliknij pierwszy róg prostokąta</translation>
     </message>
@@ -565,6 +577,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>Usuwa zaznaczony wierzchołek z wielokąta lub łamanej</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Okrąg (3 punkty)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Rozpocznij rysowanie okręgów przez 3 punkty</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

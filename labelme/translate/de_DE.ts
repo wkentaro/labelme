@@ -176,6 +176,18 @@
         <translation>Punkt auf dem Kreisumfang anklicken</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Ersten Punkt auf dem Kreisumfang anklicken</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Zweiten Punkt auf dem Kreisumfang anklicken</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Dritten Punkt auf dem Kreisumfang anklicken, um den Kreis fertigzustellen</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Erste Ecke des Rechtecks anklicken</translation>
     </message>
@@ -587,6 +599,14 @@ Formen</translation>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>Löscht den ausgewählten Eckpunkt aus dem Polygon oder Linienzug</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Kreis (3 Punkte)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Mit dem Zeichnen von Kreisen mit 3 Punkten beginnen</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>

@@ -85,6 +85,7 @@ canvas:
     rectangle: true
     oriented_rectangle: false
     circle: false
+    circle_3p: false
     line: false
     point: false
     linestrip: false
@@ -110,6 +111,7 @@ shortcuts:
   create_rectangle: Ctrl+R
   create_oriented_rectangle:
   create_circle:
+  create_circle_3p:
   create_line:
   create_point:
   create_linestrip:

@@ -176,6 +176,18 @@
         <translation>Κάντε κλικ στο σημείο στην περιφέρεια για τον κύκλο</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Κάντε κλικ στο πρώτο σημείο στην περιφέρεια για τον κύκλο</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Κάντε κλικ στο δεύτερο σημείο στην περιφέρεια για τον κύκλο</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Κάντε κλικ στο τρίτο σημείο στην περιφέρεια για να ολοκληρώσετε τον κύκλο</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>Κάντε κλικ στην πρώτη γωνία για ορθογώνιο</translation>
     </message>
@@ -410,6 +422,14 @@
     <message>
         <source>Start drawing circles</source>
         <translation>Έναρξη σχεδίασης κύκλων</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>Κύκλος (3 σημεία)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Έναρξη σχεδίασης κύκλων με 3 σημεία</translation>
     </message>
     <message>
         <source>Start drawing lines</source>

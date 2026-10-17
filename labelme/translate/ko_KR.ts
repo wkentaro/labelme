@@ -188,6 +188,18 @@
         <translation>원의 둘레 위 점 클릭</translation>
     </message>
     <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>원의 둘레 위 첫 번째 점 클릭</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>원의 둘레 위 두 번째 점 클릭</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>원의 둘레 위 세 번째 점을 클릭하여 원 완성</translation>
+    </message>
+    <message>
         <source>Click first corner for rectangle</source>
         <translation>사각형의 첫 번째 모서리 클릭</translation>
     </message>
@@ -565,6 +577,14 @@ Shapes</source>
     <message>
         <source>Delete the selected vertex from the polygon or line strip</source>
         <translation>선택한 꼭짓점을 다각형 또는 꺾은선에서 삭제합니다</translation>
+    </message>
+    <message>
+        <source>Circle (3 Points)</source>
+        <translation>원 (3점)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>3점으로 원 그리기 시작</translation>
     </message>
     <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
