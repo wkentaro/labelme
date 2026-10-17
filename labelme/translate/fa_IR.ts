@@ -905,6 +905,30 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>یک کادر محصورکننده برای قطعه‌بندی شیء رسم کنید.</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>حذف از فهرست برچسب‌ها</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>امکان حذف برچسب در حال استفاده توسط اشکال روی بوم وجود ندارد</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>پاک کردن برچسب‌های استفاده‌نشده</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>برچسب استفاده‌نشده‌ای برای پاک کردن وجود ندارد</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>امکان حذف برچسب وجود ندارد</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>برچسب &apos;{label}&apos; توسط اشکال روی بوم در حال استفاده است.</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points در دسترس نیست</translation>
     </message>

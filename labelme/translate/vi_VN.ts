@@ -905,6 +905,30 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Vẽ một hộp giới hạn để phân đoạn đối tượng.</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Xóa khỏi danh sách nhãn</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Không thể xóa nhãn hiện đang được các hình trên canvas sử dụng</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Xóa các nhãn chưa dùng</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Không có nhãn chưa dùng nào để xóa</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Không thể xóa nhãn</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Nhãn &apos;{label}&apos; đang được sử dụng bởi các hình trên canvas.</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points không khả dụng</translation>
     </message>
