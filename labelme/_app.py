@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import enum
 import functools
+import json
 import operator
 import os
 import platform
@@ -13,6 +14,7 @@ import typing
 import unicodedata
 import webbrowser
 from pathlib import Path
+from pathlib import PureWindowsPath
 from typing import Final
 from typing import Literal
 from typing import NamedTuple
@@ -3771,12 +3773,144 @@ def _format_window_title(
     return title
 
 
-def _resolve_label_path(*, image_or_label_path: str, output_dir: Path | None) -> str:
+def _resolve_label_path(
+    *,
+    image_or_label_path: str,
+    output_dir: Path | None,
+    root_dir: str | Path | None,
+) -> str:
     if is_label_file_path(filename=image_or_label_path):
         return image_or_label_path
     image_path = Path(image_or_label_path)
-    parent = output_dir if output_dir is not None else image_path.parent
+    if output_dir is None:
+        parent = image_path.parent
+    elif root_dir is None:
+        parent = output_dir
+    else:
+        try:
+            rel = os.path.relpath(image_path, root_dir)
+            if rel.startswith("..") or os.path.isabs(rel):
+                parent = output_dir
+            else:
+                parent = output_dir / Path(rel).parent
+        except ValueError:
+            parent = output_dir
     return str(parent / f"{image_path.stem}{LABEL_FILE_SUFFIX}")
+
+
+def _resolve_disambiguated_label_path(
+    *,
+    image_path: str,
+    output_dir: Path | None,
+    root_dir: str | Path | None,
+) -> str:
+    p = Path(image_path)
+    if output_dir is None:
+        parent = p.parent
+    elif root_dir is None:
+        parent = output_dir
+    else:
+        try:
+            rel = os.path.relpath(p, root_dir)
+            if rel.startswith("..") or os.path.isabs(rel):
+                parent = output_dir
+            else:
+                parent = output_dir / Path(rel).parent
+        except ValueError:
+            parent = output_dir
+    return str(parent / f"{p.name}{LABEL_FILE_SUFFIX}")
+
+
+def _read_label_file_image_path(label_path: str, /) -> str | None:
+    try:
+        with open(label_path, encoding="utf-8") as f:
+            raw = json.load(f)
+        image_path = raw.get("imagePath")
+        if isinstance(image_path, str):
+            return PureWindowsPath(image_path).as_posix()
+        return None
+    except Exception:
+        return None
+
+
+def _annotation_file_matches_image(*, label_path: str, image_path: str) -> bool:
+    stored_image_rel = _read_label_file_image_path(label_path)
+    if stored_image_rel is None:
+        return False
+    stored_path = Path(label_path).parent / stored_image_rel
+    try:
+        return os.path.samefile(stored_path, image_path)
+    except (OSError, ValueError):
+        return os.path.normcase(
+            os.path.normpath(str(stored_path))
+        ) == os.path.normcase(os.path.normpath(image_path))
+
+
+def _has_sibling_stem_collision(*, image_path: str) -> bool:
+    p = Path(image_path)
+    stem = p.stem.casefold()
+    exts = _list_supported_image_extensions()
+    count = 0
+    try:
+        for entry in p.parent.iterdir():
+            if not (entry.is_file() and entry.name.lower().endswith(exts)):
+                continue
+            if entry.stem.casefold() != stem:
+                continue
+            count += 1
+            if count > 1:
+                return True
+    except OSError:
+        pass
+    return False
+
+
+def _find_existing_label_path(
+    *,
+    image_path: str,
+    output_dir: Path | None,
+    root_dir: str | Path | None,
+) -> str | None:
+    mirrored = _resolve_label_path(
+        image_or_label_path=image_path,
+        output_dir=output_dir,
+        root_dir=root_dir,
+    )
+    if QtCore.QFile.exists(mirrored):
+        if not _has_sibling_stem_collision(image_path=image_path):
+            return mirrored
+        if _annotation_file_matches_image(label_path=mirrored, image_path=image_path):
+            return mirrored
+        disambiguated = _resolve_disambiguated_label_path(
+            image_path=image_path,
+            output_dir=output_dir,
+            root_dir=root_dir,
+        )
+        if QtCore.QFile.exists(disambiguated) and _annotation_file_matches_image(
+            label_path=disambiguated, image_path=image_path
+        ):
+            return disambiguated
+        return None
+
+    # Fallback to disambiguated label file (e.g. x.png.json) if it exists
+    disambiguated = _resolve_disambiguated_label_path(
+        image_path=image_path,
+        output_dir=output_dir,
+        root_dir=root_dir,
+    )
+    if QtCore.QFile.exists(disambiguated) and _annotation_file_matches_image(
+        label_path=disambiguated, image_path=image_path
+    ):
+        return disambiguated
+
+    # Legacy flat fallback when output_dir is set
+    if output_dir is not None:
+        flat = str(output_dir / f"{Path(image_path).stem}{LABEL_FILE_SUFFIX}")
+        if flat != mirrored and QtCore.QFile.exists(flat):
+            if _annotation_file_matches_image(label_path=flat, image_path=image_path):
+                return flat
+
+    return None
 
 
 def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
@@ -3811,7 +3945,12 @@ def _make_image_list_item(
 def _comparable_stem(path: str, /) -> str:
     # Over-matching only re-checks extra items, so fold the case and Unicode
     # forms a filesystem may treat as the same name.
-    return unicodedata.normalize("NFC", Path(path).stem).casefold()
+    p = Path(path)
+    name = p.name
+    if name.lower().endswith(LABEL_FILE_SUFFIX):
+        name = name[: -len(LABEL_FILE_SUFFIX)]
+    stem = Path(name).stem
+    return unicodedata.normalize("NFC", stem).casefold()
 
 
 def _set_annotated_check_state(
