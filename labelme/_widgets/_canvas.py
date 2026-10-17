@@ -1780,7 +1780,7 @@ class Canvas(QtWidgets.QWidget):
     def _should_draw_crosshair(self, *, cursor: QPointF | None) -> bool:
         if self.mode != _CanvasMode.CREATE:
             return False
-        if not self._crosshair[self._create_mode]:
+        if not self._crosshair.get(self._create_mode, False):
             return False
         if cursor is None:
             return False
