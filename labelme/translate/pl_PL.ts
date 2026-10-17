@@ -905,6 +905,30 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Narysuj ramkę ograniczającą, aby segmentować obiekt.</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Usuń z listy etykiet</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Nie można usunąć etykiety aktualnie używanej przez kształty na płótnie</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Wyczyść nieużywane etykiety</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Brak nieużywanych etykiet do wyczyszczenia</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Nie można usunąć etykiety</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Etykieta &apos;{label}&apos; jest używana przez kształty na płótnie.</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points niedostępne</translation>
     </message>

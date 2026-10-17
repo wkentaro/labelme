@@ -911,6 +911,30 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>繪製邊界框以分割物件。</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>從標籤列表中刪除</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>無法刪除畫布形狀目前正在使用的標籤</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>清除未使用的標籤</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>沒有可清除的未使用標籤</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>無法刪除標籤</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>標籤 &apos;{label}&apos; 正在被畫布上的形狀使用。</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points 無法使用</translation>
     </message>

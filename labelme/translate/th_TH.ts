@@ -905,6 +905,30 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>วาดกรอบสี่เหลี่ยมเพื่อแบ่งส่วนวัตถุ</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>ลบออกจากรายการป้ายกำกับ</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>ไม่สามารถลบป้ายกำกับที่กำลังใช้งานโดยรูปร่างบนผืนผ้าใบได้</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>ล้างป้ายกำกับที่ไม่ได้ใช้</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>ไม่มีป้ายกำกับที่ไม่ได้ใช้ให้ล้าง</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>ไม่สามารถลบป้ายกำกับได้</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>ป้ายกำกับ &apos;{label}&apos; กำลังถูกใช้งานโดยรูปร่างบนผืนผ้าใบ</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points ไม่พร้อมใช้งาน</translation>
     </message>

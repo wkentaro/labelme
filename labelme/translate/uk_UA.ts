@@ -674,6 +674,30 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Перемкніть модель AI Text-to-Annotation на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Видалити зі списку міток</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Неможливо видалити мітку, яка використовується фігурами на полотні</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Очистити невикористані мітки</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Немає невикористаних міток для очищення</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Неможливо видалити мітку</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Мітка &apos;{label}&apos; використовується фігурами на полотні.</translation>
+    </message>
+    <message>
         <source>Invalid label</source>
         <translation>Недійсна мітка</translation>
     </message>
