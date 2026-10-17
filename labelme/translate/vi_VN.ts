@@ -915,6 +915,10 @@ Please select a different model or use AI-Box mode.</source>
 Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Tìm hình ảnh…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - Chọn thư mục chú thích</translation>
     </message>

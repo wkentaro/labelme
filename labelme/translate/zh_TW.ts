@@ -921,6 +921,10 @@ Please select a different model or use AI-Box mode.</source>
 請選擇其他模型或使用 AI-Box 模式。</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>定位圖像…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - 選擇標註資料夾</translation>
     </message>

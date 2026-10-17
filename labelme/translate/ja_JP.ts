@@ -928,6 +928,10 @@ Please select a different model or use AI-Box mode.</source>
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>画像を検索…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - アノテーションフォルダーを選択</translation>
     </message>

@@ -915,6 +915,10 @@ Please select a different model or use AI-Box mode.</source>
 Wybierz inny model lub użyj trybu AI-Box.</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Zlokalizuj obraz…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s — Wybierz folder adnotacji</translation>
     </message>

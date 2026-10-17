@@ -915,6 +915,10 @@ Please select a different model or use AI-Box mode.</source>
 Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Afbeelding zoeken…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - Annotatiemap kiezen</translation>
     </message>

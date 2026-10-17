@@ -915,6 +915,10 @@ Please select a different model or use AI-Box mode.</source>
 다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>이미지 찾기…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - 주석 폴더 선택</translation>
     </message>

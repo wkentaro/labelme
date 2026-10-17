@@ -915,6 +915,10 @@ Please select a different model or use AI-Box mode.</source>
 กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>ค้นหารูปภาพ…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - เลือกโฟลเดอร์แอนโนเทชัน</translation>
     </message>

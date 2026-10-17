@@ -985,6 +985,10 @@ Expected location: {path}</source>
         <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Εντοπισμός εικόνας…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - Επιλογή φακέλου σχολιασμών</translation>
     </message>

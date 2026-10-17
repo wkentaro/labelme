@@ -921,6 +921,10 @@ Please select a different model or use AI-Box mode.</source>
 Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Resmi Bul…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - Açıklama Klasörünü Seç</translation>
     </message>

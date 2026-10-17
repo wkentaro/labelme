@@ -918,6 +918,10 @@ Please select a different model or use AI-Box mode.</source>
 Выберите другую модель или используйте режим AI-Box.</translation>
     </message>
     <message>
+        <source>Locate Image…</source>
+        <translation>Найти изображение…</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - Выбрать папку аннотаций</translation>
     </message>
