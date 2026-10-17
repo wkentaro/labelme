@@ -2866,3 +2866,137 @@ def test_double_click_in_create_mode_finalizes_shape(
     emitted.assert_not_called()
     assert canvas._current is None
     assert len(canvas.shapes) == 1
+
+
+@pytest.mark.gui
+def test_circle_3p_drawing_lifecycle(*, canvas: Canvas) -> None:
+    canvas.set_editing(value=False)
+    canvas.create_mode = "circle_3p"
+    assert canvas.create_mode == "circle_3p"
+    assert canvas._get_create_mode_message() == canvas.tr(
+        "Click first point on circumference for circle"
+    )
+
+    # Click 1: P1 = (50, 20)
+    p1 = QPointF(50.0, 20.0)
+    canvas._dispatch_pointer_press(
+        pos=p1,
+        event=_left_press(pos=p1, modifiers=Qt.KeyboardModifier.NoModifier),
+    )
+    assert canvas._current is not None
+    assert len(canvas._current.points) == 1
+    assert canvas._current.points[0] == p1
+    assert canvas._get_create_mode_message() == canvas.tr(
+        "Click second point on circumference for circle"
+    )
+
+    # Move cursor to P2 = (60, 30)
+    p2 = QPointF(60.0, 30.0)
+    canvas._update_drawing_line(pos=p2, is_shift_pressed=False)
+    assert canvas._line.shape_type == "line"
+    assert canvas._line.points == (p1, p2)
+
+    # Duplicate point 2 click is ignored (cursor moved back to p1)
+    canvas._update_drawing_line(pos=p1, is_shift_pressed=False)
+    canvas._dispatch_pointer_press(
+        pos=p1,
+        event=_left_press(pos=p1, modifiers=Qt.KeyboardModifier.NoModifier),
+    )
+    assert len(canvas._current.points) == 1
+
+    # Click 2: P2 = (60, 30)
+    canvas._update_drawing_line(pos=p2, is_shift_pressed=False)
+    canvas._dispatch_pointer_press(
+        pos=p2,
+        event=_left_press(pos=p2, modifiers=Qt.KeyboardModifier.NoModifier),
+    )
+    assert len(canvas._current.points) == 2
+    assert canvas._current.points[1] == p2
+    assert canvas._get_create_mode_message() == canvas.tr(
+        "Click third point on circumference to finish circle"
+    )
+
+    # Move cursor to collinear point (70, 40)
+    collinear_p3 = QPointF(70.0, 40.0)
+    canvas._update_drawing_line(pos=collinear_p3, is_shift_pressed=False)
+    assert canvas._line.shape_type == "line"
+
+    # Click 3 on collinear point is ignored
+    canvas._dispatch_pointer_press(
+        pos=collinear_p3,
+        event=_left_press(pos=collinear_p3, modifiers=Qt.KeyboardModifier.NoModifier),
+    )
+    assert canvas._current is not None
+    assert len(canvas.shapes) == 0
+
+    # Move cursor to valid non-collinear P3 = (50, 40)
+    # Circle through (50, 20), (60, 30), (50, 40):
+    # Center is (50, 30), radius is 10.
+    p3 = QPointF(50.0, 40.0)
+    canvas._update_drawing_line(pos=p3, is_shift_pressed=False)
+    assert canvas._line.shape_type == "circle"
+    assert canvas._line.points[0].x() == pytest.approx(50.0)
+    assert canvas._line.points[0].y() == pytest.approx(30.0)
+
+    # Click 3: commits circumcircle
+    canvas._dispatch_pointer_press(
+        pos=p3,
+        event=_left_press(pos=p3, modifiers=Qt.KeyboardModifier.NoModifier),
+    )
+    assert canvas._current is None
+    assert len(canvas.shapes) == 1
+    committed = canvas.shapes[0]
+    assert committed.shape_type == "circle"
+    assert committed.points[0][0] == pytest.approx(50.0)
+    assert committed.points[0][1] == pytest.approx(30.0)
+    radius = float(np.linalg.norm(committed.points[1] - committed.points[0]))
+    assert radius == pytest.approx(10.0)
+
+
+@pytest.mark.gui
+def test_circle_3p_undo_last_point(*, canvas: Canvas) -> None:
+    canvas.set_editing(value=False)
+    canvas.create_mode = "circle_3p"
+
+    p1 = QPointF(30.0, 20.0)
+    p2 = QPointF(40.0, 30.0)
+    canvas._dispatch_pointer_press(
+        pos=p1, event=_left_press(pos=p1, modifiers=Qt.KeyboardModifier.NoModifier)
+    )
+    canvas._update_drawing_line(pos=p2, is_shift_pressed=False)
+    canvas._dispatch_pointer_press(
+        pos=p2, event=_left_press(pos=p2, modifiers=Qt.KeyboardModifier.NoModifier)
+    )
+    assert canvas._current is not None
+    assert len(canvas._current.points) == 2
+
+    # Undo 1 point -> back to 1 point
+    canvas.undo_last_point()
+    assert canvas._current is not None
+    assert len(canvas._current.points) == 1
+    assert canvas._current.points[0] == p1
+    assert canvas._line.shape_type == "line"
+
+    # Undo again -> cancels draft
+    canvas.undo_last_point()
+    assert canvas._current is None
+
+
+@pytest.mark.gui
+def test_circle_3p_escape_cancels(*, canvas: Canvas) -> None:
+    canvas.set_editing(value=False)
+    canvas.create_mode = "circle_3p"
+
+    p1 = QPointF(30.0, 20.0)
+    canvas._dispatch_pointer_press(
+        pos=p1, event=_left_press(pos=p1, modifiers=Qt.KeyboardModifier.NoModifier)
+    )
+    assert canvas._current is not None
+
+    key_event = QtGui.QKeyEvent(
+        QtCore.QEvent.Type.KeyPress,
+        Qt.Key.Key_Escape,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    canvas.keyPressEvent(key_event)
+    assert canvas._current is None

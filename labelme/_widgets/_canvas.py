@@ -33,6 +33,7 @@ from .._shape import POLYLINE_SHAPE_TYPES
 from .._shape import RECTANGLE_POINT_COUNT
 from .._shape import Shape
 from .._shape import ShapeType
+from .._shape import compute_circumcircle
 from . import _canvas_interaction
 from ._canvas_interaction import CursorRole
 from ._canvas_interaction import HitKind
@@ -149,6 +150,7 @@ _CreateMode = Literal[
     "rectangle",
     "oriented_rectangle",
     "circle",
+    "circle_3p",
     "line",
     "point",
     "linestrip",
@@ -167,6 +169,7 @@ _CREATE_MODE_TO_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
     "rectangle": "rectangle",
     "oriented_rectangle": "oriented_rectangle",
     "circle": "circle",
+    "circle_3p": "circle",
     "line": "line",
     "point": "point",
     "linestrip": "linestrip",
@@ -267,6 +270,7 @@ class Canvas(QtWidgets.QWidget):
                 "rectangle": True,
                 "oriented_rectangle": False,
                 "circle": False,
+                "circle_3p": False,
                 "line": False,
                 "point": False,
                 "linestrip": False,
@@ -497,10 +501,18 @@ class Canvas(QtWidgets.QWidget):
         # click before the next mouseMoveEvent extends at the real cursor.
         seed_point = self._current.points[0]
         seed_label = self._current.point_labels[0]
-        self._current = _DraftShape(shape_type=new_mode).add_point(
+        shape_type = (
+            "points"
+            if new_mode == "circle_3p"
+            else _CREATE_MODE_TO_SHAPE_TYPE[new_mode]
+        )
+        self._current = _DraftShape(shape_type=shape_type).add_point(
             seed_point, label=seed_label
         )
-        self._line = dataclasses.replace(self._line, shape_type=new_mode)
+        line_shape_type = (
+            "line" if new_mode == "circle_3p" else _CREATE_MODE_TO_SHAPE_TYPE[new_mode]
+        )
+        self._line = dataclasses.replace(self._line, shape_type=line_shape_type)
         self.update()
 
     def get_ai_model_name(self) -> str:
@@ -712,6 +724,13 @@ class Canvas(QtWidgets.QWidget):
                 return self.tr("Click center point for circle")
             else:
                 return self.tr("Click point on circumference for circle")
+        if self.create_mode == "circle_3p":
+            if is_new:
+                return self.tr("Click first point on circumference for circle")
+            assert self._current is not None
+            if len(self._current.points) == 1:
+                return self.tr("Click second point on circumference for circle")
+            return self.tr("Click third point on circumference to finish circle")
         if self.create_mode == "rectangle":
             if is_new:
                 return self.tr("Click first corner for rectangle")
@@ -763,11 +782,12 @@ class Canvas(QtWidgets.QWidget):
         self.pan_request.emit(QPoint(int(step.x()), int(step.y())))
 
     def _track_drawing_cursor(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        desired_line_shape_type = _CREATE_MODE_TO_SHAPE_TYPE[self.create_mode]
-        if self._line.shape_type != desired_line_shape_type:
-            self._line = dataclasses.replace(
-                self._line, shape_type=desired_line_shape_type
-            )
+        if self.create_mode != "circle_3p":
+            desired_line_shape_type = _CREATE_MODE_TO_SHAPE_TYPE[self.create_mode]
+            if self._line.shape_type != desired_line_shape_type:
+                self._line = dataclasses.replace(
+                    self._line, shape_type=desired_line_shape_type
+                )
         self._apply_cursor(CursorRole.DRAW)
         if self._current is None:
             self.update()
@@ -872,6 +892,36 @@ class Canvas(QtWidgets.QWidget):
             self._line = dataclasses.replace(
                 self._line, points=(current.points[0], pos), point_labels=(1, 1)
             )
+        elif mode == "circle_3p":
+            if len(current.points) == 1:
+                self._line = dataclasses.replace(
+                    self._line,
+                    shape_type="line",
+                    points=(current.points[0], pos),
+                    point_labels=(1, 1),
+                )
+            else:
+                assert len(current.points) == CIRCLE_POINT_COUNT
+                p1 = (float(current.points[0].x()), float(current.points[0].y()))
+                p2 = (float(current.points[1].x()), float(current.points[1].y()))
+                p3 = (float(pos.x()), float(pos.y()))
+                circumcircle = compute_circumcircle(p1=p1, p2=p2, p3=p3)
+                if circumcircle is None:
+                    self._line = dataclasses.replace(
+                        self._line,
+                        shape_type="line",
+                        points=(current.points[1], pos),
+                        point_labels=(1, 1),
+                    )
+                else:
+                    (xc, yc), _radius = circumcircle
+                    center = QPointF(xc, yc)
+                    self._line = dataclasses.replace(
+                        self._line,
+                        shape_type="circle",
+                        points=(center, pos),
+                        point_labels=(1, 1),
+                    )
         elif mode == "line":
             self._line = dataclasses.replace(
                 self._line,
@@ -1141,6 +1191,36 @@ class Canvas(QtWidgets.QWidget):
             else:
                 assert len(current.points) == 1
                 self._lock_oriented_rectangle_first_edge(current=current)
+        elif mode == "circle_3p":
+            if len(current.points) == 1:
+                vertex = self._line.points[1]
+                if vertex == current.points[0]:
+                    return
+                label = self._line.point_labels[1]
+                self._current = current.add_point(vertex, label=label)
+                self._line = dataclasses.replace(
+                    self._line,
+                    shape_type="line",
+                    points=(vertex, vertex),
+                    point_labels=(label, label),
+                )
+            else:
+                assert len(current.points) == CIRCLE_POINT_COUNT
+                p1 = (float(current.points[0].x()), float(current.points[0].y()))
+                p2 = (float(current.points[1].x()), float(current.points[1].y()))
+                p3 = (float(self._line.points[1].x()), float(self._line.points[1].y()))
+                circumcircle = compute_circumcircle(p1=p1, p2=p2, p3=p3)
+                if circumcircle is None:
+                    return
+                (xc, yc), _radius = circumcircle
+                center = QPointF(xc, yc)
+                edge = self._line.points[1]
+                self._current = _DraftShape(
+                    shape_type="circle",
+                    points=(center, edge),
+                    point_labels=(1, 1),
+                )
+                self._finalize()
         else:
             assert mode in ("rectangle", "circle", "line", "ai_box_to_shape")
             assert len(current.points) == 1
@@ -1210,9 +1290,12 @@ class Canvas(QtWidgets.QWidget):
             if not self.ensure_ai_model_ready(model_name):
                 return
 
-        self._current = _DraftShape(
-            shape_type=_CREATE_MODE_TO_SHAPE_TYPE[mode]
-        ).add_point(pos, label=0 if is_shift_pressed else 1)
+        shape_type = (
+            "points" if mode == "circle_3p" else _CREATE_MODE_TO_SHAPE_TYPE[mode]
+        )
+        self._current = _DraftShape(shape_type=shape_type).add_point(
+            pos, label=0 if is_shift_pressed else 1
+        )
 
         if mode == "point":
             self._finalize()
@@ -1226,6 +1309,7 @@ class Canvas(QtWidgets.QWidget):
 
         self._line = dataclasses.replace(
             self._line,
+            shape_type="line" if mode == "circle_3p" else self._line.shape_type,
             points=(pos, pos),
             point_labels=(
                 (0, 0) if mode == "ai_points_to_shape" and is_shift_pressed else (1, 1)
@@ -2106,10 +2190,16 @@ class Canvas(QtWidgets.QWidget):
             "rectangle",
             "line",
             "circle",
+            "circle_3p",
             "ai_box_to_shape",
         ):
             self._current = dataclasses.replace(
                 self._current,
+                shape_type=(
+                    "points"
+                    if self.create_mode == "circle_3p"
+                    else self._current.shape_type
+                ),
                 points=self._current.points[0:1],
                 point_labels=self._current.point_labels[0:1],
             )
@@ -2128,6 +2218,19 @@ class Canvas(QtWidgets.QWidget):
             and len(current.points) == ORIENTED_RECTANGLE_POINT_COUNT
         ):
             self._unlock_oriented_rectangle_first_edge(current=current)
+            self.update()
+            return
+        if (
+            self.create_mode == "circle_3p"
+            and len(current.points) == CIRCLE_POINT_COUNT
+        ):
+            self._current = current.pop_point()
+            self._line = dataclasses.replace(
+                self._line,
+                shape_type="line",
+                points=(self._current.points[0], self._current.points[0]),
+                point_labels=(1, 1),
+            )
             self.update()
             return
         current = current.pop_point()
