@@ -681,7 +681,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self._open_next_image,
             shortcut=shortcuts["open_next"],
             icon="phosphor/arrow-fat-right.svg",
-            tip=self.tr("Open next (hold Ctl+Shift to copy labels)"),
+            tip=self.tr("Open next (hold Ctrl+Shift to copy labels)"),
             enabled=False,
         )
         open_prev_img = action(
@@ -689,7 +689,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self._open_prev_image,
             shortcut=shortcuts["open_prev"],
             icon="phosphor/arrow-fat-left.svg",
-            tip=self.tr("Open prev (hold Ctl+Shift to copy labels)"),
+            tip=self.tr("Open prev (hold Ctrl+Shift to copy labels)"),
             enabled=False,
         )
         keep_prev_zoom = action(
