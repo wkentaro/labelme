@@ -370,7 +370,9 @@ def read_label_file(
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
         if image_filename is not None:
-            image_data = read_image_file(filename=image_filename)
+            image_data = read_image_file(
+                filename=image_filename, max_decode_mb=max_decode_mb
+            )
             image_path = resolve_stored_image_path(
                 image_path=image_filename, label_dir=Path(filename).parent
             )

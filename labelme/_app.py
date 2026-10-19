@@ -348,6 +348,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
         self._auto_save_path: str | None = None
+        self._requires_explicit_save = False
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
         self._image_prefetcher = ImagePrefetcher()
@@ -1555,7 +1556,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._is_changed = True
         self._actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
-        if self._actions.save_auto.isChecked():
+        if self._actions.save_auto.isChecked() and not self._requires_explicit_save:
             assert self._image_path is not None
             self._queue_auto_save(
                 label_path=self._auto_save_path
@@ -1683,6 +1684,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def reset_state(self) -> None:
         self._auto_save_path = None
+        self._requires_explicit_save = False
         self._docks.label_list.clear()
         self._annotation = None
         self._image = QtGui.QImage()
@@ -2058,6 +2060,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _record_saved_annotation(self, *, label_path: str) -> None:
         assert self._image_path is not None
+        if self._requires_explicit_save:
+            # A confirmed repair owns this destination for later auto-saves too.
+            self._auto_save_path = label_path
+            self._requires_explicit_save = False
         self._label_file_path = label_path
         self._refresh_image_list_checkmarks(label_path=label_path)
         self._failed_save_path = None
@@ -2523,7 +2529,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         try:
             annotation = read_label_file(
-                filename=label_path, image_filename=replacement_path
+                filename=label_path,
+                image_filename=replacement_path,
+                max_decode_mb=_max_decode_mb(),
             )
         except (LabelFileError, OSError) as err:
             self._show_file_open_error(
@@ -2707,8 +2715,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.setEnabled(False)
         self._annotation = annotation
         self._image_path = image_path
-        self._file_list_image_path = file_list_image_path
+        # A repaired Annotation belongs to the replacement Image, even when
+        # recovery started from another Image's row in the Image List.
+        self._file_list_image_path = None if recovered else file_list_image_path
         self._label_file_path = label_file_path
+        # Locating an Image previews the repair. Keep all subsequent edits in
+        # memory until Save (or Save As) explicitly confirms the destination.
+        self._requires_explicit_save = recovered
         self._image = image
         t0 = time.time()
         self._canvas_widgets.canvas.load_pixmap(pixmap=QtGui.QPixmap.fromImage(image))
