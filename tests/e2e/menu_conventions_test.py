@@ -166,12 +166,7 @@ def test_checkable_menu_items_have_no_icon(*, main_win: MainWinFactory) -> None:
 def test_each_icon_belongs_to_one_action(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
-    allowed = frozenset(
-        {
-            frozenset({"Undo", "Undo Last Point"}),
-            frozenset({"Show Shapes", "Toggle Shapes"}),
-        }
-    )
+    allowed = frozenset[frozenset[str]]()
     win = _english_window(main_win)
     by_icon: dict[bytes, set[str]] = {}
     for action in _menu_actions(win):

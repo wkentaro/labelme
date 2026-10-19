@@ -582,7 +582,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Undo Last Point"),
             slot=self._canvas_widgets.canvas.undo_last_point,
             shortcut=shortcuts["undo_last_point"],
-            icon="phosphor/arrow-u-up-left.svg",
+            icon="phosphor/backspace.svg",
             tip=self.tr("Undo last drawn point"),
             enabled=False,
         )
@@ -788,7 +788,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Toggle Shapes"),
             slot=functools.partial(self.toggle_shape_visibility, value=None),
             shortcut=shortcuts["toggle_all_shapes"],
-            icon="phosphor/eye.svg",
+            icon="phosphor/toggle-right.svg",
             tip=self.tr("Toggle all shapes"),
         )
 
