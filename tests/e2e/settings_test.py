@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pytest
@@ -11,9 +12,11 @@ from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
 from labelme._config import _writer
+from labelme._locale import TRANSLATE_DIR
 from labelme._widgets import SettingsDialog
 from labelme._widgets._integer_slider import IntegerSlider
 from labelme._widgets._label_list_widget import LABEL_COLOR_ROLE
+from labelme._widgets._models_widget import ModelsWidget
 from labelme._widgets._settings_dialog import _ColorSwatchButton
 from labelme._widgets._settings_dialog import _PlainTextEdit
 from labelme._yaml import safe_load
@@ -566,8 +569,10 @@ def test_model_management_available_with_cli_overrides(
     assert dialog is not None
     assert not dialog._editors[("auto_save",)].isEnabled()
     win._open_models()
-    assert dialog._page._navigation.currentRow() == dialog._models_index
-    assert dialog._page._groups[-1].isEnabled()
+    models_dialog = win._models_dialog
+    assert models_dialog is not None
+    models = models_dialog.findChild(ModelsWidget)
+    assert models is not None and models.isEnabled()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -875,3 +880,27 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
     assert win._canvas_widgets.canvas._ai_assist_session.polygon_detail == 70
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="offscreen Qt on Windows has no system font, so its text widths are a "
+    "fallback font's",
+)
+@pytest.mark.parametrize(
+    "language", sorted(path.stem for path in TRANSLATE_DIR.glob("*.qm"))
+)
+def test_settings_sections_fit_without_eliding(
+    *, main_win: MainWinFactory, language: str
+) -> None:
+    win = main_win(config_overrides={"language": language})
+    win._open_settings()
+    dialog = win._settings_dialog
+    assert dialog is not None
+    navigation = dialog.findChild(QtWidgets.QListWidget)
+    assert navigation is not None
+    for row in range(navigation.count()):
+        width = navigation.sizeHintForIndex(navigation.model().index(row, 0)).width()
+        assert width <= navigation.viewport().width(), navigation.item(row).text()
+    dialog.close()
