@@ -289,3 +289,10 @@ def test_toolbar_empty_actions(*, qtbot: QtBot) -> None:
     tb = ToolBar(title="Empty", actions=[])
     qtbot.addWidget(tb)
     assert len(_user_buttons(tb)) == 0
+
+
+def test_toolbar_object_name_ignores_translated_title(*, qtbot: QtBot) -> None:
+    tb = ToolBar(name="Tools", title="ツール", actions=[])
+    qtbot.addWidget(tb)
+    assert tb.objectName() == "ToolsToolBar"
+    assert tb.windowTitle() == "ツール"

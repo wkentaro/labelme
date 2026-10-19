@@ -72,7 +72,7 @@ def test_states_and_menu(*, qtbot: QtBot) -> None:
     footer = AnnotationFolderFooter(on_choose=_ignore, on_next_to_images=_ignore)
     qtbot.addWidget(footer)
     next_to_images, choose = _menu(footer).actions()
-    assert choose.text() == "Choose Annotation Folder…"
+    assert choose.text() == "Change Annotation Folder…"
 
     assert _text(footer) == "0 of 0 annotated · next to images"
     assert next_to_images.isChecked()
