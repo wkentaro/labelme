@@ -114,7 +114,7 @@ def test_menu_text_has_no_newline(*, main_win: MainWinFactory) -> None:
 def test_menu_items_use_title_case(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
-    allowed = frozenset({"Undo last point"})
+    allowed = frozenset[str]()
     win = _english_window(main_win)
     found = {
         _plain(a.text())
@@ -137,7 +137,7 @@ def test_dialog_actions_end_with_ellipsis(*, main_win: MainWinFactory) -> None:
     )
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
-    allowed = frozenset({"save_as", "edit", "brightness_contrast"})
+    allowed = frozenset[str]()
     win = _english_window(main_win)
     found = {
         name
@@ -168,7 +168,7 @@ def test_each_icon_belongs_to_one_action(*, main_win: MainWinFactory) -> None:
     # fails, so the set only shrinks.
     allowed = frozenset(
         {
-            frozenset({"Undo", "Undo last point"}),
+            frozenset({"Undo", "Undo Last Point"}),
             frozenset({"Show Shapes", "Toggle Shapes"}),
         }
     )

@@ -309,16 +309,8 @@
         <translation>Apri la successiva (tieni premuto Ctrl+Maiusc per copiare le etichette)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>Immagine &amp;precedente</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Apri la precedente (tieni premuto Ctrl+Maiusc per copiare le etichette)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Salva &amp;come</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>Crea un duplicato dele forme selezionate</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Annulla ultimo punto</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Annulla l&apos;ultimo punto disegnato</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>Zoom &amp;indietro</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Luminosità e contrasto</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Regola luminosità e contrasto</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Modifica etichetta</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>Annulla</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Elimina vertice selezionato</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Elimina il vertice selezionato dal poligono o dalla polilinea</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Fai clic per posizionare i punti della polilinea; Ctrl+clic posiziona l&apos;ultimo.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>Immagine &amp;precedente</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Esegue lo zoom sulle forme selezionate a ogni cambio di selezione</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Luminosità/Contrasto…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
     <message>
         <source>Polygon</source>
         <translation>Poligono</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Salva &amp;come…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Modifica etichetta…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Annulla ultimo punto</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Elimina punto selezionato</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Elimina il punto selezionato dal poligono o dalla polilinea</translation>
     </message>
     <message>
         <source>Rectangle</source>

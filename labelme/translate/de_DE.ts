@@ -309,16 +309,8 @@
         <translation>Nächstes öffnen (Strg+Umschalt gedrückt halten, um Labels zu kopieren)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Vorheriges Bild</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Vorheriges öffnen (Strg+Umschalt gedrückt halten, um Labels zu kopieren)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Speichern &amp;unter</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -417,10 +409,6 @@
         <translation>Duplikat der ausgewählten Formen erstellen</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Letzten Punkt rückgängig machen</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Letzten gezeichneten Punkt rückgängig machen</translation>
     </message>
@@ -461,16 +449,8 @@
         <translation>&amp;Verkleinern</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Helligkeit/Kontrast</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Helligkeit und Kontrast einstellen</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Label bearbeiten</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -549,16 +529,12 @@
         <translation>Rückgängig</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Ausgewählten Eckpunkt löschen</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Löscht den ausgewählten Eckpunkt aus dem Polygon oder Linienzug</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Klicken, um Punkte der Linienfolge zu setzen; Strg+Klick setzt den letzten.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Vorheriges Bild</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -571,6 +547,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Bei jeder Änderung der Auswahl auf die ausgewählten Formen zoomen</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Helligkeit/Kontrast…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -857,6 +837,26 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Reset Layout</source>
         <translation>Layout zurücksetzen</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Speichern &amp;unter…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Label bearbeiten…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Letzten Punkt rückgängig machen</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Ausgewählten Punkt löschen</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Löscht den ausgewählten Punkt aus dem Polygon oder Linienzug</translation>
     </message>
     <message>
         <source>Polygon</source>

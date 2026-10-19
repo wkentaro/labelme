@@ -309,16 +309,8 @@
         <translation>เปิดรูปถัดไป (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>รูปก่อนหน้า (&amp;P)</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>เปิดรูปก่อนหน้า (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>บันทึกเป็น (&amp;S)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>สร้างสำเนารูปร่างที่เลือก</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>ยกเลิกจุดล่าสุด</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>ยกเลิกจุดที่วาดล่าสุด</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>ซูมออก (&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>ความสว่าง คอนทราสต์ (&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>ปรับความสว่างและคอนทราสต์</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>แก้ไขเลเบล (&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>ยกเลิก</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>ลบจุดยอดที่เลือก</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>ลบจุดยอดที่เลือกออกจากรูปหลายเหลี่ยมหรือเส้นหักมุม</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>คลิกเพื่อวางจุดของเส้นต่อเนื่อง Ctrl+คลิกเพื่อวางจุดสุดท้าย</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>รูปก่อนหน้า (&amp;P)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>ซูมไปที่รูปร่างที่เลือกทุกครั้งที่การเลือกเปลี่ยน</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>ความสว่าง/คอนทราสต์ (&amp;B)…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>หลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>บันทึกเป็น (&amp;S)…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>แก้ไขเลเบล (&amp;E)…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>ยกเลิกจุดล่าสุด</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>ลบจุดที่เลือก</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>ลบจุดที่เลือกออกจากรูปหลายเหลี่ยมหรือเส้นหักมุม</translation>
     </message>
     <message>
         <source>Rectangle</source>

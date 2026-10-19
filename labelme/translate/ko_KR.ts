@@ -309,16 +309,8 @@
         <translation>다음 열기 (Ctrl+Shift를 누르면 레이블 복사)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>이전 이미지(&amp;P)</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>이전 열기 (Ctrl+Shift를 누르면 레이블 복사)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>다른 이름으로 저장(&amp;S)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>선택한 도형의 복사본 생성</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>마지막 점 실행 취소</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>마지막으로 그린 점 실행 취소</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>축소(&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>밝기 대비(&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>밝기 및 대비 조정</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>레이블 편집(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>실행 취소</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>선택한 꼭짓점 삭제</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>선택한 꼭짓점을 다각형 또는 꺾은선에서 삭제합니다</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>클릭하여 연속선의 점을 놓고, Ctrl+클릭으로 마지막 점을 놓습니다.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>이전 이미지(&amp;P)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>선택이 바뀔 때마다 선택한 도형에 맞춰 확대/축소</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>밝기/대비(&amp;B)…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Polygon</source>
         <translation>다각형</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>다른 이름으로 저장(&amp;S)…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>레이블 편집(&amp;E)…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>마지막 점 실행 취소</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>선택한 점 삭제</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>선택한 점을 다각형 또는 꺾은선에서 삭제합니다</translation>
     </message>
     <message>
         <source>Rectangle</source>

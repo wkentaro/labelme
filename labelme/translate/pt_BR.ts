@@ -309,16 +309,8 @@
         <translation>Abrir seguinte (mantenha Ctrl+Shift para copiar rótulos)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>Imagem &amp;Anterior</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Abrir anterior (mantenha Ctrl+Shift para copiar rótulos)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Salvar &amp;Como</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>Criar uma cópia das formas selecionadas</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Desfazer último ponto</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Desfazer último ponto desenhado</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>&amp;Afastar</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>Brilho e &amp;Contraste</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Ajustar brilho e contraste</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Editar Rótulo</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>Desfazer</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Excluir Vértice Selecionado</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Exclui o vértice selecionado do polígono ou da polilinha</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Clique para posicionar pontos da linha contínua; Ctrl+clique posiciona o último.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>Imagem &amp;Anterior</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Ajustar o zoom às formas selecionadas sempre que a seleção mudar</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>Brilho/&amp;Contraste…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>Polygon</source>
         <translation>Polígono</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Salvar &amp;Como…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Editar Rótulo…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Desfazer Último Ponto</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Excluir Ponto Selecionado</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Exclui o ponto selecionado do polígono ou da polilinha</translation>
     </message>
     <message>
         <source>Rectangle</source>

@@ -273,10 +273,6 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;Save As</source>
-        <translation>&amp;Зберегти як</translation>
-    </message>
-    <message>
         <source>Save &amp;Automatically</source>
         <translation>&amp;Автоматично зберегти</translation>
     </message>
@@ -311,10 +307,6 @@
     <message>
         <source>Delete the selected shapes</source>
         <translation>Видалити вибрані фігури</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Редагувати мітку</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -355,10 +347,6 @@
     <message>
         <source>Lock the selected shapes against editing, or unlock them</source>
         <translation>Заблокувати вибрані фігури від редагування або розблокувати їх</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>Скасувати останній пункт</translation>
     </message>
     <message>
         <source>Undo last drawn point</source>
@@ -405,20 +393,12 @@
         <translation>Відкрити далі (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Попереднє зображення</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Відкрити попередній (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
     </message>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Масштабувати за вибраними фігурами під час кожної зміни виділення</translation>
-    </message>
-    <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Яскравість Контраст</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -505,6 +485,10 @@
         <translation>Зберегти файл анотацій</translation>
     </message>
     <message>
+        <source>&amp;Save As…</source>
+        <translation>&amp;Зберегти як…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Зберегти файл анотацій під новою назвою</translation>
     </message>
@@ -549,8 +533,32 @@
         <translation>Видалити поточний файл анотацій</translation>
     </message>
     <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Редагувати мітку…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Скасувати останню точку</translation>
+    </message>
+    <message>
         <source>Undo</source>
         <translation>Скасувати</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Видалити вибрану точку</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Видаляє вибрану точку з багатокутника або ламаної</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Попереднє зображення</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Яскравість/Контраст…</translation>
     </message>
     <message>
         <source>&amp;Hide Shapes</source>
@@ -791,14 +799,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Вставити фігури з буфера обміну в це зображення</translation>
-    </message>
-    <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Видалити вибрану вершину</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Видаляє вибрану вершину з багатокутника або ламаної</translation>
     </message>
     <message>
         <source>Rectangle</source>

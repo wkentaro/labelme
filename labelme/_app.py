@@ -450,7 +450,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         save_as = image_action(
-            text=self.tr("&Save As"),
+            text=self.tr("&Save As…"),
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
             icon="phosphor/floppy-disk-back.svg",
@@ -528,7 +528,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         edit = action(
-            text=self.tr("&Edit Label"),
+            text=self.tr("&Edit Label…"),
             slot=self._edit_label,
             shortcut=shortcuts["edit_label"],
             icon="phosphor/tag.svg",
@@ -579,7 +579,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         undo_last_point = action(
-            text=self.tr("Undo last point"),
+            text=self.tr("Undo Last Point"),
             slot=self._canvas_widgets.canvas.undo_last_point,
             shortcut=shortcuts["undo_last_point"],
             icon="phosphor/arrow-u-up-left.svg",
@@ -595,11 +595,11 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         remove_point = action(
-            text=self.tr("Delete Selected Vertex"),
+            text=self.tr("Delete Selected Point"),
             slot=self.remove_selected_point,
             shortcut=shortcuts["remove_selected_point"],
             icon="phosphor/minus-circle.svg",
-            tip=self.tr("Delete the selected vertex from the polygon or line strip"),
+            tip=self.tr("Delete the selected point from the polygon or LineStrip"),
             enabled=False,
         )
         add_point_to_edge = action(
@@ -699,7 +699,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         open_prev_img = action(
-            text=self.tr("&Prev Image"),
+            text=self.tr("&Previous Image"),
             slot=self._open_prev_image,
             shortcut=shortcuts["open_prev"],
             icon="phosphor/arrow-fat-left.svg",
@@ -728,7 +728,7 @@ class MainWindow(QtWidgets.QMainWindow):
             checkable=True,
         )
         brightness_contrast = image_action(
-            text=self.tr("&Brightness Contrast"),
+            text=self.tr("&Brightness/Contrast…"),
             slot=self.open_brightness_contrast_dialog,
             shortcut=None,
             icon="brightness-contrast.svg",

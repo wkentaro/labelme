@@ -309,16 +309,8 @@
         <translation>باز کردن بعدی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>تصویر قبلی(&amp;P)</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>باز کردن قبلی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>ذخیره با نام دیگر(&amp;S)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>ایجاد کپی از شکل‌های انتخاب شده</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>بازگشت آخرین نقطه</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>بازگشت آخرین نقطه رسم شده</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>کوچک‌نمایی(&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>روشنایی و کنتراست(&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>تنظیم روشنایی و کنتراست</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>ویرایش برچسب(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>بازگشت</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>حذف رأس انتخاب‌شده</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>رأس انتخاب‌شده را از چندضلعی یا خط شکسته حذف می‌کند</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>برای قرار دادن نقاط خط چندتکه‌ای کلیک کنید؛ Ctrl+کلیک نقطه آخر را قرار می‌دهد.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>تصویر قبلی(&amp;P)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>بزرگ‌نمایی روی شکل‌های انتخاب شده هر بار که انتخاب تغییر می‌کند</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>روشنایی/کنتراست(&amp;B)…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>چندضلعی</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>ذخیره با نام دیگر(&amp;S)…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>ویرایش برچسب(&amp;E)…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>بازگشت آخرین نقطه</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>حذف نقطه انتخاب‌شده</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>نقطه انتخاب‌شده را از چندضلعی یا خط شکسته حذف می‌کند</translation>
     </message>
     <message>
         <source>Rectangle</source>

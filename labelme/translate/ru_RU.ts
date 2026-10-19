@@ -309,16 +309,8 @@
         <translation>Открыть следующее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>Предыдущее изображение (&amp;P)</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Открыть предыдущее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Сохранить как</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>Создать копию выбранных фигур</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Отменить последнюю точку</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Отменить последнюю нарисованную точку</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>Уменьшить (&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Яркость/Контраст</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Настроить яркость и контраст</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Редактировать метку</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>Отменить</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Удалить выбранную вершину</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Удаляет выбранную вершину из полигона или ломаной</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Щёлкайте, чтобы ставить точки ломаной; Ctrl+щелчок ставит последнюю.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>Предыдущее изображение (&amp;P)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Масштабировать по выбранным фигурам при каждом изменении выделения</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Яркость/Контраст…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -857,6 +837,26 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>Полигон</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Сохранить &amp;как…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Редактировать метку…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Отменить последнюю точку</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Удалить выбранную точку</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Удаляет выбранную точку из полигона или ломаной</translation>
     </message>
     <message>
         <source>Rectangle</source>

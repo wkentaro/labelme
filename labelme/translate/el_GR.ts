@@ -273,10 +273,6 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;Save As</source>
-        <translation>Αποθήκευση &amp;Ως</translation>
-    </message>
-    <message>
         <source>Save &amp;Automatically</source>
         <translation>Αποθήκευση &amp;αυτόματα</translation>
     </message>
@@ -311,10 +307,6 @@
     <message>
         <source>Delete the selected shapes</source>
         <translation>Διαγραφή των επιλεγμένων σχημάτων</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>Επεξεργασία ετικέτας</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -355,10 +347,6 @@
     <message>
         <source>Lock the selected shapes against editing, or unlock them</source>
         <translation>Κλείδωμα των επιλεγμένων σχημάτων έναντι επεξεργασίας ή ξεκλείδωμά τους</translation>
-    </message>
-    <message>
-        <source>Undo last point</source>
-        <translation>Τελευταίο σημείο</translation>
     </message>
     <message>
         <source>Undo last drawn point</source>
@@ -405,20 +393,12 @@
         <translation>Ανοίξτε το επόμενο (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Προηγούμενη εικόνα</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Άνοιγμα προηγούμενου (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
     </message>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Εστίαση στα επιλεγμένα σχήματα κάθε φορά που αλλάζει η επιλογή</translation>
-    </message>
-    <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>αντίθεση φωτεινότητας</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -505,6 +485,10 @@
         <translation>Αποθήκευση αρχείου επισημειώσεων</translation>
     </message>
     <message>
+        <source>&amp;Save As…</source>
+        <translation>Αποθήκευση &amp;ως…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Αποθήκευση αρχείου επισημειώσεων με νέο όνομα</translation>
     </message>
@@ -549,8 +533,32 @@
         <translation>Διαγραφή τρέχοντος αρχείου επισημειώσεων</translation>
     </message>
     <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Επεξεργασία ετικέτας…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Αναίρεση τελευταίου σημείου</translation>
+    </message>
+    <message>
         <source>Undo</source>
         <translation>Αναίρεση</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Διαγραφή επιλεγμένου σημείου</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Διαγράφει το επιλεγμένο σημείο από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Προηγούμενη εικόνα</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Φωτεινότητα/Αντίθεση…</translation>
     </message>
     <message>
         <source>&amp;Hide Shapes</source>
@@ -791,14 +799,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Εισαγωγή των σχημάτων του προχείρου σε αυτήν την εικόνα</translation>
-    </message>
-    <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Διαγραφή επιλεγμένης κορυφής</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Διαγράφει την επιλεγμένη κορυφή από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
     </message>
     <message>
         <source>Rectangle</source>

@@ -147,7 +147,7 @@ def new_action(
     if icon:
         # Tool buttons show the icon text; stacking words keeps them narrow.
         # Toolbar labels name the command, so they drop the menu's ellipsis.
-        action.setIconText(text.removesuffix("…").replace(" ", "\n"))
+        action.setIconText(text.removesuffix("…").replace(" ", "\n").replace("/", "\n"))
     if slot:
         action.triggered.connect(slot)
     return action

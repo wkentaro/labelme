@@ -310,17 +310,8 @@
         <translation>次を開く (Ctrl+Shift でラベルをコピー)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>前の
-画像(&amp;P)</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>前を開く (Ctrl+Shift でラベルをコピー)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>名前を付けて保存(&amp;A)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -419,10 +410,6 @@
         <translation>選択した図形の複製を作成</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>最後の頂点を取り消し</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>最後に描画した頂点を取り消し</translation>
     </message>
@@ -463,17 +450,8 @@
         <translation>縮小(&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>明るさ・
-コントラスト(&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>明るさとコントラストを調整</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>ラベルを編集(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -540,16 +518,12 @@
         <translation>元に戻す</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>選択した頂点を削除</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>選択した頂点をポリゴンまたは折れ線から削除します</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>クリックで折れ線の点を置き、Ctrl+クリックで最後の点を置きます。</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>前の画像(&amp;P)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -563,6 +537,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>選択を変更するたびに選択した図形にズームする</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>明るさ/コントラスト(&amp;B)…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -869,6 +847,26 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Polygon</source>
         <translation>ポリゴン</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>名前を付けて保存(&amp;A)…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>ラベルを編集(&amp;E)…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>最後の点を取り消す</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>選択した点を削除</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>選択した点をポリゴンまたは折れ線から削除します</translation>
     </message>
     <message>
         <source>Rectangle</source>

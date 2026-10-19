@@ -309,16 +309,8 @@
         <translation>Otwórz następny (Ctrl+Shift — kopiuj etykiety)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Poprzedni obraz</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Otwórz poprzedni (Ctrl+Shift — kopiuj etykiety)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Zapisz &amp;jako</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>Utwórz duplikat zaznaczonych kształtów</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Cofnij ostatni punkt</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Cofnij ostatnio narysowany punkt</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>Pomniejsz (&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>Jasność i kontrast (&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Dostosuj jasność i kontrast</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Edytuj etykietę</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>Cofnij</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Usuń zaznaczony wierzchołek</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Usuwa zaznaczony wierzchołek z wielokąta lub łamanej</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Kliknij, aby umieścić punkty polilinii; Ctrl+kliknięcie umieszcza ostatni.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Poprzedni obraz</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Powiększenie dopasowuje się do zaznaczonych kształtów przy każdej zmianie zaznaczenia</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>Jasność/Kontrast (&amp;B)…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>Polygon</source>
         <translation>Wielokąt</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Zapisz &amp;jako…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Edytuj etykietę…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Cofnij ostatni punkt</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Usuń zaznaczony punkt</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Usuwa zaznaczony punkt z wielokąta lub łamanej</translation>
     </message>
     <message>
         <source>Rectangle</source>

@@ -309,16 +309,8 @@
         <translation>Buka Berikutnya (Tahan Ctrl+Shift untuk menyalin label)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>Gambar Sebelumnya (&amp;P)</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Buka Sebelumnya (Tahan Ctrl+Shift untuk menyalin label)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>&amp;Simpan Sebagai</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -385,10 +377,6 @@
         <translation>Buat duplikat dari bentuk terpilih</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Urungkan titik terakhir</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Urungkan titik terakhir yang digambar</translation>
     </message>
@@ -429,16 +417,8 @@
         <translation>Perkecil (&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>Kecerahan Kontras (&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Atur kecerahan dan kontras</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Edit Label</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -505,16 +485,12 @@
         <translation>Urungkan</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Hapus Simpul Terpilih</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Menghapus simpul terpilih dari poligon atau garis patah</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Klik untuk menempatkan titik garis patah; Ctrl+klik menempatkan titik terakhir.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>Gambar Sebelumnya (&amp;P)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -527,6 +503,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Perbesar ke bentuk terpilih setiap kali pilihan berubah</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>Kecerahan/Kontras (&amp;B)…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -735,6 +715,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Simpan berkas anotasi</translation>
     </message>
     <message>
+        <source>&amp;Save As…</source>
+        <translation>&amp;Simpan Sebagai…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Simpan berkas anotasi dengan nama baru</translation>
     </message>
@@ -757,6 +741,22 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Delete the current annotation file</source>
         <translation>Hapus berkas anotasi saat ini</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Edit Label…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Urungkan Titik Terakhir</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Hapus Titik Terpilih</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Menghapus titik terpilih dari poligon atau garis patah</translation>
     </message>
     <message>
         <source>Error saving annotation file</source>

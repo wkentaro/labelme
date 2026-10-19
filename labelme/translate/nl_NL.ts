@@ -309,16 +309,8 @@
         <translation>Volgende openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>Vorige &amp;Afbeelding</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Vorige openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Opslaan &amp;als</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>Maak een duplicaat van de geselecteerde vormen</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Laatste punt ongedaan maken</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Laatste getekende punt ongedaan maken</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>&amp;Uitzoomen</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>Helderheid en &amp;contrast</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Helderheid en contrast aanpassen</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>Label &amp;bewerken</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>Ongedaan maken</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Geselecteerd hoekpunt verwijderen</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Verwijdert het geselecteerde hoekpunt uit de polygoon of polylijn</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Klik om punten van de lijnstrook te plaatsen; Ctrl+klik plaatst het laatste.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>Vorige &amp;afbeelding</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Inzoomen op de geselecteerde vormen telkens wanneer de selectie verandert</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>Helderheid/&amp;Contrast…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Polygon</source>
         <translation>Polygoon</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Opslaan &amp;als…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>Label &amp;bewerken…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Laatste punt ongedaan maken</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Geselecteerd punt verwijderen</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Verwijdert het geselecteerde punt uit de polygoon of polylijn</translation>
     </message>
     <message>
         <source>Rectangle</source>

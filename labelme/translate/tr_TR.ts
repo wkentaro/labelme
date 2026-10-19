@@ -309,16 +309,8 @@
         <translation>Sonrakini aç (etiketleri kopyalamak için Ctl+Shift tuşlarını basılı tutun)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Önceki Görüntü</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Öncekini aç (etiketleri kopyalamak için Ctl+Shift tuşlarını basılı tutun)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>&amp;Farklı Kaydet</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>Seçili şekillerin kopyasını oluştur</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Son noktayı geri al</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Son çizilen noktayı geri al</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>&amp;Uzaklaştır</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Parlaklık ve Kontrast</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Parlaklığı ve kontrastı ayarla</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>Etiketi &amp;Düzenle</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>Geri Al</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Seçili Köşe Noktasını Sil</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Seçili köşe noktasını çokgenden veya çoklu çizgiden siler</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Çizgi şeridinin noktalarını yerleştirmek için tıklayın; Ctrl+tıklama sonuncuyu yerleştirir.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Önceki Görüntü</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Seçim her değiştiğinde seçili şekillere yakınlaştır</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Parlaklık/Kontrast…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Polygon</source>
         <translation>Çokgen</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>&amp;Farklı Kaydet…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>Etiketi &amp;Düzenle…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Son Noktayı Geri Al</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Seçili Noktayı Sil</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Seçili noktayı çokgenden veya çoklu çizgiden siler</translation>
     </message>
     <message>
         <source>Rectangle</source>

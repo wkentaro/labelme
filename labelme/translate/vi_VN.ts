@@ -309,16 +309,8 @@
         <translation>Mở tiếp theo (giữ Ctl+Shift để sao chép nhãn)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>Hình ảnh Trước(&amp;P)</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Mở trước đó (giữ Ctl+Shift để sao chép nhãn)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Lưu thành(&amp;S)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>Tạo bản sao của các hình dạng đã chọn</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Hoàn tác điểm cuối cùng</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Hoàn tác điểm vẽ cuối cùng</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>Thu nhỏ(&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>Độ sáng Độ tương phản(&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Điều chỉnh độ sáng và độ tương phản</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>Chỉnh sửa Nhãn(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>Hoàn tác</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Xóa Đỉnh đã Chọn</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Xóa đỉnh đã chọn khỏi đa giác hoặc đường gấp khúc</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Nhấn để đặt các điểm của đường gấp khúc; Ctrl+nhấn đặt điểm cuối cùng.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>Hình ảnh Trước(&amp;P)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Thu phóng đến các hình dạng đã chọn mỗi khi vùng chọn thay đổi</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>Độ sáng/Độ tương phản(&amp;B)…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Polygon</source>
         <translation>Đa giác</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Lưu thành(&amp;S)…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>Chỉnh sửa Nhãn(&amp;E)…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Hoàn tác điểm cuối cùng</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Xóa Điểm đã Chọn</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Xóa điểm đã chọn khỏi đa giác hoặc đường gấp khúc</translation>
     </message>
     <message>
         <source>Rectangle</source>

@@ -309,16 +309,8 @@
         <translation>Következő megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Előző kép</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>Előző megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Mentés &amp;másként</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -417,10 +409,6 @@
         <translation>A kijelölt alakzatok másolatának létrehozása</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Utolsó pont visszavonása</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Utolsó rajzolt pont visszavonása</translation>
     </message>
@@ -461,16 +449,8 @@
         <translation>&amp;Kicsinyítés</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Fényerő/Kontraszt</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Fényerő és kontraszt beállítása</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Címke szerkesztése</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -549,16 +529,12 @@
         <translation>Visszavonás</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Kijelölt csúcspont törlése</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Törli a kijelölt csúcspontot a sokszögből vagy a töröttvonalból</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>Kattintson a vonallánc pontjainak elhelyezéséhez; Ctrl+kattintás helyezi el az utolsót.</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Előző kép</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -571,6 +547,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Nagyítás a kijelölt alakzatokra a kijelölés minden változásakor</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Fényerő/Kontraszt…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -857,6 +837,26 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Reset Layout</source>
         <translation>Elrendezés visszaállítása</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Mentés &amp;másként…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Címke szerkesztése…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Utolsó pont visszavonása</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Kijelölt pont törlése</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Törli a kijelölt pontot a sokszögből vagy a töröttvonalból</translation>
     </message>
     <message>
         <source>Polygon</source>

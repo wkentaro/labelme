@@ -309,16 +309,8 @@
         <translation>打开下一张图像（按住 Ctl+Shift 复制标签）</translation>
     </message>
     <message>
-        <source>&amp;Prev Image</source>
-        <translation>上一张图像(&amp;P)</translation>
-    </message>
-    <message>
         <source>Open prev (hold Ctl+Shift to copy labels)</source>
         <translation>打开上一张图像（按住 Ctl+Shift 复制标签）</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>另存为(&amp;S)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,10 +405,6 @@
         <translation>创建选中形状的副本</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>撤销上一个点</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>撤销上一个绘制的点</translation>
     </message>
@@ -457,16 +445,8 @@
         <translation>缩小(&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>亮度与对比度(&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>调整亮度和对比度</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>编辑标签(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -533,16 +513,12 @@
         <translation>撤销</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>删除选中的顶点</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>从多边形或折线中删除选中的顶点</translation>
-    </message>
-    <message>
         <source>Click to place linestrip points; Ctrl+click places the last one.</source>
         <translation>单击放置折线的点；Ctrl+单击放置最后一个点。</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>上一张图像(&amp;P)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -555,6 +531,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>每次选择更改时缩放至选中的形状</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>亮度/对比度(&amp;B)…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -861,6 +841,26 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Polygon</source>
         <translation>多边形</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>另存为(&amp;S)…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>编辑标签(&amp;E)…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>撤销上一个点</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>删除选中的点</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>从多边形或折线中删除选中的点</translation>
     </message>
     <message>
         <source>Rectangle</source>
