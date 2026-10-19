@@ -759,7 +759,6 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         fill_drawing = action(
             text=self.tr("Fill Drawing Polygon"),
-            icon="phosphor/paint-bucket.svg",
             tip=self.tr("Fill polygon while drawing"),
             checkable=True,
             enabled=True,
