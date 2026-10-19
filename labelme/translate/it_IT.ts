@@ -1246,7 +1246,7 @@ Posizione prevista: {path}</translation>
     </message>
     <message>
         <source>Label behavior</source>
-        <translation>Comportamento delle etichette</translation>
+        <translation>Comportamento etichette</translation>
     </message>
     <message>
         <source>AI assist</source>

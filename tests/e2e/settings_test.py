@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pytest
@@ -882,6 +883,11 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
 
 
 @pytest.mark.gui
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="offscreen Qt on Windows has no system font, so its text widths are a "
+    "fallback font's",
+)
 @pytest.mark.parametrize(
     "language", sorted(path.stem for path in TRANSLATE_DIR.glob("*.qm"))
 )

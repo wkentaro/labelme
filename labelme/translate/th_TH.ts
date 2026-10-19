@@ -1239,7 +1239,7 @@ Expected location: {path}</source>
     </message>
     <message>
         <source>Continue between images</source>
-        <translation>การทำงานต่อเนื่องระหว่างภาพ</translation>
+        <translation>เมื่อเปลี่ยนภาพ</translation>
     </message>
     <message>
         <source>Label sources</source>

@@ -1238,7 +1238,7 @@ Emplacement attendu : {path}</translation>
     </message>
     <message>
         <source>Continue between images</source>
-        <translation>Continuer d’une image à l’autre</translation>
+        <translation>Passage entre images</translation>
     </message>
     <message>
         <source>Label sources</source>
