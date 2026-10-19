@@ -305,16 +305,12 @@
         <translation>&amp;Nächstes Bild</translation>
     </message>
     <message>
-        <source>Save &amp;Automatically</source>
-        <translation>&amp;Automatisch speichern</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>Automatisch speichern</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>&amp;Schließen</translation>
+        <translation>S&amp;chließen</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -365,8 +361,16 @@
         <translation>Annotationsdatei speichern</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Speichern &amp;unter…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Annotationsdatei unter neuem Namen speichern</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>&amp;Automatisch speichern</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -375,6 +379,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>Speichert eine Kopie des Bildes in der Annotationsdatei</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Ann&amp;otationsordner ändern…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -450,7 +458,7 @@
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>&amp;Verkleinern</translation>
+        <translation>Ve&amp;rkleinern</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -507,10 +515,6 @@
     <message>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>&amp;Annotationsordner ändern…</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -574,7 +578,7 @@
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>&amp;An Fenster anpassen</translation>
+        <translation>An &amp;Fenster anpassen</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -847,10 +851,6 @@
         <translation>Layout zurücksetzen</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>Speichern &amp;unter…</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label…</source>
         <translation>&amp;Label bearbeiten…</translation>
     </message>
@@ -966,7 +966,7 @@ Erwarteter Speicherort: {path}</translation>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>&amp;Vorherigen Zoom beibehalten</translation>
+        <translation>Vorherigen &amp;Zoom beibehalten</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

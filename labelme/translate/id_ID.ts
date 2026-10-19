@@ -294,7 +294,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>Keluar (&amp;Q)</translation>
+        <translation>&amp;Keluar</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -302,11 +302,7 @@
     </message>
     <message>
         <source>&amp;Next Image</source>
-        <translation>Gambar Berikutnya (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Simpan Otomatis (&amp;A)</translation>
+        <translation>&amp;Gambar Berikutnya</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -314,7 +310,7 @@
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>Tutup (&amp;C)</translation>
+        <translation>&amp;Tutup</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -402,11 +398,11 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>Perbesar (&amp;I)</translation>
+        <translation>&amp;Perbesar</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>Perkecil (&amp;Z)</translation>
+        <translation>P&amp;erkecil</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -438,7 +434,7 @@
     </message>
     <message>
         <source>&amp;About %s</source>
-        <translation>&amp;Tentang %s</translation>
+        <translation>Te&amp;ntang %s</translation>
     </message>
     <message>
         <source>About %s</source>
@@ -446,11 +442,7 @@
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;Simpan</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Ubah Folder Anotasi (&amp;A)…</translation>
+        <translation>S&amp;impan</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -458,7 +450,7 @@
     </message>
     <message>
         <source>&amp;Open File…</source>
-        <translation>Buka Berkas (&amp;O)…</translation>
+        <translation>&amp;Buka Berkas…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -510,7 +502,7 @@
     </message>
     <message>
         <source>&amp;Previous Image</source>
-        <translation>Gambar Sebelumnya (&amp;P)</translation>
+        <translation>Gambar &amp;Sebelumnya</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -518,7 +510,7 @@
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>Sesuaikan Jendela (&amp;W)</translation>
+        <translation>Sesuaikan &amp;Jendela</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -530,7 +522,7 @@
     </message>
     <message>
         <source>&amp;Brightness/Contrast…</source>
-        <translation>Kecerahan/Kontras (&amp;B)…</translation>
+        <translation>&amp;Kecerahan/Kontras…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -558,15 +550,15 @@
     </message>
     <message>
         <source>&amp;Hide Shapes</source>
-        <translation>Sembunyikan Bentuk (&amp;H)</translation>
+        <translation>&amp;Sembunyikan Bentuk</translation>
     </message>
     <message>
         <source>&amp;Show Shapes</source>
-        <translation>Tampilkan Bentuk (&amp;S)</translation>
+        <translation>&amp;Tampilkan Bentuk</translation>
     </message>
     <message>
         <source>&amp;Toggle Shapes</source>
-        <translation>Tampilkan/Sembunyikan Bentuk (&amp;T)</translation>
+        <translation>Tampilkan/Sembunyikan &amp;Bentuk</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -614,19 +606,19 @@
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>Berkas (&amp;F)</translation>
+        <translation>&amp;Berkas</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>Edit (&amp;E)</translation>
+        <translation>&amp;Edit</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>Tampilan (&amp;V)</translation>
+        <translation>&amp;Tampilan</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>Bantuan (&amp;H)</translation>
+        <translation>B&amp;antuan</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -678,7 +670,7 @@
     </message>
     <message>
         <source>Fit to S&amp;election</source>
-        <translation>Sesuaikan Pilihan (&amp;E)</translation>
+        <translation>Ses&amp;uaikan Pilihan</translation>
     </message>
     <message>
         <source>Could not reset the Config File.
@@ -731,12 +723,12 @@
         <translation>Simpan berkas anotasi</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>&amp;Simpan Sebagai…</translation>
-    </message>
-    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Simpan berkas anotasi dengan nama baru</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Simpan &amp;Otomatis</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -747,12 +739,16 @@
         <translation>Menyimpan salinan gambar di dalam berkas anotasi</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>&amp;Ubah Folder Anotasi…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Buka gambar atau berkas anotasi</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>Hapus Berkas Anotasi (&amp;D)</translation>
+        <translation>&amp;Hapus Berkas Anotasi</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -879,6 +875,10 @@ Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluara
         <translation>Poligon</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Si&amp;mpan Sebagai…</translation>
+    </message>
+    <message>
         <source>Rectangle</source>
         <translation>Persegi Panjang</translation>
     </message>
@@ -966,7 +966,7 @@ Lokasi yang diharapkan: {path}</translation>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>Pertahankan Zoom Sebelumnya (&amp;K)</translation>
+        <translation>Pertahankan &amp;Zoom Sebelumnya</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

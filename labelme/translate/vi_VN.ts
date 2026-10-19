@@ -294,7 +294,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>Thoát(&amp;Q)</translation>
+        <translation>Th&amp;oát</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -302,11 +302,7 @@
     </message>
     <message>
         <source>&amp;Next Image</source>
-        <translation>Hình ảnh Tiếp theo(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Tự động lưu (&amp;A)</translation>
+        <translation>&amp;Hình ảnh Tiếp theo</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -314,7 +310,7 @@
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>Đóng(&amp;C)</translation>
+        <translation>Đón&amp;g</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -361,8 +357,16 @@
         <translation>Lưu tệp chú thích</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Lư&amp;u thành…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Lưu tệp chú thích với tên mới</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Tự độ&amp;ng lưu</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -373,12 +377,16 @@
         <translation>Lưu một bản sao của hình ảnh bên trong tệp chú thích</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Thay đổi thư mục &amp;chú thích…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Mở hình ảnh hoặc tệp chú thích</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>Xóa tệp chú thích(&amp;D)</translation>
+        <translation>&amp;Xóa tệp chú thích</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -430,7 +438,7 @@
     </message>
     <message>
         <source>&amp;Tutorial</source>
-        <translation>Hướng dẫn(&amp;T)</translation>
+        <translation>&amp;Hướng dẫn</translation>
     </message>
     <message>
         <source>Show tutorial page</source>
@@ -442,11 +450,11 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>Phóng to(&amp;I)</translation>
+        <translation>&amp;Phóng to</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>Thu nhỏ(&amp;Z)</translation>
+        <translation>&amp;Thu nhỏ</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -486,11 +494,7 @@
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>Lưu(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Thay đổi thư mục chú thích (&amp;A)…</translation>
+        <translation>&amp;Lưu</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -498,7 +502,7 @@
     </message>
     <message>
         <source>&amp;Open File…</source>
-        <translation>Mở tệp(&amp;O)…</translation>
+        <translation>&amp;Mở tệp…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -550,7 +554,7 @@
     </message>
     <message>
         <source>&amp;Previous Image</source>
-        <translation>Hình ảnh Trước(&amp;P)</translation>
+        <translation>Hình ảnh &amp;Trước</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -558,7 +562,7 @@
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>Vừa Cửa sổ(&amp;W)</translation>
+        <translation>&amp;Vừa Cửa sổ</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -570,7 +574,7 @@
     </message>
     <message>
         <source>&amp;Brightness/Contrast…</source>
-        <translation>Độ sáng/Độ tương phản(&amp;B)…</translation>
+        <translation>Độ &amp;sáng/Độ tương phản…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -582,7 +586,7 @@
     </message>
     <message>
         <source>&amp;Actual Size</source>
-        <translation>Kích thước &amp;thật</translation>
+        <translation>&amp;Kích thước thật</translation>
     </message>
     <message>
         <source>Show the image at 100%</source>
@@ -598,15 +602,15 @@
     </message>
     <message>
         <source>&amp;Hide Shapes</source>
-        <translation>Ẩn hình dạng(&amp;H)</translation>
+        <translation>Ẩn &amp;hình dạng</translation>
     </message>
     <message>
         <source>&amp;Show Shapes</source>
-        <translation>Hiện hình dạng(&amp;S)</translation>
+        <translation>Hiện hình &amp;dạng</translation>
     </message>
     <message>
         <source>&amp;Toggle Shapes</source>
-        <translation>Bật/tắt hình dạng(&amp;T)</translation>
+        <translation>&amp;Bật/tắt hình dạng</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -654,19 +658,19 @@
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>Tệp(&amp;F)</translation>
+        <translation>&amp;Tệp</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>Chỉnh sửa(&amp;E)</translation>
+        <translation>&amp;Chỉnh sửa</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>Xem(&amp;V)</translation>
+        <translation>&amp;Xem</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>Trợ giúp(&amp;H)</translation>
+        <translation>Trợ &amp;giúp</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -718,7 +722,7 @@
     </message>
     <message>
         <source>Fit to S&amp;election</source>
-        <translation>Vừa Vùng chọn(&amp;E)</translation>
+        <translation>Vừa Vùng &amp;chọn</translation>
     </message>
     <message>
         <source>Could not reset the Config File.
@@ -851,12 +855,8 @@
         <translation>Đa giác</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>Lưu thành(&amp;S)…</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label…</source>
-        <translation>Chỉnh sửa Nhãn(&amp;E)…</translation>
+        <translation>&amp;Chỉnh sửa Nhãn…</translation>
     </message>
     <message>
         <source>Undo Last Point</source>

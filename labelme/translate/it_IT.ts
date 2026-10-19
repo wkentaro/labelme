@@ -294,7 +294,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Esci</translation>
+        <translation>Esc&amp;i</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -305,16 +305,12 @@
         <translation>Immagine &amp;successiva</translation>
     </message>
     <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Salva &amp;automaticamente</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>Salva automaticamente</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>&amp;Chiudi</translation>
+        <translation>C&amp;hiudi</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -361,8 +357,16 @@
         <translation>Salva il file di annotazioni</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Salva &amp;come…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Salva il file di annotazioni con un nuovo nome</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Sal&amp;va automaticamente</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -371,6 +375,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>Salva una copia dell’immagine all’interno del file di annotazioni</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Ca&amp;mbia cartella annotazioni…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -486,11 +494,7 @@
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;Salva</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Cambia cartella &amp;annotazioni…</translation>
+        <translation>Sa&amp;lva</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -558,7 +562,7 @@
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>&amp;Adatta alla finestra</translation>
+        <translation>Adatta alla &amp;finestra</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -851,10 +855,6 @@
         <translation>Poligono</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>Salva &amp;come…</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label…</source>
         <translation>&amp;Modifica etichetta…</translation>
     </message>
@@ -966,7 +966,7 @@ Posizione prevista: {path}</translation>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>&amp;Mantieni zoom precedente</translation>
+        <translation>Mantieni &amp;zoom precedente</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

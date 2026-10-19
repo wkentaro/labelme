@@ -302,11 +302,7 @@
     </message>
     <message>
         <source>&amp;Next Image</source>
-        <translation>Следующее изображение (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Сохранять &amp;автоматически</translation>
+        <translation>&amp;Следующее изображение</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -361,8 +357,16 @@
         <translation>Сохранить файл аннотаций</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Сохранить &amp;как…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Сохранить файл аннотаций под новым именем</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Сохранять &amp;автоматически</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -373,12 +377,16 @@
         <translation>Сохраняет копию изображения внутри файла аннотаций</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>&amp;Изменить папку аннотаций…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Открыть изображение или файл аннотаций</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>Удалить файл аннотаций (&amp;D)</translation>
+        <translation>&amp;Удалить файл аннотаций</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -442,11 +450,11 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>Увеличить (&amp;I)</translation>
+        <translation>&amp;Увеличить</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>Уменьшить (&amp;Z)</translation>
+        <translation>У&amp;меньшить</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -486,11 +494,7 @@
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>Сохранить (&amp;S)</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Изменить папку &amp;аннотаций…</translation>
+        <translation>Со&amp;хранить</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -550,7 +554,7 @@
     </message>
     <message>
         <source>&amp;Previous Image</source>
-        <translation>Предыдущее изображение (&amp;P)</translation>
+        <translation>&amp;Предыдущее изображение</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -558,7 +562,7 @@
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>По размеру окна</translation>
+        <translation>По р&amp;азмеру окна</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -606,7 +610,7 @@
     </message>
     <message>
         <source>&amp;Toggle Shapes</source>
-        <translation>&amp;Переключить фигуры</translation>
+        <translation>Переключить &amp;фигуры</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -851,10 +855,6 @@
         <translation>Полигон</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>Сохранить &amp;как…</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label…</source>
         <translation>&amp;Редактировать метку…</translation>
     </message>
@@ -950,7 +950,7 @@ Expected location: {path}</source>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>Сохранять предыдущий масштаб</translation>
+        <translation>С&amp;охранять предыдущий масштаб</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

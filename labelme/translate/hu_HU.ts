@@ -294,7 +294,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Kilépés</translation>
+        <translation>K&amp;ilépés</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -303,10 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Következő kép</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>&amp;Automatikus mentés</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -365,8 +361,16 @@
         <translation>Annotációs fájl mentése</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Men&amp;tés másként…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Annotációs fájl mentése új néven</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>&amp;Automatikus mentés</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -377,12 +381,16 @@
         <translation>A kép másolatát az annotációs fájlban tárolja</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Ann&amp;otációs mappa módosítása…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Kép vagy annotációs fájl megnyitása</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>Annotációs fájl &amp;törlése</translation>
+        <translation>Annotációs &amp;fájl törlése</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -506,11 +514,7 @@
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;Mentés</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>&amp;Annotációs mappa módosítása…</translation>
+        <translation>Me&amp;ntés</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -674,7 +678,7 @@
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>&amp;Súgó</translation>
+        <translation>Sú&amp;gó</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -726,7 +730,7 @@
     </message>
     <message>
         <source>Fit to S&amp;election</source>
-        <translation>&amp;Kijelöléshez igazítás</translation>
+        <translation>Kijelöléshez &amp;igazítás</translation>
     </message>
     <message>
         <source>Could not reset the Config File.
@@ -847,10 +851,6 @@
         <translation>Elrendezés visszaállítása</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>Mentés &amp;másként…</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label…</source>
         <translation>&amp;Címke szerkesztése…</translation>
     </message>
@@ -966,7 +966,7 @@ Várt hely: {path}</translation>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>&amp;Előző nagyítás megtartása</translation>
+        <translation>E&amp;lőző nagyítás megtartása</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

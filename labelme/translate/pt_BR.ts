@@ -294,7 +294,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Sair</translation>
+        <translation>Sai&amp;r</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -303,10 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>Imagem &amp;Seguinte</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Salvar &amp;Automaticamente</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -361,8 +357,16 @@
         <translation>Salvar o arquivo de anotações</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Salvar &amp;Como…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Salvar o arquivo de anotações com um novo nome</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Sal&amp;var Automaticamente</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -371,6 +375,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>Salva uma cópia da imagem dentro do arquivo de anotações</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Alterar &amp;pasta de anotações…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -442,11 +450,11 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>&amp;Aproximar</translation>
+        <translation>A&amp;proximar</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>&amp;Afastar</translation>
+        <translation>Afa&amp;star</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -486,11 +494,7 @@
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;Salvar</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Alterar pasta de &amp;anotações…</translation>
+        <translation>Sa&amp;lvar</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -550,7 +554,7 @@
     </message>
     <message>
         <source>&amp;Previous Image</source>
-        <translation>Imagem &amp;Anterior</translation>
+        <translation>&amp;Imagem Anterior</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -602,11 +606,11 @@
     </message>
     <message>
         <source>&amp;Show Shapes</source>
-        <translation>Mostrar &amp;formas</translation>
+        <translation>&amp;Mostrar formas</translation>
     </message>
     <message>
         <source>&amp;Toggle Shapes</source>
-        <translation>Alternar &amp;formas</translation>
+        <translation>&amp;Alternar formas</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -666,7 +670,7 @@
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>&amp;Ajuda</translation>
+        <translation>A&amp;juda</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -718,7 +722,7 @@
     </message>
     <message>
         <source>Fit to S&amp;election</source>
-        <translation>Ajustar à &amp;Seleção</translation>
+        <translation>Aj&amp;ustar à Seleção</translation>
     </message>
     <message>
         <source>Could not reset the Config File.
@@ -851,10 +855,6 @@
         <translation>Polígono</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>Salvar &amp;Como…</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label…</source>
         <translation>&amp;Editar Rótulo…</translation>
     </message>
@@ -966,7 +966,7 @@ Local esperado: {path}</translation>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>Manter Zoom &amp;Anterior</translation>
+        <translation>Manter &amp;Zoom Anterior</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

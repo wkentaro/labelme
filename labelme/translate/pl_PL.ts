@@ -294,7 +294,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Zakończ</translation>
+        <translation>Za&amp;kończ</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -305,16 +305,12 @@
         <translation>&amp;Następny obraz</translation>
     </message>
     <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Zapisuj &amp;automatycznie</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>Zapisuj automatycznie</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>&amp;Zamknij</translation>
+        <translation>Za&amp;mknij</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -361,8 +357,16 @@
         <translation>Zapisz plik adnotacji</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Zapisz &amp;jako…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Zapisz plik adnotacji pod nową nazwą</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Zapisuj &amp;automatycznie</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -371,6 +375,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>Zapisuje kopię obrazu wewnątrz pliku adnotacji</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Zmień &amp;folder adnotacji…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -442,11 +450,11 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>Powiększ (&amp;I)</translation>
+        <translation>P&amp;owiększ</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>Pomniejsz (&amp;Z)</translation>
+        <translation>Po&amp;mniejsz</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -487,10 +495,6 @@
     <message>
         <source>&amp;Save</source>
         <translation>&amp;Zapisz</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Zmień folder &amp;adnotacji…</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -558,7 +562,7 @@
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>Dopasuj do okna (&amp;W)</translation>
+        <translation>&amp;Dopasuj do okna</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -570,7 +574,7 @@
     </message>
     <message>
         <source>&amp;Brightness/Contrast…</source>
-        <translation>Jasność/Kontrast (&amp;B)…</translation>
+        <translation>&amp;Jasność/Kontrast…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -666,7 +670,7 @@
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>&amp;Pomoc</translation>
+        <translation>P&amp;omoc</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -718,7 +722,7 @@
     </message>
     <message>
         <source>Fit to S&amp;election</source>
-        <translation>Dopasuj do zaznaczenia (&amp;E)</translation>
+        <translation>Dop&amp;asuj do zaznaczenia</translation>
     </message>
     <message>
         <source>Could not reset the Config File.
@@ -851,10 +855,6 @@
         <translation>Wielokąt</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>Zapisz &amp;jako…</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label…</source>
         <translation>&amp;Edytuj etykietę…</translation>
     </message>
@@ -966,7 +966,7 @@ Oczekiwana lokalizacja: {path}</translation>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>Zachowaj poprzedni zoom (&amp;K)</translation>
+        <translation>&amp;Zachowaj poprzedni zoom</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>

@@ -305,10 +305,6 @@
         <translation>รูปถัดไป (&amp;N)</translation>
     </message>
     <message>
-        <source>Save &amp;Automatically</source>
-        <translation>บันทึกอัตโนมัติ (&amp;A)</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>บันทึกอัตโนมัติ</translation>
     </message>
@@ -361,8 +357,16 @@
         <translation>บันทึกไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>บันทึกเป็น (&amp;A)…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>บันทึกไฟล์คำอธิบายประกอบด้วยชื่อใหม่</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>บันทึกอัตโนมัติ (&amp;T)</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -371,6 +375,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>เก็บสำเนาของรูปภาพไว้ในไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>เปลี่ยนโฟลเดอร์แอนโนเทชัน (&amp;F)…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -490,10 +498,6 @@
         <translation>บันทึก (&amp;S)</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>เปลี่ยนโฟลเดอร์แอนโนเทชัน (&amp;A)…</translation>
-    </message>
-    <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>เลือกตำแหน่งที่จะอ่านและบันทึกไฟล์แอนโนเทชัน</translation>
     </message>
@@ -583,7 +587,7 @@
     </message>
     <message>
         <source>&amp;Actual Size</source>
-        <translation>ขนาด&amp;จริง</translation>
+        <translation>ขนาดจริง(&amp;จ)</translation>
     </message>
     <message>
         <source>Show the image at 100%</source>
@@ -850,10 +854,6 @@
     <message>
         <source>Polygon</source>
         <translation>หลายเหลี่ยม</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>บันทึกเป็น (&amp;S)…</translation>
     </message>
     <message>
         <source>&amp;Edit Label…</source>

@@ -294,7 +294,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>Çı&amp;kış</translation>
+        <translation>&amp;Çıkış</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -305,16 +305,12 @@
         <translation>&amp;Sonraki Görüntü</translation>
     </message>
     <message>
-        <source>Save &amp;Automatically</source>
-        <translation>&amp;Otomatik Kaydet</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>Otomatik kaydet</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>K&amp;apat</translation>
+        <translation>Ka&amp;pat</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -361,8 +357,16 @@
         <translation>Açıklama dosyasını kaydet</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>&amp;Farklı Kaydet…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Açıklama dosyasını yeni bir adla kaydet</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>&amp;Otomatik Kaydet</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -373,12 +377,16 @@
         <translation>Görüntünün bir kopyasını açıklama dosyasının içinde saklar</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Açıklama Klasörünü &amp;Değiştir…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Görüntü veya açıklama dosyası aç</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>Açıklama Dosyasını &amp;Sil</translation>
+        <translation>Açık&amp;lama Dosyasını Sil</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -489,10 +497,6 @@
         <translation>&amp;Kaydet</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>&amp;Açıklama Klasörünü Değiştir…</translation>
-    </message>
-    <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Açıklama dosyalarının okunup kaydedileceği yeri seçin</translation>
     </message>
@@ -570,7 +574,7 @@
     </message>
     <message>
         <source>&amp;Brightness/Contrast…</source>
-        <translation>&amp;Parlaklık/Kontrast…</translation>
+        <translation>Pa&amp;rlaklık/Kontrast…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -582,7 +586,7 @@
     </message>
     <message>
         <source>&amp;Actual Size</source>
-        <translation>&amp;Gerçek Boyut</translation>
+        <translation>Gerçek &amp;Boyut</translation>
     </message>
     <message>
         <source>Show the image at 100%</source>
@@ -602,7 +606,7 @@
     </message>
     <message>
         <source>&amp;Show Shapes</source>
-        <translation>Şekilleri &amp;Göster</translation>
+        <translation>Ş&amp;ekilleri Göster</translation>
     </message>
     <message>
         <source>&amp;Toggle Shapes</source>
@@ -851,10 +855,6 @@
         <translation>Çokgen</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>&amp;Farklı Kaydet…</translation>
-    </message>
-    <message>
         <source>&amp;Edit Label…</source>
         <translation>Etiketi &amp;Düzenle…</translation>
     </message>
@@ -966,7 +966,7 @@ Beklenen konum: {path}</translation>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>Önceki &amp;Yakınlaştırmayı Koru</translation>
+        <translation>Önceki Yakınlaştırmayı &amp;Koru</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
