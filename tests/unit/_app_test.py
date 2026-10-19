@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import os
 import struct
@@ -736,3 +737,120 @@ def test_scan_image_files_sorts_top_level_and_nested_files_together(
     assert _app._scan_image_files(root_dir=".") == [
         os.path.normpath(name) for name in expected
     ]
+
+
+@pytest.mark.parametrize("name", ["..a", "..b"])
+def test_dot_prefixed_subfolders_stay_below_annotation_folder(
+    *, tmp_path: Path, name: str
+) -> None:
+    images = tmp_path / "images"
+    out = tmp_path / "annotations"
+    image = images / name / "x.png"
+    assert _app._resolve_label_path(
+        image_or_label_path=str(image), output_dir=out, root_dir=images
+    ) == str(out / name / "x.json")
+    assert _app._resolve_disambiguated_label_path(
+        image_path=str(image), output_dir=out, root_dir=images
+    ) == str(out / name / "x.png.json")
+
+
+@pytest.mark.parametrize(
+    "names",
+    [("x.jpg", "x.png"), ("X.jpg", "x.png"), ("\u00e9.jpg", "e\u0301.png")],
+)
+def test_save_destination_keeps_existing_image_annotation(
+    *, tmp_path: Path, names: tuple[str, str]
+) -> None:
+    first, second = (tmp_path / name for name in names)
+    first.touch()
+    second.touch()
+    assert _app._has_sibling_stem_collision(image_path=str(first))
+    assert _app._has_sibling_stem_collision(image_path=str(second))
+    owned = first.with_suffix(".json")
+    owned.write_text(json.dumps({"imagePath": first.name}))
+    # On case-sensitive filesystems differently cased/normalized stems do not
+    # collide on disk; keep their conventional names in that case.
+    default = second.with_suffix(".json")
+    expected = second.with_name(second.name + ".json") if default.exists() else default
+    assert _app._resolve_save_label_path(
+        image_path=str(second), output_dir=None, root_dir=None
+    ) == str(expected)
+    assert json.loads(owned.read_text())["imagePath"] == first.name
+
+
+def test_existing_disambiguated_annotation_survives_an_unrelated_mirrored_file(
+    *, tmp_path: Path
+) -> None:
+    image = tmp_path / "x.jpg"
+    image.touch()
+    mirrored = tmp_path / "x.json"
+    mirrored.write_text(json.dumps({"imagePath": "another_folder/x.jpg"}))
+    disambiguated = tmp_path / "x.jpg.json"
+    disambiguated.write_text(json.dumps({"imagePath": image.name}))
+    assert _app._find_existing_label_path(
+        image_path=str(image), output_dir=None, root_dir=None
+    ) == str(disambiguated)
+    assert _app._resolve_save_label_path(
+        image_path=str(image), output_dir=None, root_dir=None
+    ) == str(disambiguated)
+
+
+@pytest.mark.parametrize("candidate", ["canonical", "disambiguated", "legacy-flat"])
+def test_missing_stored_path_can_only_use_matching_embedded_canonical_annotation(
+    *, tmp_path: Path, candidate: str
+) -> None:
+    images = tmp_path / "images"
+    image = images / "subfolder" / "x.jpg"
+    image.parent.mkdir(parents=True)
+    image.write_bytes(b"identical-image-data" * 10000)
+    out = tmp_path / "annotations"
+    label = {
+        "canonical": out / "subfolder" / "x.json",
+        "disambiguated": out / "subfolder" / "x.jpg.json",
+        "legacy-flat": out / "x.json",
+    }[candidate]
+    label.parent.mkdir(parents=True)
+    raw = {
+        "imagePath": "missing.jpg",
+        "imageData": base64.b64encode(image.read_bytes()).decode(),
+    }
+    label.write_text(json.dumps(raw))
+    expected = str(label) if candidate == "canonical" else None
+    assert (
+        _app._find_existing_label_path(
+            image_path=str(image), output_dir=out, root_dir=images
+        )
+        == expected
+    )
+    if candidate != "canonical":
+        return
+
+    # Matching embedded bytes cannot override a valid pointer to another Image.
+    (label.parent / "missing.jpg").write_bytes(image.read_bytes())
+    assert (
+        _app._find_existing_label_path(
+            image_path=str(image), output_dir=out, root_dir=images
+        )
+        is None
+    )
+    (label.parent / "missing.jpg").unlink()
+
+    # Ambiguous same-stem siblings must never share an embedded Annotation.
+    sibling = image.with_suffix(".png")
+    sibling.write_bytes(image.read_bytes())
+    assert (
+        _app._find_existing_label_path(
+            image_path=str(image), output_dir=out, root_dir=images
+        )
+        is None
+    )
+    sibling.unlink()
+
+    raw["imageData"] = base64.b64encode(b"different-image-data").decode()
+    label.write_text(json.dumps(raw))
+    assert (
+        _app._find_existing_label_path(
+            image_path=str(image), output_dir=out, root_dir=images
+        )
+        is None
+    )

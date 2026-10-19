@@ -623,12 +623,14 @@ def test_subfolder_images_with_same_name_have_unique_annotation_files(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("auto_save", [False, True], ids=["manual-save", "auto-save"])
 def test_legacy_flat_annotation_folder_backward_compatibility(
     *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
     tmp_path: Path,
+    auto_save: bool,
 ) -> None:
     images = tmp_path / "images"
     (images / "a").mkdir(parents=True)
@@ -667,7 +669,9 @@ def test_legacy_flat_annotation_folder_backward_compatibility(
         encoding="utf-8",
     )
 
-    win = main_win(file_or_dir=images, output_dir=out)
+    win = main_win(
+        file_or_dir=images, output_dir=out, config_overrides={"auto_save": auto_save}
+    )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     # Row 0 (a/0001.jpg) is checked via fallback; row 1 (b/0001.jpg) is unchecked
@@ -683,6 +687,31 @@ def test_legacy_flat_annotation_folder_backward_compatibility(
     qtbot.waitUntil(lambda: win._file_list_image_path == str(b_img))
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     assert len(win._canvas_widgets.canvas.shapes) == 0
+
+    legacy_bytes = flat_ann.read_bytes()
+    win._commit_shapes(
+        [Shape(label="new_b", points=np.array([[10.0, 10.0], [30.0, 30.0]]))]
+    )
+    if not auto_save:
+        win.save_labels(label_path=win.current_label_file_path())
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy and not win._is_changed)
+    assert flat_ann.read_bytes() == legacy_bytes
+    assert (out / "b" / "0001.json").exists()
+    assert _check_states(win) == [Qt.CheckState.Checked, Qt.CheckState.Checked]
+
+    win._docks.file_list.setCurrentRow(0)
+    qtbot.waitUntil(lambda: win._file_list_image_path == str(a_img))
+    assert win._canvas_widgets.canvas.shapes[0].label == "legacy_box"
+    win._commit_shapes(
+        [Shape(label="updated_a", points=np.array([[15.0, 15.0], [35.0, 35.0]]))]
+    )
+    if not auto_save:
+        win._save_label_file(save_as=False)
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy and not win._is_changed)
+    assert json.loads(flat_ann.read_text())["shapes"][0]["label"] == "updated_a"
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(lambda: win._file_list_image_path == str(b_img))
+    assert win._canvas_widgets.canvas.shapes[0].label == "new_b"
 
 
 @pytest.mark.gui
@@ -722,3 +751,260 @@ def test_same_folder_shared_stem_isolation(
     qtbot.waitUntil(lambda: win._file_list_image_path == str(x_png))
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     assert len(win._canvas_widgets.canvas.shapes) == 0
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("auto_save", [False, True], ids=["manual-save", "auto-save"])
+@pytest.mark.parametrize("subfolders", [False, True], ids=["shared-stem", "dot-prefix"])
+def test_colliding_images_keep_separate_annotations_after_saving_both(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    auto_save: bool,
+    subfolders: bool,
+) -> None:
+    images = tmp_path / "images"
+    first = images / "..a" / "0001.jpg" if subfolders else images / "x.jpg"
+    second = images / "..b" / "0001.jpg" if subfolders else images / "x.png"
+    for image in (first, second):
+        image.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(data_path / "raw" / "2011_000003.jpg", image)
+    out = tmp_path / "annotations" if subfolders else images
+    out.mkdir(exist_ok=True)
+    win = main_win(
+        file_or_dir=images,
+        output_dir=out if subfolders else None,
+        config_overrides={"auto_save": auto_save},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    monkeypatch.setattr(
+        QtWidgets.QFileDialog,
+        "getSaveFileName",
+        lambda **kwargs: (kwargs["dir"], ""),
+    )
+
+    paths: list[Path] = []
+    saved_bytes: list[bytes] = []
+    for row, (image, label) in enumerate(
+        ((first, "first_only"), (second, "second_only"))
+    ):
+        win._docks.file_list.setCurrentRow(row)
+        qtbot.waitUntil(lambda: win._file_list_image_path == str(image))
+        assert win._image_path == str(image)
+        assert not win._canvas_widgets.canvas.shapes
+        destination = Path(win.current_label_file_path())
+        win._commit_shapes(
+            [Shape(label=label, points=np.array([[10.0, 10.0], [30.0, 30.0]]))]
+        )
+        if not auto_save:
+            win._save_label_file(save_as=False)
+        qtbot.waitUntil(lambda: not win._save_writer.is_busy and not win._is_changed)
+        paths.append(destination)
+        saved_bytes.append(destination.read_bytes())
+        assert _check_states(win) == [
+            Qt.CheckState.Checked,
+            Qt.CheckState.Checked if row else Qt.CheckState.Unchecked,
+        ]
+
+    assert paths[0] != paths[1]
+    assert paths[0].read_bytes() == saved_bytes[0]
+    if subfolders:
+        assert paths == [out / "..a" / "0001.json", out / "..b" / "0001.json"]
+        assert not (out / "0001.json").exists()
+    else:
+        assert paths == [images / "x.json", images / "x.png.json"]
+    if subfolders:
+        assert _footer_text(win) == f"2 of 2 annotated in {out.name}"
+
+    # A fresh session must reopen each Image's own Shapes, not just checkmarks.
+    win.close()
+    reopened = main_win(
+        file_or_dir=images,
+        output_dir=out if subfolders else None,
+        config_overrides={"auto_save": auto_save},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=reopened)
+    for row, (image, label) in enumerate(
+        ((first, "first_only"), (second, "second_only"))
+    ):
+        reopened._docks.file_list.setCurrentRow(row)
+        qtbot.waitUntil(lambda: reopened._file_list_image_path == str(image))
+        assert reopened._image_path == str(image)
+        assert [shape.label for shape in reopened._canvas_widgets.canvas.shapes] == [
+            label
+        ]
+        assert reopened.current_label_file_path() == str(paths[row])
+        # Later auto-save must keep the disambiguated file rather than x.json.
+        reopened._commit_shapes(
+            [
+                Shape(
+                    label=label + "_updated",
+                    points=np.array([[15.0, 15.0], [35.0, 35.0]]),
+                )
+            ]
+        )
+        if not auto_save:
+            reopened._save_label_file(save_as=False)
+        qtbot.waitUntil(
+            lambda: not reopened._save_writer.is_busy and not reopened._is_changed
+        )
+        assert (
+            json.loads(paths[row].read_text())["shapes"][0]["label"]
+            == label + "_updated"
+        )
+
+
+@pytest.mark.gui
+def test_save_as_uses_safe_default_and_honors_explicit_overwrite(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    images = tmp_path / "images"
+    images.mkdir()
+    for name in ("x.jpg", "x.png"):
+        shutil.copy(data_path / "raw" / "2011_000003.jpg", images / name)
+    win = main_win(file_or_dir=images, config_overrides={"auto_save": False})
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    win._commit_shapes(
+        [Shape(label="first_only", points=np.array([[10.0, 10.0], [30.0, 30.0]]))]
+    )
+    owned = Path(win.current_label_file_path())
+    assert win.save_labels(label_path=str(owned))
+    before = owned.read_bytes()
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(lambda: win._file_list_image_path == str(images / "x.png"))
+    win._commit_shapes(
+        [Shape(label="second_only", points=np.array([[15.0, 15.0], [35.0, 35.0]]))]
+    )
+    assert not win.save_labels(label_path=str(owned), show_error=False)
+    assert win._is_changed
+    assert owned.read_bytes() == before
+
+    default = images / "x.png.json"
+    defaults: list[str] = []
+
+    def choose_default(**kwargs: str) -> tuple[str, str]:
+        defaults.append(kwargs["dir"])
+        return kwargs["dir"], ""
+
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName", choose_default)
+    win._save_label_file(save_as=True)
+    assert defaults == [str(default)]
+    assert win.current_label_file_path() == str(default)
+    win._actions.save_auto.setChecked(True)
+    win._commit_shapes(
+        [Shape(label="second_updated", points=np.array([[20.0, 20.0], [40.0, 40.0]]))]
+    )
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy and not win._is_changed)
+    assert json.loads(default.read_text())["shapes"][0]["label"] == "second_updated"
+    assert owned.read_bytes() == before
+
+    # An explicit Save As choice has already passed the native overwrite
+    # confirmation. Preserve that existing behavior, including later Auto Save.
+    monkeypatch.setattr(
+        QtWidgets.QFileDialog, "getSaveFileName", lambda **_kwargs: (str(owned), "")
+    )
+    win._save_label_file(save_as=True)
+    assert win.current_label_file_path() == str(owned)
+    assert json.loads(owned.read_text())["imagePath"] == "x.png"
+    win._commit_shapes(
+        [
+            Shape(
+                label="confirmed_overwrite", points=np.array([[5.0, 5.0], [25.0, 25.0]])
+            )
+        ]
+    )
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy and not win._is_changed)
+    assert json.loads(owned.read_text())["shapes"][0]["label"] == "confirmed_overwrite"
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("auto_save", [False, True], ids=["manual-save", "auto-save"])
+def test_opened_annotation_keeps_manual_destination_and_auto_save_honors_folder(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    auto_save: bool,
+) -> None:
+    source = data_path / "annotated" / "2011_000003.json"
+    original_bytes = source.read_bytes()
+    out = tmp_path / "annotations"
+    win = main_win(
+        file_or_dir=source, output_dir=out, config_overrides={"auto_save": auto_save}
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    destination = out / source.name
+    assert win.current_label_file_path() == str(source)
+    win._commit_shapes(
+        [
+            Shape(
+                label="copied_annotation", points=np.array([[10.0, 10.0], [30.0, 30.0]])
+            )
+        ]
+    )
+    if not auto_save:
+        win._save_label_file(save_as=False)
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy and not win._is_changed)
+    if auto_save:
+        assert source.read_bytes() == original_bytes
+        assert win.current_label_file_path() == str(destination)
+    else:
+        assert not destination.exists()
+        destination = source
+    assert (
+        json.loads(destination.read_text())["shapes"][0]["label"] == "copied_annotation"
+    )
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("contents", [b"{broken", b'{"shapes": []}'])
+@pytest.mark.parametrize("auto_save", [False, True], ids=["manual-save", "auto-save"])
+def test_damaged_disambiguated_annotation_is_not_silently_overwritten(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    critical_messages: list[str],
+    contents: bytes,
+    auto_save: bool,
+) -> None:
+    images = tmp_path / "images"
+    images.mkdir()
+    for name in ("x.jpg", "x.png"):
+        shutil.copy(data_path / "raw" / "2011_000003.jpg", images / name)
+    win = main_win(file_or_dir=images, config_overrides={"auto_save": auto_save})
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    win._commit_shapes(
+        [Shape(label="first_only", points=np.array([[10.0, 10.0], [30.0, 30.0]]))]
+    )
+    if not auto_save:
+        assert win.save_labels(label_path=win.current_label_file_path())
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy and not win._is_changed)
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(lambda: win._file_list_image_path == str(images / "x.png"))
+    damaged = images / "x.png.json"
+    damaged.write_bytes(contents)
+    # The file can appear after opening, before the next edit/Auto Save.
+    win._commit_shapes(
+        [Shape(label="second_only", points=np.array([[15.0, 15.0], [35.0, 35.0]]))]
+    )
+    if not auto_save:
+        assert not win.save_labels(label_path=str(damaged), show_error=False)
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+    assert win._is_changed
+    assert win._status_bar.save.text() == "Save failed"
+    assert damaged.read_bytes() == contents
+    assert not win._load_file(image_or_label_path=str(images / "x.png"))
+    assert critical_messages
+    assert damaged.read_bytes() == contents
+    win.mark_clean()
