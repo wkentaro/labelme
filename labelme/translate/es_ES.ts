@@ -258,6 +258,10 @@
         <translation>Etiqueta de forma</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Etiqueta del objeto</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Etiqueta</translation>
     </message>

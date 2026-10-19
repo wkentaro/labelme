@@ -258,6 +258,10 @@
         <translation>圖形標籤</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>輸入物件標籤</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>標籤</translation>
     </message>

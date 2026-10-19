@@ -258,12 +258,16 @@
         <translation>Étiquette de forme</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Étiquette de l’objet</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Étiquette</translation>
     </message>
     <message>
         <source>Group ID</source>
-        <translation>Identifiant du groupe</translation>
+        <translation>ID du groupe</translation>
     </message>
     <message>
         <source>Description</source>

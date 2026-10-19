@@ -258,6 +258,10 @@
         <translation>Nhãn hình dạng</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Nhập nhãn đối tượng</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Nhãn</translation>
     </message>

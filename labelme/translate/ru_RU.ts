@@ -258,12 +258,16 @@
         <translation>Метка фигуры</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Метка объекта</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Метка</translation>
     </message>
     <message>
         <source>Group ID</source>
-        <translation>Идентификатор группы</translation>
+        <translation>ID группы</translation>
     </message>
     <message>
         <source>Description</source>

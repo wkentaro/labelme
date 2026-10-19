@@ -258,6 +258,10 @@
         <translation>เลเบลรูปร่าง</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>ป้อนเลเบลของวัตถุ</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>เลเบล</translation>
     </message>

@@ -258,6 +258,10 @@
         <translation>形状标签</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>输入对象标签</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>标签</translation>
     </message>

@@ -258,6 +258,10 @@
         <translation>برچسب شکل</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>برچسب شیء را وارد کنید</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>برچسب</translation>
     </message>

@@ -258,6 +258,10 @@
         <translation>Мітка фігури</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Введіть мітку об’єкта</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Мітка</translation>
     </message>

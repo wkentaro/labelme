@@ -258,12 +258,16 @@
         <translation>Alakzat címkéje</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Objektum címkéje</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Címke</translation>
     </message>
     <message>
         <source>Group ID</source>
-        <translation>Csoportazonosító</translation>
+        <translation>Csoport-ID</translation>
     </message>
     <message>
         <source>Description</source>

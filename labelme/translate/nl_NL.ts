@@ -258,6 +258,10 @@
         <translation>Vormlabel</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Voer het objectlabel in</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Label</translation>
     </message>

@@ -258,6 +258,10 @@
         <translation>Rótulo da forma</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Digite o rótulo do objeto</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Rótulo</translation>
     </message>

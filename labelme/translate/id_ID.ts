@@ -258,6 +258,10 @@
         <translation>Label Bentuk</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Masukkan label objek</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Label</translation>
     </message>

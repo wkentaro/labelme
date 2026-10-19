@@ -258,6 +258,10 @@
         <translation>Şekil Etiketi</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Nesne etiketini girin</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Etiket</translation>
     </message>

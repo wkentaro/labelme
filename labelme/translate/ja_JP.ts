@@ -258,6 +258,10 @@
         <translation>図形のラベル</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>オブジェクトのラベルを入力</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>ラベル</translation>
     </message>
