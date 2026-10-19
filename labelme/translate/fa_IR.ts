@@ -258,6 +258,10 @@
         <translation>برچسب شکل</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>برچسب شیء را وارد کنید</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>برچسب</translation>
     </message>
@@ -303,10 +307,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>تصویر بعدی(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>ذخیره خودکار(&amp;A)</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -361,8 +361,16 @@
         <translation>ذخیره فایل حاشیه‌نویسی</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>ذخیره با نام دیگر(&amp;A)…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>ذخیره فایل حاشیه‌نویسی با نام جدید</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>ذخیره خودکار(&amp;T)</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -371,6 +379,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>یک نسخه از تصویر را داخل فایل حاشیه‌نویسی ذخیره می‌کند</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>تغییر پوشهٔ حاشیه‌نویسی(&amp;F)…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -489,10 +501,6 @@
         <translation>ذخیره(&amp;S)</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>تغییر پوشهٔ حاشیه‌نویسی(&amp;A)…</translation>
-    </message>
-    <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>انتخاب محل خواندن و ذخیرهٔ پرونده‌های حاشیه‌نویسی</translation>
     </message>
@@ -582,7 +590,7 @@
     </message>
     <message>
         <source>&amp;Actual Size</source>
-        <translation>اندازهٔ &amp;واقعی</translation>
+        <translation>اندازهٔ واقعی(&amp;و)</translation>
     </message>
     <message>
         <source>Show the image at 100%</source>
@@ -849,10 +857,6 @@
     <message>
         <source>Polygon</source>
         <translation>چندضلعی</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>ذخیره با نام دیگر(&amp;S)…</translation>
     </message>
     <message>
         <source>&amp;Edit Label…</source>

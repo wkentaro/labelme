@@ -124,6 +124,28 @@ def new_icon(name: str, /) -> QtGui.QIcon:
     return QtGui.QIcon(path)
 
 
+def _toolbar_label(text: str, /) -> str:
+    # Two lines at most, so no language's label grows the toolbar taller.
+    # Toolbar labels name the command, so they drop the menu's ellipsis, and
+    # toolbar buttons don't use mnemonics, so the "(&O)" form that CJK
+    # translations use goes too. A translation without spaces (e.g. Japanese)
+    # marks its own break with "\n"; otherwise the break goes where the two
+    # lines come out closest in length, or at a slash.
+    label = re.sub(r"\s*\(&\w\)", "", text).removesuffix("…")
+    if "\n" in label:
+        return label
+    if "/" in label:  # "Brightness/Contrast": each half names one thing
+        return "\n".join(part.strip() for part in label.split("/", 1))
+    words = label.split()
+    if not words[1:]:
+        return label
+    split = min(
+        range(1, len(words)),
+        key=lambda i: max(len(" ".join(words[:i])), len(" ".join(words[i:]))),
+    )
+    return " ".join(words[:split]) + "\n" + " ".join(words[split:])
+
+
 def new_action(
     parent: QtCore.QObject,
     /,
@@ -150,14 +172,7 @@ def new_action(
     action.setChecked(checked)
     action.setEnabled(enabled)
     if icon:
-        # Tool buttons show the icon text; stacking words keeps them narrow.
-        # Toolbar labels name the command, so they drop the menu's ellipsis.
-        # Toolbar buttons don't use mnemonics, and the "(&O)" form that CJK
-        # translations use would show as "(O)".
-        icon_text = re.sub(r"\s*\(&\w\)", "", text).removesuffix("…")
-        if "\n" not in icon_text:
-            icon_text = icon_text.replace(" ", "\n").replace("/", "\n")
-        action.setIconText(icon_text)
+        action.setIconText(_toolbar_label(text))
     if slot:
         action.triggered.connect(slot)
     return action

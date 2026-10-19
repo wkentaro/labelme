@@ -11,6 +11,7 @@ from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
 from labelme._utils._qt import _TintedSvgIconEngine
+from labelme._utils._qt import _toolbar_label
 from labelme._utils._qt import direction_angle
 from labelme._utils._qt import modifier_text
 from labelme._utils._qt import new_action
@@ -386,3 +387,20 @@ def test_new_action_drops_cjk_mnemonic_from_toolbar_label(*, qtbot: QtBot) -> No
     action = new_action(parent, text="保存(&S)", icon="phosphor/floppy-disk.svg")
     assert action.text() == "保存(&S)"
     assert action.iconText() == "保存"
+
+
+@pytest.mark.parametrize(
+    ("text", "label"),
+    [
+        ("&Save", "&Save"),
+        ("&Open File…", "&Open\nFile"),
+        ("&Brightness/Contrast…", "&Brightness\nContrast"),
+        ("&Delete Annotation File", "&Delete\nAnnotation File"),
+        ("Supprimer le fichier d'annotations", "Supprimer le fichier\nd'annotations"),
+        ("Hình ảnh Tiếp theo(&N)", "Hình ảnh\nTiếp theo"),
+        ("Độ sáng/Độ tương phản(&B)…", "Độ sáng\nĐộ tương phản"),
+        ("図形を\n編集", "図形を\n編集"),
+    ],
+)
+def test_toolbar_label_wraps_to_two_balanced_lines(*, text: str, label: str) -> None:
+    assert _toolbar_label(text) == label

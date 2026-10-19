@@ -258,12 +258,16 @@
         <translation>Étiquette de forme</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Étiquette de l’objet</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Étiquette</translation>
     </message>
     <message>
         <source>Group ID</source>
-        <translation>Identifiant du groupe</translation>
+        <translation>ID du groupe</translation>
     </message>
     <message>
         <source>Description</source>
@@ -303,10 +307,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>Image &amp;suivante</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Enregistrer &amp;automatiquement</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -361,8 +361,16 @@
         <translation>Enregistrer le fichier d’annotations</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>E&amp;nregistrer sous…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Enregistrer le fichier d’annotations sous un nouveau nom</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Enregistrer &amp;automatiquement</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -373,12 +381,16 @@
         <translation>Enregistre une copie de l’image dans le fichier d’annotations</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>&amp;Changer le dossier d’annotations…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Ouvrir une image ou un fichier d’annotations</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>&amp;Supprimer le fichier d’annotations</translation>
+        <translation>Supprimer &amp;le fichier d’annotations</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -442,11 +454,11 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>Zoom &amp;avant</translation>
+        <translation>&amp;Zoom avant</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>Zoom &amp;arrière</translation>
+        <translation>Z&amp;oom arrière</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -487,10 +499,6 @@
     <message>
         <source>&amp;Save</source>
         <translation>&amp;Enregistrer</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Changer le dossier d’&amp;annotations…</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -558,7 +566,7 @@
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>&amp;Adapter à la fenêtre</translation>
+        <translation>Adapter à &amp;la fenêtre</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -570,7 +578,7 @@
     </message>
     <message>
         <source>&amp;Brightness/Contrast…</source>
-        <translation>&amp;Luminosité/Contraste…</translation>
+        <translation>L&amp;uminosité/Contraste…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -666,7 +674,7 @@
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>&amp;Aide</translation>
+        <translation>A&amp;ide</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -849,10 +857,6 @@
     <message>
         <source>Polygon</source>
         <translation>Polygone</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>Enregistrer &amp;sous…</translation>
     </message>
     <message>
         <source>&amp;Edit Label…</source>
@@ -1238,7 +1242,7 @@ Emplacement attendu : {path}</translation>
     </message>
     <message>
         <source>Continue between images</source>
-        <translation>Continuer d’une image à l’autre</translation>
+        <translation>Passage entre images</translation>
     </message>
     <message>
         <source>Label sources</source>

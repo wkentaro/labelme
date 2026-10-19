@@ -9,6 +9,7 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from labelme._app import MainWindow
+from labelme._locale import TRANSLATE_DIR
 
 from .conftest import MainWinFactory
 
@@ -215,3 +216,44 @@ def test_menu_text_avoids_glossary_terms(*, main_win: MainWinFactory) -> None:
     ]
     found = {term for term in avoided_terms for text in texts if term in text}
     assert found == set()
+
+
+def _mnemonic(text: str, /) -> str | None:
+    # Inline "&File", or the "(&F)" form CJK translations use.
+    match = re.search(r"&([^&\s])", text.replace("&&", ""))
+    return match.group(1).lower() if match else None
+
+
+def _menu_texts(win: MainWindow, /) -> dict[str, list[str]]:
+    menus: dict[str, QtWidgets.QWidget] = {"menu bar": win.menuBar()}
+    for name in ("file", "edit", "view", "help", "label_list"):
+        menus[name] = getattr(win._menus, name)
+    menus["canvas"] = win._canvas_widgets.canvas.context_menu
+    return {
+        name: [a.text() for a in widget.actions() if not a.isSeparator()]
+        for name, widget in menus.items()
+    }
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "language", sorted(path.stem for path in TRANSLATE_DIR.glob("*.qm"))
+)
+def test_menu_mnemonics_are_unique_in_every_language(
+    *, main_win: MainWinFactory, language: str
+) -> None:
+    # Windows and Linux open a menu item with Alt plus its mnemonic, so two
+    # items sharing one in a menu can't both be reached that way, and an item
+    # whose English text has one should keep one when translated.
+    english = _menu_texts(_english_window(main_win))
+    translated = _menu_texts(main_win(config_overrides={"language": language}))
+    for name, texts in translated.items():
+        keys = [_mnemonic(text) for text in texts]
+        duplicates = sorted({k for k in keys if k is not None and keys.count(k) > 1})
+        assert duplicates == [], (name, texts)
+        dropped = [
+            text
+            for text, source in zip(texts, english[name], strict=True)
+            if _mnemonic(source) and not _mnemonic(text)
+        ]
+        assert dropped == [], name

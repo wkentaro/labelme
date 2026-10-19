@@ -258,6 +258,10 @@
         <translation>圖形標籤</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>輸入物件標籤</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>標籤</translation>
     </message>
@@ -303,10 +307,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>下一張影像(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>自動儲存(&amp;A)</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -361,8 +361,16 @@
         <translation>儲存標註檔案</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>另存新檔(&amp;A)…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>以新名稱儲存標註檔案</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>自動儲存(&amp;T)</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -371,6 +379,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>在標註檔案中儲存一份影像副本</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>變更標註資料夾(&amp;F)…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -487,10 +499,6 @@
     <message>
         <source>&amp;Save</source>
         <translation>儲存(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>變更標註資料夾(&amp;A)…</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -849,10 +857,6 @@
     <message>
         <source>Polygon</source>
         <translation>多邊形</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>另存新檔(&amp;S)…</translation>
     </message>
     <message>
         <source>&amp;Edit Label…</source>

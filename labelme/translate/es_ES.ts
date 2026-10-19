@@ -258,6 +258,10 @@
         <translation>Etiqueta de forma</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Etiqueta del objeto</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Etiqueta</translation>
     </message>
@@ -294,7 +298,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Salir</translation>
+        <translation>Sali&amp;r</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -305,16 +309,12 @@
         <translation>Imagen &amp;siguiente</translation>
     </message>
     <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Guardar &amp;automáticamente</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>Guardar automáticamente</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>&amp;Cerrar</translation>
+        <translation>C&amp;errar</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -361,8 +361,16 @@
         <translation>Guardar el archivo de anotaciones</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Guardar &amp;como…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Guardar el archivo de anotaciones con otro nombre</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>G&amp;uardar automáticamente</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -373,12 +381,16 @@
         <translation>Guarda una copia de la imagen dentro del archivo de anotaciones</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Cambiar carpeta &amp;de anotaciones…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Abrir una imagen o un archivo de anotaciones</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>&amp;Eliminar archivo de anotaciones</translation>
+        <translation>E&amp;liminar archivo de anotaciones</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -442,11 +454,11 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>&amp;Acercar</translation>
+        <translation>A&amp;cercar</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>&amp;Alejar</translation>
+        <translation>A&amp;lejar</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -487,10 +499,6 @@
     <message>
         <source>&amp;Save</source>
         <translation>&amp;Guardar</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Cambiar carpeta de &amp;anotaciones…</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -550,7 +558,7 @@
     </message>
     <message>
         <source>&amp;Previous Image</source>
-        <translation>Imagen &amp;anterior</translation>
+        <translation>&amp;Imagen anterior</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -570,7 +578,7 @@
     </message>
     <message>
         <source>&amp;Brightness/Contrast…</source>
-        <translation>Brillo/&amp;Contraste…</translation>
+        <translation>&amp;Brillo/Contraste…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -602,11 +610,11 @@
     </message>
     <message>
         <source>&amp;Show Shapes</source>
-        <translation>Mostrar &amp;formas</translation>
+        <translation>&amp;Mostrar formas</translation>
     </message>
     <message>
         <source>&amp;Toggle Shapes</source>
-        <translation>Alternar &amp;formas</translation>
+        <translation>&amp;Alternar formas</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -666,7 +674,7 @@
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>&amp;Ayuda</translation>
+        <translation>A&amp;yuda</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -849,10 +857,6 @@
     <message>
         <source>Polygon</source>
         <translation>Polígono</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>Guardar &amp;como…</translation>
     </message>
     <message>
         <source>&amp;Edit Label…</source>

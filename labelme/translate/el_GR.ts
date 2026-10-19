@@ -258,12 +258,16 @@
         <translation>Ετικέτα σχήματος</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Ετικέτα αντικειμένου</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Ετικέτα</translation>
     </message>
     <message>
         <source>Group ID</source>
-        <translation>Αναγνωριστικό ομάδας</translation>
+        <translation>ID ομάδας</translation>
     </message>
     <message>
         <source>Description</source>
@@ -273,16 +277,16 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Αποθήκευση &amp;αυτόματα</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>Αυτόματη αποθήκευση</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Αλλαγή φακέλου &amp;σχολιασμών…</translation>
+    </message>
+    <message>
         <source>&amp;Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation>&amp;Κλείσιμο</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -386,7 +390,7 @@
     </message>
     <message>
         <source>&amp;Next Image</source>
-        <translation>Επόμενη εικόνα</translation>
+        <translation>&amp;Επόμενη εικόνα</translation>
     </message>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
@@ -398,11 +402,11 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>&amp; Μεγέθυνση</translation>
+        <translation>&amp;Μεγέθυνση</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>&amp;Σμίκρυνση</translation>
+        <translation>Σμ&amp;ίκρυνση</translation>
     </message>
     <message>
         <source>Reset Layout</source>
@@ -502,15 +506,11 @@
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>Αποθήκευση</translation>
+        <translation>&amp;Αποθήκευση</translation>
     </message>
     <message>
         <source>Save the annotation file</source>
         <translation>Αποθήκευση αρχείου επισημειώσεων</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>Αποθήκευση &amp;ως…</translation>
     </message>
     <message>
         <source>Save the annotation file under a new name</source>
@@ -525,16 +525,12 @@
         <translation>Αποθηκεύει ένα αντίγραφο της εικόνας μέσα στο αρχείο επισημειώσεων</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Αλλαγή φακέλου &amp;σχολιασμών…</translation>
-    </message>
-    <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Επιλογή του πού διαβάζονται και αποθηκεύονται τα αρχεία σχολιασμών</translation>
     </message>
     <message>
         <source>&amp;Open File…</source>
-        <translation>Άνοιγμα αρχείου…</translation>
+        <translation>&amp;Άνοιγμα αρχείου…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -610,11 +606,11 @@
     </message>
     <message>
         <source>&amp;Toggle Shapes</source>
-        <translation>&amp;Εναλλαγή σχημάτων</translation>
+        <translation>Εναλλαγή &amp;σχημάτων</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>Τερματισμός</translation>
+        <translation>&amp;Τερματισμός</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -630,7 +626,7 @@
     </message>
     <message>
         <source>&amp;Tutorial</source>
-        <translation>&amp; Εκμάθηση</translation>
+        <translation>&amp;Εκμάθηση</translation>
     </message>
     <message>
         <source>Show tutorial page</source>
@@ -638,19 +634,19 @@
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>Αρχείο</translation>
+        <translation>&amp;Αρχείο</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>Επεξεργασία</translation>
+        <translation>&amp;Επεξεργασία</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>Προβολή</translation>
+        <translation>&amp;Προβολή</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>Βοήθεια</translation>
+        <translation>&amp;Βοήθεια</translation>
     </message>
     <message>
         <source>Tools</source>
@@ -837,6 +833,14 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Πολύγωνο</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Αποθήκευση &amp;ως…</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Απ&amp;οθήκευση αυτόματα</translation>
+    </message>
+    <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Εισαγωγή των σχημάτων του προχείρου σε αυτήν την εικόνα</translation>
     </message>
@@ -874,7 +878,7 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>&amp;Προσαρμογή παραθύρου</translation>
+        <translation>Π&amp;ροσαρμογή παραθύρου</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -882,7 +886,7 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
     </message>
     <message>
         <source>Fit to S&amp;election</source>
-        <translation>Προσαρμογή στην &amp;επιλογή</translation>
+        <translation>Πρ&amp;οσαρμογή στην επιλογή</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>

@@ -258,6 +258,10 @@
         <translation>도형 레이블</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>객체 레이블 입력</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>레이블</translation>
     </message>
@@ -303,10 +307,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>다음 이미지(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>자동 저장(&amp;A)</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -361,8 +361,16 @@
         <translation>주석 파일 저장</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>다른 이름으로 저장(&amp;A)…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>주석 파일을 새 이름으로 저장</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>자동 저장(&amp;T)</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -371,6 +379,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>이미지 사본을 주석 파일 안에 저장합니다</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>주석 폴더 변경(&amp;F)…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -487,10 +499,6 @@
     <message>
         <source>&amp;Save</source>
         <translation>저장(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>주석 폴더 변경(&amp;A)…</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -849,10 +857,6 @@
     <message>
         <source>Polygon</source>
         <translation>다각형</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>다른 이름으로 저장(&amp;S)…</translation>
     </message>
     <message>
         <source>&amp;Edit Label…</source>

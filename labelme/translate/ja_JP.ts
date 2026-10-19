@@ -258,6 +258,10 @@
         <translation>図形のラベル</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>オブジェクトのラベルを入力</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>ラベル</translation>
     </message>
@@ -304,10 +308,6 @@
         <source>&amp;Next Image</source>
         <translation>次の
 画像(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>自動保存(&amp;A)</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -364,8 +364,16 @@
         <translation>アノテーションファイルを保存</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>名前を付けて保存(&amp;A)…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>アノテーションファイルを別名で保存</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>自動保存(&amp;T)</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -374,6 +382,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>画像のコピーをアノテーションファイル内に保存します</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>アノテーションフォルダーを変更(&amp;F)…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -492,10 +504,6 @@
     <message>
         <source>&amp;Save</source>
         <translation>保存(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>アノテーションフォルダーを変更(&amp;A)…</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -858,10 +866,6 @@
     <message>
         <source>Polygon</source>
         <translation>ポリゴン</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>名前を付けて保存(&amp;A)…</translation>
     </message>
     <message>
         <source>&amp;Edit Label…</source>

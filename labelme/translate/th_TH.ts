@@ -258,6 +258,10 @@
         <translation>เลเบลรูปร่าง</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>ป้อนเลเบลของวัตถุ</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>เลเบล</translation>
     </message>
@@ -303,10 +307,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>รูปถัดไป (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>บันทึกอัตโนมัติ (&amp;A)</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -361,8 +361,16 @@
         <translation>บันทึกไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>บันทึกเป็น (&amp;A)…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>บันทึกไฟล์คำอธิบายประกอบด้วยชื่อใหม่</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>บันทึกอัตโนมัติ (&amp;T)</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -373,12 +381,17 @@
         <translation>เก็บสำเนาของรูปภาพไว้ในไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>เปลี่ยนโฟลเดอร์แอนโนเทชัน (&amp;F)…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>เปิดรูปภาพหรือไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>ลบไฟล์คำอธิบายประกอบ (&amp;D)</translation>
+        <translation>ลบไฟล์
+คำอธิบายประกอบ (&amp;D)</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -489,10 +502,6 @@
         <translation>บันทึก (&amp;S)</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>เปลี่ยนโฟลเดอร์แอนโนเทชัน (&amp;A)…</translation>
-    </message>
-    <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>เลือกตำแหน่งที่จะอ่านและบันทึกไฟล์แอนโนเทชัน</translation>
     </message>
@@ -582,7 +591,7 @@
     </message>
     <message>
         <source>&amp;Actual Size</source>
-        <translation>ขนาด&amp;จริง</translation>
+        <translation>ขนาดจริง(&amp;จ)</translation>
     </message>
     <message>
         <source>Show the image at 100%</source>
@@ -849,10 +858,6 @@
     <message>
         <source>Polygon</source>
         <translation>หลายเหลี่ยม</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>บันทึกเป็น (&amp;S)…</translation>
     </message>
     <message>
         <source>&amp;Edit Label…</source>
@@ -1238,7 +1243,7 @@ Expected location: {path}</source>
     </message>
     <message>
         <source>Continue between images</source>
-        <translation>การทำงานต่อเนื่องระหว่างภาพ</translation>
+        <translation>เมื่อเปลี่ยนภาพ</translation>
     </message>
     <message>
         <source>Label sources</source>

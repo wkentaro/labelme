@@ -258,6 +258,10 @@
         <translation>Мітка фігури</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Введіть мітку об’єкта</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Мітка</translation>
     </message>
@@ -273,16 +277,16 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>Save &amp;Automatically</source>
-        <translation>&amp;Автоматично зберегти</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>Зберегти автоматично</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>З&amp;мінити папку анотацій…</translation>
+    </message>
+    <message>
         <source>&amp;Close</source>
-        <translation>&amp;Закрити</translation>
+        <translation>За&amp;крити</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -402,7 +406,7 @@
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>&amp;Зменшити</translation>
+        <translation>З&amp;меншити</translation>
     </message>
     <message>
         <source>Reset Layout</source>
@@ -494,7 +498,7 @@
     </message>
     <message>
         <source>&amp;About %s</source>
-        <translation>&amp;Про %s</translation>
+        <translation>П&amp;ро %s</translation>
     </message>
     <message>
         <source>About %s</source>
@@ -509,10 +513,6 @@
         <translation>Зберегти файл анотацій</translation>
     </message>
     <message>
-        <source>&amp;Save As…</source>
-        <translation>&amp;Зберегти як…</translation>
-    </message>
-    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Зберегти файл анотацій під новою назвою</translation>
     </message>
@@ -523,10 +523,6 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>Зберігає копію зображення всередині файлу анотацій</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Змінити папку &amp;анотацій…</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -550,7 +546,7 @@
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>&amp;Видалити файл анотацій</translation>
+        <translation>Видалити &amp;файл анотацій</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -606,15 +602,15 @@
     </message>
     <message>
         <source>&amp;Show Shapes</source>
-        <translation>&amp;Показати фігури</translation>
+        <translation>Показати &amp;фігури</translation>
     </message>
     <message>
         <source>&amp;Toggle Shapes</source>
-        <translation>&amp;Переключити фігури</translation>
+        <translation>П&amp;ереключити фігури</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Вийти</translation>
+        <translation>В&amp;ийти</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -837,6 +833,14 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Багатокутник</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Зберегти &amp;як…</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>&amp;Автоматично зберегти</translation>
+    </message>
+    <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Вставити фігури з буфера обміну в це зображення</translation>
     </message>
@@ -874,7 +878,7 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>&amp;Припасувати вікно</translation>
+        <translation>Припасувати &amp;вікно</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -882,7 +886,7 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
     </message>
     <message>
         <source>Fit to S&amp;election</source>
-        <translation>За &amp;виділенням</translation>
+        <translation>З&amp;а виділенням</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -986,7 +990,7 @@ Expected location: {path}</source>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>&amp;Зберегти попередній масштаб</translation>
+        <translation>З&amp;берегти попередній масштаб</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
@@ -1238,7 +1242,7 @@ Expected location: {path}</source>
     </message>
     <message>
         <source>Continue between images</source>
-        <translation>Продовження роботи між зображеннями</translation>
+        <translation>Під час зміни зображення</translation>
     </message>
     <message>
         <source>Label sources</source>

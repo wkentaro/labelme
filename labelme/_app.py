@@ -462,14 +462,14 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         save_as = image_action(
-            text=self.tr("&Save As…"),
+            text=self.tr("Save &As…"),
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
             icon="phosphor/floppy-disk-back.svg",
             tip=self.tr("Save the annotation file under a new name"),
         )
         save_auto = action(
-            text=self.tr("Save &Automatically"),
+            text=self.tr("Save Au&tomatically"),
             tip=self.tr("Save automatically"),
             checkable=True,
             enabled=True,
@@ -482,7 +482,7 @@ class MainWindow(QtWidgets.QMainWindow):
             checked=self._config["with_image_data"],
         )
         change_output_dir = action(
-            text=self.tr("Change &Annotation Folder…"),
+            text=self.tr("Change Annotation &Folder…"),
             slot=self.prompt_output_dir,
             shortcut=shortcuts["save_to"],
             icon="phosphor/folders.svg",

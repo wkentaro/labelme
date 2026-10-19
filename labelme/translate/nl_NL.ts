@@ -258,6 +258,10 @@
         <translation>Vormlabel</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Voer het objectlabel in</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Label</translation>
     </message>
@@ -294,7 +298,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Afsluiten</translation>
+        <translation>A&amp;fsluiten</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -305,16 +309,12 @@
         <translation>Volgende &amp;Afbeelding</translation>
     </message>
     <message>
-        <source>Save &amp;Automatically</source>
-        <translation>&amp;Automatisch opslaan</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>Automatisch opslaan</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>&amp;Sluiten</translation>
+        <translation>S&amp;luiten</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -361,8 +361,16 @@
         <translation>Annotatiebestand opslaan</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Op&amp;slaan als…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Annotatiebestand opslaan onder een nieuwe naam</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>A&amp;utomatisch opslaan</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -373,12 +381,16 @@
         <translation>Slaat een kopie van de afbeelding op in het annotatiebestand</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Annotatiemap &amp;wijzigen…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Afbeelding of annotatiebestand openen</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>Annotatiebestand &amp;verwijderen</translation>
+        <translation>A&amp;nnotatiebestand verwijderen</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -486,11 +498,7 @@
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;Opslaan</translation>
-    </message>
-    <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>&amp;Annotatiemap wijzigen…</translation>
+        <translation>O&amp;pslaan</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
@@ -550,7 +558,7 @@
     </message>
     <message>
         <source>&amp;Previous Image</source>
-        <translation>Vorige &amp;afbeelding</translation>
+        <translation>&amp;Vorige afbeelding</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -558,7 +566,7 @@
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>Aanpassen aan &amp;venster</translation>
+        <translation>&amp;Aanpassen aan venster</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -658,11 +666,11 @@
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>&amp;Bewerken</translation>
+        <translation>B&amp;ewerken</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>&amp;Beeld</translation>
+        <translation>Bee&amp;ld</translation>
     </message>
     <message>
         <source>&amp;Help</source>
@@ -849,10 +857,6 @@
     <message>
         <source>Polygon</source>
         <translation>Polygoon</translation>
-    </message>
-    <message>
-        <source>&amp;Save As…</source>
-        <translation>Opslaan &amp;als…</translation>
     </message>
     <message>
         <source>&amp;Edit Label…</source>
