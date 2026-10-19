@@ -83,10 +83,11 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     win = main_win(config_file=config)
     assist = win._ai_annotation._model_combo
     text = win._ai_text._model_combo
-    for picker in (assist, text):
+    for picker, display in ((assist, "Sam3"), (text, "SAM3 (smart)")):
         assert picker.currentIndex() == -1
         assert picker.findData(name) >= 0
-        assert "Unavailable" in picker.placeholderText()
+        assert picker.placeholderText() == display
+        assert picker.toolTip() == f"Unavailable: {display}"
     assert not requests
     assert win._config["ai"]["text_model"] == name
 
@@ -333,7 +334,8 @@ def test_picker_downloads_and_selects_a_missing_model_in_place(
     assert safe_load(config.read_text())["ai"]["default"] == "Sam2 (speed)"
     qtbot.waitUntil(lambda: requests == ["/slow"])
     assert picker.currentIndex() == -1
-    assert picker.placeholderText() == "Downloading: Sam2 (speed)"
+    assert picker.placeholderText() == "Sam2 (speed)"
+    assert picker.toolTip() == "Downloading: Sam2 (speed)"
     assert win._models_dialog is None
     release.set()
     qtbot.waitUntil(lambda: picker.currentData() == name)

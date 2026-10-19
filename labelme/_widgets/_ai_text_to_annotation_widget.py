@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Final
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -87,6 +88,24 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         model_combo.model_changed.connect(self.model_changed)
         model_combo.manage_requested.connect(self.manage_models_requested)
         model_combo.download_requested.connect(self.download_requested)
+        # Room for the longest model name, which shows even before its download.
+        model_combo.ensurePolished()
+        metrics = model_combo.fontMetrics()
+        longest = max(
+            metrics.horizontalAdvance(display) for _, display in AI_TEXT_MODEL_OPTIONS
+        )
+        option = QtWidgets.QStyleOptionComboBox()
+        model_combo.initStyleOption(option)
+        model_combo.setMinimumWidth(
+            model_combo.style()
+            .sizeFromContents(
+                QtWidgets.QStyle.ContentsType.CT_ComboBox,
+                option,
+                QtCore.QSize(longest, metrics.height()),
+                model_combo,
+            )
+            .width()
+        )
         settings_layout.addWidget(model_combo, stretch=1)
 
         # Size and mute these via QFont and a palette role, never a stylesheet:
@@ -130,7 +149,9 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         body_layout.addLayout(grid)
         layout.addWidget(body)
 
-        self.setMaximumWidth(320)
+        # Compact, but never narrower than a language's labels need.
+        COMPACT_WIDTH: Final[int] = 320
+        self.setMaximumWidth(max(COMPACT_WIDTH, self.minimumSizeHint().width()))
 
     def get_text_prompt(self) -> str:
         return self._text_input.text()
