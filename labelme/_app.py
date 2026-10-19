@@ -416,6 +416,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         about = action(
             text=f"&About {__appname__}",
+            icon="phosphor/info.svg",
             slot=functools.partial(
                 QMessageBox.about,
                 self,
@@ -601,6 +602,7 @@ class MainWindow(QtWidgets.QMainWindow):
         add_point_to_edge = action(
             text=self.tr("Add Point to Edge"),
             slot=self._canvas_widgets.canvas.add_point_to_edge,
+            icon="phosphor/plus-circle.svg",
             tip=self.tr("Insert a new point at the hovered polygon edge"),
             enabled=False,
         )
@@ -980,7 +982,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Quit"),
             slot=self.close,
             shortcut=shortcuts["quit"],
-            icon=None,
+            icon="phosphor/power.svg",
             tip=self.tr("Quit application"),
         )
         settings_editable = self._is_settings_editable
@@ -988,7 +990,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Settings…"),
             slot=self._open_settings,
             shortcut="Ctrl+," if platform.system() == "Darwin" else "Ctrl+Shift+,",
-            icon=None,
+            icon="phosphor/gear-six.svg",
             tip=(
                 self.tr("Edit settings")
                 if settings_editable
@@ -1000,7 +1002,7 @@ class MainWindow(QtWidgets.QMainWindow):
         open_models = action(
             text=self.tr("AI Models…"),
             slot=self._open_models,
-            icon=None,
+            icon="phosphor/cube.svg",
             tip=self.tr("Download or delete AI models"),
         )
         help_ = action(
