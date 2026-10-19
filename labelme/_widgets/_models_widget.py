@@ -12,6 +12,28 @@ from .._ai_models import find_ai_assist_model_option
 from .._model_manager import ModelManager
 
 
+def license_link(model_name: str, /) -> str:
+    import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
+    metadata = osam.apis.get_model_metadata(model_name)
+    return (
+        f'<a href="{html.escape(metadata.license_url, quote=True)}">'
+        f"{html.escape(metadata.license_name)}</a>"
+    )
+
+
+def license_notice(model_name: str, /) -> str | None:
+    # Licenses with use restrictions must be read before downloading.
+    if model_name != "sam3:latest":
+        return None
+    return QtCore.QCoreApplication.translate(
+        "ModelsWidget",
+        "SAM3 use is subject to the SAM License, including "
+        "trade-control and end-use restrictions. Read the full "
+        "agreement before downloading or using it.",
+    )
+
+
 class ModelsWidget(QtWidgets.QWidget):
     def __init__(
         self, *, manager: ModelManager, remove_model: Callable[[str], None]
@@ -89,35 +111,22 @@ class ModelsWidget(QtWidgets.QWidget):
             if name in {model for model, _ in AI_TEXT_MODEL_OPTIONS}:
                 capabilities.append(self.tr("Text prompts"))
             row_layout.addWidget(QtWidgets.QLabel(" · ".join(capabilities)), 2, 0, 1, 2)
-            import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
-
-            metadata = osam.apis.get_model_metadata(name)
-            license_link = QtWidgets.QLabel(
-                self.tr("License: {license}").format(
-                    license=(
-                        f'<a href="{html.escape(metadata.license_url, quote=True)}">'
-                        f"{html.escape(metadata.license_name)}</a>"
-                    ),
-                )
+            license_label = QtWidgets.QLabel(
+                self.tr("License: {license}").format(license=license_link(name))
             )
-            license_link.setWordWrap(True)
-            self._links[license_link] = license_link.text()
-            license_link.setTextInteractionFlags(
+            license_label.setWordWrap(True)
+            self._links[license_label] = license_label.text()
+            license_label.setTextInteractionFlags(
                 QtCore.Qt.TextInteractionFlag.LinksAccessibleByMouse
                 | QtCore.Qt.TextInteractionFlag.LinksAccessibleByKeyboard
             )
-            license_link.setOpenExternalLinks(True)
-            row_layout.addWidget(license_link, 3, 0, 1, 2)
-            if name == "sam3:latest":
-                notice = QtWidgets.QLabel(
-                    self.tr(
-                        "SAM3 use is subject to the SAM License, including "
-                        "trade-control and end-use restrictions. Read the full "
-                        "agreement before downloading or using it."
-                    )
-                )
-                notice.setWordWrap(True)
-                row_layout.addWidget(notice, 4, 0, 1, 2)
+            license_label.setOpenExternalLinks(True)
+            row_layout.addWidget(license_label, 3, 0, 1, 2)
+            notice = license_notice(name)
+            if notice is not None:
+                notice_label = QtWidgets.QLabel(notice)
+                notice_label.setWordWrap(True)
+                row_layout.addWidget(notice_label, 4, 0, 1, 2)
             status = QtWidgets.QLabel()
             status.setTextFormat(QtCore.Qt.TextFormat.PlainText)
             status.setWordWrap(True)
@@ -214,7 +223,7 @@ class ModelsWidget(QtWidgets.QWidget):
 
     def _show_error(self, model_name: str, /) -> None:
         message = QtWidgets.QMessageBox(self)
-        message.setWindowTitle(self.tr("Failed"))
+        message.setWindowTitle(self.tr("Download Failed"))
         message.setIcon(QtWidgets.QMessageBox.Icon.Warning)
         message.setText(self._manager.models[model_name])
         message.setInformativeText(
@@ -223,20 +232,51 @@ class ModelsWidget(QtWidgets.QWidget):
         message.setDetailedText(self._manager.errors.get(model_name, ""))
         message.exec()
 
-    def _delete(self, model_name: str, /) -> None:
-        answer = QtWidgets.QMessageBox.question(
-            self,
-            self.tr("Delete model"),
+    def _confirm_delete(self, model_name: str, /) -> bool:
+        message = QtWidgets.QMessageBox(self)
+        message.setIcon(QtWidgets.QMessageBox.Icon.Question)
+        message.setWindowTitle(self.tr("Delete Model"))
+        message.setText(
             self.tr(
                 "Delete {model} from this computer? Its selections will be cleared. "
                 "Your annotations will not change."
-            ).format(model=self._manager.models[model_name]),
-            QtWidgets.QMessageBox.StandardButton.Yes
-            | QtWidgets.QMessageBox.StandardButton.Cancel,
-            QtWidgets.QMessageBox.StandardButton.Cancel,
+            ).format(model=self._manager.models[model_name])
         )
-        if answer == QtWidgets.QMessageBox.StandardButton.Yes:
-            try:
-                self._remove_model(model_name)
-            except OSError as error:
-                QtWidgets.QMessageBox.warning(self, self.tr("Delete model"), str(error))
+        delete = message.addButton(
+            self.tr("Delete"), QtWidgets.QMessageBox.ButtonRole.DestructiveRole
+        )
+        cancel = message.addButton(QtWidgets.QMessageBox.StandardButton.Cancel)
+        message.setDefaultButton(cancel)
+        message.exec()
+        return message.clickedButton() is delete
+
+    def _delete(self, model_name: str, /) -> None:
+        if not self._confirm_delete(model_name):
+            return
+        try:
+            self._remove_model(model_name)
+        except OSError as error:
+            QtWidgets.QMessageBox.warning(self, self.tr("Delete Model"), str(error))
+
+
+class ModelsDialog(QtWidgets.QDialog):
+    def __init__(
+        self,
+        *,
+        manager: ModelManager,
+        remove_model: Callable[[str], None],
+        parent: QtWidgets.QWidget | None = None,
+    ) -> None:
+        super().__init__(parent)
+        self.setWindowTitle(self.tr("AI Models"))
+        self._scroll_area = scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setWidget(ModelsWidget(manager=manager, remove_model=remove_model))
+        buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.StandardButton.Close
+        )
+        buttons.rejected.connect(self.close)
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.addWidget(scroll_area)
+        layout.addWidget(buttons)
+        self.resize(560, 590)

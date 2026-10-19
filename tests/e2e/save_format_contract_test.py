@@ -292,7 +292,7 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
 
     title, message, details = messages[0]
     # Qt ignores message-box window titles on macOS.
-    assert title == ("" if sys.platform == "darwin" else "Image not found")
+    assert title == ("" if sys.platform == "darwin" else "Image Not Found")
     assert "does_not_exist.jpg" in message
     assert str(tmp_path / image_path) in message
     assert "imagePath" not in message

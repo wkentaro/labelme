@@ -328,7 +328,7 @@ def test_annotation_folder_footer_follows_changes(
     assert _footer_text(win) == "3 of 3 annotated · next to images"
     assert set(_check_states(win)) == {Qt.CheckState.Checked}
 
-    _menu_action(win, "Choose Annotation Folder…").trigger()
+    _menu_action(win, "Change Annotation Folder…").trigger()
     assert win._output_dir == annotation_folder
     assert _footer_text(win) == "0 of 3 annotated in annotations"
     assert set(_check_states(win)) == {Qt.CheckState.Unchecked}
@@ -402,7 +402,7 @@ def test_missing_folder_warning_survives_a_refused_folder(
     win._load_from_file_or_dir(file_or_dir=str(images))
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
-    _menu_action(win, "Choose Annotation Folder…").trigger()
+    _menu_action(win, "Change Annotation Folder…").trigger()
 
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
     assert win._output_dir is None
