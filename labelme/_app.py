@@ -1485,10 +1485,10 @@ class MainWindow(QtWidgets.QMainWindow):
             + f"\n\n{source}\n{message}"
         )
         keep_file = msg_box.addButton(
-            self.tr("Continue with defaults"), QMessageBox.ButtonRole.AcceptRole
+            self.tr("Continue with Defaults"), QMessageBox.ButtonRole.AcceptRole
         )
         reset_all = msg_box.addButton(
-            self.tr("Back up and reset"), QMessageBox.ButtonRole.ResetRole
+            self.tr("Back Up and Reset"), QMessageBox.ButtonRole.ResetRole
         )
         reset_all.setEnabled(can_reset)
         msg_box.setDefaultButton(keep_file)
@@ -1507,7 +1507,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 continue
             QMessageBox.information(
                 self,
-                self.tr("Back up and reset"),
+                self.tr("Back Up and Reset"),
                 self.tr("Configuration backup saved to %s") % backup.resolve(),
             )
             return config_file, fallback
@@ -1817,7 +1817,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if "label" not in locked and not self.validate_label(label=entry.label):
             self.show_error_message(
-                title=self.tr("Invalid label"),
+                title=self.tr("Invalid Label"),
                 message=self.tr("Invalid label '{}' with validation type '{}'").format(
                     entry.label, self._config["validate_label"]
                 ),
@@ -2076,7 +2076,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_save_failure(label_path=label_path, error=e)
             if show_error:
                 self.show_error_message(
-                    title=self.tr("Error saving annotation file"),
+                    title=self.tr("Error Saving Annotation File"),
                     message=self.tr("<b>%s</b>") % e,
                 )
             return False
@@ -2175,7 +2175,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if entry is not None and not self.validate_label(label=entry.label):
             self.show_error_message(
-                title=self.tr("Invalid label"),
+                title=self.tr("Invalid Label"),
                 message=self.tr("Invalid label '{}' with validation type '{}'").format(
                     entry.label, self._config["validate_label"]
                 ),
@@ -2470,7 +2470,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self, *, requirement: ImageDecodeRequirement, limit_mb: int
     ) -> bool:
         msg_box = QtWidgets.QMessageBox(self)
-        msg_box.setWindowTitle(self.tr("Large image"))
+        msg_box.setWindowTitle(self.tr("Large Image"))
         msg_box.setText(self.tr("Large image requires more memory"))
         msg_box.setInformativeText(
             self.tr(
@@ -2529,7 +2529,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         if not QtCore.QFile.exists(image_or_label_path):
             self.show_error_message(
-                title=self.tr("Error opening file"),
+                title=self.tr("Error Opening File"),
                 message=self.tr("No such file: <b>%s</b>") % image_or_label_path,
             )
             return False
@@ -2861,7 +2861,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         image_or_label_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            self.tr("%s - Open File") % __appname__,
+            self.tr("Open File"),
             self.current_path(),
             filters,
         )
@@ -2879,7 +2879,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         output_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self,
-            self.tr("%s - Choose Annotation Folder") % __appname__,
+            self.tr("Choose Annotation Folder"),
             default_output_dir,
             QtWidgets.QFileDialog.Option.ShowDirsOnly
             | QtWidgets.QFileDialog.Option.DontResolveSymlinks,
@@ -2991,7 +2991,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _confirm_deletion(self, *, message: str) -> bool:
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
-        msg_box.setWindowTitle(self.tr("Attention"))
+        msg_box.setWindowTitle(self.tr("Delete Annotation File"))
         msg_box.setText(message)
         delete_button = msg_box.addButton(
             self.tr("Delete"), QtWidgets.QMessageBox.ButtonRole.DestructiveRole
@@ -3019,7 +3019,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         except OSError as error:
             self.show_error_message(
-                title=self.tr("Error deleting annotation file"), message=str(error)
+                title=self.tr("Error Deleting Annotation File"), message=str(error)
             )
             return
         self._failed_save_path = None
@@ -3418,7 +3418,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         user_choice = QtWidgets.QMessageBox.question(
             self,
-            self.tr("Unsaved changes"),
+            self.tr("Unsaved Changes"),
             prompt_text,
             QtWidgets.QMessageBox.StandardButton.Save
             | QtWidgets.QMessageBox.StandardButton.Discard
@@ -3446,7 +3446,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if isinstance(exc, ImageNotFoundError):
             dialog = QtWidgets.QMessageBox(self)
             dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-            dialog.setWindowTitle(self.tr("Image not found"))
+            dialog.setWindowTitle(self.tr("Image Not Found"))
             dialog.setTextFormat(Qt.TextFormat.PlainText)
             dialog.setText(
                 self.tr(
@@ -3478,7 +3478,7 @@ class MainWindow(QtWidgets.QMainWindow):
             message = f"{message}\n\n{exc}"
         if extra:
             message = f"{message}\n\n{extra}"
-        QtWidgets.QMessageBox.critical(self, self.tr("Error opening file"), message)
+        QtWidgets.QMessageBox.critical(self, self.tr("Error Opening File"), message)
         self.show_status_message(self.tr("Failed to load: {path}").format(path=path))
 
     def current_path(self) -> str:
@@ -3617,7 +3617,7 @@ class MainWindow(QtWidgets.QMainWindow):
         dir_path = str(
             QtWidgets.QFileDialog.getExistingDirectory(
                 self,
-                self.tr("%s - Browse Image Folder") % __appname__,
+                self.tr("Open Folder"),
                 default_open_dir_path,
                 QtWidgets.QFileDialog.Option.ShowDirsOnly
                 | QtWidgets.QFileDialog.Option.DontResolveSymlinks,

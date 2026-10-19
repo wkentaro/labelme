@@ -675,16 +675,12 @@
         <translation>今回は初期設定で続行できます。リセットする場合は、先に設定ファイルのバックアップを保存します。</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>フォルダーを開く</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>コマンドラインの設定</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>バックアップしてリセット</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>初期設定で続行</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -717,10 +713,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>無効なラベル</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>ラベル &apos;{}&apos; は検証タイプ &apos;{}&apos; では無効です</translation>
     </message>
@@ -749,14 +741,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>選択範囲に合わせる</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>アノテーションファイルの保存エラー</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>大きな画像</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>大きな画像には追加のメモリが必要です</translation>
     </message>
@@ -767,10 +751,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Open Anyway</source>
         <translation>それでも開く</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>ファイルを開けませんでした</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -787,10 +767,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>画像とアノテーションファイル (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>注意</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -823,10 +799,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>アノテーションフォルダーが見つかりません: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - 画像フォルダーを選択</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -905,6 +877,22 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>バウンディングボックスを描画してオブジェクトをセグメント。</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>初期設定で続行</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>バックアップしてリセット</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>無効なラベル</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>アノテーションファイルの保存エラー</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Pointsは利用できません</translation>
     </message>
@@ -915,24 +903,12 @@ Please select a different model or use AI-Box mode.</source>
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - ファイルを開く</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - アノテーションフォルダーを選択</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>アノテーションフォルダー: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>ダウンロード</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>画像が見つかりません</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -961,6 +937,18 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>対応形式: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>アノテーションファイルの削除エラー</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>未保存の変更</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>画像が見つかりません</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -999,6 +987,22 @@ Expected location: {path}</source>
         <translation>このセッションの設定は --config で管理されています</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>大きな画像</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>ファイルを開けませんでした</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>ファイルを開く</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>アノテーションフォルダーを選択</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>アノテーションファイルを保存</translation>
     </message>
@@ -1007,12 +1011,12 @@ Expected location: {path}</source>
         <translation>アノテーションファイル (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>このアノテーションファイルを完全に削除しますか？この操作は元に戻せません。</translation>
+        <source>Delete Annotation File</source>
+        <translation>アノテーションファイルを削除</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>アノテーションファイルの削除エラー</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>このアノテーションファイルを完全に削除しますか？この操作は元に戻せません。</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1140,11 +1144,15 @@ Expected location: {path}</source>
         <translation>ダウンロード</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>ダウンロードに失敗しました</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>ダウンロードに失敗しました。接続を確認して再試行してください。</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>モデルを削除</translation>
     </message>
     <message>

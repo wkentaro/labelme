@@ -677,16 +677,12 @@
         <translation>Sie können vorerst die Standardeinstellungen verwenden. Vor dem Zurücksetzen wird eine Sicherung Ihrer Konfigurationsdatei gespeichert.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Ordner öffnen</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Befehlszeileneinstellungen</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Sichern und zurücksetzen</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Mit Standardwerten fortfahren</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -719,10 +715,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Ungültiges Label</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Ungültiges Label &apos;{}&apos; mit Validierungstyp &apos;{}&apos;</translation>
     </message>
@@ -751,14 +743,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>An Auswahl anpassen</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Fehler beim Speichern der Annotationsdatei</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Großes Bild</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Großes Bild benötigt mehr Arbeitsspeicher</translation>
     </message>
@@ -769,10 +753,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Open Anyway</source>
         <translation>Trotzdem öffnen</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Fehler beim Öffnen der Datei</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -789,10 +769,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Bilder und Annotationsdateien (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Achtung</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -825,10 +801,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Annotationsordner nicht gefunden: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Bilderordner auswählen</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
         <translation>Einen Begrenzungsrahmen zeichnen, um Objekt zu segmentieren.</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Mit Standardwerten fortfahren</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Sichern und zurücksetzen</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Ungültiges Label</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Fehler beim Speichern der Annotationsdatei</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points nicht verfügbar</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Datei öffnen</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Annotationsordner auswählen</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotationsordner: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Herunterladen</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Bild nicht gefunden</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Erlaubte Formate: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Fehler beim Löschen der Annotationsdatei</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Ungespeicherte Änderungen</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Bild nicht gefunden</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Einstellungen werden für diese Sitzung über --config verwaltet</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Großes Bild</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Fehler beim Öffnen der Datei</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Datei öffnen</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Annotationsordner auswählen</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Annotationsdatei speichern</translation>
     </message>
@@ -1001,12 +1005,12 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Annotationsdateien (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Diese Annotationsdatei endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Annotationsdatei löschen</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Fehler beim Löschen der Annotationsdatei</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Diese Annotationsdatei endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Herunterladen</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Download fehlgeschlagen</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Download fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Modell löschen</translation>
     </message>
     <message>

@@ -665,6 +665,14 @@
         <translation>Ρυθμίσεις γραμμής εντολών</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Συνέχεια με προεπιλογές</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Αντίγραφο και επαναφορά</translation>
+    </message>
+    <message>
         <source>Saving…</source>
         <translation>Αποθήκευση…</translation>
     </message>
@@ -681,8 +689,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Αλλάξτε το μοντέλο AI Text-to-Annotation σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Μη έγκυρη ετικέτα</translation>
+        <source>Open Folder</source>
+        <translation>Άνοιγμα φακέλου</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -701,6 +709,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Η αποθήκευση απέτυχε</translation>
     </message>
     <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Σφάλμα αποθήκευσης αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -713,14 +725,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Προσαρμογή στην επιλογή</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Σφάλμα αποθήκευσης αρχείου επισημειώσεων</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Μεγάλη εικόνα</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Η μεγάλη εικόνα απαιτεί περισσότερη μνήμη</translation>
     </message>
@@ -731,10 +735,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>Άνοιγμα ούτως ή άλλως</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Σφάλμα κατά το άνοιγμα του αρχείου</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -751,10 +751,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Εικόνες και αρχεία επισημειώσεων (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Προσοχή</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -787,10 +783,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Ο φάκελος σχολιασμών δεν βρέθηκε: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Επιλογή φακέλου εικόνων</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -881,14 +873,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Μπορείτε προς το παρόν να χρησιμοποιήσετε τις προεπιλεγμένες ρυθμίσεις. Πριν από την επαναφορά θα αποθηκευτεί ένα αντίγραφο ασφαλείας του αρχείου διαμόρφωσής σας.</translation>
     </message>
     <message>
-        <source>Back up and reset</source>
-        <translation>Αντίγραφο και επαναφορά</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Συνέχεια με προεπιλογές</translation>
-    </message>
-    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Δεν ήταν δυνατή η επαναφορά του αρχείου ρυθμίσεων.
@@ -897,6 +881,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Configuration backup saved to %s</source>
         <translation>Το αντίγραφο ασφαλείας των ρυθμίσεων αποθηκεύτηκε στο %s</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Μη έγκυρη ετικέτα</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -909,12 +897,32 @@ Please select a different model or use AI-Box mode.</source>
 Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
     </message>
     <message>
-        <source>Download</source>
-        <translation>Λήψη</translation>
+        <source>Large Image</source>
+        <translation>Μεγάλη εικόνα</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>Η εικόνα δεν βρέθηκε</translation>
+        <source>Error Opening File</source>
+        <translation>Σφάλμα κατά το άνοιγμα του αρχείου</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Άνοιγμα αρχείου</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Επιλογή φακέλου σχολιασμών</translation>
+    </message>
+    <message>
+        <source>Delete Annotation File</source>
+        <translation>Διαγραφή αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Σφάλμα διαγραφής αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Λήψη</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -943,6 +951,14 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Επιτρεπόμενες μορφές: {formats}</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Μη αποθηκευμένες αλλαγές</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Η εικόνα δεν βρέθηκε</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -981,14 +997,6 @@ Expected location: {path}</source>
         <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Άνοιγμα αρχείου</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Επιλογή φακέλου σχολιασμών</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Φάκελος σχολιασμών: %s</translation>
     </message>
@@ -1003,10 +1011,6 @@ Expected location: {path}</source>
     <message>
         <source>Permanently delete this annotation file? This action cannot be undone.</source>
         <translation>Οριστική διαγραφή αυτού του αρχείου επισημειώσεων; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
-    </message>
-    <message>
-        <source>Error deleting annotation file</source>
-        <translation>Σφάλμα διαγραφής αρχείου επισημειώσεων</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Expected location: {path}</source>
         <translation>Λήψη</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Η λήψη απέτυχε</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Η λήψη απέτυχε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Διαγραφή μοντέλου</translation>
     </message>
     <message>

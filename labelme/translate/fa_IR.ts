@@ -669,16 +669,12 @@
         <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>باز کردن پوشه</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>تنظیمات خط فرمان</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>پشتیبان‌گیری و بازنشانی</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>ادامه با پیش‌فرض‌ها</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -711,10 +707,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 مدل AI Text-to-Annotation را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>برچسب نامعتبر</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>برچسب نامعتبر &apos;{}&apos; با نوع اعتبارسنجی &apos;{}&apos;</translation>
     </message>
@@ -743,14 +735,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>تناسب با انتخاب</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>تصویر بزرگ</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>تصویر بزرگ به حافظه بیشتری نیاز دارد</translation>
     </message>
@@ -761,10 +745,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>باز کردن در هر صورت</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>خطا در باز کردن فایل</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -781,10 +761,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>تصاویر و پرونده‌های حاشیه‌نویسی (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>توجه</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -817,10 +793,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>پوشهٔ حاشیه‌نویسی پیدا نشد: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - مرور پوشهٔ تصاویر</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>یک کادر محصورکننده برای قطعه‌بندی شیء رسم کنید.</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>ادامه با پیش‌فرض‌ها</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>پشتیبان‌گیری و بازنشانی</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>برچسب نامعتبر</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points در دسترس نیست</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - باز کردن فایل</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - انتخاب پوشهٔ حاشیه‌نویسی</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>پوشهٔ حاشیه‌نویسی: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>بارگیری</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>تصویر پیدا نشد</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>قالب‌های مجاز: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>خطا در حذف فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>تغییرات ذخیره‌نشده</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>تصویر پیدا نشد</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Expected location: {path}</source>
         <translation>تنظیمات این نشست از طریق --config مدیریت می‌شوند</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>تصویر بزرگ</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>خطا در باز کردن فایل</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>باز کردن فایل</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>انتخاب پوشهٔ حاشیه‌نویسی</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>ذخیره فایل حاشیه‌نویسی</translation>
     </message>
@@ -1001,12 +1005,12 @@ Expected location: {path}</source>
         <translation>فایل‌های حاشیه‌نویسی (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>این فایل حاشیه‌نویسی برای همیشه حذف شود؟ این عمل قابل بازگشت نیست.</translation>
+        <source>Delete Annotation File</source>
+        <translation>حذف فایل حاشیه‌نویسی</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>خطا در حذف فایل حاشیه‌نویسی</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>این فایل حاشیه‌نویسی برای همیشه حذف شود؟ این عمل قابل بازگشت نیست.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Expected location: {path}</source>
         <translation>بارگیری</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>دانلود ناموفق بود</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>دانلود ناموفق بود. اتصال خود را بررسی کنید و دوباره تلاش کنید.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>حذف مدل</translation>
     </message>
     <message>

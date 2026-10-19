@@ -669,16 +669,12 @@
         <translation>Bạn có thể dùng cài đặt mặc định lúc này. Trước khi đặt lại, một bản sao lưu của tệp cấu hình sẽ được lưu.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Mở thư mục</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Cài đặt dòng lệnh</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Sao lưu và đặt lại</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Tiếp tục với mặc định</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -711,10 +707,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Nhãn không hợp lệ</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Nhãn không hợp lệ &apos;{}&apos; với loại xác thực &apos;{}&apos;</translation>
     </message>
@@ -743,14 +735,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Vừa Vùng chọn</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Lỗi khi lưu tệp chú thích</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Ảnh lớn</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Ảnh lớn cần thêm bộ nhớ</translation>
     </message>
@@ -761,10 +745,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Open Anyway</source>
         <translation>Vẫn mở</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Lỗi khi mở tệp</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -781,10 +761,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Hình ảnh và tệp chú thích (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Chú ý</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -817,10 +793,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Không tìm thấy thư mục chú thích: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Duyệt thư mục hình ảnh</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Vẽ một hộp giới hạn để phân đoạn đối tượng.</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Tiếp tục với mặc định</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Sao lưu và đặt lại</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Nhãn không hợp lệ</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Lỗi khi lưu tệp chú thích</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points không khả dụng</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Mở tệp</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Chọn thư mục chú thích</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Thư mục chú thích: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Tải xuống</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Không tìm thấy ảnh</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Định dạng cho phép: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Lỗi khi xóa tệp chú thích</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Thay đổi chưa lưu</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Không tìm thấy ảnh</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Vị trí dự kiến: {path}</translation>
         <translation>Cài đặt được quản lý qua --config trong phiên này</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Ảnh lớn</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Lỗi khi mở tệp</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Mở tệp</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Chọn thư mục chú thích</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Lưu tệp chú thích</translation>
     </message>
@@ -1001,12 +1005,12 @@ Vị trí dự kiến: {path}</translation>
         <translation>Tệp chú thích (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Xóa vĩnh viễn tệp chú thích này? Hành động này không thể hoàn tác.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Xóa tệp chú thích</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Lỗi khi xóa tệp chú thích</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Xóa vĩnh viễn tệp chú thích này? Hành động này không thể hoàn tác.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Vị trí dự kiến: {path}</translation>
         <translation>Tải xuống</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Tải xuống thất bại</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Tải xuống không thành công. Kiểm tra kết nối và thử lại.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Xóa mô hình</translation>
     </message>
     <message>

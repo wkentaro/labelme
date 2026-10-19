@@ -669,16 +669,12 @@
         <translation>지금은 기본 설정을 사용할 수 있습니다. 초기화하기 전에 설정 파일의 백업을 저장합니다.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>폴더 열기</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>명령줄 설정</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>백업 후 초기화</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>기본 설정으로 계속</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -711,10 +707,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>잘못된 레이블</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>검증 유형 &apos;{}&apos;에 대한 잘못된 레이블 &apos;{}&apos;</translation>
     </message>
@@ -743,14 +735,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>선택 항목에 맞추기</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>주석 파일 저장 오류</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>큰 이미지</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>큰 이미지에는 더 많은 메모리가 필요합니다</translation>
     </message>
@@ -761,10 +745,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Open Anyway</source>
         <translation>그래도 열기</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>파일 열기 오류</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -781,10 +761,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>이미지 및 주석 파일 (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>주의</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -817,10 +793,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>주석 폴더를 찾을 수 없음: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - 이미지 폴더 찾아보기</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>바운딩 박스를 그려서 객체를 세그먼트.</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>기본 설정으로 계속</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>백업 후 초기화</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>잘못된 레이블</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>주석 파일 저장 오류</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points 사용 불가</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - 파일 열기</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - 주석 폴더 선택</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>주석 폴더: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>다운로드</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>이미지를 찾을 수 없음</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>지원 형식: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>주석 파일 삭제 오류</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>저장하지 않은 변경 사항</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>이미지를 찾을 수 없음</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Expected location: {path}</source>
         <translation>이 세션의 설정은 --config로 관리됩니다</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>큰 이미지</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>파일 열기 오류</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>파일 열기</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>주석 폴더 선택</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>주석 파일 저장</translation>
     </message>
@@ -1001,12 +1005,12 @@ Expected location: {path}</source>
         <translation>주석 파일 (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>이 주석 파일을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
+        <source>Delete Annotation File</source>
+        <translation>주석 파일 삭제</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>주석 파일 삭제 오류</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>이 주석 파일을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Expected location: {path}</source>
         <translation>다운로드</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>다운로드 실패</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>다운로드에 실패했습니다. 연결을 확인하고 다시 시도하세요.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>모델 삭제</translation>
     </message>
     <message>

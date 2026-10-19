@@ -677,16 +677,12 @@
         <translation>Egyelőre használhatja az alapértelmezett beállításokat. A visszaállítás előtt biztonsági másolat készül a konfigurációs fájlról.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Mappa megnyitása</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Parancssori beállítások</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Biztonsági mentés és visszaállítás</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Folytatás az alapértékekkel</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -719,10 +715,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Érvénytelen címke</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Érvénytelen címke &apos;{}&apos; &apos;{}&apos; validációs típussal</translation>
     </message>
@@ -751,14 +743,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Kijelöléshez igazítás</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Hiba az annotációs fájl mentésekor</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Nagyméretű kép</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>A nagyméretű kép több memóriát igényel</translation>
     </message>
@@ -769,10 +753,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Open Anyway</source>
         <translation>Mégis megnyitás</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Hiba a fájl megnyitásakor</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -789,10 +769,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Képek és annotációs fájlok (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Figyelem</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -825,10 +801,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Az annotációs mappa nem található: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Képmappa tallózása</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Rajzoljon befoglaló keretet az objektum szegmentálásához.</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Folytatás az alapértékekkel</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Biztonsági mentés és visszaállítás</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Érvénytelen címke</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Hiba az annotációs fájl mentésekor</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points nem elérhető</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Fájl megnyitása</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Annotációs mappa kiválasztása</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotációs mappa: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Letöltés</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>A kép nem található</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Várt hely: {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Megengedett formátumok: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Hiba az annotációs fájl törlésekor</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Nem mentett módosítások</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>A kép nem található</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Várt hely: {path}</translation>
         <translation>A beállítások ebben a munkamenetben --config segítségével vannak kezelve</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Nagyméretű kép</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Hiba a fájl megnyitásakor</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Fájl megnyitása</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Annotációs mappa kiválasztása</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Annotációs fájl mentése</translation>
     </message>
@@ -1001,12 +1005,12 @@ Várt hely: {path}</translation>
         <translation>Annotációs fájlok (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Véglegesen törli ezt az annotációs fájlt? Ez a művelet nem vonható vissza.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Annotációs fájl törlése</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Hiba az annotációs fájl törlésekor</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Véglegesen törli ezt az annotációs fájlt? Ez a művelet nem vonható vissza.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Várt hely: {path}</translation>
         <translation>Letöltés</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Sikertelen letöltés</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>A letöltés sikertelen. Ellenőrizze a kapcsolatot, és próbálja újra.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Modell törlése</translation>
     </message>
     <message>

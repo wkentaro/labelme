@@ -665,6 +665,14 @@
         <translation>Налаштування командного рядка</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Продовжити з типовими налаштуваннями</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Створити копію та скинути</translation>
+    </message>
+    <message>
         <source>Saving…</source>
         <translation>Збереження…</translation>
     </message>
@@ -681,8 +689,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Перемкніть модель AI Text-to-Annotation на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Недійсна мітка</translation>
+        <source>Open Folder</source>
+        <translation>Відкрити папку</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -701,6 +709,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Не вдалося зберегти</translation>
     </message>
     <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Помилка збереження файлу анотацій</translation>
+    </message>
+    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -713,14 +725,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>За виділенням</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Помилка збереження файлу анотацій</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Велике зображення</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Для великого зображення потрібно більше пам’яті</translation>
     </message>
@@ -731,10 +735,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>Усе одно відкрити</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Помилка відкриття файлу</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -751,10 +751,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Зображення та файли анотацій (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Увага</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -787,10 +783,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Папку анотацій не знайдено: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Вибрати теку зображень</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -881,14 +873,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Поки що можна використовувати типові налаштування. Перед скиданням буде збережено резервну копію вашого файлу конфігурації.</translation>
     </message>
     <message>
-        <source>Back up and reset</source>
-        <translation>Створити копію та скинути</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Продовжити з типовими налаштуваннями</translation>
-    </message>
-    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Не вдалося скинути файл конфігурації.
@@ -897,6 +881,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Configuration backup saved to %s</source>
         <translation>Резервну копію конфігурації збережено в %s</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Недійсна мітка</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -909,12 +897,32 @@ Please select a different model or use AI-Box mode.</source>
 Будь ласка, виберіть іншу модель або використовуйте режим AI-Box.</translation>
     </message>
     <message>
-        <source>Download</source>
-        <translation>Завантажити</translation>
+        <source>Large Image</source>
+        <translation>Велике зображення</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>Зображення не знайдено</translation>
+        <source>Error Opening File</source>
+        <translation>Помилка відкриття файлу</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Відкрити файл</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Вибрати папку анотацій</translation>
+    </message>
+    <message>
+        <source>Delete Annotation File</source>
+        <translation>Видалити файл анотацій</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Помилка видалення файлу анотацій</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Завантажити</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -943,6 +951,14 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Дозволені формати: {formats}</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Незбережені зміни</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Зображення не знайдено</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -981,14 +997,6 @@ Expected location: {path}</source>
         <translation>Параметри керуються через --config для цього сеансу</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Відкрити файл</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Вибрати папку анотацій</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Папка анотацій: %s</translation>
     </message>
@@ -1003,10 +1011,6 @@ Expected location: {path}</source>
     <message>
         <source>Permanently delete this annotation file? This action cannot be undone.</source>
         <translation>Остаточно видалити цей файл анотацій? Цю дію неможливо скасувати.</translation>
-    </message>
-    <message>
-        <source>Error deleting annotation file</source>
-        <translation>Помилка видалення файлу анотацій</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Expected location: {path}</source>
         <translation>Завантажити</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Помилка завантаження</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Не вдалося завантажити. Перевірте з’єднання та спробуйте ще раз.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Видалити модель</translation>
     </message>
     <message>

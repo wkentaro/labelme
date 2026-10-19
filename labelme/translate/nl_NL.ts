@@ -669,16 +669,12 @@
         <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Map openen</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Opdrachtregelinstellingen</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Back-up maken en resetten</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Doorgaan met standaardinstellingen</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -711,10 +707,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Ongeldig label</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Ongeldig label &apos;{}&apos; met validatietype &apos;{}&apos;</translation>
     </message>
@@ -743,14 +735,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Aanpassen aan selectie</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Fout bij opslaan van annotatiebestand</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Grote afbeelding</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Grote afbeelding vereist meer geheugen</translation>
     </message>
@@ -761,10 +745,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Open Anyway</source>
         <translation>Toch openen</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Fout bij openen van bestand</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -781,10 +761,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Afbeeldingen en annotatiebestanden (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Let op</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -817,10 +793,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Annotatiemap niet gevonden: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Afbeeldingsmap kiezen</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Teken een begrenzingskader om een object te segmenteren.</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Doorgaan met standaardinstellingen</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Back-up maken en resetten</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Ongeldig label</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Fout bij opslaan van annotatiebestand</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points niet beschikbaar</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Bestand openen</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Annotatiemap kiezen</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotatiemap: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Downloaden</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Afbeelding niet gevonden</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Toegestane formaten: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Fout bij het verwijderen van het annotatiebestand</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Niet-opgeslagen wijzigingen</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Afbeelding niet gevonden</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Verwachte locatie: {path}</translation>
         <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Grote afbeelding</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Fout bij openen van bestand</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Bestand openen</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Annotatiemap kiezen</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Annotatiebestand opslaan</translation>
     </message>
@@ -1001,12 +1005,12 @@ Verwachte locatie: {path}</translation>
         <translation>Annotatiebestanden (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Dit annotatiebestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Annotatiebestand verwijderen</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Fout bij het verwijderen van het annotatiebestand</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Dit annotatiebestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Verwachte locatie: {path}</translation>
         <translation>Downloaden</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Downloaden mislukt</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Download mislukt. Controleer uw verbinding en probeer het opnieuw.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Model verwijderen</translation>
     </message>
     <message>

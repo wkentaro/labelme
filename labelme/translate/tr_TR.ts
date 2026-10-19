@@ -669,16 +669,12 @@
         <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Klasör Aç</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Komut satırı ayarları</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Yedekle ve sıfırla</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Varsayılanlarla devam et</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -711,10 +707,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Geçersiz etiket</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>&apos;{}&apos; etiketi &apos;{}&apos; doğrulama türüne göre geçersiz</translation>
     </message>
@@ -743,14 +735,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Seçime Sığdır</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Büyük görüntü</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Büyük görüntü daha fazla bellek gerektiriyor</translation>
     </message>
@@ -761,10 +745,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Open Anyway</source>
         <translation>Yine de Aç</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Dosya açılırken hata oluştu</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -781,10 +761,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Görüntüler ve açıklama dosyaları (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Dikkat</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -817,10 +793,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Açıklama Klasörü bulunamadı: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Görüntü Klasörüne Göz At</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Nesneyi bölütlemek için bir sınır kutusu çizin.</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Varsayılanlarla devam et</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Yedekle ve sıfırla</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Geçersiz etiket</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points Kullanılamıyor</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Dosya Aç</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Açıklama Klasörünü Seç</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Açıklama Klasörü: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>İndir</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Görüntü bulunamadı</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>İzin verilen biçimler: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Açıklama dosyası silinirken hata oluştu</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Kaydedilmemiş değişiklikler</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Görüntü bulunamadı</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Beklenen konum: {path}</translation>
         <translation>Bu oturumda ayarlar --config ile yönetiliyor</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Büyük görüntü</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Dosya açılırken hata oluştu</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Dosya Aç</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Açıklama Klasörünü Seç</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Açıklama Dosyasını Kaydet</translation>
     </message>
@@ -1001,12 +1005,12 @@ Beklenen konum: {path}</translation>
         <translation>Açıklama dosyaları (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Bu açıklama dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Açıklama Dosyasını Sil</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Açıklama dosyası silinirken hata oluştu</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Bu açıklama dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Beklenen konum: {path}</translation>
         <translation>İndir</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>İndirme Başarısız</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>İndirme başarısız oldu. Bağlantınızı kontrol edip yeniden deneyin.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Modeli sil</translation>
     </message>
     <message>

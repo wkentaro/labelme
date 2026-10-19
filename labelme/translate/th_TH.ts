@@ -669,16 +669,12 @@
         <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>เปิดโฟลเดอร์</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>การตั้งค่าบรรทัดคำสั่ง</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>สำรองข้อมูลและรีเซ็ต</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>ใช้ค่าเริ่มต้นต่อไป</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -711,10 +707,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 เปลี่ยนโมเดล AI Text-to-Annotation เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>เลเบลไม่ถูกต้อง</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>เลเบล &apos;{}&apos; ไม่ถูกต้อง ประเภทการตรวจ &apos;{}&apos;</translation>
     </message>
@@ -743,14 +735,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>พอดีส่วนที่เลือก</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>รูปภาพขนาดใหญ่</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>รูปภาพขนาดใหญ่ต้องใช้หน่วยความจำเพิ่มขึ้น</translation>
     </message>
@@ -761,10 +745,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>เปิดต่อไป</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>เกิดข้อผิดพลาดในการเปิดไฟล์</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -781,10 +761,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>ภาพและไฟล์คำอธิบายประกอบ (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>คำเตือน</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -817,10 +793,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>ไม่พบโฟลเดอร์แอนโนเทชัน: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - เรียกดูโฟลเดอร์ภาพ</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>วาดกรอบสี่เหลี่ยมเพื่อแบ่งส่วนวัตถุ</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>ใช้ค่าเริ่มต้นต่อไป</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>สำรองข้อมูลและรีเซ็ต</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>เลเบลไม่ถูกต้อง</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points ไม่พร้อมใช้งาน</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - เปิดไฟล์</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - เลือกโฟลเดอร์แอนโนเทชัน</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>โฟลเดอร์แอนโนเทชัน: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>ดาวน์โหลด</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>ไม่พบรูปภาพ</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>รูปแบบที่อนุญาต: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>เกิดข้อผิดพลาดขณะลบไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>การเปลี่ยนแปลงที่ยังไม่ได้บันทึก</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>ไม่พบรูปภาพ</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Expected location: {path}</source>
         <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>รูปภาพขนาดใหญ่</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>เกิดข้อผิดพลาดในการเปิดไฟล์</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>เปิดไฟล์</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>เลือกโฟลเดอร์แอนโนเทชัน</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>บันทึกไฟล์คำอธิบายประกอบ</translation>
     </message>
@@ -1001,12 +1005,12 @@ Expected location: {path}</source>
         <translation>ไฟล์คำอธิบายประกอบ (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>ลบไฟล์คำอธิบายประกอบนี้อย่างถาวรหรือไม่ การกระทำนี้ไม่สามารถเลิกทำได้</translation>
+        <source>Delete Annotation File</source>
+        <translation>ลบไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>เกิดข้อผิดพลาดขณะลบไฟล์คำอธิบายประกอบ</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>ลบไฟล์คำอธิบายประกอบนี้อย่างถาวรหรือไม่ การกระทำนี้ไม่สามารถเลิกทำได้</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Expected location: {path}</source>
         <translation>ดาวน์โหลด</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>ดาวน์โหลดไม่สำเร็จ</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>ดาวน์โหลดไม่สำเร็จ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>ลบโมเดล</translation>
     </message>
     <message>

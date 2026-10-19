@@ -629,16 +629,12 @@
         <translation>Anda dapat menggunakan pengaturan bawaan untuk saat ini. Sebelum reset, salinan cadangan file konfigurasi Anda akan disimpan.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Buka Folder</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Pengaturan baris perintah</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Cadangkan dan reset</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Lanjutkan dengan bawaan</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -669,10 +665,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat anotasi &apos;%s&apos;.
 
 Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
-        <source>Invalid label</source>
-        <translation>Label tidak valid</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -763,14 +755,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Buka gambar berikutnya (tahan %s untuk menyalin bentuk saat ini)</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Gagal menyimpan berkas anotasi</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Gambar besar</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Gambar besar memerlukan lebih banyak memori</translation>
     </message>
@@ -781,10 +765,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Open Anyway</source>
         <translation>Tetap Buka</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Error membuka file</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -801,10 +781,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Gambar dan berkas anotasi (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Perhatian</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -837,10 +813,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Folder Anotasi tidak ditemukan: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Telusuri Folder Gambar</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Gambar bounding box untuk mensegmentasi objek.</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Lanjutkan dengan bawaan</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Cadangkan dan reset</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Label tidak valid</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Gagal menyimpan berkas anotasi</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points tidak tersedia</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 Silakan pilih model lain atau gunakan mode AI-Box.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Buka Berkas</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Pilih Folder Anotasi</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Folder Anotasi: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Unduh</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Gambar tidak ditemukan</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Format yang didukung: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Gagal menghapus berkas anotasi</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Perubahan belum disimpan</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Gambar tidak ditemukan</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Pengaturan dikelola melalui --config untuk sesi ini</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Gambar besar</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Error membuka file</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Buka Berkas</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Pilih Folder Anotasi</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Simpan Berkas Anotasi</translation>
     </message>
@@ -1001,12 +1005,12 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Berkas anotasi (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Hapus permanen berkas anotasi ini? Tindakan ini tidak dapat dibatalkan.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Hapus Berkas Anotasi</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Gagal menghapus berkas anotasi</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Hapus permanen berkas anotasi ini? Tindakan ini tidak dapat dibatalkan.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Unduh</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Unduhan Gagal</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Unduhan gagal. Periksa koneksi Anda dan coba lagi.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Hapus model</translation>
     </message>
     <message>

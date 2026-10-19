@@ -223,7 +223,7 @@ class ModelsWidget(QtWidgets.QWidget):
 
     def _show_error(self, model_name: str, /) -> None:
         message = QtWidgets.QMessageBox(self)
-        message.setWindowTitle(self.tr("Failed"))
+        message.setWindowTitle(self.tr("Download Failed"))
         message.setIcon(QtWidgets.QMessageBox.Icon.Warning)
         message.setText(self._manager.models[model_name])
         message.setInformativeText(
@@ -232,23 +232,31 @@ class ModelsWidget(QtWidgets.QWidget):
         message.setDetailedText(self._manager.errors.get(model_name, ""))
         message.exec()
 
-    def _delete(self, model_name: str, /) -> None:
-        answer = QtWidgets.QMessageBox.question(
-            self,
-            self.tr("Delete model"),
+    def _confirm_delete(self, model_name: str, /) -> bool:
+        message = QtWidgets.QMessageBox(self)
+        message.setIcon(QtWidgets.QMessageBox.Icon.Question)
+        message.setWindowTitle(self.tr("Delete Model"))
+        message.setText(
             self.tr(
                 "Delete {model} from this computer? Its selections will be cleared. "
                 "Your annotations will not change."
-            ).format(model=self._manager.models[model_name]),
-            QtWidgets.QMessageBox.StandardButton.Yes
-            | QtWidgets.QMessageBox.StandardButton.Cancel,
-            QtWidgets.QMessageBox.StandardButton.Cancel,
+            ).format(model=self._manager.models[model_name])
         )
-        if answer == QtWidgets.QMessageBox.StandardButton.Yes:
-            try:
-                self._remove_model(model_name)
-            except OSError as error:
-                QtWidgets.QMessageBox.warning(self, self.tr("Delete model"), str(error))
+        delete = message.addButton(
+            self.tr("Delete"), QtWidgets.QMessageBox.ButtonRole.DestructiveRole
+        )
+        cancel = message.addButton(QtWidgets.QMessageBox.StandardButton.Cancel)
+        message.setDefaultButton(cancel)
+        message.exec()
+        return message.clickedButton() is delete
+
+    def _delete(self, model_name: str, /) -> None:
+        if not self._confirm_delete(model_name):
+            return
+        try:
+            self._remove_model(model_name)
+        except OSError as error:
+            QtWidgets.QMessageBox.warning(self, self.tr("Delete Model"), str(error))
 
 
 class ModelsDialog(QtWidgets.QDialog):

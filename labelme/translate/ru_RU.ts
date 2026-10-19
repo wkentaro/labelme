@@ -669,16 +669,12 @@
         <translation>Пока можно использовать настройки по умолчанию. Перед сбросом будет сохранена резервная копия вашего файла конфигурации.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Открыть папку</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Настройки командной строки</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Создать копию и сбросить</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Продолжить с настройками по умолчанию</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -711,10 +707,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Переключите модель AI Text-to-Annotation на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Неверная метка</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Неверная метка &apos;{}&apos; с типом проверки &apos;{}&apos;</translation>
     </message>
@@ -743,10 +735,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>По выделению</translation>
     </message>
     <message>
-        <source>Large image</source>
-        <translation>Большое изображение</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Для большого изображения требуется больше памяти</translation>
     </message>
@@ -757,10 +745,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>Всё равно открыть</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Ошибка при открытии файла</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -777,10 +761,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Изображения и файлы аннотаций (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Внимание</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -813,10 +793,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Папка аннотаций не найдена: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Выбрать папку изображений</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -895,10 +871,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Нарисуйте ограничивающую рамку для сегментации объекта.</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Ошибка сохранения файла аннотаций</translation>
-    </message>
-    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points недоступен</translation>
     </message>
@@ -909,24 +881,12 @@ Please select a different model or use AI-Box mode.</source>
 Выберите другую модель или используйте режим AI-Box.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Открыть файл</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Выбрать папку аннотаций</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Папка аннотаций: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Скачать</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Изображение не найдено</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +915,18 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Допустимые форматы: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Ошибка удаления файла аннотаций</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Несохранённые изменения</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Изображение не найдено</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +965,38 @@ Expected location: {path}</source>
         <translation>Настройки управляются через --config для этого сеанса</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Продолжить с настройками по умолчанию</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Создать копию и сбросить</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Неверная метка</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Ошибка сохранения файла аннотаций</translation>
+    </message>
+    <message>
+        <source>Large Image</source>
+        <translation>Большое изображение</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Ошибка при открытии файла</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Открыть файл</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Выбрать папку аннотаций</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Сохранить файл аннотаций</translation>
     </message>
@@ -1001,12 +1005,12 @@ Expected location: {path}</source>
         <translation>Файлы аннотаций (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Безвозвратно удалить этот файл аннотаций? Это действие нельзя отменить.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Удалить файл аннотаций</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Ошибка удаления файла аннотаций</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Безвозвратно удалить этот файл аннотаций? Это действие нельзя отменить.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Expected location: {path}</source>
         <translation>Скачать</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Ошибка загрузки</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Не удалось скачать. Проверьте подключение и повторите попытку.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Удалить модель</translation>
     </message>
     <message>

@@ -669,16 +669,12 @@
         <translation>你可以暂时使用默认设置。重置前会先保存配置文件的备份。</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>打开文件夹</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>命令行设置</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>备份并重置</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>使用默认设置继续</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -711,10 +707,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 请将 AI Text-to-Annotation 模型切换为 &apos;SAM3 (smart)&apos;，或将输出格式设置为 &apos;Rectangle&apos;。</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>无效标签</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>标签“{}”不符合“{}”验证类型</translation>
     </message>
@@ -743,14 +735,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>适合选区</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>保存标注文件时出错</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>大图像</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>大图像需要更多内存</translation>
     </message>
@@ -761,10 +745,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>仍然打开</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>打开文件时出错</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -781,10 +761,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>图像与标注文件 (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>注意</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -817,10 +793,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>找不到标注文件夹：%s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - 浏览图像文件夹</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>绘制边界框以分割对象。</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>使用默认设置继续</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>备份并重置</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>无效标签</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>保存标注文件时出错</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points 不可用</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 请另选模型，或改用 AI-Box 模式。</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - 打开文件</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - 选择标注文件夹</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>标注文件夹：%s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>下载</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>找不到图像</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>支持的格式: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>删除标注文件出错</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>尚未保存的更改</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>找不到图像</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Expected location: {path}</source>
         <translation>本次会话的设置通过 --config 管理</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>大图像</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>打开文件时出错</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>打开文件</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>选择标注文件夹</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>保存标注文件</translation>
     </message>
@@ -1001,12 +1005,12 @@ Expected location: {path}</source>
         <translation>标注文件 (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>永久删除该标注文件？此操作无法撤销。</translation>
+        <source>Delete Annotation File</source>
+        <translation>删除标注文件</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>删除标注文件出错</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>永久删除该标注文件？此操作无法撤销。</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Expected location: {path}</source>
         <translation>下载</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>下载失败</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>下载失败。请检查网络连接并重试。</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>删除模型</translation>
     </message>
     <message>

@@ -669,16 +669,12 @@
         <translation>Você pode usar as configurações padrão por enquanto. Antes de redefinir, será salva uma cópia de segurança do seu arquivo de configuração.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Abrir pasta</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Configurações da linha de comando</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Fazer backup e redefinir</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Continuar com os padrões</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -711,10 +707,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o formato de saída como &apos;Rectangle&apos;.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Rótulo inválido</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Rótulo inválido &apos;{}&apos; com tipo de validação &apos;{}&apos;</translation>
     </message>
@@ -743,14 +735,6 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
         <translation>Ajustar à Seleção</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Erro ao salvar o arquivo de anotações</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Imagem grande</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>A imagem grande requer mais memória</translation>
     </message>
@@ -761,10 +745,6 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>Open Anyway</source>
         <translation>Abrir mesmo assim</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Erro ao abrir arquivo</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -781,10 +761,6 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Imagens e arquivos de anotações (%s)</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Atenção</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -817,10 +793,6 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Pasta de anotações não encontrada: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Explorar pasta de imagens</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -899,6 +871,22 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
         <translation>Desenhe uma caixa delimitadora para segmentar o objeto.</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Continuar com os padrões</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Fazer backup e redefinir</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Rótulo inválido</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Erro ao salvar o arquivo de anotações</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points indisponível</translation>
     </message>
@@ -909,24 +897,12 @@ Please select a different model or use AI-Box mode.</source>
 Selecione um modelo diferente ou use o modo AI-Box.</translation>
     </message>
     <message>
-        <source>%s - Open File</source>
-        <translation>%s - Abrir arquivo</translation>
-    </message>
-    <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Escolher pasta de anotações</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Pasta de anotações: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Baixar</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Imagem não encontrada</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -955,6 +931,18 @@ Local esperado: {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Formatos permitidos: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Erro ao excluir o arquivo de anotações</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Alterações não salvas</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Imagem não encontrada</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -993,6 +981,22 @@ Local esperado: {path}</translation>
         <translation>As configurações desta sessão são gerenciadas via --config</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Imagem grande</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Erro ao abrir arquivo</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Abrir arquivo</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Escolher pasta de anotações</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Salvar Arquivo de Anotações</translation>
     </message>
@@ -1001,12 +1005,12 @@ Local esperado: {path}</translation>
         <translation>Arquivos de anotações (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Excluir permanentemente este arquivo de anotações? Esta ação não pode ser desfeita.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Excluir Arquivo de Anotações</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Erro ao excluir o arquivo de anotações</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Excluir permanentemente este arquivo de anotações? Esta ação não pode ser desfeita.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1134,11 +1138,15 @@ Local esperado: {path}</translation>
         <translation>Baixar</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Falha no Download</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Falha no download. Verifique sua conexão e tente novamente.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Excluir modelo</translation>
     </message>
     <message>
