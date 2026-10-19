@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI-анотація</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Більше деталей</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Виберіть режим &apos;AI-Points&apos; або &apos;AI-Box&apos;, щоб увімкнути анотацію за допомогою ШІ</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Виберіть режим &apos;AI-Points&apos; або &apos;AI-Box&apos;, щоб увімкнути ШІ-помічника</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,16 +40,16 @@
         <translation>Модель</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>ШІ-помічник</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Формат виведення</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI: текст в анотацію</translation>
-    </message>
     <message>
         <source>AI creates annotations from the text prompt</source>
         <translation>AI створює анотації з текстової підказки</translation>
@@ -65,6 +61,10 @@
     <message>
         <source>Run</source>
         <translation>Запустити</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Модель текстового запиту ШІ</translation>
     </message>
     <message>
         <source>Score</source>
@@ -83,12 +83,12 @@
         <translation>Модель</translation>
     </message>
     <message>
-        <source>Prompt</source>
-        <translation>Запит</translation>
+        <source>AI Text Prompt</source>
+        <translation>Текстовий запит ШІ</translation>
     </message>
     <message>
-        <source>Text-to-annotation model</source>
-        <translation>Модель розмітки за текстом</translation>
+        <source>Prompt</source>
+        <translation>Запит</translation>
     </message>
 </context>
 <context>
@@ -102,8 +102,8 @@
         <translation>Поруч із зображеннями</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Вибрати папку анотацій…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Змінити папку анотацій…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -152,6 +152,10 @@
         <translation>Редагування фігур</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Клацайте точки, щоб включити, або утримуйте %s і клацніть, щоб виключити. Утримуйте %s і клацніть, щоб завершити.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Натисніть початкову точку лінії</translation>
     </message>
@@ -164,8 +168,8 @@
         <translation>Натисніть початкову точку для лінії</translation>
     </message>
     <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Натисніть наступну точку або завершіть через Ctrl/Cmd+Click для linestrip</translation>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Утримуйте %s і клацніть, щоб додати точку на ребрі</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -192,14 +196,6 @@
         <translation>Натисніть і перетягніть, щоб перемістити точку</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Натисніть, щоб видалити точку</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Натисніть, щоб створити точку на фігурі</translation>
-    </message>
-    <message>
         <source>Shape is locked</source>
         <translation>Фігуру заблоковано</translation>
     </message>
@@ -208,16 +204,16 @@
         <translation>Натисніть і перетягніть, щоб перемістити фігуру</translation>
     </message>
     <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Натисніть точки для включення або Shift+Click для виключення. Ctrl+LeftClick завершує створення.</translation>
-    </message>
-    <message>
         <source>Click first corner of bbox for AI segmentation</source>
         <translation>Натисніть на перший кут bbox для сегментації ШІ</translation>
     </message>
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Натисніть на протилежний кут для сегментації об&apos;єкта</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Клацніть наступну точку або утримуйте %s і клацніть, щоб завершити ламану</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Натисніть третій кут для замикання орієнтованого прямокутника</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Утримуйте %s і клацніть, щоб видалити точку</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -245,14 +245,6 @@
     <message>
         <source>Open an image or a folder of images to begin.</source>
         <translation>Щоб почати, відкрийте зображення або папку із зображеннями.</translation>
-    </message>
-    <message>
-        <source>Open Folder</source>
-        <translation>Відкрити папку</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Відкрити зображення</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -281,26 +273,12 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Зберегти</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>&amp;Зберегти як</translation>
-    </message>
-    <message>
         <source>Save &amp;Automatically</source>
         <translation>&amp;Автоматично зберегти</translation>
     </message>
     <message>
         <source>Save automatically</source>
         <translation>Зберегти автоматично</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Відкрити</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -329,10 +307,6 @@
     <message>
         <source>Delete the selected shapes</source>
         <translation>Видалити вибрані фігури</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Редагувати мітку</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -375,17 +349,8 @@
         <translation>Заблокувати вибрані фігури від редагування або розблокувати їх</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Скасувати останній пункт</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Скасувати останню намальовану точку</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Скасувати</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
@@ -424,24 +389,8 @@
         <translation>&amp;Наступне зображення</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Відкрити далі (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Попереднє зображення</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Відкрити попередній (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
-    </message>
-    <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Масштабувати за вибраними фігурами під час кожної зміни виділення</translation>
-    </message>
-    <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Яскравість Контраст</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -468,30 +417,12 @@
         <translation>Заповнювати багатокутник під час малювання</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Приховати
-фігури</translation>
-    </message>
-    <message>
         <source>Hide all shapes</source>
         <translation>Приховати всі фігури</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Показати
-фігури</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Показати всі фігури</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Переключити
-фігури</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -538,8 +469,48 @@ Shapes</source>
         <translation>Припасувати вікно</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Полігональна анотація зображень на Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Версія: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Автор: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Сайт</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Документація</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Усунення несправностей</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;Про %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Про %s</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Зберегти</translation>
+    </message>
+    <message>
         <source>Save the annotation file</source>
         <translation>Зберегти файл анотацій</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>&amp;Зберегти як…</translation>
     </message>
     <message>
         <source>Save the annotation file under a new name</source>
@@ -562,6 +533,10 @@ Shapes</source>
         <translation>Вибрати, де читати й зберігати файли анотацій</translation>
     </message>
     <message>
+        <source>&amp;Open File…</source>
+        <translation>&amp;Відкрити файл…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Відкрити зображення або файл анотацій</translation>
     </message>
@@ -580,6 +555,62 @@ Shapes</source>
     <message>
         <source>Delete the current annotation file</source>
         <translation>Видалити поточний файл анотацій</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Редагувати мітку…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Скасувати останню точку</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Видалити вибрану точку</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Видаляє вибрану точку з багатокутника або ламаної</translation>
+    </message>
+    <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Клацайте, щоб ставити точки ламаної; утримуйте %s і клацніть, щоб поставити останню.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Клацайте точки, щоб сегментувати об&apos;єкт; утримуйте %s і клацніть, щоб завершити.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Відкрити наступне зображення (утримуйте %s, щоб скопіювати поточні фігури)</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Попереднє зображення</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Відкрити попереднє зображення (утримуйте %s, щоб скопіювати поточні фігури)</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Яскравість/Контраст…</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Приховати фігури</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Показати фігури</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>&amp;Переключити фігури</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -622,8 +653,16 @@ Shapes</source>
         <translation>&amp;Довідка</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Інструменти</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Інші інструменти</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Інструменти фігур</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -666,6 +705,14 @@ Shapes</source>
         <translation>Налаштування командного рядка</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Продовжити з типовими налаштуваннями</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Створити копію та скинути</translation>
+    </message>
+    <message>
         <source>Saving…</source>
         <translation>Збереження…</translation>
     </message>
@@ -674,16 +721,16 @@ Shapes</source>
         <translation>Вивід маски недоступний</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s виявляє лише обмежувальні рамки й не може створювати анотації &apos;%s&apos;.
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s виявляє лише обмежувальні рамки й не може створювати фігури &apos;%s&apos;.
 
-Перемкніть модель AI Text-to-Annotation на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
+Перемкніть модель текстового запиту ШІ на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Недійсна мітка</translation>
+        <source>Open Folder</source>
+        <translation>Відкрити папку</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -702,6 +749,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Не вдалося зберегти</translation>
     </message>
     <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Помилка збереження файлу анотацій</translation>
+    </message>
+    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -714,14 +765,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>За виділенням</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Помилка збереження файлу анотацій</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Велике зображення</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Для великого зображення потрібно більше пам’яті</translation>
     </message>
@@ -732,10 +775,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>Усе одно відкрити</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Помилка відкриття файлу</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -752,14 +791,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Зображення та файли анотацій (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Відкрити зображення або анотації</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Увага</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -794,10 +825,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Папку анотацій не знайдено: %s</translation>
     </message>
     <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Вибрати теку зображень</translation>
-    </message>
-    <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>Зображення завелике, щоб його відкрити: {width}x{height} пікселів перевищує обмеження растрового рушія у {max_side} пікселів на сторону. Збільшення ліміту декодування не допоможе. Розбийте зображення на плитки (наприклад, за допомогою gdal_retile.py) або відкрийте меншу копію.</translation>
     </message>
@@ -812,14 +839,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Вставити фігури з буфера обміну в це зображення</translation>
-    </message>
-    <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Видалити вибрану вершину</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Видаляє вибрану вершину з багатокутника або ламаної</translation>
     </message>
     <message>
         <source>Rectangle</source>
@@ -842,16 +861,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Клацайте, щоб ставити точки лінії; Ctrl+клацання ставить останню.</translation>
-    </message>
-    <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Натисніть точки для сегментації об&apos;єкта. Ctrl+LeftClick завершує створення.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -902,14 +913,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Поки що можна використовувати типові налаштування. Перед скиданням буде збережено резервну копію вашого файлу конфігурації.</translation>
     </message>
     <message>
-        <source>Back up and reset</source>
-        <translation>Створити копію та скинути</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Продовжити з типовими налаштуваннями</translation>
-    </message>
-    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Не вдалося скинути файл конфігурації.
@@ -918,6 +921,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Configuration backup saved to %s</source>
         <translation>Резервну копію конфігурації збережено в %s</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Недійсна мітка</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -930,12 +937,32 @@ Please select a different model or use AI-Box mode.</source>
 Будь ласка, виберіть іншу модель або використовуйте режим AI-Box.</translation>
     </message>
     <message>
-        <source>Download</source>
-        <translation>Завантажити</translation>
+        <source>Large Image</source>
+        <translation>Велике зображення</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>Зображення не знайдено</translation>
+        <source>Error Opening File</source>
+        <translation>Помилка відкриття файлу</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Відкрити файл</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Вибрати папку анотацій</translation>
+    </message>
+    <message>
+        <source>Delete Annotation File</source>
+        <translation>Видалити файл анотацій</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Помилка видалення файлу анотацій</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Завантажити</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -964,6 +991,14 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Дозволені формати: {formats}</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Незбережені зміни</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Зображення не знайдено</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -1002,10 +1037,6 @@ Expected location: {path}</source>
         <translation>Параметри керуються через --config для цього сеансу</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Вибрати папку анотацій</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Папка анотацій: %s</translation>
     </message>
@@ -1020,10 +1051,6 @@ Expected location: {path}</source>
     <message>
         <source>Permanently delete this annotation file? This action cannot be undone.</source>
         <translation>Остаточно видалити цей файл анотацій? Цю дію неможливо скасувати.</translation>
-    </message>
-    <message>
-        <source>Error deleting annotation file</source>
-        <translation>Помилка видалення файлу анотацій</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1151,11 +1178,15 @@ Expected location: {path}</source>
         <translation>Завантажити</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Помилка завантаження</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Не вдалося завантажити. Перевірте з’єднання та спробуйте ще раз.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Видалити модель</translation>
     </message>
     <message>
@@ -1294,10 +1325,6 @@ Expected location: {path}</source>
         <translation>Одна назва прапорця на рядок. Шаблони: ^car$ точно відповідає car, car — префіксу, .* — будь-якій мітці.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI: текст в анотацію</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Деталізація полігона</translation>
     </message>
@@ -1390,6 +1417,10 @@ Expected location: {path}</source>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Text prompt model</source>
+        <translation>Модель текстового запиту</translation>
+    </message>
+    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Придушувати збіги з наявними фігурами</translation>
     </message>
@@ -1468,8 +1499,8 @@ Expected location: {path}</source>
         <translation>Збільшити</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+колесо масштабує полотно</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Утримуйте %s і прокручуйте, щоб масштабувати полотно</translation>
     </message>
 </context>
 <context>
@@ -1543,6 +1574,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>У цьому вікні немає відповідних налаштувань. Спробуйте інший запит або очистьте пошук.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Помилка</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Сталася неочікувана помилка. Застосунок буде закрито.&lt;br/&gt;&lt;br/&gt;Повідомте про проблему, дотримуючись розділу &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Усунення несправностей&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

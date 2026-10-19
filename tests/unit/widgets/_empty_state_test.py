@@ -9,16 +9,9 @@ from labelme._utils import new_icon
 from labelme._widgets._empty_state import EmptyStateWidget
 
 
-def _ignore_click() -> None:
-    return
-
-
 @pytest.fixture()
 def empty_state(*, qtbot: QtBot) -> EmptyStateWidget:
-    widget = EmptyStateWidget(
-        on_open_image=_ignore_click,
-        on_open_directory=_ignore_click,
-    )
+    widget = EmptyStateWidget()
     qtbot.addWidget(widget)
     widget.resize(640, 480)
     return widget

@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI-Ondersteunde Annotatie</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Meer detail</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Selecteer de modus &apos;AI-Points&apos; of &apos;AI-Box&apos; om AI-ondersteunde annotatie in te schakelen</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Selecteer de modus &apos;AI-Points&apos; of &apos;AI-Box&apos; om de AI-assistent in te schakelen</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,16 +40,16 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>AI-assistent</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Uitvoerformaat</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Tekst-naar-Annotatie</translation>
-    </message>
     <message>
         <source>AI creates annotations from the text prompt</source>
         <translation>AI genereert annotaties op basis van de tekstprompt</translation>
@@ -65,6 +61,10 @@
     <message>
         <source>Run</source>
         <translation>Uitvoeren</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Model voor AI-tekstprompt</translation>
     </message>
     <message>
         <source>Score</source>
@@ -83,12 +83,12 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>Prompt</source>
-        <translation>Prompt</translation>
+        <source>AI Text Prompt</source>
+        <translation>AI-tekstprompt</translation>
     </message>
     <message>
-        <source>Text-to-annotation model</source>
-        <translation>Model voor annotatie uit tekst</translation>
+        <source>Prompt</source>
+        <translation>Prompt</translation>
     </message>
 </context>
 <context>
@@ -102,8 +102,8 @@
         <translation>Naast afbeeldingen</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Annotatiemap kiezen…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Annotatiemap wijzigen…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -140,6 +140,10 @@
         <translation>Klik en sleep om punt te verplaatsen</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Houd %s ingedrukt en klik om een punt op de rand toe te voegen</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>Vorm is vergrendeld</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Vormen bewerken</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Klik op punten om op te nemen, of houd %s ingedrukt en klik om uit te sluiten. Houd %s ingedrukt en klik om te voltooien.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Klik op startpunt voor lijn</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Klik op startpunt voor lijnstrook</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Klik op volgend punt of Ctrl/Cmd+Klik om te voltooien (lijnstrook)</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Klik om punt toe te voegen</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Klik om punt te verwijderen</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Klik om punt op vorm te maken</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Kies de andere hoek. Houd Shift ingedrukt voor een vierkant.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Klik op punten om toe te voegen of Shift+Click om uit te sluiten. Ctrl+LeftClick beëindigt het maken.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Klik op de tegenoverliggende hoek om het object te segmenteren</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Klik op het volgende punt, of houd %s ingedrukt en klik om de polylijn te voltooien</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Klik op derde hoek om georiënteerde rechthoek te sluiten</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Houd %s ingedrukt en klik om het punt te verwijderen</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -245,14 +245,6 @@
     <message>
         <source>Open an image or a folder of images to begin.</source>
         <translation>Open een afbeelding of een map met afbeeldingen om te beginnen.</translation>
-    </message>
-    <message>
-        <source>Open Folder</source>
-        <translation>Map openen</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Afbeelding openen</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -309,34 +301,8 @@
         <translation>Applicatie afsluiten</translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Openen</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Volgende &amp;Afbeelding</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Volgende openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>Vorige &amp;Afbeelding</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Vorige openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Opslaan</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Opslaan &amp;als</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -431,44 +397,32 @@
         <translation>Maak een duplicaat van de geselecteerde vormen</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Laatste punt ongedaan maken</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Laatste getekende punt ongedaan maken</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Ongedaan Maken</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>Laatste toevoeging en bewerking van vorm ongedaan maken</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Vormen &amp;verbergen</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Klik om punten van de polylijn te plaatsen; houd %s ingedrukt en klik om het laatste te plaatsen.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Klik op punten om het object te segmenteren; houd %s ingedrukt en klik om te voltooien.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Volgende afbeelding openen (houd %s ingedrukt om de huidige vormen te kopiëren)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Alle vormen verbergen</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Vormen &amp;tonen</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Alle vormen tonen</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Vormen &amp;omschakelen</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -495,16 +449,44 @@ Shapes</source>
         <translation>&amp;Uitzoomen</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>Helderheid en &amp;contrast</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Helderheid en contrast aanpassen</translation>
     </message>
     <message>
-        <source>&amp;Edit Label</source>
-        <translation>Label &amp;bewerken</translation>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Polygonale beeldannotatie met Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Versie: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Auteur: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Website</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Documentatie</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Probleemoplossing</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;Over %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Over %s</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Opslaan</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -513,6 +495,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Kies waar annotatiebestanden worden gelezen en opgeslagen</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>Bestand &amp;openen…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -559,16 +545,16 @@ Shapes</source>
         <translation>Geselecteerde vormen vergrendelen tegen bewerken, of ontgrendelen</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Geselecteerd hoekpunt verwijderen</translation>
+        <source>Undo</source>
+        <translation>Ongedaan maken</translation>
     </message>
     <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Verwijdert het geselecteerde hoekpunt uit de polygoon of polylijn</translation>
+        <source>&amp;Previous Image</source>
+        <translation>Vorige &amp;afbeelding</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Klik om punten van de lijnstrook te plaatsen; Ctrl+klik plaatst het laatste.</translation>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Vorige afbeelding openen (houd %s ingedrukt om de huidige vormen te kopiëren)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -581,6 +567,10 @@ Shapes</source>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Inzoomen op de geselecteerde vormen telkens wanneer de selectie verandert</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>Helderheid/&amp;Contrast…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -605,6 +595,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Polygoon vullen tijdens tekenen</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Vormen &amp;verbergen</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Vormen &amp;tonen</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Vormen &amp;omschakelen</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -667,8 +669,16 @@ Shapes</source>
         <translation>&amp;Help</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Gereedschappen</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Meer gereedschappen</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Vormgereedschappen</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -699,16 +709,12 @@ Shapes</source>
         <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Map openen</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Opdrachtregelinstellingen</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Back-up maken en resetten</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Doorgaan met standaardinstellingen</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -731,18 +737,6 @@ Shapes</source>
     <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskeruitvoer niet beschikbaar</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-annotaties maken.
-
-Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
-        <source>Invalid label</source>
-        <translation>Ongeldig label</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -773,14 +767,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Aanpassen aan selectie</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Fout bij opslaan van annotatiebestand</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Grote afbeelding</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Grote afbeelding vereist meer geheugen</translation>
     </message>
@@ -791,10 +777,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Open Anyway</source>
         <translation>Toch openen</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Fout bij openen van bestand</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -811,14 +793,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Afbeeldingen en annotatiebestanden (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Afbeelding of annotaties openen</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Let op</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -853,10 +827,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Annotatiemap niet gevonden: %s</translation>
     </message>
     <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Afbeeldingsmap kiezen</translation>
-    </message>
-    <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>De afbeelding is te groot om te openen: {width}x{height} pixels overschrijdt de limiet van {max_side} pixels per zijde van de raster-engine. Het verhogen van de decodeerlimiet helpt niet. Splits de afbeelding in tegels (bijvoorbeeld met gdal_retile.py) of open een kleinere kopie.</translation>
     </message>
@@ -879,6 +849,26 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Polygon</source>
         <translation>Polygoon</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Opslaan &amp;als…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>Label &amp;bewerken…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Laatste punt ongedaan maken</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Geselecteerd punt verwijderen</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Verwijdert het geselecteerde punt uit de polygoon of polylijn</translation>
     </message>
     <message>
         <source>Rectangle</source>
@@ -905,16 +895,36 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Klik op punten om object te segmenteren. Ctrl+LeftClick beëindigt het maken.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
     <message>
         <source>Draw a bounding box to segment object.</source>
         <translation>Teken een begrenzingskader om een object te segmenteren.</translation>
+    </message>
+    <message>
+        <source>Continue with Defaults</source>
+        <translation>Doorgaan met standaardinstellingen</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Back-up maken en resetten</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-vormen maken.
+
+Wijzig het model voor de AI-tekstprompt naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Ongeldig label</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Fout bij opslaan van annotatiebestand</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -927,20 +937,12 @@ Please select a different model or use AI-Box mode.</source>
 Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Annotatiemap kiezen</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotatiemap: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Downloaden</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Afbeelding niet gevonden</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -969,6 +971,18 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Toegestane formaten: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Fout bij het verwijderen van het annotatiebestand</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Niet-opgeslagen wijzigingen</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Afbeelding niet gevonden</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -1007,6 +1021,22 @@ Verwachte locatie: {path}</translation>
         <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Grote afbeelding</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Fout bij openen van bestand</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Bestand openen</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Annotatiemap kiezen</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Annotatiebestand opslaan</translation>
     </message>
@@ -1015,12 +1045,12 @@ Verwachte locatie: {path}</translation>
         <translation>Annotatiebestanden (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Dit annotatiebestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Annotatiebestand verwijderen</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Fout bij het verwijderen van het annotatiebestand</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Dit annotatiebestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1148,11 +1178,15 @@ Verwachte locatie: {path}</translation>
         <translation>Downloaden</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Downloaden mislukt</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Download mislukt. Controleer uw verbinding en probeer het opnieuw.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Model verwijderen</translation>
     </message>
     <message>
@@ -1291,10 +1325,6 @@ Verwachte locatie: {path}</translation>
         <translation>Eén vlagnaam per regel. Patronen: ^car$ komt exact overeen met car, car met een voorvoegsel, .* met elk label.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Tekst-naar-Annotatie</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Polygoondetail</translation>
     </message>
@@ -1387,6 +1417,10 @@ Verwachte locatie: {path}</translation>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Text prompt model</source>
+        <translation>Model voor tekstprompt</translation>
+    </message>
+    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Overeenkomsten met bestaande vormen onderdrukken</translation>
     </message>
@@ -1465,8 +1499,8 @@ Verwachte locatie: {path}</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Wiel zoomt op het canvas</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Houd %s ingedrukt en scrol om op het canvas te zoomen</translation>
     </message>
 </context>
 <context>
@@ -1540,6 +1574,17 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Geen overeenkomende instellingen in dit dialoogvenster. Probeer een andere term of wis de zoekopdracht.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Fout</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Er is een onverwachte fout opgetreden. De applicatie wordt gesloten.&lt;br/&gt;&lt;br/&gt;Meld het probleem volgens &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Probleemoplossing&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

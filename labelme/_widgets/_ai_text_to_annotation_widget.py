@@ -42,7 +42,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
         header_layout = QtWidgets.QHBoxLayout()
         header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI Text-to-Annotation"))
+        label = QtWidgets.QLabel(self.tr("AI Text Prompt"))
         header_layout.addWidget(label)
         info_button = InfoButton(
             tooltip=self.tr("AI creates annotations from the text prompt")
@@ -83,7 +83,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         self._model_combo = model_combo = ModelPicker(options=AI_TEXT_MODEL_OPTIONS)
         # Windows needs an explicit name; Unix exposes the selected option instead.
         model_combo.setAccessibleName(self.tr("Model"))
-        model_combo.setAccessibleDescription(self.tr("Text-to-annotation model"))
+        model_combo.setAccessibleDescription(self.tr("AI Text Prompt model"))
         model_combo.model_changed.connect(self.model_changed)
         model_combo.manage_requested.connect(self.manage_models_requested)
         model_combo.download_requested.connect(self.download_requested)

@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>Annotation assistée par IA</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>L&apos;IA suggère des annotations dans les modes &apos;AI-Points&apos; et &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Plus de détails</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Sélectionnez le mode &apos;AI-Points&apos; ou &apos;AI-Box&apos; pour activer l&apos;annotation assistée par IA</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Sélectionnez le mode &apos;AI-Points&apos; ou &apos;AI-Box&apos; pour activer l&apos;Assistance IA</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Modèle</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>Assistance IA</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Format de sortie</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>Invite IA</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>ex. : chien,chat,oiseau</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Exécuter</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Modèle d’invite textuelle IA</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>L&apos;IA crée des annotations à partir du texte</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>Invite textuelle IA</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Sélectionner le mode &apos;Polygon&apos;, &apos;Rectangle&apos; ou &apos;AI-Points&apos; pour activer</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>Consigne</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Modèle d’annotation à partir de texte</translation>
     </message>
 </context>
 <context>
@@ -102,8 +102,8 @@
         <translation>À côté des images</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Choisir le dossier d’annotations…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Changer le dossier d’annotations…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -140,6 +140,10 @@
         <translation>Cliquer et glisser pour déplacer le point</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Maintenez %s et cliquez pour ajouter un point sur l&apos;arête</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>La forme est verrouillée</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Modification des formes</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Cliquez sur des points pour inclure, ou maintenez %s et cliquez pour exclure. Maintenez %s et cliquez pour terminer.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Cliquer sur le point de départ de la ligne</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Cliquer sur le point de départ de la polyligne</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Cliquer sur le point suivant ou Ctrl/Cmd+Cliquer pour terminer la polyligne</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Cliquer pour ajouter un point</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + MAJ + Cliquer pour supprimer le point</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Cliquer pour créer un point sur la forme</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Choisissez l’autre coin. Maintenez Shift pour un carré.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Cliquer sur les points à inclure ou Shift+Click pour exclure. Ctrl+LeftClick termine la création.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Cliquez sur le coin opposé pour segmenter l&apos;objet</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Cliquez sur le point suivant, ou maintenez %s et cliquez pour terminer la polyligne</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Cliquer sur le troisième coin pour fermer le rectangle orienté</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Maintenez %s et cliquez pour supprimer le point</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -245,14 +245,6 @@
     <message>
         <source>Open an image or a folder of images to begin.</source>
         <translation>Ouvrez une image ou un dossier d’images pour commencer.</translation>
-    </message>
-    <message>
-        <source>Open Folder</source>
-        <translation>Ouvrir un dossier</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Ouvrir une image</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -309,36 +301,8 @@
         <translation>Quitter l&apos;application</translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Ouvrir
-</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>Image &amp;suivante</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Ouvrir la suivante (maintenir Ctrl+Maj pour copier les étiquettes)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>Image &amp;précédente</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Ouvrir la précédente (maintenir Ctrl+Maj pour copier les étiquettes)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Enregistrer
-</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Enregistrer &amp;sous</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -433,48 +397,32 @@
         <translation>Créer un doublon des formes sélectionnées</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Annuler le dernier point</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Annuler le dernier point dessiné</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Annuler
-</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>Annuler le dernier ajout et la dernière modification de forme</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Masquer
-les formes</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Cliquez pour placer les points de la polyligne ; maintenez %s et cliquez pour placer le dernier.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Cliquez sur des points pour segmenter l&apos;objet ; maintenez %s et cliquez pour terminer.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Ouvrir l&apos;image suivante (maintenez %s pour copier les formes actuelles)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Masquer toutes les formes</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Afficher
-les formes</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Afficher toutes les formes</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Basculer
-les formes</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -501,16 +449,44 @@ les formes</translation>
         <translation>Zoom &amp;arrière</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Luminosité et contraste</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Ajuster la luminosité et le contraste</translation>
     </message>
     <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Modifier l&apos;étiquette</translation>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Annotation polygonale d&apos;images avec Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Version : %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Auteur : %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Site web</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Documentation</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Dépannage</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>À &amp;propos de %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>À propos de %s</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Enregistrer</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -519,6 +495,10 @@ les formes</translation>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Choisir où les fichiers d’annotations sont lus et enregistrés</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>&amp;Ouvrir un fichier…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -565,16 +545,16 @@ les formes</translation>
         <translation>Verrouiller les formes sélectionnées pour empêcher leur modification, ou les déverrouiller</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Supprimer le sommet sélectionné</translation>
+        <source>Undo</source>
+        <translation>Annuler</translation>
     </message>
     <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Supprime le sommet sélectionné du polygone ou de la polyligne</translation>
+        <source>&amp;Previous Image</source>
+        <translation>Image &amp;précédente</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Cliquez pour placer les points de la polyligne ; Ctrl+clic place le dernier.</translation>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Ouvrir l&apos;image précédente (maintenez %s pour copier les formes actuelles)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -587,6 +567,10 @@ les formes</translation>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Zoomer sur les formes sélectionnées à chaque changement de sélection</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Luminosité/Contraste…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -611,6 +595,18 @@ les formes</translation>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Remplir le polygone pendant le dessin</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Masquer les formes</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Afficher les formes</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>&amp;Basculer les formes</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -673,8 +669,16 @@ les formes</translation>
         <translation>&amp;Aide</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Outils</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Autres outils</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Outils de forme</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -705,16 +709,12 @@ les formes</translation>
         <translation>Vous pouvez utiliser les paramètres par défaut pour le moment. Une sauvegarde de votre fichier de configuration sera enregistrée avant la réinitialisation.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Ouvrir un dossier</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Paramètres de la ligne de commande</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Sauvegarder et réinitialiser</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Continuer avec les valeurs par défaut</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -737,18 +737,6 @@ les formes</translation>
     <message>
         <source>Mask Output Unavailable</source>
         <translation>Sortie de masque indisponible</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s ne détecte que les cadres englobants et ne peut pas créer d&apos;annotations &apos;%s&apos;.
-
-Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou définissez le format de sortie sur &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
-        <source>Invalid label</source>
-        <translation>Étiquette invalide</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -779,14 +767,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>Adapter à la sélection</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Erreur lors de l’enregistrement du fichier d’annotations</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Grande image</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>La grande image nécessite plus de mémoire</translation>
     </message>
@@ -797,10 +777,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>Open Anyway</source>
         <translation>Ouvrir quand même</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Erreur lors de l&apos;ouverture du fichier</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -817,14 +793,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Images et fichiers d’annotations (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Ouvrir une image ou des annotations</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Attention</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -859,10 +827,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>Dossier d’annotations introuvable : %s</translation>
     </message>
     <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Parcourir un dossier d’images</translation>
-    </message>
-    <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>L&apos;image est trop grande pour être ouverte : {width}x{height} pixels dépasse la limite de {max_side} pixels par côté du moteur raster. Augmenter la limite de décodage n&apos;y changera rien. Découpez l&apos;image en tuiles (par exemple avec gdal_retile.py) ou ouvrez une copie plus petite.</translation>
     </message>
@@ -885,6 +849,26 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>Polygon</source>
         <translation>Polygone</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>Enregistrer &amp;sous…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Modifier l&apos;étiquette…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Annuler le dernier point</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Supprimer le point sélectionné</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Supprime le point sélectionné du polygone ou de la polyligne</translation>
     </message>
     <message>
         <source>Rectangle</source>
@@ -911,16 +895,36 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Cliquer sur les points pour segmenter l&apos;objet. Ctrl+LeftClick termine la création.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
     <message>
         <source>Draw a bounding box to segment object.</source>
         <translation>Dessinez un cadre englobant pour segmenter l&apos;objet.</translation>
+    </message>
+    <message>
+        <source>Continue with Defaults</source>
+        <translation>Continuer avec les valeurs par défaut</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Sauvegarder et réinitialiser</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s ne détecte que les cadres englobants et ne peut pas créer de formes &apos;%s&apos;.
+
+Changez le modèle d’invite textuelle IA pour &apos;SAM3 (smart)&apos;, ou définissez le format de sortie sur &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Étiquette invalide</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Erreur lors de l’enregistrement du fichier d’annotations</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -933,20 +937,12 @@ Please select a different model or use AI-Box mode.</source>
 Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Choisir le dossier d’annotations</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Dossier d’annotations : %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Télécharger</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Image introuvable</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -975,6 +971,18 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Formats autorisés : {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Erreur lors de la suppression du fichier d’annotations</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Modifications non enregistrées</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Image introuvable</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -1013,6 +1021,22 @@ Emplacement attendu : {path}</translation>
         <translation>Les réglages sont gérés via --config pour cette session</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Grande image</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Erreur lors de l&apos;ouverture du fichier</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Ouvrir un fichier</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Choisir le dossier d’annotations</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Enregistrer le fichier d’annotations</translation>
     </message>
@@ -1021,12 +1045,12 @@ Emplacement attendu : {path}</translation>
         <translation>Fichiers d’annotations (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Supprimer définitivement ce fichier d’annotations ? Cette action est irréversible.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Supprimer le fichier d’annotations</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Erreur lors de la suppression du fichier d’annotations</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Supprimer définitivement ce fichier d’annotations ? Cette action est irréversible.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1154,11 +1178,15 @@ Emplacement attendu : {path}</translation>
         <translation>Télécharger</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Échec du téléchargement</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Le téléchargement a échoué. Vérifiez votre connexion et réessayez.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Supprimer le modèle</translation>
     </message>
     <message>
@@ -1297,10 +1325,6 @@ Emplacement attendu : {path}</translation>
         <translation>Un nom d’indicateur par ligne. Motifs : ^car$ correspond exactement à car, car à un préfixe, .* à toute étiquette.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>Invite IA</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Détail du polygone</translation>
     </message>
@@ -1393,6 +1417,10 @@ Emplacement attendu : {path}</translation>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Text prompt model</source>
+        <translation>Modèle d’invite textuelle</translation>
+    </message>
+    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Ignorer les correspondances avec les formes existantes</translation>
     </message>
@@ -1471,8 +1499,8 @@ Emplacement attendu : {path}</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Molette zoome le canevas</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Maintenez %s et faites défiler pour zoomer sur le canevas</translation>
     </message>
 </context>
 <context>
@@ -1546,6 +1574,17 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Aucun réglage correspondant dans cette fenêtre. Essayez un autre terme ou effacez la recherche.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Une erreur inattendue s&apos;est produite. L&apos;application va se fermer.&lt;br/&gt;&lt;br/&gt;Signalez le problème en suivant la page &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Dépannage&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

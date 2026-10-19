@@ -107,11 +107,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "question",
-        lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
     # An open Settings dialog shows the cleared choices without reopening.
@@ -177,11 +173,7 @@ def test_delete_releases_loaded_assist_and_text_sessions(
     del assist_loaded, text_loaded
     del assist_session, text_session
 
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "question",
-        lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     win._open_models()
     dialog = win._models_dialog
     assert dialog is not None

@@ -43,7 +43,7 @@ def recovery_buttons(
             if widget.standardButtons() == QMessageBox.StandardButton.Ok:
                 widget.button(QMessageBox.StandardButton.Ok).click()
                 continue
-            assert widget.defaultButton().text() == "Continue with defaults"
+            assert widget.defaultButton().text() == "Continue with Defaults"
             assert widget.escapeButton() is widget.defaultButton()
             recovery_button_states.update(
                 (widget.buttonRole(button), button.isEnabled())

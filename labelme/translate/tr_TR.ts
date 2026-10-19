@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI Destekli Açıklama Ekleme</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI, &apos;AI-Noktalar&apos; ve &apos;AI-Kutu&apos; modlarında açıklama önerir</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Daha fazla ayrıntı</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>AI Destekli Açıklama Eklemeyi etkinleştirmek için &apos;AI-Noktalar&apos; veya &apos;AI-Kutu&apos; modunu seçin</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos; veya &apos;AI-Box&apos; modunu seçin</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>AI Yardımı</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Çıktı biçimi</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI ile Metinden Açıklama</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>ör. köpek,kedi,kuş</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Çalıştır</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>AI Metin İstemi modeli</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AI, metin isteminden açıklamalar oluşturur</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>AI Metin İstemi</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Etkinleştirmek için &apos;Çokgen&apos;, &apos;Dikdörtgen&apos; veya &apos;AI-Noktalar&apos; modunu seçin</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>İstem</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Metinden açıklama modeli</translation>
     </message>
 </context>
 <context>
@@ -102,8 +102,8 @@
         <translation>Görüntülerin yanında</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Açıklama Klasörünü Seç…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Açıklama Klasörünü Değiştir…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -140,6 +140,10 @@
         <translation>Noktayı taşımak için tıklayın &amp; sürükleyin</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Kenara nokta eklemek için %s tuşunu basılı tutup tıklayın</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>Şekil kilitli</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Şekiller düzenleniyor</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Dahil etmek için noktalara tıklayın veya hariç tutmak için %s tuşunu basılı tutup tıklayın. Bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Çizginin başlangıç noktasına tıklayın</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Kırık çizginin başlangıç noktasına tıklayın</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Kırık çizgi için sonraki noktaya tıklayın veya Ctrl/Cmd+Click ile tamamlayın</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Nokta eklemek için tıklayın</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>Noktayı silmek için ALT + SHIFT + Click</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>Şekil üzerinde nokta oluşturmak için ALT + Click</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Diğer köşeyi seçin. Kare çizmek için Shift tuşunu basılı tutun.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Dahil etmek için noktalara tıklayın, dışlamak için Shift+Tıklama. Ctrl+Sol Tıklama oluşturmayı sonlandırır.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Nesneyi bölütlemek için karşı köşeye tıklayın</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Sonraki noktaya tıklayın veya çoklu çizgiyi bitirmek için %s tuşunu basılı tutup tıklayın</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Yönlü dikdörtgeni kapatmak için üçüncü köşeye tıklayın</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Noktayı silmek için %s tuşunu basılı tutup tıklayın</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -245,14 +245,6 @@
     <message>
         <source>Open an image or a folder of images to begin.</source>
         <translation>Başlamak için bir görüntü veya görüntü klasörü açın.</translation>
-    </message>
-    <message>
-        <source>Open Folder</source>
-        <translation>Klasör Aç</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Görüntü Aç</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -309,36 +301,8 @@
         <translation>Uygulamadan çık</translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Aç
-</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Sonraki Görüntü</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Sonrakini aç (etiketleri kopyalamak için Ctl+Shift tuşlarını basılı tutun)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Önceki Görüntü</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Öncekini aç (etiketleri kopyalamak için Ctl+Shift tuşlarını basılı tutun)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Kaydet
-</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>&amp;Farklı Kaydet</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -433,48 +397,32 @@
         <translation>Seçili şekillerin kopyasını oluştur</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Son noktayı geri al</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Son çizilen noktayı geri al</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Geri Al
-</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>Son şekil ekleme veya düzenleme işlemini geri al</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Şekilleri
-&amp;Gizle</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Çoklu çizgi noktalarını yerleştirmek için tıklayın; sonuncuyu yerleştirmek için %s tuşunu basılı tutup tıklayın.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Nesneyi bölütlemek için noktalara tıklayın; bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Sonraki görüntüyü aç (geçerli şekilleri kopyalamak için %s tuşunu basılı tutun)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Tüm şekilleri gizle</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Şekilleri
-&amp;Göster</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Tüm şekilleri göster</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Şekilleri
-&amp;Aç/Kapat</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -501,16 +449,44 @@ Shapes</source>
         <translation>&amp;Uzaklaştır</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Parlaklık ve Kontrast</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Parlaklığı ve kontrastı ayarla</translation>
     </message>
     <message>
-        <source>&amp;Edit Label</source>
-        <translation>Etiketi &amp;Düzenle</translation>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Python ile Çokgen Görüntü Açıklama</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Sürüm: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Yazar: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Web Sitesi</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Belgeler</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Sorun Giderme</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>%s &amp;Hakkında</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>%s Hakkında</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Kaydet</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -519,6 +495,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Açıklama dosyalarının okunup kaydedileceği yeri seçin</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>Dosya &amp;Aç…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -565,16 +545,16 @@ Shapes</source>
         <translation>Seçili şekilleri düzenlemeye karşı kilitle veya kilidini aç</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Seçili Köşe Noktasını Sil</translation>
+        <source>Undo</source>
+        <translation>Geri Al</translation>
     </message>
     <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Seçili köşe noktasını çokgenden veya çoklu çizgiden siler</translation>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Önceki Görüntü</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Çizgi şeridinin noktalarını yerleştirmek için tıklayın; Ctrl+tıklama sonuncuyu yerleştirir.</translation>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Önceki görüntüyü aç (geçerli şekilleri kopyalamak için %s tuşunu basılı tutun)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -587,6 +567,10 @@ Shapes</source>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Seçim her değiştiğinde seçili şekillere yakınlaştır</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Parlaklık/Kontrast…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -611,6 +595,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Çizerken çokgeni doldur</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Şekilleri &amp;Gizle</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Şekilleri &amp;Göster</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Şekilleri &amp;Aç/Kapat</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -673,8 +669,16 @@ Shapes</source>
         <translation>&amp;Yardım</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Araçlar</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Diğer araçlar</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Şekil Araçları</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -705,16 +709,12 @@ Shapes</source>
         <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Klasör Aç</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Komut satırı ayarları</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>Yedekle ve sıfırla</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Varsayılanlarla devam et</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -737,18 +737,6 @@ Shapes</source>
     <message>
         <source>Mask Output Unavailable</source>
         <translation>Maske çıktısı kullanılamıyor</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; ek açıklamaları oluşturamaz.
-
-AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
-    </message>
-    <message>
-        <source>Invalid label</source>
-        <translation>Geçersiz etiket</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -779,14 +767,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Seçime Sığdır</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Büyük görüntü</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Büyük görüntü daha fazla bellek gerektiriyor</translation>
     </message>
@@ -797,10 +777,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Open Anyway</source>
         <translation>Yine de Aç</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Dosya açılırken hata oluştu</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -817,14 +793,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Görüntüler ve açıklama dosyaları (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Görüntü veya Açıklamaları Aç</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Dikkat</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -859,10 +827,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Açıklama Klasörü bulunamadı: %s</translation>
     </message>
     <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Görüntü Klasörüne Göz At</translation>
-    </message>
-    <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
         <translation>Görüntü açılamayacak kadar büyük: {width}x{height} piksel, raster motorunun kenar başına {max_side} piksel sınırını aşıyor. Kod çözme sınırını yükseltmek yardımcı olmaz. Görüntüyü karolara bölün (örneğin gdal_retile.py ile) veya daha küçük bir kopyasını açın.</translation>
     </message>
@@ -885,6 +849,26 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Polygon</source>
         <translation>Çokgen</translation>
+    </message>
+    <message>
+        <source>&amp;Save As…</source>
+        <translation>&amp;Farklı Kaydet…</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>Etiketi &amp;Düzenle…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Son Noktayı Geri Al</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Seçili Noktayı Sil</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Seçili noktayı çokgenden veya çoklu çizgiden siler</translation>
     </message>
     <message>
         <source>Rectangle</source>
@@ -911,16 +895,36 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Nesneyi bölütlemek için noktalara tıklayın. Ctrl+Sol Tıklama oluşturmayı sonlandırır.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
     <message>
         <source>Draw a bounding box to segment object.</source>
         <translation>Nesneyi bölütlemek için bir sınır kutusu çizin.</translation>
+    </message>
+    <message>
+        <source>Continue with Defaults</source>
+        <translation>Varsayılanlarla devam et</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Yedekle ve sıfırla</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; şekilleri oluşturamaz.
+
+AI Metin İstemi modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Geçersiz etiket</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -933,20 +937,12 @@ Please select a different model or use AI-Box mode.</source>
 Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Açıklama Klasörünü Seç</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Açıklama Klasörü: %s</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>İndir</translation>
-    </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Görüntü bulunamadı</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -975,6 +971,18 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>İzin verilen biçimler: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Açıklama dosyası silinirken hata oluştu</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Kaydedilmemiş değişiklikler</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Görüntü bulunamadı</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -1013,6 +1021,22 @@ Beklenen konum: {path}</translation>
         <translation>Bu oturumda ayarlar --config ile yönetiliyor</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Büyük görüntü</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Dosya açılırken hata oluştu</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Dosya Aç</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Açıklama Klasörünü Seç</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Açıklama Dosyasını Kaydet</translation>
     </message>
@@ -1021,12 +1045,12 @@ Beklenen konum: {path}</translation>
         <translation>Açıklama dosyaları (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Bu açıklama dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
+        <source>Delete Annotation File</source>
+        <translation>Açıklama Dosyasını Sil</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Açıklama dosyası silinirken hata oluştu</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Bu açıklama dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1154,11 +1178,15 @@ Beklenen konum: {path}</translation>
         <translation>İndir</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>İndirme Başarısız</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>İndirme başarısız oldu. Bağlantınızı kontrol edip yeniden deneyin.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Modeli sil</translation>
     </message>
     <message>
@@ -1297,10 +1325,6 @@ Beklenen konum: {path}</translation>
         <translation>Her satıra bir bayrak adı. Desenler: ^car$ tam olarak car ile, car bir önekle, .* her etiketle eşleşir.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI ile Metinden Açıklama</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Poligon ayrıntısı</translation>
     </message>
@@ -1393,6 +1417,10 @@ Beklenen konum: {path}</translation>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Text prompt model</source>
+        <translation>Metin istemi modeli</translation>
+    </message>
+    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Mevcut şekillerle eşleşenleri bastır</translation>
     </message>
@@ -1471,8 +1499,8 @@ Beklenen konum: {path}</translation>
         <translation>Yakınlaştırma</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Tekerlek tuvali yakınlaştırır</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Tuvali yakınlaştırmak için %s tuşunu basılı tutup kaydırın</translation>
     </message>
 </context>
 <context>
@@ -1546,6 +1574,17 @@ Beklenen konum: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Bu iletişim kutusunda eşleşen ayar yok. Başka bir terim deneyin veya aramayı temizleyin.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Hata</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Beklenmeyen bir hata oluştu. Uygulama kapanacak.&lt;br/&gt;&lt;br/&gt;Lütfen sorunu &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Sorun Giderme&lt;/a&gt; sayfasındaki adımları izleyerek bildirin.</translation>
     </message>
 </context>
 </TS>
