@@ -148,10 +148,17 @@ def _handle_exception(
     logger.critical(traceback_str)
 
     traceback_html: str = traceback_str.replace("\n", "<br/>").replace(" ", "&nbsp;")
+    translate = QtCore.QCoreApplication.translate
     QtWidgets.QMessageBox.critical(
         None,
-        "Error",
-        f"An unexpected error occurred. The application will close.<br/><br/>Please report issues following the <a href='https://labelme.io/docs/troubleshoot'>Troubleshoot</a>.<br/><br/>{traceback_html}",  # noqa: E501
+        translate("main", "Error"),
+        translate(
+            "main",
+            "An unexpected error occurred. The application will close.<br/><br/>"
+            "Please report the issue by following "
+            "<a href='https://labelme.io/docs/troubleshoot'>Troubleshooting</a>.",
+        )
+        + f"<br/><br/>{traceback_html}",
     )
 
     if app := QtWidgets.QApplication.instance():
@@ -391,10 +398,15 @@ def main() -> None:
     # system locale, matching the Settings dialog.
     if not _locale.is_valid_language(language):
         language = None
+    locale_name = language or QtCore.QLocale.system().name()
     translator = QtCore.QTranslator()
-    translator.load(
-        language or QtCore.QLocale.system().name(),
-        str(_locale.TRANSLATE_DIR),
+    translator.load(locale_name, str(_locale.TRANSLATE_DIR))
+    # Qt's own catalog translates standard buttons (OK, Cancel, Save, Discard)
+    # and file dialogs; a missing catalog leaves them in English.
+    qt_translator = QtCore.QTranslator()
+    qt_translator.load(
+        f"qtbase_{locale_name}",
+        QtCore.QLibraryInfo.path(QtCore.QLibraryInfo.LibraryPath.TranslationsPath),
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms
@@ -405,6 +417,7 @@ def main() -> None:
     app.setWindowIcon(
         new_icon("icon-macos-512.png" if sys.platform == "darwin" else "icon-256.png")
     )
+    app.installTranslator(qt_translator)
     app.installTranslator(translator)
     win = MainWindow(
         config_file=config_file,

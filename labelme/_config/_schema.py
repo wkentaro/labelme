@@ -305,7 +305,7 @@ SETTINGS: Final[tuple[Setting, ...]] = (
     Setting(
         key_path=("ai", "text_model"),
         group="AI assist",
-        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "AI Text-to-Annotation")),
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Text prompt model")),
         kind="enum",
         choices=(None, *(model_name for model_name, _ in AI_TEXT_MODEL_OPTIONS)),
         choice_labels=(

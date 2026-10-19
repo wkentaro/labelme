@@ -12,6 +12,7 @@ class ToolBar(QtWidgets.QToolBar):
         self,
         *,
         title: str,
+        name: str | None = None,
         actions: list[QtGui.QAction],
         orientation: Qt.Orientation = Qt.Orientation.Horizontal,
         button_style: Qt.ToolButtonStyle = Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
@@ -26,7 +27,9 @@ class ToolBar(QtWidgets.QToolBar):
         )
 
         super().__init__(title)
-        self.setObjectName(title + OBJECT_NAME_SUFFIX)
+        # The object name keys saved window state, so it must not change with
+        # the translated title.
+        self.setObjectName((name or title) + OBJECT_NAME_SUFFIX)
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
         self.setMovable(False)
         self.setFloatable(False)
