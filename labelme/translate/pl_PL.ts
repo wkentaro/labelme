@@ -994,7 +994,7 @@ Oczekiwana lokalizacja: {path}</translation>
     </message>
     <message>
         <source>Choose Annotation Folder</source>
-        <translation>%s — Wybierz folder adnotacji</translation>
+        <translation>Wybierz folder adnotacji</translation>
     </message>
     <message>
         <source>Save Annotation File</source>
