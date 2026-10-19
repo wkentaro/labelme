@@ -1064,10 +1064,6 @@ Expected location: {path}</source>
         <source>Locate Image…</source>
         <translation>이미지 찾기…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>이미지를 찾을 수 없음</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

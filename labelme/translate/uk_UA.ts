@@ -1061,10 +1061,6 @@ Expected location: {path}</source>
         <translation>Помилка конфігурації</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>Зображення не знайдено</translation>
-    </message>
-    <message>
         <source>Locate Image…</source>
         <translation>Знайти зображення…</translation>
     </message>

@@ -1064,10 +1064,6 @@ Beklenen konum: {path}</translation>
         <source>Locate Image…</source>
         <translation>Resmi Bul…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Görüntü bulunamadı</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

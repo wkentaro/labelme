@@ -1064,10 +1064,6 @@ Local esperado: {path}</translation>
         <source>Locate Image…</source>
         <translation>Localizar imagem…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Imagem não encontrada</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

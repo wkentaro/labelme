@@ -1064,10 +1064,6 @@ Várt hely: {path}</translation>
         <source>Locate Image…</source>
         <translation>Kép keresése…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>A kép nem található</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1064,10 +1064,6 @@ Vị trí dự kiến: {path}</translation>
         <source>Locate Image…</source>
         <translation>Tìm hình ảnh…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Không tìm thấy ảnh</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

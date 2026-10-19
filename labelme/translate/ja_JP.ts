@@ -1073,10 +1073,6 @@ Expected location: {path}</source>
         <source>Locate Image…</source>
         <translation>画像を検索…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>画像が見つかりません</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1064,10 +1064,6 @@ Lokasi yang diharapkan: {path}</translation>
         <source>Locate Image…</source>
         <translation>Cari Gambar…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Gambar tidak ditemukan</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

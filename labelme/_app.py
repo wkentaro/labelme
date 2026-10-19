@@ -2480,7 +2480,7 @@ class MainWindow(QtWidgets.QMainWindow):
     ) -> tuple[Annotation, bool] | None:
         dialog = QtWidgets.QMessageBox(self)
         dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-        dialog.setWindowTitle(self.tr("Image not found"))
+        dialog.setWindowTitle(self.tr("Image Not Found"))
         dialog.setTextFormat(Qt.TextFormat.PlainText)
         dialog.setText(
             self.tr(

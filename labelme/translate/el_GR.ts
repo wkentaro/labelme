@@ -1061,10 +1061,6 @@ Expected location: {path}</source>
         <translation>Σφάλμα διαμόρφωσης</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>Η εικόνα δεν βρέθηκε</translation>
-    </message>
-    <message>
         <source>Locate Image…</source>
         <translation>Εντοπισμός εικόνας…</translation>
     </message>

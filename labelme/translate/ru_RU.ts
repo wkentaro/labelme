@@ -1064,10 +1064,6 @@ Expected location: {path}</source>
         <source>Locate Image…</source>
         <translation>Найти изображение…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Изображение не найдено</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

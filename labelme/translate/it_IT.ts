@@ -1064,10 +1064,6 @@ Posizione prevista: {path}</translation>
         <source>Locate Image…</source>
         <translation>Trova immagine…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Immagine non trovata</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

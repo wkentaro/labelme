@@ -1064,10 +1064,6 @@ Oczekiwana lokalizacja: {path}</translation>
         <source>Locate Image…</source>
         <translation>Zlokalizuj obraz…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Nie znaleziono obrazu</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

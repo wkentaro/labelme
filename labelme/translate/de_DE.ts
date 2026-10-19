@@ -1064,10 +1064,6 @@ Erwarteter Speicherort: {path}</translation>
         <source>Locate Image…</source>
         <translation>Bild suchen…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Bild nicht gefunden</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>

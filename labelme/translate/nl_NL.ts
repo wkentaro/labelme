@@ -1064,10 +1064,6 @@ Verwachte locatie: {path}</translation>
         <source>Locate Image…</source>
         <translation>Afbeelding zoeken…</translation>
     </message>
-    <message>
-        <source>Image not found</source>
-        <translation>Afbeelding niet gevonden</translation>
-    </message>
 </context>
 <context>
     <name>ModelPicker</name>
