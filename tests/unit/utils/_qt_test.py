@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import sys
 
 import pytest
 from PySide6 import QtCore
@@ -11,6 +12,7 @@ from pytestqt.qtbot import QtBot
 
 from labelme._utils._qt import _TintedSvgIconEngine
 from labelme._utils._qt import direction_angle
+from labelme._utils._qt import modifier_text
 from labelme._utils._qt import new_action
 from labelme._utils._qt import new_icon
 from labelme._utils._qt import new_separator
@@ -348,3 +350,23 @@ def test_new_separator_survives_menu_clear(*, qtbot: QtBot) -> None:
     menu.clear()
     menu.addAction(separator)
     assert [a.isSeparator() for a in menu.actions()] == [True]
+
+
+@pytest.mark.parametrize(
+    ("modifiers", "macos", "other"),
+    [
+        (QtCore.Qt.KeyboardModifier.ControlModifier, "⌘", "Ctrl"),
+        (
+            QtCore.Qt.KeyboardModifier.ControlModifier
+            | QtCore.Qt.KeyboardModifier.ShiftModifier,
+            "⇧⌘",
+            "Ctrl+Shift",
+        ),
+        (QtCore.Qt.KeyboardModifier.AltModifier, "⌥", "Alt"),
+    ],
+)
+def test_modifier_text_follows_platform(
+    *, modifiers: QtCore.Qt.KeyboardModifier, macos: str, other: str
+) -> None:
+    expected = macos if sys.platform == "darwin" else other
+    assert modifier_text(modifiers) == expected

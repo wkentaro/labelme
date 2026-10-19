@@ -152,6 +152,10 @@
         <translation>Formen bearbeiten</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Punkte zum Einschließen anklicken oder %s gedrückt halten und klicken, um auszuschließen. %s gedrückt halten und klicken, um abzuschließen.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Startpunkt der Linie anklicken</translation>
     </message>
@@ -164,8 +168,8 @@
         <translation>Startpunkt der Linienfolge anklicken</translation>
     </message>
     <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Nächsten Punkt anklicken oder mit Ctrl/Cmd+Klick abschließen (Linienfolge)</translation>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>%s gedrückt halten und klicken, um einen Punkt auf der Kante hinzuzufügen</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -188,14 +192,6 @@
         <translation>Klicken und ziehen zum Verschieben des Punktes</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Klick zum Löschen des Punktes</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Klick zum Erstellen eines Punktes auf der Form</translation>
-    </message>
-    <message>
         <source>Shape is locked</source>
         <translation>Form ist gesperrt</translation>
     </message>
@@ -208,16 +204,16 @@
         <translation>Wähle die andere Ecke. Halte Shift für ein Quadrat gedrückt.</translation>
     </message>
     <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Punkte anklicken zum Einschließen oder Shift+Click zum Ausschließen. Ctrl+LeftClick beendet die Erstellung.</translation>
-    </message>
-    <message>
         <source>Click first corner of bbox for AI segmentation</source>
         <translation>Erste Ecke der bbox für AI-Segmentierung anklicken</translation>
     </message>
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Gegenüberliegende Ecke anklicken, um Objekt zu segmentieren</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Nächsten Punkt anklicken oder %s gedrückt halten und klicken, um die Linienfolge abzuschließen</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Dritte Ecke anklicken, um das orientierte Rechteck zu schließen</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>%s gedrückt halten und klicken, um den Punkt zu löschen</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Nächstes Bild</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Nächstes öffnen (Strg+Umschalt gedrückt halten, um Labels zu kopieren)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Vorheriges öffnen (Strg+Umschalt gedrückt halten, um Labels zu kopieren)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -415,6 +407,18 @@
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>Letztes Hinzufügen und Bearbeiten der Form rückgängig machen</translation>
+    </message>
+    <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Klicken, um Punkte der Linienfolge zu setzen; %s gedrückt halten und klicken, um den letzten zu setzen.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Punkte anklicken, um das Objekt zu segmentieren; %s gedrückt halten und klicken, um abzuschließen.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Nächstes Bild öffnen (%s gedrückt halten, um die aktuellen Formen zu kopieren)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
@@ -529,12 +533,12 @@
         <translation>Rückgängig</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Klicken, um Punkte der Linienfolge zu setzen; Strg+Klick setzt den letzten.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Vorheriges Bild</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Vorheriges Bild öffnen (%s gedrückt halten, um die aktuellen Formen zu kopieren)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Punkte anklicken, um Objekt zu segmentieren. Ctrl+LeftClick beendet die Erstellung.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Strg+Mausrad zoomt die Leinwand</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>%s gedrückt halten und scrollen, um die Leinwand zu zoomen</translation>
     </message>
 </context>
 <context>

@@ -140,6 +140,10 @@
         <translation>Klik &amp; seret untuk memindahkan titik</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Tahan %s lalu klik untuk menambahkan titik pada tepi</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>Bentuk terkunci</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Mengedit bentuk</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Klik titik untuk menyertakan, atau tahan %s lalu klik untuk mengecualikan. Tahan %s lalu klik untuk menyelesaikan.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Klik titik awal untuk garis</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Klik titik awal untuk garis patah</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Klik titik berikutnya atau selesaikan dengan Ctrl/Cmd+Klik untuk garis patah</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Klik untuk menambahkan titik</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Klik untuk menghapus titik</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Klik untuk membuat titik pada bentuk</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Pilih sudut lainnya. Tahan Shift untuk membuat persegi.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Klik titik-titik untuk menyertakan, atau Shift+Klik untuk mengecualikan. Ctrl+Klik Kiri untuk mengakhiri pembuatan.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Klik sudut berlawanan untuk segmentasi objek</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Klik titik berikutnya, atau tahan %s lalu klik untuk menyelesaikan garis patah</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Klik sudut ketiga untuk menutup persegi panjang berorientasi</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Tahan %s lalu klik untuk menghapus titik</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>Gambar Berikutnya (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Buka Berikutnya (Tahan Ctrl+Shift untuk menyalin label)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Buka Sebelumnya (Tahan Ctrl+Shift untuk menyalin label)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -485,12 +477,12 @@
         <translation>Urungkan</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Klik untuk menempatkan titik garis patah; Ctrl+klik menempatkan titik terakhir.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>Gambar Sebelumnya (&amp;P)</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Buka gambar sebelumnya (tahan %s untuk menyalin bentuk saat ini)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -759,6 +751,18 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Menghapus titik terpilih dari poligon atau garis patah</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Klik untuk menempatkan titik garis patah; tahan %s lalu klik untuk menempatkan titik terakhir.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Klik titik untuk menyegmentasi objek; tahan %s lalu klik untuk menyelesaikan.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Buka gambar berikutnya (tahan %s untuk menyalin bentuk saat ini)</translation>
+    </message>
+    <message>
         <source>Error saving annotation file</source>
         <translation>Gagal menyimpan berkas anotasi</translation>
     </message>
@@ -885,10 +889,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Klik titik untuk mensegmentasi objek. Ctrl+Klik Kiri untuk mengakhiri pembuatan.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Scroll melakukan zoom pada kanvas</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Tahan %s lalu gulir untuk memperbesar kanvas</translation>
     </message>
 </context>
 <context>

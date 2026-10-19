@@ -416,6 +416,10 @@ class MainWindow(QtWidgets.QMainWindow):
         action = functools.partial(_utils.new_action, self)
         separator = functools.partial(_utils.new_separator, self)
         shortcuts = self._config["shortcuts"]
+        ctrl = _utils.modifier_text(Qt.KeyboardModifier.ControlModifier)
+        ctrl_shift = _utils.modifier_text(
+            Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier
+        )
 
         about = action(
             text=f"&About {__appname__}",
@@ -667,8 +671,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["create_linestrip"],
             icon="phosphor/line-segments.svg",
             tip=self.tr(
-                "Click to place linestrip points; Ctrl+click places the last one."
-            ),
+                "Click to place LineStrip points; hold %s and click to place the"
+                " last one."
+            )
+            % ctrl,
         )
         create_ai_points_to_shape_mode = image_action(
             text=self.tr("AI-Points"),
@@ -678,8 +684,9 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=None,
             icon="ai-points.svg",
             tip=self.tr(
-                "Click points to segment object. Ctrl+LeftClick ends creation."
-            ),
+                "Click points to segment the object; hold %s and click to finish."
+            )
+            % ctrl,
         )
         create_ai_box_to_shape_mode = image_action(
             text=self.tr("AI-Box"),
@@ -695,7 +702,8 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self._open_next_image,
             shortcut=shortcuts["open_next"],
             icon="phosphor/arrow-fat-right.svg",
-            tip=self.tr("Open next (hold Ctl+Shift to copy labels)"),
+            tip=self.tr("Open the next image (hold %s to copy the current Shapes)")
+            % ctrl_shift,
             enabled=False,
         )
         open_prev_img = action(
@@ -703,7 +711,8 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self._open_prev_image,
             shortcut=shortcuts["open_prev"],
             icon="phosphor/arrow-fat-left.svg",
-            tip=self.tr("Open prev (hold Ctl+Shift to copy labels)"),
+            tip=self.tr("Open the previous image (hold %s to copy the current Shapes)")
+            % ctrl_shift,
             enabled=False,
         )
         keep_prev_zoom = action(

@@ -153,6 +153,19 @@ def new_action(
     return action
 
 
+def modifier_text(modifiers: QtCore.Qt.KeyboardModifier, /) -> str:
+    """Spell modifier keys the way the platform does, e.g. ⇧⌘ or Ctrl+Shift.
+
+    Qt maps Ctrl to Command on macOS, so a hint written as "Ctrl" is wrong
+    there.
+    """
+    combination = QtCore.QKeyCombination(modifiers, QtCore.Qt.Key.Key_A)
+    text = QtGui.QKeySequence(combination).toString(
+        QtGui.QKeySequence.SequenceFormat.NativeText
+    )
+    return text.removesuffix("A").removesuffix("+")
+
+
 def new_separator(parent: QtWidgets.QWidget, /) -> QtGui.QAction:
     separator = QtGui.QAction(parent)
     separator.setSeparator(True)

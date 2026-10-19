@@ -140,6 +140,10 @@
         <translation>点击 &amp; 拖动以移动点</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>按住 %s 并单击以在边上添加点</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>形状已锁定</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>正在编辑形状</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>单击各点以包含，或按住 %s 并单击以排除。按住 %s 并单击以完成。</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>单击确定直线起点</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>单击确定折线起点</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>单击添加下一个顶点；按住 Ctrl/Cmd 并单击以结束折线</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>单击以添加顶点</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>按住 ALT + SHIFT 并单击以删除顶点</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>按住 ALT 并单击以在形状上添加顶点</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>选择另一个角。按住Shift可绘制正方形。</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>单击添加包含点；按住 Shift 并单击添加排除点；按住 Ctrl 并单击结束创建。</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>单击对角以分割对象</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>单击下一个点，或按住 %s 并单击以结束折线</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>单击第三个角以闭合有向矩形</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>按住 %s 并单击以删除该点</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>下一张图像(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>打开下一张图像（按住 Ctl+Shift 复制标签）</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>打开上一张图像（按住 Ctl+Shift 复制标签）</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>撤销上一次添加或编辑形状的操作</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>单击放置折线的点；按住 %s 并单击以放置最后一个点。</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>单击各点以分割对象；按住 %s 并单击以完成。</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>打开下一张图像（按住 %s 可复制当前形状）</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>隐藏所有形状</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>撤销</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>单击放置折线的点；Ctrl+单击放置最后一个点。</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>上一张图像(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>打开上一张图像（按住 %s 可复制当前形状）</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>单击添加点以分割对象；按住 Ctrl 并单击结束创建。</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Expected location: {path}</source>
         <translation>缩放</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+滚轮缩放画布</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>按住 %s 并滚动以缩放画布</translation>
     </message>
 </context>
 <context>

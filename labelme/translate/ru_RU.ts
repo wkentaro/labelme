@@ -140,6 +140,10 @@
         <translation>Нажмите и перетащите, чтобы переместить точку</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Удерживайте %s и щёлкните, чтобы добавить точку на ребре</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>Фигура заблокирована</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Редактирование фигур</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Щёлкайте по точкам, чтобы включить, или удерживайте %s и щёлкните, чтобы исключить. Удерживайте %s и щёлкните, чтобы завершить.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Нажмите начальную точку для линии</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Нажмите начальную точку для ломаной</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Нажмите следующую точку или завершите Ctrl/Cmd+нажатие для ломаной</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Нажмите, чтобы добавить точку</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + нажатие — удалить точку</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + нажатие — создать точку на фигуре</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Выберите другой угол. Удерживайте Shift, чтобы нарисовать квадрат.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Нажмите точки для включения или Shift+Click для исключения. Ctrl+LeftClick завершает создание.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Нажмите на противоположный угол для сегментации объекта</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Щёлкните следующую точку или удерживайте %s и щёлкните, чтобы завершить ломаную</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Нажмите третий угол для замыкания ориентированного прямоугольника</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Удерживайте %s и щёлкните, чтобы удалить точку</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>Следующее изображение (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Открыть следующее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Открыть предыдущее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>Отменить последнее добавление и редактирование фигуры</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Щёлкайте, чтобы ставить точки ломаной; удерживайте %s и щёлкните, чтобы поставить последнюю.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Щёлкайте по точкам, чтобы сегментировать объект; удерживайте %s и щёлкните, чтобы завершить.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Открыть следующее изображение (удерживайте %s, чтобы скопировать текущие фигуры)</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>Скрыть все фигуры</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>Отменить</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Щёлкайте, чтобы ставить точки ломаной; Ctrl+щелчок ставит последнюю.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>Предыдущее изображение (&amp;P)</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Открыть предыдущее изображение (удерживайте %s, чтобы скопировать текущие фигуры)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -881,10 +885,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Нажмите точки для сегментации объекта. Ctrl+LeftClick завершает создание.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Expected location: {path}</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Колесо масштабирует холст</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Удерживайте %s и прокручивайте, чтобы масштабировать холст</translation>
     </message>
 </context>
 <context>

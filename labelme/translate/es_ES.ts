@@ -140,6 +140,10 @@
         <translation>Haz clic y arrastra para mover el punto</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Mantén %s y haz clic para añadir un punto en el borde</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>La forma está bloqueada</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Editando formas</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Haz clic en puntos para incluir, o mantén %s y haz clic para excluir. Mantén %s y haz clic para terminar.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Haz clic en el punto inicial de la línea</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Haz clic en el punto inicial de la línea continua</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Haz clic en el siguiente punto o Ctrl/Cmd+Clic para finalizar (línea continua)</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Haz clic para añadir un punto</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + MAYÚS + Clic para eliminar el punto</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Clic para crear un punto en la forma</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Elige la otra esquina. Mantén pulsado Shift para un cuadrado.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Haz clic en puntos para incluir o Shift+Click para excluir. Ctrl+LeftClick finaliza la creación.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Haga clic en la esquina opuesta para segmentar el objeto</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Haz clic en el siguiente punto, o mantén %s y haz clic para terminar la polilínea</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Haz clic en la tercera esquina para cerrar el rectángulo orientado</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Mantén %s y haz clic para eliminar el punto</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>Imagen &amp;siguiente</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Abrir siguiente (mantén Ctrl+Mayús para copiar etiquetas)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Abrir anterior (mantén Ctrl+Mayús para copiar etiquetas)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>Deshacer última adición y edición de forma</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Haz clic para colocar puntos de la polilínea; mantén %s y haz clic para colocar el último.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Haz clic en puntos para segmentar el objeto; mantén %s y haz clic para terminar.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Abrir la imagen siguiente (mantén %s para copiar las formas actuales)</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>Ocultar todas las formas</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>Deshacer</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Haga clic para colocar puntos de la línea continua; Ctrl+clic coloca el último.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>Imagen &amp;anterior</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Abrir la imagen anterior (mantén %s para copiar las formas actuales)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ Cambie el modelo de AI Text-to-Annotation a &apos;SAM3 (smart)&apos; o establezc
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Haz clic en puntos para segmentar el objeto. Ctrl+LeftClick finaliza la creación.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Ubicación esperada: {path}</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Rueda hace zoom en el lienzo</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Mantén %s y desplaza para hacer zoom en el lienzo</translation>
     </message>
 </context>
 <context>

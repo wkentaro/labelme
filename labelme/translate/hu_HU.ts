@@ -152,6 +152,10 @@
         <translation>Alakzatok szerkesztése</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Kattintson pontokra a belefoglaláshoz, vagy tartsa lenyomva a(z) %s billentyűt, és kattintson a kizáráshoz. A befejezéshez tartsa lenyomva a(z) %s billentyűt, és kattintson.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Kattintson a vonal kezdőpontjára</translation>
     </message>
@@ -164,8 +168,8 @@
         <translation>Kattintson a vonallánc kezdőpontjára</translation>
     </message>
     <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Kattintson a következő pontra vagy Ctrl/Cmd+Kattintás a befejezéshez (vonallánc)</translation>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Tartsa lenyomva a(z) %s billentyűt, és kattintson egy pont hozzáadásához az élen</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -188,14 +192,6 @@
         <translation>Kattintson és húzza a pont mozgatásához</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Kattintás a pont törléséhez</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Kattintás pont létrehozásához az alakzaton</translation>
-    </message>
-    <message>
         <source>Shape is locked</source>
         <translation>Az alakzat zárolva van</translation>
     </message>
@@ -208,16 +204,16 @@
         <translation>Válassza ki a másik sarkot. Négyzethez tartsa lenyomva a Shift billentyűt.</translation>
     </message>
     <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Kattintson pontokra a hozzáadáshoz vagy Shift+Click a kizáráshoz. Ctrl+LeftClick befejezi a létrehozást.</translation>
-    </message>
-    <message>
         <source>Click first corner of bbox for AI segmentation</source>
         <translation>Kattintson a bbox első sarkára az AI szegmentáláshoz</translation>
     </message>
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Kattintson az átellenes sarokra az objektum szegmentálásához</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Kattintson a következő pontra, vagy tartsa lenyomva a(z) %s billentyűt, és kattintson a töröttvonal befejezéséhez</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Kattintson a harmadik sarokra az irányított téglalap bezárásához</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Tartsa lenyomva a(z) %s billentyűt, és kattintson a pont törléséhez</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Következő kép</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Következő megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Előző megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -415,6 +407,18 @@
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>Alakzat utolsó hozzáadásának és szerkesztésének visszavonása</translation>
+    </message>
+    <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Kattintson a töröttvonal pontjainak elhelyezéséhez; tartsa lenyomva a(z) %s billentyűt, és kattintson az utolsóhoz.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Kattintson pontokra az objektum szegmentálásához; tartsa lenyomva a(z) %s billentyűt, és kattintson a befejezéshez.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Következő kép megnyitása (a jelenlegi alakzatok másolásához tartsa lenyomva a(z) %s billentyűt)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
@@ -529,12 +533,12 @@
         <translation>Visszavonás</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Kattintson a vonallánc pontjainak elhelyezéséhez; Ctrl+kattintás helyezi el az utolsót.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Előző kép</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Előző kép megnyitása (a jelenlegi alakzatok másolásához tartsa lenyomva a(z) %s billentyűt)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Kattintson pontokra az objektum szegmentálásához. Ctrl+LeftClick befejezi a létrehozást.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Várt hely: {path}</translation>
         <translation>Nagyítás</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>A Ctrl+Görgő nagyítja a vásznat</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Tartsa lenyomva a(z) %s billentyűt, és görgessen a vászon nagyításához</translation>
     </message>
 </context>
 <context>

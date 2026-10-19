@@ -152,6 +152,10 @@
         <translation>Επεξεργασία σχημάτων</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή κρατήστε πατημένο το %s και κάντε κλικ για εξαίρεση. Κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Κάντε κλικ στο σημείο έναρξης για τη γραμμή</translation>
     </message>
@@ -164,8 +168,8 @@
         <translation>Κάντε κλικ στο σημείο έναρξης για το linestrip</translation>
     </message>
     <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Κάντε κλικ στο επόμενο σημείο ή ολοκληρώστε μέχρι τις Ctrl/Cmd+Click για το linestrip</translation>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Κρατήστε πατημένο το %s και κάντε κλικ για προσθήκη σημείου στην ακμή</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -192,14 +196,6 @@
         <translation>Πάτημα και μεταφορά για μετακίνηση αυτού του σημείου</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Κάντε κλικ για διαγραφή σημείου</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Κάντε κλικ για να δημιουργήσετε σημείο στο σχήμα</translation>
-    </message>
-    <message>
         <source>Shape is locked</source>
         <translation>Το σχήμα είναι κλειδωμένο</translation>
     </message>
@@ -208,16 +204,16 @@
         <translation>Κάντε κλικ και σύρετε για να μετακινήσετε το σχήμα</translation>
     </message>
     <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή Shift+Click για εξαίρεση. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
-    </message>
-    <message>
         <source>Click first corner of bbox for AI segmentation</source>
         <translation>Κάντε κλικ στην πρώτη γωνία του bbox για τμηματοποίηση AI</translation>
     </message>
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Κάντε κλικ στην απέναντι γωνία για τμηματοποίηση αντικειμένου</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Κάντε κλικ στο επόμενο σημείο ή κρατήστε πατημένο το %s και κάντε κλικ για να ολοκληρώσετε την τεθλασμένη γραμμή</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Κάντε κλικ στην τρίτη γωνία για να κλείσετε το προσανατολισμένο ορθογώνιο</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Κρατήστε πατημένο το %s και κάντε κλικ για διαγραφή του σημείου</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -389,14 +389,6 @@
         <translation>Επόμενη εικόνα</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Ανοίξτε το επόμενο (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Άνοιγμα προηγούμενου (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
-    </message>
-    <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Εστίαση στα επιλεγμένα σχήματα κάθε φορά που αλλάζει η επιλογή</translation>
     </message>
@@ -553,8 +545,24 @@
         <translation>Διαγράφει το επιλεγμένο σημείο από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Κάντε κλικ για να τοποθετήσετε σημεία της τεθλασμένης γραμμής· κρατήστε πατημένο το %s και κάντε κλικ για το τελευταίο.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Κάντε κλικ σε σημεία για να τμηματοποιήσετε το αντικείμενο· κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Άνοιγμα της επόμενης εικόνας (κρατήστε πατημένο το %s για αντιγραφή των τρεχόντων σχημάτων)</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Προηγούμενη εικόνα</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Άνοιγμα της προηγούμενης εικόνας (κρατήστε πατημένο το %s για αντιγραφή των τρεχόντων σχημάτων)</translation>
     </message>
     <message>
         <source>&amp;Brightness/Contrast…</source>
@@ -821,16 +829,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Κάντε κλικ για να τοποθετήσετε σημεία του linestrip· Ctrl+κλικ τοποθετεί το τελευταίο.</translation>
-    </message>
-    <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Κάντε κλικ σε σημεία για κατάτμηση αντικειμένου. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Expected location: {path}</source>
         <translation>Εστίαση</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Ροδέλα κάνει ζουμ στον καμβά</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Κρατήστε πατημένο το %s και κάντε κύλιση για μεγέθυνση του καμβά</translation>
     </message>
 </context>
 <context>

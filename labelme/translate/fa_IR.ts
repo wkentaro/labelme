@@ -140,6 +140,10 @@
         <translation>کلیک و کشیدن برای جابجایی نقطه</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>%s را نگه دارید و کلیک کنید تا نقطه‌ای روی لبه اضافه شود</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>شکل قفل است</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>ویرایش اشکال</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>برای افزودن روی نقاط کلیک کنید، یا %s را نگه دارید و کلیک کنید تا حذف شوند. %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>کلیک روی نقطه شروع خط</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>کلیک روی نقطه شروع خط چندتکه‌ای</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>کلیک روی نقطه بعدی یا Ctrl/Cmd+کلیک برای پایان خط چندتکه‌ای</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>کلیک برای افزودن نقطه</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + کلیک برای حذف نقطه</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + کلیک برای ایجاد نقطه روی شکل</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>گوشهٔ دیگر را انتخاب کنید. برای مربع، Shift را نگه دارید.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>روی نقاط کلیک کنید تا شامل شوند یا Shift+Click برای حذف. Ctrl+LeftClick ایجاد را پایان می‌دهد.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>روی گوشه مقابل برای قطعه‌بندی شیء کلیک کنید</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>روی نقطه بعدی کلیک کنید، یا %s را نگه دارید و کلیک کنید تا خط شکسته تمام شود</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>کلیک روی گوشه سوم برای بستن مستطیل جهت‌دار</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>%s را نگه دارید و کلیک کنید تا نقطه حذف شود</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>تصویر بعدی(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>باز کردن بعدی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>باز کردن قبلی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>بازگشت آخرین افزودن و ویرایش شکل</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>برای قرار دادن نقاط خط شکسته کلیک کنید؛ %s را نگه دارید و کلیک کنید تا آخرین نقطه قرار گیرد.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>روی نقاط کلیک کنید تا شیء بخش‌بندی شود؛ %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>باز کردن تصویر بعدی (برای کپی شکل‌های فعلی، %s را نگه دارید)</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>مخفی کردن همه شکل‌ها</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>بازگشت</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>برای قرار دادن نقاط خط چندتکه‌ای کلیک کنید؛ Ctrl+کلیک نقطه آخر را قرار می‌دهد.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>تصویر قبلی(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>باز کردن تصویر قبلی (برای کپی شکل‌های فعلی، %s را نگه دارید)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>روی نقاط کلیک کنید تا شیء بخش‌بندی شود. Ctrl+LeftClick ایجاد را پایان می‌دهد.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Expected location: {path}</source>
         <translation>زوم</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+چرخ روی بوم بزرگ‌نمایی می‌کند</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>%s را نگه دارید و اسکرول کنید تا بوم بزرگ‌نمایی شود</translation>
     </message>
 </context>
 <context>

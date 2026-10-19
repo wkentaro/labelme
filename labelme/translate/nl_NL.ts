@@ -140,6 +140,10 @@
         <translation>Klik en sleep om punt te verplaatsen</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Houd %s ingedrukt en klik om een punt op de rand toe te voegen</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>Vorm is vergrendeld</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Vormen bewerken</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Klik op punten om op te nemen, of houd %s ingedrukt en klik om uit te sluiten. Houd %s ingedrukt en klik om te voltooien.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Klik op startpunt voor lijn</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Klik op startpunt voor lijnstrook</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Klik op volgend punt of Ctrl/Cmd+Klik om te voltooien (lijnstrook)</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Klik om punt toe te voegen</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Klik om punt te verwijderen</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Klik om punt op vorm te maken</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Kies de andere hoek. Houd Shift ingedrukt voor een vierkant.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Klik op punten om toe te voegen of Shift+Click om uit te sluiten. Ctrl+LeftClick beëindigt het maken.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Klik op de tegenoverliggende hoek om het object te segmenteren</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Klik op het volgende punt, of houd %s ingedrukt en klik om de polylijn te voltooien</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Klik op derde hoek om georiënteerde rechthoek te sluiten</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Houd %s ingedrukt en klik om het punt te verwijderen</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>Volgende &amp;Afbeelding</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Volgende openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Vorige openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>Laatste toevoeging en bewerking van vorm ongedaan maken</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Klik om punten van de polylijn te plaatsen; houd %s ingedrukt en klik om het laatste te plaatsen.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Klik op punten om het object te segmenteren; houd %s ingedrukt en klik om te voltooien.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Volgende afbeelding openen (houd %s ingedrukt om de huidige vormen te kopiëren)</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>Alle vormen verbergen</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>Ongedaan maken</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Klik om punten van de lijnstrook te plaatsen; Ctrl+klik plaatst het laatste.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>Vorige &amp;afbeelding</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Vorige afbeelding openen (houd %s ingedrukt om de huidige vormen te kopiëren)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Klik op punten om object te segmenteren. Ctrl+LeftClick beëindigt het maken.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Verwachte locatie: {path}</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Wiel zoomt op het canvas</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Houd %s ingedrukt en scrol om op het canvas te zoomen</translation>
     </message>
 </context>
 <context>

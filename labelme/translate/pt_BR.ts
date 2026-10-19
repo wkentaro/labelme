@@ -140,6 +140,10 @@
         <translation>Clique e arraste para mover o ponto</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Segure %s e clique para adicionar um ponto na aresta</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>A forma está bloqueada</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Editando formas</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Clique em pontos para incluir, ou segure %s e clique para excluir. Segure %s e clique para concluir.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Clique no ponto inicial da linha</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Clique no ponto inicial da linha contínua</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Clique no próximo ponto ou Ctrl/Cmd+Clique para finalizar (linha contínua)</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Clique para adicionar um ponto</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Clique para excluir o ponto</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Clique para criar um ponto na forma</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Escolha o outro canto. Segure Shift para desenhar um quadrado.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Clique em pontos para incluir ou Shift+Click para excluir. Ctrl+LeftClick finaliza a criação.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Clique no canto oposto para segmentar o objeto</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Clique no próximo ponto, ou segure %s e clique para concluir a polilinha</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Clique na terceira esquina para fechar o retângulo orientado</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Segure %s e clique para excluir o ponto</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>Imagem &amp;Seguinte</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Abrir seguinte (mantenha Ctrl+Shift para copiar rótulos)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Abrir anterior (mantenha Ctrl+Shift para copiar rótulos)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>Desfazer última adição e edição de forma</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Clique para posicionar pontos da polilinha; segure %s e clique para posicionar o último.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Clique em pontos para segmentar o objeto; segure %s e clique para concluir.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Abrir a próxima imagem (segure %s para copiar as formas atuais)</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>Ocultar todas as formas</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>Desfazer</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Clique para posicionar pontos da linha contínua; Ctrl+clique posiciona o último.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>Imagem &amp;Anterior</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Abrir a imagem anterior (segure %s para copiar as formas atuais)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Clique em pontos para segmentar o objeto. Ctrl+LeftClick finaliza a criação.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Local esperado: {path}</translation>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Roda amplia a tela</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Segure %s e role para ampliar a tela</translation>
     </message>
 </context>
 <context>

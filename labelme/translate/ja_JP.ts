@@ -140,6 +140,10 @@
         <translation>クリック &amp; ドラッグで頂点を移動</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>%s を押しながらクリックで辺に点を追加</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>図形はロックされています</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>図形を編集中</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>点をクリックで含め、%s を押しながらクリックで除外します。%s を押しながらクリックで完了します。</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>直線の始点をクリック</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>折れ線の始点をクリック</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>次の点をクリック、または Ctrl/Cmd+クリックで完了</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>クリックで頂点を追加</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + クリックで頂点を削除</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + クリックで図形上に頂点を作成</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>もう一方の角を指定してください。Shiftを押しながら操作すると正方形になります。</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>クリックで含める点を、Shift+Clickで除外する点を指定。Ctrl+LeftClickで作成を完了。</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>対角をクリックしてオブジェクトをセグメント</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>次の点をクリック、または %s を押しながらクリックで折れ線を完了</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>3番目の角をクリックして向き付き矩形を閉じる</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>%s を押しながらクリックで点を削除</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -304,14 +304,6 @@
         <source>&amp;Next Image</source>
         <translation>次の
 画像(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>次を開く (Ctrl+Shift でラベルをコピー)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>前を開く (Ctrl+Shift でラベルをコピー)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -418,6 +410,18 @@
         <translation>最後の図形追加・編集を元に戻す</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>クリックで折れ線の点を配置し、%s を押しながらクリックで最後の点を配置します。</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>点をクリックしてオブジェクトをセグメント化し、%s を押しながらクリックで完了します。</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>次の画像を開く（%s を押したままにすると現在の図形をコピー）</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>すべての図形を非表示</translation>
     </message>
@@ -518,12 +522,12 @@
         <translation>元に戻す</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>クリックで折れ線の点を置き、Ctrl+クリックで最後の点を置きます。</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>前の画像(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>前の画像を開く（%s を押したままにすると現在の図形をコピー）</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -891,10 +895,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>クリックでオブジェクトをセグメント。Ctrl+LeftClickで作成を完了。</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1457,8 +1457,8 @@ Expected location: {path}</source>
         <translation>ズーム</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+ホイールでキャンバスをズームします</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>%s を押しながらスクロールでキャンバスをズーム</translation>
     </message>
 </context>
 <context>

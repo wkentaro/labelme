@@ -140,6 +140,10 @@
         <translation>Nhấn và kéo để di chuyển điểm</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Giữ %s và nhấp để thêm một điểm trên cạnh</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>Hình dạng đã bị khóa</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Chỉnh sửa hình dạng</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Nhấp các điểm để bao gồm, hoặc giữ %s và nhấp để loại trừ. Giữ %s và nhấp để hoàn tất.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Nhấn điểm bắt đầu cho đường thẳng</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Nhấn điểm bắt đầu cho đường gấp khúc</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Nhấn điểm tiếp theo hoặc hoàn tất bằng Ctrl/Cmd+Nhấn cho đường gấp khúc</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Nhấn để thêm điểm</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Nhấn để xóa điểm</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Nhấn để tạo điểm trên hình dạng</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Chọn góc còn lại. Giữ Shift để vẽ hình vuông.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Nhấp điểm để bao gồm hoặc Shift+Click để loại trừ. Ctrl+LeftClick kết thúc tạo.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Nhấp vào góc đối diện để phân đoạn đối tượng</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Nhấp điểm tiếp theo, hoặc giữ %s và nhấp để hoàn tất đường gấp khúc</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Nhấn góc thứ ba để đóng hình chữ nhật có hướng</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Giữ %s và nhấp để xóa điểm</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>Hình ảnh Tiếp theo(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Mở tiếp theo (giữ Ctl+Shift để sao chép nhãn)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Mở trước đó (giữ Ctl+Shift để sao chép nhãn)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>Hoàn tác lần thêm và chỉnh sửa hình dạng cuối cùng</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Nhấp để đặt các điểm của đường gấp khúc; giữ %s và nhấp để đặt điểm cuối cùng.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Nhấp các điểm để phân đoạn đối tượng; giữ %s và nhấp để hoàn tất.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Mở hình ảnh tiếp theo (giữ %s để sao chép các hình dạng hiện tại)</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>Ẩn tất cả hình dạng</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>Hoàn tác</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Nhấn để đặt các điểm của đường gấp khúc; Ctrl+nhấn đặt điểm cuối cùng.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>Hình ảnh Trước(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Mở hình ảnh trước (giữ %s để sao chép các hình dạng hiện tại)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Nhấp điểm để phân đoạn đối tượng. Ctrl+LeftClick kết thúc tạo.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Vị trí dự kiến: {path}</translation>
         <translation>Thu phóng</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Bánh xe phóng to/thu nhỏ canvas</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Giữ %s và cuộn để thu phóng khung vẽ</translation>
     </message>
 </context>
 <context>

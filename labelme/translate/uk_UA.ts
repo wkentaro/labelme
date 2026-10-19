@@ -152,6 +152,10 @@
         <translation>Редагування фігур</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Клацайте точки, щоб включити, або утримуйте %s і клацніть, щоб виключити. Утримуйте %s і клацніть, щоб завершити.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Натисніть початкову точку лінії</translation>
     </message>
@@ -164,8 +168,8 @@
         <translation>Натисніть початкову точку для лінії</translation>
     </message>
     <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Натисніть наступну точку або завершіть через Ctrl/Cmd+Click для linestrip</translation>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Утримуйте %s і клацніть, щоб додати точку на ребрі</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -192,14 +196,6 @@
         <translation>Натисніть і перетягніть, щоб перемістити точку</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Натисніть, щоб видалити точку</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Натисніть, щоб створити точку на фігурі</translation>
-    </message>
-    <message>
         <source>Shape is locked</source>
         <translation>Фігуру заблоковано</translation>
     </message>
@@ -208,16 +204,16 @@
         <translation>Натисніть і перетягніть, щоб перемістити фігуру</translation>
     </message>
     <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Натисніть точки для включення або Shift+Click для виключення. Ctrl+LeftClick завершує створення.</translation>
-    </message>
-    <message>
         <source>Click first corner of bbox for AI segmentation</source>
         <translation>Натисніть на перший кут bbox для сегментації ШІ</translation>
     </message>
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Натисніть на протилежний кут для сегментації об&apos;єкта</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Клацніть наступну точку або утримуйте %s і клацніть, щоб завершити ламану</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Натисніть третій кут для замикання орієнтованого прямокутника</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Утримуйте %s і клацніть, щоб видалити точку</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -389,14 +389,6 @@
         <translation>&amp;Наступне зображення</translation>
     </message>
     <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Відкрити далі (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Відкрити попередній (утримуйте Ctrl+Shift, щоб скопіювати мітки)</translation>
-    </message>
-    <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Масштабувати за вибраними фігурами під час кожної зміни виділення</translation>
     </message>
@@ -553,8 +545,24 @@
         <translation>Видаляє вибрану точку з багатокутника або ламаної</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Клацайте, щоб ставити точки ламаної; утримуйте %s і клацніть, щоб поставити останню.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Клацайте точки, щоб сегментувати об&apos;єкт; утримуйте %s і клацніть, щоб завершити.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Відкрити наступне зображення (утримуйте %s, щоб скопіювати поточні фігури)</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Попереднє зображення</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Відкрити попереднє зображення (утримуйте %s, щоб скопіювати поточні фігури)</translation>
     </message>
     <message>
         <source>&amp;Brightness/Contrast…</source>
@@ -821,16 +829,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Клацайте, щоб ставити точки лінії; Ctrl+клацання ставить останню.</translation>
-    </message>
-    <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Натисніть точки для сегментації об&apos;єкта. Ctrl+LeftClick завершує створення.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Expected location: {path}</source>
         <translation>Збільшити</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+колесо масштабує полотно</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Утримуйте %s і прокручуйте, щоб масштабувати полотно</translation>
     </message>
 </context>
 <context>

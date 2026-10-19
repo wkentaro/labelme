@@ -140,6 +140,10 @@
         <translation>Noktayı taşımak için tıklayın &amp; sürükleyin</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Kenara nokta eklemek için %s tuşunu basılı tutup tıklayın</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>Şekil kilitli</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>Şekiller düzenleniyor</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Dahil etmek için noktalara tıklayın veya hariç tutmak için %s tuşunu basılı tutup tıklayın. Bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Çizginin başlangıç noktasına tıklayın</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Kırık çizginin başlangıç noktasına tıklayın</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Kırık çizgi için sonraki noktaya tıklayın veya Ctrl/Cmd+Click ile tamamlayın</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>Nokta eklemek için tıklayın</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>Noktayı silmek için ALT + SHIFT + Click</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>Şekil üzerinde nokta oluşturmak için ALT + Click</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Diğer köşeyi seçin. Kare çizmek için Shift tuşunu basılı tutun.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Dahil etmek için noktalara tıklayın, dışlamak için Shift+Tıklama. Ctrl+Sol Tıklama oluşturmayı sonlandırır.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Nesneyi bölütlemek için karşı köşeye tıklayın</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Sonraki noktaya tıklayın veya çoklu çizgiyi bitirmek için %s tuşunu basılı tutup tıklayın</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Yönlü dikdörtgeni kapatmak için üçüncü köşeye tıklayın</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Noktayı silmek için %s tuşunu basılı tutup tıklayın</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Sonraki Görüntü</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Sonrakini aç (etiketleri kopyalamak için Ctl+Shift tuşlarını basılı tutun)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Öncekini aç (etiketleri kopyalamak için Ctl+Shift tuşlarını basılı tutun)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>Son şekil ekleme veya düzenleme işlemini geri al</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Çoklu çizgi noktalarını yerleştirmek için tıklayın; sonuncuyu yerleştirmek için %s tuşunu basılı tutup tıklayın.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Nesneyi bölütlemek için noktalara tıklayın; bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Sonraki görüntüyü aç (geçerli şekilleri kopyalamak için %s tuşunu basılı tutun)</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>Tüm şekilleri gizle</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>Geri Al</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Çizgi şeridinin noktalarını yerleştirmek için tıklayın; Ctrl+tıklama sonuncuyu yerleştirir.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Önceki Görüntü</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Önceki görüntüyü aç (geçerli şekilleri kopyalamak için %s tuşunu basılı tutun)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Nesneyi bölütlemek için noktalara tıklayın. Ctrl+Sol Tıklama oluşturmayı sonlandırır.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Beklenen konum: {path}</translation>
         <translation>Yakınlaştırma</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Tekerlek tuvali yakınlaştırır</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Tuvali yakınlaştırmak için %s tuşunu basılı tutup kaydırın</translation>
     </message>
 </context>
 <context>

@@ -140,6 +140,10 @@
         <translation>คลิกและลากเพื่อย้ายจุด</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>กด %s ค้างไว้แล้วคลิกเพื่อเพิ่มจุดบนขอบ</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>รูปร่างถูกล็อกอยู่</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>แก้ไขรูปร่าง</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>คลิกจุดเพื่อรวม หรือกด %s ค้างไว้แล้วคลิกเพื่อยกเว้น กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>คลิกจุดเริ่มต้นของเส้น</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>คลิกจุดเริ่มต้นของเส้นต่อเนื่อง</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>คลิกจุดถัดไป หรือ Ctrl/Cmd+คลิกเพื่อจบเส้นต่อเนื่อง</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -200,24 +204,16 @@
         <translation>คลิกเพื่อเพิ่มจุด</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + คลิกเพื่อลบจุด</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + คลิกเพื่อสร้างจุดบนรูปร่าง</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>คลิกจุดเพื่อรวม หรือ Shift+Click เพื่อยกเว้น Ctrl+LeftClick เพื่อจบการสร้าง</translation>
-    </message>
-    <message>
         <source>Click first corner of bbox for AI segmentation</source>
         <translation>คลิกมุมแรกของ bbox สำหรับ AI segmentation</translation>
     </message>
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>คลิกมุมตรงข้ามเพื่อแบ่งส่วนวัตถุ</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>คลิกจุดถัดไป หรือกด %s ค้างไว้แล้วคลิกเพื่อจบเส้นหักมุม</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>คลิกมุมที่สามเพื่อปิดสี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>กด %s ค้างไว้แล้วคลิกเพื่อลบจุด</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>รูปถัดไป (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>เปิดรูปถัดไป (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>เปิดรูปก่อนหน้า (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>ยกเลิกการเพิ่มและแก้ไขรูปร่างล่าสุด</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>คลิกเพื่อวางจุดของเส้นหักมุม กด %s ค้างไว้แล้วคลิกเพื่อวางจุดสุดท้าย</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>คลิกจุดเพื่อแบ่งส่วนวัตถุ กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>เปิดรูปถัดไป (กด %s ค้างไว้เพื่อคัดลอกรูปร่างปัจจุบัน)</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>ซ่อนรูปร่างทั้งหมด</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>ยกเลิก</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>คลิกเพื่อวางจุดของเส้นต่อเนื่อง Ctrl+คลิกเพื่อวางจุดสุดท้าย</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>รูปก่อนหน้า (&amp;P)</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>เปิดรูปก่อนหน้า (กด %s ค้างไว้เพื่อคัดลอกรูปร่างปัจจุบัน)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>คลิกจุดเพื่อแบ่งส่วนวัตถุ Ctrl+LeftClick เพื่อจบการสร้าง</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Expected location: {path}</source>
         <translation>ซูม</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+ล้อเลื่อน เพื่อซูมแคนวาส</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>กด %s ค้างไว้แล้วเลื่อนเพื่อซูมผืนผ้าใบ</translation>
     </message>
 </context>
 <context>

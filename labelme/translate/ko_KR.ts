@@ -140,6 +140,10 @@
         <translation>클릭하고 드래그하여 점 이동</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>%s 키를 누른 채 클릭하여 변에 점 추가</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>도형이 잠겨 있습니다</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>도형 편집 중</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>점을 클릭하여 포함하거나 %s 키를 누른 채 클릭하여 제외합니다. %s 키를 누른 채 클릭하여 완료합니다.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>선의 시작점 클릭</translation>
     </message>
@@ -174,10 +182,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>연속선의 시작점 클릭</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>다음 점을 클릭하거나 Ctrl/Cmd+클릭으로 완료 (연속선)</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +200,8 @@
         <translation>점 추가를 위해 클릭</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + 클릭으로 점 삭제</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + 클릭으로 도형 위에 점 생성</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>다른 모서리를 선택하세요. 정사각형을 그리려면 Shift를 누른 상태로 조작하세요.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>클릭으로 포함할 점을, Shift+Click으로 제외할 점을 지정. Ctrl+LeftClick으로 생성 완료.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>대각 모서리를 클릭하여 객체를 세그먼트</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>다음 점을 클릭하거나 %s 키를 누른 채 클릭하여 꺾은선을 완료합니다</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>세 번째 모서리를 클릭하여 방향 있는 사각형 닫기</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>%s 키를 누른 채 클릭하여 점 삭제</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -303,14 +303,6 @@
     <message>
         <source>&amp;Next Image</source>
         <translation>다음 이미지(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>다음 열기 (Ctrl+Shift를 누르면 레이블 복사)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>이전 열기 (Ctrl+Shift를 누르면 레이블 복사)</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -413,6 +405,18 @@
         <translation>도형의 마지막 추가 및 편집 실행 취소</translation>
     </message>
     <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>클릭하여 꺾은선의 점을 배치하고, %s 키를 누른 채 클릭하여 마지막 점을 배치합니다.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>점을 클릭하여 객체를 분할하고, %s 키를 누른 채 클릭하여 완료합니다.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>다음 이미지 열기(%s 키를 누르고 있으면 현재 도형을 복사)</translation>
+    </message>
+    <message>
         <source>Hide all shapes</source>
         <translation>모든 도형 숨기기</translation>
     </message>
@@ -513,12 +517,12 @@
         <translation>실행 취소</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>클릭하여 연속선의 점을 놓고, Ctrl+클릭으로 마지막 점을 놓습니다.</translation>
-    </message>
-    <message>
         <source>&amp;Previous Image</source>
         <translation>이전 이미지(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>이전 이미지 열기(%s 키를 누르고 있으면 현재 도형을 복사)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -885,10 +889,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>AI-Points</source>
         <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>클릭으로 객체를 세그먼트. Ctrl+LeftClick으로 생성 완료.</translation>
     </message>
     <message>
         <source>AI-Box</source>
@@ -1451,8 +1451,8 @@ Expected location: {path}</source>
         <translation>확대/축소</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+휠로 캔버스를 확대/축소합니다</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>%s 키를 누른 채 스크롤하여 캔버스 확대/축소</translation>
     </message>
 </context>
 <context>
