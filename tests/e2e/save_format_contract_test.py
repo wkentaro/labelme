@@ -258,6 +258,7 @@ def test_round_trip_mask_shape_via_fixture(
 def test_open_json_with_missing_image_shows_error_and_recovers(
     *,
     qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
     raw_win: MainWindow,
     data_path: Path,
     tmp_path: Path,
@@ -277,6 +278,14 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
     with open(missing_image_json, "w") as f:
         json.dump(json_data, f)
 
+    requested_titles: list[str] = []
+    set_window_title = QtWidgets.QMessageBox.setWindowTitle
+
+    def capture_title(dialog: QtWidgets.QMessageBox, title: str) -> None:
+        requested_titles.append(title)
+        set_window_title(dialog, title)
+
+    monkeypatch.setattr(QtWidgets.QMessageBox, "setWindowTitle", capture_title)
     messages = []
 
     def capture_error() -> None:
@@ -290,6 +299,7 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
     QTimer.singleShot(0, capture_error)
     raw_win._load_file(image_or_label_path=str(missing_image_json))
 
+    assert requested_titles == ["Image Not Found"]
     title, message, details = messages[0]
     # Qt ignores message-box window titles on macOS.
     assert title == ("" if sys.platform == "darwin" else "Image Not Found")
