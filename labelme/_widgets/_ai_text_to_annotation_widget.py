@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Final
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -14,6 +15,7 @@ from ._model_picker import ModelPicker
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
     model_changed = QtCore.Signal(str)
     manage_models_requested = QtCore.Signal()
+    download_requested = QtCore.Signal(str)
 
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
@@ -41,7 +43,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
         header_layout = QtWidgets.QHBoxLayout()
         header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI Text-to-Annotation"))
+        label = QtWidgets.QLabel(self.tr("AI Text Prompt"))
         header_layout.addWidget(label)
         info_button = InfoButton(
             tooltip=self.tr("AI creates annotations from the text prompt")
@@ -82,9 +84,28 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         self._model_combo = model_combo = ModelPicker(options=AI_TEXT_MODEL_OPTIONS)
         # Windows needs an explicit name; Unix exposes the selected option instead.
         model_combo.setAccessibleName(self.tr("Model"))
-        model_combo.setAccessibleDescription(self.tr("Text-to-annotation model"))
+        model_combo.setAccessibleDescription(self.tr("AI Text Prompt model"))
         model_combo.model_changed.connect(self.model_changed)
         model_combo.manage_requested.connect(self.manage_models_requested)
+        model_combo.download_requested.connect(self.download_requested)
+        # Room for the longest model name, which shows even before its download.
+        model_combo.ensurePolished()
+        metrics = model_combo.fontMetrics()
+        longest = max(
+            metrics.horizontalAdvance(display) for _, display in AI_TEXT_MODEL_OPTIONS
+        )
+        option = QtWidgets.QStyleOptionComboBox()
+        model_combo.initStyleOption(option)
+        model_combo.setMinimumWidth(
+            model_combo.style()
+            .sizeFromContents(
+                QtWidgets.QStyle.ContentsType.CT_ComboBox,
+                option,
+                QtCore.QSize(longest, metrics.height()),
+                model_combo,
+            )
+            .width()
+        )
         settings_layout.addWidget(model_combo, stretch=1)
 
         # Size and mute these via QFont and a palette role, never a stylesheet:
@@ -128,7 +149,9 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         body_layout.addLayout(grid)
         layout.addWidget(body)
 
-        self.setMaximumWidth(320)
+        # Compact, but never narrower than a language's labels need.
+        COMPACT_WIDTH: Final[int] = 320
+        self.setMaximumWidth(max(COMPACT_WIDTH, self.minimumSizeHint().width()))
 
     def get_text_prompt(self) -> str:
         return self._text_input.text()
@@ -139,8 +162,15 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     def set_model_name(self, *, model_name: str) -> None:
         self._model_combo.set_model_name(model_name=model_name)
 
-    def set_available_models(self, *, available: set[str]) -> None:
-        self._model_combo.set_available_models(available=available)
+    def set_available_models(
+        self, *, available: set[str], downloading: set[str]
+    ) -> None:
+        self._model_combo.set_available_models(
+            available=available, downloading=downloading
+        )
+
+    def select_model(self, model_name: str, /) -> None:
+        self._model_combo.select_model(model_name)
 
     def get_model_display_name(self) -> str:
         return self._model_combo.currentText()

@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import enum
 import functools
+import html
 import operator
 import os
 import platform
@@ -80,7 +81,9 @@ from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
 from ._widgets import format_shape_label
 from ._widgets._label_list_widget import LABEL_COLOR_ROLE
-from ._widgets._models_widget import ModelsWidget
+from ._widgets._models_widget import ModelsDialog
+from ._widgets._models_widget import license_link
+from ._widgets._models_widget import license_notice
 
 
 class _ZoomMode(enum.Enum):
@@ -240,6 +243,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _menus: _Menus
     _label_dialog: LabelDialog
     _settings_dialog: SettingsDialog | None = None
+    _models_dialog: ModelsDialog | None = None
     _shape_color_preview: dict | None
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
@@ -289,6 +293,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets = self._setup_canvas()
 
         self._actions = self._setup_actions()
+        self._canvas_widgets.empty_state.bind_open_actions(
+            open_file=self._actions.open, open_folder=self._actions.open_dir
+        )
         self._sync_zoom_mode_actions()
         self._persistent_actions = {
             ("auto_save",): self._actions.save_auto,
@@ -350,6 +357,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
         self._ai_text.manage_models_requested.connect(self._open_models)
+        for widget in (self._ai_annotation, self._ai_text):
+            widget.download_requested.connect(
+                functools.partial(self._download_and_select, select=widget.select_model)
+            )
         self._refresh_model_availability()
 
         self._live_widget_appliers = self._setup_live_widget_appliers()
@@ -410,22 +421,35 @@ class MainWindow(QtWidgets.QMainWindow):
         action = functools.partial(_utils.new_action, self)
         separator = functools.partial(_utils.new_separator, self)
         shortcuts = self._config["shortcuts"]
+        ctrl = _utils.modifier_text(Qt.KeyboardModifier.ControlModifier)
+        ctrl_shift = _utils.modifier_text(
+            Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier
+        )
 
+        # lupdate does not see tr() inside f-strings, so the About text is
+        # translated before it is assembled.
+        tagline = self.tr("Image Polygonal Annotation with Python")
+        version = self.tr("Version: %s") % __version__
+        author = self.tr("Author: %s") % "Kentaro Wada"
+        homepage = self.tr("Homepage")
+        documentation = self.tr("Documentation")
+        troubleshooting = self.tr("Troubleshooting")
         about = action(
-            text=f"&About {__appname__}",
+            text=self.tr("&About %s") % __appname__,
+            icon="phosphor/info.svg",
             slot=functools.partial(
                 QMessageBox.about,
                 self,
-                f"About {__appname__}",
+                self.tr("About %s") % __appname__,
                 f"""
 <h3>{__appname__}</h3>
-<p>Image Polygonal Annotation with Python</p>
-<p>Version: {__version__}</p>
-<p>Author: Kentaro Wada</p>
+<p>{tagline}</p>
+<p>{version}</p>
+<p>{author}</p>
 <p>
-    <a href="https://labelme.io">Homepage</a> |
-    <a href="https://labelme.io/docs">Documentation</a> |
-    <a href="https://labelme.io/docs/troubleshoot">Troubleshooting</a>
+    <a href="https://labelme.io">{homepage}</a> |
+    <a href="https://labelme.io/docs">{documentation}</a> |
+    <a href="https://labelme.io/docs/troubleshoot">{troubleshooting}</a>
 </p>
 <p>
     <a href="https://github.com/wkentaro/labelme">GitHub</a> |
@@ -435,7 +459,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         save = action(
-            text=self.tr("&Save\n"),
+            text=self.tr("&Save"),
             slot=lambda: self._save_label_file(save_as=False),
             shortcut=shortcuts["save"],
             icon="phosphor/floppy-disk.svg",
@@ -443,14 +467,14 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         save_as = image_action(
-            text=self.tr("&Save As"),
+            text=self.tr("Save &As…"),
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
-            icon="phosphor/floppy-disk.svg",
+            icon="phosphor/floppy-disk-back.svg",
             tip=self.tr("Save the annotation file under a new name"),
         )
         save_auto = action(
-            text=self.tr("Save &Automatically"),
+            text=self.tr("Save Au&tomatically"),
             tip=self.tr("Save automatically"),
             checkable=True,
             enabled=True,
@@ -463,7 +487,7 @@ class MainWindow(QtWidgets.QMainWindow):
             checked=self._config["with_image_data"],
         )
         change_output_dir = action(
-            text=self.tr("Change &Annotation Folder…"),
+            text=self.tr("Change Annotation &Folder…"),
             slot=self.prompt_output_dir,
             shortcut=shortcuts["save_to"],
             icon="phosphor/folders.svg",
@@ -472,10 +496,10 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         open_ = action(
-            text=self.tr("&Open\n"),
+            text=self.tr("&Open File…"),
             slot=self._open_file_with_dialog,
             shortcut=shortcuts["open"],
-            icon="phosphor/folder-open.svg",
+            icon="phosphor/file-image.svg",
             tip=self.tr("Open an image or annotation file"),
         )
         open_dir = action(
@@ -521,10 +545,10 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         edit = action(
-            text=self.tr("&Edit Label"),
+            text=self.tr("&Edit Label…"),
             slot=self._edit_label,
             shortcut=shortcuts["edit_label"],
-            icon="phosphor/note-pencil.svg",
+            icon="phosphor/tag.svg",
             tip=self.tr("Modify the label of the selected shape"),
             enabled=False,
         )
@@ -572,15 +596,15 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         undo_last_point = action(
-            text=self.tr("Undo last point"),
+            text=self.tr("Undo Last Point"),
             slot=self._canvas_widgets.canvas.undo_last_point,
             shortcut=shortcuts["undo_last_point"],
-            icon="phosphor/arrow-u-up-left.svg",
+            icon="phosphor/backspace.svg",
             tip=self.tr("Undo last drawn point"),
             enabled=False,
         )
         undo = action(
-            text=self.tr("Undo\n"),
+            text=self.tr("Undo"),
             slot=self.undo_shape_edit,
             shortcut=shortcuts["undo"],
             icon="phosphor/arrow-u-up-left.svg",
@@ -588,16 +612,17 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         remove_point = action(
-            text=self.tr("Delete Selected Vertex"),
+            text=self.tr("Delete Selected Point"),
             slot=self.remove_selected_point,
             shortcut=shortcuts["remove_selected_point"],
-            icon="phosphor/trash.svg",
-            tip=self.tr("Delete the selected vertex from the polygon or line strip"),
+            icon="phosphor/minus-circle.svg",
+            tip=self.tr("Delete the selected point from the polygon or LineStrip"),
             enabled=False,
         )
         add_point_to_edge = action(
             text=self.tr("Add Point to Edge"),
             slot=self._canvas_widgets.canvas.add_point_to_edge,
+            icon="phosphor/plus-circle.svg",
             tip=self.tr("Insert a new point at the hovered polygon edge"),
             enabled=False,
         )
@@ -659,8 +684,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["create_linestrip"],
             icon="phosphor/line-segments.svg",
             tip=self.tr(
-                "Click to place linestrip points; Ctrl+click places the last one."
-            ),
+                "Click to place LineStrip points; hold %s and click to place the"
+                " last one."
+            )
+            % ctrl,
         )
         create_ai_points_to_shape_mode = image_action(
             text=self.tr("AI-Points"),
@@ -670,8 +697,9 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=None,
             icon="ai-points.svg",
             tip=self.tr(
-                "Click points to segment object. Ctrl+LeftClick ends creation."
-            ),
+                "Click points to segment the object; hold %s and click to finish."
+            )
+            % ctrl,
         )
         create_ai_box_to_shape_mode = image_action(
             text=self.tr("AI-Box"),
@@ -687,15 +715,17 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self._open_next_image,
             shortcut=shortcuts["open_next"],
             icon="phosphor/arrow-fat-right.svg",
-            tip=self.tr("Open next (hold Ctl+Shift to copy labels)"),
+            tip=self.tr("Open the next image (hold %s to copy the current Shapes)")
+            % ctrl_shift,
             enabled=False,
         )
         open_prev_img = action(
-            text=self.tr("&Prev Image"),
+            text=self.tr("&Previous Image"),
             slot=self._open_prev_image,
             shortcut=shortcuts["open_prev"],
             icon="phosphor/arrow-fat-left.svg",
-            tip=self.tr("Open prev (hold Ctl+Shift to copy labels)"),
+            tip=self.tr("Open the previous image (hold %s to copy the current Shapes)")
+            % ctrl_shift,
             enabled=False,
         )
         keep_prev_zoom = action(
@@ -720,7 +750,7 @@ class MainWindow(QtWidgets.QMainWindow):
             checkable=True,
         )
         brightness_contrast = image_action(
-            text=self.tr("&Brightness Contrast"),
+            text=self.tr("&Brightness/Contrast…"),
             slot=self.open_brightness_contrast_dialog,
             shortcut=None,
             icon="brightness-contrast.svg",
@@ -754,7 +784,6 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         fill_drawing = action(
             text=self.tr("Fill Drawing Polygon"),
-            icon="phosphor/paint-bucket.svg",
             tip=self.tr("Fill polygon while drawing"),
             checkable=True,
             enabled=True,
@@ -764,24 +793,24 @@ class MainWindow(QtWidgets.QMainWindow):
             value=self._config["canvas"]["fill_drawing"]
         )
         hide_all = action(
-            text=self.tr("&Hide\nShapes"),
+            text=self.tr("&Hide Shapes"),
             slot=functools.partial(self.toggle_shape_visibility, value=False),
             shortcut=shortcuts["hide_all_shapes"],
-            icon="phosphor/eye.svg",
+            icon="phosphor/eye-slash.svg",
             tip=self.tr("Hide all shapes"),
         )
         show_all = action(
-            text=self.tr("&Show\nShapes"),
+            text=self.tr("&Show Shapes"),
             slot=functools.partial(self.toggle_shape_visibility, value=True),
             shortcut=shortcuts["show_all_shapes"],
             icon="phosphor/eye.svg",
             tip=self.tr("Show all shapes"),
         )
         toggle_all = action(
-            text=self.tr("&Toggle\nShapes"),
+            text=self.tr("&Toggle Shapes"),
             slot=functools.partial(self.toggle_shape_visibility, value=None),
             shortcut=shortcuts["toggle_all_shapes"],
-            icon="phosphor/eye.svg",
+            icon="phosphor/toggle-right.svg",
             tip=self.tr("Toggle all shapes"),
         )
 
@@ -977,7 +1006,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Quit"),
             slot=self.close,
             shortcut=shortcuts["quit"],
-            icon=None,
+            icon="phosphor/power.svg",
             tip=self.tr("Quit application"),
         )
         settings_editable = self._is_settings_editable
@@ -985,7 +1014,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Settings…"),
             slot=self._open_settings,
             shortcut="Ctrl+," if platform.system() == "Darwin" else "Ctrl+Shift+,",
-            icon=None,
+            icon="phosphor/gear-six.svg",
             tip=(
                 self.tr("Edit settings")
                 if settings_editable
@@ -994,6 +1023,12 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=True,
         )
         open_config.setMenuRole(QtGui.QAction.MenuRole.PreferencesRole)
+        open_models = action(
+            text=self.tr("AI Models…"),
+            slot=self._open_models,
+            icon="phosphor/cube.svg",
+            tip=self.tr("Download or delete AI models"),
+        )
         help_ = action(
             text=self.tr("&Tutorial"),
             slot=self.tutorial,
@@ -1031,6 +1066,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._actions.delete_file,
                 separator(),
                 open_config,
+                open_models,
                 separator(),
                 quit_,
             )
@@ -1061,6 +1097,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 separator(),
                 self._actions.brightness_contrast,
                 self._actions.toggle_keep_prev_brightness_contrast,
+                # macOS appends Enter Full Screen here; the separator keeps its
+                # SF Symbol from indenting the icon-less items above it.
+                separator(),
             )
         )
 
@@ -1085,7 +1124,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addToolBar(
             Qt.ToolBarArea.TopToolBarArea,
             ToolBar(
-                title="Tools",
+                name="Tools",
+                title=self.tr("Tools"),
                 overflow_label=self.tr("More tools"),
                 actions=[
                     self._actions.open,
@@ -1113,7 +1153,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addToolBar(
             Qt.ToolBarArea.LeftToolBarArea,
             ToolBar(
-                title="CreateShapeTools",
+                name="CreateShapeTools",
+                title=self.tr("Shape Tools"),
                 overflow_label=self.tr("More shape tools"),
                 actions=[
                     *[
@@ -1302,10 +1343,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.shape_double_clicked.connect(self._edit_label)
         canvas.drawing_polygon.connect(self._on_drawing_polygon_changed)
 
-        empty_state = EmptyStateWidget(
-            on_open_image=self._open_file_with_dialog,
-            on_open_directory=self._open_dir_with_dialog,
-        )
+        empty_state = EmptyStateWidget()
         surface = QtWidgets.QStackedWidget()
         surface.addWidget(empty_state)
         surface.addWidget(scroll_area)
@@ -1462,10 +1500,10 @@ class MainWindow(QtWidgets.QMainWindow):
             + f"\n\n{source}\n{message}"
         )
         keep_file = msg_box.addButton(
-            self.tr("Continue with defaults"), QMessageBox.ButtonRole.AcceptRole
+            self.tr("Continue with Defaults"), QMessageBox.ButtonRole.AcceptRole
         )
         reset_all = msg_box.addButton(
-            self.tr("Back up and reset"), QMessageBox.ButtonRole.ResetRole
+            self.tr("Back Up and Reset"), QMessageBox.ButtonRole.ResetRole
         )
         reset_all.setEnabled(can_reset)
         msg_box.setDefaultButton(keep_file)
@@ -1484,7 +1522,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 continue
             QMessageBox.information(
                 self,
-                self.tr("Back up and reset"),
+                self.tr("Back Up and Reset"),
                 self.tr("Configuration backup saved to %s") % backup.resolve(),
             )
             return config_file, fallback
@@ -1632,8 +1670,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr("Mask Output Unavailable"),
                 self.tr(
                     "%s only detects bounding boxes and cannot create "
-                    "'%s' annotations.\n\n"
-                    "Switch the AI Text-to-Annotation model to 'SAM3 (smart)', "
+                    "'%s' Shapes.\n\n"
+                    "Switch the AI Text Prompt model to 'SAM3 (smart)', "
                     "or set the output format to 'Rectangle'."
                 )
                 % (self._ai_text.get_model_display_name(), shape_type),
@@ -1794,7 +1832,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if "label" not in locked and not self.validate_label(label=entry.label):
             self.show_error_message(
-                title=self.tr("Invalid label"),
+                title=self.tr("Invalid Label"),
                 message=self.tr("Invalid label '{}' with validation type '{}'").format(
                     entry.label, self._config["validate_label"]
                 ),
@@ -2053,7 +2091,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_save_failure(label_path=label_path, error=e)
             if show_error:
                 self.show_error_message(
-                    title=self.tr("Error saving annotation file"),
+                    title=self.tr("Error Saving Annotation File"),
                     message=self.tr("<b>%s</b>") % e,
                 )
             return False
@@ -2152,7 +2190,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if entry is not None and not self.validate_label(label=entry.label):
             self.show_error_message(
-                title=self.tr("Invalid label"),
+                title=self.tr("Invalid Label"),
                 message=self.tr("Invalid label '{}' with validation type '{}'").format(
                     entry.label, self._config["validate_label"]
                 ),
@@ -2447,7 +2485,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self, *, requirement: ImageDecodeRequirement, limit_mb: int
     ) -> bool:
         msg_box = QtWidgets.QMessageBox(self)
-        msg_box.setWindowTitle(self.tr("Large image"))
+        msg_box.setWindowTitle(self.tr("Large Image"))
         msg_box.setText(self.tr("Large image requires more memory"))
         msg_box.setInformativeText(
             self.tr(
@@ -2506,7 +2544,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         if not QtCore.QFile.exists(image_or_label_path):
             self.show_error_message(
-                title=self.tr("Error opening file"),
+                title=self.tr("Error Opening File"),
                 message=self.tr("No such file: <b>%s</b>") % image_or_label_path,
             )
             return False
@@ -2838,7 +2876,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         image_or_label_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            self.tr("%s - Open Image or Annotations") % __appname__,
+            self.tr("Open File"),
             self.current_path(),
             filters,
         )
@@ -2856,7 +2894,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         output_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self,
-            self.tr("%s - Choose Annotation Folder") % __appname__,
+            self.tr("Choose Annotation Folder"),
             default_output_dir,
             QtWidgets.QFileDialog.Option.ShowDirsOnly
             | QtWidgets.QFileDialog.Option.DontResolveSymlinks,
@@ -2968,7 +3006,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _confirm_deletion(self, *, message: str) -> bool:
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
-        msg_box.setWindowTitle(self.tr("Attention"))
+        msg_box.setWindowTitle(self.tr("Delete Annotation File"))
         msg_box.setText(message)
         delete_button = msg_box.addButton(
             self.tr("Delete"), QtWidgets.QMessageBox.ButtonRole.DestructiveRole
@@ -2996,7 +3034,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         except OSError as error:
             self.show_error_message(
-                title=self.tr("Error deleting annotation file"), message=str(error)
+                title=self.tr("Error Deleting Annotation File"), message=str(error)
             )
             return
         self._failed_save_path = None
@@ -3313,14 +3351,44 @@ class MainWindow(QtWidgets.QMainWindow):
             for name in self._model_manager.models
             if self._model_manager.is_ready(name)
         }
-        self._ai_annotation.set_available_models(available=available)
-        self._ai_text.set_available_models(available=available)
+        downloading = set(self._model_manager.queue)
+        if self._model_manager.active is not None:
+            downloading.add(self._model_manager.active)
+        for widget in (self._ai_annotation, self._ai_text):
+            widget.set_available_models(available=available, downloading=downloading)
         self._ai_annotation.set_point_prompt_mode(
             enabled=self._ai_annotation.is_point_prompt_mode
         )
         self._canvas_widgets.canvas.set_ai_model_name(
             model_name=self._ai_annotation.current_model_id
         )
+
+    def _download_and_select(
+        self, model_name: str, /, *, select: Callable[[str], None]
+    ) -> None:
+        notice = license_notice(model_name)
+        if notice is not None:
+            message = QtWidgets.QMessageBox(self)
+            message.setWindowTitle(
+                self.tr("Download {model}").format(
+                    model=self._model_manager.models[model_name]
+                )
+            )
+            message.setIcon(QtWidgets.QMessageBox.Icon.Information)
+            message.setTextFormat(Qt.TextFormat.RichText)
+            message.setTextInteractionFlags(
+                Qt.TextInteractionFlag.TextBrowserInteraction
+            )
+            message.setText(f"{html.escape(notice)}<br><br>{license_link(model_name)}")
+            download = message.addButton(
+                self.tr("Download"), QtWidgets.QMessageBox.ButtonRole.AcceptRole
+            )
+            message.addButton(QtWidgets.QMessageBox.StandardButton.Cancel)
+            message.exec()
+            if message.clickedButton() is not download:
+                return
+        select(model_name)
+        self._model_manager.enqueue(model_name)
 
     def _remove_ai_model(self, model_name: str, /) -> None:
         option = _ai_models.find_ai_assist_model_option(model_name=model_name)
@@ -3349,10 +3417,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._model_manager.remove(model_name)
 
     def _open_models(self) -> None:
-        self._open_settings()
-        assert self._settings_dialog is not None
-        self._settings_dialog.show_models()
+        if self._models_dialog is None:
+            self._models_dialog = ModelsDialog(
+                manager=self._model_manager,
+                remove_model=self._remove_ai_model,
+                parent=self,
+            )
         self._model_manager.refresh()
+        self._models_dialog.show()
+        self._models_dialog.raise_()
+        self._models_dialog.activateWindow()
 
     def _open_settings(self) -> None:
         # Keep a single dialog instance; it edits self._config by reference, so
@@ -3363,9 +3437,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 apply_setting=self._apply_setting_change,
                 preview_shape_color=self._preview_shape_color,
                 open_as_text=self._open_config_file,
-                models_widget=ModelsWidget(
-                    manager=self._model_manager, remove_model=self._remove_ai_model
-                ),
                 settings_editable=self._is_settings_editable,
                 parent=self,
             )
@@ -3411,7 +3482,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         user_choice = QtWidgets.QMessageBox.question(
             self,
-            self.tr("Unsaved changes"),
+            self.tr("Unsaved Changes"),
             prompt_text,
             QtWidgets.QMessageBox.StandardButton.Save
             | QtWidgets.QMessageBox.StandardButton.Discard
@@ -3439,7 +3510,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if isinstance(exc, ImageNotFoundError):
             dialog = QtWidgets.QMessageBox(self)
             dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-            dialog.setWindowTitle(self.tr("Image not found"))
+            dialog.setWindowTitle(self.tr("Image Not Found"))
             dialog.setTextFormat(Qt.TextFormat.PlainText)
             dialog.setText(
                 self.tr(
@@ -3471,7 +3542,7 @@ class MainWindow(QtWidgets.QMainWindow):
             message = f"{message}\n\n{exc}"
         if extra:
             message = f"{message}\n\n{extra}"
-        QtWidgets.QMessageBox.critical(self, self.tr("Error opening file"), message)
+        QtWidgets.QMessageBox.critical(self, self.tr("Error Opening File"), message)
         self.show_status_message(self.tr("Failed to load: {path}").format(path=path))
 
     def current_path(self) -> str:
@@ -3610,7 +3681,7 @@ class MainWindow(QtWidgets.QMainWindow):
         dir_path = str(
             QtWidgets.QFileDialog.getExistingDirectory(
                 self,
-                self.tr("%s - Browse Image Folder") % __appname__,
+                self.tr("Open Folder"),
                 default_open_dir_path,
                 QtWidgets.QFileDialog.Option.ShowDirsOnly
                 | QtWidgets.QFileDialog.Option.DontResolveSymlinks,

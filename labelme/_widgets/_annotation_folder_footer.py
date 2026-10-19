@@ -58,9 +58,9 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
         self._next_to_images = menu.addAction(self.tr("Next to Images"))
         self._next_to_images.setCheckable(True)
         self._next_to_images.triggered.connect(self._on_next_to_images)
-        menu.addAction(self.tr("Choose Annotation Folder…")).triggered.connect(
-            on_choose
-        )
+        menu.addAction(
+            new_icon("phosphor/folders.svg"), self.tr("Change Annotation Folder…")
+        ).triggered.connect(on_choose)
 
         button = QtWidgets.QToolButton()
         button.setObjectName("annotationFolderButton")

@@ -18,6 +18,7 @@ from ._model_picker import ModelPicker
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     hover_highlight_requested = QtCore.Signal(bool)
     manage_models_requested = QtCore.Signal()
+    download_requested = QtCore.Signal(str)
 
     _model_combo: ModelPicker
     _output_format_combo: QtWidgets.QComboBox
@@ -71,7 +72,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
         header_layout = QtWidgets.QHBoxLayout()
         header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI-Assisted Annotation"))
+        label = QtWidgets.QLabel(self.tr("AI Assist"))
         header_layout.addWidget(label)
         info_button = InfoButton(
             tooltip=self.tr("AI suggests annotation in 'AI-Points' and 'AI-Box' modes")
@@ -149,6 +150,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self.set_current_model(model_display=default_model)
         self._model_combo.model_changed.connect(on_model_changed)
         self._model_combo.manage_requested.connect(self.manage_models_requested)
+        self._model_combo.download_requested.connect(self.download_requested)
 
         self._output_format_combo.setCurrentIndex(0)
 
@@ -175,8 +177,15 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         )
         self._model_combo.set_model_name(model_name=model_name)
 
-    def set_available_models(self, *, available: set[str]) -> None:
-        self._model_combo.set_available_models(available=available)
+    def set_available_models(
+        self, *, available: set[str], downloading: set[str]
+    ) -> None:
+        self._model_combo.set_available_models(
+            available=available, downloading=downloading
+        )
+
+    def select_model(self, model_name: str, /) -> None:
+        self._model_combo.select_model(model_name)
 
     def set_polygon_detail(self, detail: int, /) -> None:
         with QtCore.QSignalBlocker(self._polygon_detail_slider):
@@ -189,11 +198,11 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             option = _ai_models.find_ai_assist_model_option(
                 model_name=self._model_combo.itemData(index)
             )
+            if option is None:
+                continue
             item = model.item(index)
             assert item is not None
-            item.setEnabled(
-                option is None or not enabled or option.supports_point_prompts
-            )
+            item.setEnabled(not enabled or option.supports_point_prompts)
 
     def setEnabled(self, a0: bool, /) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
         self._body.setEnabled(a0)
@@ -205,10 +214,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
-                    self.tr(
-                        "Select 'AI-Points' or 'AI-Box' mode "
-                        "to enable AI-Assisted Annotation"
-                    ),
+                    self.tr("Select 'AI-Points' or 'AI-Box' mode to enable AI Assist"),
                     self,
                 )
                 self.hover_highlight_requested.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
