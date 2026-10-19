@@ -240,3 +240,26 @@ class ModelsWidget(QtWidgets.QWidget):
                 self._remove_model(model_name)
             except OSError as error:
                 QtWidgets.QMessageBox.warning(self, self.tr("Delete model"), str(error))
+
+
+class ModelsDialog(QtWidgets.QDialog):
+    def __init__(
+        self,
+        *,
+        manager: ModelManager,
+        remove_model: Callable[[str], None],
+        parent: QtWidgets.QWidget | None = None,
+    ) -> None:
+        super().__init__(parent)
+        self.setWindowTitle(self.tr("AI Models"))
+        self._scroll_area = scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setWidget(ModelsWidget(manager=manager, remove_model=remove_model))
+        buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.StandardButton.Close
+        )
+        buttons.rejected.connect(self.close)
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.addWidget(scroll_area)
+        layout.addWidget(buttons)
+        self.resize(560, 590)

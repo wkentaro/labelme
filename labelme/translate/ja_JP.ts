@@ -656,6 +656,14 @@ Shapes</source>
         <translation>ウィンドウに合わせる</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AIモデル…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>AIモデルをダウンロードまたは削除</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
@@ -1044,6 +1052,13 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AIモデル</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1383,10 +1398,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>設定</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AIモデル</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

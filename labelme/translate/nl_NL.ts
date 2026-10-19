@@ -643,6 +643,14 @@ Shapes</source>
         <translation>Aanpassen aan venster</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AI-modellen…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>AI-modellen downloaden of verwijderen</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Bestand</translation>
     </message>
@@ -1031,6 +1039,13 @@ Verwachte locatie: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AI-modellen</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1370,10 +1385,6 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Instellingen</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AI-modellen</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

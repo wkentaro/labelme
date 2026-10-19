@@ -643,6 +643,14 @@ Shapes</source>
         <translation>Ajustar à Janela</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Modelos de IA…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Baixar ou excluir modelos de IA</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Arquivo</translation>
     </message>
@@ -1031,6 +1039,13 @@ Local esperado: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Modelos de IA</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1370,10 +1385,6 @@ Local esperado: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Configurações</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Modelos de IA</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

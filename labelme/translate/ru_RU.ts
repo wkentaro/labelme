@@ -628,6 +628,14 @@ Shapes</source>
         <translation>По размеру окна</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Модели ИИ…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Загрузить или удалить модели ИИ</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
@@ -1034,6 +1042,13 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Модели ИИ</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1373,10 +1388,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>Настройки</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Модели ИИ</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

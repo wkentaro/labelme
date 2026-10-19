@@ -590,6 +590,14 @@
         <translation>Sesuaikan Jendela</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Model AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Unduh atau hapus model AI</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>Berkas (&amp;F)</translation>
     </message>
@@ -1031,6 +1039,13 @@ Shapes</source>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Model AI</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1138,10 +1153,6 @@ Shapes</source>
     <message>
         <source>Settings</source>
         <translation>Pengaturan</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Model AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

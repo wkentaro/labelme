@@ -643,6 +643,14 @@ Shapes</source>
         <translation>Vừa Cửa sổ</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Mô hình AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Tải xuống hoặc xóa mô hình AI</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>Tệp(&amp;F)</translation>
     </message>
@@ -1031,6 +1039,13 @@ Vị trí dự kiến: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Mô hình AI</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1370,10 +1385,6 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Cài đặt</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Mô hình AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

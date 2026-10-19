@@ -657,6 +657,14 @@ Shapes</source>
         <translation>Ablakhoz igazítás</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AI-modellek…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>AI-modellek letöltése vagy törlése</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Fájl</translation>
     </message>
@@ -1037,6 +1045,13 @@ Várt hely: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AI-modellek</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1376,10 +1391,6 @@ Várt hely: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Beállítások</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AI-modellek</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

@@ -649,6 +649,14 @@ forme</translation>
         <translation>Adatta alla finestra</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Modelli IA…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Scarica o elimina modelli IA</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;File</translation>
     </message>
@@ -1037,6 +1045,13 @@ Posizione prevista: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Modelli IA</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1376,10 +1391,6 @@ Posizione prevista: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Impostazioni</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Modelli IA</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

@@ -657,6 +657,14 @@ Formen</translation>
         <translation>An Fenster anpassen</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>KI-Modelle…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>KI-Modelle herunterladen oder löschen</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
@@ -1037,6 +1045,13 @@ Erwarteter Speicherort: {path}</translation>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>KI-Modelle</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1376,10 +1391,6 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Einstellungen</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>KI-Modelle</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

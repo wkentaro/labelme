@@ -30,7 +30,7 @@ def test_recommended_models_are_explained_before_all_models(
 ) -> None:
     win = main_win()
     win._open_models()
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None
@@ -91,7 +91,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert win._config["ai"]["text_model"] == name
 
     text.setCurrentIndex(text.findData("manage"))
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None
@@ -114,11 +114,15 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     )
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
+    # An open Settings dialog shows the cleared choices without reopening.
+    win._open_settings()
+    settings = win._settings_dialog
+    assert settings is not None
     win._open_models()
     models._rows[name][2].click()
     assert not Path(blob.path).exists()
     for key in ("default", "text_model"):
-        editor = dialog._editors[("ai", key)]
+        editor = settings._editors[("ai", key)]
         assert isinstance(editor, QtWidgets.QComboBox)
         assert editor.currentData() is None
         assert editor.currentText() == "(none)"
@@ -179,7 +183,7 @@ def test_delete_releases_loaded_assist_and_text_sessions(
         lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
     )
     win._open_models()
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None
@@ -199,27 +203,24 @@ def test_delete_releases_loaded_assist_and_text_sessions(
 
 
 @pytest.mark.gui
-@pytest.mark.parametrize("query", ["download", "AI Models", "SAM3"])
-def test_find_models_and_tab_into_visible_controls(
-    *, main_win: MainWinFactory, qtbot: QtBot, query: str
+def test_file_menu_opens_models_outside_settings_and_tabs_into_controls(
+    *, main_win: MainWinFactory, qtbot: QtBot
 ) -> None:
     win = main_win()
-    win._open_settings()
-    dialog = win._settings_dialog
+    action = next(
+        action for action in win._menus.file.actions() if action.text() == "AI Models…"
+    )
+    action.trigger()
+    dialog = win._models_dialog
     assert dialog is not None
-    page = dialog._page
+    assert win._settings_dialog is None
     qtbot.waitUntil(dialog.isActiveWindow)
-    qtbot.keyClicks(page._search, query)
-    matches = page._navigation.findItems("AI Models", QtCore.Qt.MatchFlag.MatchExactly)
-    assert len(matches) == 1
-    page._navigation.setCurrentItem(matches[0])
-    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
-    qtbot.keyClick(page._navigation, QtCore.Qt.Key.Key_Tab)
+    qtbot.keyClick(dialog, QtCore.Qt.Key.Key_Tab)
     models = dialog.findChild(ModelsWidget)
     assert models is not None
     focused = dialog.focusWidget()
     assert focused is not None and models.isAncestorOf(focused)
-    viewport = page._scroll_area.viewport()
+    viewport = dialog._scroll_area.viewport()
     assert viewport.rect().contains(focused.mapTo(viewport, focused.rect().center()))
 
 
@@ -241,14 +242,14 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     )
     win = main_win()
     win._open_models()
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None
     status, download, _, details = models._rows[name]
     # Large platform fonts can already require scrolling on the offscreen display.
     QtWidgets.QApplication.processEvents()
-    initial_scroll_maximum = dialog._page._scroll_area.horizontalScrollBar().maximum()
+    initial_scroll_maximum = dialog._scroll_area.horizontalScrollBar().maximum()
     download.click()
     qtbot.waitUntil(
         lambda: win._model_manager.get_state(name) == "failed", timeout=20_000
@@ -257,10 +258,7 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     assert download.text() == "Retry"
     assert download.accessibleName() == "Retry EfficientSam (speed)"
     QtWidgets.QApplication.processEvents()
-    assert (
-        dialog._page._scroll_area.horizontalScrollBar().maximum()
-        == initial_scroll_maximum
-    )
+    assert dialog._scroll_area.horizontalScrollBar().maximum() == initial_scroll_maximum
     assert details.isVisible()
 
     messages = []
@@ -285,7 +283,7 @@ def test_model_links_follow_live_theme_contrast(
 ) -> None:
     win = main_win()
     win._open_models()
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None

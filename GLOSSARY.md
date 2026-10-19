@@ -67,7 +67,7 @@ A supported model whose required files are present in the local cache; every dow
 _Avoid_: installed model (confuses cached files with a loaded Model Session), available model (may mean merely listed in the catalog).
 
 **Download Queue**:
-The ordered list of models the user has explicitly requested from Settings → AI Models. One model downloads at a time while Labelme stays open. Closing Settings leaves downloads running; quitting stops the current transfer and discards the queue. Completed files are retained, and restarting downloads requires user action.
+The ordered list of models the user has explicitly requested from the AI Models window. One model downloads at a time while Labelme stays open. Closing the window leaves downloads running; quitting stops the current transfer and discards the queue. Completed files are retained, and restarting downloads requires user action.
 _Avoid_: background service (downloads do not outlive Labelme).
 
 **Model Session**:

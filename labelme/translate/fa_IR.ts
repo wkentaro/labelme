@@ -643,6 +643,14 @@ Shapes</source>
         <translation>تناسب با پنجره</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>مدل‌های هوش مصنوعی…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>دانلود یا حذف مدل‌های هوش مصنوعی</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>فایل(&amp;F)</translation>
     </message>
@@ -1031,6 +1039,13 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>مدل‌های هوش مصنوعی</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1370,10 +1385,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>تنظیمات</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>مدل‌های هوش مصنوعی</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

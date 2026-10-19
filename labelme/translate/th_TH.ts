@@ -643,6 +643,14 @@ Shapes</source>
         <translation>พอดีหน้าต่าง</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>โมเดล AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>ดาวน์โหลดหรือลบโมเดล AI</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>ไฟล์ (&amp;F)</translation>
     </message>
@@ -1031,6 +1039,13 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>โมเดล AI</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1370,10 +1385,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>การตั้งค่า</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>โมเดล AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

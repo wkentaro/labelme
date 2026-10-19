@@ -649,6 +649,14 @@ Shapes</source>
         <translation>适合窗口</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AI 模型…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>下载或删除 AI 模型</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>文件(&amp;F)</translation>
     </message>
@@ -1037,6 +1045,13 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AI 模型</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1376,10 +1391,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>设置</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AI 模型</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

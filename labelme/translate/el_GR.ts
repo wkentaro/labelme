@@ -589,6 +589,14 @@ Shapes</source>
         <translation>Έξοδος από την εφαρμογή</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Μοντέλα AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Λήψη ή διαγραφή μοντέλων AI</translation>
+    </message>
+    <message>
         <source>&amp;Tutorial</source>
         <translation>&amp; Εκμάθηση</translation>
     </message>
@@ -1033,6 +1041,13 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Μοντέλα AI</translation>
+    </message>
+</context>
+<context>
     <name>ModelsWidget</name>
     <message>
         <source>Downloading…</source>
@@ -1372,10 +1387,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>Ρυθμίσεις</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Μοντέλα AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>
