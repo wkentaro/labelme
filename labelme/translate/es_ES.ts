@@ -1385,40 +1385,40 @@ Ubicación esperada: {path}</translation>
         <translation>Modelo predeterminado</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (velocidad)</translation>
+        <source>EfficientSAM (speed)</source>
+        <translation>EfficientSAM (velocidad)</translation>
     </message>
     <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (precisión)</translation>
+        <source>EfficientSAM (accuracy)</source>
+        <translation>EfficientSAM (precisión)</translation>
     </message>
     <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (velocidad)</translation>
+        <source>SAM (speed)</source>
+        <translation>SAM (velocidad)</translation>
     </message>
     <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (equilibrado)</translation>
+        <source>SAM (balanced)</source>
+        <translation>SAM (equilibrado)</translation>
     </message>
     <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (precisión)</translation>
+        <source>SAM (accuracy)</source>
+        <translation>SAM (precisión)</translation>
     </message>
     <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (velocidad)</translation>
+        <source>SAM2 (speed)</source>
+        <translation>SAM2 (velocidad)</translation>
     </message>
     <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (equilibrado)</translation>
+        <source>SAM2 (balanced)</source>
+        <translation>SAM2 (equilibrado)</translation>
     </message>
     <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (precisión)</translation>
+        <source>SAM2 (accuracy)</source>
+        <translation>SAM2 (precisión)</translation>
     </message>
     <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
+        <source>SAM3</source>
+        <translation>SAM3</translation>
     </message>
     <message>
         <source>Text prompt model</source>

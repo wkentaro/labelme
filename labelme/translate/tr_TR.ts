@@ -1385,40 +1385,40 @@ Beklenen konum: {path}</translation>
         <translation>Varsayılan model</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (hız)</translation>
+        <source>EfficientSAM (speed)</source>
+        <translation>EfficientSAM (hız)</translation>
     </message>
     <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (doğruluk)</translation>
+        <source>EfficientSAM (accuracy)</source>
+        <translation>EfficientSAM (doğruluk)</translation>
     </message>
     <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (hız)</translation>
+        <source>SAM (speed)</source>
+        <translation>SAM (hız)</translation>
     </message>
     <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (dengeli)</translation>
+        <source>SAM (balanced)</source>
+        <translation>SAM (dengeli)</translation>
     </message>
     <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (doğruluk)</translation>
+        <source>SAM (accuracy)</source>
+        <translation>SAM (doğruluk)</translation>
     </message>
     <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (hız)</translation>
+        <source>SAM2 (speed)</source>
+        <translation>SAM2 (hız)</translation>
     </message>
     <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (dengeli)</translation>
+        <source>SAM2 (balanced)</source>
+        <translation>SAM2 (dengeli)</translation>
     </message>
     <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (doğruluk)</translation>
+        <source>SAM2 (accuracy)</source>
+        <translation>SAM2 (doğruluk)</translation>
     </message>
     <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
+        <source>SAM3</source>
+        <translation>SAM3</translation>
     </message>
     <message>
         <source>Text prompt model</source>

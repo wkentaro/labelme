@@ -1385,40 +1385,40 @@ Expected location: {path}</source>
         <translation>Προεπιλεγμένο μοντέλο</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (ταχύτητα)</translation>
+        <source>EfficientSAM (speed)</source>
+        <translation>EfficientSAM (ταχύτητα)</translation>
     </message>
     <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (ακρίβεια)</translation>
+        <source>EfficientSAM (accuracy)</source>
+        <translation>EfficientSAM (ακρίβεια)</translation>
     </message>
     <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (ταχύτητα)</translation>
+        <source>SAM (speed)</source>
+        <translation>SAM (ταχύτητα)</translation>
     </message>
     <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (ισορροπημένο)</translation>
+        <source>SAM (balanced)</source>
+        <translation>SAM (ισορροπημένο)</translation>
     </message>
     <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (ακρίβεια)</translation>
+        <source>SAM (accuracy)</source>
+        <translation>SAM (ακρίβεια)</translation>
     </message>
     <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (ταχύτητα)</translation>
+        <source>SAM2 (speed)</source>
+        <translation>SAM2 (ταχύτητα)</translation>
     </message>
     <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (ισορροπημένο)</translation>
+        <source>SAM2 (balanced)</source>
+        <translation>SAM2 (ισορροπημένο)</translation>
     </message>
     <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (ακρίβεια)</translation>
+        <source>SAM2 (accuracy)</source>
+        <translation>SAM2 (ακρίβεια)</translation>
     </message>
     <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
+        <source>SAM3</source>
+        <translation>SAM3</translation>
     </message>
     <message>
         <source>Text prompt model</source>

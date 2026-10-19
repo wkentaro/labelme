@@ -14,47 +14,47 @@ class AiAssistModelOption:
 AI_ASSIST_MODEL_OPTIONS: Final[tuple[AiAssistModelOption, ...]] = (
     AiAssistModelOption(
         model_name="efficientsam:10m",
-        display_name="EfficientSam (speed)",
+        display_name="EfficientSAM (speed)",
         supports_point_prompts=True,
     ),
     AiAssistModelOption(
         model_name="efficientsam:latest",
-        display_name="EfficientSam (accuracy)",
+        display_name="EfficientSAM (accuracy)",
         supports_point_prompts=True,
     ),
     AiAssistModelOption(
         model_name="sam:100m",
-        display_name="Sam (speed)",
+        display_name="SAM (speed)",
         supports_point_prompts=True,
     ),
     AiAssistModelOption(
         model_name="sam:300m",
-        display_name="Sam (balanced)",
+        display_name="SAM (balanced)",
         supports_point_prompts=True,
     ),
     AiAssistModelOption(
         model_name="sam:latest",
-        display_name="Sam (accuracy)",
+        display_name="SAM (accuracy)",
         supports_point_prompts=True,
     ),
     AiAssistModelOption(
         model_name="sam2:small",
-        display_name="Sam2 (speed)",
+        display_name="SAM2 (speed)",
         supports_point_prompts=True,
     ),
     AiAssistModelOption(
         model_name="sam2:latest",
-        display_name="Sam2 (balanced)",
+        display_name="SAM2 (balanced)",
         supports_point_prompts=True,
     ),
     AiAssistModelOption(
         model_name="sam2:large",
-        display_name="Sam2 (accuracy)",
+        display_name="SAM2 (accuracy)",
         supports_point_prompts=True,
     ),
     AiAssistModelOption(
         model_name="sam3:latest",
-        display_name="Sam3",
+        display_name="SAM3",
         supports_point_prompts=False,
     ),
 )

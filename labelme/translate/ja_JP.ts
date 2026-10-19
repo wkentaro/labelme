@@ -1394,40 +1394,40 @@ Expected location: {path}</source>
         <translation>デフォルトモデル</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (高速)</translation>
+        <source>EfficientSAM (speed)</source>
+        <translation>EfficientSAM (高速)</translation>
     </message>
     <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (高精度)</translation>
+        <source>EfficientSAM (accuracy)</source>
+        <translation>EfficientSAM (高精度)</translation>
     </message>
     <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (高速)</translation>
+        <source>SAM (speed)</source>
+        <translation>SAM (高速)</translation>
     </message>
     <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (バランス)</translation>
+        <source>SAM (balanced)</source>
+        <translation>SAM (バランス)</translation>
     </message>
     <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (高精度)</translation>
+        <source>SAM (accuracy)</source>
+        <translation>SAM (高精度)</translation>
     </message>
     <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (高速)</translation>
+        <source>SAM2 (speed)</source>
+        <translation>SAM2 (高速)</translation>
     </message>
     <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (バランス)</translation>
+        <source>SAM2 (balanced)</source>
+        <translation>SAM2 (バランス)</translation>
     </message>
     <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (高精度)</translation>
+        <source>SAM2 (accuracy)</source>
+        <translation>SAM2 (高精度)</translation>
     </message>
     <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
+        <source>SAM3</source>
+        <translation>SAM3</translation>
     </message>
     <message>
         <source>Text prompt model</source>

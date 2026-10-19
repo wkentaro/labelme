@@ -65,11 +65,11 @@ def test_migrate_removes_logger_level(*, tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     "input_name, expected_name",
     [
-        ("SegmentAnything (balanced)", "Sam (balanced)"),
-        ("SegmentAnything (tiny)", "Sam (tiny)"),
-        ("Sam (balanced)", "Sam (balanced)"),
-        ("Sam (large)", "Sam (large)"),
-        ("Sam2 (balanced)", "Sam2 (balanced)"),
+        ("SegmentAnything (balanced)", "SAM (balanced)"),
+        ("SegmentAnything (tiny)", "SAM (tiny)"),
+        ("SAM (balanced)", "SAM (balanced)"),
+        ("SAM (large)", "SAM (large)"),
+        ("SAM2 (balanced)", "SAM2 (balanced)"),
     ],
 )
 def test_migrate_ai_model_name(*, input_name: str, expected_name: str) -> None:
@@ -148,7 +148,7 @@ def test_migrate_tolerates_empty_section(*, section: str) -> None:
 
 @pytest.mark.parametrize(
     ("section", "probe"),
-    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "Sam2 (balanced)"))],
+    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "SAM2 (balanced)"))],
     ids=["shortcuts", "ai"],
 )
 def test_load_config_empty_section_keeps_defaults(

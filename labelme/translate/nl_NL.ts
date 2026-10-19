@@ -1385,40 +1385,40 @@ Verwachte locatie: {path}</translation>
         <translation>Standaardmodel</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (snelheid)</translation>
+        <source>EfficientSAM (speed)</source>
+        <translation>EfficientSAM (snelheid)</translation>
     </message>
     <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (nauwkeurigheid)</translation>
+        <source>EfficientSAM (accuracy)</source>
+        <translation>EfficientSAM (nauwkeurigheid)</translation>
     </message>
     <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (snelheid)</translation>
+        <source>SAM (speed)</source>
+        <translation>SAM (snelheid)</translation>
     </message>
     <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (gebalanceerd)</translation>
+        <source>SAM (balanced)</source>
+        <translation>SAM (gebalanceerd)</translation>
     </message>
     <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (nauwkeurigheid)</translation>
+        <source>SAM (accuracy)</source>
+        <translation>SAM (nauwkeurigheid)</translation>
     </message>
     <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (snelheid)</translation>
+        <source>SAM2 (speed)</source>
+        <translation>SAM2 (snelheid)</translation>
     </message>
     <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (gebalanceerd)</translation>
+        <source>SAM2 (balanced)</source>
+        <translation>SAM2 (gebalanceerd)</translation>
     </message>
     <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (nauwkeurigheid)</translation>
+        <source>SAM2 (accuracy)</source>
+        <translation>SAM2 (nauwkeurigheid)</translation>
     </message>
     <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
+        <source>SAM3</source>
+        <translation>SAM3</translation>
     </message>
     <message>
         <source>Text prompt model</source>

@@ -1385,40 +1385,40 @@ Expected location: {path}</source>
         <translation>مدل پیش‌فرض</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (سرعت)</translation>
+        <source>EfficientSAM (speed)</source>
+        <translation>EfficientSAM (سرعت)</translation>
     </message>
     <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (دقت)</translation>
+        <source>EfficientSAM (accuracy)</source>
+        <translation>EfficientSAM (دقت)</translation>
     </message>
     <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (سرعت)</translation>
+        <source>SAM (speed)</source>
+        <translation>SAM (سرعت)</translation>
     </message>
     <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (متعادل)</translation>
+        <source>SAM (balanced)</source>
+        <translation>SAM (متعادل)</translation>
     </message>
     <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (دقت)</translation>
+        <source>SAM (accuracy)</source>
+        <translation>SAM (دقت)</translation>
     </message>
     <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (سرعت)</translation>
+        <source>SAM2 (speed)</source>
+        <translation>SAM2 (سرعت)</translation>
     </message>
     <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (متعادل)</translation>
+        <source>SAM2 (balanced)</source>
+        <translation>SAM2 (متعادل)</translation>
     </message>
     <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (دقت)</translation>
+        <source>SAM2 (accuracy)</source>
+        <translation>SAM2 (دقت)</translation>
     </message>
     <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
+        <source>SAM3</source>
+        <translation>SAM3</translation>
     </message>
     <message>
         <source>Text prompt model</source>

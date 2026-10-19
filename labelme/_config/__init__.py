@@ -9,6 +9,7 @@ from loguru import logger
 
 from .. import _yaml
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
+from ._migration import migrate_ai_model_names
 from ._migration import migrate_config
 from ._shape_color import migrate_shape_color
 from ._shape_color import validate_shape_color
@@ -121,6 +122,7 @@ def load_config(*, config_file: Path | None, config_overrides: dict) -> dict:
 
     config_overrides = copy.deepcopy(config_overrides)
     migrate_shape_color(config=config_overrides)
+    migrate_ai_model_names(config=config_overrides)
     if "shape_color" in config_overrides:
         validate_shape_color(config=config_overrides["shape_color"])
     _update_dict(target_dict=config, new_dict=config_overrides, key_path=())

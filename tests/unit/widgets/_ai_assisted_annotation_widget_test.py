@@ -46,7 +46,7 @@ def test_construction_exposes_default_without_firing_callbacks(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="Sam2 (balanced)",
+        default_model="SAM2 (balanced)",
         details=None,
     )
     assert widget.current_model_id == "sam2:latest"
@@ -62,18 +62,18 @@ def test_model_and_output_controls_expose_accessible_purpose(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        default_model="EfficientSAM (speed)",
         details=None,
     )
 
     model = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
     output = QtGui.QAccessible.queryAccessibleInterface(widget._output_format_combo)
     model_name = (
-        widget.tr("Model") if sys.platform == "win32" else "EfficientSam (speed)"
+        widget.tr("Model") if sys.platform == "win32" else "EfficientSAM (speed)"
     )
     output_name = widget.tr("Output format") if sys.platform == "win32" else "Polygon"
     assert model.text(QtGui.QAccessible.Text.Name) == model_name
-    assert model.text(QtGui.QAccessible.Text.Value) == "EfficientSam (speed)"
+    assert model.text(QtGui.QAccessible.Text.Value) == "EfficientSAM (speed)"
     assert model.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-assisted annotation model"
     )
@@ -91,7 +91,7 @@ def test_first_listed_default_resolves(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        default_model="EfficientSAM (speed)",
         details=None,
     )
     assert widget.current_model_id == "efficientsam:10m"
@@ -117,7 +117,7 @@ def test_selecting_another_model_fires_callback(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        default_model="EfficientSAM (speed)",
         details=None,
     )
     widget._model_combo.setCurrentIndex(widget._model_combo.findData("sam2:latest"))
@@ -131,7 +131,7 @@ def test_selecting_another_output_format_fires_callback(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        default_model="EfficientSAM (speed)",
         details=None,
     )
     widget._output_format_combo.setCurrentIndex(
@@ -154,7 +154,7 @@ def test_polygon_detail_control_fires_callback_and_exposes_value(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        default_model="EfficientSAM (speed)",
         details=details,
     )
 
@@ -173,7 +173,7 @@ def test_setting_polygon_detail_from_config_does_not_fire_callback(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        default_model="EfficientSAM (speed)",
         details=details,
     )
 

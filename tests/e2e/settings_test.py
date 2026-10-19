@@ -151,7 +151,7 @@ def test_startup_syncs_first_ai_model_without_rewriting_config(
     editable_config_file: Path,
     pause: bool,
 ) -> None:
-    original_config = "ai:\n  default: EfficientSam (speed)\nauto_save: true\n"
+    original_config = "ai:\n  default: EfficientSAM (speed)\nauto_save: true\n"
     editable_config_file.write_text(original_config)
 
     win = main_win(config_file=editable_config_file)
@@ -503,7 +503,7 @@ def test_setting_controls_revert_when_write_fails(
     ai_editor = dialog._editors[("ai", "default")]
     assert isinstance(ai_editor, QtWidgets.QComboBox)
     ai_dock = win._ai_annotation._model_combo
-    assert ai_dock.currentText() == "Sam2 (balanced)"
+    assert ai_dock.currentText() == "SAM2 (balanced)"
 
     # Refuse the save at the boundary a read-only config directory would;
     # injecting the failure keeps it reachable on Windows and as root, where
@@ -514,18 +514,18 @@ def test_setting_controls_revert_when_write_fails(
     monkeypatch.setattr(_writer, "_atomic_write", _refuse_write)
     checkbox.setChecked(False)
     win._actions.save_auto.trigger()
-    ai_dock.setCurrentIndex(ai_dock.findText("EfficientSam (speed)"))
+    ai_dock.setCurrentIndex(ai_dock.findText("EfficientSAM (speed)"))
 
     assert len(warned) == 3
     assert checkbox.isChecked()  # editor reverted to the last-saved value
     assert win._actions.save_auto.isChecked()
     assert auto_save_editor.isChecked()
-    assert ai_dock.currentText() == "Sam2 (balanced)"
-    assert ai_editor.currentData() == "Sam2 (balanced)"
+    assert ai_dock.currentText() == "SAM2 (balanced)"
+    assert ai_editor.currentData() == "SAM2 (balanced)"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "sam2:latest"
     assert win._config["display_label_popup"] is True
     assert win._config["auto_save"] is True
-    assert win._config["ai"]["default"] == "Sam2 (balanced)"
+    assert win._config["ai"]["default"] == "SAM2 (balanced)"
     assert safe_load(config_file.read_text()) == {"display_label_popup": True}
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -769,21 +769,21 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
-    assert win._config["ai"]["default"] == "Sam2 (balanced)"
+    assert win._config["ai"]["default"] == "SAM2 (balanced)"
     dock_combo = win._ai_annotation._model_combo
-    assert dock_combo.currentText() == "Sam2 (balanced)"
+    assert dock_combo.currentText() == "SAM2 (balanced)"
 
     dialog = _open_settings_dialog(win=win)
     combo = dialog._editors[("ai", "default")]
     assert isinstance(combo, QtWidgets.QComboBox)
-    combo.setCurrentIndex(combo.findData("EfficientSam (speed)"))
+    combo.setCurrentIndex(combo.findData("EfficientSAM (speed)"))
 
-    assert win._config["ai"]["default"] == "EfficientSam (speed)"
-    assert dock_combo.currentText() == "EfficientSam (speed)"
+    assert win._config["ai"]["default"] == "EfficientSAM (speed)"
+    assert dock_combo.currentText() == "EfficientSAM (speed)"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "efficientsam:10m"
     assert (
         safe_load(editable_config_file.read_text())["ai"]["default"]
-        == "EfficientSam (speed)"
+        == "EfficientSAM (speed)"
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -800,7 +800,7 @@ def test_ai_model_choices_follow_point_prompt_mode(
     dialog = _open_settings_dialog(win=win)
     combo = dialog._editors[("ai", "default")]
     assert isinstance(combo, QtWidgets.QComboBox)
-    sam3_index = combo.findData("Sam3")
+    sam3_index = combo.findData("SAM3")
     assert not combo.model().flags(combo.model().index(sam3_index, 0)) & (
         Qt.ItemFlag.ItemIsEnabled
     )
@@ -813,9 +813,9 @@ def test_ai_model_choices_follow_point_prompt_mode(
 
     combo.setCurrentIndex(sam3_index)
 
-    assert combo.currentData() == "Sam2 (balanced)"
+    assert combo.currentData() == "SAM2 (balanced)"
     assert win._ai_annotation.current_model_id == "sam2:latest"
-    assert win._config["ai"]["default"] == "Sam2 (balanced)"
+    assert win._config["ai"]["default"] == "SAM2 (balanced)"
 
     win._switch_canvas_mode(edit=False, create_mode="ai_box_to_shape")
 
@@ -843,14 +843,14 @@ def test_ai_dock_change_persists_and_syncs_settings_dialog(
     assert isinstance(settings_combo, QtWidgets.QComboBox)
 
     dock_combo = win._ai_annotation._model_combo
-    dock_combo.setCurrentIndex(dock_combo.findText("EfficientSam (speed)"))
+    dock_combo.setCurrentIndex(dock_combo.findText("EfficientSAM (speed)"))
 
-    assert win._config["ai"]["default"] == "EfficientSam (speed)"
-    assert settings_combo.currentData() == "EfficientSam (speed)"
+    assert win._config["ai"]["default"] == "EfficientSAM (speed)"
+    assert settings_combo.currentData() == "EfficientSAM (speed)"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "efficientsam:10m"
     assert (
         safe_load(editable_config_file.read_text())["ai"]["default"]
-        == "EfficientSam (speed)"
+        == "EfficientSAM (speed)"
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
