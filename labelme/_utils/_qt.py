@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import os
+import re
 from collections.abc import Callable
 from collections.abc import Sequence
 from typing import Final
@@ -151,7 +152,9 @@ def new_action(
     if icon:
         # Tool buttons show the icon text; stacking words keeps them narrow.
         # Toolbar labels name the command, so they drop the menu's ellipsis.
-        icon_text = text.removesuffix("…")
+        # Toolbar buttons don't use mnemonics, and the "(&O)" form that CJK
+        # translations use would show as "(O)".
+        icon_text = re.sub(r"\s*\(&\w\)", "", text).removesuffix("…")
         if "\n" not in icon_text:
             icon_text = icon_text.replace(" ", "\n").replace("/", "\n")
         action.setIconText(icon_text)
