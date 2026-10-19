@@ -1238,7 +1238,7 @@ Expected location: {path}</source>
     </message>
     <message>
         <source>Continue between images</source>
-        <translation>Продолжение работы между изображениями</translation>
+        <translation>При смене изображения</translation>
     </message>
     <message>
         <source>Label sources</source>

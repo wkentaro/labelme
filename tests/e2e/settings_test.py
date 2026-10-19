@@ -11,6 +11,7 @@ from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
 from labelme._config import _writer
+from labelme._locale import TRANSLATE_DIR
 from labelme._widgets import SettingsDialog
 from labelme._widgets._integer_slider import IntegerSlider
 from labelme._widgets._label_list_widget import LABEL_COLOR_ROLE
@@ -878,3 +879,22 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
     assert win._canvas_widgets.canvas._ai_assist_session.polygon_detail == 70
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "language", sorted(path.stem for path in TRANSLATE_DIR.glob("*.qm"))
+)
+def test_settings_sections_fit_without_eliding(
+    *, main_win: MainWinFactory, language: str
+) -> None:
+    win = main_win(config_overrides={"language": language})
+    win._open_settings()
+    dialog = win._settings_dialog
+    assert dialog is not None
+    navigation = dialog.findChild(QtWidgets.QListWidget)
+    assert navigation is not None
+    for row in range(navigation.count()):
+        width = navigation.sizeHintForIndex(navigation.model().index(row, 0)).width()
+        assert width <= navigation.viewport().width(), navigation.item(row).text()
+    dialog.close()
