@@ -36,7 +36,7 @@ def _delete(*, win: MainWindow, monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.mark.gui
-def test_save_as_onto_another_images_annotation_file_checks_it(
+def test_save_as_onto_another_images_annotation_file_does_not_claim_that_image(
     *,
     main_win: MainWinFactory,
     qtbot: QtBot,
@@ -51,7 +51,15 @@ def test_save_as_onto_another_images_annotation_file_checks_it(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=other)
-    assert _checked(win) == [False, True, False]
+    assert _checked(win) == [False, False, False]
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(
+        lambda: win._file_list_image_path == str(data_path / "raw/2011_000006.jpg")
+    )
+    assert win._image_path == str(data_path / "raw/2011_000006.jpg")
+    assert win._canvas_widgets.canvas.shapes == []
+    # Return to the explicitly saved source before deleting its Save As copy.
+    win._load_file(image_or_label_path=str(other))
 
     _delete(win=win, monkeypatch=monkeypatch)
     assert not other.exists()
@@ -114,6 +122,10 @@ def test_save_through_a_symlinked_annotation_folder_checks_the_image(
     saved = real / "2011_000006.json"
     win = main_win(file_or_dir=data_path / "raw", output_dir=link)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(
+        lambda: win._file_list_image_path == str(data_path / "raw/2011_000006.jpg")
+    )
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=saved)
     assert _checked(win) == [False, True, False]
@@ -141,6 +153,10 @@ def test_save_whose_name_differs_only_in_case_checks_the_image(
     saved = out / "2011_000006.JSON"
     win = main_win(file_or_dir=data_path / "raw", output_dir=out)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(
+        lambda: win._file_list_image_path == str(data_path / "raw/2011_000006.jpg")
+    )
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=saved)
     assert _checked(win) == [False, True, False]
@@ -176,6 +192,13 @@ def test_save_onto_the_annotation_file_of_an_unusual_name_checks_it(
     saved.unlink()
     win = main_win(file_or_dir=images)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    for row in range(win._docks.file_list.count()):
+        if win._docks.file_list.item(row).data(Qt.ItemDataRole.UserRole) == str(
+            images / image_name
+        ):
+            win._docks.file_list.setCurrentRow(row)
+            break
+    qtbot.waitUntil(lambda: win._file_list_image_path == str(images / image_name))
     assert _checked(win) == [False, False]
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=saved)
