@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import sys
 
 import pytest
 from PySide6 import QtCore
@@ -10,7 +11,9 @@ from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
 from labelme._utils._qt import _TintedSvgIconEngine
+from labelme._utils._qt import _toolbar_label
 from labelme._utils._qt import direction_angle
+from labelme._utils._qt import modifier_text
 from labelme._utils._qt import new_action
 from labelme._utils._qt import new_icon
 from labelme._utils._qt import new_separator
@@ -348,3 +351,56 @@ def test_new_separator_survives_menu_clear(*, qtbot: QtBot) -> None:
     menu.clear()
     menu.addAction(separator)
     assert [a.isSeparator() for a in menu.actions()] == [True]
+
+
+@pytest.mark.parametrize(
+    ("modifiers", "macos", "other"),
+    [
+        (QtCore.Qt.KeyboardModifier.ControlModifier, "⌘", "Ctrl"),
+        (
+            QtCore.Qt.KeyboardModifier.ControlModifier
+            | QtCore.Qt.KeyboardModifier.ShiftModifier,
+            "⇧⌘",
+            "Ctrl+Shift",
+        ),
+        (QtCore.Qt.KeyboardModifier.AltModifier, "⌥", "Alt"),
+    ],
+)
+def test_modifier_text_follows_platform(
+    *, modifiers: QtCore.Qt.KeyboardModifier, macos: str, other: str
+) -> None:
+    expected = macos if sys.platform == "darwin" else other
+    assert modifier_text(modifiers) == expected
+
+
+def test_new_action_keeps_translated_line_break_out_of_menu(*, qtbot: QtBot) -> None:
+    parent = QtWidgets.QWidget()
+    qtbot.addWidget(parent)
+    action = new_action(parent, text="図形を\n編集", icon="phosphor/note-pencil.svg")
+    assert action.text() == "図形を編集"
+    assert action.iconText() == "図形を\n編集"
+
+
+def test_new_action_drops_cjk_mnemonic_from_toolbar_label(*, qtbot: QtBot) -> None:
+    parent = QtWidgets.QWidget()
+    qtbot.addWidget(parent)
+    action = new_action(parent, text="保存(&S)", icon="phosphor/floppy-disk.svg")
+    assert action.text() == "保存(&S)"
+    assert action.iconText() == "保存"
+
+
+@pytest.mark.parametrize(
+    ("text", "label"),
+    [
+        ("&Save", "&Save"),
+        ("&Open File…", "&Open\nFile"),
+        ("&Brightness/Contrast…", "&Brightness\nContrast"),
+        ("&Delete Annotation File", "&Delete\nAnnotation File"),
+        ("Supprimer le fichier d'annotations", "Supprimer le fichier\nd'annotations"),
+        ("Hình ảnh Tiếp theo(&N)", "Hình ảnh\nTiếp theo"),
+        ("Độ sáng/Độ tương phản(&B)…", "Độ sáng\nĐộ tương phản"),
+        ("図形を\n編集", "図形を\n編集"),
+    ],
+)
+def test_toolbar_label_wraps_to_two_balanced_lines(*, text: str, label: str) -> None:
+    assert _toolbar_label(text) == label

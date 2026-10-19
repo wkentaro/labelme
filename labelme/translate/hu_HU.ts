@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>MI-támogatott annotáció</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>Az AI annotációt javasol &apos;AI-Points&apos; és &apos;AI-Box&apos; módokban</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Részletesebb</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az AI-támogatott annotáció engedélyezéséhez</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az MI-segéd engedélyezéséhez</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Modell</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>MI-segéd</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Kimeneti formátum</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI prompt</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>pl. kutya,macska,madár</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Futtatás</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>MI-szöveges utasítás modellje</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>Az AI annotációkat hoz létre a szöveges promptból</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>MI-szöveges utasítás</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Válassza a &apos;Polygon&apos;, &apos;Rectangle&apos; vagy &apos;AI-Points&apos; módot az engedélyezéshez</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>Utasítás</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Szövegből annotáló modell</translation>
     </message>
 </context>
 <context>
@@ -102,8 +102,8 @@
         <translation>A képek mellett</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Annotációs mappa kiválasztása…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Annotációs mappa módosítása…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -152,6 +152,10 @@
         <translation>Alakzatok szerkesztése</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>Kattintson pontokra a belefoglaláshoz, vagy tartsa lenyomva a(z) %s billentyűt, és kattintson a kizáráshoz. A befejezéshez tartsa lenyomva a(z) %s billentyűt, és kattintson.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Kattintson a vonal kezdőpontjára</translation>
     </message>
@@ -164,8 +168,8 @@
         <translation>Kattintson a vonallánc kezdőpontjára</translation>
     </message>
     <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Kattintson a következő pontra vagy Ctrl/Cmd+Kattintás a befejezéshez (vonallánc)</translation>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Tartsa lenyomva a(z) %s billentyűt, és kattintson egy pont hozzáadásához az élen</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -188,14 +192,6 @@
         <translation>Kattintson és húzza a pont mozgatásához</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Kattintás a pont törléséhez</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Kattintás pont létrehozásához az alakzaton</translation>
-    </message>
-    <message>
         <source>Shape is locked</source>
         <translation>Az alakzat zárolva van</translation>
     </message>
@@ -208,16 +204,16 @@
         <translation>Válassza ki a másik sarkot. Négyzethez tartsa lenyomva a Shift billentyűt.</translation>
     </message>
     <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Kattintson pontokra a hozzáadáshoz vagy Shift+Click a kizáráshoz. Ctrl+LeftClick befejezi a létrehozást.</translation>
-    </message>
-    <message>
         <source>Click first corner of bbox for AI segmentation</source>
         <translation>Kattintson a bbox első sarkára az AI szegmentáláshoz</translation>
     </message>
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Kattintson az átellenes sarokra az objektum szegmentálásához</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Kattintson a következő pontra, vagy tartsa lenyomva a(z) %s billentyűt, és kattintson a töröttvonal befejezéséhez</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +226,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Kattintson a harmadik sarokra az irányított téglalap bezárásához</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Tartsa lenyomva a(z) %s billentyűt, és kattintson a pont törléséhez</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -247,14 +247,6 @@
         <translation>A kezdéshez nyisson meg egy képet vagy egy képeket tartalmazó mappát.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Mappa megnyitása</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Kép megnyitása</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Vagy húzzon ide képfájlokat</translation>
     </message>
@@ -266,12 +258,16 @@
         <translation>Alakzat címkéje</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Objektum címkéje</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Címke</translation>
     </message>
     <message>
         <source>Group ID</source>
-        <translation>Csoportazonosító</translation>
+        <translation>Csoport-ID</translation>
     </message>
     <message>
         <source>Description</source>
@@ -302,47 +298,15 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;Kilépés</translation>
+        <translation>K&amp;ilépés</translation>
     </message>
     <message>
         <source>Quit application</source>
         <translation>Alkalmazás bezárása</translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Megnyitás
-</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>&amp;Következő kép</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Következő megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Előző kép</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Előző megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Mentés
-</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Mentés &amp;másként</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>&amp;Automatikus mentés</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -401,8 +365,16 @@
         <translation>Annotációs fájl mentése</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Men&amp;tés másként…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>Annotációs fájl mentése új néven</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>&amp;Automatikus mentés</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -413,12 +385,16 @@
         <translation>A kép másolatát az annotációs fájlban tárolja</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Ann&amp;otációs mappa módosítása…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Kép vagy annotációs fájl megnyitása</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>Annotációs fájl &amp;törlése</translation>
+        <translation>Annotációs &amp;fájl törlése</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -437,48 +413,32 @@
         <translation>A kijelölt alakzatok másolatának létrehozása</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Utolsó pont visszavonása</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Utolsó rajzolt pont visszavonása</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Visszavonás
-</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>Alakzat utolsó hozzáadásának és szerkesztésének visszavonása</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Alakzatok
-&amp;elrejtése</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Kattintson a töröttvonal pontjainak elhelyezéséhez; tartsa lenyomva a(z) %s billentyűt, és kattintson az utolsóhoz.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>Kattintson pontokra az objektum szegmentálásához; tartsa lenyomva a(z) %s billentyűt, és kattintson a befejezéshez.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Következő kép megnyitása (a jelenlegi alakzatok másolásához tartsa lenyomva a(z) %s billentyűt)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Összes alakzat elrejtése</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Alakzatok
-&amp;megjelenítése</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Összes alakzat megjelenítése</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Alakzatok
-&amp;váltása</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -505,16 +465,8 @@ Shapes</source>
         <translation>&amp;Kicsinyítés</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>&amp;Fényerő/Kontraszt</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>Fényerő és kontraszt beállítása</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Címke szerkesztése</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -533,12 +485,48 @@ Shapes</source>
         <translation>Előző fényerő/kontraszt megtartása</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>&amp;Annotációs mappa módosítása…</translation>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Sokszöges képannotáció Pythonnal</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Verzió: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Szerző: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Weboldal</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Dokumentáció</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Hibaelhárítás</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;A(z) %s névjegye</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>A(z) %s névjegye</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>Me&amp;ntés</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Annotációs fájlok olvasási és mentési helyének kiválasztása</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>Fájl &amp;megnyitása…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -581,16 +569,16 @@ Shapes</source>
         <translation>A kijelölt alakzatok zárolása a szerkesztés ellen, vagy a zárolás feloldása</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Kijelölt csúcspont törlése</translation>
+        <source>Undo</source>
+        <translation>Visszavonás</translation>
     </message>
     <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Törli a kijelölt csúcspontot a sokszögből vagy a töröttvonalból</translation>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Előző kép</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Kattintson a vonallánc pontjainak elhelyezéséhez; Ctrl+kattintás helyezi el az utolsót.</translation>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Előző kép megnyitása (a jelenlegi alakzatok másolásához tartsa lenyomva a(z) %s billentyűt)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -603,6 +591,10 @@ Shapes</source>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Nagyítás a kijelölt alakzatokra a kijelölés minden változásakor</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Fényerő/Kontraszt…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -619,6 +611,18 @@ Shapes</source>
     <message>
         <source>Show the image at 100%</source>
         <translation>A kép megjelenítése 100%-on</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Alakzatok &amp;elrejtése</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Alakzatok &amp;megjelenítése</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Alakzatok &amp;váltása</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -657,6 +661,14 @@ Shapes</source>
         <translation>Ablakhoz igazítás</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AI-modellek…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>AI-modellek letöltése vagy törlése</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Fájl</translation>
     </message>
@@ -670,11 +682,19 @@ Shapes</source>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>&amp;Súgó</translation>
+        <translation>Sú&amp;gó</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Eszközök</translation>
     </message>
     <message>
         <source>More tools</source>
         <translation>További eszközök</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Alakzateszközök</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -705,20 +725,16 @@ Shapes</source>
         <translation>Egyelőre használhatja az alapértelmezett beállításokat. A visszaállítás előtt biztonsági másolat készül a konfigurációs fájlról.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>Mappa megnyitása</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Parancssori beállítások</translation>
     </message>
     <message>
-        <source>Back up and reset</source>
-        <translation>Biztonsági mentés és visszaállítás</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Folytatás az alapértékekkel</translation>
-    </message>
-    <message>
         <source>Fit to S&amp;election</source>
-        <translation>&amp;Kijelöléshez igazítás</translation>
+        <translation>Kijelöléshez &amp;igazítás</translation>
     </message>
     <message>
         <source>Could not reset the Config File.
@@ -737,18 +753,6 @@ Shapes</source>
     <message>
         <source>Mask Output Unavailable</source>
         <translation>A maszk kimenet nem érhető el</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú annotációkat létrehozni.
-
-Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
-    </message>
-    <message>
-        <source>Invalid label</source>
-        <translation>Érvénytelen címke</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -779,14 +783,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Kijelöléshez igazítás</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Hiba az annotációs fájl mentésekor</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Nagyméretű kép</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>A nagyméretű kép több memóriát igényel</translation>
     </message>
@@ -797,10 +793,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Open Anyway</source>
         <translation>Mégis megnyitás</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Hiba a fájl megnyitásakor</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -817,14 +809,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Képek és annotációs fájlok (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Kép vagy annotációk megnyitása</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Figyelem</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -847,16 +831,16 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Nem mentett módosítások</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>{model} letöltése</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>A kiválasztott annotációs fájl nem nyitható meg: {path}</translation>
     </message>
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Az annotációs mappa nem található: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Képmappa tallózása</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -869,6 +853,22 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Reset Layout</source>
         <translation>Elrendezés visszaállítása</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Címke szerkesztése…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Utolsó pont visszavonása</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Kijelölt pont törlése</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Törli a kijelölt pontot a sokszögből vagy a töröttvonalból</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -899,10 +899,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Kattintson pontokra az objektum szegmentálásához. Ctrl+LeftClick befejezi a létrehozást.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
@@ -911,28 +907,28 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Rajzoljon befoglaló keretet az objektum szegmentálásához.</translation>
     </message>
     <message>
-        <source>Remove from Label List</source>
-        <translation>Eltávolítás a címkelistából</translation>
+        <source>Continue with Defaults</source>
+        <translation>Folytatás az alapértékekkel</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>A vásznon lévő alakzatok által használt címke nem távolítható el</translation>
+        <source>Back Up and Reset</source>
+        <translation>Biztonsági mentés és visszaállítás</translation>
     </message>
     <message>
-        <source>Clear Unused Labels</source>
-        <translation>Nem használt címkék törlése</translation>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú alakzatokat létrehozni.
+
+Váltson az MI-szöveges utasítás modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
     </message>
     <message>
-        <source>No unused labels to clear</source>
-        <translation>Nincsenek törölhető nem használt címkék</translation>
+        <source>Invalid Label</source>
+        <translation>Érvénytelen címke</translation>
     </message>
     <message>
-        <source>Cannot Remove Label</source>
-        <translation>A címke nem távolítható el</translation>
-    </message>
-    <message>
-        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
-        <translation>A(z) &apos;{label}&apos; címkét alakzatok használják a vásznon.</translation>
+        <source>Error Saving Annotation File</source>
+        <translation>Hiba az annotációs fájl mentésekor</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -945,16 +941,12 @@ Please select a different model or use AI-Box mode.</source>
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Annotációs mappa kiválasztása</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotációs mappa: %s</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>A kép nem található</translation>
+        <source>Download</source>
+        <translation>Letöltés</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -978,11 +970,23 @@ Várt hely: {path}</translation>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>&amp;Előző nagyítás megtartása</translation>
+        <translation>E&amp;lőző nagyítás megtartása</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Megengedett formátumok: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Hiba az annotációs fájl törlésekor</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Nem mentett módosítások</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>A kép nem található</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -1021,6 +1025,22 @@ Várt hely: {path}</translation>
         <translation>A beállítások ebben a munkamenetben --config segítségével vannak kezelve</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Nagyméretű kép</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Hiba a fájl megnyitásakor</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Fájl megnyitása</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Annotációs mappa kiválasztása</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Annotációs fájl mentése</translation>
     </message>
@@ -1029,16 +1049,40 @@ Várt hely: {path}</translation>
         <translation>Annotációs fájlok (*%s)</translation>
     </message>
     <message>
+        <source>Delete Annotation File</source>
+        <translation>Annotációs fájl törlése</translation>
+    </message>
+    <message>
         <source>Permanently delete this annotation file? This action cannot be undone.</source>
         <translation>Véglegesen törli ezt az annotációs fájlt? Ez a művelet nem vonható vissza.</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>Hiba az annotációs fájl törlésekor</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Konfigurációs hiba</translation>
+    </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Eltávolítás a címkelistából</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>A vásznon lévő alakzatok által használt címke nem távolítható el</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Nem használt címkék törlése</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Nincsenek törölhető nem használt címkék</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>A címke nem távolítható el</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>A(z) &apos;{label}&apos; címkét alakzatok használják a vásznon.</translation>
     </message>
 </context>
 <context>
@@ -1048,16 +1092,27 @@ Várt hely: {path}</translation>
         <translation>Modellek kezelése…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Modell letöltése…</translation>
+        <source>Download and use</source>
+        <translation>Letöltés és használat</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Modell kiválasztása…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Letöltés: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Nem érhető el: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AI-modellek</translation>
     </message>
 </context>
 <context>
@@ -1151,11 +1206,15 @@ Várt hely: {path}</translation>
         <translation>Letöltés</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Sikertelen letöltés</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>A letöltés sikertelen. Ellenőrizze a kapcsolatot, és próbálja újra.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Modell törlése</translation>
     </message>
     <message>
@@ -1294,10 +1353,6 @@ Várt hely: {path}</translation>
         <translation>Soronként egy jelzőnév. Minták: ^car$ pontosan a car értékre, car egy előtagra, .* minden címkére illeszkedik.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI prompt</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Poligon részletessége</translation>
     </message>
@@ -1390,6 +1445,10 @@ Várt hely: {path}</translation>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Text prompt model</source>
+        <translation>Szöveges utasítás modellje</translation>
+    </message>
+    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Meglévő alakzatokkal való egyezések elnyomása</translation>
     </message>
@@ -1400,10 +1459,6 @@ Várt hely: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Beállítások</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AI-modellek</translation>
     </message>
     <message>
         <source>Open config file as text…</source>
@@ -1472,8 +1527,8 @@ Várt hely: {path}</translation>
         <translation>Nagyítás</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>A Ctrl+Görgő nagyítja a vásznat</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Tartsa lenyomva a(z) %s billentyűt, és görgessen a vászon nagyításához</translation>
     </message>
 </context>
 <context>
@@ -1547,6 +1602,17 @@ Várt hely: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Nincs egyező beállítás ebben az ablakban. Próbáljon másik kifejezést, vagy törölje a keresést.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Hiba</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Váratlan hiba történt. Az alkalmazás bezárul.&lt;br/&gt;&lt;br/&gt;Kérjük, jelentse a hibát a(z) &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Hibaelhárítás&lt;/a&gt; útmutató szerint.</translation>
     </message>
 </context>
 </TS>
