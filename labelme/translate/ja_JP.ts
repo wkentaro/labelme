@@ -503,11 +503,13 @@
     </message>
     <message>
         <source>&amp;Open File…</source>
-        <translation>ファイルを開く(&amp;O)…</translation>
+        <translation>ファイルを
+開く(&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
-        <translation>フォルダーを開く…</translation>
+        <translation>フォルダーを
+開く…</translation>
     </message>
     <message>
         <source>Open a folder of images</source>
@@ -555,7 +557,8 @@
     </message>
     <message>
         <source>&amp;Previous Image</source>
-        <translation>前の画像(&amp;P)</translation>
+        <translation>前の
+画像(&amp;P)</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

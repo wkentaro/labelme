@@ -378,3 +378,11 @@ def test_new_action_keeps_translated_line_break_out_of_menu(*, qtbot: QtBot) -> 
     action = new_action(parent, text="図形を\n編集", icon="phosphor/note-pencil.svg")
     assert action.text() == "図形を編集"
     assert action.iconText() == "図形を\n編集"
+
+
+def test_new_action_drops_cjk_mnemonic_from_toolbar_label(*, qtbot: QtBot) -> None:
+    parent = QtWidgets.QWidget()
+    qtbot.addWidget(parent)
+    action = new_action(parent, text="保存(&S)", icon="phosphor/floppy-disk.svg")
+    assert action.text() == "保存(&S)"
+    assert action.iconText() == "保存"
