@@ -841,6 +841,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>저장하지 않은 변경 사항</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>{model} 다운로드</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>선택한 주석 파일을 열 수 없습니다: {path}</translation>
     </message>
@@ -929,6 +933,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>주석 폴더: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1026,12 +1034,16 @@ Expected location: {path}</source>
         <translation>모델 관리…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>모델 다운로드…</translation>
+        <source>Download and use</source>
+        <translation>다운로드 후 사용</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>모델 선택…</translation>
+    </message>
+    <message>
+        <source>Downloading: {model}</source>
+        <translation>다운로드 중: {model}</translation>
     </message>
     <message>
         <source>Unavailable: {model}</source>

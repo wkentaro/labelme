@@ -847,6 +847,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Kaydedilmemiş değişiklikler</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>{model} indir</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Seçilen açıklama dosyası açılamadı: {path}</translation>
     </message>
@@ -935,6 +939,10 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Açıklama Klasörü: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>İndir</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1032,12 +1040,16 @@ Beklenen konum: {path}</translation>
         <translation>Modelleri yönet…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Model indir…</translation>
+        <source>Download and use</source>
+        <translation>İndir ve kullan</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Model seç…</translation>
+    </message>
+    <message>
+        <source>Downloading: {model}</source>
+        <translation>İndiriliyor: {model}</translation>
     </message>
     <message>
         <source>Unavailable: {model}</source>

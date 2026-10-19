@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import enum
 import functools
+import html
 import operator
 import os
 import platform
@@ -12,6 +13,7 @@ import time
 import typing
 import unicodedata
 import webbrowser
+from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 from typing import Literal
@@ -80,6 +82,8 @@ from ._widgets import ZoomWidget
 from ._widgets import format_shape_label
 from ._widgets._label_list_widget import LABEL_COLOR_ROLE
 from ._widgets._models_widget import ModelsDialog
+from ._widgets._models_widget import license_link
+from ._widgets._models_widget import license_notice
 
 
 class _ZoomMode(enum.Enum):
@@ -348,6 +352,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
         self._ai_text.manage_models_requested.connect(self._open_models)
+        for widget in (self._ai_annotation, self._ai_text):
+            widget.download_requested.connect(
+                functools.partial(self._download_and_select, select=widget.select_model)
+            )
         self._refresh_model_availability()
 
         self._setup_app_state(file_or_dir=file_or_dir, output_dir=output_dir)
@@ -3266,14 +3274,44 @@ class MainWindow(QtWidgets.QMainWindow):
             for name in self._model_manager.models
             if self._model_manager.is_ready(name)
         }
-        self._ai_annotation.set_available_models(available=available)
-        self._ai_text.set_available_models(available=available)
+        downloading = set(self._model_manager.queue)
+        if self._model_manager.active is not None:
+            downloading.add(self._model_manager.active)
+        for widget in (self._ai_annotation, self._ai_text):
+            widget.set_available_models(available=available, downloading=downloading)
         self._ai_annotation.set_point_prompt_mode(
             enabled=self._ai_annotation.is_point_prompt_mode
         )
         self._canvas_widgets.canvas.set_ai_model_name(
             model_name=self._ai_annotation.current_model_id
         )
+
+    def _download_and_select(
+        self, model_name: str, /, *, select: Callable[[str], None]
+    ) -> None:
+        notice = license_notice(model_name)
+        if notice is not None:
+            message = QtWidgets.QMessageBox(self)
+            message.setWindowTitle(
+                self.tr("Download {model}").format(
+                    model=self._model_manager.models[model_name]
+                )
+            )
+            message.setIcon(QtWidgets.QMessageBox.Icon.Information)
+            message.setTextFormat(Qt.TextFormat.RichText)
+            message.setTextInteractionFlags(
+                Qt.TextInteractionFlag.TextBrowserInteraction
+            )
+            message.setText(f"{html.escape(notice)}<br><br>{license_link(model_name)}")
+            download = message.addButton(
+                self.tr("Download"), QtWidgets.QMessageBox.ButtonRole.AcceptRole
+            )
+            message.addButton(QtWidgets.QMessageBox.StandardButton.Cancel)
+            message.exec()
+            if message.clickedButton() is not download:
+                return
+        select(model_name)
+        self._model_manager.enqueue(model_name)
 
     def _remove_ai_model(self, model_name: str, /) -> None:
         option = _ai_models.find_ai_assist_model_option(model_name=model_name)

@@ -816,6 +816,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Perubahan belum disimpan</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>Unduh {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Berkas anotasi yang dipilih tidak dapat dibuka: {path}</translation>
     </message>
@@ -904,6 +908,10 @@ Silakan pilih model lain atau gunakan mode AI-Box.</translation>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Folder Anotasi: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Unduh</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1026,12 +1034,16 @@ Shapes</source>
         <translation>Kelola model…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Unduh model…</translation>
+        <source>Download and use</source>
+        <translation>Unduh dan gunakan</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Pilih model…</translation>
+    </message>
+    <message>
+        <source>Downloading: {model}</source>
+        <translation>Mengunduh: {model}</translation>
     </message>
     <message>
         <source>Unavailable: {model}</source>

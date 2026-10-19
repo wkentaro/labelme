@@ -85,7 +85,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     text = win._ai_text._model_combo
     for picker in (assist, text):
         assert picker.currentIndex() == -1
-        assert picker.count() == 1
+        assert picker.findData(name) >= 0
         assert "Unavailable" in picker.placeholderText()
     assert not requests
     assert win._config["ai"]["text_model"] == name
@@ -311,3 +311,80 @@ def test_model_links_follow_live_theme_contrast(
             link.textInteractionFlags()
             & QtCore.Qt.TextInteractionFlag.LinksAccessibleByKeyboard
         )
+
+
+@pytest.mark.gui
+def test_picker_downloads_and_selects_a_missing_model_in_place(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    download_server: tuple[str, list[str], threading.Event],
+) -> None:
+    origin, requests, release = download_server
+    name = "sam2:small"
+    blob = osam.types.Blob(
+        url=origin + "/slow", hash="sha256:" + hashlib.sha256(b"weights").hexdigest()
+    )
+    monkeypatch.setattr(
+        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
+    )
+    config = tmp_path / "config.yaml"
+    config.write_text("ai:\n  default: Sam2 (balanced)\n")
+    win = main_win(config_file=config)
+    picker = win._ai_annotation._model_combo
+    header = picker.findText("Download and use")
+    assert 0 <= header < picker.findData(name) < picker.findData("manage")
+
+    picker.setCurrentIndex(picker.findData(name))
+    assert safe_load(config.read_text())["ai"]["default"] == "Sam2 (speed)"
+    qtbot.waitUntil(lambda: requests == ["/slow"])
+    assert picker.currentIndex() == -1
+    assert picker.placeholderText() == "Downloading: Sam2 (speed)"
+    assert win._models_dialog is None
+    release.set()
+    qtbot.waitUntil(lambda: picker.currentData() == name)
+    assert win._canvas_widgets.canvas.get_ai_model_name() == name
+
+
+@pytest.mark.gui
+def test_picker_asks_before_downloading_sam3_and_cancel_keeps_setting(
+    *, main_win: MainWinFactory, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    win = main_win()
+    shown: list[str] = []
+
+    def cancel(message: QtWidgets.QMessageBox) -> int:
+        shown.append(message.text())
+        return 0
+
+    monkeypatch.setattr(QtWidgets.QMessageBox, "exec", cancel)
+    text_model = win._config["ai"]["text_model"]
+    picker = win._ai_text._model_combo
+    picker.setCurrentIndex(picker.findData("sam3:latest"))
+
+    assert len(shown) == 1 and "SAM License" in shown[0]
+    assert win._config["ai"]["text_model"] == text_model
+    assert win._model_manager.get_state("sam3:latest") == "missing"
+
+
+@pytest.mark.gui
+def test_point_mode_disables_incompatible_models_before_download(
+    *, main_win: MainWinFactory
+) -> None:
+    win = main_win()
+    picker = win._ai_annotation._model_combo
+    win._ai_annotation.set_point_prompt_mode(enabled=True)
+    model = picker.model()
+    assert isinstance(model, QtGui.QStandardItemModel)
+
+    def enabled(index: int) -> bool:
+        item = model.item(index)
+        assert item is not None
+        return item.isEnabled()
+
+    assert not enabled(picker.findData("sam3:latest"))
+    assert enabled(picker.findData("sam2:latest"))
+    assert not enabled(picker.findText("Download and use"))
+    assert enabled(picker.findData("manage"))

@@ -841,6 +841,10 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
         <translation>Niezapisane zmiany</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>Pobierz {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Nie można otworzyć wybranego pliku adnotacji: {path}</translation>
     </message>
@@ -929,6 +933,10 @@ Wybierz inny model lub użyj trybu AI-Box.</translation>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Folder adnotacji: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Pobierz</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1026,12 +1034,16 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Zarządzaj modelami…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Pobierz model…</translation>
+        <source>Download and use</source>
+        <translation>Pobierz i użyj</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Wybierz model…</translation>
+    </message>
+    <message>
+        <source>Downloading: {model}</source>
+        <translation>Pobieranie: {model}</translation>
     </message>
     <message>
         <source>Unavailable: {model}</source>

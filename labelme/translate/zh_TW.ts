@@ -847,6 +847,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>尚未儲存的變更</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>下載 {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>無法開啟所選標註檔案: {path}</translation>
     </message>
@@ -935,6 +939,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>標註資料夾：%s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>下載</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1032,12 +1040,16 @@ Expected location: {path}</source>
         <translation>管理模型…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>下載模型…</translation>
+        <source>Download and use</source>
+        <translation>下載並使用</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>選擇模型…</translation>
+    </message>
+    <message>
+        <source>Downloading: {model}</source>
+        <translation>正在下載：{model}</translation>
     </message>
     <message>
         <source>Unavailable: {model}</source>

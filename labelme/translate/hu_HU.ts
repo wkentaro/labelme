@@ -855,6 +855,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Nem mentett módosítások</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>{model} letöltése</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>A kiválasztott annotációs fájl nem nyitható meg: {path}</translation>
     </message>
@@ -935,6 +939,10 @@ Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translati
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotációs mappa: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Letöltés</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1032,12 +1040,16 @@ Várt hely: {path}</translation>
         <translation>Modellek kezelése…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Modell letöltése…</translation>
+        <source>Download and use</source>
+        <translation>Letöltés és használat</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Modell kiválasztása…</translation>
+    </message>
+    <message>
+        <source>Downloading: {model}</source>
+        <translation>Letöltés: {model}</translation>
     </message>
     <message>
         <source>Unavailable: {model}</source>

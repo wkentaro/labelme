@@ -822,6 +822,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Несохранённые изменения</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>Загрузить {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Не удалось открыть выбранный файл аннотаций: {path}</translation>
     </message>
@@ -934,6 +938,10 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Папка аннотаций: %s</translation>
     </message>
     <message>
+        <source>Download</source>
+        <translation>Скачать</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>Изображение не найдено</translation>
     </message>
@@ -1029,12 +1037,16 @@ Expected location: {path}</source>
         <translation>Управление моделями…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Скачать модель…</translation>
+        <source>Download and use</source>
+        <translation>Загрузить и использовать</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Выбрать модель…</translation>
+    </message>
+    <message>
+        <source>Downloading: {model}</source>
+        <translation>Загрузка: {model}</translation>
     </message>
     <message>
         <source>Unavailable: {model}</source>
