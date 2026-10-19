@@ -425,27 +425,12 @@
         <translation>Отменить последнее добавление и редактирование фигуры</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Скрыть фигуры (&amp;H)</translation>
-    </message>
-    <message>
         <source>Hide all shapes</source>
         <translation>Скрыть все фигуры</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Показать фигуры (&amp;S)</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Показать все фигуры</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Переключить фигуры</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -482,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Редактировать метку</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>Сохранить (&amp;S)</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -540,6 +529,10 @@ Shapes</source>
         <translation>Заблокировать выбранные фигуры от редактирования или разблокировать их</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Отменить</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Удалить выбранную вершину</translation>
     </message>
@@ -586,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Заполнять полигон во время рисования</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Скрыть фигуры</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Показать фигуры</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>&amp;Переключить фигуры</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -848,18 +853,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Reset Layout</source>
         <translation>Сбросить компоновку</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>Сохранить (&amp;S)
-</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Отменить
-</translation>
     </message>
     <message>
         <source>Polygon</source>

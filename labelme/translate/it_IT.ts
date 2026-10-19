@@ -317,12 +317,6 @@
         <translation>Apri la precedente (tieni premuto Ctrl+Maiusc per copiare le etichette)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Salva
-</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Salva &amp;come</translation>
     </message>
@@ -427,40 +421,16 @@
         <translation>Annulla l&apos;ultimo punto disegnato</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Annulla
-</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Annulla l&apos;ultimo aggiunto e la modifica della forma</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Nascondi
-forme</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Nascondi tutte le forme</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Mostra
-forme</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Mostra tutte le forme</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Commuta
-forme</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -497,6 +467,10 @@ forme</translation>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Modifica etichetta</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Salva</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -555,6 +529,10 @@ forme</translation>
         <translation>Blocca le forme selezionate per impedirne la modifica, oppure sbloccale</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Annulla</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Elimina vertice selezionato</translation>
     </message>
@@ -601,6 +579,18 @@ forme</translation>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Riempire il poligono durante il disegno</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Nascondi forme</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Mostra forme</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>&amp;Commuta forme</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

@@ -273,11 +273,6 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>Αποθήκευση</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Αποθήκευση &amp;Ως</translation>
     </message>
@@ -370,11 +365,6 @@
         <translation>Αναίρεση τελευταίου σημείου έλξης</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Αναίρεση</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Αναίρεση τελευταίας προσθήκης και επεξεργασίας σχήματος</translation>
     </message>
@@ -455,29 +445,12 @@
         <translation>Γεμίστε πολύγωνο ενώ σχεδιάζετε</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Απόκρυψη
-Σχήματα</translation>
-    </message>
-    <message>
         <source>Hide all shapes</source>
         <translation>Όλα τα σχήματα</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Προβολή σχημάτων</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Όλα τα σχήματα</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Εναλλαγή
-Σχήματα</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -522,6 +495,10 @@ Shapes</source>
     <message>
         <source>Fit to Window</source>
         <translation>Προσαρμογή παραθύρου</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>Αποθήκευση</translation>
     </message>
     <message>
         <source>Save the annotation file</source>
@@ -570,6 +547,22 @@ Shapes</source>
     <message>
         <source>Delete the current annotation file</source>
         <translation>Διαγραφή τρέχοντος αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Αναίρεση</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Απόκρυψη σχημάτων</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Εμφάνιση σχημάτων</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>&amp;Εναλλαγή σχημάτων</translation>
     </message>
     <message>
         <source>&amp;Quit</source>

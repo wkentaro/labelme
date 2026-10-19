@@ -317,12 +317,6 @@
         <translation>Ouvrir la précédente (maintenir Ctrl+Maj pour copier les étiquettes)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Enregistrer
-</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Enregistrer &amp;sous</translation>
     </message>
@@ -427,40 +421,16 @@
         <translation>Annuler le dernier point dessiné</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Annuler
-</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Annuler le dernier ajout et la dernière modification de forme</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Masquer
-les formes</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Masquer toutes les formes</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Afficher
-les formes</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Afficher toutes les formes</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Basculer
-les formes</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -497,6 +467,10 @@ les formes</translation>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Modifier l&apos;étiquette</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Enregistrer</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -555,6 +529,10 @@ les formes</translation>
         <translation>Verrouiller les formes sélectionnées pour empêcher leur modification, ou les déverrouiller</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Supprimer le sommet sélectionné</translation>
     </message>
@@ -601,6 +579,18 @@ les formes</translation>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Remplir le polygone pendant le dessin</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Masquer les formes</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Afficher les formes</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>&amp;Basculer les formes</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

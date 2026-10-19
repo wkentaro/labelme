@@ -317,11 +317,6 @@
         <translation>Otwórz poprzedni (Ctrl+Shift — kopiuj etykiety)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Zapisz</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Zapisz &amp;jako</translation>
     </message>
@@ -426,36 +421,16 @@
         <translation>Cofnij ostatnio narysowany punkt</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Cofnij</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Cofnij ostatnie dodanie i edycję kształtu</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Ukryj kształty</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Ukryj wszystkie kształty</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Pokaż kształty</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Pokaż wszystkie kształty</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Przełącz &amp;kształty</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -492,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Edytuj etykietę</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Zapisz</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -550,6 +529,10 @@ Shapes</source>
         <translation>Zablokuj zaznaczone kształty przed edycją lub je odblokuj</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Cofnij</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Usuń zaznaczony wierzchołek</translation>
     </message>
@@ -596,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Wypełniaj wielokąt podczas rysowania</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Ukryj kształty</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Pokaż kształty</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Przełącz &amp;kształty</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

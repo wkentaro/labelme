@@ -317,12 +317,6 @@
         <translation>Előző megnyitása (tartsa lenyomva a Ctrl+Shift-et a címkék másolásához)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Mentés
-</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Mentés &amp;másként</translation>
     </message>
@@ -431,40 +425,16 @@
         <translation>Utolsó rajzolt pont visszavonása</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Visszavonás
-</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Alakzat utolsó hozzáadásának és szerkesztésének visszavonása</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Alakzatok
-&amp;elrejtése</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Összes alakzat elrejtése</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Alakzatok
-&amp;megjelenítése</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Összes alakzat megjelenítése</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Alakzatok
-&amp;váltása</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -519,6 +489,10 @@ Shapes</source>
         <translation>Előző fényerő/kontraszt megtartása</translation>
     </message>
     <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Mentés</translation>
+    </message>
+    <message>
         <source>Change &amp;Annotation Folder…</source>
         <translation>&amp;Annotációs mappa módosítása…</translation>
     </message>
@@ -571,6 +545,10 @@ Shapes</source>
         <translation>A kijelölt alakzatok zárolása a szerkesztés ellen, vagy a zárolás feloldása</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Visszavonás</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Kijelölt csúcspont törlése</translation>
     </message>
@@ -609,6 +587,18 @@ Shapes</source>
     <message>
         <source>Show the image at 100%</source>
         <translation>A kép megjelenítése 100%-on</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Alakzatok &amp;elrejtése</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Alakzatok &amp;megjelenítése</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Alakzatok &amp;váltása</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

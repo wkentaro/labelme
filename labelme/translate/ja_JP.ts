@@ -319,12 +319,6 @@
         <translation>前を開く (Ctrl+Shift でラベルをコピー)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>保存(&amp;S)
-</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>名前を付けて保存(&amp;A)</translation>
     </message>
@@ -433,39 +427,16 @@
         <translation>最後に描画した頂点を取り消し</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>元に戻す</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>最後の図形追加・編集を元に戻す</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>図形を
-非表示(&amp;H)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>すべての図形を非表示</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>図形を
-表示(&amp;S)</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>すべての図形を表示</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>図形を
-切り替え(&amp;T)</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -503,6 +474,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>ラベルを編集(&amp;E)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>保存(&amp;S)</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -561,6 +536,10 @@ Shapes</source>
         <translation>選択した図形を編集できないようにロック、またはロックを解除</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>元に戻す</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>選択した頂点を削除</translation>
     </message>
@@ -608,6 +587,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>描画中にポリゴンを塗りつぶす</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>図形を非表示(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>図形を表示(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>図形を切り替え(&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

@@ -317,11 +317,6 @@
         <translation>เปิดรูปก่อนหน้า (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>บันทึก (&amp;S)</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>บันทึกเป็น (&amp;S)</translation>
     </message>
@@ -426,36 +421,16 @@
         <translation>ยกเลิกจุดที่วาดล่าสุด</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>ยกเลิก</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>ยกเลิกการเพิ่มและแก้ไขรูปร่างล่าสุด</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>ซ่อนรูปร่าง (&amp;H)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>ซ่อนรูปร่างทั้งหมด</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>แสดงรูปร่าง (&amp;S)</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>แสดงรูปร่างทั้งหมด</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>สลับรูปร่าง (&amp;S)</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -492,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>แก้ไขเลเบล (&amp;E)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>บันทึก (&amp;S)</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -550,6 +529,10 @@ Shapes</source>
         <translation>ล็อกรูปร่างที่เลือกไม่ให้แก้ไข หรือปลดล็อก</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>ยกเลิก</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>ลบจุดยอดที่เลือก</translation>
     </message>
@@ -596,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>เติมสีหลายเหลี่ยมขณะวาด</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>ซ่อนรูปร่าง (&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>แสดงรูปร่าง (&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>สลับการแสดงรูปร่าง (&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

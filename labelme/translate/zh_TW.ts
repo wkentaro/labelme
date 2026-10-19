@@ -317,12 +317,6 @@
         <translation>開啟上一張影像（按住 Ctl+Shift 複製標籤）</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>儲存(&amp;S)
-</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>另存新檔(&amp;S)</translation>
     </message>
@@ -427,40 +421,16 @@
         <translation>復原上一個繪製的點</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>復原
-</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>復原上一次新增或編輯形狀的操作</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>隱藏(&amp;H)
-形狀</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>隱藏所有形狀</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>顯示(&amp;S)
-形狀</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>顯示所有形狀</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>切換(&amp;T)
-形狀顯示</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -497,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>編輯標籤(&amp;E)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>儲存(&amp;S)</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -555,6 +529,10 @@ Shapes</source>
         <translation>鎖定選取的形狀以防止編輯，或解除鎖定</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>復原</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>刪除選取的頂點</translation>
     </message>
@@ -601,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>繪製時填滿多邊形</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>隱藏形狀(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>顯示形狀(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>切換形狀顯示(&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

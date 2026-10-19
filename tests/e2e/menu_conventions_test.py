@@ -104,15 +104,7 @@ def _icon_key(action: QtGui.QAction, /) -> bytes:
 def test_menu_text_has_no_newline(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
-    allowed = frozenset(
-        {
-            "&Save\n",
-            "Undo\n",
-            "&Hide\nShapes",
-            "&Show\nShapes",
-            "&Toggle\nShapes",
-        }
-    )
+    allowed = frozenset[str]()
     win = _english_window(main_win)
     found = {a.text() for a in _menu_actions(win) if "\n" in a.text()}
     assert found == allowed

@@ -317,11 +317,6 @@
         <translation>باز کردن قبلی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>ذخیره(&amp;S)</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>ذخیره با نام دیگر(&amp;S)</translation>
     </message>
@@ -426,36 +421,16 @@
         <translation>بازگشت آخرین نقطه رسم شده</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>بازگشت</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>بازگشت آخرین افزودن و ویرایش شکل</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>مخفی کردن شکل(&amp;H)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>مخفی کردن همه شکل‌ها</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>نمایش شکل(&amp;S)</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>نمایش همه شکل‌ها</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>تغییر وضعیت شکل(&amp;S)</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -492,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>ویرایش برچسب(&amp;E)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>ذخیره(&amp;S)</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -550,6 +529,10 @@ Shapes</source>
         <translation>قفل کردن شکل‌های انتخاب شده در برابر ویرایش، یا باز کردن قفل آن‌ها</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>بازگشت</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>حذف رأس انتخاب‌شده</translation>
     </message>
@@ -596,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>پر کردن چندضلعی هنگام رسم</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>مخفی کردن شکل(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>نمایش شکل(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>تغییر نمایش شکل‌ها(&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

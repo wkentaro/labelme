@@ -442,7 +442,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         save = action(
-            text=self.tr("&Save\n"),
+            text=self.tr("&Save"),
             slot=lambda: self._save_label_file(save_as=False),
             shortcut=shortcuts["save"],
             icon="phosphor/floppy-disk.svg",
@@ -587,7 +587,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         undo = action(
-            text=self.tr("Undo\n"),
+            text=self.tr("Undo"),
             slot=self.undo_shape_edit,
             shortcut=shortcuts["undo"],
             icon="phosphor/arrow-u-up-left.svg",
@@ -771,21 +771,21 @@ class MainWindow(QtWidgets.QMainWindow):
             value=self._config["canvas"]["fill_drawing"]
         )
         hide_all = action(
-            text=self.tr("&Hide\nShapes"),
+            text=self.tr("&Hide Shapes"),
             slot=functools.partial(self.toggle_shape_visibility, value=False),
             shortcut=shortcuts["hide_all_shapes"],
             icon="phosphor/eye-slash.svg",
             tip=self.tr("Hide all shapes"),
         )
         show_all = action(
-            text=self.tr("&Show\nShapes"),
+            text=self.tr("&Show Shapes"),
             slot=functools.partial(self.toggle_shape_visibility, value=True),
             shortcut=shortcuts["show_all_shapes"],
             icon="phosphor/eye.svg",
             tip=self.tr("Show all shapes"),
         )
         toggle_all = action(
-            text=self.tr("&Toggle\nShapes"),
+            text=self.tr("&Toggle Shapes"),
             slot=functools.partial(self.toggle_shape_visibility, value=None),
             shortcut=shortcuts["toggle_all_shapes"],
             icon="phosphor/eye.svg",

@@ -273,11 +273,6 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Зберегти</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>&amp;Зберегти як</translation>
     </message>
@@ -370,11 +365,6 @@
         <translation>Скасувати останню намальовану точку</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Скасувати</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Скасувати останнє додавання та редагування фігури</translation>
     </message>
@@ -455,30 +445,12 @@
         <translation>Заповнювати багатокутник під час малювання</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Приховати
-фігури</translation>
-    </message>
-    <message>
         <source>Hide all shapes</source>
         <translation>Приховати всі фігури</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Показати
-фігури</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Показати всі фігури</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Переключити
-фігури</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -523,6 +495,10 @@ Shapes</source>
     <message>
         <source>Fit to Window</source>
         <translation>Припасувати вікно</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Зберегти</translation>
     </message>
     <message>
         <source>Save the annotation file</source>
@@ -571,6 +547,22 @@ Shapes</source>
     <message>
         <source>Delete the current annotation file</source>
         <translation>Видалити поточний файл анотацій</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Приховати фігури</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Показати фігури</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>&amp;Переключити фігури</translation>
     </message>
     <message>
         <source>&amp;Quit</source>

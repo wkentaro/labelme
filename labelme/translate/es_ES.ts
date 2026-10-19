@@ -317,11 +317,6 @@
         <translation>Abrir anterior (mantén Ctrl+Mayús para copiar etiquetas)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Guardar</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Guardar &amp;como</translation>
     </message>
@@ -426,36 +421,16 @@
         <translation>Deshacer último punto dibujado</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Deshacer</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Deshacer última adición y edición de forma</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Ocultar &amp;formas</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Ocultar todas las formas</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Mostrar &amp;formas</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Mostrar todas las formas</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Alternar &amp;formas</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -492,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>&amp;Editar etiqueta</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Guardar</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -550,6 +529,10 @@ Shapes</source>
         <translation>Bloquear las formas seleccionadas para impedir su edición, o desbloquearlas</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Deshacer</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Eliminar vértice seleccionado</translation>
     </message>
@@ -596,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Rellenar polígono mientras se dibuja</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Ocultar &amp;formas</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Mostrar &amp;formas</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Alternar &amp;formas</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

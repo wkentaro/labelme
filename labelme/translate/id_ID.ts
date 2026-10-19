@@ -317,11 +317,6 @@
         <translation>Buka Sebelumnya (Tahan Ctrl+Shift untuk menyalin label)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Simpan</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>&amp;Simpan Sebagai</translation>
     </message>
@@ -446,6 +441,10 @@
         <translation>&amp;Edit Label</translation>
     </message>
     <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Simpan</translation>
+    </message>
+    <message>
         <source>Change &amp;Annotation Folder…</source>
         <translation>Ubah Folder Anotasi (&amp;A)…</translation>
     </message>
@@ -502,6 +501,10 @@
         <translation>Kunci bentuk terpilih agar tidak dapat diedit, atau buka kuncinya</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Urungkan</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Hapus Simpul Terpilih</translation>
     </message>
@@ -548,6 +551,18 @@
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Isi poligon saat menggambar</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Sembunyikan Bentuk (&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Tampilkan Bentuk (&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Tampilkan/Sembunyikan Bentuk (&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -964,26 +979,6 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Shape had no area; nothing created.</source>
         <translation>Bentuk tidak memiliki area; tidak ada yang dibuat.</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Urungkan</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Sembunyikan Bentuk (&amp;H)</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Tampilkan Bentuk (&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Tampilkan/Sembunyikan Bentuk (&amp;T)</translation>
     </message>
     <message>
         <source>Settings…</source>

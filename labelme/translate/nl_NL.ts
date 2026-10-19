@@ -317,11 +317,6 @@
         <translation>Vorige openen (houd Ctrl+Shift ingedrukt om labels te kopiëren)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Opslaan</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Opslaan &amp;als</translation>
     </message>
@@ -426,36 +421,16 @@
         <translation>Laatste getekende punt ongedaan maken</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Ongedaan Maken</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Laatste toevoeging en bewerking van vorm ongedaan maken</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Vormen &amp;verbergen</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Alle vormen verbergen</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Vormen &amp;tonen</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Alle vormen tonen</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Vormen &amp;omschakelen</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -492,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Label &amp;bewerken</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Opslaan</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -550,6 +529,10 @@ Shapes</source>
         <translation>Geselecteerde vormen vergrendelen tegen bewerken, of ontgrendelen</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Ongedaan maken</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Geselecteerd hoekpunt verwijderen</translation>
     </message>
@@ -596,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Polygoon vullen tijdens tekenen</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Vormen &amp;verbergen</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Vormen &amp;tonen</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Vormen &amp;omschakelen</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

@@ -317,12 +317,6 @@
         <translation>Öncekini aç (etiketleri kopyalamak için Ctl+Shift tuşlarını basılı tutun)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Kaydet
-</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>&amp;Farklı Kaydet</translation>
     </message>
@@ -427,40 +421,16 @@
         <translation>Son çizilen noktayı geri al</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Geri Al
-</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Son şekil ekleme veya düzenleme işlemini geri al</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Şekilleri
-&amp;Gizle</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Tüm şekilleri gizle</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Şekilleri
-&amp;Göster</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Tüm şekilleri göster</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Şekilleri
-&amp;Aç/Kapat</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -497,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Etiketi &amp;Düzenle</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Kaydet</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -555,6 +529,10 @@ Shapes</source>
         <translation>Seçili şekilleri düzenlemeye karşı kilitle veya kilidini aç</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Geri Al</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Seçili Köşe Noktasını Sil</translation>
     </message>
@@ -601,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Çizerken çokgeni doldur</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Şekilleri &amp;Gizle</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Şekilleri &amp;Göster</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Şekilleri &amp;Aç/Kapat</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

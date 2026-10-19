@@ -317,12 +317,6 @@
         <translation>Vorheriges öffnen (Strg+Umschalt gedrückt halten, um Labels zu kopieren)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Speichern
-</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Speichern &amp;unter</translation>
     </message>
@@ -431,40 +425,16 @@
         <translation>Letzten gezeichneten Punkt rückgängig machen</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Rückgängig
-</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Letztes Hinzufügen und Bearbeiten der Form rückgängig machen</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Verbergen
-Formen</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Alle Formen verbergen</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>&amp;Anzeigen
-Formen</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Alle Formen anzeigen</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Umschalten
-Formen</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -519,6 +489,10 @@ Formen</translation>
         <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
     </message>
     <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Speichern</translation>
+    </message>
+    <message>
         <source>Change &amp;Annotation Folder…</source>
         <translation>&amp;Annotationsordner ändern…</translation>
     </message>
@@ -571,6 +545,10 @@ Formen</translation>
         <translation>Ausgewählte Formen gegen Bearbeitung sperren oder entsperren</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Rückgängig</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Ausgewählten Eckpunkt löschen</translation>
     </message>
@@ -609,6 +587,18 @@ Formen</translation>
     <message>
         <source>Show the image at 100%</source>
         <translation>Das Bild bei 100 % anzeigen</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Formen &amp;ausblenden</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Formen &amp;einblenden</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Formen &amp;umschalten</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

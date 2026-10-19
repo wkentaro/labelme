@@ -317,11 +317,6 @@
         <translation>이전 열기 (Ctrl+Shift를 누르면 레이블 복사)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>저장(&amp;S)</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>다른 이름으로 저장(&amp;S)</translation>
     </message>
@@ -426,36 +421,16 @@
         <translation>마지막으로 그린 점 실행 취소</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>실행 취소</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>도형의 마지막 추가 및 편집 실행 취소</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>도형 숨기기(&amp;H)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>모든 도형 숨기기</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>도형 표시(&amp;S)</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>모든 도형 표시</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>도형 토글(&amp;S)</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -492,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>레이블 편집(&amp;E)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>저장(&amp;S)</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -550,6 +529,10 @@ Shapes</source>
         <translation>선택한 도형을 편집할 수 없도록 잠그거나 잠금 해제</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>실행 취소</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>선택한 꼭짓점 삭제</translation>
     </message>
@@ -596,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>그리는 동안 다각형 채우기</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>도형 숨기기(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>도형 표시(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>도형 표시 전환(&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>

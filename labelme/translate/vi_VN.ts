@@ -317,11 +317,6 @@
         <translation>Mở trước đó (giữ Ctl+Shift để sao chép nhãn)</translation>
     </message>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>Lưu(&amp;S)</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Lưu thành(&amp;S)</translation>
     </message>
@@ -426,36 +421,16 @@
         <translation>Hoàn tác điểm vẽ cuối cùng</translation>
     </message>
     <message>
-        <source>Undo
-</source>
-        <translation>Hoàn tác</translation>
-    </message>
-    <message>
         <source>Undo last add and edit of shape</source>
         <translation>Hoàn tác lần thêm và chỉnh sửa hình dạng cuối cùng</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Ẩn Hình dạng(&amp;H)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>Ẩn tất cả hình dạng</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Hiển thị Hình dạng(&amp;S)</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Hiển thị tất cả hình dạng</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Bật/tắt Hình dạng(&amp;S)</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -492,6 +467,10 @@ Shapes</source>
     <message>
         <source>&amp;Edit Label</source>
         <translation>Chỉnh sửa Nhãn(&amp;E)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>Lưu(&amp;S)</translation>
     </message>
     <message>
         <source>Change &amp;Annotation Folder…</source>
@@ -550,6 +529,10 @@ Shapes</source>
         <translation>Khóa các hình dạng đã chọn để không thể chỉnh sửa, hoặc mở khóa</translation>
     </message>
     <message>
+        <source>Undo</source>
+        <translation>Hoàn tác</translation>
+    </message>
+    <message>
         <source>Delete Selected Vertex</source>
         <translation>Xóa Đỉnh đã Chọn</translation>
     </message>
@@ -596,6 +579,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Tô đa giác khi vẽ</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>Ẩn hình dạng(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>Hiện hình dạng(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Bật/tắt hình dạng(&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
