@@ -1597,15 +1597,21 @@ class MainWindow(QtWidgets.QMainWindow):
         return not len(self._docks.label_list)
 
     def populate_mode_actions(self) -> None:
-        self._canvas_widgets.canvas.shape_context_menu.clear()
+        # QMenu.clear() can delete its submenu actions, which are reused below.
+        # Remove membership without destroying the actions or their submenus.
+        for menu in (
+            self._canvas_widgets.canvas.shape_context_menu,
+            self._canvas_widgets.canvas.canvas_context_menu,
+            self._menus.edit,
+        ):
+            for menu_action in menu.actions():
+                menu.removeAction(menu_action)
         self._canvas_widgets.canvas.shape_context_menu.addActions(
             self._actions.shape_context_menu
         )
-        self._canvas_widgets.canvas.canvas_context_menu.clear()
         self._canvas_widgets.canvas.canvas_context_menu.addActions(
             self._actions.canvas_context_menu
         )
-        self._menus.edit.clear()
         actions = (
             *[draw_action for _, draw_action in self._actions.draw],
             self._actions.edit_mode,
