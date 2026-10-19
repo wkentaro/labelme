@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI 辅助标注</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>在 &apos;AI-Points&apos; 和 &apos;AI-Box&apos; 模式下，AI 会提供标注建议</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>更多细节</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>请选择 &apos;AI-Points&apos; 或 &apos;AI-Box&apos; 模式以启用 AI 辅助标注</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>请选择 &apos;AI-Points&apos; 或 &apos;AI-Box&apos; 模式以启用 AI 辅助</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>模型</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>AI 辅助</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>输出格式</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI 文本转标注</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>例如：dog,cat,bird</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>运行</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>AI 文本提示模型</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AI 将根据文本提示生成标注</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>AI 文本提示</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>请选择 &apos;Polygon&apos;、&apos;Rectangle&apos; 或 &apos;AI-Points&apos; 模式以启用</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>提示词</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>文本转标注模型</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>掩膜输出不可用</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s 仅检测边界框，无法创建 &apos;%s&apos; 标注。
-
-请将 AI Text-to-Annotation 模型切换为 &apos;SAM3 (smart)&apos;，或将输出格式设置为 &apos;Rectangle&apos;。</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>标签“{}”不符合“{}”验证类型</translation>
     </message>
@@ -917,6 +909,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Back Up and Reset</source>
         <translation>备份并重置</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s 仅检测边界框，无法创建 &apos;%s&apos; 形状。
+
+请将 AI 文本提示模型切换为 &apos;SAM3 (smart)&apos;，或将输出格式设置为 &apos;Rectangle&apos;。</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Expected location: {path}</source>
         <translation>每行一个标志名称。模式：^car$ 精确匹配 car，car 匹配前缀，.* 匹配所有标签。</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI 文本转标注</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>多边形细节</translation>
     </message>
@@ -1419,6 +1415,10 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>文本提示模型</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>Разметка с помощью ИИ</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>ИИ предлагает аннотацию в режимах &apos;AI-Points&apos; и &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Больше деталей</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Выберите режим &apos;AI-Points&apos; или &apos;AI-Box&apos;, чтобы включить аннотацию с помощью ИИ</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Выберите режим &apos;AI-Points&apos; или &apos;AI-Box&apos;, чтобы включить ИИ-помощника</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Модель</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>ИИ-помощник</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Формат вывода</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>ИИ: текст → разметка</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>например: собака,кот,птица</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Выполнить</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Модель текстового запроса ИИ</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>ИИ создаёт разметку по текстовому запросу</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>Текстовый запрос ИИ</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Выберите режим &apos;Polygon&apos;, &apos;Rectangle&apos; или &apos;AI-Points&apos;, чтобы включить</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>Запрос</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Модель разметки по тексту</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>Вывод маски недоступен</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s обнаруживает только ограничивающие рамки и не может создавать аннотации &apos;%s&apos;.
-
-Переключите модель AI Text-to-Annotation на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Неверная метка &apos;{}&apos; с типом проверки &apos;{}&apos;</translation>
     </message>
@@ -909,6 +901,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Draw a bounding box to segment object.</source>
         <translation>Нарисуйте ограничивающую рамку для сегментации объекта.</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s обнаруживает только ограничивающие рамки и не может создавать фигуры &apos;%s&apos;.
+
+Переключите модель текстового запроса ИИ на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -1325,10 +1325,6 @@ Expected location: {path}</source>
         <translation>Одно имя флага на строку. Шаблоны: ^car$ точно соответствует car, car — префиксу, .* — любой метке.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>ИИ: текст → разметка</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Детализация полигона</translation>
     </message>
@@ -1419,6 +1415,10 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Модель текстового запроса</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

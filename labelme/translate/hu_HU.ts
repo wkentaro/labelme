@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>MI-támogatott annotáció</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>Az AI annotációt javasol &apos;AI-Points&apos; és &apos;AI-Box&apos; módokban</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Részletesebb</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az AI-támogatott annotáció engedélyezéséhez</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az MI-segéd engedélyezéséhez</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Modell</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>MI-segéd</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Kimeneti formátum</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI prompt</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>pl. kutya,macska,madár</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Futtatás</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>MI-szöveges utasítás modellje</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>Az AI annotációkat hoz létre a szöveges promptból</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>MI-szöveges utasítás</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Válassza a &apos;Polygon&apos;, &apos;Rectangle&apos; vagy &apos;AI-Points&apos; módot az engedélyezéshez</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>Utasítás</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Szövegből annotáló modell</translation>
     </message>
 </context>
 <context>
@@ -747,14 +747,6 @@
         <translation>A maszk kimenet nem érhető el</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú annotációkat létrehozni.
-
-Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Érvénytelen címke &apos;{}&apos; &apos;{}&apos; validációs típussal</translation>
     </message>
@@ -917,6 +909,14 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
     <message>
         <source>Back Up and Reset</source>
         <translation>Biztonsági mentés és visszaállítás</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú alakzatokat létrehozni.
+
+Váltson az MI-szöveges utasítás modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Várt hely: {path}</translation>
         <translation>Soronként egy jelzőnév. Minták: ^car$ pontosan a car értékre, car egy előtagra, .* minden címkére illeszkedik.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI prompt</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Poligon részletessége</translation>
     </message>
@@ -1419,6 +1415,10 @@ Várt hely: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Szöveges utasítás modellje</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

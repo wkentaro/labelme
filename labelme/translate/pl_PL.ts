@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>Adnotacja wspomagana przez AI</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI sugeruje adnotacje w trybach &apos;AI-Points&apos; i &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Więcej szczegółów</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Wybierz tryb &apos;AI-Points&apos; lub &apos;AI-Box&apos;, aby włączyć adnotację wspomaganą przez AI</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Wybierz tryb &apos;AI-Points&apos; lub &apos;AI-Box&apos;, aby włączyć Asystenta AI</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>Asystent AI</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Format wyjściowy</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI — tekst na adnotację</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>np. pies,kot,ptak</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Uruchom</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Model monitu tekstowego AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AI generuje adnotacje na podstawie wprowadzonego polecenia tekstowego</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>Monit tekstowy AI</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Wybierz tryb &apos;Polygon&apos;, &apos;Rectangle&apos; lub &apos;AI-Points&apos;, aby włączyć</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>Polecenie</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Model tworzenia adnotacji z tekstu</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>Wyjście maski niedostępne</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s wykrywa tylko ramki ograniczające i nie może utworzyć adnotacji &apos;%s&apos;.
-
-Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format wyjściowy na &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Nieprawidłowa etykieta &apos;{}&apos; dla typu walidacji &apos;{}&apos;</translation>
     </message>
@@ -917,6 +909,14 @@ Zmień model AI Text-to-Annotation na &apos;SAM3 (smart)&apos; lub ustaw format 
     <message>
         <source>Back Up and Reset</source>
         <translation>Utwórz kopię i zresetuj</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s wykrywa tylko ramki ograniczające i nie może utworzyć kształtów &apos;%s&apos;.
+
+Zmień model monitu tekstowego AI na &apos;SAM3 (smart)&apos; lub ustaw format wyjściowy na &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Jedna nazwa flagi w wierszu. Wzorce: ^car$ pasuje dokładnie do car, car do prefiksu, .* do każdej etykiety.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI — tekst na adnotację</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Szczegółowość wielokąta</translation>
     </message>
@@ -1419,6 +1415,10 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Model monitu tekstowego</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

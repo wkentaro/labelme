@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>KI-gestützte Annotation</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI schlägt Annotationen in den Modi &apos;AI-Points&apos; und &apos;AI-Box&apos; vor</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Mehr Details</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Wählen Sie den Modus &apos;AI-Points&apos; oder &apos;AI-Box&apos;, um die KI-gestützte Annotation zu aktivieren</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Wählen Sie den Modus &apos;AI-Points&apos; oder &apos;AI-Box&apos;, um den KI-Assistenten zu aktivieren</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Modell</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>KI-Assistent</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Ausgabeformat</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>KI-Prompt</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>z.B. Hund,Katze,Vogel</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Ausführen</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Modell für KI-Textprompt</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>KI erstellt Annotationen aus dem Textprompt</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>KI-Textprompt</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>&apos;Polygon&apos;-, &apos;Rectangle&apos;- oder &apos;AI-Points&apos;-Modus auswählen zum Aktivieren</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Modell für textbasierte Annotation</translation>
     </message>
 </context>
 <context>
@@ -747,14 +747,6 @@
         <translation>Maskenausgabe nicht verfügbar</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s erkennt nur Begrenzungsrahmen und kann keine &apos;%s&apos;-Annotationen erstellen.
-
-Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Ungültiges Label &apos;{}&apos; mit Validierungstyp &apos;{}&apos;</translation>
     </message>
@@ -917,6 +909,14 @@ Wechseln Sie das AI Text-to-Annotation-Modell zu &apos;SAM3 (smart)&apos; oder s
     <message>
         <source>Back Up and Reset</source>
         <translation>Sichern und zurücksetzen</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s erkennt nur Begrenzungsrahmen und kann keine &apos;%s&apos;-Formen erstellen.
+
+Wechseln Sie das Modell für den KI-Textprompt zu &apos;SAM3 (smart)&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Ein Flag-Name pro Zeile. Muster: ^car$ passt genau auf car, car auf ein Präfix, .* auf jedes Label.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>KI-Prompt</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Polygondetails</translation>
     </message>
@@ -1419,6 +1415,10 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Modell für Textprompt</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

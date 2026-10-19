@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>Anotasi berbasis AI</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Lebih detail</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Pilih mode &apos;AI-Points&apos; atau &apos;AI-Box&apos; untuk mengaktifkan Anotasi yang berbasis AI</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Pilih mode &apos;AI-Points&apos; atau &apos;AI-Box&apos; untuk mengaktifkan Bantuan AI</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>Bantuan AI</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Format keluaran</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>Anotasi dari teks (AI)</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>contoh: anjing, kucing, burung</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Jalankan</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Model Prompt Teks AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AI membuat anotasi dari prompt teks</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>Prompt Teks AI</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Pilih mode &apos;Polygon&apos;, &apos;Rectangle&apos;, atau &apos;AI-Points&apos; untuk mengaktifkan</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Model teks ke anotasi</translation>
     </message>
 </context>
 <context>
@@ -699,14 +699,6 @@
         <translation>Keluaran mask tidak tersedia</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat anotasi &apos;%s&apos;.
-
-Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Label &apos;{}&apos; tidak valid dengan tipe validasi &apos;{}&apos;</translation>
     </message>
@@ -793,6 +785,14 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Buka gambar berikutnya (tahan %s untuk menyalin bentuk saat ini)</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat bentuk &apos;%s&apos;.
+
+Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Large image requires more memory</source>
@@ -1377,10 +1377,6 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Satu nama flag per baris. Pola: ^car$ cocok persis dengan car, car cocok dengan awalan, .* cocok dengan setiap label.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>Anotasi dari teks (AI)</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Detail poligon</translation>
     </message>
@@ -1471,6 +1467,10 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Model prompt teks</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

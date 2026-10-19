@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI支援アノテーション</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AIが&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>より詳細</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>&apos;AI-Points&apos;または&apos;AI-Box&apos;モードを選択してAI支援アノテーションを有効化</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>&apos;AI-Points&apos; または &apos;AI-Box&apos; モードを選択すると AI アシストが有効になります</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>モデル</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>AI アシスト</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>出力形式</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AIプロンプト</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>例: dog,cat,bird</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>実行</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>AI テキストプロンプトのモデル</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AIがテキストプロンプトからアノテーションを作成</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>AI テキストプロンプト</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>「Polygon」「Rectangle」または「AI-Points」モードで有効</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>プロンプト</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>テキストからアノテーションを生成するモデル</translation>
     </message>
 </context>
 <context>
@@ -745,14 +745,6 @@
         <translation>マスク出力は利用できません</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; アノテーションを作成できません。
-
-AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>ラベル &apos;{}&apos; は検証タイプ &apos;{}&apos; では無効です</translation>
     </message>
@@ -923,6 +915,14 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Back Up and Reset</source>
         <translation>バックアップしてリセット</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; の図形を作成できません。
+
+AI テキストプロンプトのモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1331,10 +1331,6 @@ Expected location: {path}</source>
         <translation>フラグ名は1行に1つ入力します。パターン: ^car$ は car と完全一致、car は前方一致、.* はすべてのラベルに一致します。</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AIプロンプト</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>ポリゴンの詳細度</translation>
     </message>
@@ -1425,6 +1421,10 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>テキストプロンプトのモデル</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

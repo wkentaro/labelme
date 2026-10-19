@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI Destekli Açıklama Ekleme</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI, &apos;AI-Noktalar&apos; ve &apos;AI-Kutu&apos; modlarında açıklama önerir</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Daha fazla ayrıntı</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>AI Destekli Açıklama Eklemeyi etkinleştirmek için &apos;AI-Noktalar&apos; veya &apos;AI-Kutu&apos; modunu seçin</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos; veya &apos;AI-Box&apos; modunu seçin</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>AI Yardımı</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Çıktı biçimi</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI ile Metinden Açıklama</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>ör. köpek,kedi,kuş</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Çalıştır</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>AI Metin İstemi modeli</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AI, metin isteminden açıklamalar oluşturur</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>AI Metin İstemi</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Etkinleştirmek için &apos;Çokgen&apos;, &apos;Dikdörtgen&apos; veya &apos;AI-Noktalar&apos; modunu seçin</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>İstem</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Metinden açıklama modeli</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>Maske çıktısı kullanılamıyor</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; ek açıklamaları oluşturamaz.
-
-AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>&apos;{}&apos; etiketi &apos;{}&apos; doğrulama türüne göre geçersiz</translation>
     </message>
@@ -917,6 +909,14 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
     <message>
         <source>Back Up and Reset</source>
         <translation>Yedekle ve sıfırla</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; şekilleri oluşturamaz.
+
+AI Metin İstemi modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Beklenen konum: {path}</translation>
         <translation>Her satıra bir bayrak adı. Desenler: ^car$ tam olarak car ile, car bir önekle, .* her etiketle eşleşir.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI ile Metinden Açıklama</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Poligon ayrıntısı</translation>
     </message>
@@ -1419,6 +1415,10 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Metin istemi modeli</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>Σχολιασμός υποβοηθούμενος από τεχνητή νοημοσύνη</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Περισσότερη λεπτομέρεια</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos; ή &apos;AI-Box&apos; για να ενεργοποιήσετε τον σχολιασμό υποβοηθούμενο από AI</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos; ή &apos;AI-Box&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,16 +40,16 @@
         <translation>Μοντέλο</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>Βοήθεια AI</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Μορφή εξόδου</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Text-to-Annotation</translation>
-    </message>
     <message>
         <source>AI creates annotations from the text prompt</source>
         <translation>Η τεχνητή νοημοσύνη δημιουργεί σχολιασμούς από την προτροπή κειμένου</translation>
@@ -65,6 +61,10 @@
     <message>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Μοντέλο κειμένου προτροπής AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -83,12 +83,12 @@
         <translation>Μοντέλο</translation>
     </message>
     <message>
-        <source>Prompt</source>
-        <translation>Προτροπή</translation>
+        <source>AI Text Prompt</source>
+        <translation>Κείμενο προτροπής AI</translation>
     </message>
     <message>
-        <source>Text-to-annotation model</source>
-        <translation>Μοντέλο σχολιασμού από κείμενο</translation>
+        <source>Prompt</source>
+        <translation>Προτροπή</translation>
     </message>
 </context>
 <context>
@@ -721,12 +721,12 @@
         <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχολιασμούς &apos;%s&apos;.
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχήματα &apos;%s&apos;.
 
-Αλλάξτε το μοντέλο AI Text-to-Annotation σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+Αλλάξτε το μοντέλο κειμένου προτροπής AI σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1325,10 +1325,6 @@ Expected location: {path}</source>
         <translation>Ένα όνομα σημαίας ανά γραμμή. Μοτίβα: ^car$ αντιστοιχεί ακριβώς στο car, car σε πρόθεμα, .* σε κάθε ετικέτα.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Text-to-Annotation</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Λεπτομέρεια πολυγώνου</translation>
     </message>
@@ -1419,6 +1415,10 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Μοντέλο κειμένου προτροπής</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

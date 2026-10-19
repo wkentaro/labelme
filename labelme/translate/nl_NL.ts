@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI-Ondersteunde Annotatie</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Meer detail</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Selecteer de modus &apos;AI-Points&apos; of &apos;AI-Box&apos; om AI-ondersteunde annotatie in te schakelen</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Selecteer de modus &apos;AI-Points&apos; of &apos;AI-Box&apos; om de AI-assistent in te schakelen</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,16 +40,16 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>AI-assistent</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Uitvoerformaat</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Tekst-naar-Annotatie</translation>
-    </message>
     <message>
         <source>AI creates annotations from the text prompt</source>
         <translation>AI genereert annotaties op basis van de tekstprompt</translation>
@@ -65,6 +61,10 @@
     <message>
         <source>Run</source>
         <translation>Uitvoeren</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Model voor AI-tekstprompt</translation>
     </message>
     <message>
         <source>Score</source>
@@ -83,12 +83,12 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>Prompt</source>
-        <translation>Prompt</translation>
+        <source>AI Text Prompt</source>
+        <translation>AI-tekstprompt</translation>
     </message>
     <message>
-        <source>Text-to-annotation model</source>
-        <translation>Model voor annotatie uit tekst</translation>
+        <source>Prompt</source>
+        <translation>Prompt</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>Maskeruitvoer niet beschikbaar</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-annotaties maken.
-
-Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Ongeldig label &apos;{}&apos; met validatietype &apos;{}&apos;</translation>
     </message>
@@ -917,6 +909,14 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Back Up and Reset</source>
         <translation>Back-up maken en resetten</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-vormen maken.
+
+Wijzig het model voor de AI-tekstprompt naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Verwachte locatie: {path}</translation>
         <translation>Eén vlagnaam per regel. Patronen: ^car$ komt exact overeen met car, car met een voorvoegsel, .* met elk label.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Tekst-naar-Annotatie</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Polygoondetail</translation>
     </message>
@@ -1419,6 +1415,10 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Model voor tekstprompt</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

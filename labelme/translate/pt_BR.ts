@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>Anotação Assistida por IA</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>A IA sugere anotações nos modos &apos;AI-Points&apos; e &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Mais detalhes</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Selecione o modo &apos;AI-Points&apos; ou &apos;AI-Box&apos; para habilitar a Anotação Assistida por IA</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Selecione o modo &apos;AI-Points&apos; ou &apos;AI-Box&apos; para habilitar a Assistência de IA</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,16 +40,16 @@
         <translation>Modelo</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>Assistência de IA</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Formato de saída</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>Texto para Anotação IA</translation>
-    </message>
     <message>
         <source>AI creates annotations from the text prompt</source>
         <translation>IA cria anotações a partir do prompt de texto</translation>
@@ -65,6 +61,10 @@
     <message>
         <source>Run</source>
         <translation>Executar</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Modelo de Prompt de Texto de IA</translation>
     </message>
     <message>
         <source>Score</source>
@@ -83,12 +83,12 @@
         <translation>Modelo</translation>
     </message>
     <message>
-        <source>Prompt</source>
-        <translation>Prompt</translation>
+        <source>AI Text Prompt</source>
+        <translation>Prompt de Texto de IA</translation>
     </message>
     <message>
-        <source>Text-to-annotation model</source>
-        <translation>Modelo de texto para anotação</translation>
+        <source>Prompt</source>
+        <translation>Prompt</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>Saída de máscara indisponível</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s detecta apenas caixas delimitadoras e não pode criar anotações &apos;%s&apos;.
-
-Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o formato de saída como &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Rótulo inválido &apos;{}&apos; com tipo de validação &apos;{}&apos;</translation>
     </message>
@@ -917,6 +909,14 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>Back Up and Reset</source>
         <translation>Fazer backup e redefinir</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s detecta apenas caixas delimitadoras e não pode criar formas &apos;%s&apos;.
+
+Mude o modelo de Prompt de Texto de IA para &apos;SAM3 (smart)&apos; ou defina o formato de saída como &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Local esperado: {path}</translation>
         <translation>Um nome de sinalizador por linha. Padrões: ^car$ corresponde exatamente a car, car a um prefixo, .* a qualquer rótulo.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>Texto para Anotação IA</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Detalhe do polígono</translation>
     </message>
@@ -1419,6 +1415,10 @@ Local esperado: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Modelo de prompt de texto</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

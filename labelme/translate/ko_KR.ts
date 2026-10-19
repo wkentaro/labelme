@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI 지원 주석</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>더 자세하게</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>&apos;AI-Points&apos; 또는 &apos;AI-Box&apos; 모드를 선택하여 AI 지원 주석을 활성화</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>&apos;AI-Points&apos; 또는 &apos;AI-Box&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>모델</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>AI 어시스트</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>출력 형식</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI 프롬프트</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>예: 개, 고양이, 새</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>실행</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>AI 텍스트 프롬프트 모델</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AI가 텍스트 프롬프트에서 주석을 생성합니다</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>AI 텍스트 프롬프트</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>&apos;Polygon&apos;, &apos;Rectangle&apos; 또는 &apos;AI-Points&apos; 모드를 선택하여 활성화</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>프롬프트</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>텍스트 기반 주석 모델</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>마스크 출력을 사용할 수 없음</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 주석을 생성할 수 없습니다.
-
-AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>검증 유형 &apos;{}&apos;에 대한 잘못된 레이블 &apos;{}&apos;</translation>
     </message>
@@ -917,6 +909,14 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Back Up and Reset</source>
         <translation>백업 후 초기화</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 도형을 생성할 수 없습니다.
+
+AI 텍스트 프롬프트 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Expected location: {path}</source>
         <translation>한 줄에 플래그 이름 하나를 입력합니다. 패턴: ^car$는 car와 정확히 일치하고, car는 접두사와 일치하며, .*는 모든 레이블과 일치합니다.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI 프롬프트</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>폴리곤 세부 수준</translation>
     </message>
@@ -1419,6 +1415,10 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>텍스트 프롬프트 모델</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI輔助標註</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI在&apos;AI-Points&apos;和&apos;AI-Box&apos;模式下建議標註</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>更多細節</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>選擇&apos;AI-Points&apos;或&apos;AI-Box&apos;模式以啟用AI輔助標註</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>選擇 &apos;AI-Points&apos; 或 &apos;AI-Box&apos; 模式以啟用 AI 輔助</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>模型</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>AI 輔助</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>輸出格式</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI提示</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>例如：狗,貓,鳥</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>執行</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>AI 文字提示模型</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AI根據文字提示創建標註</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>AI 文字提示</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>選擇&apos;Polygon&apos;、&apos;Rectangle&apos;或&apos;AI-Points&apos;模式以啟用</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>提示詞</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>文字轉標註模型</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>遮罩輸出無法使用</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 標註。
-
-請將 AI Text-to-Annotation 模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>標籤「{}」不符合「{}」驗證類型</translation>
     </message>
@@ -917,6 +909,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Back Up and Reset</source>
         <translation>備份並重設</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 形狀。
+
+請將 AI 文字提示模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Expected location: {path}</source>
         <translation>每行一個旗標名稱。模式：^car$ 精確符合 car，car 符合前綴，.* 符合所有標籤。</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI提示</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>多邊形細節</translation>
     </message>
@@ -1419,6 +1415,10 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>文字提示模型</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

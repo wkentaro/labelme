@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI-анотація</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Більше деталей</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Виберіть режим &apos;AI-Points&apos; або &apos;AI-Box&apos;, щоб увімкнути анотацію за допомогою ШІ</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Виберіть режим &apos;AI-Points&apos; або &apos;AI-Box&apos;, щоб увімкнути ШІ-помічника</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,16 +40,16 @@
         <translation>Модель</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>ШІ-помічник</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Формат виведення</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI: текст в анотацію</translation>
-    </message>
     <message>
         <source>AI creates annotations from the text prompt</source>
         <translation>AI створює анотації з текстової підказки</translation>
@@ -65,6 +61,10 @@
     <message>
         <source>Run</source>
         <translation>Запустити</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Модель текстового запиту ШІ</translation>
     </message>
     <message>
         <source>Score</source>
@@ -83,12 +83,12 @@
         <translation>Модель</translation>
     </message>
     <message>
-        <source>Prompt</source>
-        <translation>Запит</translation>
+        <source>AI Text Prompt</source>
+        <translation>Текстовий запит ШІ</translation>
     </message>
     <message>
-        <source>Text-to-annotation model</source>
-        <translation>Модель розмітки за текстом</translation>
+        <source>Prompt</source>
+        <translation>Запит</translation>
     </message>
 </context>
 <context>
@@ -721,12 +721,12 @@
         <translation>Вивід маски недоступний</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s виявляє лише обмежувальні рамки й не може створювати анотації &apos;%s&apos;.
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s виявляє лише обмежувальні рамки й не може створювати фігури &apos;%s&apos;.
 
-Перемкніть модель AI Text-to-Annotation на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
+Перемкніть модель текстового запиту ШІ на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1325,10 +1325,6 @@ Expected location: {path}</source>
         <translation>Одна назва прапорця на рядок. Шаблони: ^car$ точно відповідає car, car — префіксу, .* — будь-якій мітці.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI: текст в анотацію</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Деталізація полігона</translation>
     </message>
@@ -1419,6 +1415,10 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Модель текстового запиту</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

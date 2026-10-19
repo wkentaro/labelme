@@ -72,7 +72,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
         header_layout = QtWidgets.QHBoxLayout()
         header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI-Assisted Annotation"))
+        label = QtWidgets.QLabel(self.tr("AI Assist"))
         header_layout.addWidget(label)
         info_button = InfoButton(
             tooltip=self.tr("AI suggests annotation in 'AI-Points' and 'AI-Box' modes")
@@ -214,10 +214,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
-                    self.tr(
-                        "Select 'AI-Points' or 'AI-Box' mode "
-                        "to enable AI-Assisted Annotation"
-                    ),
+                    self.tr("Select 'AI-Points' or 'AI-Box' mode to enable AI Assist"),
                     self,
                 )
                 self.hover_highlight_requested.emit(True)  # noqa: FBT003 -- Qt signal payload is positional

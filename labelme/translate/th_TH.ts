@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>แอนโนเทชันด้วย AI</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>รายละเอียดมากขึ้น</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>เลือกโหมด &apos;AI-Points&apos; หรือ &apos;AI-Box&apos; เพื่อเปิดใช้งานแอนโนเทชันด้วย AI</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>เลือกโหมด &apos;AI-Points&apos; หรือ &apos;AI-Box&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>โมเดล</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>ผู้ช่วย AI</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>รูปแบบผลลัพธ์</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI ข้อความสู่แอนโนเทชัน</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>เช่น สุนัข, แมว, นก</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>รัน</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>โมเดลพรอมต์ข้อความ AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AI สร้างแอนโนเทชันจากข้อความที่ป้อน</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>พรอมต์ข้อความ AI</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>เลือกโหมด &apos;Polygon&apos;, &apos;Rectangle&apos; หรือ &apos;AI-Points&apos; เพื่อเปิดใช้งาน</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>พรอมต์</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>โมเดลแปลงข้อความเป็นคำอธิบายประกอบ</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>ไม่สามารถสร้างเอาต์พุตมาสก์ได้</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างคำอธิบายประกอบ &apos;%s&apos; ได้
-
-เปลี่ยนโมเดล AI Text-to-Annotation เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>เลเบล &apos;{}&apos; ไม่ถูกต้อง ประเภทการตรวจ &apos;{}&apos;</translation>
     </message>
@@ -917,6 +909,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Back Up and Reset</source>
         <translation>สำรองข้อมูลและรีเซ็ต</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างรูปร่าง &apos;%s&apos; ได้
+
+เปลี่ยนโมเดลพรอมต์ข้อความ AI เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Expected location: {path}</source>
         <translation>หนึ่งชื่อแฟล็กต่อบรรทัด รูปแบบ: ^car$ ตรงกับ car เท่านั้น, car ตรงกับคำนำหน้า, .* ตรงกับทุกป้ายกำกับ</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI ข้อความสู่แอนโนเทชัน</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>รายละเอียดโพลีกอน</translation>
     </message>
@@ -1419,6 +1415,10 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>โมเดลพรอมต์ข้อความ</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

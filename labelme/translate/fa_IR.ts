@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>حاشیه‌نویسی با کمک هوش مصنوعی</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>جزئیات بیشتر</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی حاشیه‌نویسی با کمک AI انتخاب کنید</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>مدل</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>دستیار هوش مصنوعی</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>قالب خروجی</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>پیشنهاد هوش مصنوعی</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>مثال: سگ، گربه، پرنده</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>اجرا</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>مدل پرامپت متنی هوش مصنوعی</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>هوش مصنوعی حاشیه‌نویسی‌ها را از متن ایجاد می‌کند</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>پرامپت متنی هوش مصنوعی</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>حالت &apos;Polygon&apos;، &apos;Rectangle&apos; یا &apos;AI-Points&apos; را برای فعال‌سازی انتخاب کنید</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>دستور</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>مدل تبدیل متن به حاشیه‌نویسی</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>خروجی ماسک در دسترس نیست</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s فقط کادرهای محصور‌کننده را تشخیص می‌دهد و نمی‌تواند حاشیه‌نویسی &apos;%s&apos; ایجاد کند.
-
-مدل AI Text-to-Annotation را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>برچسب نامعتبر &apos;{}&apos; با نوع اعتبارسنجی &apos;{}&apos;</translation>
     </message>
@@ -917,6 +909,14 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Back Up and Reset</source>
         <translation>پشتیبان‌گیری و بازنشانی</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s فقط کادرهای محصورکننده را تشخیص می‌دهد و نمی‌تواند شکل‌های &apos;%s&apos; ایجاد کند.
+
+مدل پرامپت متنی هوش مصنوعی را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Expected location: {path}</source>
         <translation>هر نام پرچم در یک خط. الگوها: ^car$ دقیقاً با car، car با پیشوند و .* با هر برچسب مطابقت دارد.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>پیشنهاد هوش مصنوعی</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>جزئیات چندضلعی</translation>
     </message>
@@ -1419,6 +1415,10 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>مدل پرامپت متنی</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

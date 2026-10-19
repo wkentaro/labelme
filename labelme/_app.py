@@ -1665,8 +1665,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr("Mask Output Unavailable"),
                 self.tr(
                     "%s only detects bounding boxes and cannot create "
-                    "'%s' annotations.\n\n"
-                    "Switch the AI Text-to-Annotation model to 'SAM3 (smart)', "
+                    "'%s' Shapes.\n\n"
+                    "Switch the AI Text Prompt model to 'SAM3 (smart)', "
                     "or set the output format to 'Rectangle'."
                 )
                 % (self._ai_text.get_model_display_name(), shape_type),

@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>Chú thích dữ liệu với sự hỗ trợ của AI</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI gợi ý chú thích trong các chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>Chi tiết hơn</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Chọn chế độ &apos;AI-Points&apos; hoặc &apos;AI-Box&apos; để bật Chú thích Hỗ trợ AI</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>Chọn chế độ &apos;AI-Points&apos; hoặc &apos;AI-Box&apos; để bật Hỗ trợ AI</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>Mô hình</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>Hỗ trợ AI</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>Định dạng đầu ra</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Văn bản sang Chú thích</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>ví dụ: chó,mèo,chim</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>Chạy</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>Mô hình lời nhắc văn bản AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>AI tạo chú thích dựa trên nội dung lời nhắc văn bản</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>Lời nhắc văn bản AI</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>Chọn chế độ &apos;Polygon&apos;, &apos;Rectangle&apos; hoặc &apos;AI-Points&apos; để bật</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>Lời nhắc</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>Mô hình chuyển văn bản thành chú thích</translation>
     </message>
 </context>
 <context>
@@ -739,14 +739,6 @@
         <translation>Không có đầu ra mặt nạ</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s chỉ phát hiện khung giới hạn và không thể tạo chú thích &apos;%s&apos;.
-
-Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Nhãn không hợp lệ &apos;{}&apos; với loại xác thực &apos;{}&apos;</translation>
     </message>
@@ -917,6 +909,14 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
     <message>
         <source>Back Up and Reset</source>
         <translation>Sao lưu và đặt lại</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s chỉ phát hiện khung giới hạn và không thể tạo hình dạng &apos;%s&apos;.
+
+Chuyển mô hình lời nhắc văn bản AI sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1325,10 +1325,6 @@ Vị trí dự kiến: {path}</translation>
         <translation>Mỗi dòng một tên cờ. Mẫu: ^car$ khớp chính xác với car, car khớp tiền tố, .* khớp mọi nhãn.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Văn bản sang Chú thích</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Độ chi tiết đa giác</translation>
     </message>
@@ -1419,6 +1415,10 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
+    </message>
+    <message>
+        <source>Text prompt model</source>
+        <translation>Mô hình lời nhắc văn bản</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
