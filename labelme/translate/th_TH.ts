@@ -378,7 +378,8 @@
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>ลบไฟล์คำอธิบายประกอบ (&amp;D)</translation>
+        <translation>ลบไฟล์
+คำอธิบายประกอบ (&amp;D)</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
