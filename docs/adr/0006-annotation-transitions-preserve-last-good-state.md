@@ -33,11 +33,19 @@ processes. Encoding can still hold the Python GIL briefly; a process worker is
 reserved for measured event-loop stalls that exceed the interaction budget.
 
 Navigation, close, and output-directory changes wait for queued saves, then use
-the existing Save/Discard/Cancel decision if the latest save failed. Manual Save
+the existing Save/Discard/Cancel decision when changes remain unsaved. Manual Save
 and Save As discard superseded pending work and wait for the active write before
 writing the latest snapshot. Delete waits for the active writer before unlinking,
 so a late completion cannot recreate the deleted Annotation File. Save As sets
 the auto-save destination for the current document.
+
+Locating a replacement for a missing Image stages the repaired Annotation in
+memory. Auto-save stays paused for that Annotation, including further edits,
+until an explicit Save, Save As, or Retry succeeds. Save repairs the original
+Annotation File; Save As chooses a new destination. Subsequent auto-saves use
+that confirmed destination, leaving any Annotation File already associated with
+the replacement Image untouched. Canceling recovery preserves the previous
+session; navigating or closing after recovery uses Save/Discard/Cancel.
 
 The status bar distinguishes Saving, Saved, and Save failed. A failure retries
 only on another edit or explicit Retry. The pending interval is not crash
