@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>حاشیه‌نویسی با کمک هوش مصنوعی</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
     </message>
@@ -28,8 +24,8 @@
         <translation>جزئیات بیشتر</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی حاشیه‌نویسی با کمک AI انتخاب کنید</translation>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +40,10 @@
         <translation>مدل</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>دستیار هوش مصنوعی</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>قالب خروجی</translation>
     </message>
@@ -51,16 +51,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>پیشنهاد هوش مصنوعی</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>مثال: سگ، گربه، پرنده</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>اجرا</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>مدل پرامپت متنی هوش مصنوعی</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +75,10 @@
         <translation>هوش مصنوعی حاشیه‌نویسی‌ها را از متن ایجاد می‌کند</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>پرامپت متنی هوش مصنوعی</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>حالت &apos;Polygon&apos;، &apos;Rectangle&apos; یا &apos;AI-Points&apos; را برای فعال‌سازی انتخاب کنید</translation>
     </message>
@@ -85,10 +89,6 @@
     <message>
         <source>Prompt</source>
         <translation>دستور</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>مدل تبدیل متن به حاشیه‌نویسی</translation>
     </message>
 </context>
 <context>
@@ -102,8 +102,8 @@
         <translation>کنار تصاویر</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>انتخاب پوشهٔ حاشیه‌نویسی…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>تغییر پوشهٔ حاشیه‌نویسی…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -140,6 +140,10 @@
         <translation>کلیک و کشیدن برای جابجایی نقطه</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>%s را نگه دارید و کلیک کنید تا نقطه‌ای روی لبه اضافه شود</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>شکل قفل است</translation>
     </message>
@@ -164,6 +168,10 @@
         <translation>ویرایش اشکال</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>برای افزودن روی نقاط کلیک کنید، یا %s را نگه دارید و کلیک کنید تا حذف شوند. %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>کلیک روی نقطه شروع خط</translation>
     </message>
@@ -176,28 +184,12 @@
         <translation>کلیک روی نقطه شروع خط چندتکه‌ای</translation>
     </message>
     <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>کلیک روی نقطه بعدی یا Ctrl/Cmd+کلیک برای پایان خط چندتکه‌ای</translation>
-    </message>
-    <message>
         <source>Click center point for circle</source>
         <translation>کلیک روی نقطه مرکز دایره</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>
         <translation>کلیک روی نقطه روی محیط دایره</translation>
-    </message>
-    <message>
-        <source>Click first point on circumference for circle</source>
-        <translation>کلیک روی اولین نقطه روی محیط دایره</translation>
-    </message>
-    <message>
-        <source>Click second point on circumference for circle</source>
-        <translation>کلیک روی دومین نقطه روی محیط دایره</translation>
-    </message>
-    <message>
-        <source>Click third point on circumference to finish circle</source>
-        <translation>کلیک روی سومین نقطه روی محیط برای اتمام دایره</translation>
     </message>
     <message>
         <source>Click first corner for rectangle</source>
@@ -208,20 +200,8 @@
         <translation>کلیک برای افزودن نقطه</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + کلیک برای حذف نقطه</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + کلیک برای ایجاد نقطه روی شکل</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>گوشهٔ دیگر را انتخاب کنید. برای مربع، Shift را نگه دارید.</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>روی نقاط کلیک کنید تا شامل شوند یا Shift+Click برای حذف. Ctrl+LeftClick ایجاد را پایان می‌دهد.</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -230,6 +210,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>روی گوشه مقابل برای قطعه‌بندی شیء کلیک کنید</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>روی نقطه بعدی کلیک کنید، یا %s را نگه دارید و کلیک کنید تا خط شکسته تمام شود</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -244,8 +228,24 @@
         <translation>کلیک روی گوشه سوم برای بستن مستطیل جهت‌دار</translation>
     </message>
     <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>%s را نگه دارید و کلیک کنید تا نقطه حذف شود</translation>
+    </message>
+    <message>
         <source>Click &amp; drag to rotate the shape</source>
         <translation>کلیک و کشیدن برای چرخاندن شکل</translation>
+    </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>کلیک روی اولین نقطه روی محیط دایره</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>کلیک روی دومین نقطه روی محیط دایره</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>کلیک روی سومین نقطه روی محیط برای اتمام دایره</translation>
     </message>
 </context>
 <context>
@@ -259,14 +259,6 @@
         <translation>برای شروع، یک تصویر یا پوشه‌ای از تصاویر را باز کنید.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>باز کردن پوشه</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>باز کردن تصویر</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>یا فایل‌های تصویری را اینجا بکشید و رها کنید</translation>
     </message>
@@ -276,6 +268,10 @@
     <message>
         <source>Shape Label</source>
         <translation>برچسب شکل</translation>
+    </message>
+    <message>
+        <source>Enter object label</source>
+        <translation>برچسب شیء را وارد کنید</translation>
     </message>
     <message>
         <source>Label</source>
@@ -321,38 +317,8 @@
         <translation>خروج از برنامه</translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>باز کردن(&amp;O)</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>تصویر بعدی(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>باز کردن بعدی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>تصویر قبلی(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>باز کردن قبلی (Ctrl+Shift را نگه دارید تا برچسب‌ها کپی شوند)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>ذخیره(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>ذخیره با نام دیگر(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>ذخیره خودکار(&amp;A)</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -407,8 +373,16 @@
         <translation>ذخیره فایل حاشیه‌نویسی</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>ذخیره با نام دیگر(&amp;A)…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>ذخیره فایل حاشیه‌نویسی با نام جدید</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>ذخیره خودکار(&amp;T)</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -417,6 +391,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>یک نسخه از تصویر را داخل فایل حاشیه‌نویسی ذخیره می‌کند</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>تغییر پوشهٔ حاشیه‌نویسی(&amp;F)…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -443,44 +421,32 @@
         <translation>ایجاد کپی از شکل‌های انتخاب شده</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>بازگشت آخرین نقطه</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>بازگشت آخرین نقطه رسم شده</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>بازگشت</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>بازگشت آخرین افزودن و ویرایش شکل</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>مخفی کردن شکل(&amp;H)</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>برای قرار دادن نقاط خط شکسته کلیک کنید؛ %s را نگه دارید و کلیک کنید تا آخرین نقطه قرار گیرد.</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>روی نقاط کلیک کنید تا شیء بخش‌بندی شود؛ %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>باز کردن تصویر بعدی (برای کپی شکل‌های فعلی، %s را نگه دارید)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>مخفی کردن همه شکل‌ها</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>نمایش شکل(&amp;S)</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>نمایش همه شکل‌ها</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>تغییر وضعیت شکل(&amp;S)</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -507,24 +473,52 @@ Shapes</source>
         <translation>کوچک‌نمایی(&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>روشنایی و کنتراست(&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>تنظیم روشنایی و کنتراست</translation>
     </message>
     <message>
-        <source>&amp;Edit Label</source>
-        <translation>ویرایش برچسب(&amp;E)</translation>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>حاشیه‌نویسی چندضلعی تصویر با Python</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>تغییر پوشهٔ حاشیه‌نویسی(&amp;A)…</translation>
+        <source>Version: %s</source>
+        <translation>نسخه: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>نویسنده: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>وب‌سایت</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>مستندات</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>عیب‌یابی</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>درباره %s(&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>درباره %s</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>ذخیره(&amp;S)</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>انتخاب محل خواندن و ذخیرهٔ پرونده‌های حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>باز کردن فایل(&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -571,24 +565,16 @@ Shapes</source>
         <translation>قفل کردن شکل‌های انتخاب شده در برابر ویرایش، یا باز کردن قفل آن‌ها</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>حذف رأس انتخاب‌شده</translation>
+        <source>Undo</source>
+        <translation>بازگشت</translation>
     </message>
     <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>رأس انتخاب‌شده را از چندضلعی یا خط شکسته حذف می‌کند</translation>
+        <source>&amp;Previous Image</source>
+        <translation>تصویر قبلی(&amp;P)</translation>
     </message>
     <message>
-        <source>Circle (3 Points)</source>
-        <translation>دایره (۳ نقطه)</translation>
-    </message>
-    <message>
-        <source>Start drawing circles with 3 points</source>
-        <translation>شروع رسم دایره با ۳ نقطه</translation>
-    </message>
-    <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>برای قرار دادن نقاط خط چندتکه‌ای کلیک کنید؛ Ctrl+کلیک نقطه آخر را قرار می‌دهد.</translation>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>باز کردن تصویر قبلی (برای کپی شکل‌های فعلی، %s را نگه دارید)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -603,6 +589,10 @@ Shapes</source>
         <translation>بزرگ‌نمایی روی شکل‌های انتخاب شده هر بار که انتخاب تغییر می‌کند</translation>
     </message>
     <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>روشنایی/کنتراست(&amp;B)…</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>نمایش تصویر در اندازهٔ بزرگ‌تر</translation>
     </message>
@@ -612,7 +602,7 @@ Shapes</source>
     </message>
     <message>
         <source>&amp;Actual Size</source>
-        <translation>اندازهٔ &amp;واقعی</translation>
+        <translation>اندازهٔ واقعی(&amp;و)</translation>
     </message>
     <message>
         <source>Show the image at 100%</source>
@@ -625,6 +615,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>پر کردن چندضلعی هنگام رسم</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>مخفی کردن شکل(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>نمایش شکل(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>تغییر نمایش شکل‌ها(&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -663,6 +665,14 @@ Shapes</source>
         <translation>تناسب با پنجره</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>مدل‌های هوش مصنوعی…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>دانلود یا حذف مدل‌های هوش مصنوعی</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>فایل(&amp;F)</translation>
     </message>
@@ -679,8 +689,16 @@ Shapes</source>
         <translation>راهنما(&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>ابزارها</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>ابزارهای بیشتر</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>ابزارهای شکل</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -711,16 +729,12 @@ Shapes</source>
         <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
     </message>
     <message>
+        <source>Open Folder</source>
+        <translation>باز کردن پوشه</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>تنظیمات خط فرمان</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>پشتیبان‌گیری و بازنشانی</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>ادامه با پیش‌فرض‌ها</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -743,18 +757,6 @@ Shapes</source>
     <message>
         <source>Mask Output Unavailable</source>
         <translation>خروجی ماسک در دسترس نیست</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s فقط کادرهای محصور‌کننده را تشخیص می‌دهد و نمی‌تواند حاشیه‌نویسی &apos;%s&apos; ایجاد کند.
-
-مدل AI Text-to-Annotation را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
-    </message>
-    <message>
-        <source>Invalid label</source>
-        <translation>برچسب نامعتبر</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -785,14 +787,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>تناسب با انتخاب</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>تصویر بزرگ</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>تصویر بزرگ به حافظه بیشتری نیاز دارد</translation>
     </message>
@@ -803,10 +797,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>باز کردن در هر صورت</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>خطا در باز کردن فایل</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -823,14 +813,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>تصاویر و پرونده‌های حاشیه‌نویسی (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - باز کردن تصویر یا حاشیه‌نویسی‌ها</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>توجه</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -853,16 +835,16 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>تغییرات ذخیره‌نشده</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>دانلود {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>فایل حاشیه‌نویسی انتخاب‌شده باز نشد: {path}</translation>
     </message>
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>پوشهٔ حاشیه‌نویسی پیدا نشد: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - مرور پوشهٔ تصاویر</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -889,6 +871,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>چندضلعی</translation>
     </message>
     <message>
+        <source>&amp;Edit Label…</source>
+        <translation>ویرایش برچسب(&amp;E)…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>بازگشت آخرین نقطه</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>حذف نقطه انتخاب‌شده</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>نقطه انتخاب‌شده را از چندضلعی یا خط شکسته حذف می‌کند</translation>
+    </message>
+    <message>
         <source>Rectangle</source>
         <translation>مستطیل</translation>
     </message>
@@ -913,16 +911,36 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>روی نقاط کلیک کنید تا شیء بخش‌بندی شود. Ctrl+LeftClick ایجاد را پایان می‌دهد.</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
     <message>
         <source>Draw a bounding box to segment object.</source>
         <translation>یک کادر محصورکننده برای قطعه‌بندی شیء رسم کنید.</translation>
+    </message>
+    <message>
+        <source>Continue with Defaults</source>
+        <translation>ادامه با پیش‌فرض‌ها</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>پشتیبان‌گیری و بازنشانی</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s فقط کادرهای محصورکننده را تشخیص می‌دهد و نمی‌تواند شکل‌های &apos;%s&apos; ایجاد کند.
+
+مدل پرامپت متنی هوش مصنوعی را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>برچسب نامعتبر</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -935,16 +953,12 @@ Please select a different model or use AI-Box mode.</source>
 لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - انتخاب پوشهٔ حاشیه‌نویسی</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>پوشهٔ حاشیه‌نویسی: %s</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>تصویر پیدا نشد</translation>
+        <source>Download</source>
+        <translation>بارگیری</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -973,6 +987,18 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>قالب‌های مجاز: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>خطا در حذف فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>تغییرات ذخیره‌نشده</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>تصویر پیدا نشد</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -1011,6 +1037,22 @@ Expected location: {path}</source>
         <translation>تنظیمات این نشست از طریق --config مدیریت می‌شوند</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>تصویر بزرگ</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>خطا در باز کردن فایل</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>باز کردن فایل</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>انتخاب پوشهٔ حاشیه‌نویسی</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>ذخیره فایل حاشیه‌نویسی</translation>
     </message>
@@ -1019,16 +1061,24 @@ Expected location: {path}</source>
         <translation>فایل‌های حاشیه‌نویسی (*%s)</translation>
     </message>
     <message>
+        <source>Delete Annotation File</source>
+        <translation>حذف فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
         <source>Permanently delete this annotation file? This action cannot be undone.</source>
         <translation>این فایل حاشیه‌نویسی برای همیشه حذف شود؟ این عمل قابل بازگشت نیست.</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>خطا در حذف فایل حاشیه‌نویسی</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>خطای پیکربندی</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>دایره (۳ نقطه)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>شروع رسم دایره با ۳ نقطه</translation>
     </message>
 </context>
 <context>
@@ -1038,16 +1088,27 @@ Expected location: {path}</source>
         <translation>مدیریت مدل‌ها…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>بارگیری مدل…</translation>
+        <source>Download and use</source>
+        <translation>دانلود و استفاده</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>انتخاب مدل…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>در حال دانلود: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>در دسترس نیست: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>مدل‌های هوش مصنوعی</translation>
     </message>
 </context>
 <context>
@@ -1141,11 +1202,15 @@ Expected location: {path}</source>
         <translation>بارگیری</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>دانلود ناموفق بود</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>دانلود ناموفق بود. اتصال خود را بررسی کنید و دوباره تلاش کنید.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>حذف مدل</translation>
     </message>
     <message>
@@ -1284,10 +1349,6 @@ Expected location: {path}</source>
         <translation>هر نام پرچم در یک خط. الگوها: ^car$ دقیقاً با car، car با پیشوند و .* با هر برچسب مطابقت دارد.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>پیشنهاد هوش مصنوعی</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>جزئیات چندضلعی</translation>
     </message>
@@ -1380,6 +1441,10 @@ Expected location: {path}</source>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Text prompt model</source>
+        <translation>مدل پرامپت متنی</translation>
+    </message>
+    <message>
         <source>Suppress existing Shape matches</source>
         <translation>نادیده گرفتن موارد منطبق با شکل‌های موجود</translation>
     </message>
@@ -1390,10 +1455,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>تنظیمات</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>مدل‌های هوش مصنوعی</translation>
     </message>
     <message>
         <source>Open config file as text…</source>
@@ -1462,8 +1523,8 @@ Expected location: {path}</source>
         <translation>زوم</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+چرخ روی بوم بزرگ‌نمایی می‌کند</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>%s را نگه دارید و اسکرول کنید تا بوم بزرگ‌نمایی شود</translation>
     </message>
 </context>
 <context>
@@ -1537,6 +1598,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>تنظیم مطابقی در این پنجره یافت نشد. عبارت دیگری را امتحان کنید یا جستجو را پاک کنید.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>خطا</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>یک خطای غیرمنتظره رخ داد. برنامه بسته می‌شود.&lt;br/&gt;&lt;br/&gt;لطفاً مشکل را طبق &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;عیب‌یابی&lt;/a&gt; گزارش دهید.</translation>
     </message>
 </context>
 </TS>

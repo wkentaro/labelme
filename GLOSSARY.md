@@ -63,11 +63,11 @@ Bulk, text-driven Shape proposal: the user types a class name and an open-vocabu
 _Avoid_: AI annotation (too vague), text-to-annotation (verbose), auto-detect.
 
 **Downloaded Model**:
-A supported model whose required files are present in the local cache; every download is hash-checked before it lands there. It can be selected without a download; this does not guarantee hardware compatibility. Downloading and selecting are separate actions, and completing a download never changes a selection or runs inference.
+A supported model whose required files are present in the local cache; every download is hash-checked before it lands there. It can be selected without a download; this does not guarantee hardware compatibility. Downloading from the AI Models window never selects a model. Choosing a model that is not downloaded in a toolbar model picker changes the Setting at that moment and queues its download; the choice takes effect when the files arrive. Completing a download never changes a selection or runs inference.
 _Avoid_: installed model (confuses cached files with a loaded Model Session), available model (may mean merely listed in the catalog).
 
 **Download Queue**:
-The ordered list of models the user has explicitly requested from Settings → AI Models. One model downloads at a time while Labelme stays open. Closing Settings leaves downloads running; quitting stops the current transfer and discards the queue. Completed files are retained, and restarting downloads requires user action.
+The ordered list of models the user has explicitly requested from the AI Models window or a toolbar model picker. One model downloads at a time while Labelme stays open. Closing the window leaves downloads running; quitting stops the current transfer and discards the queue. Completed files are retained, and restarting downloads requires user action.
 _Avoid_: background service (downloads do not outlive Labelme).
 
 **Model Session**:

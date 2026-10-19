@@ -699,8 +699,11 @@ class Canvas(QtWidgets.QWidget):
         is_new: bool = self._current is None
         if self.create_mode == "ai_points_to_shape":
             return self.tr(
-                "Click points to include or Shift+Click to exclude."
-                " Ctrl+LeftClick ends creation."
+                "Click points to include, or hold %s and click to exclude."
+                " Hold %s and click to finish."
+            ) % (
+                _utils.modifier_text(Qt.KeyboardModifier.ShiftModifier),
+                _utils.modifier_text(Qt.KeyboardModifier.ControlModifier),
             )
         if self.create_mode == "ai_box_to_shape":
             if is_new:
@@ -717,8 +720,8 @@ class Canvas(QtWidgets.QWidget):
                 return self.tr("Click start point for linestrip")
             else:
                 return self.tr(
-                    "Click next point or finish by Ctrl/Cmd+Click for linestrip"
-                )
+                    "Click the next point, or hold %s and click to finish the LineStrip"
+                ) % _utils.modifier_text(Qt.KeyboardModifier.ControlModifier)
         if self.create_mode == "circle":
             if is_new:
                 return self.tr("Click center point for circle")
@@ -1040,7 +1043,13 @@ class Canvas(QtWidgets.QWidget):
             self._apply_cursor(CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to move point"))
             if target.shape.can_remove_point():
-                status_messages.append(self.tr("ALT + SHIFT + Click to delete point"))
+                status_messages.append(
+                    self.tr("Hold %s and click to delete the point")
+                    % _utils.modifier_text(
+                        Qt.KeyboardModifier.AltModifier
+                        | Qt.KeyboardModifier.ShiftModifier
+                    )
+                )
             return
 
         if target.kind is HitKind.ROTATION_HANDLE:
@@ -1065,7 +1074,10 @@ class Canvas(QtWidgets.QWidget):
                 hovered_rotation=None,
             )
             self._apply_cursor(CursorRole.HANDLE)
-            status_messages.append(self.tr("ALT + Click to create point on shape"))
+            status_messages.append(
+                self.tr("Hold %s and click to add a point on the edge")
+                % _utils.modifier_text(Qt.KeyboardModifier.AltModifier)
+            )
             return
 
         if target.kind is HitKind.BODY:

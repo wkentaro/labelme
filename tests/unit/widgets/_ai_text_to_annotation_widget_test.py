@@ -38,5 +38,5 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
     interface = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
     assert interface.text(QtGui.QAccessible.Text.Value) == "SAM3 (smart)"
     assert interface.text(QtGui.QAccessible.Text.Description) == widget.tr(
-        "Text-to-annotation model"
+        "AI Text Prompt model"
     )
