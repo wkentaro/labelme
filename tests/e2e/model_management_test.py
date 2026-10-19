@@ -13,6 +13,7 @@ from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme import _automation
+from labelme._model_manager import ModelManager
 from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
@@ -382,3 +383,52 @@ def test_point_mode_disables_incompatible_models_before_download(
     assert enabled(picker.findData("sam2:latest"))
     assert not enabled(picker.findText("Download and use"))
     assert enabled(picker.findData("manage"))
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("available", [False, True])
+@pytest.mark.parametrize(
+    ("old_name", "display", "model_id"),
+    [
+        ("EfficientSam (speed)", "EfficientSAM (speed)", "efficientsam:10m"),
+        ("Sam (balanced)", "SAM (balanced)", "sam:300m"),
+        ("Sam2 (balanced)", "SAM2 (balanced)", "sam2:latest"),
+        ("Sam3", "SAM3", "sam3:latest"),
+        ("SegmentAnything (balanced)", "SAM (balanced)", "sam:300m"),
+    ],
+)
+def test_legacy_model_choice_survives_save_and_restart(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    old_name: str,
+    display: str,
+    model_id: str,
+    available: bool,
+) -> None:
+    # Model presence is isolated; this exercises selection without downloading
+    # weights or running inference.
+    monkeypatch.setattr(ModelManager, "is_ready", lambda *_args: available)
+    config = tmp_path / "config.yaml"
+    config.write_text(f"ai:\n  default: {old_name}\n")
+    win = main_win(config_file=config)
+
+    def assert_choice() -> None:
+        assert win._config["ai"]["default"] == display
+        picker = win._ai_annotation._model_combo
+        assert picker.itemText(picker.findData(model_id)) == display
+        if available:
+            assert picker.currentData() == model_id
+            assert win._canvas_widgets.canvas.get_ai_model_name() == model_id
+        else:
+            assert picker.currentIndex() == -1
+            assert picker.placeholderText() == display
+            assert picker.toolTip() == f"Unavailable: {display}"
+
+    assert_choice()
+    win._actions.save_auto.trigger()
+    assert safe_load(config.read_text())["ai"]["default"] == display
+    win.close()
+    win = main_win(config_file=config)
+    assert_choice()
