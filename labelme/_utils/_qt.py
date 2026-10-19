@@ -136,7 +136,11 @@ def new_action(
     enabled: bool = True,
     checked: bool = False,
 ) -> QtGui.QAction:
-    action = QtGui.QAction(new_icon(icon) if icon else QtGui.QIcon(), text, parent)
+    # A translation without spaces (e.g. Japanese) marks where the toolbar label
+    # breaks with "\n"; menus show the text on one line.
+    action = QtGui.QAction(
+        new_icon(icon) if icon else QtGui.QIcon(), text.replace("\n", ""), parent
+    )
     keys = [shortcut] if isinstance(shortcut, str) else shortcut or ()
     action.setShortcuts([QtGui.QKeySequence(key) for key in keys])
     action.setToolTip(tip or "")
@@ -147,7 +151,10 @@ def new_action(
     if icon:
         # Tool buttons show the icon text; stacking words keeps them narrow.
         # Toolbar labels name the command, so they drop the menu's ellipsis.
-        action.setIconText(text.removesuffix("…").replace(" ", "\n").replace("/", "\n"))
+        icon_text = text.removesuffix("…")
+        if "\n" not in icon_text:
+            icon_text = icon_text.replace(" ", "\n").replace("/", "\n")
+        action.setIconText(icon_text)
     if slot:
         action.triggered.connect(slot)
     return action

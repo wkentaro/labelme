@@ -370,3 +370,11 @@ def test_modifier_text_follows_platform(
 ) -> None:
     expected = macos if sys.platform == "darwin" else other
     assert modifier_text(modifiers) == expected
+
+
+def test_new_action_keeps_translated_line_break_out_of_menu(*, qtbot: QtBot) -> None:
+    parent = QtWidgets.QWidget()
+    qtbot.addWidget(parent)
+    action = new_action(parent, text="図形を\n編集", icon="phosphor/note-pencil.svg")
+    assert action.text() == "図形を編集"
+    assert action.iconText() == "図形を\n編集"
