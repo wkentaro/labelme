@@ -10,6 +10,7 @@ from ._image import img_qt_to_arr
 from ._image import img_qt_to_rgb_arr
 from ._qt import apply_color_theme
 from ._qt import direction_angle
+from ._qt import modifier_text
 from ._qt import new_action
 from ._qt import new_icon
 from ._qt import new_separator
@@ -31,6 +32,7 @@ __all__ = [
     "img_data_to_pil",
     "img_qt_to_arr",
     "img_qt_to_rgb_arr",
+    "modifier_text",
     "new_action",
     "new_icon",
     "new_separator",
