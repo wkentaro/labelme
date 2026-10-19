@@ -359,3 +359,34 @@ def test_shape_conversion_saves_clean_annotation_file(
     assert len(converted_shape["points"]) == 4
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_conversion_stays_in_shape_menu_after_mode_actions_rebuilt(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win, canvas = open_window(
+        main_win=main_win,
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides={"auto_save": False},
+    )
+    rectangle = canvas.shapes[1]
+    canvas.select_shapes(shapes=[rectangle])
+    conversion = win._actions.context_convert_menu.menuAction()
+    for rebuild in (False, True):
+        if rebuild:
+            win.populate_mode_actions()
+        assert conversion in canvas.shape_context_menu.actions()
+        assert conversion not in canvas.canvas_context_menu.actions()
+        assert win._actions.convert_menu.menuAction() in win._menus.edit.actions()
+        assert win._actions.convert_to_polygon.isEnabled()
+        assert win._actions.copy in canvas.shape_context_menu.actions()
+        assert win._actions.copy not in canvas.canvas_context_menu.actions()
+        assert win._actions.paste in canvas.canvas_context_menu.actions()
+        assert win._actions.paste not in canvas.shape_context_menu.actions()
+    win._actions.convert_to_polygon.trigger()
+    assert canvas.selected_shapes[0].shape_type == "polygon"
+    win.undo_shape_edit()
+    assert canvas.shapes[1].shape_type == "rectangle"
+    win.mark_clean()
