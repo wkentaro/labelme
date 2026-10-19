@@ -453,6 +453,38 @@
         <translation>Dostosuj jasność i kontrast</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Wielokątne adnotacje obrazów w Pythonie</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Wersja: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Autor: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Strona główna</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Dokumentacja</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Rozwiązywanie problemów</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;O programie %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>O programie %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>&amp;Zapisz</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>&amp;Pomoc</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Narzędzia</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Więcej narzędzi</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Narzędzia kształtów</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Brak pasujących ustawień w tym oknie. Spróbuj innego hasła lub wyczyść wyszukiwanie.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Błąd</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Wystąpił nieoczekiwany błąd. Aplikacja zostanie zamknięta.&lt;br/&gt;&lt;br/&gt;Zgłoś problem zgodnie z instrukcją &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Rozwiązywanie problemów&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

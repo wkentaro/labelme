@@ -473,6 +473,38 @@
         <translation>Vorherige Helligkeit/Kontrast beibehalten</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Polygonale Bildannotation mit Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Version: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Autor: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Website</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Dokumentation</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Fehlerbehebung</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>Über %s (&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Über %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
@@ -645,8 +677,16 @@
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Werkzeuge</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Weitere Werkzeuge</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Formwerkzeuge</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Keine passenden Einstellungen in diesem Dialog. Versuchen Sie einen anderen Begriff oder löschen Sie die Suche.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Fehler</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Ein unerwarteter Fehler ist aufgetreten. Die Anwendung wird geschlossen.&lt;br/&gt;&lt;br/&gt;Bitte melden Sie das Problem gemäß &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Fehlerbehebung&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

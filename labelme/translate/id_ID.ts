@@ -413,6 +413,38 @@
         <translation>Atur kecerahan dan kontras</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Anotasi Gambar Poligonal dengan Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Versi: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Penulis: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Situs Web</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Dokumentasi</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Pemecahan Masalah</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;Tentang %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Tentang %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>&amp;Simpan</translation>
     </message>
@@ -597,8 +629,16 @@
         <translation>Bantuan (&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Alat</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Alat lainnya</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Alat Bentuk</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Tidak ada pengaturan yang cocok dalam dialog ini. Coba istilah lain atau hapus pencarian.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Kesalahan</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Terjadi kesalahan tak terduga. Aplikasi akan ditutup.&lt;br/&gt;&lt;br/&gt;Laporkan masalah ini dengan mengikuti &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Pemecahan Masalah&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

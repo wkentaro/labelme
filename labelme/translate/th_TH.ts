@@ -453,6 +453,38 @@
         <translation>ปรับความสว่างและคอนทราสต์</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>การทำคำอธิบายประกอบรูปภาพแบบรูปหลายเหลี่ยมด้วย Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>เวอร์ชัน: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>ผู้พัฒนา: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>เว็บไซต์</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>เอกสาร</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>การแก้ไขปัญหา</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>เกี่ยวกับ %s (&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>เกี่ยวกับ %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>บันทึก (&amp;S)</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>ช่วยเหลือ (&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>เครื่องมือ</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>เครื่องมือเพิ่มเติม</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>เครื่องมือรูปร่าง</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>ไม่พบการตั้งค่าที่ตรงกันในกล่องโต้ตอบนี้ ลองใช้คำอื่นหรือล้างการค้นหา</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>ข้อผิดพลาด</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>เกิดข้อผิดพลาดที่ไม่คาดคิด แอปพลิเคชันจะปิดลง&lt;br/&gt;&lt;br/&gt;โปรดรายงานปัญหาตาม&lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;การแก้ไขปัญหา&lt;/a&gt;</translation>
     </message>
 </context>
 </TS>

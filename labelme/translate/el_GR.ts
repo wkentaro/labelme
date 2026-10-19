@@ -469,6 +469,38 @@
         <translation>Προσαρμογή παραθύρου</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Πολυγωνική επισημείωση εικόνων με Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Έκδοση: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Συγγραφέας: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Αρχική σελίδα</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Τεκμηρίωση</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Αντιμετώπιση προβλημάτων</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;Σχετικά με το %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Σχετικά με το %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>Αποθήκευση</translation>
     </message>
@@ -621,8 +653,16 @@
         <translation>Βοήθεια</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Εργαλεία</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Περισσότερα εργαλεία</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Εργαλεία σχημάτων</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Δεν βρέθηκαν αντίστοιχες ρυθμίσεις σε αυτό το παράθυρο. Δοκιμάστε άλλον όρο ή εκκαθαρίστε την αναζήτηση.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Σφάλμα</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Παρουσιάστηκε μη αναμενόμενο σφάλμα. Η εφαρμογή θα κλείσει.&lt;br/&gt;&lt;br/&gt;Αναφέρετε το πρόβλημα ακολουθώντας την &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Αντιμετώπιση προβλημάτων&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

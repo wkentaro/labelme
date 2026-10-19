@@ -453,6 +453,38 @@
         <translation>調整亮度與對比</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>以 Python 進行影像多邊形標註</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>版本：%s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>作者：%s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>首頁</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>說明文件</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>疑難排解</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>關於 %s(&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>關於 %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>儲存(&amp;S)</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>說明(&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>工具</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>更多工具</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>形狀工具</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>此對話方塊中沒有符合的設定。請嘗試其他關鍵字或清除搜尋。</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>錯誤</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>發生未預期的錯誤，應用程式即將關閉。&lt;br/&gt;&lt;br/&gt;請依照&lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;疑難排解&lt;/a&gt;回報此問題。</translation>
     </message>
 </context>
 </TS>

@@ -421,22 +421,30 @@ class MainWindow(QtWidgets.QMainWindow):
             Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier
         )
 
+        # lupdate does not see tr() inside f-strings, so the About text is
+        # translated before it is assembled.
+        tagline = self.tr("Image Polygonal Annotation with Python")
+        version = self.tr("Version: %s") % __version__
+        author = self.tr("Author: %s") % "Kentaro Wada"
+        homepage = self.tr("Homepage")
+        documentation = self.tr("Documentation")
+        troubleshooting = self.tr("Troubleshooting")
         about = action(
-            text=f"&About {__appname__}",
+            text=self.tr("&About %s") % __appname__,
             icon="phosphor/info.svg",
             slot=functools.partial(
                 QMessageBox.about,
                 self,
-                f"About {__appname__}",
+                self.tr("About %s") % __appname__,
                 f"""
 <h3>{__appname__}</h3>
-<p>Image Polygonal Annotation with Python</p>
-<p>Version: {__version__}</p>
-<p>Author: Kentaro Wada</p>
+<p>{tagline}</p>
+<p>{version}</p>
+<p>{author}</p>
 <p>
-    <a href="https://labelme.io">Homepage</a> |
-    <a href="https://labelme.io/docs">Documentation</a> |
-    <a href="https://labelme.io/docs/troubleshoot">Troubleshooting</a>
+    <a href="https://labelme.io">{homepage}</a> |
+    <a href="https://labelme.io/docs">{documentation}</a> |
+    <a href="https://labelme.io/docs/troubleshoot">{troubleshooting}</a>
 </p>
 <p>
     <a href="https://github.com/wkentaro/labelme">GitHub</a> |
@@ -1111,7 +1119,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addToolBar(
             Qt.ToolBarArea.TopToolBarArea,
             ToolBar(
-                title="Tools",
+                name="Tools",
+                title=self.tr("Tools"),
                 overflow_label=self.tr("More tools"),
                 actions=[
                     self._actions.open,
@@ -1139,7 +1148,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addToolBar(
             Qt.ToolBarArea.LeftToolBarArea,
             ToolBar(
-                title="CreateShapeTools",
+                name="CreateShapeTools",
+                title=self.tr("Shape Tools"),
                 overflow_label=self.tr("More shape tools"),
                 actions=[
                     *[

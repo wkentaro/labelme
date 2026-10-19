@@ -453,6 +453,38 @@
         <translation>Parlaklığı ve kontrastı ayarla</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Python ile Çokgen Görüntü Açıklama</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Sürüm: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Yazar: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Web Sitesi</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Belgeler</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Sorun Giderme</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>%s &amp;Hakkında</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>%s Hakkında</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>&amp;Kaydet</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>&amp;Yardım</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Araçlar</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Diğer araçlar</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Şekil Araçları</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Beklenen konum: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Bu iletişim kutusunda eşleşen ayar yok. Başka bir terim deneyin veya aramayı temizleyin.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Hata</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Beklenmeyen bir hata oluştu. Uygulama kapanacak.&lt;br/&gt;&lt;br/&gt;Lütfen sorunu &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Sorun Giderme&lt;/a&gt; sayfasındaki adımları izleyerek bildirin.</translation>
     </message>
 </context>
 </TS>

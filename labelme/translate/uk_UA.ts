@@ -469,6 +469,38 @@
         <translation>Припасувати вікно</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Полігональна анотація зображень на Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Версія: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Автор: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Сайт</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Документація</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Усунення несправностей</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;Про %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Про %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>&amp;Зберегти</translation>
     </message>
@@ -621,8 +653,16 @@
         <translation>&amp;Довідка</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Інструменти</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Інші інструменти</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Інструменти фігур</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>У цьому вікні немає відповідних налаштувань. Спробуйте інший запит або очистьте пошук.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Помилка</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Сталася неочікувана помилка. Застосунок буде закрито.&lt;br/&gt;&lt;br/&gt;Повідомте про проблему, дотримуючись розділу &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Усунення несправностей&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

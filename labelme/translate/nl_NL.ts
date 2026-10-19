@@ -453,6 +453,38 @@
         <translation>Helderheid en contrast aanpassen</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Polygonale beeldannotatie met Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Versie: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Auteur: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Website</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Documentatie</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Probleemoplossing</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;Over %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Over %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>&amp;Opslaan</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>&amp;Help</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Gereedschappen</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Meer gereedschappen</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Vormgereedschappen</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Geen overeenkomende instellingen in dit dialoogvenster. Probeer een andere term of wis de zoekopdracht.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Fout</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Er is een onverwachte fout opgetreden. De applicatie wordt gesloten.&lt;br/&gt;&lt;br/&gt;Meld het probleem volgens &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Probleemoplossing&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

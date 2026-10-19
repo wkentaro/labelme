@@ -453,6 +453,38 @@
         <translation>Ajustar brillo y contraste</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Anotación poligonal de imágenes con Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Versión: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Autor: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Sitio web</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Documentación</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Solución de problemas</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;Acerca de %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Acerca de %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>&amp;Guardar</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>&amp;Ayuda</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Herramientas</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Más herramientas</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Herramientas de formas</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Ubicación esperada: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>No hay ajustes coincidentes en este diálogo. Pruebe otro término o borre la búsqueda.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Error</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Se produjo un error inesperado. La aplicación se cerrará.&lt;br/&gt;&lt;br/&gt;Informa del problema siguiendo &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Solución de problemas&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

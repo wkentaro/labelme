@@ -453,6 +453,38 @@
         <translation>تنظیم روشنایی و کنتراست</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>حاشیه‌نویسی چندضلعی تصویر با Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>نسخه: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>نویسنده: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>وب‌سایت</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>مستندات</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>عیب‌یابی</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>درباره %s(&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>درباره %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>ذخیره(&amp;S)</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>راهنما(&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>ابزارها</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>ابزارهای بیشتر</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>ابزارهای شکل</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>تنظیم مطابقی در این پنجره یافت نشد. عبارت دیگری را امتحان کنید یا جستجو را پاک کنید.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>خطا</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>یک خطای غیرمنتظره رخ داد. برنامه بسته می‌شود.&lt;br/&gt;&lt;br/&gt;لطفاً مشکل را طبق &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;عیب‌یابی&lt;/a&gt; گزارش دهید.</translation>
     </message>
 </context>
 </TS>

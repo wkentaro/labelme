@@ -453,6 +453,38 @@
         <translation>Điều chỉnh độ sáng và độ tương phản</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Chú thích hình ảnh dạng đa giác bằng Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Phiên bản: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Tác giả: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Trang chủ</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Tài liệu</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Khắc phục sự cố</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>Giới thiệu về %s(&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Giới thiệu về %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>Lưu(&amp;S)</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>Trợ giúp(&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Công cụ</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Công cụ khác</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Công cụ hình dạng</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Không có cài đặt phù hợp trong hộp thoại này. Hãy thử từ khác hoặc xóa tìm kiếm.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Lỗi</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Đã xảy ra lỗi không mong muốn. Ứng dụng sẽ đóng.&lt;br/&gt;&lt;br/&gt;Vui lòng báo cáo sự cố theo hướng dẫn &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Khắc phục sự cố&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

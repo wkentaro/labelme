@@ -453,6 +453,38 @@
         <translation>밝기 및 대비 조정</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Python을 이용한 이미지 다각형 주석</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>버전: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>만든 사람: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>홈페이지</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>문서</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>문제 해결</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>%s 정보(&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>%s 정보</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>저장(&amp;S)</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>도움말(&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>도구</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>추가 도구</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>도형 도구</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>이 대화상자에 일치하는 설정이 없습니다. 다른 검색어를 입력하거나 검색을 지우세요.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>오류</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>예기치 않은 오류가 발생했습니다. 애플리케이션이 종료됩니다.&lt;br/&gt;&lt;br/&gt;&lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;문제 해결&lt;/a&gt;에 따라 문제를 보고해 주세요.</translation>
     </message>
 </context>
 </TS>

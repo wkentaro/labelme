@@ -453,6 +453,38 @@
         <translation>Настроить яркость и контраст</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Полигональная аннотация изображений на Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Версия: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Автор: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Сайт</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Документация</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Устранение неполадок</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;О программе %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>О программе %s</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>Сохранить (&amp;S)</translation>
     </message>
@@ -637,8 +669,16 @@
         <translation>&amp;Справка</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>Инструменты</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>Другие инструменты</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>Инструменты фигур</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1534,6 +1574,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>В этом окне нет подходящих настроек. Попробуйте другой запрос или очистите поиск.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Произошла непредвиденная ошибка. Приложение будет закрыто.&lt;br/&gt;&lt;br/&gt;Сообщите о проблеме, следуя разделу &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Устранение неполадок&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

@@ -458,6 +458,38 @@
         <translation>明るさとコントラストを調整</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Python による画像のポリゴンアノテーション</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>バージョン: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>作者: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>ホームページ</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>ドキュメント</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>トラブルシューティング</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>%s について(&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>%s について</translation>
+    </message>
+    <message>
         <source>&amp;Save</source>
         <translation>保存(&amp;S)</translation>
     </message>
@@ -643,8 +675,16 @@
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>ツール</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>その他のツール</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>図形ツール</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -1540,6 +1580,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>このダイアログに一致する設定はありません。別の語句を試すか、検索をクリアしてください。</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>エラー</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>予期しないエラーが発生しました。アプリケーションを終了します。&lt;br/&gt;&lt;br/&gt;&lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;トラブルシューティング&lt;/a&gt;の手順に従って問題を報告してください。</translation>
     </message>
 </context>
 </TS>
