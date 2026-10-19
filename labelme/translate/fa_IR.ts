@@ -643,6 +643,14 @@ Shapes</source>
         <translation>تناسب با پنجره</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>مدل‌های هوش مصنوعی…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>دانلود یا حذف مدل‌های هوش مصنوعی</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>فایل(&amp;F)</translation>
     </message>
@@ -833,6 +841,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>تغییرات ذخیره‌نشده</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>دانلود {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>فایل حاشیه‌نویسی انتخاب‌شده باز نشد: {path}</translation>
     </message>
@@ -921,6 +933,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>پوشهٔ حاشیه‌نویسی: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>بارگیری</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1018,16 +1034,27 @@ Expected location: {path}</source>
         <translation>مدیریت مدل‌ها…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>بارگیری مدل…</translation>
+        <source>Download and use</source>
+        <translation>دانلود و استفاده</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>انتخاب مدل…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>در حال دانلود: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>در دسترس نیست: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>مدل‌های هوش مصنوعی</translation>
     </message>
 </context>
 <context>
@@ -1370,10 +1397,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>تنظیمات</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>مدل‌های هوش مصنوعی</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

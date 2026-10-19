@@ -14,6 +14,7 @@ from labelme._config import _writer
 from labelme._widgets import SettingsDialog
 from labelme._widgets._integer_slider import IntegerSlider
 from labelme._widgets._label_list_widget import LABEL_COLOR_ROLE
+from labelme._widgets._models_widget import ModelsWidget
 from labelme._widgets._settings_dialog import _ColorSwatchButton
 from labelme._widgets._settings_dialog import _PlainTextEdit
 from labelme._yaml import safe_load
@@ -566,8 +567,10 @@ def test_model_management_available_with_cli_overrides(
     assert dialog is not None
     assert not dialog._editors[("auto_save",)].isEnabled()
     win._open_models()
-    assert dialog._page._navigation.currentRow() == dialog._models_index
-    assert dialog._page._groups[-1].isEnabled()
+    models_dialog = win._models_dialog
+    assert models_dialog is not None
+    models = models_dialog.findChild(ModelsWidget)
+    assert models is not None and models.isEnabled()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

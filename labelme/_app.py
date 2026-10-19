@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import enum
 import functools
+import html
 import operator
 import os
 import platform
@@ -12,6 +13,7 @@ import time
 import typing
 import unicodedata
 import webbrowser
+from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 from typing import Literal
@@ -79,7 +81,9 @@ from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
 from ._widgets import format_shape_label
 from ._widgets._label_list_widget import LABEL_COLOR_ROLE
-from ._widgets._models_widget import ModelsWidget
+from ._widgets._models_widget import ModelsDialog
+from ._widgets._models_widget import license_link
+from ._widgets._models_widget import license_notice
 
 
 class _ZoomMode(enum.Enum):
@@ -237,6 +241,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _menus: _Menus
     _label_dialog: LabelDialog
     _settings_dialog: SettingsDialog | None = None
+    _models_dialog: ModelsDialog | None = None
     _shape_color_preview: dict | None
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
@@ -347,6 +352,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
         self._ai_text.manage_models_requested.connect(self._open_models)
+        for widget in (self._ai_annotation, self._ai_text):
+            widget.download_requested.connect(
+                functools.partial(self._download_and_select, select=widget.select_model)
+            )
         self._refresh_model_availability()
 
         self._setup_app_state(file_or_dir=file_or_dir, output_dir=output_dir)
@@ -988,6 +997,12 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=True,
         )
         open_config.setMenuRole(QtGui.QAction.MenuRole.PreferencesRole)
+        open_models = action(
+            text=self.tr("AI Models…"),
+            slot=self._open_models,
+            icon=None,
+            tip=self.tr("Download or delete AI models"),
+        )
         help_ = action(
             text=self.tr("&Tutorial"),
             slot=self.tutorial,
@@ -1025,6 +1040,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._actions.delete_file,
                 separator(),
                 open_config,
+                open_models,
                 separator(),
                 quit_,
             )
@@ -3258,14 +3274,44 @@ class MainWindow(QtWidgets.QMainWindow):
             for name in self._model_manager.models
             if self._model_manager.is_ready(name)
         }
-        self._ai_annotation.set_available_models(available=available)
-        self._ai_text.set_available_models(available=available)
+        downloading = set(self._model_manager.queue)
+        if self._model_manager.active is not None:
+            downloading.add(self._model_manager.active)
+        for widget in (self._ai_annotation, self._ai_text):
+            widget.set_available_models(available=available, downloading=downloading)
         self._ai_annotation.set_point_prompt_mode(
             enabled=self._ai_annotation.is_point_prompt_mode
         )
         self._canvas_widgets.canvas.set_ai_model_name(
             model_name=self._ai_annotation.current_model_id
         )
+
+    def _download_and_select(
+        self, model_name: str, /, *, select: Callable[[str], None]
+    ) -> None:
+        notice = license_notice(model_name)
+        if notice is not None:
+            message = QtWidgets.QMessageBox(self)
+            message.setWindowTitle(
+                self.tr("Download {model}").format(
+                    model=self._model_manager.models[model_name]
+                )
+            )
+            message.setIcon(QtWidgets.QMessageBox.Icon.Information)
+            message.setTextFormat(Qt.TextFormat.RichText)
+            message.setTextInteractionFlags(
+                Qt.TextInteractionFlag.TextBrowserInteraction
+            )
+            message.setText(f"{html.escape(notice)}<br><br>{license_link(model_name)}")
+            download = message.addButton(
+                self.tr("Download"), QtWidgets.QMessageBox.ButtonRole.AcceptRole
+            )
+            message.addButton(QtWidgets.QMessageBox.StandardButton.Cancel)
+            message.exec()
+            if message.clickedButton() is not download:
+                return
+        select(model_name)
+        self._model_manager.enqueue(model_name)
 
     def _remove_ai_model(self, model_name: str, /) -> None:
         option = _ai_models.find_ai_assist_model_option(model_name=model_name)
@@ -3294,10 +3340,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._model_manager.remove(model_name)
 
     def _open_models(self) -> None:
-        self._open_settings()
-        assert self._settings_dialog is not None
-        self._settings_dialog.show_models()
+        if self._models_dialog is None:
+            self._models_dialog = ModelsDialog(
+                manager=self._model_manager,
+                remove_model=self._remove_ai_model,
+                parent=self,
+            )
         self._model_manager.refresh()
+        self._models_dialog.show()
+        self._models_dialog.raise_()
+        self._models_dialog.activateWindow()
 
     def _open_settings(self) -> None:
         # Keep a single dialog instance; it edits self._config by reference, so
@@ -3308,9 +3360,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 apply_setting=self._apply_setting_change,
                 preview_shape_color=self._preview_shape_color,
                 open_as_text=self._open_config_file,
-                models_widget=ModelsWidget(
-                    manager=self._model_manager, remove_model=self._remove_ai_model
-                ),
                 settings_editable=self._is_settings_editable,
                 parent=self,
             )

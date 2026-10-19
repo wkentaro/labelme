@@ -643,6 +643,14 @@ Shapes</source>
         <translation>Vừa Cửa sổ</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Mô hình AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Tải xuống hoặc xóa mô hình AI</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>Tệp(&amp;F)</translation>
     </message>
@@ -833,6 +841,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Thay đổi chưa lưu</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>Tải xuống {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Không thể mở tệp chú thích đã chọn: {path}</translation>
     </message>
@@ -921,6 +933,10 @@ Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</transla
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Thư mục chú thích: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Tải xuống</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1018,16 +1034,27 @@ Vị trí dự kiến: {path}</translation>
         <translation>Quản lý mô hình…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Tải mô hình…</translation>
+        <source>Download and use</source>
+        <translation>Tải xuống và sử dụng</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Chọn mô hình…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Đang tải xuống: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Không khả dụng: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Mô hình AI</translation>
     </message>
 </context>
 <context>
@@ -1370,10 +1397,6 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Cài đặt</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Mô hình AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

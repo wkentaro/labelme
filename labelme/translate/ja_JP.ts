@@ -656,6 +656,14 @@ Shapes</source>
         <translation>ウィンドウに合わせる</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AIモデル…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>AIモデルをダウンロードまたは削除</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
@@ -846,6 +854,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>未保存の変更</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>{model}をダウンロード</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>選択されたアノテーションファイルを開けませんでした: {path}</translation>
     </message>
@@ -934,6 +946,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>アノテーションフォルダー: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>ダウンロード</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1031,16 +1047,27 @@ Expected location: {path}</source>
         <translation>モデルを管理…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>モデルをダウンロード…</translation>
+        <source>Download and use</source>
+        <translation>ダウンロードして使用</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>モデルを選択…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>ダウンロード中: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>利用不可: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AIモデル</translation>
     </message>
 </context>
 <context>
@@ -1383,10 +1410,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>設定</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AIモデル</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

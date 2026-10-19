@@ -643,6 +643,14 @@ Shapes</source>
         <translation>Ajustar à Janela</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Modelos de IA…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Baixar ou excluir modelos de IA</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Arquivo</translation>
     </message>
@@ -833,6 +841,10 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
         <translation>Alterações não salvas</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>Baixar {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Não foi possível abrir o arquivo de anotações selecionado: {path}</translation>
     </message>
@@ -921,6 +933,10 @@ Selecione um modelo diferente ou use o modo AI-Box.</translation>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Pasta de anotações: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Baixar</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1018,16 +1034,27 @@ Local esperado: {path}</translation>
         <translation>Gerenciar modelos…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Baixar um modelo…</translation>
+        <source>Download and use</source>
+        <translation>Baixar e usar</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Escolher um modelo…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Baixando: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Indisponível: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Modelos de IA</translation>
     </message>
 </context>
 <context>
@@ -1370,10 +1397,6 @@ Local esperado: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Configurações</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Modelos de IA</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

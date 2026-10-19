@@ -643,6 +643,14 @@ Shapes</source>
         <translation>Aanpassen aan venster</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AI-modellen…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>AI-modellen downloaden of verwijderen</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Bestand</translation>
     </message>
@@ -833,6 +841,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Niet-opgeslagen wijzigingen</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>{model} downloaden</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Het geselecteerde annotatiebestand kon niet worden geopend: {path}</translation>
     </message>
@@ -921,6 +933,10 @@ Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotatiemap: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Downloaden</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1018,16 +1034,27 @@ Verwachte locatie: {path}</translation>
         <translation>Modellen beheren…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Een model downloaden…</translation>
+        <source>Download and use</source>
+        <translation>Downloaden en gebruiken</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Een model kiezen…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Downloaden: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Niet beschikbaar: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AI-modellen</translation>
     </message>
 </context>
 <context>
@@ -1370,10 +1397,6 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Instellingen</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AI-modellen</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

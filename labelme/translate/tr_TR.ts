@@ -649,6 +649,14 @@ Shapes</source>
         <translation>Pencereye Sığdır</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Yapay zekâ modelleri…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Yapay zekâ modellerini indir veya sil</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Dosya</translation>
     </message>
@@ -839,6 +847,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Kaydedilmemiş değişiklikler</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>{model} indir</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Seçilen açıklama dosyası açılamadı: {path}</translation>
     </message>
@@ -927,6 +939,10 @@ Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Açıklama Klasörü: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>İndir</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1024,16 +1040,27 @@ Beklenen konum: {path}</translation>
         <translation>Modelleri yönet…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Model indir…</translation>
+        <source>Download and use</source>
+        <translation>İndir ve kullan</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Model seç…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>İndiriliyor: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Kullanılamıyor: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Yapay zekâ modelleri</translation>
     </message>
 </context>
 <context>
@@ -1376,10 +1403,6 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Ayarlar</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Yapay zekâ modelleri</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

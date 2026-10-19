@@ -589,6 +589,14 @@ Shapes</source>
         <translation>Έξοδος από την εφαρμογή</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Μοντέλα AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Λήψη ή διαγραφή μοντέλων AI</translation>
+    </message>
+    <message>
         <source>&amp;Tutorial</source>
         <translation>&amp; Εκμάθηση</translation>
     </message>
@@ -773,6 +781,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Μη αποθηκευμένες αλλαγές</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>Λήψη {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Δεν ήταν δυνατό το άνοιγμα του επιλεγμένου αρχείου επισημειώσεων: {path}</translation>
     </message>
@@ -917,6 +929,10 @@ Please select a different model or use AI-Box mode.</source>
 Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
     </message>
     <message>
+        <source>Download</source>
+        <translation>Λήψη</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>Η εικόνα δεν βρέθηκε</translation>
     </message>
@@ -1020,16 +1036,27 @@ Expected location: {path}</source>
         <translation>Διαχείριση μοντέλων…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Λήψη μοντέλου…</translation>
+        <source>Download and use</source>
+        <translation>Λήψη και χρήση</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Επιλογή μοντέλου…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Γίνεται λήψη: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Μη διαθέσιμο: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Μοντέλα AI</translation>
     </message>
 </context>
 <context>
@@ -1372,10 +1399,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>Ρυθμίσεις</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Μοντέλα AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

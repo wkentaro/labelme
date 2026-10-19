@@ -590,6 +590,14 @@ Shapes</source>
         <translation>Вийти з програми</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Моделі ШІ…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Завантажити або видалити моделі ШІ</translation>
+    </message>
+    <message>
         <source>&amp;Tutorial</source>
         <translation>&amp;Посібник</translation>
     </message>
@@ -774,6 +782,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Незбережені зміни</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>Завантажити {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>Не вдалося відкрити вибраний файл анотацій: {path}</translation>
     </message>
@@ -918,6 +930,10 @@ Please select a different model or use AI-Box mode.</source>
 Будь ласка, виберіть іншу модель або використовуйте режим AI-Box.</translation>
     </message>
     <message>
+        <source>Download</source>
+        <translation>Завантажити</translation>
+    </message>
+    <message>
         <source>Image not found</source>
         <translation>Зображення не знайдено</translation>
     </message>
@@ -1021,16 +1037,27 @@ Expected location: {path}</source>
         <translation>Керування моделями…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Завантажити модель…</translation>
+        <source>Download and use</source>
+        <translation>Завантажити й використати</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Вибрати модель…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Завантаження: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Недоступно: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Моделі ШІ</translation>
     </message>
 </context>
 <context>
@@ -1373,10 +1400,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>Параметри</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Моделі ШІ</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

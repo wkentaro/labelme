@@ -778,7 +778,6 @@ class SettingsDialog(QtWidgets.QDialog):
         apply_setting: ApplySetting,
         preview_shape_color: PreviewShapeColor,
         open_as_text: Callable[[], None],
-        models_widget: QtWidgets.QWidget | None = None,
         settings_editable: bool = True,  # noqa: FBT001 -- controls config editing
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
@@ -815,13 +814,6 @@ class SettingsDialog(QtWidgets.QDialog):
             )
         for _, _, group_box in groups:
             group_box.setEnabled(settings_editable)
-        self._models_index = len(groups)
-        if models_widget is not None:
-            model_group = QtWidgets.QGroupBox(self.tr("AI Models"))
-            QtWidgets.QVBoxLayout(model_group).addWidget(models_widget)
-            groups.append(
-                (self.tr("AI Models"), new_icon("phosphor/sparkle.svg"), model_group)
-            )
         page = _SettingsPage(groups=groups, editors=self._editors)
         self._page = page
         find_shortcut = QtGui.QShortcut(QtGui.QKeySequence.StandardKey.Find, self)
@@ -877,10 +869,6 @@ class SettingsDialog(QtWidgets.QDialog):
             event.accept()
             return
         super().keyPressEvent(event)
-
-    def show_models(self) -> None:
-        self._page.clear_search()
-        self._page._navigation.setCurrentRow(self._models_index)
 
     def accept(self) -> None:
         # Flush text editors whose edits commit on focus-out: clicking Close

@@ -643,6 +643,14 @@ Shapes</source>
         <translation>พอดีหน้าต่าง</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>โมเดล AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>ดาวน์โหลดหรือลบโมเดล AI</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>ไฟล์ (&amp;F)</translation>
     </message>
@@ -833,6 +841,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>การเปลี่ยนแปลงที่ยังไม่ได้บันทึก</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>ดาวน์โหลด {model}</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>ไม่สามารถเปิดไฟล์คำอธิบายประกอบที่เลือก: {path}</translation>
     </message>
@@ -921,6 +933,10 @@ Please select a different model or use AI-Box mode.</source>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>โฟลเดอร์แอนโนเทชัน: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>ดาวน์โหลด</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -1018,16 +1034,27 @@ Expected location: {path}</source>
         <translation>จัดการโมเดล…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>ดาวน์โหลดโมเดล…</translation>
+        <source>Download and use</source>
+        <translation>ดาวน์โหลดและใช้งาน</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>เลือกโมเดล…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>กำลังดาวน์โหลด: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>ไม่พร้อมใช้งาน: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>โมเดล AI</translation>
     </message>
 </context>
 <context>
@@ -1370,10 +1397,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>การตั้งค่า</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>โมเดล AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

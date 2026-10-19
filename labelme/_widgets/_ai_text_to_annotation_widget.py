@@ -14,6 +14,7 @@ from ._model_picker import ModelPicker
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
     model_changed = QtCore.Signal(str)
     manage_models_requested = QtCore.Signal()
+    download_requested = QtCore.Signal(str)
 
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
@@ -85,6 +86,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         model_combo.setAccessibleDescription(self.tr("Text-to-annotation model"))
         model_combo.model_changed.connect(self.model_changed)
         model_combo.manage_requested.connect(self.manage_models_requested)
+        model_combo.download_requested.connect(self.download_requested)
         settings_layout.addWidget(model_combo, stretch=1)
 
         # Size and mute these via QFont and a palette role, never a stylesheet:
@@ -139,8 +141,15 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     def set_model_name(self, *, model_name: str) -> None:
         self._model_combo.set_model_name(model_name=model_name)
 
-    def set_available_models(self, *, available: set[str]) -> None:
-        self._model_combo.set_available_models(available=available)
+    def set_available_models(
+        self, *, available: set[str], downloading: set[str]
+    ) -> None:
+        self._model_combo.set_available_models(
+            available=available, downloading=downloading
+        )
+
+    def select_model(self, model_name: str, /) -> None:
+        self._model_combo.select_model(model_name)
 
     def get_model_display_name(self) -> str:
         return self._model_combo.currentText()
