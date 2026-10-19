@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Dossier d’annotations</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>À côté des images</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Choisir le dossier d’annotations…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} sur {total} annotées dans</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Introuvable : %s · à côté des images</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} sur {total} annotées · à côté des images</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>
@@ -216,16 +243,16 @@
         <translation>Commencer l’annotation</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Ouvrez une image ou un dossier d’images pour commencer.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Ouvrir un dossier</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Ouvrir une image</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Ouvrir un dossier</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -270,8 +297,8 @@
         <translation>Rechercher un nom de fichier</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Liste des fichiers</translation>
+        <source>Image List</source>
+        <translation>Liste des images</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -286,14 +313,6 @@
 </source>
         <translation>&amp;Ouvrir
 </translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Ouvrir une image ou un fichier d&apos;étiquettes</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Ouvrir le répertoire</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -318,28 +337,8 @@
 </translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Enregistrer les étiquettes dans un fichier</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Enregistrer &amp;sous</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp;Supprimer le fichier</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Supprimer le fichier d&apos;étiquettes actuel</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>&amp;Changer le répertoire de sortie</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Changer où les annotations sont chargées/enregistrées</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -392,6 +391,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Supprimer les formes</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Enregistrer le fichier d’annotations</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Enregistrer le fichier d’annotations sous un nouveau nom</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Intégrer l’image dans le fichier d’annotations</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Enregistre une copie de l’image dans le fichier d’annotations</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Ouvrir une image ou un fichier d’annotations</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>&amp;Supprimer le fichier d’annotations</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Supprimer le fichier d’annotations actuel</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -486,16 +513,20 @@ les formes</translation>
         <translation>&amp;Modifier l&apos;étiquette</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Enregistrer les étiquettes sous un nouveau nom de fichier</translation>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Changer le dossier d’&amp;annotations…</translation>
     </message>
     <message>
-        <source>Embed Image in Label File</source>
-        <translation>Intégrer l&apos;image dans le fichier d&apos;étiquettes</translation>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Choisir où les fichiers d’annotations sont lus et enregistrés</translation>
     </message>
     <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Enregistre une copie de l&apos;image dans le fichier d&apos;étiquettes</translation>
+        <source>Open Folder…</source>
+        <translation>Ouvrir un dossier…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Ouvrir un dossier d’images</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -618,6 +649,14 @@ les formes</translation>
         <translation>Adapter à la fenêtre</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Modèles d’IA…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Télécharger ou supprimer des modèles d’IA</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
@@ -728,10 +767,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>Échec de l’enregistrement</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Erreur lors de l&apos;enregistrement des données d&apos;étiquettes</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -742,6 +777,10 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>Fit to Selection</source>
         <translation>Adapter à la sélection</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Erreur lors de l’enregistrement du fichier d’annotations</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -784,22 +823,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>%s - Ouvrir une image ou des annotations</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Enregistrer/Charger les annotations dans le répertoire</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Les annotations seront enregistrées/chargées dans %s</translation>
-    </message>
-    <message>
-        <source>Label files (*%s)</source>
-        <translation>Fichiers d&apos;étiquettes (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Choisir un fichier</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Attention</translation>
     </message>
@@ -822,6 +845,18 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
     <message>
         <source>Unsaved changes</source>
         <translation>Modifications non enregistrées</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>Télécharger {model}</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Impossible d’ouvrir le fichier d’annotations sélectionné : {path}</translation>
+    </message>
+    <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Dossier d’annotations introuvable : %s</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -898,8 +933,16 @@ Please select a different model or use AI-Box mode.</source>
 Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Erreur lors de la suppression du fichier d’annotations</translation>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Choisir le dossier d’annotations</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Dossier d’annotations : %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Télécharger</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -914,8 +957,8 @@ Expected location: {path}</source>
 Emplacement attendu : {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>La liste des fichiers est désactivée lorsqu&apos;un fichier d&apos;étiquettes est ouvert</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>La liste des images est désactivée lorsqu&apos;un fichier d&apos;annotations est ouvert</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -930,16 +973,8 @@ Emplacement attendu : {path}</translation>
         <translation>&amp;Conserver le zoom précédent</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Supprimer définitivement ce fichier d&apos;étiquettes ? Cette action est irréversible.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Formats autorisés : {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Impossible d&apos;ouvrir le fichier d&apos;étiquettes sélectionné : {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -978,6 +1013,22 @@ Emplacement attendu : {path}</translation>
         <translation>Les réglages sont gérés via --config pour cette session</translation>
     </message>
     <message>
+        <source>Save Annotation File</source>
+        <translation>Enregistrer le fichier d’annotations</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Fichiers d’annotations (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Supprimer définitivement ce fichier d’annotations ? Cette action est irréversible.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Erreur lors de la suppression du fichier d’annotations</translation>
+    </message>
+    <message>
         <source>Configuration Error</source>
         <translation>Erreur de configuration</translation>
     </message>
@@ -989,16 +1040,27 @@ Emplacement attendu : {path}</translation>
         <translation>Gérer les modèles…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Télécharger un modèle…</translation>
+        <source>Download and use</source>
+        <translation>Télécharger et utiliser</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Choisir un modèle…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Téléchargement : {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Indisponible : {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Modèles d’IA</translation>
     </message>
 </context>
 <context>
@@ -1171,8 +1233,8 @@ Emplacement attendu : {path}</translation>
         <translation>sauvegarde automatique enregistrer automatiquement</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Intègre l’image dans le fichier JSON d’étiquettes.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Intégrer l’image dans le fichier d’annotations</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1259,8 +1321,8 @@ Emplacement attendu : {path}</translation>
         <translation>Étiquettes prédéfinies</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Intégrer l&apos;image dans le fichier d&apos;étiquettes</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Intègre l’image dans le fichier d’annotations.</translation>
     </message>
     <message>
         <source>Label validation</source>
@@ -1341,10 +1403,6 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Réglages</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Modèles d’IA</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

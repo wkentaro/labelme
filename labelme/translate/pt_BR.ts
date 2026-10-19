@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Pasta de anotações</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>Junto às imagens</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Escolher pasta de anotações…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} de {total} anotadas em</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Não encontrada: %s · junto às imagens</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} de {total} anotadas · junto às imagens</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>
@@ -216,16 +243,16 @@
         <translation>Começar a anotar</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Abra uma imagem ou uma pasta de imagens para começar.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Abrir pasta</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Abrir imagem</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Abrir pasta</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -270,8 +297,8 @@
         <translation>Buscar Nome do Arquivo</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Lista de Arquivos</translation>
+        <source>Image List</source>
+        <translation>Lista de Imagens</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -285,14 +312,6 @@
         <source>&amp;Open
 </source>
         <translation>&amp;Abrir</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Abrir arquivo de imagem ou rótulo</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Abrir Diretório</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -316,28 +335,8 @@
         <translation>&amp;Salvar</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Salvar rótulos no arquivo</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Salvar &amp;Como</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>&amp;Excluir Arquivo</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Excluir arquivo de rótulo atual</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Alterar Diretório de &amp;Saída</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Alterar onde as anotações são carregadas/salvas</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -390,6 +389,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Excluir Formas</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Salvar o arquivo de anotações</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Salvar o arquivo de anotações com um novo nome</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Incorporar Imagem no Arquivo de Anotações</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Salva uma cópia da imagem dentro do arquivo de anotações</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Abrir uma imagem ou um arquivo de anotações</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>&amp;Excluir Arquivo de Anotações</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Excluir o arquivo de anotações atual</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -480,16 +507,20 @@ Shapes</source>
         <translation>&amp;Editar Rótulo</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Salvar os rótulos com um novo nome de arquivo</translation>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Alterar pasta de &amp;anotações…</translation>
     </message>
     <message>
-        <source>Embed Image in Label File</source>
-        <translation>Incorporar Imagem no Arquivo de Rótulo</translation>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Escolher onde os arquivos de anotações são lidos e salvos</translation>
     </message>
     <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Salva uma cópia da imagem dentro do arquivo de rótulo</translation>
+        <source>Open Folder…</source>
+        <translation>Abrir pasta…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Abrir uma pasta de imagens</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -612,6 +643,14 @@ Shapes</source>
         <translation>Ajustar à Janela</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Modelos de IA…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Baixar ou excluir modelos de IA</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Arquivo</translation>
     </message>
@@ -722,10 +761,6 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
         <translation>Falha ao salvar</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Erro ao salvar dados do rótulo</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -736,6 +771,10 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>Fit to Selection</source>
         <translation>Ajustar à Seleção</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Erro ao salvar o arquivo de anotações</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -778,22 +817,6 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
         <translation>%s - Abrir imagem ou anotações</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Salvar/Carregar Anotações no Diretório</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . As anotações serão salvas/carregadas em %s</translation>
-    </message>
-    <message>
-        <source>Label files (*%s)</source>
-        <translation>Arquivos de rótulo (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Escolher Arquivo</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Atenção</translation>
     </message>
@@ -816,6 +839,18 @@ Mude o modelo de AI Text-to-Annotation para &apos;SAM3 (smart)&apos; ou defina o
     <message>
         <source>Unsaved changes</source>
         <translation>Alterações não salvas</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>Baixar {model}</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Não foi possível abrir o arquivo de anotações selecionado: {path}</translation>
+    </message>
+    <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Pasta de anotações não encontrada: %s</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -892,8 +927,16 @@ Please select a different model or use AI-Box mode.</source>
 Selecione um modelo diferente ou use o modo AI-Box.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Erro ao excluir o arquivo de anotações</translation>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Escolher pasta de anotações</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Pasta de anotações: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Baixar</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -908,8 +951,8 @@ Expected location: {path}</source>
 Local esperado: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>A lista de arquivos está desativada quando um arquivo de rótulos é aberto</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>A lista de imagens está desativada quando um arquivo de anotações é aberto</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -924,16 +967,8 @@ Local esperado: {path}</translation>
         <translation>Manter Zoom &amp;Anterior</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Excluir permanentemente este arquivo de rótulo? Esta ação não pode ser desfeita.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Formatos permitidos: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Não foi possível abrir o arquivo de rótulo selecionado: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -972,6 +1007,22 @@ Local esperado: {path}</translation>
         <translation>As configurações desta sessão são gerenciadas via --config</translation>
     </message>
     <message>
+        <source>Save Annotation File</source>
+        <translation>Salvar Arquivo de Anotações</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Arquivos de anotações (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Excluir permanentemente este arquivo de anotações? Esta ação não pode ser desfeita.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Erro ao excluir o arquivo de anotações</translation>
+    </message>
+    <message>
         <source>Configuration Error</source>
         <translation>Erro de Configuração</translation>
     </message>
@@ -983,16 +1034,27 @@ Local esperado: {path}</translation>
         <translation>Gerenciar modelos…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Baixar um modelo…</translation>
+        <source>Download and use</source>
+        <translation>Baixar e usar</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Escolher um modelo…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Baixando: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Indisponível: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Modelos de IA</translation>
     </message>
 </context>
 <context>
@@ -1165,8 +1227,8 @@ Local esperado: {path}</translation>
         <translation>salvamento automático salvar automaticamente</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Incorpora a imagem no arquivo JSON de rótulos.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Incorporar imagem no arquivo de anotações</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1253,8 +1315,8 @@ Local esperado: {path}</translation>
         <translation>Rótulos predefinidos</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Incorporar imagem no arquivo de rótulo</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Incorpora a imagem no arquivo de anotações.</translation>
     </message>
     <message>
         <source>Label validation</source>
@@ -1335,10 +1397,6 @@ Local esperado: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Configurações</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Modelos de IA</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

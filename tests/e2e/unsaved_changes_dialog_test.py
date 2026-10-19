@@ -231,7 +231,7 @@ def test_navigate_with_unsaved_changes_shows_prompt(
         monkeypatch=monkeypatch, response=QMessageBox.StandardButton.Discard
     )
 
-    # Navigation moves the File List selection first; that transition owns the
+    # Navigation moves the Image List selection first; that transition owns the
     # save prompt before it stages the requested session.
     _dir_win_no_autosave._open_next_image()
 

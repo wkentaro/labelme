@@ -4,8 +4,6 @@ from typing import Final
 from typing import NamedTuple
 
 import numpy as np
-import scipy.ndimage
-import scipy.spatial
 import skimage
 from loguru import logger
 from numpy.typing import NDArray
@@ -94,6 +92,8 @@ def compute_oriented_rectangle_from_mask(
     if len(xs) < MIN_POLYGON_POINT_COUNT:
         return None
     points = np.stack([xs, ys], axis=1).astype(np.float64)
+    import scipy.spatial  # noqa: PLC0415 -- deferred: ~160ms, only AI output needs it
+
     try:
         # Qhull returns 2D hull vertices in CCW order, which the rotating
         # calipers loop below relies on for the right-handed perpendicular.
@@ -180,6 +180,8 @@ def _filter_lands_beyond_deviation(
     mask: NDArray[np.bool_],
     deviation: float,
 ) -> NDArray[np.bool_]:
+    import scipy.ndimage  # noqa: PLC0415 -- deferred: ~140ms, only AI output needs it
+
     filled = scipy.ndimage.binary_fill_holes(
         mask,
         structure=np.ones((3, 3), dtype=bool),
@@ -207,6 +209,8 @@ def _simplify_contour(
     smoothing_sigma = deviation / 2
     simplification_tolerance = deviation
     if smoothing_sigma > 0:
+        import scipy.ndimage  # noqa: PLC0415 -- deferred: ~140ms, only AI output needs it
+
         smoothed = scipy.ndimage.gaussian_filter1d(
             points,
             sigma=smoothing_sigma,

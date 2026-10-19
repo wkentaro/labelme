@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Папка аннотаций</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>Рядом с изображениями</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Выбрать папку аннотаций…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} из {total} с аннотациями в</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Не найдена: %s · рядом с изображениями</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} из {total} с аннотациями · рядом с изображениями</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>
@@ -216,16 +243,16 @@
         <translation>Начать аннотирование</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Чтобы начать, откройте изображение или папку с изображениями.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Открыть папку</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Открыть изображение</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Открыть папку</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -270,8 +297,8 @@
         <translation>Поиск по имени файла</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Список файлов</translation>
+        <source>Image List</source>
+        <translation>Список изображений</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -280,14 +307,6 @@
     <message>
         <source>Quit application</source>
         <translation>Выйти из приложения</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Открыть изображение или файл разметки</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Открыть папку</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -306,28 +325,8 @@
         <translation>Открыть предыдущее (удерживайте Ctrl+Shift, чтобы копировать метки)</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Сохранить метки в файл</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Сохранить как</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>Удалить файл (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Удалить текущий файл меток</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Изменить папку вывода (&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Изменить место загрузки/сохранения аннотаций</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -380,6 +379,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Удалить фигуры</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Сохранить файл аннотаций</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Сохранить файл аннотаций под новым именем</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Встроить изображение в файл аннотаций</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Сохраняет копию изображения внутри файла аннотаций</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Открыть изображение или файл аннотаций</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>Удалить файл аннотаций (&amp;D)</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Удалить текущий файл аннотаций</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -465,16 +492,20 @@ Shapes</source>
         <translation>&amp;Редактировать метку</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Сохранить метки под новым именем файла</translation>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Изменить папку &amp;аннотаций…</translation>
     </message>
     <message>
-        <source>Embed Image in Label File</source>
-        <translation>Встроить изображение в файл разметки</translation>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Выбрать, где читать и сохранять файлы аннотаций</translation>
     </message>
     <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Сохраняет копию изображения внутри файла разметки</translation>
+        <source>Open Folder…</source>
+        <translation>Открыть папку…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Открыть папку с изображениями</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -597,6 +628,14 @@ Shapes</source>
         <translation>По размеру окна</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Модели ИИ…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Загрузить или удалить модели ИИ</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
@@ -707,10 +746,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Не удалось сохранить</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Ошибка при сохранении данных разметки</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -763,22 +798,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - Открыть изображение или аннотации</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s — сохранять/загружать разметку в папке</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s. Разметка будет сохраняться/загружаться в %s</translation>
-    </message>
-    <message>
-        <source>Label files (*%s)</source>
-        <translation>Файлы меток (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Выбрать файл</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Внимание</translation>
     </message>
@@ -801,6 +820,18 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unsaved changes</source>
         <translation>Несохранённые изменения</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>Загрузить {model}</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Не удалось открыть выбранный файл аннотаций: {path}</translation>
+    </message>
+    <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Папка аннотаций не найдена: %s</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -885,6 +916,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Нарисуйте ограничивающую рамку для сегментации объекта.</translation>
     </message>
     <message>
+        <source>Error saving annotation file</source>
+        <translation>Ошибка сохранения файла аннотаций</translation>
+    </message>
+    <message>
         <source>AI-Points Unavailable</source>
         <translation>AI-Points недоступен</translation>
     </message>
@@ -895,8 +930,16 @@ Please select a different model or use AI-Box mode.</source>
 Выберите другую модель или используйте режим AI-Box.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Ошибка удаления файла аннотаций</translation>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Выбрать папку аннотаций</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Папка аннотаций: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Скачать</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -911,8 +954,8 @@ Expected location: {path}</source>
 Ожидаемое расположение: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Список файлов отключён при открытии файла меток</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Список изображений отключён при открытии файла аннотаций</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -927,16 +970,8 @@ Expected location: {path}</source>
         <translation>Сохранять предыдущий масштаб</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Безвозвратно удалить этот файл меток? Это действие нельзя отменить.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Допустимые форматы: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Не удалось открыть выбранный файл меток: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -975,6 +1010,22 @@ Expected location: {path}</source>
         <translation>Настройки управляются через --config для этого сеанса</translation>
     </message>
     <message>
+        <source>Save Annotation File</source>
+        <translation>Сохранить файл аннотаций</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Файлы аннотаций (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Безвозвратно удалить этот файл аннотаций? Это действие нельзя отменить.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Ошибка удаления файла аннотаций</translation>
+    </message>
+    <message>
         <source>Configuration Error</source>
         <translation>Ошибка конфигурации</translation>
     </message>
@@ -986,16 +1037,27 @@ Expected location: {path}</source>
         <translation>Управление моделями…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Скачать модель…</translation>
+        <source>Download and use</source>
+        <translation>Загрузить и использовать</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Выбрать модель…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Загрузка: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Недоступно: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Модели ИИ</translation>
     </message>
 </context>
 <context>
@@ -1168,8 +1230,8 @@ Expected location: {path}</source>
         <translation>автосохранение автоматическое сохранение</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Встраивает изображение в JSON-файл меток.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Встраивать изображение в файл аннотаций</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1256,8 +1318,8 @@ Expected location: {path}</source>
         <translation>Предустановленные метки</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Встраивать изображение в файл меток</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Встраивает изображение в файл аннотаций.</translation>
     </message>
     <message>
         <source>Label validation</source>
@@ -1338,10 +1400,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>Настройки</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Модели ИИ</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

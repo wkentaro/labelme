@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>주석 폴더</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>이미지와 같은 위치</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>주석 폴더 선택…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{total}개 중 {annotated}개 주석 완료:</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>찾을 수 없음: %s · 이미지와 같은 위치</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{total}개 중 {annotated}개 주석 완료 · 이미지와 같은 위치</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>
@@ -216,16 +243,16 @@
         <translation>주석 작업 시작</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>시작하려면 이미지 또는 이미지 폴더를 여세요.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>폴더 열기</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>이미지 열기</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>폴더 열기</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -270,8 +297,8 @@
         <translation>파일명 검색</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>파일 목록</translation>
+        <source>Image List</source>
+        <translation>이미지 목록</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -285,14 +312,6 @@
         <source>&amp;Open
 </source>
         <translation>열기(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>이미지 또는 레이블 파일 열기</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>폴더 열기</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -316,28 +335,8 @@
         <translation>저장(&amp;S)</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>레이블을 파일로 저장</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>다른 이름으로 저장(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>삭제(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>현재 레이블 파일 삭제</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>출력 폴더 변경(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>주석을 로드/저장할 위치 변경</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -390,6 +389,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>도형 삭제</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>주석 파일 저장</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>주석 파일을 새 이름으로 저장</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>이미지를 주석 파일에 포함</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>이미지 사본을 주석 파일 안에 저장합니다</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>이미지 또는 주석 파일 열기</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>주석 파일 삭제(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>현재 주석 파일 삭제</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -480,16 +507,20 @@ Shapes</source>
         <translation>레이블 편집(&amp;E)</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>레이블을 새 파일 이름으로 저장</translation>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>주석 폴더 변경(&amp;A)…</translation>
     </message>
     <message>
-        <source>Embed Image in Label File</source>
-        <translation>이미지를 레이블 파일에 포함</translation>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>주석 파일을 읽고 저장할 위치 선택</translation>
     </message>
     <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>이미지 사본을 레이블 파일 안에 저장합니다</translation>
+        <source>Open Folder…</source>
+        <translation>폴더 열기…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>이미지 폴더 열기</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -612,6 +643,14 @@ Shapes</source>
         <translation>창에 맞추기</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AI 모델…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>AI 모델 다운로드 또는 삭제</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>파일(&amp;F)</translation>
     </message>
@@ -722,10 +761,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>저장 실패</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>레이블 데이터 저장 오류</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -736,6 +771,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Fit to Selection</source>
         <translation>선택 항목에 맞추기</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>주석 파일 저장 오류</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -778,22 +817,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>%s - 이미지 또는 주석 열기</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - 폴더에 주석 저장/로드</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . 주석이 %s에 저장/로드됩니다</translation>
-    </message>
-    <message>
-        <source>Label files (*%s)</source>
-        <translation>레이블 파일 (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>파일 선택</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>주의</translation>
     </message>
@@ -816,6 +839,18 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
     <message>
         <source>Unsaved changes</source>
         <translation>저장하지 않은 변경 사항</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>{model} 다운로드</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>선택한 주석 파일을 열 수 없습니다: {path}</translation>
+    </message>
+    <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>주석 폴더를 찾을 수 없음: %s</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -892,8 +927,16 @@ Please select a different model or use AI-Box mode.</source>
 다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>주석 파일 삭제 오류</translation>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - 주석 폴더 선택</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>주석 폴더: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -908,8 +951,8 @@ Expected location: {path}</source>
 예상 위치: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>라벨 파일이 열려 있을 때 파일 목록이 비활성화됩니다</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>주석 파일이 열려 있을 때 이미지 목록이 비활성화됩니다</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -924,16 +967,8 @@ Expected location: {path}</source>
         <translation>이전 줌 유지(&amp;K)</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>이 레이블 파일을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>지원 형식: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>선택한 레이블 파일을 열 수 없습니다: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -972,6 +1007,22 @@ Expected location: {path}</source>
         <translation>이 세션의 설정은 --config로 관리됩니다</translation>
     </message>
     <message>
+        <source>Save Annotation File</source>
+        <translation>주석 파일 저장</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>주석 파일 (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>이 주석 파일을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>주석 파일 삭제 오류</translation>
+    </message>
+    <message>
         <source>Configuration Error</source>
         <translation>구성 오류</translation>
     </message>
@@ -983,16 +1034,27 @@ Expected location: {path}</source>
         <translation>모델 관리…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>모델 다운로드…</translation>
+        <source>Download and use</source>
+        <translation>다운로드 후 사용</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>모델 선택…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>다운로드 중: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>사용 불가: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AI 모델</translation>
     </message>
 </context>
 <context>
@@ -1165,8 +1227,8 @@ Expected location: {path}</source>
         <translation>자동저장 자동 저장</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>이미지를 레이블 JSON 파일에 포함합니다.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>이미지를 주석 파일에 포함</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1253,8 +1315,8 @@ Expected location: {path}</source>
         <translation>사전 정의된 레이블</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>이미지를 레이블 파일에 포함</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>이미지를 주석 파일에 포함합니다.</translation>
     </message>
     <message>
         <source>Label validation</source>
@@ -1335,10 +1397,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>설정</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AI 모델</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

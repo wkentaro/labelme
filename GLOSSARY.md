@@ -30,6 +30,10 @@ _Avoid_: class, category, tag, name; also avoid "label" to mean the Annotation F
 The on-disk persisted form of one Annotation, stored as JSON. There is one Annotation File per Image. Identified in code as `LabelFile` / `LabelData` for historical reasons — that legacy name is not promoted as glossary vocabulary.
 _Avoid_: label file, JSON file (when more precision is helpful), annotation json.
 
+**Annotation Folder**:
+The folder where Labelme reads and writes Annotation Files instead of next to each Image. Optional and unset by default, so each Annotation File sits next to its Image. When it is set, Labelme does not fall back to an Annotation File next to the Image. Set it with `--output` or Change Annotation Folder…. Labelme remembers it per opened folder in the Window State and restores it when that folder, or an Image in it, is opened again; `--output` replaces the remembered folder for the folder it is given with. Choosing one needs an opened folder. A remembered folder that no longer exists is skipped with a status-bar notice and kept for when it returns. Save As can still write the current Image's Annotation File elsewhere.
+_Avoid_: output dir, save dir, label folder, annotations dir.
+
 **Group**:
 A set of Shapes sharing a common `group_id`, marking them as belonging together. The reason for grouping is application-defined — instance segmentation uses it for the visible parts of one occluded object, but the concept is general and not tied to any one use case.
 _Avoid_: instance (it is only one application of grouping), cluster.
@@ -59,11 +63,11 @@ Bulk, text-driven Shape proposal: the user types a class name and an open-vocabu
 _Avoid_: AI annotation (too vague), text-to-annotation (verbose), auto-detect.
 
 **Downloaded Model**:
-A supported model whose required files are present in the local cache; every download is hash-checked before it lands there. It can be selected without a download; this does not guarantee hardware compatibility. Downloading and selecting are separate actions, and completing a download never changes a selection or runs inference.
+A supported model whose required files are present in the local cache; every download is hash-checked before it lands there. It can be selected without a download; this does not guarantee hardware compatibility. Downloading from the AI Models window never selects a model. Choosing a model that is not downloaded in a toolbar model picker changes the Setting at that moment and queues its download; the choice takes effect when the files arrive. Completing a download never changes a selection or runs inference.
 _Avoid_: installed model (confuses cached files with a loaded Model Session), available model (may mean merely listed in the catalog).
 
 **Download Queue**:
-The ordered list of models the user has explicitly requested from Settings → AI Models. One model downloads at a time while Labelme stays open. Closing Settings leaves downloads running; quitting stops the current transfer and discards the queue. Completed files are retained, and restarting downloads requires user action.
+The ordered list of models the user has explicitly requested from the AI Models window or a toolbar model picker. One model downloads at a time while Labelme stays open. Closing the window leaves downloads running; quitting stops the current transfer and discards the queue. Completed files are retained, and restarting downloads requires user action.
 _Avoid_: background service (downloads do not outlive Labelme).
 
 **Model Session**:
@@ -86,9 +90,13 @@ _Avoid_: bitmap, raster, segmentation map (when you mean just this Shape's pixel
 An input image file (PNG, JPEG, TIFF, etc.) that is the subject of an Annotation. Identified by its path on disk. The in-memory pixel array used while annotating is an implementation concern and not part of this term.
 _Avoid_: photo, picture, file, frame.
 
+**Image List**:
+The dock listing the Images in this session. Opening a folder lists every Image under it, recursively; opening a single Image lists every Image under its parent folder the same way; opening an Annotation File directly empties and disables the list. A row's check mark means only that its Image has an Annotation File; users cannot toggle it. The dock keeps its legacy `file_dock` config key and `Files` object name, so saved layouts and Config Files still apply.
+_Avoid_: file list.
+
 **Label List**:
-The predefined set of allowed Label strings configured for an annotation session (via the `--labels` CLI flag, a labels file, or the user config). The Label List is the *permitted vocabulary*; it is not the same as the Labels that actually appear on Shapes.
-_Avoid_: labels (means actual labels in use), label vocabulary (verbose), classes.
+The dock listing the Labels in this session: the configured Labels (from the `--labels` CLI flag, a labels file, or the Config File) plus every Label used on a Shape since launch. It is append-only: a Label stays after its last Shape is deleted, so it is not the set of Labels on the current Image's Shapes. Label validation (`validate_label`) checks a new Label against it.
+_Avoid_: labels (means the Labels on Shapes), label vocabulary (verbose), classes.
 
 ### Configuration
 

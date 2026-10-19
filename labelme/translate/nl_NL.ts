@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Annotatiemap</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>Naast afbeeldingen</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Annotatiemap kiezen…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} van {total} geannoteerd in</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Niet gevonden: %s · naast afbeeldingen</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} van {total} geannoteerd · naast afbeeldingen</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>
@@ -216,16 +243,16 @@
         <translation>Begin met annoteren</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>Open een afbeelding of een map met afbeeldingen om te beginnen.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Map openen</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Afbeelding openen</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Map openen</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -270,8 +297,8 @@
         <translation>Zoek Bestandsnaam</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Bestandslijst</translation>
+        <source>Image List</source>
+        <translation>Afbeeldingenlijst</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -285,14 +312,6 @@
         <source>&amp;Open
 </source>
         <translation>&amp;Openen</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Afbeelding of labelbestand openen</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Map Openen</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -316,28 +335,8 @@
         <translation>&amp;Opslaan</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Labels opslaan naar bestand</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>Opslaan &amp;als</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>Bestand &amp;verwijderen</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Huidig labelbestand verwijderen</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Uitvoermap &amp;wijzigen</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Wijzig waar annotaties worden geladen/opgeslagen</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -390,6 +389,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>Vormen Verwijderen</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Annotatiebestand opslaan</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Annotatiebestand opslaan onder een nieuwe naam</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Afbeelding in annotatiebestand insluiten</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Slaat een kopie van de afbeelding op in het annotatiebestand</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Afbeelding of annotatiebestand openen</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>Annotatiebestand &amp;verwijderen</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Huidig annotatiebestand verwijderen</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -480,16 +507,20 @@ Shapes</source>
         <translation>Label &amp;bewerken</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Labels opslaan onder een nieuwe bestandsnaam</translation>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>&amp;Annotatiemap wijzigen…</translation>
     </message>
     <message>
-        <source>Embed Image in Label File</source>
-        <translation>Afbeelding in labelbestand insluiten</translation>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Kies waar annotatiebestanden worden gelezen en opgeslagen</translation>
     </message>
     <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Slaat een kopie van de afbeelding op in het labelbestand</translation>
+        <source>Open Folder…</source>
+        <translation>Map openen…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Een map met afbeeldingen openen</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -612,6 +643,14 @@ Shapes</source>
         <translation>Aanpassen aan venster</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AI-modellen…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>AI-modellen downloaden of verwijderen</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>&amp;Bestand</translation>
     </message>
@@ -722,10 +761,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Opslaan mislukt</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Fout bij opslaan van labelgegevens</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -736,6 +771,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Fit to Selection</source>
         <translation>Aanpassen aan selectie</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Fout bij opslaan van annotatiebestand</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -778,22 +817,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>%s - Afbeelding of annotaties openen</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Annotaties Opslaan/Laden in Map</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . Annotaties worden opgeslagen/geladen in %s</translation>
-    </message>
-    <message>
-        <source>Label files (*%s)</source>
-        <translation>Labelbestanden (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Kies Bestand</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Let op</translation>
     </message>
@@ -816,6 +839,18 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
     <message>
         <source>Unsaved changes</source>
         <translation>Niet-opgeslagen wijzigingen</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>{model} downloaden</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Het geselecteerde annotatiebestand kon niet worden geopend: {path}</translation>
+    </message>
+    <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Annotatiemap niet gevonden: %s</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -892,8 +927,16 @@ Please select a different model or use AI-Box mode.</source>
 Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Fout bij het verwijderen van het annotatiebestand</translation>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Annotatiemap kiezen</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Annotatiemap: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Downloaden</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -908,8 +951,8 @@ Expected location: {path}</source>
 Verwachte locatie: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>De bestandslijst is uitgeschakeld wanneer een labelbestand is geopend</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>De afbeeldingenlijst is uitgeschakeld wanneer een annotatiebestand is geopend</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -924,16 +967,8 @@ Verwachte locatie: {path}</translation>
         <translation>Vorige Zoom &amp;behouden</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Dit labelbestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Toegestane formaten: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>Het geselecteerde labelbestand kon niet worden geopend: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -972,6 +1007,22 @@ Verwachte locatie: {path}</translation>
         <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
     </message>
     <message>
+        <source>Save Annotation File</source>
+        <translation>Annotatiebestand opslaan</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Annotatiebestanden (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Dit annotatiebestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Fout bij het verwijderen van het annotatiebestand</translation>
+    </message>
+    <message>
         <source>Configuration Error</source>
         <translation>Configuratiefout</translation>
     </message>
@@ -983,16 +1034,27 @@ Verwachte locatie: {path}</translation>
         <translation>Modellen beheren…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Een model downloaden…</translation>
+        <source>Download and use</source>
+        <translation>Downloaden en gebruiken</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Een model kiezen…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Downloaden: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Niet beschikbaar: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AI-modellen</translation>
     </message>
 </context>
 <context>
@@ -1165,8 +1227,8 @@ Verwachte locatie: {path}</translation>
         <translation>automatisch opslaan</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Sluit de afbeelding in het JSON-labelbestand in.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Afbeelding in annotatiebestand insluiten</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1253,8 +1315,8 @@ Verwachte locatie: {path}</translation>
         <translation>Voorgedefinieerde labels</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Afbeelding in labelbestand insluiten</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Sluit de afbeelding in het annotatiebestand in.</translation>
     </message>
     <message>
         <source>Label validation</source>
@@ -1335,10 +1397,6 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Settings</source>
         <translation>Instellingen</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AI-modellen</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

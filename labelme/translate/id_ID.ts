@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>Folder Anotasi</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>Di samping gambar</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>Pilih Folder Anotasi…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} dari {total} dianotasi di</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>Tidak ditemukan: %s · di samping gambar</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} dari {total} dianotasi · di samping gambar</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>
@@ -216,16 +243,16 @@
         <translation>Mulai anotasi</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
-        <translation>Buka gambar atau direktori gambar untuk memulai.</translation>
+        <source>Open an image or a folder of images to begin.</source>
+        <translation>Buka gambar atau folder gambar untuk memulai.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Buka Folder</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>Buka Gambar</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>Buka Direktori</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -270,8 +297,8 @@
         <translation>Cari Nama File</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>Daftar File</translation>
+        <source>Image List</source>
+        <translation>Daftar Gambar</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -280,14 +307,6 @@
     <message>
         <source>Quit application</source>
         <translation>Keluar Aplikasi</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>Buka file gambar atau label</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>Buka Direktori</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -311,28 +330,8 @@
         <translation>&amp;Simpan</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>Simpan label ke file</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>&amp;Simpan Sebagai</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>Hapus File (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>Hapus file label ini</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>Ubah Direktori Output (&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>Ubah tempat pengambilan/penyimpanan anotasi</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -455,16 +454,20 @@
         <translation>&amp;Edit Label</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>Simpan label dengan nama file baru</translation>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>Ubah Folder Anotasi (&amp;A)…</translation>
     </message>
     <message>
-        <source>Embed Image in Label File</source>
-        <translation>Sematkan Gambar dalam File Label</translation>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>Pilih tempat berkas anotasi dibaca dan disimpan</translation>
     </message>
     <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>Menyimpan salinan gambar di dalam file label</translation>
+        <source>Open Folder…</source>
+        <translation>Buka Folder…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>Buka folder gambar</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -587,6 +590,14 @@
         <translation>Sesuaikan Jendela</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Model AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Unduh atau hapus model AI</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>Berkas (&amp;F)</translation>
     </message>
@@ -697,10 +708,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Gagal menyimpan</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>Error menyimpan data label</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -711,6 +718,38 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Fit to Selection</source>
         <translation>Sesuaikan Pilihan</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>Simpan berkas anotasi</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>Simpan berkas anotasi dengan nama baru</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>Sematkan Gambar dalam Berkas Anotasi</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>Menyimpan salinan gambar di dalam berkas anotasi</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>Buka gambar atau berkas anotasi</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>Hapus Berkas Anotasi (&amp;D)</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>Hapus berkas anotasi saat ini</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>Gagal menyimpan berkas anotasi</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -753,22 +792,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>%s - Buka Gambar atau Anotasi</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - Simpan/Muat Anotasi di Direktori</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s - Anotasi akan disimpan/dimuat di %s</translation>
-    </message>
-    <message>
-        <source>Label files (*%s)</source>
-        <translation>File label (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>Pilih File</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Perhatian</translation>
     </message>
@@ -791,6 +814,18 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Unsaved changes</source>
         <translation>Perubahan belum disimpan</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>Unduh {model}</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>Berkas anotasi yang dipilih tidak dapat dibuka: {path}</translation>
+    </message>
+    <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>Folder Anotasi tidak ditemukan: %s</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -867,8 +902,16 @@ Please select a different model or use AI-Box mode.</source>
 Silakan pilih model lain atau gunakan mode AI-Box.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>Gagal menghapus berkas anotasi</translation>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - Pilih Folder Anotasi</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>Folder Anotasi: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Unduh</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -883,8 +926,8 @@ Expected location: {path}</source>
 Lokasi yang diharapkan: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>Daftar file dinonaktifkan saat file label dibuka</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>Daftar gambar dinonaktifkan saat berkas anotasi dibuka</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -899,16 +942,8 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Pertahankan Zoom Sebelumnya (&amp;K)</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>Hapus permanen file label ini? Tindakan ini tidak dapat dibatalkan.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>Format yang didukung: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>File label yang dipilih tidak dapat dibuka: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -972,6 +1007,22 @@ Shapes</source>
         <translation>Pengaturan dikelola melalui --config untuk sesi ini</translation>
     </message>
     <message>
+        <source>Save Annotation File</source>
+        <translation>Simpan Berkas Anotasi</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>Berkas anotasi (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>Hapus permanen berkas anotasi ini? Tindakan ini tidak dapat dibatalkan.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>Gagal menghapus berkas anotasi</translation>
+    </message>
+    <message>
         <source>Configuration Error</source>
         <translation>Error Konfigurasi</translation>
     </message>
@@ -983,16 +1034,27 @@ Shapes</source>
         <translation>Kelola model…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Unduh model…</translation>
+        <source>Download and use</source>
+        <translation>Unduh dan gunakan</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Pilih model…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Mengunduh: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Tidak tersedia: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Model AI</translation>
     </message>
 </context>
 <context>
@@ -1103,10 +1165,6 @@ Shapes</source>
     <message>
         <source>Settings</source>
         <translation>Pengaturan</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Model AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>
@@ -1225,8 +1283,8 @@ Shapes</source>
         <translation>simpan otomatis penyimpanan otomatis</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>Menyematkan gambar dalam file JSON label.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>Sematkan gambar dalam berkas anotasi</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1309,8 +1367,8 @@ Shapes</source>
         <translation>Label yang telah ditentukan</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>Sematkan gambar dalam file label</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>Menyematkan gambar dalam berkas anotasi.</translation>
     </message>
     <message>
         <source>Label validation</source>

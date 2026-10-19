@@ -92,6 +92,33 @@
     </message>
 </context>
 <context>
+    <name>AnnotationFolderFooter</name>
+    <message>
+        <source>Annotation Folder</source>
+        <translation>پوشهٔ حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Next to Images</source>
+        <translation>کنار تصاویر</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder…</source>
+        <translation>انتخاب پوشهٔ حاشیه‌نویسی…</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated in</source>
+        <translation>{annotated} از {total} حاشیه‌نویسی‌شده در</translation>
+    </message>
+    <message>
+        <source>Not found: %s · next to images</source>
+        <translation>پیدا نشد: %s · کنار تصاویر</translation>
+    </message>
+    <message>
+        <source>{annotated} of {total} annotated · next to images</source>
+        <translation>{annotated} از {total} حاشیه‌نویسی‌شده · کنار تصاویر</translation>
+    </message>
+</context>
+<context>
     <name>BrightnessContrastDialog</name>
     <message>
         <source>Brightness/Contrast</source>
@@ -216,16 +243,16 @@
         <translation>برچسب‌گذاری را شروع کنید</translation>
     </message>
     <message>
-        <source>Open an image or a directory of images to begin.</source>
+        <source>Open an image or a folder of images to begin.</source>
         <translation>برای شروع، یک تصویر یا پوشه‌ای از تصاویر را باز کنید.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>باز کردن پوشه</translation>
     </message>
     <message>
         <source>Open Image</source>
         <translation>باز کردن تصویر</translation>
-    </message>
-    <message>
-        <source>Open Directory</source>
-        <translation>باز کردن پوشه</translation>
     </message>
     <message>
         <source>Or drag and drop image files here</source>
@@ -270,8 +297,8 @@
         <translation>جستجوی نام فایل</translation>
     </message>
     <message>
-        <source>File List</source>
-        <translation>فهرست فایل‌ها</translation>
+        <source>Image List</source>
+        <translation>فهرست تصاویر</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -285,14 +312,6 @@
         <source>&amp;Open
 </source>
         <translation>باز کردن(&amp;O)</translation>
-    </message>
-    <message>
-        <source>Open image or label file</source>
-        <translation>باز کردن فایل تصویر یا برچسب</translation>
-    </message>
-    <message>
-        <source>Open Dir</source>
-        <translation>باز کردن پوشه</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -316,28 +335,8 @@
         <translation>ذخیره(&amp;S)</translation>
     </message>
     <message>
-        <source>Save labels to file</source>
-        <translation>ذخیره برچسب‌ها در فایل</translation>
-    </message>
-    <message>
         <source>&amp;Save As</source>
         <translation>ذخیره با نام دیگر(&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Delete File</source>
-        <translation>حذف(&amp;D)</translation>
-    </message>
-    <message>
-        <source>Delete current label file</source>
-        <translation>حذف فایل برچسب فعلی</translation>
-    </message>
-    <message>
-        <source>&amp;Change Output Dir</source>
-        <translation>تغییر مسیر خروجی(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Change where annotations are loaded/saved</source>
-        <translation>تغییر محل بارگذاری/ذخیره حاشیه‌نویسی‌ها</translation>
     </message>
     <message>
         <source>Save &amp;Automatically</source>
@@ -390,6 +389,34 @@
     <message>
         <source>Delete Shapes</source>
         <translation>حذف شکل</translation>
+    </message>
+    <message>
+        <source>Save the annotation file</source>
+        <translation>ذخیره فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Save the annotation file under a new name</source>
+        <translation>ذخیره فایل حاشیه‌نویسی با نام جدید</translation>
+    </message>
+    <message>
+        <source>Embed Image in Annotation File</source>
+        <translation>جاسازی تصویر در فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Store a copy of the image inside the annotation file</source>
+        <translation>یک نسخه از تصویر را داخل فایل حاشیه‌نویسی ذخیره می‌کند</translation>
+    </message>
+    <message>
+        <source>Open an image or annotation file</source>
+        <translation>باز کردن تصویر یا فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>&amp;Delete Annotation File</source>
+        <translation>حذف فایل حاشیه‌نویسی(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Delete the current annotation file</source>
+        <translation>حذف فایل حاشیه‌نویسی فعلی</translation>
     </message>
     <message>
         <source>Delete the selected shapes</source>
@@ -480,16 +507,20 @@ Shapes</source>
         <translation>ویرایش برچسب(&amp;E)</translation>
     </message>
     <message>
-        <source>Save the labels under a new file name</source>
-        <translation>ذخیره برچسب‌ها با نام فایل جدید</translation>
+        <source>Change &amp;Annotation Folder…</source>
+        <translation>تغییر پوشهٔ حاشیه‌نویسی(&amp;A)…</translation>
     </message>
     <message>
-        <source>Embed Image in Label File</source>
-        <translation>جاسازی تصویر در فایل برچسب</translation>
+        <source>Choose where annotation files are read and saved</source>
+        <translation>انتخاب محل خواندن و ذخیرهٔ پرونده‌های حاشیه‌نویسی</translation>
     </message>
     <message>
-        <source>Store a copy of the image inside the label file</source>
-        <translation>یک نسخه از تصویر را داخل فایل برچسب ذخیره می‌کند</translation>
+        <source>Open Folder…</source>
+        <translation>باز کردن پوشه…</translation>
+    </message>
+    <message>
+        <source>Open a folder of images</source>
+        <translation>باز کردن پوشه‌ای از تصاویر</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -612,6 +643,14 @@ Shapes</source>
         <translation>تناسب با پنجره</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>مدل‌های هوش مصنوعی…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>دانلود یا حذف مدل‌های هوش مصنوعی</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>فایل(&amp;F)</translation>
     </message>
@@ -722,10 +761,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>ذخیره ناموفق بود</translation>
     </message>
     <message>
-        <source>Error saving label data</source>
-        <translation>خطا در ذخیره داده برچسب</translation>
-    </message>
-    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -736,6 +771,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Fit to Selection</source>
         <translation>تناسب با انتخاب</translation>
+    </message>
+    <message>
+        <source>Error saving annotation file</source>
+        <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
     </message>
     <message>
         <source>Large image</source>
@@ -778,22 +817,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>%s - باز کردن تصویر یا حاشیه‌نویسی‌ها</translation>
     </message>
     <message>
-        <source>%s - Save/Load Annotations in Directory</source>
-        <translation>%s - ذخیره/بارگذاری حاشیه‌نویسی‌ها در پوشه</translation>
-    </message>
-    <message>
-        <source>%s . Annotations will be saved/loaded in %s</source>
-        <translation>%s . حاشیه‌نویسی‌ها در %s ذخیره/بارگذاری خواهند شد</translation>
-    </message>
-    <message>
-        <source>Label files (*%s)</source>
-        <translation>فایل‌های برچسب (*%s)</translation>
-    </message>
-    <message>
-        <source>Choose File</source>
-        <translation>انتخاب فایل</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>توجه</translation>
     </message>
@@ -816,6 +839,18 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Unsaved changes</source>
         <translation>تغییرات ذخیره‌نشده</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>دانلود {model}</translation>
+    </message>
+    <message>
+        <source>The selected annotation file could not be opened: {path}</source>
+        <translation>فایل حاشیه‌نویسی انتخاب‌شده باز نشد: {path}</translation>
+    </message>
+    <message>
+        <source>Annotation Folder not found: %s</source>
+        <translation>پوشهٔ حاشیه‌نویسی پیدا نشد: %s</translation>
     </message>
     <message>
         <source>%s - Browse Image Folder</source>
@@ -892,8 +927,16 @@ Please select a different model or use AI-Box mode.</source>
 لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
     </message>
     <message>
-        <source>Error deleting label file</source>
-        <translation>خطا در حذف فایل برچسب</translation>
+        <source>%s - Choose Annotation Folder</source>
+        <translation>%s - انتخاب پوشهٔ حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Annotation Folder: %s</source>
+        <translation>پوشهٔ حاشیه‌نویسی: %s</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>بارگیری</translation>
     </message>
     <message>
         <source>Image not found</source>
@@ -908,8 +951,8 @@ Expected location: {path}</source>
 محل مورد انتظار: {path}</translation>
     </message>
     <message>
-        <source>File list is disabled when a label file is opened</source>
-        <translation>فهرست فایل‌ها هنگام باز بودن یک فایل برچسب غیرفعال است</translation>
+        <source>Image List is disabled when an annotation file is opened</source>
+        <translation>فهرست تصاویر هنگام باز بودن یک پرونده حاشیه‌نویسی غیرفعال است</translation>
     </message>
     <message>
         <source>Add Point to Edge</source>
@@ -924,16 +967,8 @@ Expected location: {path}</source>
         <translation>نگه داشتن بزرگ‌نمایی قبلی(&amp;K)</translation>
     </message>
     <message>
-        <source>Permanently delete this label file? This action cannot be undone.</source>
-        <translation>حذف دائمی این فایل برچسب؟ این عمل قابل بازگشت نیست.</translation>
-    </message>
-    <message>
         <source>Allowed formats: {formats}</source>
         <translation>قالب‌های مجاز: {formats}</translation>
-    </message>
-    <message>
-        <source>The selected label file could not be opened: {path}</source>
-        <translation>پرونده برچسب انتخاب‌شده باز نشد: {path}</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -972,6 +1007,22 @@ Expected location: {path}</source>
         <translation>تنظیمات این نشست از طریق --config مدیریت می‌شوند</translation>
     </message>
     <message>
+        <source>Save Annotation File</source>
+        <translation>ذخیره فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Annotation files (*%s)</source>
+        <translation>فایل‌های حاشیه‌نویسی (*%s)</translation>
+    </message>
+    <message>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>این فایل حاشیه‌نویسی برای همیشه حذف شود؟ این عمل قابل بازگشت نیست.</translation>
+    </message>
+    <message>
+        <source>Error deleting annotation file</source>
+        <translation>خطا در حذف فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
         <source>Configuration Error</source>
         <translation>خطای پیکربندی</translation>
     </message>
@@ -983,16 +1034,27 @@ Expected location: {path}</source>
         <translation>مدیریت مدل‌ها…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>بارگیری مدل…</translation>
+        <source>Download and use</source>
+        <translation>دانلود و استفاده</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>انتخاب مدل…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>در حال دانلود: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>در دسترس نیست: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>مدل‌های هوش مصنوعی</translation>
     </message>
 </context>
 <context>
@@ -1165,8 +1227,8 @@ Expected location: {path}</source>
         <translation>ذخیره خودکار ذخیره‌سازی خودکار</translation>
     </message>
     <message>
-        <source>Embeds the image in the label JSON file.</source>
-        <translation>تصویر را در فایل JSON برچسب جاسازی می‌کند.</translation>
+        <source>Embed image in annotation file</source>
+        <translation>جاسازی تصویر در فایل حاشیه‌نویسی</translation>
     </message>
     <message>
         <source>Shape Color Mode</source>
@@ -1253,8 +1315,8 @@ Expected location: {path}</source>
         <translation>برچسب‌های از پیش تعریف‌شده</translation>
     </message>
     <message>
-        <source>Embed image in label file</source>
-        <translation>جاسازی تصویر در فایل برچسب</translation>
+        <source>Embeds the image in the annotation file.</source>
+        <translation>تصویر را در فایل حاشیه‌نویسی جاسازی می‌کند.</translation>
     </message>
     <message>
         <source>Label validation</source>
@@ -1335,10 +1397,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>تنظیمات</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>مدل‌های هوش مصنوعی</translation>
     </message>
     <message>
         <source>Open config file as text…</source>

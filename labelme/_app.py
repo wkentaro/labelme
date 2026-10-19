@@ -3,14 +3,17 @@ from __future__ import annotations
 import copy
 import enum
 import functools
-import math
+import html
+import operator
 import os
 import platform
 import re
 import subprocess
 import time
 import typing
+import unicodedata
 import webbrowser
+from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 from typing import Literal
@@ -34,6 +37,7 @@ from . import _ai_models
 from . import _automation
 from . import _config
 from . import _utils
+from ._image_prefetcher import ImagePrefetcher
 from ._label_file import LABEL_FILE_SUFFIX
 from ._label_file import RASTER_MAX_SIDE
 from ._label_file import Annotation
@@ -56,8 +60,11 @@ from ._shape import can_merge_shapes
 from ._shape import merge_masks
 from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
+from ._utils import ImageDecodeRequirement
+from ._utils import get_image_decode_requirement
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
+from ._widgets import AnnotationFolderFooter
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
 from ._widgets import EmptyStateWidget
@@ -74,7 +81,9 @@ from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
 from ._widgets import format_shape_label
 from ._widgets._label_list_widget import LABEL_COLOR_ROLE
-from ._widgets._models_widget import ModelsWidget
+from ._widgets._models_widget import ModelsDialog
+from ._widgets._models_widget import license_link
+from ._widgets._models_widget import license_notice
 
 
 class _ZoomMode(enum.Enum):
@@ -93,6 +102,8 @@ _AI_CREATE_MODES: Final[tuple[str, ...]] = (
 WINDOW_SIZE_KEY: Final[str] = "window/size"
 WINDOW_POSITION_KEY: Final[str] = "window/position"
 WINDOW_LAYOUT_KEY: Final[str] = "window/state"
+# Maps each absolute opened folder to its absolute Annotation Folder.
+ANNOTATION_FOLDERS_KEY: Final[str] = "annotationFolders"
 
 
 class _StatusBarWidgets(NamedTuple):
@@ -118,12 +129,6 @@ class _ViewportState(NamedTuple):
     view_offset: QtCore.QPointF
 
 
-class _ImageDecodeRequirement(NamedTuple):
-    width: int
-    height: int
-    required_mb: int
-
-
 class _DockWidgets(NamedTuple):
     flag_dock: QtWidgets.QDockWidget
     flag_list: QtWidgets.QListWidget
@@ -132,6 +137,7 @@ class _DockWidgets(NamedTuple):
     label_dock: QtWidgets.QDockWidget
     unique_label_list: UniqueLabelQListWidget
     file_dock: QtWidgets.QDockWidget
+    annotation_folder_footer: AnnotationFolderFooter
     file_search: QtWidgets.QLineEdit
     file_search_error: QtWidgets.QLabel
     file_list: QtWidgets.QListWidget
@@ -235,11 +241,12 @@ class MainWindow(QtWidgets.QMainWindow):
     _menus: _Menus
     _label_dialog: LabelDialog
     _settings_dialog: SettingsDialog | None = None
+    _models_dialog: ModelsDialog | None = None
     _shape_color_preview: dict | None
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
 
-    _output_dir: Path | None
+    _output_dir_value: Path | None = None
     _image: QtGui.QImage
     _annotation: Annotation | None
     _label_file_path: str | None
@@ -339,11 +346,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._auto_save_path: str | None = None
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
+        self._image_prefetcher = ImagePrefetcher()
         self._model_manager = ModelManager(parent=self)
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
         self._ai_text.manage_models_requested.connect(self._open_models)
+        for widget in (self._ai_annotation, self._ai_text):
+            widget.download_requested.connect(
+                functools.partial(self._download_and_select, select=widget.select_model)
+            )
         self._refresh_model_availability()
 
         self._setup_app_state(file_or_dir=file_or_dir, output_dir=output_dir)
@@ -430,7 +442,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._save_label_file(save_as=False),
             shortcut=shortcuts["save"],
             icon="phosphor/floppy-disk.svg",
-            tip=self.tr("Save labels to file"),
+            tip=self.tr("Save the annotation file"),
             enabled=False,
         )
         save_as = image_action(
@@ -438,7 +450,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
             icon="phosphor/floppy-disk.svg",
-            tip=self.tr("Save the labels under a new file name"),
+            tip=self.tr("Save the annotation file under a new name"),
         )
         save_auto = action(
             text=self.tr("Save &Automatically"),
@@ -448,31 +460,33 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         save_auto.setChecked(self._config["auto_save"])
         save_with_image_data = action(
-            text=self.tr("Embed Image in Label File"),
-            tip=self.tr("Store a copy of the image inside the label file"),
+            text=self.tr("Embed Image in Annotation File"),
+            tip=self.tr("Store a copy of the image inside the annotation file"),
             checkable=True,
             checked=self._config["with_image_data"],
         )
         change_output_dir = action(
-            text=self.tr("&Change Output Dir"),
+            text=self.tr("Change &Annotation Folder…"),
             slot=self.prompt_output_dir,
             shortcut=shortcuts["save_to"],
             icon="phosphor/folders.svg",
-            tip=self.tr("Change where annotations are loaded/saved"),
+            tip=self.tr("Choose where annotation files are read and saved"),
+            # The choice is remembered per opened folder, so it needs one.
+            enabled=False,
         )
         open_ = action(
             text=self.tr("&Open\n"),
             slot=self._open_file_with_dialog,
             shortcut=shortcuts["open"],
             icon="phosphor/folder-open.svg",
-            tip=self.tr("Open image or label file"),
+            tip=self.tr("Open an image or annotation file"),
         )
         open_dir = action(
-            text=self.tr("Open Dir"),
+            text=self.tr("Open Folder…"),
             slot=self._open_dir_with_dialog,
             shortcut=shortcuts["open_dir"],
             icon="phosphor/folder-open.svg",
-            tip=self.tr("Open Dir"),
+            tip=self.tr("Open a folder of images"),
         )
         close = image_action(
             text=self.tr("&Close"),
@@ -482,11 +496,11 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Close current file"),
         )
         delete_file = action(
-            text=self.tr("&Delete File"),
+            text=self.tr("&Delete Annotation File"),
             slot=self.delete_file,
             shortcut=shortcuts["delete_file"],
             icon="phosphor/file-x.svg",
-            tip=self.tr("Delete current label file"),
+            tip=self.tr("Delete the current annotation file"),
             enabled=False,
         )
         keep_prev_action = action(
@@ -983,6 +997,12 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=True,
         )
         open_config.setMenuRole(QtGui.QAction.MenuRole.PreferencesRole)
+        open_models = action(
+            text=self.tr("AI Models…"),
+            slot=self._open_models,
+            icon=None,
+            tip=self.tr("Download or delete AI models"),
+        )
         help_ = action(
             text=self.tr("&Tutorial"),
             slot=self.tutorial,
@@ -1020,6 +1040,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._actions.delete_file,
                 separator(),
                 open_config,
+                open_models,
                 separator(),
                 quit_,
             )
@@ -1137,6 +1158,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._image_path = None
         self._file_list_image_path = None
         self._loaded_image_paths = []
+        # Annotated images the search box hides, found when the list is
+        # rebuilt and kept current by saves and deletions; the visible ones
+        # are counted from their check marks.
+        self._hidden_annotated_paths: set[str] = set()
         self._file_list_root_prefix = None
         self._file_search_pattern = re.compile("")
         self._prev_image_path = None
@@ -1184,8 +1209,21 @@ class MainWindow(QtWidgets.QMainWindow):
         ) and (primary_screen := QtWidgets.QApplication.primaryScreen()):
             self.move(primary_screen.availableGeometry().topLeft())
 
-        if file_or_dir:
-            self._load_from_file_or_dir(file_or_dir=file_or_dir)
+        if not file_or_dir:
+            return
+        if self._output_dir is not None and not is_label_file_path(
+            filename=file_or_dir
+        ):
+            # --output replaces the folder's remembered Annotation Folder, so
+            # opening the folder restores it like any other choice. It must
+            # exist, or the restore would skip it as missing.
+            self._output_dir.mkdir(parents=True, exist_ok=True)
+            self._remember_output_dir(
+                opened_dir=file_or_dir
+                if Path(file_or_dir).is_dir()
+                else str(Path(file_or_dir).parent)
+            )
+        self._load_from_file_or_dir(file_or_dir=file_or_dir)
 
     def _setup_status_bar(self) -> _StatusBarWidgets:
         message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
@@ -1329,6 +1367,11 @@ class MainWindow(QtWidgets.QMainWindow):
         label.setObjectName("Label List")
         label.setWidget(unique_label_list)
 
+        annotation_folder_footer = AnnotationFolderFooter(
+            on_choose=self.prompt_output_dir, on_next_to_images=self._clear_output_dir
+        )
+        # Shown once a folder is open; see _refresh_file_list.
+        annotation_folder_footer.hide()
         file_search = QtWidgets.QLineEdit()
         file_search.setPlaceholderText(self.tr("Search Filename"))
         file_search.textChanged.connect(self._on_file_search_changed)
@@ -1345,7 +1388,8 @@ class MainWindow(QtWidgets.QMainWindow):
         file_list_layout.addWidget(file_search)
         file_list_layout.addWidget(file_search_error)
         file_list_layout.addWidget(file_list)
-        file = QtWidgets.QDockWidget(self.tr("File List"), self)
+        file_list_layout.addWidget(annotation_folder_footer)
+        file = QtWidgets.QDockWidget(self.tr("Image List"), self)
         file.setObjectName("Files")
         file_list_container = QtWidgets.QWidget()
         file_list_container.setLayout(file_list_layout)
@@ -1385,6 +1429,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label_dock=label,
             unique_label_list=unique_label_list,
             file_dock=file,
+            annotation_folder_footer=annotation_folder_footer,
             file_search=file_search,
             file_search_error=file_search_error,
             file_list=file_list,
@@ -1807,15 +1852,17 @@ class MainWindow(QtWidgets.QMainWindow):
         current_item: QtWidgets.QListWidgetItem | None,
         previous_item: QtWidgets.QListWidgetItem | None,
         /,
-    ) -> None:
+    ) -> bool:
         if current_item is None:
-            return
+            return False
         # Qt moves the selection before asking to save or staging the next
         # session, so retain the exact prior UI state for rollback.
         if not self._can_continue() or not self._load_file(
             image_or_label_path=_file_list_item_path(current_item)
         ):
             self._restore_file_list_state(item=previous_item)
+            return False
+        return True
 
     def _on_shape_selection_changed(self, selected_shapes: list[Shape], /) -> None:
         self._docks.label_list.item_selection_changed.disconnect(
@@ -1988,14 +2035,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _record_saved_annotation(self, *, label_path: str) -> None:
         assert self._image_path is not None
         self._label_file_path = label_path
-        image_path = self._file_list_image_path or self._image_path
-        rows = [row for row, path in enumerate(self.image_list) if path == image_path]
-        if len(rows) > 1:
-            raise RuntimeError("There are duplicate files.")
-        if rows:
-            item = self._docks.file_list.item(rows[0])
-            assert item
-            item.setCheckState(Qt.CheckState.Checked)
+        self._refresh_image_list_checkmarks(label_path=label_path)
         self._failed_save_path = None
         self._status_bar.save.setText(self.tr("Saved"))
         self._status_bar.save.setToolTip(label_path)
@@ -2023,7 +2063,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_save_failure(label_path=label_path, error=e)
             if show_error:
                 self.show_error_message(
-                    title=self.tr("Error saving label data"),
+                    title=self.tr("Error saving annotation file"),
                     message=self.tr("<b>%s</b>") % e,
                 )
             return False
@@ -2414,7 +2454,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _confirm_large_image_open(
-        self, *, requirement: _ImageDecodeRequirement, limit_mb: int
+        self, *, requirement: ImageDecodeRequirement, limit_mb: int
     ) -> bool:
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setWindowTitle(self.tr("Large image"))
@@ -2457,8 +2497,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _load_file(self, *, image_or_label_path: str) -> bool:
         # Qt file dialogs separate with forward slashes even on Windows, while
-        # the file list holds the separator of the platform, so an unnormalized
-        # path would neither select its file list row nor receive the saved
+        # the Image List holds the separator of the platform, so an unnormalized
+        # path would neither select its Image List row nor receive the saved
         # checkmark, which both compare exact strings.
         image_or_label_path = os.path.normpath(image_or_label_path)
         file_list_image_path = (
@@ -2495,7 +2535,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 return False
             # The relative path stored in the Annotation File may carry "." or ".."
             # components, which would survive the join and break the
-            # exact-string comparisons against the file list.
+            # exact-string comparisons against the Image List.
             stored_image = Path(label_path).parent / annotation.image_path
             image_path = os.path.normpath(str(stored_image))
             # Following symlinks first keeps parent traversal on its intended target.
@@ -2516,13 +2556,19 @@ class MainWindow(QtWidgets.QMainWindow):
             label_file_path = None
             shapes = []
         t0 = time.time()
-        image = QtGui.QImage.fromData(annotation.image_data)
+        image = (
+            None
+            if file_list_image_path is None
+            else self._image_prefetcher.take(
+                image_path=file_list_image_path, image_data=annotation.image_data
+            )
+        )
+        if image is None:
+            image = QtGui.QImage.fromData(annotation.image_data)
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
-            requirement = _get_image_decode_requirement(
-                image_data=annotation.image_data
-            )
+            requirement = get_image_decode_requirement(image_data=annotation.image_data)
             original_limit = QtGui.QImageReader.allocationLimit()
             if (
                 requirement is not None
@@ -2618,7 +2664,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._actions.image.setEnabled(True)
         self._sync_navigation_actions()
-        # A load never pulls the keyboard out of the File List, whatever drove
+        self._prefetch_neighbors()
+        # A load never pulls the keyboard out of the Image List, whatever drove
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
             self._canvas_widgets.canvas.setFocus()
@@ -2722,6 +2769,7 @@ class MainWindow(QtWidgets.QMainWindow):
             a0.ignore()
             return
         self._save_writer.shutdown()
+        self._image_prefetcher.shutdown()
         self._window_state.setValue(WINDOW_SIZE_KEY, self.size())
         self._window_state.setValue(WINDOW_POSITION_KEY, self.pos())
         self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())
@@ -2758,6 +2806,18 @@ class MainWindow(QtWidgets.QMainWindow):
         return next(
             (paths[i] for i in indices if self._matches_file_search(paths[i])),
             None,
+        )
+
+    def _prefetch_neighbors(self) -> None:
+        self._image_prefetcher.retain(
+            current=None
+            if self._file_list_image_path is None or self._annotation is None
+            else (self._file_list_image_path, self._annotation.image_data, self._image),
+            neighbors=[
+                path
+                for step in (1, -1)
+                if (path := self._get_neighbor_image_path(step=step)) is not None
+            ],
         )
 
     def _sync_navigation_actions(self) -> None:
@@ -2806,7 +2866,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         output_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self,
-            self.tr("%s - Save/Load Annotations in Directory") % __appname__,
+            self.tr("%s - Choose Annotation Folder") % __appname__,
             default_output_dir,
             QtWidgets.QFileDialog.Option.ShowDirsOnly
             | QtWidgets.QFileDialog.Option.DontResolveSymlinks,
@@ -2819,25 +2879,47 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             return
 
+        if not self._switch_output_dir(Path(output_dir)):
+            return
+        self._docks.annotation_folder_footer.set_missing(None)
+        assert self._file_list_root_prefix is not None
+        self._remember_output_dir(opened_dir=self._file_list_root_prefix)
+        self.statusBar().showMessage(
+            self.tr("Annotation Folder: %s") % self._output_dir
+        )
+        self.statusBar().show()
+
+    def _clear_output_dir(self) -> None:
+        if not self._can_continue() or not self._switch_output_dir(None):
+            return
+        self._docks.annotation_folder_footer.set_missing(None)
+        if self._file_list_root_prefix is not None:
+            self._remember_output_dir(opened_dir=self._file_list_root_prefix)
+
+    def _switch_output_dir(self, output_dir: Path | None, /) -> bool:
         # Reload the current image against the candidate directory and keep
         # the previous directory when that reload fails, so a bad candidate
         # never becomes the autosave target.
         previous_output_dir = self._output_dir
-        self._output_dir = Path(output_dir)
+        self._output_dir = output_dir
         if self._file_list_image_path is not None and not self._load_file(
             image_or_label_path=self._file_list_image_path
         ):
             self._output_dir = previous_output_dir
-            return
-
+            return False
         self._auto_save_path = None
-        self.statusBar().showMessage(
-            self.tr("%s . Annotations will be saved/loaded in %s")
-            % ("Change Annotations Dir", self._output_dir)
-        )
-        self.statusBar().show()
-
         self._refresh_file_list()
+        return True
+
+    @property
+    def _output_dir(self) -> Path | None:
+        return self._output_dir_value
+
+    @_output_dir.setter
+    def _output_dir(self, value: Path | None, /) -> None:
+        # The Annotation Folder footer mirrors every change, wherever it comes from.
+        self._output_dir_value = value
+        self._docks.annotation_folder_footer.set_folder(value)
 
     def _save_label_file(self, *, save_as: bool) -> None:
         assert not self._image.isNull(), "cannot save empty image"
@@ -2862,12 +2944,12 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         label_path, _ = QtWidgets.QFileDialog.getSaveFileName(
             parent=self,
-            caption=self.tr("Choose File"),
+            caption=self.tr("Save Annotation File"),
             dir=_resolve_label_path(
                 image_or_label_path=self._file_list_image_path or self._image_path,
                 output_dir=self._output_dir,
             ),
-            filter=self.tr("Label files (*%s)") % LABEL_FILE_SUFFIX,
+            filter=self.tr("Annotation files (*%s)") % LABEL_FILE_SUFFIX,
         )
         return label_path
 
@@ -2910,7 +2992,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def delete_file(self) -> None:
         msg = self.tr(
-            "Permanently delete this label file? This action cannot be undone."
+            "Permanently delete this annotation file? This action cannot be undone."
         )
         if not self._confirm_deletion(message=msg):
             return
@@ -2924,7 +3006,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         except OSError as error:
             self.show_error_message(
-                title=self.tr("Error deleting label file"), message=str(error)
+                title=self.tr("Error deleting annotation file"), message=str(error)
             )
             return
         self._failed_save_path = None
@@ -2932,9 +3014,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._status_bar.retry.hide()
         logger.info(f"Label file is removed: {annotation_path}")
 
-        item = self._docks.file_list.currentItem()
-        if item:
-            item.setCheckState(Qt.CheckState.Unchecked)
+        self._refresh_image_list_checkmarks(label_path=str(annotation_path))
 
         # Only the label file was deleted, not the image: clear the annotations
         # but keep the image on the canvas.
@@ -3194,14 +3274,44 @@ class MainWindow(QtWidgets.QMainWindow):
             for name in self._model_manager.models
             if self._model_manager.is_ready(name)
         }
-        self._ai_annotation.set_available_models(available=available)
-        self._ai_text.set_available_models(available=available)
+        downloading = set(self._model_manager.queue)
+        if self._model_manager.active is not None:
+            downloading.add(self._model_manager.active)
+        for widget in (self._ai_annotation, self._ai_text):
+            widget.set_available_models(available=available, downloading=downloading)
         self._ai_annotation.set_point_prompt_mode(
             enabled=self._ai_annotation.is_point_prompt_mode
         )
         self._canvas_widgets.canvas.set_ai_model_name(
             model_name=self._ai_annotation.current_model_id
         )
+
+    def _download_and_select(
+        self, model_name: str, /, *, select: Callable[[str], None]
+    ) -> None:
+        notice = license_notice(model_name)
+        if notice is not None:
+            message = QtWidgets.QMessageBox(self)
+            message.setWindowTitle(
+                self.tr("Download {model}").format(
+                    model=self._model_manager.models[model_name]
+                )
+            )
+            message.setIcon(QtWidgets.QMessageBox.Icon.Information)
+            message.setTextFormat(Qt.TextFormat.RichText)
+            message.setTextInteractionFlags(
+                Qt.TextInteractionFlag.TextBrowserInteraction
+            )
+            message.setText(f"{html.escape(notice)}<br><br>{license_link(model_name)}")
+            download = message.addButton(
+                self.tr("Download"), QtWidgets.QMessageBox.ButtonRole.AcceptRole
+            )
+            message.addButton(QtWidgets.QMessageBox.StandardButton.Cancel)
+            message.exec()
+            if message.clickedButton() is not download:
+                return
+        select(model_name)
+        self._model_manager.enqueue(model_name)
 
     def _remove_ai_model(self, model_name: str, /) -> None:
         option = _ai_models.find_ai_assist_model_option(model_name=model_name)
@@ -3230,10 +3340,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._model_manager.remove(model_name)
 
     def _open_models(self) -> None:
-        self._open_settings()
-        assert self._settings_dialog is not None
-        self._settings_dialog.show_models()
+        if self._models_dialog is None:
+            self._models_dialog = ModelsDialog(
+                manager=self._model_manager,
+                remove_model=self._remove_ai_model,
+                parent=self,
+            )
         self._model_manager.refresh()
+        self._models_dialog.show()
+        self._models_dialog.raise_()
+        self._models_dialog.activateWindow()
 
     def _open_settings(self) -> None:
         # Keep a single dialog instance; it edits self._config by reference, so
@@ -3244,9 +3360,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 apply_setting=self._apply_setting_change,
                 preview_shape_color=self._preview_shape_color,
                 open_as_text=self._open_config_file,
-                models_widget=ModelsWidget(
-                    manager=self._model_manager, remove_model=self._remove_ai_model
-                ),
                 settings_editable=self._is_settings_editable,
                 parent=self,
             )
@@ -3336,7 +3449,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         if file_kind == "label":
             message = self.tr(
-                "The selected label file could not be opened: {path}"
+                "The selected annotation file could not be opened: {path}"
             ).format(path=path)
         else:
             message = self.tr(
@@ -3380,19 +3493,37 @@ class MainWindow(QtWidgets.QMainWindow):
             raise ValueError("file_or_dir cannot be empty")
 
         if is_label_file_path(filename=file_or_dir):
-            # Load before dropping the File List, so a failed load leaves the
-            # previous session and File List untouched.
+            # Load before dropping the Image List, so a failed load leaves the
+            # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
             self._loaded_image_paths = []
             self._file_list_root_prefix = None
             self._refresh_file_list()
+            self._docks.annotation_folder_footer.set_missing(None)
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
-                self.tr("File list is disabled when a label file is opened")
+                self.tr("Image List is disabled when an annotation file is opened")
             )
-        elif Path(file_or_dir).is_dir():
-            self._import_images_from_dir(root_dir=file_or_dir)
+            return
+
+        if Path(file_or_dir).is_dir():
+            # Settle unsaved changes before the Annotation Folder switches, so
+            # a Save still goes where the open image saves. A Discard is final:
+            # loading the folder's first image must not ask again after the
+            # switch.
+            if not self._can_continue():
+                return
+            self.mark_clean()
+            opened_dir = file_or_dir
+            previous_label_path = (
+                self.current_label_file_path() if self._image_path else None
+            )
+            missing_output_dir = self._restore_remembered_output_dir(
+                opened_dir=opened_dir
+            )
+            self._import_images_from_dir(root_dir=opened_dir)
+            loaded = False
             if self.image_list:
                 # Selecting the first row emits no change signal when it is
                 # already current (reopening the same directory), so drive the
@@ -3401,19 +3532,67 @@ class MainWindow(QtWidgets.QMainWindow):
                 previous_item = file_list.currentItem()
                 with QtCore.QSignalBlocker(file_list):
                     file_list.setCurrentRow(0)
-                self._load_selected_image(file_list.currentItem(), previous_item)
+                loaded = self._load_selected_image(
+                    file_list.currentItem(), previous_item
+                )
                 file_list.repaint()
+            # A failed load keeps the previous image open beside the new
+            # folder's Images: the new Annotation Folder serves those Images,
+            # and the open image keeps saving where it did.
+            if not loaded and previous_label_path is not None:
+                self._label_file_path = previous_label_path
+                self._auto_save_path = previous_label_path
         else:
-            # Load before swapping the File List, so a failed load leaves the
-            # previous session and File List untouched.
+            opened_dir = str(Path(file_or_dir).parent)
+            previous_output_dir = self._output_dir
+            missing_output_dir = self._restore_remembered_output_dir(
+                opened_dir=opened_dir
+            )
+            # Load before swapping the Image List, so a failed load leaves the
+            # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
+                self._output_dir = previous_output_dir
                 return
-            self._import_images_from_dir(root_dir=str(Path(file_or_dir).parent))
+            self._import_images_from_dir(root_dir=opened_dir)
+            # The load ran before the Image List knew the neighbors.
+            self._prefetch_neighbors()
+
+        # Set only once the open succeeded, so a rolled-back open keeps the
+        # previous session's warning.
+        self._docks.annotation_folder_footer.set_missing(missing_output_dir)
+        # Shown last so the loading messages do not replace it.
+        if missing_output_dir is not None:
+            self.statusBar().showMessage(
+                self.tr("Annotation Folder not found: %s") % missing_output_dir
+            )
+
+    def _restore_remembered_output_dir(self, *, opened_dir: str) -> str | None:
+        remembered = self._remembered_output_dirs().get(os.path.abspath(opened_dir))
+        # Report a missing folder to the caller but keep its entry: it may be
+        # on a drive that is not mounted right now, and choosing another
+        # folder replaces it.
+        if remembered is not None and not Path(remembered).is_dir():
+            self._output_dir = None
+            return remembered
+        self._output_dir = Path(remembered) if remembered else None
+        return None
+
+    def _remembered_output_dirs(self) -> dict[str, str]:
+        return cast(
+            dict[str, str], self._window_state.value(ANNOTATION_FOLDERS_KEY, {})
+        )
+
+    def _remember_output_dir(self, *, opened_dir: str) -> None:
+        folders = self._remembered_output_dirs()
+        key = os.path.abspath(opened_dir)
+        if self._output_dir is None:
+            folders.pop(key, None)
+        else:
+            folders[key] = os.path.abspath(self._output_dir)
+        self._window_state.setValue(ANNOTATION_FOLDERS_KEY, folders)
 
     def _open_dir_with_dialog(self) -> None:
-        if not self._can_continue():
-            return
-
+        # Unsaved changes are settled once a folder is chosen.
         default_open_dir_path: str
         if self._prev_opened_dir and Path(self._prev_opened_dir).exists():
             default_open_dir_path = self._prev_opened_dir
@@ -3480,9 +3659,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self._refresh_file_list()
 
     def _refresh_file_list(self) -> None:
-        image_paths = [
-            path for path in self._loaded_image_paths if self._matches_file_search(path)
-        ]
+        # The Annotation Folder is remembered per opened folder, so choosing
+        # one needs a folder, and the footer has nothing to count without
+        # images.
+        has_folder = self._file_list_root_prefix is not None
+        self._actions.change_output_dir.setEnabled(has_folder)
+        self._docks.annotation_folder_footer.setVisible(
+            has_folder and bool(self._loaded_image_paths)
+        )
+        image_paths = []
+        self._hidden_annotated_paths = set()
+        for path in self._loaded_image_paths:
+            if self._matches_file_search(path):
+                image_paths.append(path)
+            elif _has_label_file(image_path=path, output_dir=self._output_dir):
+                self._hidden_annotated_paths.add(path)
 
         file_list = self._docks.file_list
         with QtCore.QSignalBlocker(file_list):
@@ -3498,12 +3689,51 @@ class MainWindow(QtWidgets.QMainWindow):
             if self._file_list_image_path in image_paths:
                 file_list.setCurrentRow(image_paths.index(self._file_list_image_path))
 
+        self._update_annotated_count()
         self._sync_navigation_actions()
         self.setWindowTitle(self._get_window_title(dirty=self._is_changed))
 
+    def _refresh_image_list_checkmarks(self, *, label_path: str) -> None:
+        # Save As can write or delete any image's Annotation File, so re-apply
+        # the build-time rule to every item that could own this file.
+        # ponytail: matched by stem to keep auto-save cheap on large folders; an
+        # Annotation File symlinked under another name stays stale until the
+        # list is rebuilt. Drop the filter if that matters.
+        stem = _comparable_stem(label_path)
+        file_list = self._docks.file_list
+        for row in range(file_list.count()):
+            item = file_list.item(row)
+            assert item
+            if _comparable_stem(_file_list_item_path(item)) == stem:
+                _set_annotated_check_state(item, output_dir=self._output_dir)
+
+        # Images hidden by the search box have no item, so keep the count's
+        # record of them by the same rule.
+        for image_path in self._loaded_image_paths:
+            if _comparable_stem(image_path) != stem or self._matches_file_search(
+                image_path
+            ):
+                continue
+            if _has_label_file(image_path=image_path, output_dir=self._output_dir):
+                self._hidden_annotated_paths.add(image_path)
+            else:
+                self._hidden_annotated_paths.discard(image_path)
+        self._update_annotated_count()
+
+    def _update_annotated_count(self) -> None:
+        file_list = self._docks.file_list
+        visible = sum(
+            file_list.item(row).checkState() == Qt.CheckState.Checked
+            for row in range(file_list.count())
+        )
+        self._docks.annotation_folder_footer.set_count(
+            annotated=len(self._hidden_annotated_paths) + visible,
+            total=len(self._loaded_image_paths),
+        )
+
     def _file_list_label(self, image_path: str, /) -> str:
         # Paths under the opened folder are shown relative to it so the
-        # File List stays readable; the full path stays in the tooltip.
+        # Image List stays readable; the full path stays in the tooltip.
         prefix = self._file_list_root_prefix
         if prefix and image_path.startswith(prefix):
             return image_path[len(prefix) :]
@@ -3623,12 +3853,29 @@ def _make_image_list_item(
     item.setData(Qt.ItemDataRole.UserRole, image_path)
     item.setToolTip(os.path.abspath(image_path))
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-    label_path = _resolve_label_path(
-        image_or_label_path=image_path, output_dir=output_dir
-    )
-    has_label = QtCore.QFile.exists(label_path)
-    item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
+    _set_annotated_check_state(item, output_dir=output_dir)
     return item
+
+
+def _comparable_stem(path: str, /) -> str:
+    # Over-matching only re-checks extra items, so fold the case and Unicode
+    # forms a filesystem may treat as the same name.
+    return unicodedata.normalize("NFC", Path(path).stem).casefold()
+
+
+def _set_annotated_check_state(
+    item: QtWidgets.QListWidgetItem, /, *, output_dir: Path | None
+) -> None:
+    has_label = _has_label_file(
+        image_path=_file_list_item_path(item), output_dir=output_dir
+    )
+    item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
+
+
+def _has_label_file(*, image_path: str, output_dir: Path | None) -> bool:
+    return QtCore.QFile.exists(
+        _resolve_label_path(image_or_label_path=image_path, output_dir=output_dir)
+    )
 
 
 def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:
@@ -3673,7 +3920,7 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     # None means the failure is not explained by image size, so the caller
     # falls back to the generic unsupported-format message.
 
-    requirement = _get_image_decode_requirement(image_data=image_data)
+    requirement = get_image_decode_requirement(image_data=image_data)
     if requirement is None:
         return None
     width = requirement.width
@@ -3703,33 +3950,6 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     )
 
 
-def _get_image_decode_requirement(
-    *, image_data: bytes
-) -> _ImageDecodeRequirement | None:
-    buffer = QtCore.QBuffer()
-    buffer.setData(image_data)
-    buffer.open(QtCore.QIODevice.OpenModeFlag.ReadOnly)
-    reader = QtGui.QImageReader(buffer)
-    size = reader.size()
-    if not size.isValid():
-        return None
-    bits_per_pixel = QtGui.QImage.toPixelFormat(
-        reader.imageFormat()  # ty: ignore[no-matching-overload]
-    ).bitsPerPixel()
-    if bits_per_pixel <= 0:
-        return None
-
-    # Match Qt's 32-bit minimum for GUI-backed image allocations.
-    required_mb = (
-        size.width() * size.height() * max(bits_per_pixel, 32) / 8 / 1024 / 1024
-    )
-    return _ImageDecodeRequirement(
-        width=size.width(),
-        height=size.height(),
-        required_mb=math.ceil(required_mb),
-    )
-
-
 def _list_supported_image_extensions() -> tuple[str, ...]:
     return tuple(
         f".{fmt.toStdString().lower()}"
@@ -3749,19 +3969,28 @@ def _extract_dropped_image_paths(*, mime: QtCore.QMimeData) -> list[str]:
 def _scan_image_files(*, root_dir: str) -> list[str]:
     extensions = _list_supported_image_extensions()
 
-    images: list[str] = []
+    # (path below root_dir, path) pairs. Every path shares the root_dir prefix,
+    # so sorting by the part below it gives the same order, and natsort's key
+    # cost grows with path depth (~5x faster for a typical absolute root_dir).
+    images: list[tuple[str, str]] = []
     for root, dirs, files in os.walk(root_dir):
+        root_below = os.path.relpath(root, root_dir)
         for file in files:
             if file.lower().endswith(extensions):
-                relative_path = os.path.normpath(os.path.join(root, file))
-                images.append(relative_path)
+                images.append(
+                    (
+                        os.path.normpath(os.path.join(root_below, file)),
+                        os.path.normpath(os.path.join(root, file)),
+                    )
+                )
 
     logger.debug("found {:d} images in {!r}", len(images), root_dir)
     try:
-        return natsort.os_sorted(images)
+        images = natsort.os_sorted(images, key=operator.itemgetter(0))
     except OSError:
         logger.warning(
             "natsort.os_sorted failed (known macOS strxfrm bug), "
             "falling back to locale-unaware natural sort"
         )
-        return natsort.natsorted(images)
+        images = natsort.natsorted(images, key=operator.itemgetter(0))
+    return [path for _, path in images]

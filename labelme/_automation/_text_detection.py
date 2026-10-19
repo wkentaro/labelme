@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import json
 import time
+from typing import TYPE_CHECKING
 from typing import Final
 
 import numpy as np
-import osam
 from loguru import logger
 from numpy.typing import NDArray
 
@@ -18,6 +18,9 @@ from ._shape_builders import assign_available_group_ids
 from ._shape_builders import shapes_from_detections
 from ._suppression import suppress_detections_greedy
 from ._types import AiOutputFormat
+
+if TYPE_CHECKING:
+    import osam
 
 
 class MaskOutputUnavailableError(ValueError):
@@ -185,6 +188,8 @@ def nms_bboxes(
         max_num_detections,
     )
     logger.debug(f"Input: num_boxes={len(boxes)}")
+    import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
     boxes, scores, labels, indices = osam.apis.non_maximum_suppression(
         boxes=boxes,
         scores=scores_of_all_classes,

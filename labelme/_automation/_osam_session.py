@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import collections
+from typing import TYPE_CHECKING
 
 import numpy as np
-import osam
 from loguru import logger
 from numpy.typing import NDArray
+
+if TYPE_CHECKING:
+    import osam
 
 
 class OsamSession:
@@ -38,6 +41,8 @@ class OsamSession:
         point_labels: NDArray[np.intp] | None = None,
         texts: list[str] | None = None,
     ) -> osam.types.GenerateResponse:
+        import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
         image_embedding: osam.types.ImageEmbedding | None
         try:
             image_embedding = self._get_or_compute_embedding(
@@ -90,6 +95,8 @@ class OsamSession:
 
     def _get_or_load_model(self) -> osam.types.Model:
         if self._model is None:
+            import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
             logger.debug("Loading model with name={!r}", self._model_name)
             self._model = osam.apis.get_model_type_by_name(self._model_name)()
             logger.debug("Loaded model with name={!r}", self._model_name)

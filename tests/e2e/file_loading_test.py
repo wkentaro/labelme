@@ -881,3 +881,27 @@ def test_image_flags_survive_save_and_navigation(
     win._open_prev_image()
     assert list(win._read_flag_dock_states().items()) == expected
     assert not win._is_changed
+
+
+@pytest.mark.gui
+def test_opening_one_image_prefetches_its_folder_neighbors(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    source_image = data_path / "annotated/2011_000003.jpg"
+    paths = [tmp_path / f"{i}.jpg" for i in range(3)]
+    for path in paths:
+        shutil.copyfile(src=source_image, dst=path)
+
+    win = main_win(file_or_dir=paths[1])
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    # The Image List fills only after the image loads; its neighbors are
+    # still scheduled.
+    assert set(win._image_prefetcher._decoded) == {str(path) for path in paths}
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)

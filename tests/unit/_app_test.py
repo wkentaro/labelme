@@ -528,3 +528,21 @@ def test_resolve_stored_image_path_falls_back_across_real_windows_drives() -> No
         )
         == r"D:\imgs\img.png"
     )
+
+
+@pytest.mark.usefixtures("qapp")
+def test_scan_image_files_sorts_top_level_and_nested_files_together(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    for name in ["z.jpg", "a10.jpg", "a2.jpg", "sub/b.jpg", "sua.jpg", "t.jpg"]:
+        (tmp_path / name).parent.mkdir(exist_ok=True)
+        (tmp_path / name).touch()
+
+    expected = ["a2.jpg", "a10.jpg", "sua.jpg", "sub/b.jpg", "t.jpg", "z.jpg"]
+    assert _app._scan_image_files(root_dir=str(tmp_path)) == [
+        os.path.join(tmp_path, os.path.normpath(name)) for name in expected
+    ]
+    monkeypatch.chdir(tmp_path)
+    assert _app._scan_image_files(root_dir=".") == [
+        os.path.normpath(name) for name in expected
+    ]
