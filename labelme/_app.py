@@ -1072,6 +1072,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 separator(),
                 self._actions.brightness_contrast,
                 self._actions.toggle_keep_prev_brightness_contrast,
+                # macOS appends Enter Full Screen here; the separator keeps its
+                # SF Symbol from indenting the icon-less items above it.
+                separator(),
             )
         )
 

@@ -191,7 +191,6 @@ def test_each_icon_belongs_to_one_action(*, main_win: MainWinFactory) -> None:
 
 
 @pytest.mark.gui
-@pytest.mark.xfail(strict=True, reason="the View menu has no trailing separator yet")
 def test_view_menu_ends_with_separator(*, main_win: MainWinFactory) -> None:
     # macOS appends Enter Full Screen to the View menu. Without a separator it
     # joins the last section, and its SF Symbol makes AppKit indent the
