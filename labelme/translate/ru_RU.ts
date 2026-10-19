@@ -102,8 +102,8 @@
         <translation>Рядом с изображениями</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Выбрать папку аннотаций…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Изменить папку аннотаций…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

@@ -102,8 +102,8 @@
         <translation>Obok obrazów</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Wybierz folder adnotacji…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Zmień folder adnotacji…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

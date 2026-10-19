@@ -102,8 +102,8 @@
         <translation>Görüntülerin yanında</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Açıklama Klasörünü Seç…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Açıklama Klasörünü Değiştir…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

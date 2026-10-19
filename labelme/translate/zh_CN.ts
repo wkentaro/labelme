@@ -102,8 +102,8 @@
         <translation>与图像在同一位置</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>选择标注文件夹…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>更改标注文件夹…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

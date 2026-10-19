@@ -102,8 +102,8 @@
         <translation>Δίπλα στις εικόνες</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Επιλογή φακέλου σχολιασμών…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Αλλαγή φακέλου σχολιασμών…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

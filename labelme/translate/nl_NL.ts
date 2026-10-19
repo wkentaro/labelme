@@ -102,8 +102,8 @@
         <translation>Naast afbeeldingen</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Annotatiemap kiezen…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Annotatiemap wijzigen…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

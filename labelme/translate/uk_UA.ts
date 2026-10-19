@@ -102,8 +102,8 @@
         <translation>Поруч із зображеннями</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Вибрати папку анотацій…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Змінити папку анотацій…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

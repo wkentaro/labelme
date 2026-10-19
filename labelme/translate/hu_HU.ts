@@ -102,8 +102,8 @@
         <translation>A képek mellett</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Annotációs mappa kiválasztása…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Annotációs mappa módosítása…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

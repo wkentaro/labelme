@@ -102,8 +102,8 @@
         <translation>이미지와 같은 위치</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>주석 폴더 선택…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>주석 폴더 변경…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

@@ -102,8 +102,8 @@
         <translation>À côté des images</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Choisir le dossier d’annotations…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Changer le dossier d’annotations…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

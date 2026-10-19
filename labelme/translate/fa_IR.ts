@@ -102,8 +102,8 @@
         <translation>کنار تصاویر</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>انتخاب پوشهٔ حاشیه‌نویسی…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>تغییر پوشهٔ حاشیه‌نویسی…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

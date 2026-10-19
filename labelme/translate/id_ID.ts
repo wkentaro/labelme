@@ -102,8 +102,8 @@
         <translation>Di samping gambar</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Pilih Folder Anotasi…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Ubah Folder Anotasi…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

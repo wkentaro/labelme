@@ -102,8 +102,8 @@
         <translation>Cùng chỗ với hình ảnh</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Chọn thư mục chú thích…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Thay đổi thư mục chú thích…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

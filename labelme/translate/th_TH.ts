@@ -102,8 +102,8 @@
         <translation>โฟลเดอร์เดียวกับรูปภาพ</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>เลือกโฟลเดอร์แอนโนเทชัน…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>เปลี่ยนโฟลเดอร์แอนโนเทชัน…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

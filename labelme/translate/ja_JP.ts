@@ -102,8 +102,8 @@
         <translation>画像と同じ場所</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>アノテーションフォルダーを選択…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>アノテーションフォルダーを変更…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>

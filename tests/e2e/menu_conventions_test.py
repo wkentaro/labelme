@@ -190,7 +190,7 @@ def test_view_menu_ends_with_separator(*, main_win: MainWinFactory) -> None:
 def test_menu_commands_have_icon(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
-    allowed = frozenset({"Choose Annotation Folder…"})
+    allowed = frozenset[str]()
     win = _english_window(main_win)
     found = {
         _plain(a.text())
