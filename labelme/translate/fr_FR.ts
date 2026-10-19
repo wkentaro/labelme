@@ -247,14 +247,6 @@
         <translation>Ouvrez une image ou un dossier d’images pour commencer.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Ouvrir un dossier</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Ouvrir une image</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Ou glissez-déposez des fichiers image ici</translation>
     </message>
@@ -307,12 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>Quitter l&apos;application</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Ouvrir
-</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -519,6 +505,10 @@ les formes</translation>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Choisir où les fichiers d’annotations sont lus et enregistrés</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>&amp;Ouvrir un fichier…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -819,10 +809,6 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
         <translation>Images et fichiers d’annotations (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Ouvrir une image ou des annotations</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Attention</translation>
     </message>
@@ -931,6 +917,10 @@ Changez le modèle AI Text-to-Annotation pour &apos;SAM3 (smart)&apos;, ou défi
 Please select a different model or use AI-Box mode.</source>
         <translation>%s ne prend pas en charge les invites par points.
 Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - Ouvrir un fichier</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

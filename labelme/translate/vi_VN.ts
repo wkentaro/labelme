@@ -247,14 +247,6 @@
         <translation>Mở một hình ảnh hoặc thư mục hình ảnh để bắt đầu.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Mở thư mục</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Mở hình ảnh</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Hoặc kéo và thả tệp hình ảnh vào đây</translation>
     </message>
@@ -307,11 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>Thoát ứng dụng</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>Mở(&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -513,6 +500,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Chọn nơi đọc và lưu tệp chú thích</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>Mở tệp(&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -813,10 +804,6 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
         <translation>Hình ảnh và tệp chú thích (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Mở hình ảnh hoặc chú thích</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Chú ý</translation>
     </message>
@@ -925,6 +912,10 @@ Chuyển mô hình AI Text-to-Annotation sang &apos;SAM3 (smart)&apos;, hoặc �
 Please select a different model or use AI-Box mode.</source>
         <translation>%s không hỗ trợ gợi ý điểm.
 Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - Mở tệp</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

@@ -291,6 +291,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets = self._setup_canvas()
 
         self._actions = self._setup_actions()
+        self._canvas_widgets.empty_state.bind_open_actions(
+            open_file=self._actions.open, open_folder=self._actions.open_dir
+        )
         self._sync_zoom_mode_actions()
         self._persistent_actions = {
             ("auto_save",): self._actions.save_auto,
@@ -476,7 +479,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=False,
         )
         open_ = action(
-            text=self.tr("&Open\n"),
+            text=self.tr("&Open File…"),
             slot=self._open_file_with_dialog,
             shortcut=shortcuts["open"],
             icon="phosphor/file-image.svg",
@@ -1316,10 +1319,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.shape_double_clicked.connect(self._edit_label)
         canvas.drawing_polygon.connect(self._on_drawing_polygon_changed)
 
-        empty_state = EmptyStateWidget(
-            on_open_image=self._open_file_with_dialog,
-            on_open_directory=self._open_dir_with_dialog,
-        )
+        empty_state = EmptyStateWidget()
         surface = QtWidgets.QStackedWidget()
         surface.addWidget(empty_state)
         surface.addWidget(scroll_area)
@@ -2852,7 +2852,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         image_or_label_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            self.tr("%s - Open Image or Annotations") % __appname__,
+            self.tr("%s - Open File") % __appname__,
             self.current_path(),
             filters,
         )

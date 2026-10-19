@@ -247,14 +247,6 @@
         <translation>Ανοίξτε μια εικόνα ή έναν φάκελο εικόνων για να ξεκινήσετε.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Άνοιγμα φακέλου</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Άνοιγμα εικόνας</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Ή σύρετε και αποθέστε αρχεία εικόνας εδώ</translation>
     </message>
@@ -296,11 +288,6 @@
     <message>
         <source>Save automatically</source>
         <translation>Αυτόματη αποθήκευση</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>Ανοιγμα</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -561,6 +548,10 @@ Shapes</source>
         <translation>Επιλογή του πού διαβάζονται και αποθηκεύονται τα αρχεία σχολιασμών</translation>
     </message>
     <message>
+        <source>&amp;Open File…</source>
+        <translation>Άνοιγμα αρχείου…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Άνοιγμα εικόνας ή αρχείου επισημειώσεων</translation>
     </message>
@@ -751,10 +742,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Εικόνες και αρχεία επισημειώσεων (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Άνοιγμα εικόνας ή επισημειώσεων</translation>
     </message>
     <message>
         <source>Attention</source>
@@ -999,6 +986,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - Άνοιγμα αρχείου</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

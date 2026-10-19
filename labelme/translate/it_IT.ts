@@ -247,14 +247,6 @@
         <translation>Apri un&apos;immagine o una cartella di immagini per iniziare.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Apri cartella</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Apri immagine</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Oppure trascina qui i file immagine</translation>
     </message>
@@ -307,12 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>Esci dall&apos;applicazione</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Apri
-</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -519,6 +505,10 @@ forme</translation>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Scegli dove leggere e salvare i file di annotazioni</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>&amp;Apri file…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -819,10 +809,6 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
         <translation>Immagini e file di annotazioni (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Apri immagine o annotazioni</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Attenzione</translation>
     </message>
@@ -931,6 +917,10 @@ Cambia il modello AI Text-to-Annotation in &apos;SAM3 (smart)&apos; oppure impos
 Please select a different model or use AI-Box mode.</source>
         <translation>%s non supporta i prompt a punti.
 Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - Apri file</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

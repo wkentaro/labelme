@@ -247,14 +247,6 @@
         <translation>A kezdéshez nyisson meg egy képet vagy egy képeket tartalmazó mappát.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Mappa megnyitása</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Kép megnyitása</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Vagy húzzon ide képfájlokat</translation>
     </message>
@@ -307,12 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>Alkalmazás bezárása</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Megnyitás
-</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -539,6 +525,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Annotációs fájlok olvasási és mentési helyének kiválasztása</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>Fájl &amp;megnyitása…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -827,10 +817,6 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
         <translation>Képek és annotációs fájlok (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Kép vagy annotációk megnyitása</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Figyelem</translation>
     </message>
@@ -931,6 +917,10 @@ Váltson az AI Text-to-Annotation modellnél &apos;SAM3 (smart)&apos;-re, vagy �
 Please select a different model or use AI-Box mode.</source>
         <translation>%s nem támogatja a pont alapú promptokat.
 Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - Fájl megnyitása</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

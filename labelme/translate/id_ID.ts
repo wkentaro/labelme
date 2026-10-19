@@ -247,14 +247,6 @@
         <translation>Buka gambar atau folder gambar untuk memulai.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Buka Folder</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Buka Gambar</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Atau seret dan lepaskan file gambar di sini</translation>
     </message>
@@ -460,6 +452,10 @@
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Pilih tempat berkas anotasi dibaca dan disimpan</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>Buka Berkas (&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -788,10 +784,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Gambar dan berkas anotasi (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Buka Gambar atau Anotasi</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Perhatian</translation>
     </message>
@@ -902,6 +894,10 @@ Please select a different model or use AI-Box mode.</source>
 Silakan pilih model lain atau gunakan mode AI-Box.</translation>
     </message>
     <message>
+        <source>%s - Open File</source>
+        <translation>%s - Buka Berkas</translation>
+    </message>
+    <message>
         <source>%s - Choose Annotation Folder</source>
         <translation>%s - Pilih Folder Anotasi</translation>
     </message>
@@ -968,11 +964,6 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Shape had no area; nothing created.</source>
         <translation>Bentuk tidak memiliki area; tidak ada yang dibuat.</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>Buka (&amp;O)</translation>
     </message>
     <message>
         <source>Undo

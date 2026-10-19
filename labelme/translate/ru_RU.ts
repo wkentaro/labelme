@@ -247,14 +247,6 @@
         <translation>Чтобы начать, откройте изображение или папку с изображениями.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Открыть папку</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Открыть изображение</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Или перетащите файлы изображений сюда</translation>
     </message>
@@ -498,6 +490,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Выбрать, где читать и сохранять файлы аннотаций</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>&amp;Открыть файл…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -794,10 +790,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Изображения и файлы аннотаций (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Открыть изображение или аннотации</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Внимание</translation>
     </message>
@@ -864,12 +856,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 </translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Открыть
-</translation>
-    </message>
-    <message>
         <source>Undo
 </source>
         <translation>Отменить
@@ -928,6 +914,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s не поддерживает точечные запросы.
 Выберите другую модель или используйте режим AI-Box.</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - Открыть файл</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

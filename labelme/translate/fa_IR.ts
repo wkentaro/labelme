@@ -247,14 +247,6 @@
         <translation>برای شروع، یک تصویر یا پوشه‌ای از تصاویر را باز کنید.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>باز کردن پوشه</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>باز کردن تصویر</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>یا فایل‌های تصویری را اینجا بکشید و رها کنید</translation>
     </message>
@@ -307,11 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>خروج از برنامه</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>باز کردن(&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -513,6 +500,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>انتخاب محل خواندن و ذخیرهٔ پرونده‌های حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>باز کردن فایل(&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -813,10 +804,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>تصاویر و پرونده‌های حاشیه‌نویسی (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - باز کردن تصویر یا حاشیه‌نویسی‌ها</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>توجه</translation>
     </message>
@@ -925,6 +912,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s از دستورات نقطه‌ای پشتیبانی نمی‌کند.
 لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - باز کردن فایل</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

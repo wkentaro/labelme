@@ -247,14 +247,6 @@
         <translation>Open een afbeelding of een map met afbeeldingen om te beginnen.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Map openen</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Afbeelding openen</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Of sleep afbeeldingsbestanden hierheen</translation>
     </message>
@@ -307,11 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>Applicatie afsluiten</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Openen</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -513,6 +500,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Kies waar annotatiebestanden worden gelezen en opgeslagen</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>Bestand &amp;openen…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -813,10 +804,6 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
         <translation>Afbeeldingen en annotatiebestanden (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Afbeelding of annotaties openen</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Let op</translation>
     </message>
@@ -925,6 +912,10 @@ Wijzig het AI Text-to-Annotation-model naar &apos;SAM3 (smart)&apos; of stel het
 Please select a different model or use AI-Box mode.</source>
         <translation>%s ondersteunt geen puntinvoer.
 Selecteer een ander model of gebruik de AI-Box-modus.</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - Bestand openen</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

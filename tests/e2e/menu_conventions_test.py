@@ -106,7 +106,6 @@ def test_menu_text_has_no_newline(*, main_win: MainWinFactory) -> None:
     # fails, so the set only shrinks.
     allowed = frozenset(
         {
-            "&Open\n",
             "&Save\n",
             "Undo\n",
             "&Hide\nShapes",
@@ -146,7 +145,7 @@ def test_dialog_actions_end_with_ellipsis(*, main_win: MainWinFactory) -> None:
     )
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
-    allowed = frozenset({"open", "save_as", "edit", "brightness_contrast"})
+    allowed = frozenset({"save_as", "edit", "brightness_contrast"})
     win = _english_window(main_win)
     found = {
         name

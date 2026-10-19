@@ -247,14 +247,6 @@
         <translation>เปิดรูปภาพหรือโฟลเดอร์รูปภาพเพื่อเริ่มต้น</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>เปิดโฟลเดอร์</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>เปิดรูปภาพ</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>หรือลากและวางไฟล์รูปภาพที่นี่</translation>
     </message>
@@ -307,11 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>ปิดแอป</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>เปิด (&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -513,6 +500,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>เลือกตำแหน่งที่จะอ่านและบันทึกไฟล์แอนโนเทชัน</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>เปิดไฟล์ (&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -813,10 +804,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>ภาพและไฟล์คำอธิบายประกอบ (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - เปิดภาพหรือคำอธิบายประกอบ</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>คำเตือน</translation>
     </message>
@@ -925,6 +912,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s ไม่รองรับการกำหนดจุด
 กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - เปิดไฟล์</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

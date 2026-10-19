@@ -247,14 +247,6 @@
         <translation>Щоб почати, відкрийте зображення або папку із зображеннями.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Відкрити папку</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Відкрити зображення</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Або перетягніть файли зображень сюди</translation>
     </message>
@@ -296,11 +288,6 @@
     <message>
         <source>Save automatically</source>
         <translation>Зберегти автоматично</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Відкрити</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -562,6 +549,10 @@ Shapes</source>
         <translation>Вибрати, де читати й зберігати файли анотацій</translation>
     </message>
     <message>
+        <source>&amp;Open File…</source>
+        <translation>&amp;Відкрити файл…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Відкрити зображення або файл анотацій</translation>
     </message>
@@ -752,10 +743,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>Зображення та файли анотацій (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Відкрити зображення або анотації</translation>
     </message>
     <message>
         <source>Attention</source>
@@ -1000,6 +987,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Параметри керуються через --config для цього сеансу</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - Відкрити файл</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

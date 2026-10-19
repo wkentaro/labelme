@@ -247,14 +247,6 @@
         <translation>Başlamak için bir görüntü veya görüntü klasörü açın.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Klasör Aç</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Görüntü Aç</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Veya görüntü dosyalarını buraya sürükleyip bırakın</translation>
     </message>
@@ -307,12 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>Uygulamadan çık</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>&amp;Aç
-</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -519,6 +505,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Açıklama dosyalarının okunup kaydedileceği yeri seçin</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>Dosya &amp;Aç…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -819,10 +809,6 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
         <translation>Görüntüler ve açıklama dosyaları (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Görüntü veya Açıklamaları Aç</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>Dikkat</translation>
     </message>
@@ -931,6 +917,10 @@ AI Text-to-Annotation modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya
 Please select a different model or use AI-Box mode.</source>
         <translation>%s nokta istemlerini desteklemiyor.
 Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - Dosya Aç</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

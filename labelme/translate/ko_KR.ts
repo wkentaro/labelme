@@ -247,14 +247,6 @@
         <translation>시작하려면 이미지 또는 이미지 폴더를 여세요.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>폴더 열기</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>이미지 열기</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>또는 이미지 파일을 여기로 끌어다 놓으세요</translation>
     </message>
@@ -307,11 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>애플리케이션 종료</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>열기(&amp;O)</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -513,6 +500,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>주석 파일을 읽고 저장할 위치 선택</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>파일 열기(&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -813,10 +804,6 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
         <translation>이미지 및 주석 파일 (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - 이미지 또는 주석 열기</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>주의</translation>
     </message>
@@ -925,6 +912,10 @@ AI Text-to-Annotation 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나
 Please select a different model or use AI-Box mode.</source>
         <translation>%s은(는) 포인트 프롬프트를 지원하지 않습니다.
 다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - 파일 열기</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

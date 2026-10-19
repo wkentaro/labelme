@@ -247,14 +247,6 @@
         <translation>画像または画像フォルダーを開いて開始します。</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>フォルダーを開く</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>画像を開く</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>または、画像ファイルをここにドラッグ＆ドロップします</translation>
     </message>
@@ -307,12 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>アプリケーションを終了</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>開く(&amp;O)
-</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -525,6 +511,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>アノテーションファイルの読み込みと保存の場所を選択</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>ファイルを開く(&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -826,10 +816,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>画像とアノテーションファイル (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - 画像またはアノテーションを開く</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>注意</translation>
     </message>
@@ -938,6 +924,10 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
 Please select a different model or use AI-Box mode.</source>
         <translation>%s はポイントプロンプトに対応していません。
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - ファイルを開く</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>

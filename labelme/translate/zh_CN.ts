@@ -247,14 +247,6 @@
         <translation>打开图像或图像文件夹以开始。</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>打开文件夹</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>打开图像</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>或将图像文件拖放到此处</translation>
     </message>
@@ -307,12 +299,6 @@
     <message>
         <source>Quit application</source>
         <translation>退出应用程序</translation>
-    </message>
-    <message>
-        <source>&amp;Open
-</source>
-        <translation>打开(&amp;O)
-</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -519,6 +505,10 @@ Shapes</source>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>选择读取和保存标注文件的位置</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>打开文件(&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -819,10 +809,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>图像与标注文件 (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - 打开图像或标注</translation>
-    </message>
-    <message>
         <source>Attention</source>
         <translation>注意</translation>
     </message>
@@ -931,6 +917,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
 Please select a different model or use AI-Box mode.</source>
         <translation>%s 不支持点提示。
 请另选模型，或改用 AI-Box 模式。</translation>
+    </message>
+    <message>
+        <source>%s - Open File</source>
+        <translation>%s - 打开文件</translation>
     </message>
     <message>
         <source>%s - Choose Annotation Folder</source>
