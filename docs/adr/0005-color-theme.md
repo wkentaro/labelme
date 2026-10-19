@@ -16,9 +16,9 @@ paint time, so they re-tint live when `colorSchemeChanged` fires (the single
 re-theme hook for both user changes and OS flips). Selection is by content, not an
 allowlist: `new_icon` tints any SVG containing the `currentColor` token, so a new
 monochrome icon authored with `fill="currentColor"` is theme-aware automatically.
-The five semantic accent icons (blue `floppy-disk`/`folders`/`folder-open`, red
-`trash`/`file-x`) keep their fixed colors, since their color carries meaning and is
-legible on both backgrounds; the other 26 are tinted.
+The semantic accent icons (blue `floppy-disk`/`floppy-disk-back`/`file-image`/
+`folders`/`folder-open`, red `trash`/`file-x`) keep their fixed colors, since their
+color carries meaning and is legible on both backgrounds; the rest are tinted.
 
 Theming is scoped to *chrome*, not annotation *data*. Chrome colors must follow
 the palette: the toolbar icons, the AI-button highlight (previously a hardcoded

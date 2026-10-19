@@ -450,7 +450,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Save As"),
             slot=lambda: self._save_label_file(save_as=True),
             shortcut=shortcuts["save_as"],
-            icon="phosphor/floppy-disk.svg",
+            icon="phosphor/floppy-disk-back.svg",
             tip=self.tr("Save the annotation file under a new name"),
         )
         save_auto = action(
@@ -479,7 +479,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Open\n"),
             slot=self._open_file_with_dialog,
             shortcut=shortcuts["open"],
-            icon="phosphor/folder-open.svg",
+            icon="phosphor/file-image.svg",
             tip=self.tr("Open an image or annotation file"),
         )
         open_dir = action(
@@ -528,7 +528,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Edit Label"),
             slot=self._edit_label,
             shortcut=shortcuts["edit_label"],
-            icon="phosphor/note-pencil.svg",
+            icon="phosphor/tag.svg",
             tip=self.tr("Modify the label of the selected shape"),
             enabled=False,
         )
@@ -595,7 +595,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Delete Selected Vertex"),
             slot=self.remove_selected_point,
             shortcut=shortcuts["remove_selected_point"],
-            icon="phosphor/trash.svg",
+            icon="phosphor/minus-circle.svg",
             tip=self.tr("Delete the selected vertex from the polygon or line strip"),
             enabled=False,
         )
@@ -772,7 +772,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Hide\nShapes"),
             slot=functools.partial(self.toggle_shape_visibility, value=False),
             shortcut=shortcuts["hide_all_shapes"],
-            icon="phosphor/eye.svg",
+            icon="phosphor/eye-slash.svg",
             tip=self.tr("Hide all shapes"),
         )
         show_all = action(
