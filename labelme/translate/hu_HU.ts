@@ -557,6 +557,16 @@
         <translation>Képeket tartalmazó mappa megnyitása</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Fájl törlése</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Törlés</translation>
+    </message>
+    <message>
         <source>Copy to Clipboard</source>
         <translation>Másolás a vágólapra</translation>
     </message>
@@ -571,6 +581,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>A vágólap alakzatainak beszúrása ebbe a képbe</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Duplikálás</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -593,8 +608,23 @@
         <translation>Visszavonás</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Szerkesztés</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Következő</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Előző kép</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Előző</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

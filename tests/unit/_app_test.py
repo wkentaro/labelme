@@ -546,3 +546,23 @@ def test_scan_image_files_sorts_top_level_and_nested_files_together(
     assert _app._scan_image_files(root_dir=".") == [
         os.path.normpath(name) for name in expected
     ]
+
+
+@pytest.mark.parametrize(
+    "available, toolbar_width, expected",
+    [
+        # Room to spare: the preferred size, centered.
+        (QtCore.QRect(0, 0, 1920, 1200), 1100, QtCore.QRect(320, 200, 1280, 800)),
+        # A toolbar wider than the preferred width widens the window.
+        (QtCore.QRect(0, 0, 1920, 1200), 1400, QtCore.QRect(260, 200, 1400, 800)),
+        # A small screen bounds the size; the offset of its work area carries.
+        (QtCore.QRect(0, 25, 1366, 743), 1400, QtCore.QRect(0, 25, 1366, 743)),
+    ],
+)
+def test_default_window_geometry(
+    *, available: QtCore.QRect, toolbar_width: int, expected: QtCore.QRect
+) -> None:
+    assert (
+        _app._default_window_geometry(available, toolbar_width=toolbar_width)
+        == expected
+    )

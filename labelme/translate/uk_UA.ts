@@ -569,12 +569,27 @@
         <translation>Видалити &amp;файл анотацій</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Видалити файл</translation>
+    </message>
+    <message>
         <source>Delete the current annotation file</source>
         <translation>Видалити поточний файл анотацій</translation>
     </message>
     <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Видалити</translation>
+    </message>
+    <message>
         <source>&amp;Edit Label…</source>
         <translation>&amp;Редагувати мітку…</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Дублювати</translation>
     </message>
     <message>
         <source>Undo Last Point</source>
@@ -593,6 +608,11 @@
         <translation>Видаляє вибрану точку з багатокутника або ламаної</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Змінити</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Клацайте, щоб ставити точки ламаної; утримуйте %s і клацніть, щоб поставити останню.</translation>
     </message>
@@ -601,12 +621,22 @@
         <translation>Клацайте точки, щоб сегментувати об&apos;єкт; утримуйте %s і клацніть, щоб завершити.</translation>
     </message>
     <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Далі</translation>
+    </message>
+    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Відкрити наступне зображення (утримуйте %s, щоб скопіювати поточні фігури)</translation>
     </message>
     <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Попереднє зображення</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Назад</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

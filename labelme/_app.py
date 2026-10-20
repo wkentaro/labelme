@@ -206,6 +206,17 @@ class _Menus(NamedTuple):
     label_list: QtWidgets.QMenu
 
 
+def _default_window_geometry(
+    available: QtCore.QRect, /, *, toolbar_width: int
+) -> QtCore.QRect:
+    # A first window wide enough for the whole labeled toolbar, shrunk to fit a
+    # smaller screen and centered on it.
+    size = QtCore.QSize(max(1280, toolbar_width), 800)
+    geometry = QtCore.QRect(QtCore.QPoint(), size.boundedTo(available.size()))
+    geometry.moveCenter(available.center())
+    return geometry
+
+
 def _try_load_config(
     *, config_file: Path | None, config_overrides: dict
 ) -> dict | None:
@@ -513,6 +524,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         delete_file = action(
             text=self.tr("&Delete Annotation File"),
+            toolbar_text=self.tr("Delete File", "toolbar"),
             slot=self.delete_file,
             shortcut=shortcuts["delete_file"],
             icon="phosphor/file-x.svg",
@@ -533,6 +545,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         delete = action(
             text=self.tr("Delete Shapes"),
+            toolbar_text=self.tr("Delete", "toolbar"),
             slot=self.delete_selected_shapes,
             shortcut=shortcuts["delete_shape"],
             icon="phosphor/trash.svg",
@@ -567,6 +580,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         duplicate = action(
             text=self.tr("Duplicate Shapes"),
+            toolbar_text=self.tr("Duplicate", "toolbar"),
             slot=lambda: self._insert_shapes(
                 [s.copy() for s in self._canvas_widgets.canvas.selected_shapes]
             ),
@@ -630,6 +644,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         edit_mode = image_action(
             text=self.tr("Edit Shapes"),
+            toolbar_text=self.tr("Edit", "toolbar"),
             slot=lambda: self._switch_canvas_mode(edit=True, create_mode=None),
             shortcut=shortcuts["edit_shape"],
             icon="phosphor/note-pencil.svg",
@@ -707,6 +722,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         open_next_img = action(
             text=self.tr("&Next Image"),
+            toolbar_text=self.tr("Next", "toolbar"),
             slot=self._open_next_image,
             shortcut=shortcuts["open_next"],
             icon="phosphor/arrow-fat-right.svg",
@@ -716,6 +732,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         open_prev_img = action(
             text=self.tr("&Previous Image"),
+            toolbar_text=self.tr("Previous", "toolbar"),
             slot=self._open_prev_image,
             shortcut=shortcuts["open_prev"],
             icon="phosphor/arrow-fat-left.svg",
@@ -1210,16 +1227,25 @@ class MainWindow(QtWidgets.QMainWindow):
             self._reset_layout()
             self._window_state.setValue("settingsVersion", SETTINGS_VERSION)
         #
+        screen = QtGui.QGuiApplication.primaryScreen()
+        default = _default_window_geometry(
+            screen.availableGeometry(),
+            toolbar_width=max(
+                toolbar.sizeHint().width()
+                for toolbar in self.findChildren(ToolBar)
+                if toolbar.orientation() == Qt.Orientation.Horizontal
+            ),
+        )
         self.resize(
             cast(
                 QtCore.QSize,
-                self._window_state.value(WINDOW_SIZE_KEY, QtCore.QSize(900, 500)),
+                self._window_state.value(WINDOW_SIZE_KEY, default.size()),
             )
         )
         self.move(
             cast(
                 QtCore.QPoint,
-                self._window_state.value(WINDOW_POSITION_KEY, QtCore.QPoint(0, 0)),
+                self._window_state.value(WINDOW_POSITION_KEY, default.topLeft()),
             )
         )
         self.restoreState(

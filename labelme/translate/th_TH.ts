@@ -538,6 +538,16 @@
         <translation>เปิดโฟลเดอร์รูปภาพ</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>ลบไฟล์</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>ลบ</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>แก้ไขเลเบลของรูปร่างที่เลือก</translation>
     </message>
@@ -556,6 +566,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>แทรกรูปร่างจากคลิปบอร์ดลงในภาพนี้</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>ทำซ้ำ</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -578,8 +593,23 @@
         <translation>ยกเลิก</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>แก้ไข</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>ถัดไป</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>รูปก่อนหน้า (&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>ก่อนหน้า</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
