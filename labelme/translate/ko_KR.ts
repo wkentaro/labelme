@@ -24,6 +24,26 @@
         <translation>더 자세하게</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>다각형</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>마스크</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>사각형</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>방향 있는 사각형</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>원</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>&apos;AI-Points&apos; 또는 &apos;AI-Box&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
     </message>

@@ -24,6 +24,26 @@
         <translation>Mais detalhes</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Polígono</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Máscara</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Retângulo</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Retângulo Orientado</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Círculo</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Selecione o modo &apos;AI-Points&apos; ou &apos;AI-Box&apos; para habilitar a Assistência de IA</translation>
     </message>

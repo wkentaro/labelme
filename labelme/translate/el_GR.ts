@@ -24,6 +24,26 @@
         <translation>Περισσότερη λεπτομέρεια</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Πολύγωνο</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Μάσκα</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Ορθογώνιο</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Προσανατολισμένο Ορθογώνιο</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Κύκλος</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos; ή &apos;AI-Box&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
     </message>

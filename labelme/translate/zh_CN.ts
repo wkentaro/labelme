@@ -24,6 +24,26 @@
         <translation>更多细节</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>多边形</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>掩码</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>矩形</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>有向矩形</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>圆形</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>请选择 &apos;AI-Points&apos; 或 &apos;AI-Box&apos; 模式以启用 AI 辅助</translation>
     </message>

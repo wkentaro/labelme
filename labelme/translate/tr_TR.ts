@@ -24,6 +24,26 @@
         <translation>Daha fazla ayrıntı</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Çokgen</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maske</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Dikdörtgen</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Yönlü Dikdörtgen</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Daire</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos; veya &apos;AI-Box&apos; modunu seçin</translation>
     </message>

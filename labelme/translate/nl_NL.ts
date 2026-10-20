@@ -24,6 +24,26 @@
         <translation>Meer detail</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Polygoon</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Masker</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Rechthoek</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Georiënteerde Rechthoek</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Cirkel</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Selecteer de modus &apos;AI-Points&apos; of &apos;AI-Box&apos; om de AI-assistent in te schakelen</translation>
     </message>
