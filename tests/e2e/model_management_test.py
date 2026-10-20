@@ -17,6 +17,7 @@ from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
+from ..conftest import DOWNLOAD_START_TIMEOUT_MS
 from .conftest import MainWinFactory
 
 
@@ -97,7 +98,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     models = dialog.findChild(ModelsWidget)
     assert models is not None
     models._rows[name][1].click()
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     dialog.close()
     assert win._model_manager.active == name
     release.set()
@@ -332,7 +333,7 @@ def test_picker_downloads_and_selects_a_missing_model_in_place(
 
     picker.setCurrentIndex(picker.findData(name))
     assert safe_load(config.read_text())["ai"]["default"] == "Sam2 (speed)"
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     assert picker.currentIndex() == -1
     assert picker.placeholderText() == "Sam2 (speed)"
     assert picker.toolTip() == "Downloading: Sam2 (speed)"
