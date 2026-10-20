@@ -347,7 +347,8 @@ def read_label_file_image_path(*, filename: str) -> str:
     try:
         with open(filename, encoding="utf-8") as f:
             return _image_path_from_raw(json.load(f))
-    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as e:
+    # RuntimeError covers RecursionError from deeply nested JSON.
+    except (OSError, KeyError, TypeError, ValueError, RuntimeError) as e:
         raise LabelFileReadError(f"failed to load {filename!r}: {e}") from e
 
 
