@@ -537,6 +537,16 @@
         <translation>Ouvrir un dossier d’images</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Supprimer le fichier</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Supprimer</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modifier l&apos;étiquette de la forme sélectionnée</translation>
     </message>
@@ -555,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Insérer dans cette image les formes du presse-papiers</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Dupliquer</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -577,8 +592,23 @@
         <translation>Annuler</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Modifier</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Suivante</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>Image &amp;précédente</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Précédente</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

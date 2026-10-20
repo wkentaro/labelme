@@ -537,6 +537,16 @@
         <translation>Mở thư mục hình ảnh</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Xóa tệp</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Xóa</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Sửa đổi nhãn của hình dạng đã chọn</translation>
     </message>
@@ -555,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Chèn các hình dạng trong clipboard vào ảnh này</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Nhân đôi</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -577,8 +592,23 @@
         <translation>Hoàn tác</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Chỉnh sửa</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Tiếp theo</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>Hình ảnh &amp;Trước</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Trước</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

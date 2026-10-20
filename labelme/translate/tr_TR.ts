@@ -537,6 +537,16 @@
         <translation>Görüntü klasörü aç</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Dosyayı Sil</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Sil</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Seçili şeklin etiketini değiştir</translation>
     </message>
@@ -555,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Panodaki şekilleri bu görüntüye ekle</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Çoğalt</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -577,8 +592,23 @@
         <translation>Geri Al</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Düzenle</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Sonraki</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Önceki Görüntü</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Önceki</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

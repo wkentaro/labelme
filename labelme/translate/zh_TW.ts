@@ -537,6 +537,16 @@
         <translation>開啟影像資料夾</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>刪除檔案</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>刪除</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>修改選取形狀的標籤</translation>
     </message>
@@ -555,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>將剪貼板中的圖形插入此圖片</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>複製</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -577,8 +592,23 @@
         <translation>復原</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>編輯</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>下一張</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>上一張影像(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>上一張</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

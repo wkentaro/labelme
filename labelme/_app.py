@@ -513,6 +513,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         delete_file = action(
             text=self.tr("&Delete Annotation File"),
+            toolbar_text=self.tr("Delete File", "toolbar"),
             slot=self.delete_file,
             shortcut=shortcuts["delete_file"],
             icon="phosphor/file-x.svg",
@@ -533,6 +534,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         delete = action(
             text=self.tr("Delete Shapes"),
+            toolbar_text=self.tr("Delete", "toolbar"),
             slot=self.delete_selected_shapes,
             shortcut=shortcuts["delete_shape"],
             icon="phosphor/trash.svg",
@@ -567,6 +569,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         duplicate = action(
             text=self.tr("Duplicate Shapes"),
+            toolbar_text=self.tr("Duplicate", "toolbar"),
             slot=lambda: self._insert_shapes(
                 [s.copy() for s in self._canvas_widgets.canvas.selected_shapes]
             ),
@@ -630,6 +633,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         edit_mode = image_action(
             text=self.tr("Edit Shapes"),
+            toolbar_text=self.tr("Edit", "toolbar"),
             slot=lambda: self._switch_canvas_mode(edit=True, create_mode=None),
             shortcut=shortcuts["edit_shape"],
             icon="phosphor/note-pencil.svg",
@@ -707,6 +711,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         open_next_img = action(
             text=self.tr("&Next Image"),
+            toolbar_text=self.tr("Next", "toolbar"),
             slot=self._open_next_image,
             shortcut=shortcuts["open_next"],
             icon="phosphor/arrow-fat-right.svg",
@@ -716,6 +721,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         open_prev_img = action(
             text=self.tr("&Previous Image"),
+            toolbar_text=self.tr("Previous", "toolbar"),
             slot=self._open_prev_image,
             shortcut=shortcuts["open_prev"],
             icon="phosphor/arrow-fat-left.svg",

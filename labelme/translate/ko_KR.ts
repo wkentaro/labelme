@@ -537,6 +537,16 @@
         <translation>이미지 폴더 열기</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>파일 삭제</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>삭제</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>선택한 도형의 레이블 수정</translation>
     </message>
@@ -555,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>클립보드의 도형을 이 이미지에 삽입</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>복제</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -577,8 +592,23 @@
         <translation>실행 취소</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>편집</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>다음</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>이전 이미지(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>이전</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

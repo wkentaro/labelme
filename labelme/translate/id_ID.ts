@@ -485,6 +485,16 @@
         <translation>Buka folder gambar</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Hapus Berkas</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Hapus</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Ubah label bentuk yang dipilih</translation>
     </message>
@@ -503,6 +513,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Sisipkan bentuk dari clipboard ke gambar ini</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Duplikat</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -525,8 +540,23 @@
         <translation>Urungkan</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Berikutnya</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>Gambar &amp;Sebelumnya</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Sebelumnya</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

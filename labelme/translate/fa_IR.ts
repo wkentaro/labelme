@@ -537,6 +537,16 @@
         <translation>باز کردن پوشه‌ای از تصاویر</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>حذف فایل</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>حذف</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>تغییر برچسب شکل انتخاب شده</translation>
     </message>
@@ -555,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>درج شکل‌های کلیپ‌بورد در این تصویر</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>تکثیر</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -577,8 +592,23 @@
         <translation>بازگشت</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>ویرایش</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>بعدی</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>تصویر قبلی(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>قبلی</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>

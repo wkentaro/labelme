@@ -537,6 +537,16 @@
         <translation>Открыть папку с изображениями</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Удалить файл</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Удалить</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Изменить метку выбранной фигуры</translation>
     </message>
@@ -555,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Вставить фигуры из буфера обмена в это изображение</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Дублировать</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -577,8 +592,23 @@
         <translation>Отменить</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Изменить</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Далее</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Предыдущее изображение</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Назад</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
