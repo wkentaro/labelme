@@ -767,6 +767,10 @@
         <translation>Na razie możesz używać ustawień domyślnych. Przed resetowaniem zostanie zapisana kopia zapasowa pliku konfiguracyjnego.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Plik adnotacji należy do innego obrazu: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Otwórz folder</translation>
     </message>

@@ -767,6 +767,10 @@
         <translation>Per ora puoi usare le impostazioni predefinite. Prima del ripristino verrà salvata una copia di backup del file di configurazione.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Il file di annotazioni appartiene a un’altra immagine: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Apri cartella</translation>
     </message>

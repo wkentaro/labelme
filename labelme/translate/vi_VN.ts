@@ -767,6 +767,10 @@
         <translation>Bạn có thể dùng cài đặt mặc định lúc này. Trước khi đặt lại, một bản sao lưu của tệp cấu hình sẽ được lưu.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Tệp chú thích thuộc về một hình ảnh khác: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Mở thư mục</translation>
     </message>

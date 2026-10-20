@@ -767,6 +767,10 @@
         <translation>你可以暂时使用默认设置。重置前会先保存配置文件的备份。</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>该标注文件属于另一张图像：%s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>打开文件夹</translation>
     </message>

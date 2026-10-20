@@ -767,6 +767,10 @@
         <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Açıklama dosyası başka bir görüntüye ait: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Klasör Aç</translation>
     </message>

@@ -767,6 +767,10 @@
         <translation>你可以暫時使用預設值。重設前會先儲存設定檔的備份。</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>此標註檔案屬於另一張影像：%s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>開啟資料夾</translation>
     </message>

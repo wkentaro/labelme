@@ -767,6 +767,10 @@
         <translation>Пока можно использовать настройки по умолчанию. Перед сбросом будет сохранена резервная копия вашего файла конфигурации.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Файл аннотаций относится к другому изображению: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Открыть папку</translation>
     </message>

@@ -545,3 +545,59 @@ def test_footer_recounts_once_per_save(
     (out / "frame.json").write_text("{}")
     win._refresh_image_list_checkmarks(label_path=str(out / "frame.json"))
     assert counts == [(3, 3)]
+
+
+@pytest.mark.gui
+def test_images_sharing_a_stem_keep_their_own_annotation_files(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    critical_messages: list[str],
+) -> None:
+    images = tmp_path / "images"
+    images.mkdir()
+    for name in ("x.jpg", "x.png"):
+        shutil.copy(data_path / "raw" / "2011_000003.jpg", images / name)
+    win = main_win(file_or_dir=images)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    monkeypatch.setattr(win, "prompt_save_file_path", win.current_label_file_path)
+
+    def open_x_png() -> None:
+        win._docks.file_list.setCurrentRow(1)
+        win._load_file(image_or_label_path=str(images / "x.png"))
+        assert win._image_path == str(images / "x.png")
+
+    def save() -> None:
+        win._save_label_file(save_as=False)
+        qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+
+    save()
+    assert (images / "x.json").exists()
+    assert _check_states(win) == [Qt.CheckState.Checked, Qt.CheckState.Unchecked]
+
+    # x.png opens on its own, not on x.jpg's Annotation File.
+    open_x_png()
+    assert win._label_file_path is None
+    save()
+    assert (images / "x.png.json").exists()
+    assert _check_states(win) == [Qt.CheckState.Checked] * 2
+
+    # With both names holding x.jpg's Annotation, x.png's save fails rather
+    # than overwrite one.
+    taken = (images / "x.json").read_text()
+    (images / "x.png.json").write_text(taken)
+    open_x_png()
+    assert win._label_file_path is None
+    win.mark_dirty()
+    # The default destination, as Auto Save and Retry use it; only a
+    # destination confirmed in the Save dialog may replace another's file.
+    assert not win.save_labels(label_path=win.current_label_file_path())
+    assert len(critical_messages) == 1
+    assert "another Image" in critical_messages[0]
+    assert (images / "x.json").read_text() == taken
+    assert (images / "x.png.json").read_text() == taken
+    # Closing must not stop on the unsaved changes the failed save left.
+    win.mark_clean()

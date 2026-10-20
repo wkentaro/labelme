@@ -777,6 +777,10 @@
         <translation>今回は初期設定で続行できます。リセットする場合は、先に設定ファイルのバックアップを保存します。</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>このアノテーションファイルは別の画像のものです: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>フォルダーを開く</translation>
     </message>

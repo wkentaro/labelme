@@ -715,6 +715,10 @@
         <translation>Anda dapat menggunakan pengaturan bawaan untuk saat ini. Sebelum reset, salinan cadangan file konfigurasi Anda akan disimpan.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Berkas anotasi milik gambar lain: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Buka Folder</translation>
     </message>

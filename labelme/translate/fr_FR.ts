@@ -767,6 +767,10 @@
         <translation>Vous pouvez utiliser les paramètres par défaut pour le moment. Une sauvegarde de votre fichier de configuration sera enregistrée avant la réinitialisation.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Le fichier d’annotations appartient à une autre image : %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Ouvrir un dossier</translation>
     </message>
