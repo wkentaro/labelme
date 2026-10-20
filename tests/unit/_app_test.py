@@ -529,6 +529,25 @@ def test_resolve_label_path_follows_the_recorded_image(*, tmp_path: Path) -> Non
     assert resolve("y.jpg") == str(tmp_path / "y.json")
 
 
+def test_find_label_path_reads_a_rewrite_within_one_timestamp(
+    *, tmp_path: Path
+) -> None:
+    for name in ("x.jpg", "x.png"):
+        (tmp_path / name).touch()
+    label = tmp_path / "x.png.json"
+    label.write_text(json.dumps({"imagePath": "x.png"}))
+    image = str(tmp_path / "x.png")
+    assert _app._has_label_file(image_path=image, output_dir=None)
+
+    # Same size and mtime, as a fast rewrite on a coarse clock leaves them.
+    stat = label.stat()
+    label.write_text(json.dumps({"imagePath": "x.jpg"}))
+    os.utime(label, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    assert (
+        _app._find_label_path(image_path=image, output_dir=None, cached=False) is None
+    )
+
+
 def test_resolve_stored_image_path_falls_back_to_absolute(
     *,
     monkeypatch: pytest.MonkeyPatch,
