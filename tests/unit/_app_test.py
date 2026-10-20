@@ -490,7 +490,9 @@ def test_resolve_label_path(
     expected: str,
 ) -> None:
     assert (
-        _app._resolve_label_path(image_path=image_path, output_dir=output_dir)
+        _app._resolve_label_path(
+            image_path=image_path, output_dir=output_dir, root_prefix=None
+        )
         == expected
     )
 
@@ -501,7 +503,7 @@ def test_resolve_label_path_follows_the_recorded_image(*, tmp_path: Path) -> Non
 
     def resolve(name: str) -> str:
         return _app._resolve_label_path(
-            image_path=str(tmp_path / name), output_dir=None
+            image_path=str(tmp_path / name), output_dir=None, root_prefix=None
         )
 
     def record(label_name: str, image_path: str) -> None:
@@ -518,9 +520,13 @@ def test_resolve_label_path_follows_the_recorded_image(*, tmp_path: Path) -> Non
     # A recorded Image that is gone still belongs here, unless its name is
     # another Image beside this one.
     record("x.json", "../moved/x.jpg")
-    assert _app._has_label_file(image_path=str(tmp_path / "x.jpg"), output_dir=None)
+    assert _app._has_label_file(
+        image_path=str(tmp_path / "x.jpg"), output_dir=None, root_prefix=None
+    )
     record("y.json", "embedded-elsewhere.jpg")
-    assert _app._has_label_file(image_path=str(tmp_path / "y.jpg"), output_dir=None)
+    assert _app._has_label_file(
+        image_path=str(tmp_path / "y.jpg"), output_dir=None, root_prefix=None
+    )
     (tmp_path / "x.png.json").unlink()
     assert resolve("x.png") == str(tmp_path / "x.png.json")
 
@@ -537,15 +543,56 @@ def test_find_label_path_reads_a_rewrite_within_one_timestamp(
     label = tmp_path / "x.png.json"
     label.write_text(json.dumps({"imagePath": "x.png"}))
     image = str(tmp_path / "x.png")
-    assert _app._has_label_file(image_path=image, output_dir=None)
+    assert _app._has_label_file(image_path=image, output_dir=None, root_prefix=None)
 
     # Same size and mtime, as a fast rewrite on a coarse clock leaves them.
     stat = label.stat()
     label.write_text(json.dumps({"imagePath": "x.jpg"}))
     os.utime(label, ns=(stat.st_atime_ns, stat.st_mtime_ns))
     assert (
-        _app._find_label_path(image_path=image, output_dir=None, cached=False) is None
+        _app._find_label_path(
+            image_path=image, output_dir=None, root_prefix=None, cached=False
+        )
+        is None
     )
+
+
+def test_resolve_label_path_mirrors_subfolders(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    images = tmp_path / "images"
+    out = tmp_path / "out"
+    for name in ("0001.jpg", "a/0001.jpg", "b/0001.jpg"):
+        (images / name).parent.mkdir(parents=True, exist_ok=True)
+        (images / name).touch()
+    root_prefix = os.path.join(str(images), "")
+
+    def resolve(image_path: Path) -> str:
+        return _app._resolve_label_path(
+            image_path=str(image_path), output_dir=out, root_prefix=root_prefix
+        )
+
+    assert resolve(images / "a" / "0001.jpg") == str(out / "a" / "0001.json")
+    assert resolve(images / "0001.jpg") == str(out / "0001.json")
+    # Images outside the opened folder have no subfolder to mirror.
+    assert resolve(tmp_path / "x.jpg") == str(out / "x.json")
+    assert resolve(tmp_path / "..x" / "x.jpg") == str(out / "x.json")
+
+    # A flat Annotation File from before mirroring stays with its own Image,
+    # even when the root Image's name is the same.
+    out.mkdir()
+    (out / "0001.json").write_text(json.dumps({"imagePath": "../images/b/0001.jpg"}))
+    assert resolve(images / "b" / "0001.jpg") == str(out / "0001.json")
+    assert resolve(images / "a" / "0001.jpg") == str(out / "a" / "0001.json")
+    assert resolve(images / "0001.jpg") == str(out / "0001.jpg.json")
+
+    # A folder opened as "." lists its Images without the "./" prefix.
+    monkeypatch.chdir(images)
+    assert _app._resolve_label_path(
+        image_path=os.path.join("a", "0001.jpg"),
+        output_dir=out,
+        root_prefix=os.path.join(".", ""),
+    ) == str(out / "a" / "0001.json")
 
 
 def test_resolve_stored_image_path_falls_back_to_absolute(

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import copy
 import enum
 import functools
@@ -1588,6 +1589,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 or _resolve_label_path(
                     image_path=self._file_list_image_path or self._image_path,
                     output_dir=self._output_dir,
+                    root_prefix=self._file_list_root_prefix,
                 )
             )
         else:
@@ -2594,6 +2596,7 @@ class MainWindow(QtWidgets.QMainWindow):
             else _find_label_path(
                 image_path=image_or_label_path,
                 output_dir=self._output_dir,
+                root_prefix=self._file_list_root_prefix,
                 cached=False,
             )
         )
@@ -3011,13 +3014,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
+        default_path = _resolve_label_path(
+            image_path=self._file_list_image_path or self._image_path,
+            output_dir=self._output_dir,
+            root_prefix=self._file_list_root_prefix,
+        )
+        # The dialog cannot preselect a file in a mirrored subfolder of the
+        # Annotation Folder that does not exist yet.
+        with contextlib.suppress(OSError):
+            Path(default_path).parent.mkdir(parents=True, exist_ok=True)
         label_path, _ = QtWidgets.QFileDialog.getSaveFileName(
             parent=self,
             caption=self.tr("Save Annotation File"),
-            dir=_resolve_label_path(
-                image_path=self._file_list_image_path or self._image_path,
-                output_dir=self._output_dir,
-            ),
+            dir=default_path,
             filter=self.tr("Annotation files (*%s)") % LABEL_FILE_SUFFIX,
         )
         return label_path
@@ -3042,6 +3051,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return _resolve_label_path(
             image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
+            root_prefix=self._file_list_root_prefix,
         )
 
     def _confirm_deletion(self, *, message: str) -> bool:
@@ -3475,6 +3485,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return self._label_file_path or _find_label_path(
             image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
+            root_prefix=self._file_list_root_prefix,
             cached=False,
         )
 
@@ -3627,13 +3638,18 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             opened_dir = str(Path(file_or_dir).parent)
             previous_output_dir = self._output_dir
+            previous_root_prefix = self._file_list_root_prefix
             missing_output_dir = self._restore_remembered_output_dir(
                 opened_dir=opened_dir
             )
+            # The Annotation File mirrors the image's place under the folder
+            # being opened, not the one being replaced.
+            self._file_list_root_prefix = opened_dir
             # Load before swapping the Image List, so a failed load leaves the
             # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
                 self._output_dir = previous_output_dir
+                self._file_list_root_prefix = previous_root_prefix
                 return
             self._import_images_from_dir(root_dir=opened_dir)
             # The load ran before the Image List knew the neighbors.
@@ -3735,8 +3751,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.file_dock.setToolTip("")
 
         self._prev_opened_dir = root_dir
-        # Matches the normpath'd paths _scan_image_files returns.
-        self._file_list_root_prefix = os.path.join(os.path.normpath(root_dir), "")
+        self._file_list_root_prefix = root_dir
         self._loaded_image_paths = _scan_image_files(root_dir=root_dir)
         self._refresh_file_list()
 
@@ -3754,7 +3769,11 @@ class MainWindow(QtWidgets.QMainWindow):
         for path in self._loaded_image_paths:
             if self._matches_file_search(path):
                 image_paths.append(path)
-            elif _has_label_file(image_path=path, output_dir=self._output_dir):
+            elif _has_label_file(
+                image_path=path,
+                output_dir=self._output_dir,
+                root_prefix=self._file_list_root_prefix,
+            ):
                 self._hidden_annotated_paths.add(path)
 
         file_list = self._docks.file_list
@@ -3766,6 +3785,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         image_path=image_path,
                         label=self._file_list_label(image_path),
                         output_dir=self._output_dir,
+                        root_prefix=self._file_list_root_prefix,
                     )
                 )
             if self._file_list_image_path in image_paths:
@@ -3789,7 +3809,11 @@ class MainWindow(QtWidgets.QMainWindow):
             item = file_list.item(row)
             assert item
             if _comparable_stem(_file_list_item_path(item)) in stems:
-                _set_annotated_check_state(item, output_dir=self._output_dir)
+                _set_annotated_check_state(
+                    item,
+                    output_dir=self._output_dir,
+                    root_prefix=self._file_list_root_prefix,
+                )
 
         # Images hidden by the search box have no item, so keep the count's
         # record of them by the same rule.
@@ -3798,7 +3822,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 image_path
             ):
                 continue
-            if _has_label_file(image_path=image_path, output_dir=self._output_dir):
+            if _has_label_file(
+                image_path=image_path,
+                output_dir=self._output_dir,
+                root_prefix=self._file_list_root_prefix,
+            ):
                 self._hidden_annotated_paths.add(image_path)
             else:
                 self._hidden_annotated_paths.discard(image_path)
@@ -3818,10 +3846,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def _file_list_label(self, image_path: str, /) -> str:
         # Paths under the opened folder are shown relative to it so the
         # Image List stays readable; the full path stays in the tooltip.
-        prefix = self._file_list_root_prefix
-        if prefix and image_path.startswith(prefix):
-            return image_path[len(prefix) :]
-        return image_path
+        relative = _relative_to_root(image_path, self._file_list_root_prefix)
+        return image_path if relative is None else relative
 
     def _matches_file_search(self, image_path: str, /) -> bool:
         return bool(self._file_search_pattern.search(self._file_list_label(image_path)))
@@ -3904,28 +3930,40 @@ def _format_window_title(
     return title
 
 
-def _resolve_label_path(*, image_path: str, output_dir: Path | None) -> str:
+def _resolve_label_path(
+    *, image_path: str, output_dir: Path | None, root_prefix: str | None
+) -> str:
     # The Image's Annotation File, or where a new one is written.
-    candidates = _label_path_candidates(image_path=image_path, output_dir=output_dir)
-    free: Path | None = None
-    for candidate in candidates:
-        if _label_file_belongs_to_image(
-            label_path=candidate, image_path=image_path, cached=False
-        ):
-            return str(candidate)
-        if free is None and not candidate.exists():
-            free = candidate
+    if found := _find_label_path(
+        image_path=image_path,
+        output_dir=output_dir,
+        root_prefix=root_prefix,
+        cached=False,
+    ):
+        return found
+    candidates = _label_path_candidates(
+        image_path=image_path, output_dir=output_dir, root_prefix=root_prefix
+    )
     # Never default to another Image's Annotation File. With every candidate
     # taken, the save refuses to overwrite the first one.
-    return str(free or candidates[0])
+    return str(next((c for c in candidates if not c.exists()), candidates[0]))
 
 
 def _find_label_path(
-    *, image_path: str, output_dir: Path | None, cached: bool
+    *,
+    image_path: str,
+    output_dir: Path | None,
+    root_prefix: str | None,
+    cached: bool,
 ) -> str | None:
-    for candidate in _label_path_candidates(
-        image_path=image_path, output_dir=output_dir
-    ):
+    for candidate in [
+        *_label_path_candidates(
+            image_path=image_path, output_dir=output_dir, root_prefix=root_prefix
+        ),
+        *_legacy_label_path_candidates(
+            image_path=image_path, output_dir=output_dir, root_prefix=root_prefix
+        ),
+    ]:
         if _label_file_belongs_to_image(
             label_path=candidate, image_path=image_path, cached=cached
         ):
@@ -3933,9 +3971,32 @@ def _find_label_path(
     return None
 
 
-def _label_path_candidates(*, image_path: str, output_dir: Path | None) -> list[Path]:
+def _label_path_candidates(
+    *, image_path: str, output_dir: Path | None, root_prefix: str | None
+) -> list[Path]:
     image = Path(image_path)
-    parent = output_dir if output_dir is not None else image.parent
+    if output_dir is None:
+        parent = image.parent
+    else:
+        # Mirror the opened folder's subfolders, so Images sharing a name in
+        # different subfolders keep separate Annotation Files.
+        relative = _relative_to_root(image_path, root_prefix)
+        parent = output_dir if relative is None else output_dir / Path(relative).parent
+    return _label_names_in(parent, image)
+
+
+def _legacy_label_path_candidates(
+    *, image_path: str, output_dir: Path | None, root_prefix: str | None
+) -> list[Path]:
+    # Annotation Folders written before mirroring are flat. Their files are
+    # still read, but new ones go to the mirrored subfolder.
+    relative = _relative_to_root(image_path, root_prefix)
+    if output_dir is None or relative is None or Path(relative).parent == Path():
+        return []
+    return _label_names_in(output_dir, Path(image_path))
+
+
+def _label_names_in(parent: Path, image: Path, /) -> list[Path]:
     # _refresh_image_list_checkmarks maps both names back to the stem.
     # The stem name is the convention other tools read. Images sharing a stem in
     # one folder (x.jpg, x.png) cannot both have it, so the next one keeps its
@@ -3944,6 +4005,20 @@ def _label_path_candidates(*, image_path: str, output_dir: Path | None) -> list[
         parent / f"{image.stem}{LABEL_FILE_SUFFIX}",
         parent / f"{image.name}{LABEL_FILE_SUFFIX}",
     ]
+
+
+def _relative_to_root(path: str, root_prefix: str | None, /) -> str | None:
+    if root_prefix is None:
+        return None
+    try:
+        # A prefix check would miss "./a.jpg" under the opened folder ".",
+        # which the scan lists as "a.jpg".
+        relative = os.path.relpath(path, root_prefix)
+    except ValueError:  # Windows paths on different drives
+        return None
+    if relative == os.pardir or relative.startswith(os.pardir + os.sep):
+        return None
+    return relative
 
 
 def _label_file_belongs_to_image(
@@ -4020,13 +4095,13 @@ def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
 
 
 def _make_image_list_item(
-    *, image_path: str, label: str, output_dir: Path | None
+    *, image_path: str, label: str, output_dir: Path | None, root_prefix: str | None
 ) -> QtWidgets.QListWidgetItem:
     item = QtWidgets.QListWidgetItem(label)
     item.setData(Qt.ItemDataRole.UserRole, image_path)
     item.setToolTip(os.path.abspath(image_path))
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-    _set_annotated_check_state(item, output_dir=output_dir)
+    _set_annotated_check_state(item, output_dir=output_dir, root_prefix=root_prefix)
     return item
 
 
@@ -4037,17 +4112,30 @@ def _comparable_stem(path: str, /) -> str:
 
 
 def _set_annotated_check_state(
-    item: QtWidgets.QListWidgetItem, /, *, output_dir: Path | None
+    item: QtWidgets.QListWidgetItem,
+    /,
+    *,
+    output_dir: Path | None,
+    root_prefix: str | None,
 ) -> None:
     has_label = _has_label_file(
-        image_path=_file_list_item_path(item), output_dir=output_dir
+        image_path=_file_list_item_path(item),
+        output_dir=output_dir,
+        root_prefix=root_prefix,
     )
     item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
 
 
-def _has_label_file(*, image_path: str, output_dir: Path | None) -> bool:
+def _has_label_file(
+    *, image_path: str, output_dir: Path | None, root_prefix: str | None
+) -> bool:
     return (
-        _find_label_path(image_path=image_path, output_dir=output_dir, cached=True)
+        _find_label_path(
+            image_path=image_path,
+            output_dir=output_dir,
+            root_prefix=root_prefix,
+            cached=True,
+        )
         is not None
     )
 
