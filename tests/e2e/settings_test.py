@@ -642,6 +642,52 @@ def test_menu_toggle_persists_and_syncs_settings_dialog(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    ("action_name", "key"),
+    [
+        ("keep_prev_zoom", "keep_prev_scale"),
+        ("toggle_keep_prev_brightness_contrast", "keep_prev_brightness_contrast"),
+    ],
+)
+def test_keep_previous_menu_toggle_survives_restart(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    editable_config_file: Path,
+    pause: bool,
+    action_name: str,
+    key: str,
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    assert win._config[key] is False
+    assert not getattr(win._actions, action_name).isChecked()
+
+    for expected in (True, False):
+        getattr(win._actions, action_name).trigger()
+        assert win._config[key] is expected
+        persisted = safe_load(editable_config_file.read_text())
+        if expected:
+            assert persisted[key] is True
+        else:
+            # Returning to the default removes the sparse Override; a new
+            # window must then recover False from the Default Config.
+            assert key not in persisted
+        assert persisted["auto_save"] is True
+        assert win.close()
+
+        win = main_win(config_file=editable_config_file)
+        assert win._config[key] is expected
+        assert getattr(win._actions, action_name).isChecked() is expected
+        dialog = _open_settings_dialog(win=win)
+        editor = dialog._editors[(key,)]
+        assert isinstance(editor, QtWidgets.QCheckBox)
+        assert editor.isChecked() is expected
+        dialog.close()
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_fill_drawing_dialog_toggle_applies_to_canvas(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
