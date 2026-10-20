@@ -142,6 +142,8 @@ Everything else, including the Python import surface, is internal and may change
 Run `labelme --help` for detail.\
 The annotations are saved as a [JSON](http://www.json.org/) file.
 
+Saving an Annotation File writes a temporary file in the same folder and then replaces the destination. The folder must permit creating and replacing files, even when an existing Annotation File is writable. If the folder is not writable, saving fails and the existing Annotation File stays unchanged. Choose a writable folder with Save As… or adjust the folder permissions before saving again.
+
 ```bash
 labelme  # just open gui
 
