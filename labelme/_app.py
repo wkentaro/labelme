@@ -2068,7 +2068,7 @@ class MainWindow(QtWidgets.QMainWindow):
             label_path != self._auto_save_path
             and Path(label_path).exists()
             and not _label_file_belongs_to_image(
-                label_path=Path(label_path), image_path=image_path
+                label_path=Path(label_path), image_path=image_path, cached=False
             )
         ):
             raise LabelFileError(
@@ -2592,7 +2592,9 @@ class MainWindow(QtWidgets.QMainWindow):
             image_or_label_path
             if file_list_image_path is None
             else _find_label_path(
-                image_path=image_or_label_path, output_dir=self._output_dir
+                image_path=image_or_label_path,
+                output_dir=self._output_dir,
+                cached=False,
             )
         )
         if label_path is None:
@@ -3473,6 +3475,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return self._label_file_path or _find_label_path(
             image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
+            cached=False,
         )
 
     def _can_continue(self) -> bool:
@@ -3906,7 +3909,9 @@ def _resolve_label_path(*, image_path: str, output_dir: Path | None) -> str:
     candidates = _label_path_candidates(image_path=image_path, output_dir=output_dir)
     free: Path | None = None
     for candidate in candidates:
-        if _label_file_belongs_to_image(label_path=candidate, image_path=image_path):
+        if _label_file_belongs_to_image(
+            label_path=candidate, image_path=image_path, cached=False
+        ):
             return str(candidate)
         if free is None and not candidate.exists():
             free = candidate
@@ -3915,11 +3920,15 @@ def _resolve_label_path(*, image_path: str, output_dir: Path | None) -> str:
     return str(free or candidates[0])
 
 
-def _find_label_path(*, image_path: str, output_dir: Path | None) -> str | None:
+def _find_label_path(
+    *, image_path: str, output_dir: Path | None, cached: bool
+) -> str | None:
     for candidate in _label_path_candidates(
         image_path=image_path, output_dir=output_dir
     ):
-        if _label_file_belongs_to_image(label_path=candidate, image_path=image_path):
+        if _label_file_belongs_to_image(
+            label_path=candidate, image_path=image_path, cached=cached
+        ):
             return str(candidate)
     return None
 
@@ -3937,14 +3946,20 @@ def _label_path_candidates(*, image_path: str, output_dir: Path | None) -> list[
     ]
 
 
-def _label_file_belongs_to_image(*, label_path: Path, image_path: str) -> bool:
+def _label_file_belongs_to_image(
+    *, label_path: Path, image_path: str, cached: bool
+) -> bool:
     # An Annotation File records its Image in imagePath; the file name alone
     # cannot tell Images sharing a stem apart.
     try:
         stat = label_path.stat()
     except OSError:
         return False
-    stored = _read_stored_image_path(str(label_path), stat.st_mtime_ns, stat.st_size)
+    stored = (
+        _read_stored_image_path_cached(str(label_path), stat.st_mtime_ns, stat.st_size)
+        if cached
+        else _read_stored_image_path(str(label_path))
+    )
     if stored is None:
         # Unreadable: claim it, so opening the Image reports the error instead
         # of hiding the file and saving over it.
@@ -3966,13 +3981,19 @@ def _label_file_belongs_to_image(*, label_path: Path, image_path: str) -> bool:
 
 
 # The Image List checks every Image on each rebuild and search keystroke, so
-# parse each Annotation File once per revision.
+# its check marks parse each Annotation File once per revision. A rewrite of
+# the same size within one timestamp tick keeps a stale check mark, so loading,
+# saving and Delete read the file fresh.
 # ponytail: the first parse reads the whole file, ~0.6 ms with embedded image
 # data; stop reading at imagePath if first builds of such folders are slow.
 @functools.lru_cache(maxsize=65536)
-def _read_stored_image_path(
+def _read_stored_image_path_cached(
     label_path: str, _mtime_ns: int, _size: int, /
 ) -> str | None:
+    return _read_stored_image_path(label_path)
+
+
+def _read_stored_image_path(label_path: str, /) -> str | None:
     try:
         image_path = read_label_file_image_path(filename=label_path)
     except LabelFileReadError:
@@ -4025,7 +4046,10 @@ def _set_annotated_check_state(
 
 
 def _has_label_file(*, image_path: str, output_dir: Path | None) -> bool:
-    return _find_label_path(image_path=image_path, output_dir=output_dir) is not None
+    return (
+        _find_label_path(image_path=image_path, output_dir=output_dir, cached=True)
+        is not None
+    )
 
 
 def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:
