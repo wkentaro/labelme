@@ -24,6 +24,26 @@
         <translation>جزئیات بیشتر</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>چندضلعی</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>ماسک</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>مستطیل</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>مستطیل جهت‌دار</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>دایره</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
     </message>

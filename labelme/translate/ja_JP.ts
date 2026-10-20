@@ -24,6 +24,26 @@
         <translation>より詳細</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>ポリゴン</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>マスク</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>矩形</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>向き付き矩形</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>円</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>&apos;AI-Points&apos; または &apos;AI-Box&apos; モードを選択すると AI アシストが有効になります</translation>
     </message>

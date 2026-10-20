@@ -2236,7 +2236,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "%s does not support point prompts.\n"
                 "Please select a different model or use AI-Box mode."
             )
-            % option.display_name,
+            % QtCore.QCoreApplication.translate("SettingsDialog", option.display_name),
         )
 
     def _on_scroll_request(self, delta: int, orientation: Qt.Orientation, /) -> None:

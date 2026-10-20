@@ -138,11 +138,13 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self._output_format_combo.setAccessibleDescription(
             self.tr("AI-assisted annotation output format")
         )
-        self._output_format_combo.addItem("Polygon", "polygon")
-        self._output_format_combo.addItem("Mask", "mask")
-        self._output_format_combo.addItem("Rectangle", "rectangle")
-        self._output_format_combo.addItem("Oriented Rectangle", "oriented_rectangle")
-        self._output_format_combo.addItem("Circle", "circle")
+        self._output_format_combo.addItem(self.tr("Polygon"), "polygon")
+        self._output_format_combo.addItem(self.tr("Mask"), "mask")
+        self._output_format_combo.addItem(self.tr("Rectangle"), "rectangle")
+        self._output_format_combo.addItem(
+            self.tr("Oriented Rectangle"), "oriented_rectangle"
+        )
+        self._output_format_combo.addItem(self.tr("Circle"), "circle")
         body_layout.addWidget(self._output_format_combo)
 
         layout.addWidget(body)

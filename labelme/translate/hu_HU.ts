@@ -24,6 +24,26 @@
         <translation>Részletesebb</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Sokszög</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maszk</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Téglalap</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Irányított téglalap</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Kör</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az MI-segéd engedélyezéséhez</translation>
     </message>

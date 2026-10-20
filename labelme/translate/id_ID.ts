@@ -24,6 +24,26 @@
         <translation>Lebih detail</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Poligon</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Mask</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Persegi Panjang</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Persegi Panjang Berorientasi</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Lingkaran</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Pilih mode &apos;AI-Points&apos; atau &apos;AI-Box&apos; untuk mengaktifkan Bantuan AI</translation>
     </message>

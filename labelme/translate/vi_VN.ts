@@ -24,6 +24,26 @@
         <translation>Chi tiết hơn</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Đa giác</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Mặt nạ</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Hình chữ nhật</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Hình chữ nhật có hướng</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Hình tròn</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Chọn chế độ &apos;AI-Points&apos; hoặc &apos;AI-Box&apos; để bật Hỗ trợ AI</translation>
     </message>

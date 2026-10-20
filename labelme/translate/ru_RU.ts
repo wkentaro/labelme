@@ -24,6 +24,26 @@
         <translation>Больше деталей</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Полигон</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Маска</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Прямоугольник</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Ориентированный прямоугольник</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Окружность</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Выберите режим &apos;AI-Points&apos; или &apos;AI-Box&apos;, чтобы включить ИИ-помощника</translation>
     </message>

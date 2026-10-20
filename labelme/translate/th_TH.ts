@@ -24,6 +24,26 @@
         <translation>รายละเอียดมากขึ้น</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>หลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>มาสก์</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>สี่เหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>สี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>วงกลม</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>เลือกโหมด &apos;AI-Points&apos; หรือ &apos;AI-Box&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
     </message>
