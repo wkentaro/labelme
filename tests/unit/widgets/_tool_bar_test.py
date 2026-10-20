@@ -154,6 +154,20 @@ def test_toolbar_custom_button_style(*, qtbot: QtBot) -> None:
     assert tb.toolButtonStyle() == Qt.ToolButtonStyle.ToolButtonIconOnly
 
 
+def test_toolbar_drops_text_when_labeled_bar_does_not_fit(
+    *, qtbot: QtBot, toolbar_h: ToolBar
+) -> None:
+    toolbar_h.show()
+    qtbot.waitExposed(toolbar_h)
+    labeled_width = toolbar_h.sizeHint().width()
+
+    toolbar_h.resize(labeled_width - 1, toolbar_h.height())
+    assert toolbar_h.toolButtonStyle() == Qt.ToolButtonStyle.ToolButtonIconOnly
+
+    toolbar_h.resize(labeled_width, toolbar_h.height())
+    assert toolbar_h.toolButtonStyle() == Qt.ToolButtonStyle.ToolButtonTextUnderIcon
+
+
 # --- actions produce QToolButton children ---
 
 

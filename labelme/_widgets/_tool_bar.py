@@ -35,6 +35,8 @@ class ToolBar(QtWidgets.QToolBar):
         self.setFloatable(False)
         self.setOrientation(orientation)
         self.setToolButtonStyle(button_style)
+        self._button_style = button_style
+        self._labeled_width = 0
         overflow = self.findChild(QtWidgets.QToolButton, "qt_toolbar_ext_button")
         if overflow is not None:
             overflow.setAccessibleName(overflow_label or self.tr("More actions"))
@@ -57,6 +59,25 @@ class ToolBar(QtWidgets.QToolBar):
 
         if orientation == Qt.Orientation.Vertical:
             self._equalize_button_widths()
+
+    def resizeEvent(self, event: QtGui.QResizeEvent, /) -> None:
+        super().resizeEvent(event)
+        if (
+            self.orientation() != Qt.Orientation.Horizontal
+            or self._button_style == Qt.ToolButtonStyle.ToolButtonIconOnly
+        ):
+            return
+        # Long translations can push the trailing widgets into the overflow
+        # menu, so the buttons drop their text when the labeled bar won't fit.
+        # ponytail: the labeled width is measured only while labeled, so a
+        # widget that grows while icon-only shows up on the next labeled pass.
+        if self.toolButtonStyle() == self._button_style:
+            self._labeled_width = self.sizeHint().width()
+        self.setToolButtonStyle(
+            self._button_style
+            if self.width() >= self._labeled_width
+            else Qt.ToolButtonStyle.ToolButtonIconOnly
+        )
 
     def _equalize_button_widths(self) -> None:
         buttons = [
