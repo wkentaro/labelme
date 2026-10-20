@@ -206,6 +206,17 @@ class _Menus(NamedTuple):
     label_list: QtWidgets.QMenu
 
 
+def _default_window_geometry(
+    available: QtCore.QRect, /, *, toolbar_width: int
+) -> QtCore.QRect:
+    # A first window wide enough for the whole labeled toolbar, shrunk to fit a
+    # smaller screen and centered on it.
+    size = QtCore.QSize(max(1280, toolbar_width), 800)
+    geometry = QtCore.QRect(QtCore.QPoint(), size.boundedTo(available.size()))
+    geometry.moveCenter(available.center())
+    return geometry
+
+
 def _try_load_config(
     *, config_file: Path | None, config_overrides: dict
 ) -> dict | None:
@@ -1216,16 +1227,25 @@ class MainWindow(QtWidgets.QMainWindow):
             self._reset_layout()
             self._window_state.setValue("settingsVersion", SETTINGS_VERSION)
         #
+        screen = QtGui.QGuiApplication.primaryScreen()
+        default = _default_window_geometry(
+            screen.availableGeometry(),
+            toolbar_width=max(
+                toolbar.sizeHint().width()
+                for toolbar in self.findChildren(ToolBar)
+                if toolbar.orientation() == Qt.Orientation.Horizontal
+            ),
+        )
         self.resize(
             cast(
                 QtCore.QSize,
-                self._window_state.value(WINDOW_SIZE_KEY, QtCore.QSize(900, 500)),
+                self._window_state.value(WINDOW_SIZE_KEY, default.size()),
             )
         )
         self.move(
             cast(
                 QtCore.QPoint,
-                self._window_state.value(WINDOW_POSITION_KEY, QtCore.QPoint(0, 0)),
+                self._window_state.value(WINDOW_POSITION_KEY, default.topLeft()),
             )
         )
         self.restoreState(
