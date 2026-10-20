@@ -49,6 +49,7 @@ from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
+from ._label_file import read_label_file_image_path
 from ._label_flags import apply_default_flags
 from ._model_manager import ModelManager
 from ._save_request import SaveRequest
@@ -1585,7 +1586,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._queue_auto_save(
                 label_path=self._auto_save_path
                 or _resolve_label_path(
-                    image_or_label_path=self._file_list_image_path or self._image_path,
+                    image_path=self._file_list_image_path or self._image_path,
                     output_dir=self._output_dir,
                 )
             )
@@ -2060,11 +2061,24 @@ class MainWindow(QtWidgets.QMainWindow):
     def _capture_save_request(self, *, label_path: str) -> SaveRequest:
         assert self._image_path
         assert self._annotation is not None
+        image_path = self._file_list_image_path or self._image_path
+        # Save As confirms an overwrite in its dialog; no other save may replace
+        # another Image's Annotation File.
+        if (
+            label_path != self._auto_save_path
+            and Path(label_path).exists()
+            and not _label_file_belongs_to_image(
+                label_path=Path(label_path), image_path=image_path
+            )
+        ):
+            raise LabelFileError(
+                self.tr("The Annotation File belongs to another Image: %s") % label_path
+            )
         return SaveRequest(
             filename=label_path,
             annotation=Annotation(
                 image_path=_resolve_stored_image_path(
-                    image_path=self._file_list_image_path or self._image_path,
+                    image_path=image_path,
                     label_dir=Path(label_path).parent,
                 ),
                 image_data=self._annotation.image_data,
@@ -2574,11 +2588,21 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         t0_load_file = time.time()
-        label_path: str = _resolve_label_path(
-            image_or_label_path=image_or_label_path,
-            output_dir=self._output_dir,
+        label_path = (
+            image_or_label_path
+            if file_list_image_path is None
+            else _find_label_path(
+                image_path=image_or_label_path, output_dir=self._output_dir
+            )
         )
-        if QtCore.QFile.exists(label_path):
+        if label_path is None:
+            annotation = self._read_image_as_annotation(image_path=image_or_label_path)
+            if annotation is None:
+                return False
+            image_path = image_or_label_path
+            label_file_path = None
+            shapes = []
+        else:
             annotation = self._read_annotation_file(label_path=label_path)
             if annotation is None:
                 return False
@@ -2597,13 +2621,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 shape_dicts=annotation.shapes,
                 label_flags=self._config["label_flags"],
             )
-        else:
-            annotation = self._read_image_as_annotation(image_path=image_or_label_path)
-            if annotation is None:
-                return False
-            image_path = image_or_label_path
-            label_file_path = None
-            shapes = []
         t0 = time.time()
         image = (
             None
@@ -2979,14 +2996,15 @@ class MainWindow(QtWidgets.QMainWindow):
             label_path = self._save_writer.get_latest_path() or self._label_file_path
         if label_path is None:
             label_path = self.prompt_save_file_path()
+            if label_path:
+                # The dialog confirmed any overwrite. Keep the chosen
+                # destination through failure, Retry, and later edits.
+                self._auto_save_path = label_path
 
         if not label_path:
             logger.warning("label_path={!r} is empty, so cannot save", label_path)
             return
 
-        if save_as:
-            # Keep the chosen destination through failure, Retry, and later edits.
-            self._auto_save_path = label_path
         self.save_labels(label_path=label_path)
 
     def prompt_save_file_path(self) -> str:
@@ -2995,7 +3013,7 @@ class MainWindow(QtWidgets.QMainWindow):
             parent=self,
             caption=self.tr("Save Annotation File"),
             dir=_resolve_label_path(
-                image_or_label_path=self._file_list_image_path or self._image_path,
+                image_path=self._file_list_image_path or self._image_path,
                 output_dir=self._output_dir,
             ),
             filter=self.tr("Annotation files (*%s)") % LABEL_FILE_SUFFIX,
@@ -3020,7 +3038,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._label_file_path is not None:
             return self._label_file_path
         return _resolve_label_path(
-            image_or_label_path=self._file_list_image_path or self._image_path,
+            image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
         )
 
@@ -3048,7 +3066,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._save_writer.discard_pending()
         self._wait_for_save()
-        annotation_path = Path(self.current_label_file_path())
+        label_path = self._own_label_file_path()
+        if label_path is None:
+            return
+        annotation_path = Path(label_path)
         try:
             annotation_path.unlink()
         except FileNotFoundError:
@@ -3442,8 +3463,17 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._image_path is None:
             return False
 
-        label_file = self.current_label_file_path()
-        return Path(label_file).exists()
+        label_path = self._own_label_file_path()
+        return label_path is not None and Path(label_path).exists()
+
+    def _own_label_file_path(self) -> str | None:
+        # Unlike current_label_file_path, never a destination that may hold
+        # another Image's Annotation File.
+        assert self._image_path is not None
+        return self._label_file_path or _find_label_path(
+            image_path=self._file_list_image_path or self._image_path,
+            output_dir=self._output_dir,
+        )
 
     def _can_continue(self) -> bool:
         self._wait_for_save()
@@ -3748,18 +3778,20 @@ class MainWindow(QtWidgets.QMainWindow):
         # ponytail: matched by stem to keep auto-save cheap on large folders; an
         # Annotation File symlinked under another name stays stale until the
         # list is rebuilt. Drop the filter if that matters.
-        stem = _comparable_stem(label_path)
+        # An extension-qualified x.png.json belongs to an Image with stem x
+        # (see _label_path_candidates).
+        stems = {_comparable_stem(label_path), _comparable_stem(Path(label_path).stem)}
         file_list = self._docks.file_list
         for row in range(file_list.count()):
             item = file_list.item(row)
             assert item
-            if _comparable_stem(_file_list_item_path(item)) == stem:
+            if _comparable_stem(_file_list_item_path(item)) in stems:
                 _set_annotated_check_state(item, output_dir=self._output_dir)
 
         # Images hidden by the search box have no item, so keep the count's
         # record of them by the same rule.
         for image_path in self._loaded_image_paths:
-            if _comparable_stem(image_path) != stem or self._matches_file_search(
+            if _comparable_stem(image_path) not in stems or self._matches_file_search(
                 image_path
             ):
                 continue
@@ -3869,12 +3901,83 @@ def _format_window_title(
     return title
 
 
-def _resolve_label_path(*, image_or_label_path: str, output_dir: Path | None) -> str:
-    if is_label_file_path(filename=image_or_label_path):
-        return image_or_label_path
-    image_path = Path(image_or_label_path)
-    parent = output_dir if output_dir is not None else image_path.parent
-    return str(parent / f"{image_path.stem}{LABEL_FILE_SUFFIX}")
+def _resolve_label_path(*, image_path: str, output_dir: Path | None) -> str:
+    # The Image's Annotation File, or where a new one is written.
+    candidates = _label_path_candidates(image_path=image_path, output_dir=output_dir)
+    free: Path | None = None
+    for candidate in candidates:
+        if _label_file_belongs_to_image(label_path=candidate, image_path=image_path):
+            return str(candidate)
+        if free is None and not candidate.exists():
+            free = candidate
+    # Never default to another Image's Annotation File. With every candidate
+    # taken, the save refuses to overwrite the first one.
+    return str(free or candidates[0])
+
+
+def _find_label_path(*, image_path: str, output_dir: Path | None) -> str | None:
+    for candidate in _label_path_candidates(
+        image_path=image_path, output_dir=output_dir
+    ):
+        if _label_file_belongs_to_image(label_path=candidate, image_path=image_path):
+            return str(candidate)
+    return None
+
+
+def _label_path_candidates(*, image_path: str, output_dir: Path | None) -> list[Path]:
+    image = Path(image_path)
+    parent = output_dir if output_dir is not None else image.parent
+    # _refresh_image_list_checkmarks maps both names back to the stem.
+    # The stem name is the convention other tools read. Images sharing a stem in
+    # one folder (x.jpg, x.png) cannot both have it, so the next one keeps its
+    # extension (x.png.json).
+    return [
+        parent / f"{image.stem}{LABEL_FILE_SUFFIX}",
+        parent / f"{image.name}{LABEL_FILE_SUFFIX}",
+    ]
+
+
+def _label_file_belongs_to_image(*, label_path: Path, image_path: str) -> bool:
+    # An Annotation File records its Image in imagePath; the file name alone
+    # cannot tell Images sharing a stem apart.
+    try:
+        stat = label_path.stat()
+    except OSError:
+        return False
+    stored = _read_stored_image_path(str(label_path), stat.st_mtime_ns, stat.st_size)
+    if stored is None:
+        # Unreadable: claim it, so opening the Image reports the error instead
+        # of hiding the file and saving over it.
+        return True
+    if os.path.exists(stored):
+        try:
+            return os.path.samefile(stored, image_path)
+        except OSError:
+            return False
+    # The recorded Image is gone, e.g. moved with its folder or embedded from
+    # elsewhere. Moved Images keep their names, so a name that matches another
+    # Image beside this one is that Image's.
+    image = Path(image_path)
+    stored_name = Path(stored).name
+    return (
+        os.path.normcase(stored_name) == os.path.normcase(image.name)
+        or not (image.parent / stored_name).exists()
+    )
+
+
+# The Image List checks every Image on each rebuild and search keystroke, so
+# parse each Annotation File once per revision.
+# ponytail: the first parse reads the whole file, ~0.6 ms with embedded image
+# data; stop reading at imagePath if first builds of such folders are slow.
+@functools.lru_cache(maxsize=65536)
+def _read_stored_image_path(
+    label_path: str, _mtime_ns: int, _size: int, /
+) -> str | None:
+    try:
+        image_path = read_label_file_image_path(filename=label_path)
+    except LabelFileReadError:
+        return None
+    return str(Path(label_path).parent / image_path)
 
 
 def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
@@ -3922,9 +4025,7 @@ def _set_annotated_check_state(
 
 
 def _has_label_file(*, image_path: str, output_dir: Path | None) -> bool:
-    return QtCore.QFile.exists(
-        _resolve_label_path(image_or_label_path=image_path, output_dir=output_dir)
-    )
+    return _find_label_path(image_path=image_path, output_dir=output_dir) is not None
 
 
 def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:

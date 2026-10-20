@@ -342,11 +342,25 @@ def _check_image_dimensions(
         )
 
 
+def read_label_file_image_path(*, filename: str) -> str:
+    """Return the Image path an Annotation File records, relative to the file."""
+    try:
+        with open(filename, encoding="utf-8") as f:
+            return _image_path_from_raw(json.load(f))
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as e:
+        raise LabelFileReadError(f"failed to load {filename!r}: {e}") from e
+
+
+def _image_path_from_raw(raw: dict[str, Any], /) -> str:
+    # Annotation Files saved on Windows carry backslashes.
+    return PureWindowsPath(raw["imagePath"]).as_posix()
+
+
 def read_label_file(*, filename: str, max_decode_mb: int | None = None) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
-        image_path = PureWindowsPath(raw["imagePath"]).as_posix()
+        image_path = _image_path_from_raw(raw)
         if raw["imageData"] is None:
             resolved_image_path = str(Path(filename).parent / image_path)
             try:

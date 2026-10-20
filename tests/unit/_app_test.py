@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import struct
 import zlib
@@ -474,36 +475,58 @@ def test_shape_to_dict_requires_label() -> None:
 
 
 @pytest.mark.parametrize(
-    "image_or_label_path, output_dir, expected",
+    "image_path, output_dir, expected",
     [
         (str(Path("/data/img.png")), None, str(Path("/data/img.json"))),
         (str(Path("/data/img.png")), Path("/out"), str(Path("/out/img.json"))),
-        (str(Path("/data/foo.json")), None, str(Path("/data/foo.json"))),
-        (str(Path("/data/foo.json")), Path("/out"), str(Path("/data/foo.json"))),
         (str(Path("/data/a.b.png")), None, str(Path("/data/a.b.json"))),
-        (str(Path("/data/FOO.JSON")), None, str(Path("/data/FOO.JSON"))),
     ],
-    ids=[
-        "image-sibling-json",
-        "image-honors-output-dir",
-        "label-path-passthrough",
-        "label-path-ignores-output-dir",
-        "multi-dot-stem",
-        "uppercase-suffix-passthrough",
-    ],
+    ids=["image-sibling-json", "image-honors-output-dir", "multi-dot-stem"],
 )
 def test_resolve_label_path(
     *,
-    image_or_label_path: str,
+    image_path: str,
     output_dir: Path | None,
     expected: str,
 ) -> None:
     assert (
-        _app._resolve_label_path(
-            image_or_label_path=image_or_label_path, output_dir=output_dir
-        )
+        _app._resolve_label_path(image_path=image_path, output_dir=output_dir)
         == expected
     )
+
+
+def test_resolve_label_path_follows_the_recorded_image(*, tmp_path: Path) -> None:
+    for name in ("x.jpg", "x.png", "y.jpg"):
+        (tmp_path / name).touch()
+
+    def resolve(name: str) -> str:
+        return _app._resolve_label_path(
+            image_path=str(tmp_path / name), output_dir=None
+        )
+
+    def record(label_name: str, image_path: str) -> None:
+        (tmp_path / label_name).write_text(json.dumps({"imagePath": image_path}))
+
+    # x.jpg and x.png share the stem name; whichever saves second keeps its
+    # extension.
+    record("x.json", "x.jpg")
+    assert resolve("x.jpg") == str(tmp_path / "x.json")
+    assert resolve("x.png") == str(tmp_path / "x.png.json")
+    record("x.png.json", "x.png")
+    assert resolve("x.png") == str(tmp_path / "x.png.json")
+
+    # A recorded Image that is gone still belongs here, unless its name is
+    # another Image beside this one.
+    record("x.json", "../moved/x.jpg")
+    assert _app._has_label_file(image_path=str(tmp_path / "x.jpg"), output_dir=None)
+    record("y.json", "embedded-elsewhere.jpg")
+    assert _app._has_label_file(image_path=str(tmp_path / "y.jpg"), output_dir=None)
+    (tmp_path / "x.png.json").unlink()
+    assert resolve("x.png") == str(tmp_path / "x.png.json")
+
+    # An unreadable file stays claimed, so opening reports it.
+    (tmp_path / "y.json").write_text("{")
+    assert resolve("y.jpg") == str(tmp_path / "y.json")
 
 
 def test_resolve_stored_image_path_falls_back_to_absolute(
