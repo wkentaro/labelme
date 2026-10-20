@@ -767,6 +767,10 @@
         <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Het annotatiebestand hoort bij een andere afbeelding: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Map openen</translation>
     </message>

@@ -768,6 +768,10 @@
         <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>ไฟล์คำอธิบายประกอบนี้เป็นของรูปอื่น: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>เปิดโฟลเดอร์</translation>
     </message>

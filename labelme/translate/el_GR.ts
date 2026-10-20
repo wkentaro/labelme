@@ -775,6 +775,10 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 Αλλάξτε το μοντέλο κειμένου προτροπής AI σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Το αρχείο επισημειώσεων ανήκει σε άλλη εικόνα: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Άνοιγμα φακέλου</translation>
     </message>

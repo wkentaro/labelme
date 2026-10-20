@@ -775,6 +775,10 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 Перемкніть модель текстового запиту ШІ на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Файл анотацій належить іншому зображенню: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Відкрити папку</translation>
     </message>

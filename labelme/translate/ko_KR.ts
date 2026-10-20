@@ -767,6 +767,10 @@
         <translation>지금은 기본 설정을 사용할 수 있습니다. 초기화하기 전에 설정 파일의 백업을 저장합니다.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>이 주석 파일은 다른 이미지의 파일입니다: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>폴더 열기</translation>
     </message>

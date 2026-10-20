@@ -775,6 +775,10 @@
         <translation>Egyelőre használhatja az alapértelmezett beállításokat. A visszaállítás előtt biztonsági másolat készül a konfigurációs fájlról.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Az annotációs fájl egy másik képhez tartozik: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Mappa megnyitása</translation>
     </message>

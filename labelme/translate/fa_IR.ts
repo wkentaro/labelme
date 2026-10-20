@@ -767,6 +767,10 @@
         <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>فایل حاشیه‌نویسی متعلق به تصویر دیگری است: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>باز کردن پوشه</translation>
     </message>

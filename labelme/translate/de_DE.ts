@@ -775,6 +775,10 @@
         <translation>Sie können vorerst die Standardeinstellungen verwenden. Vor dem Zurücksetzen wird eine Sicherung Ihrer Konfigurationsdatei gespeichert.</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Die Annotationsdatei gehört zu einem anderen Bild: %s</translation>
+    </message>
+    <message>
         <source>Open Folder</source>
         <translation>Ordner öffnen</translation>
     </message>
