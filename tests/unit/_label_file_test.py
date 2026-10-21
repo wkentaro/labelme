@@ -29,10 +29,7 @@ from labelme._utils import img_arr_to_b64
 
 
 def test_read_label_file_load_windows_path(*, data_path: Path, tmp_path: Path) -> None:
-    """Test that read_label_file loads JSON with Windows-style backslash paths.
-
-    Regression test for https://github.com/wkentaro/labelme/issues/1725
-    """
+    # Regression test for https://github.com/wkentaro/labelme/issues/1725
     (tmp_path / "images").mkdir()
     shutil.copy(
         data_path / "annotated" / "2011_000003.jpg",
@@ -935,10 +932,9 @@ def test_normalize_to_uint8_all_non_finite_returns_zeros() -> None:
 
 
 def test_normalize_to_uint8_maps_non_finite_pixels_deterministically() -> None:
-    """Regression: an inf pixel made the max inf, so finite/inf == 0 turned every
-    finite pixel black. Non-finite pixels must saturate instead: +inf -> 255,
-    -inf -> 0, nan -> 0, leaving finite pixels scaled over the finite range.
-    """
+    # Regression: an inf pixel made the max inf, so finite/inf == 0 turned every
+    # finite pixel black. Non-finite pixels must saturate instead: +inf -> 255,
+    # -inf -> 0, nan -> 0, leaving finite pixels scaled over the finite range.
     result = _normalize_to_uint8(
         np.array([[0.0, 50.0, 100.0, np.inf, -np.inf, np.nan]])
     )

@@ -40,13 +40,11 @@ def suppress_detections_greedy(
     detections: list[Detection],
     iou_threshold: float,
 ) -> list[Detection]:
-    """Callers must pass detections in priority order (highest first); the first
-    detection in each redundant cluster is kept and later ones are dropped.
-
-    Redundancy combines IoU with intersection-over-smaller (containment), so
-    nested masks (e.g. tree-cluster containing a single tree) deduplicate even
-    when their IoU is low.
-    """
+    # Callers pass detections in priority order (highest first): the first
+    # detection in each redundant cluster is kept and later ones are dropped.
+    # Redundancy combines IoU with intersection-over-smaller (containment), so
+    # nested masks (e.g. tree-cluster containing a single tree) deduplicate even
+    # when their IoU is low.
     if not detections:
         return []
 

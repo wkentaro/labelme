@@ -1424,12 +1424,10 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def select_neighbor_shape(self, *, key: Qt.Key) -> None:
-        """Select the nearest visible shape in the arrow key's direction.
-
-        With nothing selected, the shape closest to the image's top-left
-        corner is selected instead. When no visible shape lies within the
-        90-degree cone opening that way, the selection is left as it is.
-        """
+        # Picks the nearest visible shape within the 90-degree cone opening in
+        # the arrow key's direction, and leaves the selection as it is when
+        # none lies there. With nothing selected, the shape closest to the
+        # image's top-left corner is selected instead.
         candidates = [
             shape
             for shape in self.shapes
@@ -1976,11 +1974,9 @@ class Canvas(QtWidgets.QWidget):
         )
 
     def compute_settled_viewport_size(self) -> QtCore.QSize | None:
-        """Return the viewport size once scrollbars match the current scale.
-
-        The scroll area shows or hides its scrollbars after the next layout
-        pass, so the live viewport size lags a scale change until then.
-        """
+        # The scroll area shows or hides its scrollbars after the next layout
+        # pass, so the live viewport size lags a scale change until then.
+        # Return the size it settles at for the current scale.
         if self.pixmap.isNull():
             return None
         scroll_area = self._find_scroll_area()
