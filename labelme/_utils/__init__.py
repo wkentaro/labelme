@@ -16,11 +16,13 @@ from ._qt import new_icon
 from ._qt import new_separator
 from ._qt import project_point_on_line
 from ._qt import project_point_on_perpendicular_line
+from ._shape import ShapeDict
 from ._shape import shape_to_mask
 from ._shape import shapes_to_label
 
 __all__ = [
     "ImageDecodeRequirement",
+    "ShapeDict",
     "apply_color_theme",
     "apply_exif_orientation",
     "direction_angle",

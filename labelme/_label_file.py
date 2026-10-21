@@ -25,7 +25,7 @@ from labelme import __version__
 
 from . import _utils
 from ._shape import ShapeType
-from ._utils._shape import ShapeDict
+from ._utils import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
 

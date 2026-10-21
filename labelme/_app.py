@@ -64,6 +64,7 @@ from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
 from ._utils import ImageDecodeRequirement
 from ._utils import get_image_decode_requirement
+from ._widgets import LABEL_COLOR_ROLE
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import AnnotationFolderFooter
@@ -75,6 +76,7 @@ from ._widgets import LabelDialogEntry
 from ._widgets import LabelDialogField
 from ._widgets import LabelListWidget
 from ._widgets import LabelListWidgetItem
+from ._widgets import ModelsDialog
 from ._widgets import Palette
 from ._widgets import SettingsDialog
 from ._widgets import StatusStats
@@ -82,10 +84,8 @@ from ._widgets import ToolBar
 from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
 from ._widgets import format_shape_label
-from ._widgets._label_list_widget import LABEL_COLOR_ROLE
-from ._widgets._models_widget import ModelsDialog
-from ._widgets._models_widget import license_link
-from ._widgets._models_widget import license_notice
+from ._widgets import license_link
+from ._widgets import license_notice
 
 
 class _ZoomMode(enum.Enum):
