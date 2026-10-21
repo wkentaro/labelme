@@ -255,6 +255,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Klik &amp; seret untuk merotasi bentuk</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Klik titik pertama pada keliling untuk membuat lingkaran</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Klik titik kedua pada keliling untuk membuat lingkaran</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Klik titik ketiga pada keliling untuk menyelesaikan lingkaran</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1113,6 +1125,14 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Configuration Error</source>
         <translation>Error Konfigurasi</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>Lingkaran (3 Titik)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Mulai menggambar lingkaran dengan 3 titik</translation>
     </message>
 </context>
 <context>

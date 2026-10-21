@@ -255,6 +255,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>按住鼠标左键拖动以旋转形状</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>单击圆周上的第一个点以确定圆形</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>单击圆周上的第二个点以确定圆形</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>单击圆周上的第三个点以完成圆形</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1113,6 +1125,14 @@ Expected location: {path}</source>
     <message>
         <source>Configuration Error</source>
         <translation>配置错误</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>三点画圆</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>开始通过三点绘制圆形</translation>
     </message>
 </context>
 <context>
