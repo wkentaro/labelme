@@ -428,14 +428,14 @@ wheels = [
 
 [[package]]
 name = "gruff"
-version = "0.0.10"
+version = "0.1.1"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9a/3f/7e96f6a52854c60308cb5a07c3d4109727347dd8da2e7cd1cab81739c2b3/gruff-0.0.10-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:4a6351ef3d046224b856a1b5bad74ff2d7695ea8935d5090bfb182aa6ac78106", size = 2019870, upload-time = "2026-09-07T02:31:25.891Z" },
-    { url = "https://files.pythonhosted.org/packages/3b/8f/8b120b35029b0122b5a695c31d741b3e650fb8bb91a2769a4eb41c9c54c4/gruff-0.0.10-py3-none-macosx_11_0_arm64.whl", hash = "sha256:de9f7154e371feeebaf6d88282d512dc29eca5e916bac307924b264d754db487", size = 1951377, upload-time = "2026-09-07T02:31:27.779Z" },
-    { url = "https://files.pythonhosted.org/packages/36/33/7d35bade2093959c4205bb05bb357cdc4d79ebf8463b7f49e8d1e82d992b/gruff-0.0.10-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b0c22cfa526a5ff3fc5577cba4dd3b4492f941ccf67b664a7c95ba0516c7a67e", size = 1970604, upload-time = "2026-09-07T02:31:29.663Z" },
-    { url = "https://files.pythonhosted.org/packages/46/a3/94d5a30aa8dcc7a0f69e70ef1491b6a263853cea3d6c7fff096deaee79bf/gruff-0.0.10-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2b1889578bb75302bbea5234c39ddde49120344f10634b8333473bc4e2f26213", size = 2094056, upload-time = "2026-09-07T02:31:31.429Z" },
-    { url = "https://files.pythonhosted.org/packages/ad/16/0f5d14f2bf5518aa261c7896c1c93dec66b1878f8c6a5abbe5f699692c73/gruff-0.0.10-py3-none-win_amd64.whl", hash = "sha256:9e2495e84247df4fa5067dabe6272a0037403f3b8fdafc71f25840c282b877af", size = 2001509, upload-time = "2026-09-07T02:31:33.046Z" },
+    { url = "https://files.pythonhosted.org/packages/3e/94/258ec2fbaf26e3296a8dcca5d0b1a38879cae00c0fc3078a14203fa8f9b3/gruff-0.1.1-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:ab95d138de651a366be1dcd47544568b9b3795c75604f54f221a423b2c9a544b", size = 2040765, upload-time = "2026-10-21T14:34:58.236Z" },
+    { url = "https://files.pythonhosted.org/packages/4d/01/3561be9da8bd2f4c8b534f292ca3a1c8e93f1ca1f5567b84b179c8c5b30e/gruff-0.1.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:1dc8e4a1f59383ad9a8346ec162f52aa97f227d67dc085d8157ebcbc6c8aeea1", size = 1971006, upload-time = "2026-10-21T14:35:00.02Z" },
+    { url = "https://files.pythonhosted.org/packages/20/b0/c83e0fa11d386154d8d8694eec823a98ae2be90aa1d214df897c3179b8c7/gruff-0.1.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f8a8b7ecfb1ff422e34c23bf2e610f4ec2565f94124262eb5aa414485822d5b9", size = 1986522, upload-time = "2026-10-21T14:35:01.537Z" },
+    { url = "https://files.pythonhosted.org/packages/42/d9/1bbc4c76e7acf843cb5891b1d7a7c8ae7b3ace8cc56ae6cec7de106b9ea9/gruff-0.1.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:88cc4bafa2a956b3a480143176baaecc04f2960ba8bac3d0519a0929870bbbf3", size = 2113621, upload-time = "2026-10-21T14:35:02.996Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/eb/fe348bbfa6e76174a07304e90c61c1f6e45d8d1ed994e9d0663a82db9b5a/gruff-0.1.1-py3-none-win_amd64.whl", hash = "sha256:a8eeca666464af1537bb66e2476b03aa6b3127da6bce23fc3a187620fae8862e", size = 2025358, upload-time = "2026-10-21T14:35:04.533Z" },
 ]
 
 [[package]]
@@ -683,7 +683,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "gruff", specifier = ">=0.0.10" },
+    { name = "gruff", specifier = ">=0.1.1" },
     { name = "ipython" },
     { name = "mdformat", specifier = ">=0.7" },
     { name = "mdformat-frontmatter", specifier = ">=2.0.10" },
