@@ -14,7 +14,12 @@ class ModelPicker(QtWidgets.QComboBox):
 
     def __init__(self, *, options: Sequence[tuple[str, str]]) -> None:
         super().__init__()
-        self._options = options
+        # The display names double as config values, so they stay English in
+        # _ai_models and are translated here with the Settings dialog's entries.
+        self._options = [
+            (name, QtCore.QCoreApplication.translate("SettingsDialog", display))
+            for name, display in options
+        ]
         self._available = {name for name, _ in options}
         self._downloading: set[str] = set()
         self._selected = ""

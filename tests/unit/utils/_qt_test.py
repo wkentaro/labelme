@@ -381,6 +381,19 @@ def test_new_action_keeps_translated_line_break_out_of_menu(*, qtbot: QtBot) -> 
     assert action.iconText() == "図形を\n編集"
 
 
+def test_new_action_shows_toolbar_text_on_the_toolbar(*, qtbot: QtBot) -> None:
+    parent = QtWidgets.QWidget()
+    qtbot.addWidget(parent)
+    action = new_action(
+        parent,
+        text="&Previous Image",
+        toolbar_text="Previous",
+        icon="phosphor/arrow-fat-left.svg",
+    )
+    assert action.text() == "&Previous Image"
+    assert action.iconText() == "Previous"
+
+
 def test_new_action_drops_cjk_mnemonic_from_toolbar_label(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
