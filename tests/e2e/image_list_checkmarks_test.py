@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import shutil
 from pathlib import Path
@@ -36,7 +37,7 @@ def _delete(*, win: MainWindow, monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.mark.gui
-def test_save_as_onto_another_images_annotation_file_checks_it(
+def test_save_as_onto_another_images_annotation_file_checks_neither(
     *,
     main_win: MainWinFactory,
     qtbot: QtBot,
@@ -50,12 +51,36 @@ def test_save_as_onto_another_images_annotation_file_checks_it(
     win = main_win(file_or_dir=data_path / "raw", output_dir=out)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
+    # The file records 2011_000003.jpg, so it is not 2011_000006.jpg's, and
+    # 2011_000003.jpg does not look for it under that name.
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=other)
-    assert _checked(win) == [False, True, False]
+    assert _checked(win) == [False, False, False]
 
     _delete(win=win, monkeypatch=monkeypatch)
     assert not other.exists()
     assert _checked(win) == [False, False, False]
+
+
+@pytest.mark.gui
+def test_first_save_onto_another_images_annotation_file_is_allowed(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    out = tmp_path / "out"
+    out.mkdir()
+    other = out / "2011_000006.json"
+    other.write_text(json.dumps({"imagePath": "../raw/2011_000006.jpg"}))
+    win = main_win(file_or_dir=data_path / "raw", output_dir=out)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    # Save asks for a destination, and the dialog confirms the overwrite.
+    monkeypatch.setattr(win, "prompt_save_file_path", lambda: str(other))
+    win._save_label_file(save_as=False)
+    qtbot.waitUntil(lambda: "2011_000003" in json.loads(other.read_text())["imagePath"])
 
 
 @pytest.mark.gui
@@ -111,12 +136,12 @@ def test_save_through_a_symlinked_annotation_folder_checks_the_image(
     real.mkdir()
     link = tmp_path / "link"
     link.symlink_to(real, target_is_directory=True)
-    saved = real / "2011_000006.json"
+    saved = real / "2011_000003.json"
     win = main_win(file_or_dir=data_path / "raw", output_dir=link)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=saved)
-    assert _checked(win) == [False, True, False]
+    assert _checked(win) == [True, False, False]
 
     _delete(win=win, monkeypatch=monkeypatch)
     assert not saved.exists()
@@ -138,12 +163,12 @@ def test_save_whose_name_differs_only_in_case_checks_the_image(
     if not (out / "PROBE").exists():
         pytest.skip("needs a case-insensitive filesystem")
     (out / "probe").unlink()
-    saved = out / "2011_000006.JSON"
+    saved = out / "2011_000003.JSON"
     win = main_win(file_or_dir=data_path / "raw", output_dir=out)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=saved)
-    assert _checked(win) == [False, True, False]
+    assert _checked(win) == [True, False, False]
 
     _delete(win=win, monkeypatch=monkeypatch)
     assert _checked(win) == [False, False, False]
@@ -167,7 +192,8 @@ def test_save_onto_the_annotation_file_of_an_unusual_name_checks_it(
 ) -> None:
     images = tmp_path / "images"
     images.mkdir()
-    shutil.copy(data_path / "raw" / "2011_000003.jpg", images / "a.jpg")
+    # Sorted after image_name, so image_name is the open Image.
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", images / "z.jpg")
     shutil.copy(data_path / "raw" / "2011_000003.jpg", images / image_name)
     saved = images / saved_name
     saved.touch()

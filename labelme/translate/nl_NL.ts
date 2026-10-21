@@ -24,6 +24,26 @@
         <translation>Meer detail</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Polygoon</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Masker</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Rechthoek</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Georiënteerde Rechthoek</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Cirkel</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Selecteer de modus &apos;AI-Points&apos; of &apos;AI-Box&apos; om de AI-assistent in te schakelen</translation>
     </message>
@@ -517,6 +537,16 @@
         <translation>Een map met afbeeldingen openen</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Bestand verwijderen</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Verwijderen</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Label van geselecteerde vorm wijzigen</translation>
     </message>
@@ -535,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Vormen van het klembord in deze afbeelding invoegen</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Dupliceren</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -557,8 +592,23 @@
         <translation>Ongedaan maken</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Bewerken</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Volgende</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Vorige afbeelding</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Vorige</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -715,6 +765,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Het annotatiebestand hoort bij een andere afbeelding: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>
