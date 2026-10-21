@@ -24,6 +24,26 @@
         <translation>Περισσότερη λεπτομέρεια</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Πολύγωνο</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Μάσκα</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Ορθογώνιο</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Προσανατολισμένο Ορθογώνιο</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Κύκλος</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos; ή &apos;AI-Box&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
     </message>
@@ -549,12 +569,27 @@
         <translation>&amp;Διαγραφή αρχείου επισημειώσεων</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Διαγραφή αρχείου</translation>
+    </message>
+    <message>
         <source>Delete the current annotation file</source>
         <translation>Διαγραφή τρέχοντος αρχείου επισημειώσεων</translation>
     </message>
     <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Διαγραφή</translation>
+    </message>
+    <message>
         <source>&amp;Edit Label…</source>
         <translation>&amp;Επεξεργασία ετικέτας…</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Διπλότυπο</translation>
     </message>
     <message>
         <source>Undo Last Point</source>
@@ -573,6 +608,11 @@
         <translation>Διαγράφει το επιλεγμένο σημείο από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Επεξεργασία</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Κάντε κλικ για να τοποθετήσετε σημεία της τεθλασμένης γραμμής· κρατήστε πατημένο το %s και κάντε κλικ για το τελευταίο.</translation>
     </message>
@@ -581,12 +621,22 @@
         <translation>Κάντε κλικ σε σημεία για να τμηματοποιήσετε το αντικείμενο· κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
     </message>
     <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Επόμενη</translation>
+    </message>
+    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Άνοιγμα της επόμενης εικόνας (κρατήστε πατημένο το %s για αντιγραφή των τρεχόντων σχημάτων)</translation>
     </message>
     <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Προηγούμενη εικόνα</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Προηγούμενη</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -723,6 +773,10 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχήματα &apos;%s&apos;.
 
 Αλλάξτε το μοντέλο κειμένου προτροπής AI σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Το αρχείο επισημειώσεων ανήκει σε άλλη εικόνα: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>

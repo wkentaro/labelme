@@ -24,6 +24,26 @@
         <translation>جزئیات بیشتر</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>چندضلعی</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>ماسک</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>مستطیل</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>مستطیل جهت‌دار</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>دایره</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
     </message>
@@ -517,6 +537,16 @@
         <translation>باز کردن پوشه‌ای از تصاویر</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>حذف فایل</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>حذف</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>تغییر برچسب شکل انتخاب شده</translation>
     </message>
@@ -535,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>درج شکل‌های کلیپ‌بورد در این تصویر</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>تکثیر</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -557,8 +592,23 @@
         <translation>بازگشت</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>ویرایش</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>بعدی</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>تصویر قبلی(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>قبلی</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -715,6 +765,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>فایل حاشیه‌نویسی متعلق به تصویر دیگری است: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>

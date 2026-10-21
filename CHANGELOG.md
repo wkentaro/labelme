@@ -9,6 +9,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## 7.9.0 - 2026-10-20
+
+### Added
+
+- Allow double-clicking a shape on the canvas to open the label-edit dialog. ([#2744](https://github.com/wkentaro/labelme/pull/2744))
+- Lock shapes against editing with Lock Shapes / Unlock Shapes (`Ctrl+Shift+L`); the lock is saved per shape as `"locked": true` in the annotation file. ([#2755](https://github.com/wkentaro/labelme/pull/2755))
+- Add Fit to Selection (`Ctrl+Shift+F`) to the View menu and toolbar, a zoom mode that fits the view to the selected shapes, with padding, whenever the selection changes. ([#2758](https://github.com/wkentaro/labelme/pull/2758))
+- Labelme remembers the Annotation Folder for each opened folder across restarts, including one given with `--output`, which Labelme now creates at startup if it is missing. ([#2775](https://github.com/wkentaro/labelme/pull/2775))
+- The Image List has a footer that shows the Annotation Folder and how many images are annotated, for example "3 of 5 annotated · next to images", with Change Annotation Folder… and an option to go back to saving next to images. A remembered folder that is missing shows a warning there. ([#2776](https://github.com/wkentaro/labelme/pull/2776), [#2778](https://github.com/wkentaro/labelme/pull/2778), [#2808](https://github.com/wkentaro/labelme/pull/2808))
+- Choose a model that is not downloaded yet in a toolbar model picker to download it and select it when the files arrive. SAM3 shows its license notice first. ([#2790](https://github.com/wkentaro/labelme/pull/2790))
+- The Brightness/Contrast dialog has Restore Defaults and Close buttons. ([#2822](https://github.com/wkentaro/labelme/pull/2822))
+
+### Changed
+
+- Show Fit to Window and Fit to Selection as icon buttons beside the toolbar zoom field, with a caption naming the active zoom mode. ([#2759](https://github.com/wkentaro/labelme/pull/2759))
+- Image List shows image paths relative to the opened folder, with the full path on hover, and File Search matches that shown path. ([#2764](https://github.com/wkentaro/labelme/pull/2764))
+- Menus, dialogs, Settings, and CLI help now say "annotation file" instead of "label file", and the File menu's "Delete File" is now "Delete Annotation File" so it no longer reads as deleting the image. ([#2771](https://github.com/wkentaro/labelme/pull/2771))
+- The File List dock is now called Image List. ([#2772](https://github.com/wkentaro/labelme/pull/2772))
+- Output Dir is now called Annotation Folder and Open Dir is now Open Folder, and the Annotation Folder status message is translated. ([#2774](https://github.com/wkentaro/labelme/pull/2774))
+- AI Models now opens in its own window from File > AI Models… or Manage models… in a toolbar model picker, instead of as a Settings page. ([#2789](https://github.com/wkentaro/labelme/pull/2789))
+- Each menu command now has its own icon, Settings…, AI Models…, Quit, About, and Add Point to Edge gained icons, and Fill Drawing Polygon shows a checkmark like the other View menu toggles. ([#2792](https://github.com/wkentaro/labelme/pull/2792), [#2793](https://github.com/wkentaro/labelme/pull/2793), [#2794](https://github.com/wkentaro/labelme/pull/2794), [#2800](https://github.com/wkentaro/labelme/pull/2800))
+- The open command is now Open File… everywhere, and the empty-state buttons use the same names and icons as the File menu. ([#2797](https://github.com/wkentaro/labelme/pull/2797))
+- Menu items that open a dialog end with an ellipsis, and Prev Image, Brightness Contrast, and Delete Selected Vertex are now Previous Image, Brightness/Contrast…, and Delete Selected Point. ([#2799](https://github.com/wkentaro/labelme/pull/2799))
+- Dialog titles and buttons use title case, deleting a model asks Delete/Cancel, and standard buttons such as OK and Cancel follow the chosen language. ([#2802](https://github.com/wkentaro/labelme/pull/2802))
+- The About box, toolbar titles, and crash dialog follow the chosen language. ([#2804](https://github.com/wkentaro/labelme/pull/2804))
+- The AI toolbars are named AI Assist and AI Text Prompt. ([#2805](https://github.com/wkentaro/labelme/pull/2805))
+- Long toolbar buttons show shorter labels, such as Previous and Next, so the toolbar fits a 1280px window in more languages. ([#2826](https://github.com/wkentaro/labelme/pull/2826))
+- New Annotation Files in an Annotation Folder mirror the opened folder's subfolders, so same-named Images in different subfolders keep separate files. Existing flat Annotation Files still open and save in place. Scripts that read the Annotation Folder should search it recursively. ([#2827](https://github.com/wkentaro/labelme/pull/2827))
+
+### Removed
+
+- Remove Fit to Width from the View menu; `Ctrl+Shift+F` now triggers Fit to Selection, and configs that set `shortcuts.fit_width` still load. ([#2761](https://github.com/wkentaro/labelme/pull/2761))
+
+### Fixed
+
+- An image too large to display now shows the size error at once instead of after decoding the whole image, which took tens of seconds and gigabytes of memory for large GeoTIFFs. ([#2750](https://github.com/wkentaro/labelme/pull/2750))
+- Multi-band TIFFs stored with separate band planes now open at their real size and colors instead of as a thin, garbled strip. ([#2765](https://github.com/wkentaro/labelme/pull/2765))
+- Speed up scrolling a zoomed-in image with many shapes by skipping shapes outside the view. ([#2766](https://github.com/wkentaro/labelme/pull/2766))
+- Start faster by loading SciPy only when AI results are turned into shapes. ([#2767](https://github.com/wkentaro/labelme/pull/2767))
+- Open folders with many images faster. ([#2768](https://github.com/wkentaro/labelme/pull/2768))
+- Switch to the next or previous image faster by decoding neighboring images in the background. ([#2769](https://github.com/wkentaro/labelme/pull/2769))
+- Image List checkmarks now follow Save As and deletes of any image's Annotation File, not only the open image's. ([#2779](https://github.com/wkentaro/labelme/pull/2779))
+- Keep Previous Brightness/Contrast no longer sits indented in the View menu on macOS. ([#2796](https://github.com/wkentaro/labelme/pull/2796))
+- Hide Shapes, Show Shapes, and Toggle Shapes no longer get cut to their first word in native macOS menus. ([#2798](https://github.com/wkentaro/labelme/pull/2798))
+- Tooltips and status hints show ⌘, ⌥, and ⇧ on macOS instead of Ctrl and Alt. ([#2801](https://github.com/wkentaro/labelme/pull/2801))
+- Japanese menu items no longer break onto a second line in native macOS menus. ([#2803](https://github.com/wkentaro/labelme/pull/2803))
+- Toolbar buttons no longer show bracketed menu mnemonics such as "(O)" in Japanese, Korean, Chinese, Thai, and Persian. ([#2809](https://github.com/wkentaro/labelme/pull/2809))
+- Toolbar labels wrap onto at most two balanced lines in every language. ([#2810](https://github.com/wkentaro/labelme/pull/2810))
+- Menu items have unique keyboard mnemonics in every language. ([#2811](https://github.com/wkentaro/labelme/pull/2811))
+- Settings section names are no longer cut off in French, Italian, Russian, Thai, and Ukrainian. ([#2812](https://github.com/wkentaro/labelme/pull/2812))
+- The label dialog's placeholders are translated and no longer cut off. ([#2813](https://github.com/wkentaro/labelme/pull/2813))
+- The AI model pickers show the model name before it downloads, with its status in the tooltip, instead of a cut-off "Unavailable: …". ([#2815](https://github.com/wkentaro/labelme/pull/2815))
+- The crash dialog keeps frame names such as <module> in the traceback, which it now shows as plain text under Show Details. ([#2821](https://github.com/wkentaro/labelme/pull/2821))
+- The AI Assist output formats and the model names in the AI pickers and AI Models dialog are translated. ([#2823](https://github.com/wkentaro/labelme/pull/2823))
+- The first window opens centered and wide enough for the whole toolbar instead of at 900x500 in the corner. ([#2826](https://github.com/wkentaro/labelme/pull/2826))
+- Images that share a file stem, such as x.jpg and x.png, no longer open or overwrite each other's Annotation File; the second one saves to x.png.json. ([#2828](https://github.com/wkentaro/labelme/pull/2828))
+
 ## 7.8.1 - 2026-10-07
 
 ### Fixed
