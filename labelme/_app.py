@@ -2118,7 +2118,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._failed_save_path is not None:
             self._queue_auto_save(label_path=self._failed_save_path)
 
-    def save_labels(self, *, label_path: str, show_error: bool = True) -> bool:
+    def save_labels(self, *, label_path: str) -> bool:
         self._save_writer.discard_pending()
         self._wait_for_save()
         try:
@@ -2126,11 +2126,10 @@ class MainWindow(QtWidgets.QMainWindow):
             write_save_request(request)
         except (LabelFileError, OSError, ValueError) as e:
             self._show_save_failure(label_path=label_path, error=e)
-            if show_error:
-                self.show_error_message(
-                    title=self.tr("Error Saving Annotation File"),
-                    message=self.tr("<b>%s</b>") % e,
-                )
+            self.show_error_message(
+                title=self.tr("Error Saving Annotation File"),
+                message=self.tr("<b>%s</b>") % e,
+            )
             return False
         self._record_saved_annotation(label_path=request.filename)
         return True
@@ -2926,7 +2925,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if image_or_label_path:
             self._load_from_file_or_dir(file_or_dir=image_or_label_path)
 
-    def prompt_output_dir(self, _value: bool = False, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+    def prompt_output_dir(self) -> None:
         default_output_dir: str
         if self._output_dir is not None:
             default_output_dir = str(self._output_dir)
@@ -3031,7 +3030,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         return label_path
 
-    def close_file(self, _value: bool = False, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+    def close_file(self) -> None:
         if not self._can_continue():
             return
         self._remember_current_viewport()

@@ -349,10 +349,9 @@ def test_shape_to_mask_point_marks_pixels_around_center() -> None:
         (100, 100),
         [[40.0, 60.0]],
         shape_type="point",
-        point_size=5,
     )
     assert mask.dtype == bool
     assert mask[60, 40]
-    assert mask[60, 43]  # 3px from center, inside point_size=5
+    assert mask[60, 43]  # 3px from center, inside the 5px radius
     assert mask[62, 40]  # off the center row: a filled disk, not a horizontal line
-    assert not mask[60, 46]  # 1px past the point_size=5 edge
+    assert not mask[60, 46]  # 1px past the 5px radius
