@@ -142,6 +142,11 @@ Everything else, including the Python import surface, is internal and may change
 Run `labelme --help` for detail.\
 The annotations are saved as a [JSON](http://www.json.org/) file.
 
+JPEG 2000 images (`.jp2`, `.jpx`, `.j2k`, `.j2c`) can be opened, scanned from a
+folder, or dragged into the window when Pillow has OpenJPEG support. They are
+decoded to PNG in memory for Qt, preserving pixel values and transparency;
+the source image is unchanged.
+
 ```bash
 labelme  # just open gui
 

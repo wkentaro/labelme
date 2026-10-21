@@ -6,6 +6,7 @@ import zlib
 from pathlib import Path
 
 import numpy as np
+import PIL.features
 import PIL.Image
 import pytest
 import tifffile
@@ -53,6 +54,34 @@ def test_png_returns_raw_bytes(*, tmp_path: Path) -> None:
     path = _make_image(tmp_path, filename="test.png", mode="RGB")
     data = read_image_file(filename=str(path))
     assert data == path.read_bytes()
+
+
+@pytest.mark.skipif(
+    not PIL.features.check_codec("jpg_2000"), reason="Pillow needs OpenJPEG"
+)
+@pytest.mark.parametrize("suffix", [".jp2", ".jpx", ".j2k", ".j2c"])
+@pytest.mark.parametrize("mode", ["L", "RGB", "RGBA", "I;16"])
+def test_jpeg2000_encoded_as_lossless_png(
+    *, tmp_path: Path, suffix: str, mode: str
+) -> None:
+    path = tmp_path / f"image{suffix}"
+    rng = np.random.default_rng(0)
+    shape = (24, 32) if mode in ("L", "I;16") else (24, 32, len(mode))
+    pixels = rng.integers(
+        0,
+        65536 if mode == "I;16" else 256,
+        size=shape,
+        dtype=np.uint16 if mode == "I;16" else np.uint8,
+    )
+    PIL.Image.fromarray(pixels).save(
+        path, format="JPEG2000", no_jp2=suffix in (".j2k", ".j2c")
+    )
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as decoded:
+        assert decoded.format == "PNG"
+        np.testing.assert_array_equal(np.asarray(decoded), pixels)
 
 
 @pytest.mark.parametrize("ext", ["gif", "bmp"])
