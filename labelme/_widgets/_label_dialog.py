@@ -23,9 +23,6 @@ class LabelDialogEntry:
     description: str
 
 
-_PLACEHOLDER_TEXT: Final[str] = "Enter object label"
-
-
 class LabelDialog(QtWidgets.QDialog):
     """Dialog for entering label, group id, description, and flags."""
 
@@ -37,7 +34,7 @@ class LabelDialog(QtWidgets.QDialog):
     def __init__(
         self,
         *,
-        text: str = _PLACEHOLDER_TEXT,
+        text: str | None = None,
         parent: QtWidgets.QWidget | None = None,
         labels: list[str] | None = None,
         sort_labels: bool = True,
@@ -80,12 +77,20 @@ class LabelDialog(QtWidgets.QDialog):
 
         # Build widgets
         self.edit = QtWidgets.QLineEdit()
-        self.edit.setPlaceholderText(text)
+        self.edit.setPlaceholderText(
+            self.tr("Enter object label") if text is None else text
+        )
         self.edit.setAccessibleName(self.tr("Label"))
 
         group_id_name = self.tr("Group ID")
         self.edit_group_id = QtWidgets.QLineEdit()
         self.edit_group_id.setPlaceholderText(group_id_name)
+        # Wide enough that the placeholder, in any language, is not cut off.
+        GROUP_ID_PADDING: Final[int] = 16
+        self.edit_group_id.setMinimumWidth(
+            self.edit_group_id.fontMetrics().horizontalAdvance(group_id_name)
+            + GROUP_ID_PADDING
+        )
         self.edit_group_id.setAccessibleName(group_id_name)
         self.edit_group_id.setValidator(
             QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"[0-9]*"))

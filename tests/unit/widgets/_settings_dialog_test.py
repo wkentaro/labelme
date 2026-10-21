@@ -438,13 +438,35 @@ def test_navigation_uses_readable_typography_and_spacing(
     )
 
 
-@pytest.mark.parametrize("locale", ["ru_RU"])
+class _LongSectionTranslator(QtCore.QTranslator):
+    # No shipped catalog names a section too long for the sidebar any more, so
+    # this stands in for a future one that does.
+    title: str = "Продолжение работы между изображениями"
+
+    def translate(
+        self,
+        context: str,  # noqa: ARG002 -- Qt's signature
+        source_text: str,
+        /,
+        disambiguation: str | None = None,  # noqa: ARG002 -- Qt's signature
+        n: int = -1,  # noqa: ARG002 -- Qt's signature
+    ) -> str | None:  # noqa: GR005 -- overrides Qt's signature
+        return self.title if source_text == "Continue between images" else None
+
+
 def test_navigation_elides_long_localized_names_without_squeezing_content(
-    *, localized_dialog: SettingsDialog, qtbot: QtBot
+    *, qapp: QtWidgets.QApplication, qtbot: QtBot, applied: Applied
 ) -> None:
-    dialog = localized_dialog
+    translator = _LongSectionTranslator()
+    qapp.installTranslator(translator)
+    try:
+        dialog = _make_dialog(
+            qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
+        )
+    finally:
+        qapp.removeTranslator(translator)
     navigation = dialog._page._navigation
-    long_title = "Продолжение работы между изображениями"
+    long_title = _LongSectionTranslator.title
 
     assert navigation.item(3).text() == long_title
     assert navigation.item(3).toolTip() == long_title

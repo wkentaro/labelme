@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>AI支援アノテーション</translation>
-    </message>
-    <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AIが&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案</translation>
     </message>
@@ -28,8 +24,28 @@
         <translation>より詳細</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>&apos;AI-Points&apos;または&apos;AI-Box&apos;モードを選択してAI支援アノテーションを有効化</translation>
+        <source>Polygon</source>
+        <translation>ポリゴン</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>マスク</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>矩形</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>向き付き矩形</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>円</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
+        <translation>&apos;AI-Points&apos; または &apos;AI-Box&apos; モードを選択すると AI アシストが有効になります</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -44,6 +60,10 @@
         <translation>モデル</translation>
     </message>
     <message>
+        <source>AI Assist</source>
+        <translation>AI アシスト</translation>
+    </message>
+    <message>
         <source>Output format</source>
         <translation>出力形式</translation>
     </message>
@@ -51,16 +71,16 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AIプロンプト</translation>
-    </message>
-    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>例: dog,cat,bird</translation>
     </message>
     <message>
         <source>Run</source>
         <translation>実行</translation>
+    </message>
+    <message>
+        <source>AI Text Prompt model</source>
+        <translation>AI テキストプロンプトのモデル</translation>
     </message>
     <message>
         <source>Score</source>
@@ -75,6 +95,10 @@
         <translation>AIがテキストプロンプトからアノテーションを作成</translation>
     </message>
     <message>
+        <source>AI Text Prompt</source>
+        <translation>AI テキストプロンプト</translation>
+    </message>
+    <message>
         <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
         <translation>「Polygon」「Rectangle」または「AI-Points」モードで有効</translation>
     </message>
@@ -85,10 +109,6 @@
     <message>
         <source>Prompt</source>
         <translation>プロンプト</translation>
-    </message>
-    <message>
-        <source>Text-to-annotation model</source>
-        <translation>テキストからアノテーションを生成するモデル</translation>
     </message>
 </context>
 <context>
@@ -102,8 +122,8 @@
         <translation>画像と同じ場所</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>アノテーションフォルダーを選択…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>アノテーションフォルダーを変更…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -140,6 +160,10 @@
         <translation>クリック &amp; ドラッグで頂点を移動</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>%s を押しながらクリックで辺に点を追加</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>図形はロックされています</translation>
     </message>
@@ -164,6 +188,10 @@
         <translation>図形を編集中</translation>
     </message>
     <message>
+        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
+        <translation>点をクリックで含め、%s を押しながらクリックで除外します。%s を押しながらクリックで完了します。</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>直線の始点をクリック</translation>
     </message>
@@ -174,10 +202,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>折れ線の始点をクリック</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>次の点をクリック、または Ctrl/Cmd+クリックで完了</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,20 +220,8 @@
         <translation>クリックで頂点を追加</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + クリックで頂点を削除</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + クリックで図形上に頂点を作成</translation>
-    </message>
-    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>もう一方の角を指定してください。Shiftを押しながら操作すると正方形になります。</translation>
-    </message>
-    <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>クリックで含める点を、Shift+Clickで除外する点を指定。Ctrl+LeftClickで作成を完了。</translation>
     </message>
     <message>
         <source>Click first corner of bbox for AI segmentation</source>
@@ -218,6 +230,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>対角をクリックしてオブジェクトをセグメント</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>次の点をクリック、または %s を押しながらクリックで折れ線を完了</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +246,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>3番目の角をクリックして向き付き矩形を閉じる</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>%s を押しながらクリックで点を削除</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -247,14 +267,6 @@
         <translation>画像または画像フォルダーを開いて開始します。</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>フォルダーを開く</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>画像を開く</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>または、画像ファイルをここにドラッグ＆ドロップします</translation>
     </message>
@@ -264,6 +276,10 @@
     <message>
         <source>Shape Label</source>
         <translation>図形のラベル</translation>
+    </message>
+    <message>
+        <source>Enter object label</source>
+        <translation>オブジェクトのラベルを入力</translation>
     </message>
     <message>
         <source>Label</source>
@@ -309,42 +325,9 @@
         <translation>アプリケーションを終了</translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>開く(&amp;O)
-</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>次の
 画像(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>次を開く (Ctrl+Shift でラベルをコピー)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>前の
-画像(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>前を開く (Ctrl+Shift でラベルをコピー)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>保存(&amp;S)
-</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>名前を付けて保存(&amp;A)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>自動保存(&amp;A)</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -401,8 +384,16 @@
         <translation>アノテーションファイルを保存</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>名前を付けて保存(&amp;A)…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>アノテーションファイルを別名で保存</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>自動保存(&amp;T)</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -411,6 +402,10 @@
     <message>
         <source>Store a copy of the image inside the annotation file</source>
         <translation>画像のコピーをアノテーションファイル内に保存します</translation>
+    </message>
+    <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>アノテーションフォルダーを変更(&amp;F)…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -439,47 +434,32 @@
         <translation>選択した図形の複製を作成</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>最後の頂点を取り消し</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>最後に描画した頂点を取り消し</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>元に戻す</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>最後の図形追加・編集を元に戻す</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>図形を
-非表示(&amp;H)</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>クリックで折れ線の点を配置し、%s を押しながらクリックで最後の点を配置します。</translation>
+    </message>
+    <message>
+        <source>Click points to segment the object; hold %s and click to finish.</source>
+        <translation>点をクリックしてオブジェクトをセグメント化し、%s を押しながらクリックで完了します。</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>次の画像を開く（%s を押したままにすると現在の図形をコピー）</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>すべての図形を非表示</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>図形を
-表示(&amp;S)</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>すべての図形を表示</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>図形を
-切り替え(&amp;T)</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -506,33 +486,73 @@ Shapes</source>
         <translation>縮小(&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>明るさ・
-コントラスト(&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>明るさとコントラストを調整</translation>
     </message>
     <message>
-        <source>&amp;Edit Label</source>
-        <translation>ラベルを編集(&amp;E)</translation>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Python による画像のポリゴンアノテーション</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>アノテーションフォルダーを変更(&amp;A)…</translation>
+        <source>Version: %s</source>
+        <translation>バージョン: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>作者: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>ホームページ</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>ドキュメント</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>トラブルシューティング</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>%s について(&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>%s について</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>保存(&amp;S)</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>アノテーションファイルの読み込みと保存の場所を選択</translation>
     </message>
     <message>
+        <source>&amp;Open File…</source>
+        <translation>ファイルを
+開く(&amp;O)…</translation>
+    </message>
+    <message>
         <source>Open Folder…</source>
-        <translation>フォルダーを開く…</translation>
+        <translation>フォルダーを
+開く…</translation>
     </message>
     <message>
         <source>Open a folder of images</source>
         <translation>画像フォルダーを開く</translation>
+    </message>
+    <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>ファイルを
+削除</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>削除</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -555,6 +575,11 @@ Shapes</source>
         <translation>クリップボードの図形をこの画像に挿入</translation>
     </message>
     <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>複製</translation>
+    </message>
+    <message>
         <source>Merge Shapes</source>
         <translation>図形を結合</translation>
     </message>
@@ -571,16 +596,32 @@ Shapes</source>
         <translation>選択した図形を編集できないようにロック、またはロックを解除</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>選択した頂点を削除</translation>
+        <source>Undo</source>
+        <translation>元に戻す</translation>
     </message>
     <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>選択した頂点をポリゴンまたは折れ線から削除します</translation>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>編集</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>クリックで折れ線の点を置き、Ctrl+クリックで最後の点を置きます。</translation>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>次へ</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>前の
+画像(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>前へ</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>前の画像を開く（%s を押したままにすると現在の図形をコピー）</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -594,6 +635,10 @@ Shapes</source>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>選択を変更するたびに選択した図形にズームする</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>明るさ/コントラスト(&amp;B)…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -618,6 +663,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>描画中にポリゴンを塗りつぶす</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>図形を非表示(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>図形を表示(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>図形を切り替え(&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -656,6 +713,14 @@ Shapes</source>
         <translation>ウィンドウに合わせる</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>AIモデル…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>AIモデルをダウンロードまたは削除</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
@@ -672,8 +737,16 @@ Shapes</source>
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>ツール</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>その他のツール</translation>
+    </message>
+    <message>
+        <source>Shape Tools</source>
+        <translation>図形ツール</translation>
     </message>
     <message>
         <source>More shape tools</source>
@@ -704,16 +777,16 @@ Shapes</source>
         <translation>今回は初期設定で続行できます。リセットする場合は、先に設定ファイルのバックアップを保存します。</translation>
     </message>
     <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>このアノテーションファイルは別の画像のものです: %s</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>フォルダーを開く</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>コマンドラインの設定</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>バックアップしてリセット</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>初期設定で続行</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -736,18 +809,6 @@ Shapes</source>
     <message>
         <source>Mask Output Unavailable</source>
         <translation>マスク出力は利用できません</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; アノテーションを作成できません。
-
-AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
-    </message>
-    <message>
-        <source>Invalid label</source>
-        <translation>無効なラベル</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -778,14 +839,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>選択範囲に合わせる</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>アノテーションファイルの保存エラー</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>大きな画像</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>大きな画像には追加のメモリが必要です</translation>
     </message>
@@ -796,10 +849,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Open Anyway</source>
         <translation>それでも開く</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>ファイルを開けませんでした</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -816,14 +865,6 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
     <message>
         <source>Images and annotation files (%s)</source>
         <translation>画像とアノテーションファイル (%s)</translation>
-    </message>
-    <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - 画像またはアノテーションを開く</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>注意</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -846,16 +887,16 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>未保存の変更</translation>
     </message>
     <message>
+        <source>Download {model}</source>
+        <translation>{model}をダウンロード</translation>
+    </message>
+    <message>
         <source>The selected annotation file could not be opened: {path}</source>
         <translation>選択されたアノテーションファイルを開けませんでした: {path}</translation>
     </message>
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>アノテーションフォルダーが見つかりません: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - 画像フォルダーを選択</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -882,6 +923,22 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>ポリゴン</translation>
     </message>
     <message>
+        <source>&amp;Edit Label…</source>
+        <translation>ラベルを編集(&amp;E)…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>最後の点を取り消す</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>選択した点を削除</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>選択した点をポリゴンまたは折れ線から削除します</translation>
+    </message>
+    <message>
         <source>Rectangle</source>
         <translation>矩形</translation>
     </message>
@@ -906,16 +963,36 @@ AI Text-to-Annotation モデルを &apos;SAM3 (smart)&apos; に切り替える�
         <translation>AI-Points</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>クリックでオブジェクトをセグメント。Ctrl+LeftClickで作成を完了。</translation>
-    </message>
-    <message>
         <source>AI-Box</source>
         <translation>AI-Box</translation>
     </message>
     <message>
         <source>Draw a bounding box to segment object.</source>
         <translation>バウンディングボックスを描画してオブジェクトをセグメント。</translation>
+    </message>
+    <message>
+        <source>Continue with Defaults</source>
+        <translation>初期設定で続行</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>バックアップしてリセット</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; の図形を作成できません。
+
+AI テキストプロンプトのモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>無効なラベル</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>アノテーションファイルの保存エラー</translation>
     </message>
     <message>
         <source>AI-Points Unavailable</source>
@@ -928,16 +1005,12 @@ Please select a different model or use AI-Box mode.</source>
 別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - アノテーションフォルダーを選択</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>アノテーションフォルダー: %s</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>画像が見つかりません</translation>
+        <source>Download</source>
+        <translation>ダウンロード</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -966,6 +1039,18 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>対応形式: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>アノテーションファイルの削除エラー</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>未保存の変更</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>画像が見つかりません</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -1004,6 +1089,22 @@ Expected location: {path}</source>
         <translation>このセッションの設定は --config で管理されています</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>大きな画像</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>ファイルを開けませんでした</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>ファイルを開く</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>アノテーションフォルダーを選択</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>アノテーションファイルを保存</translation>
     </message>
@@ -1012,12 +1113,12 @@ Expected location: {path}</source>
         <translation>アノテーションファイル (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>このアノテーションファイルを完全に削除しますか？この操作は元に戻せません。</translation>
+        <source>Delete Annotation File</source>
+        <translation>アノテーションファイルを削除</translation>
     </message>
     <message>
-        <source>Error deleting annotation file</source>
-        <translation>アノテーションファイルの削除エラー</translation>
+        <source>Permanently delete this annotation file? This action cannot be undone.</source>
+        <translation>このアノテーションファイルを完全に削除しますか？この操作は元に戻せません。</translation>
     </message>
     <message>
         <source>Configuration Error</source>
@@ -1031,16 +1132,27 @@ Expected location: {path}</source>
         <translation>モデルを管理…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>モデルをダウンロード…</translation>
+        <source>Download and use</source>
+        <translation>ダウンロードして使用</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>モデルを選択…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>ダウンロード中: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>利用不可: {model}</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>AIモデル</translation>
     </message>
 </context>
 <context>
@@ -1134,11 +1246,15 @@ Expected location: {path}</source>
         <translation>ダウンロード</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>ダウンロードに失敗しました</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>ダウンロードに失敗しました。接続を確認して再試行してください。</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>モデルを削除</translation>
     </message>
     <message>
@@ -1277,10 +1393,6 @@ Expected location: {path}</source>
         <translation>フラグ名は1行に1つ入力します。パターン: ^car$ は car と完全一致、car は前方一致、.* はすべてのラベルに一致します。</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AIプロンプト</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>ポリゴンの詳細度</translation>
     </message>
@@ -1373,6 +1485,10 @@ Expected location: {path}</source>
         <translation>Sam3</translation>
     </message>
     <message>
+        <source>Text prompt model</source>
+        <translation>テキストプロンプトのモデル</translation>
+    </message>
+    <message>
         <source>Suppress existing Shape matches</source>
         <translation>既存の図形と一致する候補を抑制</translation>
     </message>
@@ -1383,10 +1499,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>設定</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>AIモデル</translation>
     </message>
     <message>
         <source>Open config file as text…</source>
@@ -1455,8 +1567,8 @@ Expected location: {path}</source>
         <translation>ズーム</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+ホイールでキャンバスをズームします</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>%s を押しながらスクロールでキャンバスをズーム</translation>
     </message>
 </context>
 <context>
@@ -1530,6 +1642,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>このダイアログに一致する設定はありません。別の語句を試すか、検索をクリアしてください。</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>エラー</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>予期しないエラーが発生しました。アプリケーションを終了します。&lt;br/&gt;&lt;br/&gt;&lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;トラブルシューティング&lt;/a&gt;の手順に従って問題を報告してください。</translation>
     </message>
 </context>
 </TS>
