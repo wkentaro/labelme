@@ -134,7 +134,15 @@ def test_completion_arrows_then_return_in_real_popup(
     timer.timeout.connect(dialog.reject)
     timer.start(3000)
     QtCore.QTimer.singleShot(0, choose)
-    entry = dialog.popup(text="unknown", move=False)
+    entry = dialog.popup(
+        text="unknown",
+        move=False,
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=(),
+        position=None,
+    )
     timer.stop()
     assert entry is not None
     assert entry.label == "cat"

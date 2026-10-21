@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -45,7 +44,7 @@ def test_save_through_directory_alias_reopens_source_image(
     label_path = alias / "labels" / "saved.json"
 
     assert win.save_labels(label_path=str(label_path))
-    saved = read_label_file(filename=str(label_path))
+    saved = read_label_file(filename=str(label_path), max_decode_mb=None)
     assert saved.image_data == image_data
     assert (label_path.parent / saved.image_path).samefile(image_path)
     if use_image_alias:
@@ -56,25 +55,23 @@ def test_save_through_directory_alias_reopens_source_image(
     assert win._image_path is not None
     assert Path(win._image_path).samefile(image_path)
     assert win.save_labels(label_path=str(label_path))
-    assert read_label_file(filename=str(label_path)).image_data == image_data
+    assert (
+        read_label_file(filename=str(label_path), max_decode_mb=None).image_data
+        == image_data
+    )
 
 
 @pytest.mark.gui
-@pytest.mark.parametrize(
-    "set_fit_mode",
-    [MainWindow.set_fit_window_mode],
-)
 def test_close_file(
     *,
     annotated_win: MainWindow,
     qtbot: QtBot,
     pause: bool,
-    set_fit_mode: Callable[[MainWindow], None],
 ) -> None:
     assert annotated_win._annotation is not None
     assert annotated_win._canvas_widgets.canvas.isEnabled()
 
-    set_fit_mode(annotated_win)
+    annotated_win.set_fit_window_mode(True)
     annotated_win.close_file()
     annotated_win.resize(annotated_win.width() + 50, annotated_win.height() + 50)
     qtbot.wait(50)

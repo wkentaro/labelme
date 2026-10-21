@@ -99,7 +99,7 @@ class _DraftShape:
         return dataclasses.replace(self, closed=False)
 
     def add_point(
-        self, point: QPointF, /, *, label: int = 1, autoclose: bool = False
+        self, point: QPointF, /, *, label: int, autoclose: bool
     ) -> _DraftShape:
         if autoclose and self.points and self.points[0] == point:
             return dataclasses.replace(self, closed=True)
@@ -323,7 +323,7 @@ class Canvas(QtWidgets.QWidget):
         self._allow_out_of_bounds_points = value
         self.update()
 
-    def pan_view(self, *, step: QPointF, constrain_to_center: bool = True) -> None:
+    def pan_view(self, *, step: QPointF, constrain_to_center: bool) -> None:
         viewport = self._scroll_viewport()
         if viewport is None:
             return
@@ -498,7 +498,7 @@ class Canvas(QtWidgets.QWidget):
         seed_point = self._current.points[0]
         seed_label = self._current.point_labels[0]
         self._current = _DraftShape(shape_type=new_mode).add_point(
-            seed_point, label=seed_label
+            seed_point, label=seed_label, autoclose=False
         )
         self._line = dataclasses.replace(self._line, shape_type=new_mode)
         self.update()
@@ -606,9 +606,7 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self._update_status(extra_messages=None)
 
-    def set_editing(
-        self, *, value: bool = True, create_mode: str | None = None
-    ) -> None:
+    def set_editing(self, *, value: bool, create_mode: str | None) -> None:
         if create_mode is not None:
             self._set_create_mode(value=create_mode)
         new_mode = _CanvasMode.EDIT if value else _CanvasMode.CREATE
@@ -1053,7 +1051,7 @@ class Canvas(QtWidgets.QWidget):
         point = self._prev_move_point
         if shape is None or index is None or point is None or shape.locked:
             return
-        shape.insert_point(i=index, point=(point.x(), point.y()))
+        shape.insert_point(i=index, point=(point.x(), point.y()), label=1)
         self._highlight_vertex(index=index, mode="move")
         self.hovered_shape = shape
         self._hovered_vertex = index
@@ -1224,7 +1222,7 @@ class Canvas(QtWidgets.QWidget):
 
         self._current = _DraftShape(
             shape_type=_CREATE_MODE_TO_SHAPE_TYPE[mode]
-        ).add_point(pos, label=0 if is_shift_pressed else 1)
+        ).add_point(pos, label=0 if is_shift_pressed else 1, autoclose=False)
 
         if mode == "point":
             self._finalize()
@@ -1809,7 +1807,7 @@ class Canvas(QtWidgets.QWidget):
 
         preview = current
         if self._fill_drawing and len(preview.points) >= MIN_POINTS_FOR_FILL_PREVIEW:
-            preview = preview.add_point(self._line.points[1], autoclose=True)
+            preview = preview.add_point(self._line.points[1], autoclose=True, label=1)
         return _draft_to_shape(preview)
 
     def _refresh_ai_points_preview(self) -> None:
@@ -1840,6 +1838,7 @@ class Canvas(QtWidgets.QWidget):
         preview = current.add_point(
             self._line.points[1],
             label=self._line.point_labels[1],
+            autoclose=False,
         )
         try:
             proposal = self._propose_ai_shapes(
@@ -1866,7 +1865,7 @@ class Canvas(QtWidgets.QWidget):
         return point / self.scale - origin
 
     def transform_image_point_to_widget(
-        self, point: QPointF, /, *, area: QtCore.QSize | None = None
+        self, point: QPointF, /, *, area: QtCore.QSize | None
     ) -> QPointF:
         return (point + self._compute_image_origin_offset(area=area)) * self.scale
 
@@ -2162,7 +2161,7 @@ class Canvas(QtWidgets.QWidget):
         self._clear_highlight_state()
         self._set_ai_existing_shape_highlights(shapes=[])
 
-    def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
+    def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool) -> None:
         self.pixmap = pixmap
         self._drag_anchor = None
         self._pixmap_hash = None
@@ -2174,7 +2173,7 @@ class Canvas(QtWidgets.QWidget):
             self.shapes = []
         self.update()
 
-    def load_shapes(self, *, shapes: list[Shape], replace: bool = True) -> None:
+    def load_shapes(self, *, shapes: list[Shape], replace: bool) -> None:
         self.shapes = list(shapes) if replace else self.shapes + list(shapes)
         self.backup_shapes()
         self._reset_interaction_state()

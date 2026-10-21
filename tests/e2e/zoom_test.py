@@ -86,7 +86,7 @@ def test_resize_preserves_zoom_mode(
     canvas = win._canvas_widgets.canvas
     if mode == _ZoomMode.MANUAL_ZOOM:
         win._set_zoom(value=300, pos=None)
-        canvas.pan_view(step=QPointF(17, 23))
+        canvas.pan_view(step=QPointF(17, 23), constrain_to_center=True)
     offset = canvas.get_view_offset()
     scroll_area = win._canvas_widgets.scroll_area
     old_size = scroll_area.size()
@@ -300,7 +300,7 @@ def test_navigation_chooses_viewport_by_keep_previous_scale(
         numerator=1,
         denominator=3,
     )
-    canvas.pan_view(step=QPointF(17, 23))
+    canvas.pan_view(step=QPointF(17, 23), constrain_to_center=True)
     first_view_offset = canvas.get_view_offset()
 
     first_image_path = win._image_path
@@ -335,7 +335,7 @@ def test_navigation_chooses_viewport_by_keep_previous_scale(
         numerator=2,
         denominator=3,
     )
-    canvas.pan_view(step=QPointF(-31, -19))
+    canvas.pan_view(step=QPointF(-31, -19), constrain_to_center=True)
     second_view_offset = canvas.get_view_offset()
     assert second_scroll_values != first_scroll_values
     assert second_view_offset != first_view_offset
@@ -377,7 +377,7 @@ def test_navigation_restores_view_offset_with_retained_brightness(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     canvas = win._canvas_widgets.canvas
-    canvas.pan_view(step=QPointF(17, 23))
+    canvas.pan_view(step=QPointF(17, 23), constrain_to_center=True)
     expected_view_offset = canvas.get_view_offset()
     first_image_path = win._image_path
     assert first_image_path is not None
@@ -414,7 +414,7 @@ def test_navigation_restores_fitted_view_position(
     win._switch_zoom_mode(mode)
     canvas = win._canvas_widgets.canvas
     vertical_bar = win._canvas_widgets.scroll_bars[Qt.Orientation.Vertical]
-    canvas.pan_view(step=QPointF(17, 23))
+    canvas.pan_view(step=QPointF(17, 23), constrain_to_center=True)
     expected_scroll = vertical_bar.value()
     expected_offset = canvas.get_view_offset()
 
@@ -760,7 +760,9 @@ def _to_viewport(*, win: MainWindow, image_pos: QPointF) -> QPointF:
     canvas = win._canvas_widgets.canvas
     viewport = win._canvas_widgets.scroll_area.viewport()
     return QPointF(
-        canvas.mapTo(viewport, canvas.transform_image_point_to_widget(image_pos))
+        canvas.mapTo(
+            viewport, canvas.transform_image_point_to_widget(image_pos, area=None)
+        )
     )
 
 

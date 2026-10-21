@@ -47,7 +47,7 @@ def _decode(image_path: str, /) -> _Decoded:
             != QtGui.QImageIOHandler.Transformation.TransformationNone
         ):
             return None
-        image_data = read_image_file(filename=image_path)
+        image_data = read_image_file(filename=image_path, max_decode_mb=None)
         with open(image_path, "rb") as f:
             if f.read() != image_data:
                 return None

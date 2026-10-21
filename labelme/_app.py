@@ -465,6 +465,12 @@ class MainWindow(QtWidgets.QMainWindow):
 </p>
 """,
             ),
+            shortcut=None,
+            toolbar_text=None,
+            tip=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         save = action(
             text=self.tr("&Save"),
@@ -473,6 +479,9 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/floppy-disk.svg",
             tip=self.tr("Save the annotation file"),
             enabled=False,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         save_as = image_action(
             text=self.tr("Save &As…"),
@@ -480,12 +489,21 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["save_as"],
             icon="phosphor/floppy-disk-back.svg",
             tip=self.tr("Save the annotation file under a new name"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         save_auto = action(
             text=self.tr("Save Au&tomatically"),
             tip=self.tr("Save automatically"),
             checkable=True,
             enabled=True,
+            slot=None,
+            shortcut=None,
+            icon=None,
+            toolbar_text=None,
+            checked=False,
         )
         save_auto.setChecked(self._config["auto_save"])
         save_with_image_data = action(
@@ -493,6 +511,11 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Store a copy of the image inside the annotation file"),
             checkable=True,
             checked=self._config["with_image_data"],
+            slot=None,
+            shortcut=None,
+            icon=None,
+            toolbar_text=None,
+            enabled=True,
         )
         change_output_dir = action(
             text=self.tr("Change Annotation &Folder…"),
@@ -502,6 +525,9 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Choose where annotation files are read and saved"),
             # The choice is remembered per opened folder, so it needs one.
             enabled=False,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         open_ = action(
             text=self.tr("&Open File…"),
@@ -509,6 +535,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["open"],
             icon="phosphor/file-image.svg",
             tip=self.tr("Open an image or annotation file"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         open_dir = action(
             text=self.tr("Open Folder…"),
@@ -516,6 +546,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["open_dir"],
             icon="phosphor/folder-open.svg",
             tip=self.tr("Open a folder of images"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         close = image_action(
             text=self.tr("&Close"),
@@ -523,6 +557,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["close"],
             icon="phosphor/x-circle.svg",
             tip=self.tr("Close current file"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         delete_file = action(
             text=self.tr("&Delete Annotation File"),
@@ -532,6 +570,8 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/file-x.svg",
             tip=self.tr("Delete the current annotation file"),
             enabled=False,
+            checkable=False,
+            checked=False,
         )
         keep_prev_action = action(
             text=self.tr("Keep Previous Annotation"),
@@ -539,11 +579,21 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr('Toggle "keep previous annotation" mode'),
             checkable=True,
             checked=self._config["keep_prev"],
+            slot=None,
+            icon=None,
+            toolbar_text=None,
+            enabled=True,
         )
         toggle_keep_prev_brightness_contrast = action(
             text=self.tr("Keep Previous Brightness/Contrast"),
             checkable=True,
             checked=self._config["keep_prev_brightness_contrast"],
+            slot=None,
+            shortcut=None,
+            icon=None,
+            toolbar_text=None,
+            tip=None,
+            enabled=True,
         )
         delete = action(
             text=self.tr("Delete Shapes"),
@@ -553,6 +603,8 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/trash.svg",
             tip=self.tr("Delete the selected shapes"),
             enabled=False,
+            checkable=False,
+            checked=False,
         )
         edit = action(
             text=self.tr("&Edit Label…"),
@@ -561,6 +613,9 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/tag.svg",
             tip=self.tr("Modify the label of the selected shape"),
             enabled=False,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         copy = action(
             text=self.tr("Copy to Clipboard"),
@@ -571,6 +626,9 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/clipboard.svg",
             tip=self.tr("Place the selected shapes on the clipboard"),
             enabled=False,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         paste = action(
             text=self.tr("Paste from Clipboard"),
@@ -579,6 +637,9 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/clipboard-text.svg",
             tip=self.tr("Insert the clipboard shapes into this image"),
             enabled=False,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         duplicate = action(
             text=self.tr("Duplicate Shapes"),
@@ -590,6 +651,8 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/copy.svg",
             tip=self.tr("Create a duplicate of the selected shapes"),
             enabled=False,
+            checkable=False,
+            checked=False,
         )
         merge = action(
             text=self.tr("Merge Shapes"),
@@ -597,6 +660,10 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/unite-duotone.svg",
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
+            shortcut=None,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         lock = action(
             text=self.tr("Lock Shapes"),
@@ -605,6 +672,9 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/lock.svg",
             tip=self.tr("Lock the selected shapes against editing, or unlock them"),
             enabled=False,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         undo_last_point = action(
             text=self.tr("Undo Last Point"),
@@ -613,6 +683,9 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/backspace.svg",
             tip=self.tr("Undo last drawn point"),
             enabled=False,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         undo = action(
             text=self.tr("Undo"),
@@ -621,6 +694,9 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/arrow-u-up-left.svg",
             tip=self.tr("Undo last add and edit of shape"),
             enabled=False,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         remove_point = action(
             text=self.tr("Delete Selected Point"),
@@ -629,6 +705,9 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/minus-circle.svg",
             tip=self.tr("Delete the selected point from the polygon or LineStrip"),
             enabled=False,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         add_point_to_edge = action(
             text=self.tr("Add Point to Edge"),
@@ -636,6 +715,10 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/plus-circle.svg",
             tip=self.tr("Insert a new point at the hovered polygon edge"),
             enabled=False,
+            shortcut=None,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         create_mode = image_action(
             text=self.tr("Polygon"),
@@ -643,6 +726,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["create_polygon"],
             icon="phosphor/polygon.svg",
             tip=self.tr("Start drawing polygons"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         edit_mode = image_action(
             text=self.tr("Edit Shapes"),
@@ -652,6 +739,8 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/note-pencil.svg",
             tip=self.tr("Move and edit the selected shapes"),
             enabled=False,
+            checkable=False,
+            checked=False,
         )
         create_rectangle_mode = image_action(
             text=self.tr("Rectangle"),
@@ -659,6 +748,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["create_rectangle"],
             icon="phosphor/rectangle.svg",
             tip=self.tr("Start drawing rectangles"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         create_oriented_rectangle_mode = image_action(
             text=self.tr("Oriented Rectangle"),
@@ -668,6 +761,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["create_oriented_rectangle"],
             icon="oriented_rectangle.svg",
             tip=self.tr("Start drawing oriented rectangles"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         create_circle_mode = image_action(
             text=self.tr("Circle"),
@@ -675,6 +772,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["create_circle"],
             icon="phosphor/circle.svg",
             tip=self.tr("Start drawing circles"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         create_line_mode = image_action(
             text=self.tr("Line"),
@@ -682,6 +783,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["create_line"],
             icon="phosphor/line-segment.svg",
             tip=self.tr("Start drawing lines"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         create_point_mode = image_action(
             text=self.tr("Point"),
@@ -689,6 +794,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["create_point"],
             icon="phosphor/circles-four.svg",
             tip=self.tr("Start drawing points"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         create_line_strip_mode = image_action(
             text=self.tr("LineStrip"),
@@ -700,6 +809,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 " last one."
             )
             % ctrl,
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         create_ai_points_to_shape_mode = image_action(
             text=self.tr("AI-Points"),
@@ -712,6 +825,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 "Click points to segment the object; hold %s and click to finish."
             )
             % ctrl,
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         create_ai_box_to_shape_mode = image_action(
             text=self.tr("AI-Box"),
@@ -721,6 +838,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=None,
             icon="ai-box.svg",
             tip=self.tr("Draw a bounding box to segment object."),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         open_next_img = action(
             text=self.tr("&Next Image"),
@@ -731,6 +852,8 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Open the next image (hold %s to copy the current Shapes)")
             % ctrl_shift,
             enabled=False,
+            checkable=False,
+            checked=False,
         )
         open_prev_img = action(
             text=self.tr("&Previous Image"),
@@ -741,11 +864,19 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Open the previous image (hold %s to copy the current Shapes)")
             % ctrl_shift,
             enabled=False,
+            checkable=False,
+            checked=False,
         )
         keep_prev_zoom = action(
             text=self.tr("&Keep Previous Zoom"),
             checkable=True,
             checked=self._config["keep_prev_scale"],
+            slot=None,
+            shortcut=None,
+            icon=None,
+            toolbar_text=None,
+            tip=None,
+            enabled=True,
         )
         fit_window = image_action(
             text=self.tr("Fit to &Window"),
@@ -754,6 +885,9 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/frame-corners.svg",
             tip=self.tr("Keep the whole image visible when the window is resized"),
             checkable=True,
+            toolbar_text=None,
+            enabled=True,
+            checked=False,
         )
         fit_selection = image_action(
             text=self.tr("Fit to S&election"),
@@ -762,13 +896,20 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="phosphor/scan.svg",
             tip=self.tr("Zoom to the selected shapes whenever the selection changes"),
             checkable=True,
+            toolbar_text=None,
+            enabled=True,
+            checked=False,
         )
         brightness_contrast = image_action(
             text=self.tr("&Brightness/Contrast…"),
-            slot=self.open_brightness_contrast_dialog,
+            slot=lambda: self.open_brightness_contrast_dialog(is_initial_load=False),
             shortcut=None,
             icon="brightness-contrast.svg",
             tip=self.tr("Adjust brightness and contrast"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         zoom_in = image_action(
             text=self.tr("Zoom &In"),
@@ -776,6 +917,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["zoom_in"],
             icon="phosphor/magnifying-glass-plus.svg",
             tip=self.tr("Make the image appear larger"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         zoom_out = image_action(
             text=self.tr("&Zoom Out"),
@@ -783,6 +928,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["zoom_out"],
             icon="phosphor/magnifying-glass-minus.svg",
             tip=self.tr("Make the image appear smaller"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         zoom_org = image_action(
             text=self.tr("&Actual Size"),
@@ -790,11 +939,21 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["zoom_to_original"],
             icon="phosphor/image-square.svg",
             tip=self.tr("Show the image at 100%"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         reset_layout = action(
             text=self.tr("Reset Layout"),
             slot=self._reset_layout,
             icon="phosphor/layout-duotone.svg",
+            shortcut=None,
+            toolbar_text=None,
+            tip=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         fill_drawing = action(
             text=self.tr("Fill Drawing Polygon"),
@@ -802,6 +961,10 @@ class MainWindow(QtWidgets.QMainWindow):
             checkable=True,
             enabled=True,
             checked=self._config["canvas"]["fill_drawing"],
+            slot=None,
+            shortcut=None,
+            icon=None,
+            toolbar_text=None,
         )
         self._canvas_widgets.canvas.set_fill_drawing(
             value=self._config["canvas"]["fill_drawing"]
@@ -812,6 +975,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["hide_all_shapes"],
             icon="phosphor/eye-slash.svg",
             tip=self.tr("Hide all shapes"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         show_all = action(
             text=self.tr("&Show Shapes"),
@@ -819,6 +986,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["show_all_shapes"],
             icon="phosphor/eye.svg",
             tip=self.tr("Show all shapes"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         toggle_all = action(
             text=self.tr("&Toggle Shapes"),
@@ -826,6 +997,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["toggle_all_shapes"],
             icon="phosphor/toggle-right.svg",
             tip=self.tr("Toggle all shapes"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
 
         select_neighbor = self._canvas_widgets.canvas.select_neighbor_shape
@@ -836,6 +1011,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 shortcut=shortcuts["select_shape_up"],
                 icon="phosphor/arrow-up.svg",
                 tip=self.tr("Select the nearest shape above the selection"),
+                toolbar_text=None,
+                checkable=False,
+                enabled=True,
+                checked=False,
             ),
             action(
                 text=self.tr("Select Shape Below"),
@@ -843,6 +1022,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 shortcut=shortcuts["select_shape_down"],
                 icon="phosphor/arrow-down.svg",
                 tip=self.tr("Select the nearest shape below the selection"),
+                toolbar_text=None,
+                checkable=False,
+                enabled=True,
+                checked=False,
             ),
             action(
                 text=self.tr("Select Shape to the Left"),
@@ -850,6 +1033,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 shortcut=shortcuts["select_shape_left"],
                 icon="phosphor/arrow-left.svg",
                 tip=self.tr("Select the nearest shape left of the selection"),
+                toolbar_text=None,
+                checkable=False,
+                enabled=True,
+                checked=False,
             ),
             action(
                 text=self.tr("Select Shape to the Right"),
@@ -857,6 +1044,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 shortcut=shortcuts["select_shape_right"],
                 icon="phosphor/arrow-right.svg",
                 tip=self.tr("Select the nearest shape right of the selection"),
+                toolbar_text=None,
+                checkable=False,
+                enabled=True,
+                checked=False,
             ),
         )
 
@@ -1022,6 +1213,10 @@ class MainWindow(QtWidgets.QMainWindow):
             shortcut=shortcuts["quit"],
             icon="phosphor/power.svg",
             tip=self.tr("Quit application"),
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         settings_editable = self._is_settings_editable
         open_config = action(
@@ -1035,6 +1230,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 else self.tr("Settings are managed via --config for this session")
             ),
             enabled=True,
+            toolbar_text=None,
+            checkable=False,
+            checked=False,
         )
         open_config.setMenuRole(QtGui.QAction.MenuRole.PreferencesRole)
         open_models = action(
@@ -1042,12 +1240,22 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=self._open_models,
             icon="phosphor/cube.svg",
             tip=self.tr("Download or delete AI models"),
+            shortcut=None,
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
         help_ = action(
             text=self.tr("&Tutorial"),
             slot=self.tutorial,
             icon="phosphor/question.svg",
             tip=self.tr("Show tutorial page"),
+            shortcut=None,
+            toolbar_text=None,
+            checkable=False,
+            enabled=True,
+            checked=False,
         )
 
         file_menu = self.menuBar().addMenu(self.tr("&File"))
@@ -1647,7 +1855,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.save.setEnabled(False)
         self.setWindowTitle(self._get_window_title(dirty=False))
 
-    def show_status_message(self, message: str, /, *, delay: int = 500) -> None:
+    def show_status_message(self, message: str, /, *, delay: int) -> None:
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self, _: bool, /) -> None:  # noqa: FBT001 -- submit callback receives the Qt clicked flag
@@ -1846,6 +2054,7 @@ class MainWindow(QtWidgets.QMainWindow):
             description=first_shape.description,
             locked=locked,
             position=menu_origin,
+            move=True,
         )
         if entry is None:
             # The next new-shape dialog starts from the label that was on show.
@@ -2118,7 +2327,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._failed_save_path is not None:
             self._queue_auto_save(label_path=self._failed_save_path)
 
-    def save_labels(self, *, label_path: str, show_error: bool = True) -> bool:
+    def save_labels(self, *, label_path: str) -> bool:
         self._save_writer.discard_pending()
         self._wait_for_save()
         try:
@@ -2126,11 +2335,10 @@ class MainWindow(QtWidgets.QMainWindow):
             write_save_request(request)
         except (LabelFileError, OSError, ValueError) as e:
             self._show_save_failure(label_path=label_path, error=e)
-            if show_error:
-                self.show_error_message(
-                    title=self.tr("Error Saving Annotation File"),
-                    message=self.tr("<b>%s</b>") % e,
-                )
+            self.show_error_message(
+                title=self.tr("Error Saving Annotation File"),
+                message=self.tr("<b>%s</b>") % e,
+            )
             return False
         self._record_saved_annotation(label_path=request.filename)
         return True
@@ -2219,7 +2427,15 @@ class MainWindow(QtWidgets.QMainWindow):
         items = self._docks.unique_label_list.selectedItems()
         text = items[0].data(Qt.ItemDataRole.UserRole) if items else None
         if self._config["display_label_popup"] or not text:
-            entry = self._label_dialog.popup(text=text)
+            entry = self._label_dialog.popup(
+                text=text,
+                flags=None,
+                group_id=None,
+                description=None,
+                locked=(),
+                move=True,
+                position=None,
+            )
         else:
             entry = LabelDialogEntry(
                 label=text, flags={}, group_id=None, description=""
@@ -2384,11 +2600,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def _zoom_requested(self, delta: int, pos: QtCore.QPointF, /) -> None:
         self._add_zoom(increment=1.1 if delta > 0 else 0.9, pos=pos)
 
-    def set_fit_window_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+    def set_fit_window_mode(self, value: bool, /) -> None:  # noqa: FBT001 -- QAction.triggered slot
         target = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
         self._switch_zoom_mode(target)
 
-    def set_fit_selection_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+    def set_fit_selection_mode(self, value: bool, /) -> None:  # noqa: FBT001 -- QAction.triggered slot
         target = _ZoomMode.FIT_SELECTION if value else _ZoomMode.MANUAL_ZOOM
         self._switch_zoom_mode(target)
 
@@ -2426,13 +2642,7 @@ class MainWindow(QtWidgets.QMainWindow):
             pixmap=QtGui.QPixmap.fromImage(qimage), clear_shapes=False
         )
 
-    def open_brightness_contrast_dialog(
-        self,
-        _value: bool,  # noqa: FBT001 -- QAction.triggered slot
-        /,
-        *,
-        is_initial_load: bool = False,
-    ) -> None:
+    def open_brightness_contrast_dialog(self, *, is_initial_load: bool) -> None:
         if self._image_path is None:
             logger.warning("image_path is None, cannot set brightness/contrast")
             return
@@ -2586,7 +2796,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
         self.show_status_message(
-            self.tr("Loading %s...") % Path(image_or_label_path).name
+            self.tr("Loading %s...") % Path(image_or_label_path).name, delay=500
         )
 
         t0_load_file = time.time()
@@ -2683,7 +2893,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_file_path = label_file_path
         self._image = image
         t0 = time.time()
-        self._canvas_widgets.canvas.load_pixmap(pixmap=QtGui.QPixmap.fromImage(image))
+        self._canvas_widgets.canvas.load_pixmap(
+            pixmap=QtGui.QPixmap.fromImage(image), clear_shapes=True
+        )
         self._canvas_widgets.surface.setCurrentWidget(self._canvas_widgets.scroll_area)
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         # Record one baseline state. Loading carried-forward shapes separately
@@ -2729,10 +2941,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._canvas_widgets.canvas.pan_view(
                 step=target_viewport.view_offset, constrain_to_center=False
             )
-        self.open_brightness_contrast_dialog(
-            False,  # noqa: FBT003 -- placeholder for the Qt triggered flag
-            is_initial_load=True,
-        )
+        self.open_brightness_contrast_dialog(is_initial_load=True)
         self._actions.image.setEnabled(True)
         self._sync_navigation_actions()
         self._prefetch_neighbors()
@@ -2740,7 +2949,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
             self._canvas_widgets.canvas.setFocus()
-        self.show_status_message(self.tr("Loaded %s") % Path(image_or_label_path).name)
+        self.show_status_message(
+            self.tr("Loaded %s") % Path(image_or_label_path).name, delay=500
+        )
         logger.info(
             "Loaded file: {!r} in {:.0f}ms",
             image_or_label_path,
@@ -2926,7 +3137,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if image_or_label_path:
             self._load_from_file_or_dir(file_or_dir=image_or_label_path)
 
-    def prompt_output_dir(self, _value: bool = False, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+    def prompt_output_dir(self) -> None:
         default_output_dir: str
         if self._output_dir is not None:
             default_output_dir = str(self._output_dir)
@@ -3031,7 +3242,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         return label_path
 
-    def close_file(self, _value: bool = False, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+    def close_file(self) -> None:
         if not self._can_continue():
             return
         self._remember_current_viewport()
@@ -3537,7 +3748,7 @@ class MainWindow(QtWidgets.QMainWindow):
             dialog.setDetailedText(str(exc.__cause__))
             dialog.exec()
             self.show_status_message(
-                self.tr("Failed to load: {path}").format(path=path)
+                self.tr("Failed to load: {path}").format(path=path), delay=500
             )
             return
         if file_kind == "label":
@@ -3559,7 +3770,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if extra:
             message = f"{message}\n\n{extra}"
         QtWidgets.QMessageBox.critical(self, self.tr("Error Opening File"), message)
-        self.show_status_message(self.tr("Failed to load: {path}").format(path=path))
+        self.show_status_message(
+            self.tr("Failed to load: {path}").format(path=path), delay=500
+        )
 
     def current_path(self) -> str:
         return str(Path(self._image_path).parent) if self._image_path else "."

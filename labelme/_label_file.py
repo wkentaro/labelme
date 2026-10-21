@@ -278,7 +278,7 @@ def is_label_file_path(*, filename: str) -> bool:
     return Path(filename).suffix.lower() == LABEL_FILE_SUFFIX
 
 
-def read_image_file(*, filename: str, max_decode_mb: int | None = None) -> bytes:
+def read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
     try:
         return _read_image_file(filename=filename, max_decode_mb=max_decode_mb)
     except OSError:
@@ -358,7 +358,7 @@ def _image_path_from_raw(raw: dict[str, Any], /) -> str:
     return PureWindowsPath(raw["imagePath"]).as_posix()
 
 
-def read_label_file(*, filename: str, max_decode_mb: int | None = None) -> Annotation:
+def read_label_file(*, filename: str, max_decode_mb: int | None) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)

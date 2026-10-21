@@ -65,7 +65,7 @@ class AiAssistSession:
         points: NDArray[np.floating],
         point_labels: NDArray[np.intp],
         existing_shapes: list[Shape],
-        image_size: tuple[int, int] | None = None,
+        image_size: tuple[int, int] | None,
     ) -> AiAssistProposal:
         if prompt_kind == "points" and not supports_point_prompts(
             model_name=self.model_name
@@ -76,6 +76,7 @@ class AiAssistSession:
             image_id=image_id,
             points=points,
             point_labels=point_labels,
+            texts=None,
         )
         # iou_threshold is hardcoded because the AI Assist flow has no
         # user-facing IoU control (unlike the AI Text Prompt flow); 0.5 matches

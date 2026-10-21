@@ -212,7 +212,8 @@ def test_merge_mask_shapes(
     expected[20:60, 20:60] = True
     np.testing.assert_array_equal(merged.mask, expected)
     saved = read_label_file(
-        filename=str(tmp_path / raw_image_path.with_suffix(".json").name)
+        filename=str(tmp_path / raw_image_path.with_suffix(".json").name),
+        max_decode_mb=None,
     )
     exported, _ = _utils.shapes_to_label(
         img_shape=(338, 500), shapes=saved.shapes, label_name_to_value={"cat": 1}

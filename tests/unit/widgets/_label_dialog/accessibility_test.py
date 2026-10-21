@@ -64,6 +64,9 @@ def test_popup_exposes_accessible_names(
         move=False,
         group_id=group_id,
         description=description,
+        flags=None,
+        locked=(),
+        position=None,
     )
 
     assert observed == {

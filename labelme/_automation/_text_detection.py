@@ -125,6 +125,8 @@ def get_bboxes_from_texts(
         image=image,
         image_id=image_id,
         texts=texts,
+        points=None,
+        point_labels=None,
     )
 
     num_annotations: int = len(response.annotations)

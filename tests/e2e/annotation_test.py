@@ -88,7 +88,7 @@ def test_labeling_ai_lands_preserves_generated_group(
     win = main_win(config_overrides={"auto_save": False})
     canvas = win._canvas_widgets.canvas
     shapes = [Shape(group_id=1), Shape(group_id=1)]
-    canvas.load_shapes(shapes=shapes)
+    canvas.load_shapes(shapes=shapes, replace=True)
     canvas.backup_shapes()
     monkeypatch.setattr(
         win._label_dialog,

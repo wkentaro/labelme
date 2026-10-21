@@ -227,7 +227,7 @@ def test_shape_to_xyxy_bbox_raises_on_unsupported_shape_type() -> None:
 
 
 def test_compute_polygons_from_mask_returns_empty_for_empty_mask() -> None:
-    polygons = compute_polygons_from_mask(mask=np.zeros((5, 5), dtype=bool))
+    polygons = compute_polygons_from_mask(mask=np.zeros((5, 5), dtype=bool), detail=60)
 
     assert polygons == []
 

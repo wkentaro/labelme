@@ -90,7 +90,7 @@ class Shape:
         }[self.shape_type]
         return len(self.points) > floor
 
-    def insert_point(self, *, i: int, point: npt.ArrayLike, label: int = 1) -> None:
+    def insert_point(self, *, i: int, point: npt.ArrayLike, label: int) -> None:
         if not self.can_add_point():
             logger.warning(
                 "Cannot add point to: shape_type={!r}, len(points)={:d}",

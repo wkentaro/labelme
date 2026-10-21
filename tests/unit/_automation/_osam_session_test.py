@@ -80,6 +80,7 @@ def _run_point(session: OsamSession, /, *, image_id: str) -> None:
         image_id=image_id,
         points=_POINTS,
         point_labels=_POINT_LABELS,
+        texts=None,
     )
 
 
@@ -108,6 +109,8 @@ def test_text_prompt_uses_detection_thresholds(
         image=_IMAGE,
         image_id="img",
         texts=["cat"],
+        points=None,
+        point_labels=None,
     )
 
     (request,) = registry.model.requests
@@ -125,7 +128,9 @@ def test_run_without_a_prompt_raises_and_never_generates(
     registry = install_fake_model()
 
     with pytest.raises(ValueError, match="points and point_labels, or texts"):
-        OsamSession(model_name="x").run(image=_IMAGE, image_id="img")
+        OsamSession(model_name="x").run(
+            image=_IMAGE, image_id="img", points=None, point_labels=None, texts=None
+        )
 
     assert registry.model.requests == []
 
@@ -137,7 +142,9 @@ def test_points_without_labels_is_not_treated_as_a_prompt(
     registry = install_fake_model()
 
     with pytest.raises(ValueError, match="points and point_labels, or texts"):
-        OsamSession(model_name="x").run(image=_IMAGE, image_id="img", points=_POINTS)
+        OsamSession(model_name="x").run(
+            image=_IMAGE, image_id="img", points=_POINTS, point_labels=None, texts=None
+        )
 
     assert registry.model.requests == []
 

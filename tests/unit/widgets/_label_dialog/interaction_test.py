@@ -53,6 +53,7 @@ def _run_popup(
         group_id=group_id,
         description=description,
         locked=locked,
+        position=None,
     )
 
 
@@ -1017,7 +1018,15 @@ def test_list_keyboard_choice_is_accepted_immediately(
 
     QtCore.QTimer.singleShot(0, choose_label)
     QtCore.QTimer.singleShot(1000, dialog.reject)
-    entry = dialog.popup(text="custom", move=False)
+    entry = dialog.popup(
+        text="custom",
+        move=False,
+        flags=None,
+        group_id=None,
+        description=None,
+        locked=(),
+        position=None,
+    )
     assert entry is not None
     assert entry.label == expected
 
@@ -1080,7 +1089,15 @@ def test_repeated_modal_popups_restore_focus_and_isolate_results(
         qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Return)
 
     QtCore.QTimer.singleShot(0, accept_with_space)
-    entry = dialog.popup(text=" cat", group_id=0, description="<b>pet</b>", move=False)
+    entry = dialog.popup(
+        text=" cat",
+        group_id=0,
+        description="<b>pet</b>",
+        move=False,
+        flags=None,
+        locked=(),
+        position=None,
+    )
     assert entry == LabelDialogEntry(
         label="cat", flags={"indoor": True}, group_id=0, description="<b>pet</b>"
     )
@@ -1103,6 +1120,7 @@ def test_repeated_modal_popups_restore_focus_and_isolate_results(
         description="mixed",
         locked=("label", "flags", "group_id", "description"),
         move=False,
+        position=None,
     )
     assert locked_entry == (
         None
@@ -1125,7 +1143,18 @@ def test_repeated_modal_popups_restore_focus_and_isolate_results(
         qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Escape)
 
     QtCore.QTimer.singleShot(0, cancel_unlocked)
-    assert dialog.popup(move=False) is None
+    assert (
+        dialog.popup(
+            move=False,
+            text=None,
+            flags=None,
+            group_id=None,
+            description=None,
+            locked=(),
+            position=None,
+        )
+        is None
+    )
     assert _get_shown_text(dialog=dialog, accept=False, text=None) == (
         "cat" if cancel_locked else ""
     )

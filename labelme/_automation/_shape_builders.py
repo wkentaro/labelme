@@ -219,8 +219,8 @@ def shapes_from_detections(
     *,
     detections: list[Detection],
     shape_type: AiOutputFormat,
-    image_size: tuple[int, int] | None = None,
-    polygon_detail: int = _DEFAULT_POLYGON_DETAIL,
+    image_size: tuple[int, int] | None,
+    polygon_detail: int,
 ) -> list[Shape]:
     shapes: list[Shape] = []
     next_group_id = 1

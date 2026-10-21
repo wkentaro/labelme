@@ -57,10 +57,10 @@ def test_decode_rejects_file_replaced_after_reader_opened(
     replacement = tmp_path / "b.png"
     PIL.Image.new("RGB", (8, 8), (0, 0, 255)).save(replacement)
 
-    def replace_then_read(*, filename: str) -> bytes:
+    def replace_then_read(*, filename: str, max_decode_mb: int | None) -> bytes:
         # Atomic replacement while the reader holds the red file open.
         os.replace(replacement, filename)
-        return read_image_file(filename=filename)
+        return read_image_file(filename=filename, max_decode_mb=max_decode_mb)
 
     monkeypatch.setattr(_image_prefetcher, "read_image_file", replace_then_read)
     assert _image_prefetcher._decode(str(path)) is None

@@ -254,7 +254,7 @@ def main() -> None:
             " (default: next to each image)"
         ),
     )
-    default_config_file = _config.get_user_config_file()
+    default_config_file = _config.get_user_config_file(create_if_missing=True)
     parser.add_argument(
         "--config",
         dest="config",

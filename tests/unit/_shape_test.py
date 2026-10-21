@@ -30,6 +30,7 @@ def test_rotate_oriented_rectangle_around_origin() -> None:
         shape=shape,
         center=np.array([0.0, 0.0]),
         angle=math.pi / 2,
+        source_points=None,
     )
 
     expected = [(0.0, 0.0), (0.0, 10.0), (-4.0, 10.0), (-4.0, 0.0)]
@@ -93,6 +94,7 @@ def test_rotate_non_oriented_rectangle_raises() -> None:
             shape=shape,
             center=np.array([0.0, 0.0]),
             angle=math.pi / 2,
+            source_points=None,
         )
 
 
@@ -210,7 +212,7 @@ def test_constructor_rejects_unknown_shape_type() -> None:
 def test_insert_point_keeps_points_and_labels_in_sync() -> None:
     shape = _make_square_polygon()
 
-    shape.insert_point(i=1, point=(5.0, 0.0))
+    shape.insert_point(i=1, point=(5.0, 0.0), label=1)
 
     assert len(shape.points) == 5
     assert len(shape.point_labels) == 5
@@ -232,7 +234,7 @@ def test_insert_point_is_noop_for_non_polyline() -> None:
         points=np.array([(0.0, 0.0), (10.0, 10.0)], dtype=np.float64),
     )
 
-    shape.insert_point(i=1, point=(5.0, 5.0))
+    shape.insert_point(i=1, point=(5.0, 5.0), label=1)
 
     assert len(shape.points) == 2
     assert len(shape.point_labels) == 2
@@ -249,7 +251,7 @@ def test_insert_point_noop_logs_shape_state() -> None:
     )
 
     try:
-        shape.insert_point(i=1, point=(5.0, 5.0))
+        shape.insert_point(i=1, point=(5.0, 5.0), label=1)
     finally:
         logger.remove(sink_id)
 

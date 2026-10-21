@@ -36,7 +36,7 @@ def test_save_request_owns_mutable_annotation_data(
     shape.other_data["custom"].append(3)
     win._annotation.other_data["custom"].append(4)
     write_save_request(request)
-    restored = read_label_file(filename=str(path))
+    restored = read_label_file(filename=str(path), max_decode_mb=None)
     assert restored.shapes[0]["points"] == [[0, 0], [2, 2]]
     assert np.all(restored.shapes[0]["mask"])
     assert restored.shapes[0]["flags"] == {"checked": True}

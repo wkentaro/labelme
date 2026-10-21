@@ -564,7 +564,7 @@ def test_auto_save_uses_source_image_when_embedded_path_differs(
     assert not (output_dir / "embedded-source.json").exists()
     assert item.checkState() == Qt.CheckState.Checked
     assert win.current_label_file_path() == str(label_path)
-    assert read_label_file(filename=str(label_path)).image_data
+    assert read_label_file(filename=str(label_path), max_decode_mb=None).image_data
     assert win._load_file(image_or_label_path=str(image_path))
     assert critical_messages == []
 

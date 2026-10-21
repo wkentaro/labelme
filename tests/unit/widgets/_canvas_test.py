@@ -138,7 +138,7 @@ def test_drag_hovered_rotation_point_does_not_drift_on_repeated_drags(
         (30, 40),
     ]
     shape = _make_oriented_rectangle(corners=original)
-    canvas.load_shapes(shapes=[shape])
+    canvas.load_shapes(shapes=[shape], replace=True)
 
     canvas._refresh_hover_state(pos=QPointF(50, 10))
     assert canvas._hovered_rotation == 1
@@ -433,7 +433,7 @@ def test_drag_anchor_releases_captured_shapes_on_reset(
     if reset == "image":
         canvas.load_pixmap(pixmap=QtGui.QPixmap(100, 50), clear_shapes=False)
     elif reset == "shapes":
-        canvas.load_shapes(shapes=[])
+        canvas.load_shapes(shapes=[], replace=True)
     elif reset == "empty_capture":
         canvas._record_drag_anchor(shapes=[], click=QPointF())
     elif reset == "focus":
@@ -493,9 +493,9 @@ def test_move_by_keyboard_ignores_stale_mouse_position(*, canvas: Canvas) -> Non
         points=np.array([(40, 20), (60, 30)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_pixmap(pixmap=QtGui.QPixmap(200, 100))
+    canvas.load_pixmap(pixmap=QtGui.QPixmap(200, 100), clear_shapes=True)
     canvas._prev_point = QPointF(150, 80)
-    canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT))
+    canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT), clear_shapes=True)
     canvas.shapes = [shape]
     canvas.selected_shapes = [shape]
 
@@ -662,7 +662,7 @@ def test_should_draw_crosshair_off_image_when_out_of_bounds_allowed(
 ) -> None:
     canvas.set_allow_out_of_bounds_points(value=True)
     canvas._crosshair[canvas._create_mode] = True
-    canvas.set_editing(value=False)
+    canvas.set_editing(value=False, create_mode=None)
 
     assert canvas._should_draw_crosshair(cursor=QPointF(_WIDTH + 20, _HEIGHT + 20))
 
@@ -676,7 +676,7 @@ def test_set_shape_visible_toggles_visibility(*, canvas: Canvas) -> None:
         points=np.array([(0, 0), (10, 10)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes(shapes=[shape])
+    canvas.load_shapes(shapes=[shape], replace=True)
 
     assert canvas.shapes[0].visible is True
 
@@ -697,11 +697,11 @@ def test_shape_visibility_survives_backup_and_restore(*, canvas: Canvas) -> None
         points=np.array([(0, 0), (10, 10)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes(shapes=[shape])
+    canvas.load_shapes(shapes=[shape], replace=True)
 
     canvas.set_shape_visible(shape=canvas.shapes[0], value=False)
     canvas.backup_shapes()
-    canvas.load_shapes(shapes=[shape.copy()])
+    canvas.load_shapes(shapes=[shape.copy()], replace=True)
     assert canvas.shapes[0].visible is False
 
     canvas.restore_last_shape()
@@ -730,7 +730,7 @@ def test_set_last_label_applies_only_to_trailing_unlabeled_run(
     labeled = _make_rectangle(label="old")
     fresh_a = _make_rectangle(label=None)
     fresh_b = _make_rectangle(label=None)
-    canvas.load_shapes(shapes=[stale, labeled, fresh_a, fresh_b])
+    canvas.load_shapes(shapes=[stale, labeled, fresh_a, fresh_b], replace=True)
 
     updated = canvas.set_last_label(text="new", flags={"occluded": True})
 
@@ -800,7 +800,7 @@ def test_existing_shape_suppression_is_disabled_by_default(
         points=np.array([(20, 20), (30, 30)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes(shapes=[existing])
+    canvas.load_shapes(shapes=[existing], replace=True)
 
     def propose_shapes(
         *, existing_shapes: list[Shape], **_: object
@@ -903,7 +903,7 @@ def test_changing_polygon_detail_requests_preview_repaint(
 @pytest.mark.gui
 def test_delete_shape_clears_highlights(*, canvas: Canvas) -> None:
     existing = _make_rectangle(label="existing")
-    canvas.load_shapes(shapes=[existing])
+    canvas.load_shapes(shapes=[existing], replace=True)
     canvas._set_ai_existing_shape_highlights(shapes=[existing])
 
     canvas.delete_shape(shape=existing)
@@ -914,7 +914,7 @@ def test_delete_shape_clears_highlights(*, canvas: Canvas) -> None:
 @pytest.mark.gui
 def test_delete_selected_clears_highlights(*, canvas: Canvas) -> None:
     existing = _make_rectangle(label="existing")
-    canvas.load_shapes(shapes=[existing])
+    canvas.load_shapes(shapes=[existing], replace=True)
     canvas.selected_shapes.append(existing)
     canvas._set_ai_existing_shape_highlights(shapes=[existing])
 
@@ -944,10 +944,10 @@ def ai_existing_shape_highlight_harness(
         points=np.array([[20, 10], [60, 40]], dtype=np.float64),
         visible=False,
     )
-    canvas.load_shapes(shapes=[existing])
+    canvas.load_shapes(shapes=[existing], replace=True)
     canvas.set_ai_existing_shape_suppression(enabled=True)
     canvas.create_mode = "ai_box_to_shape"
-    canvas.set_editing(value=False)
+    canvas.set_editing(value=False, create_mode=None)
     canvas._current = _DraftShape(
         shape_type="rectangle",
         points=(QPointF(0, 0), QPointF(10, 10)),
@@ -1007,7 +1007,7 @@ def test_finalize_existing_only_inference_highlights_hidden_shape(
     assert highlight.red() > highlight.green() > highlight.blue()
 
     if clear_action == "edit":
-        canvas.set_editing()
+        canvas.set_editing(value=True, create_mode=None)
     elif clear_action == "pointer":
         qtbot.mouseClick(
             canvas,
@@ -1147,7 +1147,7 @@ def ai_points_harness(
     monkeypatch.setattr(canvas, "ensure_ai_model_ready", ensure_ready)
     canvas.point_prompt_rejected.connect(rejected_models.append)
     canvas.resize(_WIDTH, _HEIGHT)
-    canvas.set_editing(value=False)
+    canvas.set_editing(value=False, create_mode=None)
     canvas.create_mode = "ai_points_to_shape"
     with qtbot.waitExposed(canvas):
         canvas.show()
@@ -1398,7 +1398,7 @@ def test_load_pixmap_rearms_inference_failure_report(*, canvas: Canvas) -> None:
     # A new image is a fresh inference context: a previous image's latched
     # failure must not mute the first failure report on the new image.
     canvas._ai_inference_failed = True
-    canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT))
+    canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT), clear_shapes=True)
     assert canvas._ai_inference_failed is False
 
 
@@ -1411,7 +1411,7 @@ def test_load_pixmap_defers_image_hash(
         pixmap, "toImage", Mock(side_effect=AssertionError("Image converted on load"))
     )
     canvas._pixmap_hash = 1
-    canvas.load_pixmap(pixmap=pixmap)
+    canvas.load_pixmap(pixmap=pixmap, clear_shapes=True)
     assert canvas._pixmap_hash is None
 
 
@@ -1447,7 +1447,7 @@ def test_ai_embedding_is_reused_after_reloading_image(
         pixmap = QtGui.QPixmap.fromImage(image.copy())
         keys.append(pixmap.cacheKey())
         canvas.reset_state()
-        canvas.load_pixmap(pixmap=pixmap)
+        canvas.load_pixmap(pixmap=pixmap, clear_shapes=True)
         canvas._propose_ai_shapes(
             prompt_kind="points", points=[QPointF(10, 10)], point_labels=[1]
         )
@@ -1909,7 +1909,9 @@ def test_retype_draft_into_fresh_shape_type() -> None:
 
 
 def test_add_point_appends_point_with_default_label() -> None:
-    draft = _DraftShape(shape_type="polygon").add_point(QPointF(1, 2))
+    draft = _DraftShape(shape_type="polygon").add_point(
+        QPointF(1, 2), label=1, autoclose=False
+    )
 
     assert draft.points == (QPointF(1, 2),)
     assert draft.point_labels == (1,)
@@ -1917,7 +1919,9 @@ def test_add_point_appends_point_with_default_label() -> None:
 
 
 def test_add_point_appends_with_explicit_label() -> None:
-    draft = _DraftShape(shape_type="points").add_point(QPointF(3, 4), label=0)
+    draft = _DraftShape(shape_type="points").add_point(
+        QPointF(3, 4), label=0, autoclose=False
+    )
 
     assert draft.points == (QPointF(3, 4),)
     assert draft.point_labels == (0,)
@@ -1930,7 +1934,7 @@ def test_add_point_autoclose_closes_when_new_point_matches_first() -> None:
         point_labels=(1, 1, 1),
     )
 
-    closed = start.add_point(QPointF(0, 0), autoclose=True)
+    closed = start.add_point(QPointF(0, 0), autoclose=True, label=1)
 
     assert closed.closed is True
     assert closed.points == start.points  # first point is not re-appended
@@ -1944,7 +1948,7 @@ def test_add_point_autoclose_appends_when_new_point_differs_from_first() -> None
         point_labels=(1, 1),
     )
 
-    grown = start.add_point(QPointF(10, 10), autoclose=True)
+    grown = start.add_point(QPointF(10, 10), autoclose=True, label=1)
 
     assert grown.closed is False
     assert grown.points == (QPointF(0, 0), QPointF(10, 0), QPointF(10, 10))
@@ -1952,7 +1956,9 @@ def test_add_point_autoclose_appends_when_new_point_differs_from_first() -> None
 
 def test_add_point_autoclose_on_empty_draft_appends_seed_point() -> None:
     # No first point to match against, so autoclose falls through to a normal append.
-    draft = _DraftShape(shape_type="polygon").add_point(QPointF(5, 5), autoclose=True)
+    draft = _DraftShape(shape_type="polygon").add_point(
+        QPointF(5, 5), autoclose=True, label=1
+    )
 
     assert draft.closed is False
     assert draft.points == (QPointF(5, 5),)
@@ -1965,7 +1971,7 @@ def test_add_point_without_autoclose_appends_even_when_matching_first() -> None:
         point_labels=(1, 1),
     )
 
-    grown = start.add_point(QPointF(0, 0))
+    grown = start.add_point(QPointF(0, 0), label=1, autoclose=False)
 
     assert grown.closed is False
     assert grown.points == (QPointF(0, 0), QPointF(10, 0), QPointF(0, 0))
@@ -2389,7 +2395,7 @@ def test_add_point_to_edge_repaints(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     shape = _make_polygon()
-    canvas.load_shapes(shapes=[shape])
+    canvas.load_shapes(shapes=[shape], replace=True)
     canvas._last_hovered_shape = shape
     canvas._last_hovered_edge = 0
     canvas._prev_move_point = QPointF(25, 10)
@@ -2408,7 +2414,7 @@ def test_remove_selected_point_repaints(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     shape = _make_polygon()
-    canvas.load_shapes(shapes=[shape])
+    canvas.load_shapes(shapes=[shape], replace=True)
     canvas._last_hovered_shape = shape
     canvas._last_hovered_vertex = 1
     update = Mock()
@@ -2447,7 +2453,7 @@ def test_reset_state_clears_view_offset(*, canvas: Canvas) -> None:
 @pytest.mark.gui
 def test_remove_selected_point_deselects_vertex(*, canvas: Canvas) -> None:
     shape = _make_polygon()
-    canvas.load_shapes(shapes=[shape])
+    canvas.load_shapes(shapes=[shape], replace=True)
     canvas._last_hovered_shape = shape
     canvas._last_hovered_vertex = 1
     canvas._hovered_vertex = 1
@@ -2674,7 +2680,7 @@ def test_hover_transitions_repaint(
     )
     canvas.pixmap = QtGui.QPixmap(140, 60)
     canvas.pixmap.fill(Qt.GlobalColor.white)
-    canvas.load_shapes(shapes=[polygon, rotated])
+    canvas.load_shapes(shapes=[polygon, rotated], replace=True)
     # Keep the desktop pointer from overwriting the scripted hover targets.
     canvas.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
     canvas.show()
@@ -2722,7 +2728,7 @@ def test_hover_transitions_repaint(
     elif clear_action == "leave":
         canvas.leaveEvent(QtCore.QEvent(QtCore.QEvent.Type.Leave))
     else:
-        canvas.set_editing(value=False)
+        canvas.set_editing(value=False, create_mode=None)
     qtbot.waitUntil(lambda: bool(painted))
     assert all(
         not context.fill
@@ -2737,7 +2743,7 @@ def test_hover_transitions_repaint(
         assert not painted
     if clear_action == "create":
         painted.clear()
-        canvas.set_editing(value=True)
+        canvas.set_editing(value=True, create_mode=None)
         qtbot.waitUntil(lambda: bool(painted))
 
 
@@ -2749,7 +2755,7 @@ def _double_click_canvas(
     button: Qt.MouseButton,
 ) -> None:
     # A real double-click arrives as press, release, double-click, release.
-    pos = canvas.transform_image_point_to_widget(image_pos).toPoint()
+    pos = canvas.transform_image_point_to_widget(image_pos, area=None).toPoint()
     qtbot.mouseMove(canvas, pos)
     qtbot.mouseClick(canvas, button, pos=pos)
     qtbot.mouseDClick(canvas, button, pos=pos)
@@ -2761,7 +2767,7 @@ def editing_canvas(*, qtbot: QtBot, canvas: Canvas) -> Canvas:
     # Hovering needs mouse-move events, which only a shown widget receives.
     with qtbot.waitExposed(canvas):
         canvas.show()
-    canvas.load_shapes(shapes=[_make_polygon()])
+    canvas.load_shapes(shapes=[_make_polygon()], replace=True)
     # The main window owns the selection and writes it back like this.
     canvas.selection_changed.connect(
         lambda shapes: setattr(canvas, "selected_shapes", shapes)
@@ -2811,7 +2817,7 @@ def test_double_click_vertex_selects_its_shape_not_the_enclosing_one(
         points=np.array([(0, 0), (50, 50)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes(shapes=[inner, outer])
+    canvas.load_shapes(shapes=[inner, outer], replace=True)
 
     _double_click_canvas(
         qtbot=qtbot,
@@ -2851,7 +2857,7 @@ def test_double_click_does_not_emit_signal(
 def test_double_click_in_create_mode_finalizes_shape(
     *, qtbot: QtBot, canvas: Canvas
 ) -> None:
-    canvas.set_editing(value=False)
+    canvas.set_editing(value=False, create_mode=None)
     canvas.create_mode = "polygon"
     canvas._current = _DraftShape(
         points=(QPointF(10.0, 10.0), QPointF(30.0, 10.0), QPointF(20.0, 30.0)),
@@ -2860,7 +2866,9 @@ def test_double_click_in_create_mode_finalizes_shape(
     emitted = Mock()
     canvas.shape_double_clicked.connect(emitted)
 
-    pos = canvas.transform_image_point_to_widget(QPointF(20.0, 30.0)).toPoint()
+    pos = canvas.transform_image_point_to_widget(
+        QPointF(20.0, 30.0), area=None
+    ).toPoint()
     qtbot.mouseDClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
 
     emitted.assert_not_called()

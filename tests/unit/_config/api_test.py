@@ -21,7 +21,7 @@ def test_get_user_config_file_creates_empty(
     *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _steer_home(monkeypatch=monkeypatch, home=tmp_path)
-    config_file = _config.get_user_config_file()
+    config_file = _config.get_user_config_file(create_if_missing=True)
     assert Path(config_file).read_text() == ""
 
 
@@ -31,7 +31,7 @@ def test_get_user_config_file_does_not_overwrite(
     _steer_home(monkeypatch=monkeypatch, home=tmp_path)
     config_path = tmp_path / ".labelmerc"
     config_path.write_text("auto_save: true\n")
-    config_file = _config.get_user_config_file()
+    config_file = _config.get_user_config_file(create_if_missing=True)
     content = Path(config_file).read_text()
     assert content == "auto_save: true\n"
 

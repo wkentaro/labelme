@@ -239,7 +239,9 @@ def test_shape_to_mask() -> None:
     img, data = get_img_and_data()
     for shape in data["shapes"]:
         points = shape["points"]
-        mask = mask_module.shape_to_mask(img.shape[:2], points)
+        mask = mask_module.shape_to_mask(
+            img.shape[:2], points, shape_type=None, line_width=10
+        )
         assert mask.shape == img.shape[:2]
 
 
@@ -249,6 +251,7 @@ def test_shape_to_mask_oriented_rectangle_marks_inside_pixels() -> None:
         (20, 20),
         [[0.0, 0.0], [10.0, 0.0], [10.0, 4.0], [0.0, 4.0]],
         shape_type="oriented_rectangle",
+        line_width=10,
     )
     assert mask.dtype == bool
     inside_row, inside_col = 2, 5
@@ -294,16 +297,28 @@ def test_shape_to_mask_linestrip_collinear_point_does_not_change_mask() -> None:
 def test_shape_to_mask_rectangle_reversed_coords() -> None:
     img_shape = (100, 100)
     mask_tl_br = mask_module.shape_to_mask(
-        img_shape, [[10, 10], [50, 50]], shape_type="rectangle"
+        img_shape,
+        [[10, 10], [50, 50]],
+        shape_type="rectangle",
+        line_width=10,
     )
     mask_br_tl = mask_module.shape_to_mask(
-        img_shape, [[50, 50], [10, 10]], shape_type="rectangle"
+        img_shape,
+        [[50, 50], [10, 10]],
+        shape_type="rectangle",
+        line_width=10,
     )
     mask_tr_bl = mask_module.shape_to_mask(
-        img_shape, [[50, 10], [10, 50]], shape_type="rectangle"
+        img_shape,
+        [[50, 10], [10, 50]],
+        shape_type="rectangle",
+        line_width=10,
     )
     mask_bl_tr = mask_module.shape_to_mask(
-        img_shape, [[10, 50], [50, 10]], shape_type="rectangle"
+        img_shape,
+        [[10, 50], [50, 10]],
+        shape_type="rectangle",
+        line_width=10,
     )
     assert np.array_equal(mask_tl_br, mask_br_tl)
     assert np.array_equal(mask_tl_br, mask_tr_bl)
@@ -318,6 +333,7 @@ def test_shape_to_mask_circle_marks_center_and_clears_outside() -> None:
         (30, 30),
         [[12.0, 10.0], [12.0, 15.0]],
         shape_type="circle",
+        line_width=10,
     )
     assert mask.dtype == bool
     assert mask[10, 12]
@@ -349,10 +365,10 @@ def test_shape_to_mask_point_marks_pixels_around_center() -> None:
         (100, 100),
         [[40.0, 60.0]],
         shape_type="point",
-        point_size=5,
+        line_width=10,
     )
     assert mask.dtype == bool
     assert mask[60, 40]
-    assert mask[60, 43]  # 3px from center, inside point_size=5
+    assert mask[60, 43]  # 3px from center, inside the 5px point radius
     assert mask[62, 40]  # off the center row: a filled disk, not a horizontal line
-    assert not mask[60, 46]  # 1px past the point_size=5 edge
+    assert not mask[60, 46]  # 1px past the 5px point radius

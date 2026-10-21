@@ -73,7 +73,7 @@ def cached_ai_models(*, session_home: Path, monkeypatch: pytest.MonkeyPatch) -> 
 
 
 def image_to_widget_pos(*, canvas: Canvas, image_pos: QPointF) -> QPoint:
-    widget_pos = canvas.transform_image_point_to_widget(image_pos)
+    widget_pos = canvas.transform_image_point_to_widget(image_pos, area=None)
     return QPoint(int(widget_pos.x()), int(widget_pos.y()))
 
 

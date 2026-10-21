@@ -25,13 +25,13 @@ def _make_image(tmp_path: Path, /, *, filename: str, mode: str) -> Path:
 
 def test_tiff_without_alpha_encoded_as_jpeg(*, tmp_path: Path) -> None:
     path = _make_image(tmp_path, filename="test.tiff", mode="RGB")
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     assert data[:2] == b"\xff\xd8"
 
 
 def test_tiff_with_alpha_encoded_as_png(*, tmp_path: Path) -> None:
     path = _make_image(tmp_path, filename="test.tiff", mode="RGBA")
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     assert data[:4] == b"\x89PNG"
 
 
@@ -40,18 +40,18 @@ def test_corrupt_tiff_raises_os_error(*, tmp_path: Path) -> None:
     path.write_bytes(b"II*\x00")
 
     with pytest.raises(OSError, match="failed to read image"):
-        read_image_file(filename=str(path))
+        read_image_file(filename=str(path), max_decode_mb=None)
 
 
 def test_jpeg_returns_raw_bytes(*, tmp_path: Path) -> None:
     path = _make_image(tmp_path, filename="test.jpg", mode="RGB")
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     assert data == path.read_bytes()
 
 
 def test_png_returns_raw_bytes(*, tmp_path: Path) -> None:
     path = _make_image(tmp_path, filename="test.png", mode="RGB")
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     assert data == path.read_bytes()
 
 
@@ -65,7 +65,7 @@ def test_palette_image_without_alpha_encoded_as_jpeg(
     with PIL.Image.open(path) as image:
         assert image.mode == "P"
 
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     assert data[:2] == b"\xff\xd8"
 
 
@@ -78,7 +78,7 @@ def test_transparent_palette_gif_encoded_as_png(*, tmp_path: Path) -> None:
         assert image.mode == "P"
         assert "transparency" in image.info
 
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     assert data[:4] == b"\x89PNG"
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert "transparency" in image.info
@@ -90,7 +90,7 @@ def test_palette_with_alpha_tiff_encoded_as_png(*, tmp_path: Path) -> None:
     with PIL.Image.open(path) as image:
         assert image.mode == "PA"
 
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     assert data[:4] == b"\x89PNG"
 
 
@@ -100,7 +100,7 @@ def test_bilevel_image_encoded_as_jpeg_without_widening(*, tmp_path: Path) -> No
     with PIL.Image.open(path) as image:
         assert image.mode == "1"
 
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     assert data[:2] == b"\xff\xd8"
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert image.mode == "L"
@@ -111,7 +111,7 @@ def test_multispectral_tiff_float32(*, tmp_path: Path) -> None:
     path = tmp_path / "multispectral.tif"
     tifffile.imwrite(str(path), arr)
 
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     assert data[:2] == b"\xff\xd8"
 
     with PIL.Image.open(io.BytesIO(data)) as image:
@@ -124,7 +124,7 @@ def test_grayscale_tiff_float32(*, tmp_path: Path) -> None:
     path = tmp_path / "grayscale.tif"
     tifffile.imwrite(str(path), arr)
 
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert image.size == (64, 64)
 
@@ -134,7 +134,7 @@ def test_constant_value_tiff_returns_black(*, tmp_path: Path) -> None:
     path = tmp_path / "constant.tif"
     tifffile.imwrite(str(path), arr)
 
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert image.size == (64, 64)
         assert np.array(image).max() == 0
@@ -145,7 +145,7 @@ def test_two_band_tiff_falls_back_to_first_band(*, tmp_path: Path) -> None:
     path = tmp_path / "twoband.tif"
     tifffile.imwrite(str(path), arr)
 
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert image.size == (64, 64)
 
@@ -157,7 +157,7 @@ def test_planar_separate_tiff_keeps_image_size_and_bands(*, tmp_path: Path) -> N
     path = tmp_path / "planar.tif"
     tifffile.imwrite(str(path), arr, photometric="rgb", planarconfig="separate")
 
-    data = read_image_file(filename=str(path))
+    data = read_image_file(filename=str(path), max_decode_mb=None)
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert image.size == (200, 64)
         rgb = image.convert("RGB")

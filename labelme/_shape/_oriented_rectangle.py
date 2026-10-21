@@ -59,7 +59,7 @@ def rotate(
     shape: Shape,
     center: npt.NDArray[np.float64],
     angle: float,
-    source_points: npt.NDArray[np.float64] | None = None,
+    source_points: npt.NDArray[np.float64] | None,
 ) -> None:
     if shape.shape_type != "oriented_rectangle":
         raise ValueError(

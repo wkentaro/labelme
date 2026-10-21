@@ -209,70 +209,180 @@ def test_new_icon_keeps_accent_icon_fixed(*, qapp: QtWidgets.QApplication) -> No
 def test_new_action_returns_qaction(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="Open")
+    action = new_action(
+        parent,
+        text="Open",
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     assert isinstance(action, QtGui.QAction)
 
 
 def test_new_action_text(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="Save")
+    action = new_action(
+        parent,
+        text="Save",
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     assert action.text() == "Save"
 
 
 def test_new_action_enabled_by_default(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X")
+    action = new_action(
+        parent,
+        text="X",
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     assert action.isEnabled()
 
 
 def test_new_action_disabled(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", enabled=False)
+    action = new_action(
+        parent,
+        text="X",
+        enabled=False,
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        checked=False,
+    )
     assert not action.isEnabled()
 
 
 def test_new_action_not_checkable_by_default(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X")
+    action = new_action(
+        parent,
+        text="X",
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     assert not action.isCheckable()
 
 
 def test_new_action_checkable(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", checkable=True)
+    action = new_action(
+        parent,
+        text="X",
+        checkable=True,
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        enabled=True,
+        checked=False,
+    )
     assert action.isCheckable()
 
 
 def test_new_action_not_checked_by_default(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", checkable=True)
+    action = new_action(
+        parent,
+        text="X",
+        checkable=True,
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        enabled=True,
+        checked=False,
+    )
     assert not action.isChecked()
 
 
 def test_new_action_checked(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", checkable=True, checked=True)
+    action = new_action(
+        parent,
+        text="X",
+        checkable=True,
+        checked=True,
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        enabled=True,
+    )
     assert action.isChecked()
 
 
 def test_new_action_shortcut_string(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", shortcut="Ctrl+S")
+    action = new_action(
+        parent,
+        text="X",
+        shortcut="Ctrl+S",
+        slot=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     assert action.shortcut().toString() == "Ctrl+S"
 
 
 def test_new_action_shortcut_list(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", shortcut=["Ctrl+S", "Ctrl+W"])
+    action = new_action(
+        parent,
+        text="X",
+        shortcut=["Ctrl+S", "Ctrl+W"],
+        slot=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     keys = [s.toString() for s in action.shortcuts()]
     assert "Ctrl+S" in keys
     assert "Ctrl+W" in keys
@@ -281,7 +391,18 @@ def test_new_action_shortcut_list(*, qtbot: QtBot) -> None:
 def test_new_action_shortcut_tuple(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", shortcut=("Ctrl+S", "Ctrl+W"))
+    action = new_action(
+        parent,
+        text="X",
+        shortcut=("Ctrl+S", "Ctrl+W"),
+        slot=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     keys = [s.toString() for s in action.shortcuts()]
     assert "Ctrl+S" in keys
     assert "Ctrl+W" in keys
@@ -290,7 +411,18 @@ def test_new_action_shortcut_tuple(*, qtbot: QtBot) -> None:
 def test_new_action_tip(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", tip="My tip")
+    action = new_action(
+        parent,
+        text="X",
+        tip="My tip",
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     assert action.toolTip() == "My tip"
     assert action.statusTip() == "My tip"
 
@@ -300,7 +432,18 @@ def test_new_action_no_tip_by_default(*, qtbot: QtBot) -> None:
     # statusTip() returns empty string.
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X")
+    action = new_action(
+        parent,
+        text="X",
+        slot=None,
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     assert action.toolTip() == "X"
     assert action.statusTip() == ""
 
@@ -309,7 +452,18 @@ def test_new_action_with_icon_sets_icon_text(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     # Use an icon file that actually exists so Qt loads it as non-null.
-    action = new_action(parent, text="Save File", icon="ai-box.svg")
+    action = new_action(
+        parent,
+        text="Save File",
+        icon="ai-box.svg",
+        slot=None,
+        shortcut=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     # multi-word labels are presented so words are not shown on a single unbroken line
     icon_text = action.iconText()
     assert icon_text != "Save File"  # must not be the original single-line text
@@ -322,7 +476,18 @@ def test_new_action_slot(*, qtbot: QtBot) -> None:
     calls: list[bool] = []
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", slot=lambda: calls.append(True))
+    action = new_action(
+        parent,
+        text="X",
+        slot=lambda: calls.append(True),
+        shortcut=None,
+        icon=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     action.trigger()
     assert calls == [True]
 
@@ -376,7 +541,18 @@ def test_modifier_text_follows_platform(
 def test_new_action_keeps_translated_line_break_out_of_menu(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="図形を\n編集", icon="phosphor/note-pencil.svg")
+    action = new_action(
+        parent,
+        text="図形を\n編集",
+        icon="phosphor/note-pencil.svg",
+        slot=None,
+        shortcut=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     assert action.text() == "図形を編集"
     assert action.iconText() == "図形を\n編集"
 
@@ -389,6 +565,12 @@ def test_new_action_shows_toolbar_text_on_the_toolbar(*, qtbot: QtBot) -> None:
         text="&Previous Image",
         toolbar_text="Previous",
         icon="phosphor/arrow-fat-left.svg",
+        slot=None,
+        shortcut=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
     )
     assert action.text() == "&Previous Image"
     assert action.iconText() == "Previous"
@@ -397,7 +579,18 @@ def test_new_action_shows_toolbar_text_on_the_toolbar(*, qtbot: QtBot) -> None:
 def test_new_action_drops_cjk_mnemonic_from_toolbar_label(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="保存(&S)", icon="phosphor/floppy-disk.svg")
+    action = new_action(
+        parent,
+        text="保存(&S)",
+        icon="phosphor/floppy-disk.svg",
+        slot=None,
+        shortcut=None,
+        toolbar_text=None,
+        tip=None,
+        checkable=False,
+        enabled=True,
+        checked=False,
+    )
     assert action.text() == "保存(&S)"
     assert action.iconText() == "保存"
 

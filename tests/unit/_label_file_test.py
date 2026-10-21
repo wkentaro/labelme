@@ -47,7 +47,7 @@ def test_read_label_file_load_windows_path(*, data_path: Path, tmp_path: Path) -
     with open(json_file, "w") as f:
         json.dump(json_data, f)
 
-    annotation = read_label_file(filename=str(json_file))
+    annotation = read_label_file(filename=str(json_file), max_decode_mb=None)
     assert annotation.image_path == "../images/2011_000003.jpg"
     assert annotation.image_data is not None
 
@@ -75,7 +75,7 @@ def _dump_json(*, path: Path, raw: dict[str, Any]) -> None:
 
 def test_read_label_file_returns_label_data(*, data_path: Path) -> None:
     label_data = read_label_file(
-        filename=str(data_path / "annotated" / "2011_000003.json")
+        filename=str(data_path / "annotated" / "2011_000003.json"), max_decode_mb=None
     )
 
     assert label_data.image_path == "2011_000003.jpg"
@@ -91,7 +91,7 @@ def test_read_label_file_extracts_other_data(
     annotated_raw["customField"] = {"reviewer": "alice"}
     _dump_json(path=annotated_dst, raw=annotated_raw)
 
-    label_data = read_label_file(filename=str(annotated_dst))
+    label_data = read_label_file(filename=str(annotated_dst), max_decode_mb=None)
 
     assert label_data.other_data == {"customField": {"reviewer": "alice"}}
 
@@ -141,7 +141,7 @@ def test_read_label_file_raises_read_error_on_malformed(
     _dump_json(path=annotated_dst, raw=annotated_raw)
 
     with pytest.raises(LabelFileReadError, match=error_match):
-        read_label_file(filename=str(annotated_dst))
+        read_label_file(filename=str(annotated_dst), max_decode_mb=None)
 
 
 @pytest.mark.parametrize(
@@ -204,7 +204,7 @@ def test_read_label_file_raises_on_malformed_shape_field(
     _dump_json(path=annotated_dst, raw=annotated_raw)
 
     with pytest.raises(LabelFileReadError, match=error_match):
-        read_label_file(filename=str(annotated_dst))
+        read_label_file(filename=str(annotated_dst), max_decode_mb=None)
 
 
 @pytest.fixture()
@@ -389,7 +389,7 @@ def test_read_label_file_reports_shape_index_field_and_filename(
     _dump_json(path=annotated_dst, raw=annotated_raw)
 
     with pytest.raises(LabelFileReadError) as exc_info:
-        read_label_file(filename=str(annotated_dst))
+        read_label_file(filename=str(annotated_dst), max_decode_mb=None)
 
     # The message quotes the filename with !r, which doubles the backslashes of
     # a Windows path.
@@ -412,7 +412,7 @@ def test_read_label_file_wraps_coordinate_overflow(
     _dump_json(path=annotated_dst, raw=annotated_raw)
 
     with pytest.raises(LabelFileReadError) as exc_info:
-        read_label_file(filename=str(annotated_dst))
+        read_label_file(filename=str(annotated_dst), max_decode_mb=None)
 
     assert repr(str(annotated_dst)) in str(exc_info.value)
     assert "shapes[0]: points" in str(exc_info.value)
@@ -557,7 +557,9 @@ def test_shape_codec_round_trips_mask(*, sample_mask: NDArray[np.bool_]) -> None
 
 
 def test_write_label_file_round_trips(*, data_path: Path, tmp_path: Path) -> None:
-    src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
+    src = read_label_file(
+        filename=str(data_path / "annotated" / "2011_000003.json"), max_decode_mb=None
+    )
     dst = tmp_path / "out.json"
 
     annotation = Annotation(
@@ -575,7 +577,7 @@ def test_write_label_file_round_trips(*, data_path: Path, tmp_path: Path) -> Non
         save_image_data=True,
     )
 
-    reloaded = read_label_file(filename=str(dst))
+    reloaded = read_label_file(filename=str(dst), max_decode_mb=None)
     assert reloaded.image_path == src.image_path
     assert reloaded.flags == {"ok": True}
     assert reloaded.other_data == {"customField": 42}
@@ -587,7 +589,9 @@ def test_write_label_file_round_trips(*, data_path: Path, tmp_path: Path) -> Non
 def test_write_label_file_round_trips_mask_shape(
     *, data_path: Path, annotated_dst: Path
 ) -> None:
-    src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
+    src = read_label_file(
+        filename=str(data_path / "annotated" / "2011_000003.json"), max_decode_mb=None
+    )
     mask = np.zeros((4, 5), dtype=bool)
     mask[1:3, 2:4] = True
     shape = ShapeDict(
@@ -616,7 +620,9 @@ def test_write_label_file_round_trips_mask_shape(
         save_image_data=True,
     )
 
-    [reloaded_shape] = read_label_file(filename=str(annotated_dst)).shapes
+    [reloaded_shape] = read_label_file(
+        filename=str(annotated_dst), max_decode_mb=None
+    ).shapes
     assert reloaded_shape["label"] == "thing"
     assert reloaded_shape["shape_type"] == "mask"
     assert reloaded_shape["group_id"] == 7
@@ -879,7 +885,9 @@ def test_write_label_file_rejects_reserved_other_data_key(
 def test_write_label_file_raises_on_dimension_mismatch(
     *, data_path: Path, tmp_path: Path
 ) -> None:
-    src = read_label_file(filename=str(data_path / "annotated" / "2011_000003.json"))
+    src = read_label_file(
+        filename=str(data_path / "annotated" / "2011_000003.json"), max_decode_mb=None
+    )
     annotation = Annotation(
         image_path="foo.jpg",
         image_data=src.image_data,
@@ -963,7 +971,7 @@ def test_is_label_file_path(*, filename: str, expected: bool) -> None:
 @pytest.fixture()
 def sample_image_data(*, data_path: Path) -> bytes:
     return read_label_file(
-        filename=str(data_path / "annotated" / "2011_000003.json")
+        filename=str(data_path / "annotated" / "2011_000003.json"), max_decode_mb=None
     ).image_data
 
 

@@ -37,9 +37,9 @@ class OsamSession:
         *,
         image: NDArray[np.uint8],
         image_id: str,
-        points: NDArray[np.floating] | None = None,
-        point_labels: NDArray[np.intp] | None = None,
-        texts: list[str] | None = None,
+        points: NDArray[np.floating] | None,
+        point_labels: NDArray[np.intp] | None,
+        texts: list[str] | None,
     ) -> osam.types.GenerateResponse:
         import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 

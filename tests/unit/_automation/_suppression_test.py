@@ -337,6 +337,8 @@ def test_mask_shape_from_fractional_detection_can_be_an_existing_shape() -> None
     [existing] = shapes_from_detections(
         detections=[detection],
         shape_type="mask",
+        image_size=None,
+        polygon_detail=60,
     )
 
     result = match_detections_to_existing_shapes(

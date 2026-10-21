@@ -78,7 +78,7 @@ def _make_release_event(*, pos: QPointF) -> QtGui.QMouseEvent:
 
 
 def _image_to_widget(*, canvas: Canvas, img_x: float, img_y: float) -> QPointF:
-    return canvas.transform_image_point_to_widget(QPointF(img_x, img_y))
+    return canvas.transform_image_point_to_widget(QPointF(img_x, img_y), area=None)
 
 
 def _clear_cursor_override(*, canvas: Canvas) -> None:
@@ -93,7 +93,7 @@ def _clear_cursor_override(*, canvas: Canvas) -> None:
 @pytest.mark.gui
 def test_cursor_is_cross_when_hovering_in_create_mode(*, canvas: Canvas) -> None:
     # Any mouse move in CREATE mode should engage CrossCursor.
-    canvas.set_editing(value=False)
+    canvas.set_editing(value=False, create_mode=None)
     canvas.create_mode = "rectangle"
     pos = _image_to_widget(canvas=canvas, img_x=50, img_y=25)
 
@@ -109,7 +109,7 @@ def test_cursor_is_cross_when_hovering_in_create_mode(*, canvas: Canvas) -> None
 def test_cursor_reverts_to_no_override_after_cursor_cleared(*, canvas: Canvas) -> None:
     # After _release_cursor the override stack is empty; callers treat that
     # as ArrowCursor.
-    canvas.set_editing(value=False)
+    canvas.set_editing(value=False, create_mode=None)
     canvas.create_mode = "polygon"
     pos = _image_to_widget(canvas=canvas, img_x=50, img_y=25)
     canvas.mouseMoveEvent(_make_move_event(pos=pos))
@@ -131,7 +131,7 @@ def test_cursor_is_arrow_when_hovering_empty_canvas_in_edit_mode(
     canvas: Canvas,
 ) -> None:
     # Moving over blank canvas area (no shapes) leaves no override cursor.
-    canvas.set_editing(value=True)
+    canvas.set_editing(value=True, create_mode=None)
     canvas.scale = 1.0
     pos = _image_to_widget(canvas=canvas, img_x=100, img_y=50)
 
@@ -157,8 +157,8 @@ def test_cursor_is_open_hand_when_hovering_shape_body_in_edit_mode(
         points=np.array([(10, 10), (40, 10), (40, 40), (10, 40)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
+    canvas.load_shapes(shapes=[shape], replace=True)
+    canvas.set_editing(value=True, create_mode=None)
     canvas.scale = 1.0
     # (25, 25) is the centroid, well away from every vertex and edge.
     pos = _image_to_widget(canvas=canvas, img_x=25, img_y=25)
@@ -190,8 +190,8 @@ def test_shape_hidden_while_hovered_stops_being_hover_interactive(
         points=np.array([(10, 10), (40, 10), (40, 40), (10, 40)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
+    canvas.load_shapes(shapes=[shape], replace=True)
+    canvas.set_editing(value=True, create_mode=None)
     canvas.scale = 1.0
 
     canvas.mouseMoveEvent(
@@ -226,8 +226,8 @@ def test_cursor_is_pointing_hand_when_hovering_vertex_in_edit_mode(
         points=np.array([(10, 10), (40, 10), (40, 40), (10, 40)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
+    canvas.load_shapes(shapes=[shape], replace=True)
+    canvas.set_editing(value=True, create_mode=None)
     canvas.scale = 1.0
     pos = _image_to_widget(canvas=canvas, img_x=10, img_y=10)
 
@@ -256,8 +256,8 @@ def test_cursor_is_pointing_hand_when_hovering_edge_in_edit_mode(
         points=np.array([(10, 10), (90, 10), (90, 40), (10, 40)], dtype=np.float64),
         closed=True,
     )
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
+    canvas.load_shapes(shapes=[shape], replace=True)
+    canvas.set_editing(value=True, create_mode=None)
     canvas.scale = 1.0
     # (50, 10) is the midpoint of the top edge, not near any vertex.
     pos = _image_to_widget(canvas=canvas, img_x=50, img_y=10)
@@ -282,7 +282,7 @@ def test_cursor_is_pointing_hand_when_snapping_to_polygon_origin(
 ) -> None:
     # While drawing a polygon with 3+ points, approaching the first point
     # within epsilon switches from CrossCursor to PointingHandCursor.
-    canvas.set_editing(value=False)
+    canvas.set_editing(value=False, create_mode=None)
     canvas.create_mode = "polygon"
     canvas.scale = 1.0
     canvas._current = _DraftShape(
@@ -305,7 +305,7 @@ def test_cursor_is_pointing_hand_when_snapping_to_polygon_origin(
 def test_cursor_is_cross_when_far_from_polygon_origin(*, canvas: Canvas) -> None:
     # When the cursor is more than epsilon/scale away from the polygon origin,
     # CrossCursor is kept (no snap engagement).
-    canvas.set_editing(value=False)
+    canvas.set_editing(value=False, create_mode=None)
     canvas.create_mode = "polygon"
     canvas.scale = 1.0
     canvas._current = _DraftShape(
@@ -335,7 +335,7 @@ def test_right_release_executes_context_menu(
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    canvas.set_editing(value=True)
+    canvas.set_editing(value=True, create_mode=None)
     canvas.scale = 1.0
     calls: list[int] = []
     monkeypatch.setattr(
@@ -385,7 +385,7 @@ def test_can_close_shape_uses_mode_point_requirement(
     points: tuple[QPointF, ...],
     expected: bool,
 ) -> None:
-    canvas.set_editing(value=False)
+    canvas.set_editing(value=False, create_mode=None)
     canvas.create_mode = create_mode
     canvas._current = _DraftShape(points=points)
 
@@ -437,8 +437,8 @@ def test_vertex_hover_within_epsilon_screen_pixels_gives_pointing_hand(
     qtbot.addWidget(canvas)
 
     shape = _make_center_polygon()
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
+    canvas.load_shapes(shapes=[shape], replace=True)
+    canvas.set_editing(value=True, create_mode=None)
 
     # 7 screen pixels at this scale equals 7/scale image pixels.
     image_offset_px = 7.0 / scale
@@ -480,8 +480,8 @@ def test_vertex_hover_beyond_epsilon_screen_pixels_does_not_select_vertex(
     qtbot.addWidget(canvas)
 
     shape = _make_center_polygon()
-    canvas.load_shapes(shapes=[shape])
-    canvas.set_editing(value=True)
+    canvas.load_shapes(shapes=[shape], replace=True)
+    canvas.set_editing(value=True, create_mode=None)
 
     # 12 screen pixels at this scale equals 12/scale image pixels.
     image_offset_px = 12.0 / scale
@@ -514,8 +514,8 @@ def test_screen_pixel_hit_radius_is_constant_across_scale_levels(
         qtbot.addWidget(canvas)
 
         shape = _make_center_polygon()
-        canvas.load_shapes(shapes=[shape])
-        canvas.set_editing(value=True)
+        canvas.load_shapes(shapes=[shape], replace=True)
+        canvas.set_editing(value=True, create_mode=None)
 
         image_offset_px = screen_offset_px / scale
         img_x = 100.0 + image_offset_px

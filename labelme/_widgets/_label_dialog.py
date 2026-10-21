@@ -323,13 +323,13 @@ class LabelDialog(QtWidgets.QDialog):
     def popup(
         self,
         *,
-        text: str | None = None,
-        flags: dict[str, bool] | None = None,
-        group_id: int | None = None,
-        description: str | None = None,
-        locked: Collection[LabelDialogField] = (),
-        move: bool = True,
-        position: QtCore.QPoint | None = None,
+        text: str | None,
+        flags: dict[str, bool] | None,
+        group_id: int | None,
+        description: str | None,
+        locked: Collection[LabelDialogField],
+        move: bool,
+        position: QtCore.QPoint | None,
     ) -> LabelDialogEntry | None:
         self._entry = None
         self._locked = frozenset(locked)

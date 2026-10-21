@@ -111,7 +111,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
 
     monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     canvas = win._canvas_widgets.canvas
-    canvas.load_shapes(shapes=[Shape(label="cat")])
+    canvas.load_shapes(shapes=[Shape(label="cat")], replace=True)
     # An open Settings dialog shows the cleared choices without reopening.
     win._open_settings()
     settings = win._settings_dialog
@@ -160,7 +160,7 @@ def test_delete_releases_loaded_assist_and_text_sessions(
     config.write_text("ai:\n  default: Sam3\n  text_model: sam3:latest\n")
     win = main_win(config_file=config)
     canvas = win._canvas_widgets.canvas
-    canvas.load_shapes(shapes=[Shape(label="cat")])
+    canvas.load_shapes(shapes=[Shape(label="cat")], replace=True)
 
     assist_session = _automation.OsamSession(model_name=name)
     text_session = _automation.OsamSession(model_name=name)
