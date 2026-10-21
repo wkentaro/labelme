@@ -1114,6 +1114,30 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>Ошибка конфигурации</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Удалить из списка меток</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Невозможно удалить метку, используемую фигурами на холсте</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Очистить неиспользуемые метки</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Нет неиспользуемых меток для очистки</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Невозможно удалить метку</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Метка &apos;{label}&apos; используется фигурами на холсте.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

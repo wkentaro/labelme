@@ -1124,6 +1124,30 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>設定エラー</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>ラベル一覧から削除</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>キャンバス上の図形で使用中のラベルは削除できません</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>未使用のラベルをクリア</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>クリアする未使用のラベルはありません</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>ラベルを削除できません</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>ラベル &apos;{label}&apos; はキャンバス上の図形で使用中です。</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

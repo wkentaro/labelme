@@ -68,6 +68,34 @@ def test_set_predefined_labels_empty_keeps_only_session_history(
     assert _labels(dialog) == {"ad-hoc"}
 
 
+def test_remove_label_removes_from_label_list_and_history(
+    *, dialog: LabelDialog
+) -> None:
+    dialog.add_label_history(label="extra")
+    assert "extra" in dialog.label_history
+    assert "extra" in _labels(dialog)
+
+    dialog.remove_label(label="extra")
+    assert "extra" not in dialog.label_history
+    assert "extra" not in _labels(dialog)
+
+    dialog.remove_label(label="cat")
+    assert "cat" not in _labels(dialog)
+
+
+def test_remove_label_resets_last_label(*, dialog: LabelDialog) -> None:
+    dialog.remember_label(label="cat")
+    assert dialog._last_label == "cat"
+    dialog.remove_label(label="cat")
+    assert dialog._last_label == ""
+
+
+def test_remove_nonexistent_label_noop(*, dialog: LabelDialog) -> None:
+    before = _labels(dialog)
+    dialog.remove_label(label="nonexistent")
+    assert _labels(dialog) == before
+
+
 def test_update_flags_skips_an_invalid_pattern(*, qtbot: QtBot) -> None:
     dialog = LabelDialog(labels=["cat"], flags={"cat(": ["occluded"]})
     qtbot.addWidget(dialog)

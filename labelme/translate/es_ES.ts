@@ -1114,6 +1114,30 @@ Ubicación esperada: {path}</translation>
         <source>Configuration Error</source>
         <translation>Error de configuración</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Eliminar de la lista de etiquetas</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>No se puede eliminar la etiqueta en uso por formas en el lienzo</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Limpiar etiquetas no utilizadas</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>No hay etiquetas no utilizadas para limpiar</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>No se puede eliminar la etiqueta</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>La etiqueta &apos;{label}&apos; está en uso por formas en el lienzo.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

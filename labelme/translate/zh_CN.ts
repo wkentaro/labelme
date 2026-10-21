@@ -1114,6 +1114,30 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>配置错误</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>从标签列表中删除</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>无法删除画布上形状当前正在使用的标签</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>清除未使用的标签</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>没有可清除的未使用标签</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>无法删除标签</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>标签 &apos;{label}&apos; 正在被画布上的形状使用。</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
