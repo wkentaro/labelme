@@ -290,9 +290,14 @@ def _read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
     t_start = time.time()
     with _imread(filename, max_decode_mb=max_decode_mb) as image_pil:
         oriented: PIL.Image.Image = _utils.apply_exif_orientation(image_pil)
+        is_jpeg2000 = image_pil.format == "JPEG2000"
 
         ext = Path(filename).suffix.lower()
-        if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
+        if (
+            oriented is image_pil
+            and ext in (".jpg", ".jpeg", ".png")
+            and not is_jpeg2000
+        ):
             with open(filename, "rb") as f:
                 image_data = f.read()
         else:
@@ -300,7 +305,7 @@ def _read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
                 has_transparency = "A" in oriented.mode or (
                     oriented.mode == "P" and "transparency" in oriented.info
                 )
-                fmt = "PNG" if has_transparency else "JPEG"
+                fmt = "PNG" if has_transparency or is_jpeg2000 else "JPEG"
                 if fmt == "JPEG" and oriented.mode == "P":
                     oriented = oriented.convert("RGB")
                 elif fmt == "PNG" and oriented.mode == "PA":
@@ -493,7 +498,9 @@ def _imread(filename: str, /, *, max_decode_mb: int | None) -> PIL.Image.Image:
         except ImageTooLargeError:
             image_pil.close()
             raise
-        if image_pil.mode not in DISPLAYABLE_MODES:
+        if image_pil.mode not in DISPLAYABLE_MODES and not (
+            image_pil.format == "JPEG2000" and image_pil.mode == "I;16"
+        ):
             raise PIL.UnidentifiedImageError
         return image_pil
     except PIL.UnidentifiedImageError:

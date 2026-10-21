@@ -24,6 +24,7 @@ from typing import cast
 
 import natsort
 import numpy as np
+import PIL.features
 from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -2660,8 +2661,7 @@ class MainWindow(QtWidgets.QMainWindow):
             extra = _make_image_too_large_message(image_data=annotation.image_data)
             if extra is None:
                 formats = ", ".join(
-                    f"*.{fmt.toStdString()}"
-                    for fmt in QtGui.QImageReader.supportedImageFormats()
+                    f"*{ext}" for ext in _list_supported_image_extensions()
                 )
                 extra = self.tr("Allowed formats: {formats}").format(formats=formats)
             self._show_file_open_error(
@@ -2910,10 +2910,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _open_file_with_dialog(self) -> None:
         if not self._can_continue():
             return
-        formats = [
-            f"*.{fmt.toStdString()}"
-            for fmt in QtGui.QImageReader.supportedImageFormats()
-        ]
+        formats = [f"*{ext}" for ext in _list_supported_image_extensions()]
         filters = self.tr("Images and annotation files (%s)") % " ".join(
             formats + [f"*{LABEL_FILE_SUFFIX}"]
         )
@@ -4213,10 +4210,13 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
 
 
 def _list_supported_image_extensions() -> tuple[str, ...]:
-    return tuple(
+    extensions = {
         f".{fmt.toStdString().lower()}"
         for fmt in QtGui.QImageReader.supportedImageFormats()
-    )
+    }
+    if PIL.features.check_codec("jpg_2000"):
+        extensions.update((".jp2", ".jpx", ".j2k", ".j2c"))
+    return tuple(sorted(extensions))
 
 
 def _extract_dropped_image_paths(*, mime: QtCore.QMimeData) -> list[str]:

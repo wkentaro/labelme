@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import cast
 
 import numpy as np
+import PIL.features
 import pytest
 from loguru import logger
 from PySide6 import QtCore
@@ -19,6 +20,24 @@ from labelme import _app
 from labelme import _automation
 from labelme._label_file import ShapeDict
 from labelme._shape import Shape
+
+
+@pytest.mark.parametrize("has_openjpeg", [True, False])
+def test_supported_image_extensions_include_jpeg2000_with_openjpeg(
+    *, monkeypatch: pytest.MonkeyPatch, has_openjpeg: bool
+) -> None:
+    monkeypatch.setattr(
+        QtGui.QImageReader,
+        "supportedImageFormats",
+        lambda: [QtCore.QByteArray(b"png")],
+    )
+    monkeypatch.setattr(PIL.features, "check_codec", lambda _codec: has_openjpeg)
+
+    extensions = _app._list_supported_image_extensions()
+
+    assert ".png" in extensions
+    for suffix in (".jp2", ".jpx", ".j2k", ".j2c"):
+        assert (suffix in extensions) is has_openjpeg
 
 
 @pytest.mark.parametrize(
