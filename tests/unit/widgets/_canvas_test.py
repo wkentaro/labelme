@@ -2866,3 +2866,158 @@ def test_double_click_in_create_mode_finalizes_shape(
     emitted.assert_not_called()
     assert canvas._current is None
     assert len(canvas.shapes) == 1
+
+
+@pytest.mark.gui
+def test_right_click_unselected_shape_selects_it_and_opens_shape_context_menu(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    shape1 = Shape(
+        label="dog",
+        shape_type="rectangle",
+        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
+        closed=True,
+    )
+    shape2 = Shape(
+        label="cat",
+        shape_type="rectangle",
+        points=np.array([(40.0, 10.0), (60.0, 30.0)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape1, shape2])
+    canvas.set_editing(value=True)
+
+    shape_calls: list[int] = []
+    canvas_calls: list[int] = []
+    monkeypatch.setattr(
+        canvas.shape_context_menu, "exec", lambda _pos=None: shape_calls.append(0)
+    )
+    monkeypatch.setattr(
+        canvas.canvas_context_menu, "exec", lambda _pos=None: canvas_calls.append(0)
+    )
+
+    pos = canvas.transform_image_point_to_widget(QPointF(20.0, 20.0))
+    press = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonPress,
+        pos,
+        pos,
+        Qt.MouseButton.RightButton,
+        Qt.MouseButton.RightButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    release = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonRelease,
+        pos,
+        pos,
+        Qt.MouseButton.RightButton,
+        Qt.MouseButton.NoButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    canvas.mousePressEvent(press)
+    canvas.mouseReleaseEvent(release)
+
+    assert shape_calls == [0]
+    assert canvas_calls == []
+    assert canvas.selected_shapes == [shape1]
+
+
+@pytest.mark.gui
+def test_right_click_multi_selected_shape_keeps_selection(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    shape1 = Shape(
+        label="dog",
+        shape_type="rectangle",
+        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
+        closed=True,
+    )
+    shape2 = Shape(
+        label="cat",
+        shape_type="rectangle",
+        points=np.array([(40.0, 10.0), (60.0, 30.0)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape1, shape2])
+    canvas.set_editing(value=True)
+    canvas.select_shapes(shapes=[shape1, shape2])
+
+    shape_calls: list[int] = []
+    canvas_calls: list[int] = []
+    monkeypatch.setattr(
+        canvas.shape_context_menu, "exec", lambda _pos=None: shape_calls.append(0)
+    )
+    monkeypatch.setattr(
+        canvas.canvas_context_menu, "exec", lambda _pos=None: canvas_calls.append(0)
+    )
+
+    pos = canvas.transform_image_point_to_widget(QPointF(20.0, 20.0))
+    press = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonPress,
+        pos,
+        pos,
+        Qt.MouseButton.RightButton,
+        Qt.MouseButton.RightButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    release = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonRelease,
+        pos,
+        pos,
+        Qt.MouseButton.RightButton,
+        Qt.MouseButton.NoButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    canvas.mousePressEvent(press)
+    canvas.mouseReleaseEvent(release)
+
+    assert shape_calls == [0]
+    assert canvas_calls == []
+    assert canvas.selected_shapes == [shape1, shape2]
+
+
+@pytest.mark.gui
+def test_right_click_empty_canvas_keeps_selection_and_opens_canvas_context_menu(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    shape1 = Shape(
+        label="dog",
+        shape_type="rectangle",
+        points=np.array([(10.0, 10.0), (30.0, 30.0)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape1])
+    canvas.set_editing(value=True)
+    canvas.select_shapes(shapes=[shape1])
+
+    shape_calls: list[int] = []
+    canvas_calls: list[int] = []
+    monkeypatch.setattr(
+        canvas.shape_context_menu, "exec", lambda _pos=None: shape_calls.append(0)
+    )
+    monkeypatch.setattr(
+        canvas.canvas_context_menu, "exec", lambda _pos=None: canvas_calls.append(0)
+    )
+
+    pos = canvas.transform_image_point_to_widget(QPointF(80.0, 40.0))
+    press = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonPress,
+        pos,
+        pos,
+        Qt.MouseButton.RightButton,
+        Qt.MouseButton.RightButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    release = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonRelease,
+        pos,
+        pos,
+        Qt.MouseButton.RightButton,
+        Qt.MouseButton.NoButton,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    canvas.mousePressEvent(press)
+    canvas.mouseReleaseEvent(release)
+
+    assert shape_calls == []
+    assert canvas_calls == [0]
+    assert canvas.selected_shapes == [shape1]
