@@ -13,6 +13,7 @@ from pathlib import Path
 from pathlib import PureWindowsPath
 from typing import Any
 from typing import Final
+from typing import TypedDict
 from typing import cast
 
 import numpy as np
@@ -25,9 +26,21 @@ from labelme import __version__
 
 from . import _utils
 from ._shape import ShapeType
-from ._utils import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
+
+
+class ShapeDict(TypedDict):
+    label: str
+    points: list[list[float]]
+    shape_type: str
+    flags: dict[str, bool]
+    description: str
+    group_id: int | None
+    mask: NDArray[np.bool_] | None
+    locked: bool
+    other_data: dict
+
 
 _SINGLE_CHANNEL_NDIM: Final = 2
 
