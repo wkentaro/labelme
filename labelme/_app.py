@@ -46,7 +46,6 @@ from ._label_file import ImageNotFoundError
 from ._label_file import ImageTooLargeError
 from ._label_file import LabelFileError
 from ._label_file import LabelFileReadError
-from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
@@ -57,6 +56,7 @@ from ._save_request import SaveRequest
 from ._save_request import write_save_request
 from ._save_writer import SaveWriter
 from ._shape import Shape
+from ._shape import ShapeDict
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
 from ._shape import merge_masks
@@ -64,6 +64,7 @@ from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
 from ._utils import ImageDecodeRequirement
 from ._utils import get_image_decode_requirement
+from ._widgets import LABEL_COLOR_ROLE
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import AnnotationFolderFooter
@@ -75,6 +76,7 @@ from ._widgets import LabelDialogEntry
 from ._widgets import LabelDialogField
 from ._widgets import LabelListWidget
 from ._widgets import LabelListWidgetItem
+from ._widgets import ModelsDialog
 from ._widgets import Palette
 from ._widgets import SettingsDialog
 from ._widgets import StatusStats
@@ -82,10 +84,8 @@ from ._widgets import ToolBar
 from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
 from ._widgets import format_shape_label
-from ._widgets._label_list_widget import LABEL_COLOR_ROLE
-from ._widgets._models_widget import ModelsDialog
-from ._widgets._models_widget import license_link
-from ._widgets._models_widget import license_notice
+from ._widgets import license_link
+from ._widgets import license_notice
 
 
 class _ZoomMode(enum.Enum):

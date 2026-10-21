@@ -24,10 +24,11 @@ from numpy.typing import NDArray
 from labelme import __version__
 
 from . import _utils
+from ._shape import ShapeDict
 from ._shape import ShapeType
-from ._utils._shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
+
 
 _SINGLE_CHANNEL_NDIM: Final = 2
 

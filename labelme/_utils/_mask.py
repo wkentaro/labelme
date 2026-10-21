@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import math
 import uuid
-from typing import TypedDict
 
 import numpy as np
 import PIL.Image
@@ -17,18 +16,7 @@ from .._shape import LINE_POINT_COUNT
 from .._shape import MIN_POLYGON_POINT_COUNT
 from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
 from .._shape import RECTANGLE_POINT_COUNT
-
-
-class ShapeDict(TypedDict):
-    label: str
-    points: list[list[float]]
-    shape_type: str
-    flags: dict[str, bool]
-    description: str
-    group_id: int | None
-    mask: NDArray[np.bool_] | None
-    locked: bool
-    other_data: dict
+from .._shape import ShapeDict
 
 
 def shape_to_mask(

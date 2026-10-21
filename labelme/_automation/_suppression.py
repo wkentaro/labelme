@@ -9,7 +9,7 @@ import PIL.ImageDraw
 from numpy.typing import NDArray
 
 from .._shape import Shape
-from ._geometry import _round_bbox_to_int
+from ._geometry import round_bbox_to_int
 from ._geometry import shape_to_xyxy_bbox
 from ._shape_builders import Detection
 
@@ -148,7 +148,7 @@ def _compute_mask_overlap(*, a: _LocalMask, b: _LocalMask) -> _MaskOverlap:
 
 def _local_mask_from_detection(*, detection: Detection) -> _LocalMask:
     assert detection.bbox is not None
-    xmin, ymin, xmax, ymax = _round_bbox_to_int(bbox=detection.bbox)
+    xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
     if detection.mask is None:
         h, w = ymax - ymin + 1, xmax - xmin + 1
         mask = np.ones((h, w), dtype=np.bool_)
@@ -183,7 +183,7 @@ def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:
     bbox = shape_to_xyxy_bbox(shape=shape)
     if bbox is None:
         return None
-    xmin, ymin, xmax, ymax = _round_bbox_to_int(bbox=bbox)
+    xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=bbox)
     width = xmax - xmin + 1
     height = ymax - ymin + 1
     mask = _rasterize_shape(
