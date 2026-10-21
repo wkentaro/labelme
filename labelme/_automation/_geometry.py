@@ -22,7 +22,7 @@ class Circle(NamedTuple):
     radius: float
 
 
-def _round_bbox_to_int(
+def round_bbox_to_int(
     *,
     bbox: tuple[float, float, float, float] | NDArray[np.floating],
 ) -> tuple[int, int, int, int]:

@@ -11,10 +11,10 @@ from numpy.typing import NDArray
 from .._shape import MIN_POLYGON_POINT_COUNT
 from .._shape import Shape
 from ._geometry import Circle
-from ._geometry import _round_bbox_to_int
 from ._geometry import compute_circle_from_mask
 from ._geometry import compute_oriented_rectangle_from_mask
 from ._geometry import compute_polygons_from_mask
+from ._geometry import round_bbox_to_int
 from ._types import AiOutputFormat
 
 _DEFAULT_POLYGON_DETAIL: Final[int] = 60
@@ -93,7 +93,7 @@ def _build_shapes_from_detection(
             return []
         if not detection.mask.any():
             return []
-        xmin, ymin, xmax, ymax = _round_bbox_to_int(bbox=detection.bbox)
+        xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
         return [
             _build_shape(
                 shape_type="mask",
