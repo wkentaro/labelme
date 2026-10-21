@@ -16,8 +16,8 @@ from .._config._shape_color import RGB_CHANNEL_COUNT
 from .._utils._qt import new_icon
 from ._integer_slider import IntegerSlider
 
-ApplySetting = Callable[[tuple[str, ...], object], bool]
-PreviewShapeColor = Callable[[tuple[str, ...], list[int] | None], None]
+_ApplySetting = Callable[[tuple[str, ...], object], bool]
+_PreviewShapeColor = Callable[[tuple[str, ...], list[int] | None], None]
 
 _SOURCE_LABEL_ROLE: typing.Final = QtCore.Qt.ItemDataRole.UserRole + 1
 _CONTEXT_FONT_SCALE: typing.Final = 0.85
@@ -775,8 +775,8 @@ class SettingsDialog(QtWidgets.QDialog):
         self,
         *,
         config: dict,
-        apply_setting: ApplySetting,
-        preview_shape_color: PreviewShapeColor,
+        apply_setting: _ApplySetting,
+        preview_shape_color: _PreviewShapeColor,
         open_as_text: Callable[[], None],
         settings_editable: bool = True,  # noqa: FBT001 -- controls config editing
         parent: QtWidgets.QWidget | None = None,
