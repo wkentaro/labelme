@@ -24,6 +24,26 @@
         <translation>รายละเอียดมากขึ้น</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>หลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>มาสก์</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>สี่เหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>สี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>วงกลม</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>เลือกโหมด &apos;AI-Points&apos; หรือ &apos;AI-Box&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
     </message>
@@ -518,6 +538,16 @@
         <translation>เปิดโฟลเดอร์รูปภาพ</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>ลบไฟล์</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>ลบ</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>แก้ไขเลเบลของรูปร่างที่เลือก</translation>
     </message>
@@ -536,6 +566,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>แทรกรูปร่างจากคลิปบอร์ดลงในภาพนี้</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>ทำซ้ำ</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -558,8 +593,23 @@
         <translation>ยกเลิก</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>แก้ไข</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>ถัดไป</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>รูปก่อนหน้า (&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>ก่อนหน้า</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -716,6 +766,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>ไฟล์คำอธิบายประกอบนี้เป็นของรูปอื่น: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>

@@ -10,6 +10,7 @@ from collections.abc import Iterator
 from http.server import BaseHTTPRequestHandler
 from http.server import ThreadingHTTPServer
 from pathlib import Path
+from typing import Final
 
 import imgviz
 import pytest
@@ -155,6 +156,11 @@ def data_path(*, tmp_path: Path) -> Path:
     _create_annotated_nested(data_path=data_path)
 
     return data_path
+
+
+# The download worker is a spawned interpreter that re-imports osam before its
+# first request, which can exceed pytest-qt's 5 s default on loaded CI runners.
+DOWNLOAD_START_TIMEOUT_MS: Final = 30_000
 
 
 @pytest.fixture

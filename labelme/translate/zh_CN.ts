@@ -24,6 +24,26 @@
         <translation>更多细节</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>多边形</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>掩码</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>矩形</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>有向矩形</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>圆形</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>请选择 &apos;AI-Points&apos; 或 &apos;AI-Box&apos; 模式以启用 AI 辅助</translation>
     </message>
@@ -517,6 +537,16 @@
         <translation>打开图像文件夹</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>删除文件</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>删除</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>修改选中形状的标签</translation>
     </message>
@@ -535,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>将剪贴板中的形状插入此图像</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>复制</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -557,8 +592,23 @@
         <translation>撤销</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>编辑</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>下一张</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>上一张图像(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>上一张</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -715,6 +765,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>你可以暂时使用默认设置。重置前会先保存配置文件的备份。</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>该标注文件属于另一张图像：%s</translation>
     </message>
     <message>
         <source>Open Folder</source>

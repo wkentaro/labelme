@@ -360,6 +360,21 @@ def resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
         return os.path.abspath(image_path)
 
 
+def read_label_file_image_path(*, filename: str) -> str:
+    """Return the Image path an Annotation File records, relative to the file."""
+    try:
+        with open(filename, encoding="utf-8") as f:
+            return _image_path_from_raw(json.load(f))
+    # RuntimeError covers RecursionError from deeply nested JSON.
+    except (OSError, KeyError, TypeError, ValueError, RuntimeError) as e:
+        raise LabelFileReadError(f"failed to load {filename!r}: {e}") from e
+
+
+def _image_path_from_raw(raw: dict[str, Any], /) -> str:
+    # Annotation Files saved on Windows carry backslashes.
+    return PureWindowsPath(raw["imagePath"]).as_posix()
+
+
 def read_label_file(
     *,
     filename: str,
@@ -377,7 +392,7 @@ def read_label_file(
                 image_path=image_filename, label_dir=Path(filename).parent
             )
         elif raw["imageData"] is None:
-            image_path = PureWindowsPath(raw["imagePath"]).as_posix()
+            image_path = _image_path_from_raw(raw)
             resolved_image_path = str(Path(filename).parent / image_path)
             try:
                 image_data = read_image_file(
@@ -386,7 +401,7 @@ def read_label_file(
             except FileNotFoundError as e:
                 raise ImageNotFoundError(image_path=resolved_image_path) from e
         else:
-            image_path = PureWindowsPath(raw["imagePath"]).as_posix()
+            image_path = _image_path_from_raw(raw)
             image_data = base64.b64decode(raw["imageData"])
         _check_image_dimensions(
             image_data=image_data,

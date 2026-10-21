@@ -24,6 +24,26 @@
         <translation>Daha fazla ayrıntı</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Çokgen</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maske</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Dikdörtgen</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Yönlü Dikdörtgen</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Daire</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos; veya &apos;AI-Box&apos; modunu seçin</translation>
     </message>
@@ -517,6 +537,16 @@
         <translation>Görüntü klasörü aç</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Dosyayı Sil</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Sil</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Seçili şeklin etiketini değiştir</translation>
     </message>
@@ -535,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Panodaki şekilleri bu görüntüye ekle</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Çoğalt</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -557,8 +592,23 @@
         <translation>Geri Al</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Düzenle</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Sonraki</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Önceki Görüntü</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Önceki</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -715,6 +765,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Açıklama dosyası başka bir görüntüye ait: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>

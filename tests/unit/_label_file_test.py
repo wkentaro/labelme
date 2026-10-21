@@ -23,6 +23,7 @@ from labelme._label_file import _load_shape_json_obj
 from labelme._label_file import _normalize_to_uint8
 from labelme._label_file import is_label_file_path
 from labelme._label_file import read_label_file
+from labelme._label_file import read_label_file_image_path
 from labelme._label_file import write_label_file
 from labelme._utils import img_arr_to_b64
 
@@ -1100,3 +1101,17 @@ def test_read_label_file_with_replacement_image_dimension_mismatch(
 
     with pytest.raises(LabelFileReadError, match="imageHeight mismatch"):
         read_label_file(filename=str(json_path), image_filename=str(replacement_img))
+
+
+def test_read_label_file_image_path_reports_unreadable_files(*, tmp_path: Path) -> None:
+    path = tmp_path / "x.json"
+    path.write_text(json.dumps({"imagePath": "x.jpg", "imageData": None}))
+    assert read_label_file_image_path(filename=str(path)) == "x.jpg"
+
+    path.write_text(json.dumps({"imagePath": "dir\\x.jpg"}))
+    assert read_label_file_image_path(filename=str(path)) == "dir/x.jpg"
+
+    for text in ("{", "{}", "[" * 100_000 + "]" * 100_000):
+        path.write_text(text)
+        with pytest.raises(LabelFileReadError):
+            read_label_file_image_path(filename=str(path))

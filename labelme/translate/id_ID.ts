@@ -24,6 +24,26 @@
         <translation>Lebih detail</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Poligon</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Mask</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Persegi Panjang</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Persegi Panjang Berorientasi</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Lingkaran</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Pilih mode &apos;AI-Points&apos; atau &apos;AI-Box&apos; untuk mengaktifkan Bantuan AI</translation>
     </message>
@@ -465,6 +485,16 @@
         <translation>Buka folder gambar</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Hapus Berkas</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Hapus</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Ubah label bentuk yang dipilih</translation>
     </message>
@@ -483,6 +513,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Sisipkan bentuk dari clipboard ke gambar ini</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Duplikat</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -505,8 +540,23 @@
         <translation>Urungkan</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Berikutnya</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>Gambar &amp;Sebelumnya</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Sebelumnya</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -663,6 +713,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>Anda dapat menggunakan pengaturan bawaan untuk saat ini. Sebelum reset, salinan cadangan file konfigurasi Anda akan disimpan.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Berkas anotasi milik gambar lain: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>

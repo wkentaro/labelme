@@ -24,6 +24,26 @@
         <translation>Più dettagli</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Poligono</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maschera</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Rettangolo</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Rettangolo Orientato</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Cerchio</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Selezionare la modalità &apos;AI-Points&apos; o &apos;AI-Box&apos; per abilitare l&apos;Assistenza IA</translation>
     </message>
@@ -517,6 +537,16 @@
         <translation>Apri una cartella di immagini</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Elimina file</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Elimina</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Modifica l&apos;etichetta della forma selezionata</translation>
     </message>
@@ -535,6 +565,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Inserisci in questa immagine le forme degli appunti</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Duplica</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -557,8 +592,23 @@
         <translation>Annulla</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Modifica</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Successiva</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>Immagine &amp;precedente</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Precedente</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -715,6 +765,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>Per ora puoi usare le impostazioni predefinite. Prima del ripristino verrà salvata una copia di backup del file di configurazione.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Il file di annotazioni appartiene a un’altra immagine: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>

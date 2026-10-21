@@ -154,6 +154,7 @@ def new_action(
     slot: Callable[..., object] | None = None,
     shortcut: str | Sequence[str] | None = None,
     icon: str | None = None,
+    toolbar_text: str | None = None,
     tip: str | None = None,
     checkable: bool = False,
     enabled: bool = True,
@@ -172,7 +173,9 @@ def new_action(
     action.setChecked(checked)
     action.setEnabled(enabled)
     if icon:
-        action.setIconText(_toolbar_label(text))
+        # A long menu name can pass a shorter one for the toolbar, where every
+        # language's labels have to fit across one row.
+        action.setIconText(_toolbar_label(toolbar_text or text))
     if slot:
         action.triggered.connect(slot)
     return action
