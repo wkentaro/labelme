@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import errno
 import json
 import os
 import shutil
@@ -740,6 +741,73 @@ def test_write_label_file_supports_long_filename(
 
     assert label_file.exists()
     assert list(tmp_path.iterdir()) == [label_file]
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX directory permissions")
+def test_write_label_file_requires_writable_directory(
+    *, annotation_to_write: Annotation, existing_label_file: Path
+) -> None:
+    directory = existing_label_file.parent
+    original_mode = stat.S_IMODE(directory.stat().st_mode)
+    original_bytes = existing_label_file.read_bytes()
+    try:
+        directory.chmod(0o555)
+        if os.access(directory, os.W_OK):
+            pytest.skip("directory write restrictions are bypassed by this process")
+        # The file itself is still writable: the previous in-place save could
+        # open it without needing to create a sibling temporary file.
+        with existing_label_file.open("r+", encoding="utf-8") as file:
+            assert file.read() == original_bytes.decode("utf-8")
+
+        with pytest.raises(LabelFileWriteError) as caught:
+            write_label_file(
+                filename=str(existing_label_file),
+                annotation=annotation_to_write,
+                image_height=None,
+                image_width=None,
+                save_image_data=False,
+            )
+        assert isinstance(caught.value.__cause__, PermissionError)
+        assert existing_label_file.read_bytes() == original_bytes
+        assert list(directory.iterdir()) == [existing_label_file]
+    finally:
+        directory.chmod(original_mode)
+
+
+@pytest.mark.parametrize("error_number", [errno.EACCES, errno.EPERM])
+def test_write_label_file_denied_temporary_creation_preserves_existing_file(
+    *,
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    error_number: int,
+) -> None:
+    original_bytes = existing_label_file.read_bytes()
+    temporary_path = Path(f"{existing_label_file}.tmp")
+    attempted: list[Path] = []
+
+    def _deny_temporary_file(path: Path, mode: str, **_kwargs: object) -> TextIO:
+        assert path == temporary_path
+        assert mode == "w"
+        attempted.append(path)
+        raise PermissionError(error_number, "temporary creation denied", str(path))
+
+    # Portable fault injection complements the real POSIX permission test on
+    # Windows and when an elevated process bypasses directory mode bits.
+    monkeypatch.setattr("labelme._label_file.open", _deny_temporary_file, raising=False)
+    with pytest.raises(LabelFileWriteError) as caught:
+        write_label_file(
+            filename=str(existing_label_file),
+            annotation=annotation_to_write,
+            image_height=None,
+            image_width=None,
+            save_image_data=False,
+        )
+    assert isinstance(caught.value.__cause__, PermissionError)
+    assert caught.value.__cause__.errno == error_number
+    assert attempted == [temporary_path]
+    assert existing_label_file.read_bytes() == original_bytes
+    assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
 
 
 def test_write_label_file_serialization_failure_preserves_existing_file(
