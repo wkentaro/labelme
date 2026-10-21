@@ -344,7 +344,7 @@ def _check_image_dimensions(
 
 
 def read_label_file_image_path(*, filename: str) -> str:
-    """Return the Image path an Annotation File records, relative to the file."""
+    # The recorded Image path is relative to the Annotation File.
     try:
         with open(filename, encoding="utf-8") as f:
             return _image_path_from_raw(json.load(f))
