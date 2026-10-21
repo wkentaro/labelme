@@ -1114,6 +1114,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>구성 오류</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>이미지 찾기…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

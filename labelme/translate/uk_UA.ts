@@ -1114,6 +1114,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>Помилка конфігурації</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Знайти зображення…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

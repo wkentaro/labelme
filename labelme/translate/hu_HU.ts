@@ -1114,6 +1114,10 @@ Várt hely: {path}</translation>
         <source>Configuration Error</source>
         <translation>Konfigurációs hiba</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Kép keresése…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

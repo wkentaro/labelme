@@ -1114,6 +1114,10 @@ Local esperado: {path}</translation>
         <source>Configuration Error</source>
         <translation>Erro de Configuração</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Localizar imagem…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

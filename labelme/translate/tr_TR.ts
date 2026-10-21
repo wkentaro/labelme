@@ -1114,6 +1114,10 @@ Beklenen konum: {path}</translation>
         <source>Configuration Error</source>
         <translation>Yapılandırma Hatası</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Resmi Bul…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
