@@ -637,6 +637,34 @@ def test_scan_image_files_sorts_top_level_and_nested_files_together(
     ]
 
 
+class _DummyApp:
+    _live_widget_appliers: dict[tuple[str, ...], Callable[[], None]]
+    _live_widget_prefix_appliers: dict[str, Callable[[], None]]
+    _apply_to_live_widgets = _app.MainWindow._apply_to_live_widgets
+
+
+def test_apply_to_live_widgets_dispatch_exact_and_prefix() -> None:
+    called: list[str] = []
+    app = _DummyApp()
+    app._live_widget_appliers = {
+        ("theme",): lambda: called.append("theme"),
+        ("canvas", "fill"): lambda: called.append("canvas.fill"),
+    }
+    app._live_widget_prefix_appliers = {
+        "shape_color": lambda: called.append("shape_color"),
+    }
+
+    app._apply_to_live_widgets(key_path=("theme",))
+    assert called == ["theme"]
+
+    app._apply_to_live_widgets(key_path=("shape_color", "uniform", "color"))
+    assert called == ["theme", "shape_color"]
+
+    # Non-matching key path safely no-ops
+    app._apply_to_live_widgets(key_path=("non_existent", "path"))
+    assert called == ["theme", "shape_color"]
+
+
 @pytest.mark.parametrize(
     "available, toolbar_width, expected",
     [
