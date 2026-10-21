@@ -16,7 +16,6 @@ from numpy.typing import NDArray
 from labelme._label_file import Annotation
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
-from labelme._label_file import ShapeDict
 from labelme._label_file import _check_image_dimensions
 from labelme._label_file import _dump_shape_to_json_obj
 from labelme._label_file import _load_shape_json_obj
@@ -25,6 +24,7 @@ from labelme._label_file import is_label_file_path
 from labelme._label_file import read_label_file
 from labelme._label_file import read_label_file_image_path
 from labelme._label_file import write_label_file
+from labelme._shape import ShapeDict
 from labelme._utils import img_arr_to_b64
 
 

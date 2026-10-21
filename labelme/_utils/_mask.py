@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import math
 import uuid
-from typing import TYPE_CHECKING
 
 import numpy as np
 import PIL.Image
@@ -17,9 +16,7 @@ from .._shape import LINE_POINT_COUNT
 from .._shape import MIN_POLYGON_POINT_COUNT
 from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
 from .._shape import RECTANGLE_POINT_COUNT
-
-if TYPE_CHECKING:
-    from .._label_file import ShapeDict
+from .._shape import ShapeDict
 
 
 def shape_to_mask(

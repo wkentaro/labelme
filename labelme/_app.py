@@ -46,7 +46,6 @@ from ._label_file import ImageNotFoundError
 from ._label_file import ImageTooLargeError
 from ._label_file import LabelFileError
 from ._label_file import LabelFileReadError
-from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
@@ -57,6 +56,7 @@ from ._save_request import SaveRequest
 from ._save_request import write_save_request
 from ._save_writer import SaveWriter
 from ._shape import Shape
+from ._shape import ShapeDict
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
 from ._shape import merge_masks
