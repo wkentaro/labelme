@@ -1114,6 +1114,26 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>Σφάλμα διαμόρφωσης</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Μετατροπή σε</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Μετατροπή επιλεγμένων σχημάτων σε πολύγωνα</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Ορθογώνιο (πλαίσιο οριοθέτησης)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Μετατροπή επιλεγμένων σχημάτων σε ορθογώνια πλαισίου οριοθέτησης</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Μετατροπή επιλεγμένων σχημάτων σε γραμμοσειρές</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

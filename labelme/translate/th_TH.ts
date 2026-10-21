@@ -1115,6 +1115,26 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>ข้อผิดพลาดการตั้งค่า</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>แปลงเป็น</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นรูปหลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>สี่เหลี่ยมผืนผ้า (กรอบขอบเขต)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นสี่เหลี่ยมผืนผ้ากรอบขอบเขต</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นเส้นต่อเนื่อง</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

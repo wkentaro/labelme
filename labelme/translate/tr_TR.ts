@@ -1114,6 +1114,26 @@ Beklenen konum: {path}</translation>
         <source>Configuration Error</source>
         <translation>Yapılandırma Hatası</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Seçili şekilleri çokgenlere dönüştür</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Dikdörtgen (sınırlayıcı kutu)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Seçili şekilleri sınırlayıcı kutu dikdörtgenlerine dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Seçili şekilleri çizgi şeritlerine dönüştür</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

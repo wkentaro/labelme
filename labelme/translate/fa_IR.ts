@@ -1114,6 +1114,26 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>خطای پیکربندی</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>تبدیل به</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>تبدیل اشکال انتخاب‌شده به چندضلعی</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>مستطیل (کادر محدودکننده)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>تبدیل اشکال انتخاب‌شده به مستطیل‌های کادر محدودکننده</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>تبدیل اشکال انتخاب‌شده به نوار خط</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

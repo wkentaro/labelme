@@ -1114,6 +1114,26 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>구성 오류</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>변환</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>선택한 모양을 다각형으로 변환</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>직사각형 (경계 상자)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>선택한 모양을 경계 상자 직사각형으로 변환</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>선택한 모양을 라인스트립으로 변환</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

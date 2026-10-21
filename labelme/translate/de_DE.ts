@@ -1114,6 +1114,26 @@ Erwarteter Speicherort: {path}</translation>
         <source>Configuration Error</source>
         <translation>Konfigurationsfehler</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Konvertieren in</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Ausgewählte Formen in Polygone konvertieren</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Rechteck (Begrenzungsrahmen)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Ausgewählte Formen in Begrenzungsrahmen-Rechtecke konvertieren</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Ausgewählte Formen in Linienzüge konvertieren</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
