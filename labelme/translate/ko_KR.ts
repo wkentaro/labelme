@@ -1439,40 +1439,40 @@ Expected location: {path}</source>
         <translation>기본 모델</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (속도)</translation>
+        <source>EfficientSAM (speed)</source>
+        <translation>EfficientSAM (속도)</translation>
     </message>
     <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (정확도)</translation>
+        <source>EfficientSAM (accuracy)</source>
+        <translation>EfficientSAM (정확도)</translation>
     </message>
     <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (속도)</translation>
+        <source>SAM (speed)</source>
+        <translation>SAM (속도)</translation>
     </message>
     <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (균형)</translation>
+        <source>SAM (balanced)</source>
+        <translation>SAM (균형)</translation>
     </message>
     <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (정확도)</translation>
+        <source>SAM (accuracy)</source>
+        <translation>SAM (정확도)</translation>
     </message>
     <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (속도)</translation>
+        <source>SAM2 (speed)</source>
+        <translation>SAM2 (속도)</translation>
     </message>
     <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (균형)</translation>
+        <source>SAM2 (balanced)</source>
+        <translation>SAM2 (균형)</translation>
     </message>
     <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (정확도)</translation>
+        <source>SAM2 (accuracy)</source>
+        <translation>SAM2 (정확도)</translation>
     </message>
     <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
+        <source>SAM3</source>
+        <translation>SAM3</translation>
     </message>
     <message>
         <source>Text prompt model</source>

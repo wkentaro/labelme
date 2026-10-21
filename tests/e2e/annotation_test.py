@@ -169,7 +169,7 @@ def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
     assert warnings == [
         (
             "AI-Points Unavailable",
-            "Sam3 does not support point prompts.\n"
+            "SAM3 does not support point prompts.\n"
             "Please select a different model or use AI-Box mode.",
         )
     ]

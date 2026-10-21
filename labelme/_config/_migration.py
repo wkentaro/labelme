@@ -8,6 +8,30 @@ from loguru import logger
 from ._shape_color import migrate_shape_color
 
 
+def migrate_ai_model_names(*, config: dict) -> None:
+    ai = config.get("ai")
+    if not isinstance(ai, dict) or not isinstance(name := ai.get("default"), str):
+        return
+    renames = {
+        "EfficientSam (speed)": "EfficientSAM (speed)",
+        "EfficientSam (accuracy)": "EfficientSAM (accuracy)",
+        "Sam (speed)": "SAM (speed)",
+        "Sam (balanced)": "SAM (balanced)",
+        "Sam (accuracy)": "SAM (accuracy)",
+        "Sam2 (speed)": "SAM2 (speed)",
+        "Sam2 (balanced)": "SAM2 (balanced)",
+        "Sam2 (accuracy)": "SAM2 (accuracy)",
+        "Sam3": "SAM3",
+    }
+    if match := re.fullmatch(r"SegmentAnything \((.*)\)", name):
+        new_name = f"SAM ({match.group(1)})"
+    else:
+        new_name = renames.get(name, name)
+    if new_name != name:
+        logger.info("Migrating old config: ai.default={!r} -> {!r}", name, new_name)
+        ai["default"] = new_name
+
+
 def migrate_config(*, config_from_yaml: dict) -> None:
     migrate_shape_color(config=config_from_yaml)
     if "instance_label_auto_increment" in config_from_yaml:
@@ -50,19 +74,7 @@ def migrate_config(*, config_from_yaml: dict) -> None:
             logger.info("Migrating old config: removing shortcuts.{}", key)
             del shortcuts[key]
 
-    ai = config_from_yaml.get("ai")
-    if (
-        isinstance(ai, dict)
-        and isinstance(model_name := ai.get("default"), str)
-        and (m := re.match(r"^SegmentAnything \((.*)\)$", model_name))
-    ):
-        model_name_new: str = f"Sam ({m.group(1)})"
-        logger.info(
-            "Migrating old config: ai.default={!r} -> ai.default={!r}",
-            model_name,
-            model_name_new,
-        )
-        ai["default"] = model_name_new
+    migrate_ai_model_names(config=config_from_yaml)
 
     # Migrate polygon shortcut keys to shape
     _POLYGON_TO_SHAPE_RENAMES: Final = {
