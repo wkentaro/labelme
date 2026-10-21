@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import os
 import shutil
 from pathlib import Path
 
@@ -545,3 +547,129 @@ def test_footer_recounts_once_per_save(
     (out / "frame.json").write_text("{}")
     win._refresh_image_list_checkmarks(label_path=str(out / "frame.json"))
     assert counts == [(3, 3)]
+
+
+@pytest.mark.gui
+def test_images_sharing_a_stem_keep_their_own_annotation_files(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    critical_messages: list[str],
+) -> None:
+    images = tmp_path / "images"
+    images.mkdir()
+    for name in ("x.jpg", "x.png"):
+        shutil.copy(data_path / "raw" / "2011_000003.jpg", images / name)
+    win = main_win(file_or_dir=images)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    monkeypatch.setattr(win, "prompt_save_file_path", win.current_label_file_path)
+
+    def open_x_png() -> None:
+        win._docks.file_list.setCurrentRow(1)
+        win._load_file(image_or_label_path=str(images / "x.png"))
+        assert win._image_path == str(images / "x.png")
+
+    def save() -> None:
+        win._save_label_file(save_as=False)
+        qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+
+    save()
+    assert (images / "x.json").exists()
+    assert _check_states(win) == [Qt.CheckState.Checked, Qt.CheckState.Unchecked]
+
+    # x.png opens on its own, not on x.jpg's Annotation File.
+    open_x_png()
+    assert win._label_file_path is None
+    save()
+    assert (images / "x.png.json").exists()
+    assert _check_states(win) == [Qt.CheckState.Checked] * 2
+
+    # With both names holding x.jpg's Annotation, x.png's save fails rather
+    # than overwrite one.
+    taken = (images / "x.json").read_text()
+    (images / "x.png.json").write_text(taken)
+    open_x_png()
+    assert win._label_file_path is None
+    win.mark_dirty()
+    # The default destination, as Auto Save and Retry use it; only a
+    # destination confirmed in the Save dialog may replace another's file.
+    assert not win.save_labels(label_path=win.current_label_file_path())
+    assert len(critical_messages) == 1
+    assert "another Image" in critical_messages[0]
+    assert (images / "x.json").read_text() == taken
+    assert (images / "x.png.json").read_text() == taken
+    # Closing must not stop on the unsaved changes the failed save left.
+    win.mark_clean()
+
+
+@pytest.mark.gui
+def test_same_named_images_in_subfolders_keep_separate_annotations(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    images = tmp_path / "images"
+    for name in ("a", "b"):
+        (images / name).mkdir(parents=True)
+        shutil.copy(data_path / "raw" / "2011_000003.jpg", images / name / "0001.jpg")
+    out = tmp_path / "out"
+    win = main_win(file_or_dir=images, output_dir=out)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert win._file_list_image_path == str(images / "a" / "0001.jpg")
+
+    def save_file_name(*_args: object, dir: str, **_kwargs: object) -> tuple[str, str]:  # noqa: A002 -- Qt keyword
+        # The dialog falls back to another folder if this one is missing.
+        assert Path(dir).parent.is_dir()
+        return dir, ""
+
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName", save_file_name)
+    win._save_label_file(save_as=False)
+    qtbot.waitUntil(lambda: (out / "a" / "0001.json").exists())
+    assert _check_states(win) == [Qt.CheckState.Checked, Qt.CheckState.Unchecked]
+
+    win._docks.file_list.setCurrentRow(1)
+    qtbot.waitUntil(lambda: win._image_path == str(images / "b" / "0001.jpg"))
+    assert win._label_file_path is None
+    win._save_label_file(save_as=False)
+    qtbot.waitUntil(lambda: (out / "b" / "0001.json").exists())
+    assert _check_states(win) == [Qt.CheckState.Checked] * 2
+
+
+@pytest.mark.gui
+def test_opened_image_resolves_against_its_own_folder(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
+    images = tmp_path / "images"
+    (images / "a").mkdir(parents=True)
+    image = images / "a" / "0001.jpg"
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", image)
+    out = tmp_path / "out"
+    (out / "a").mkdir(parents=True)
+    # The same Image annotated once from each opened folder.
+    for label_path in (out / "0001.json", out / "a" / "0001.json"):
+        label_path.write_text(
+            json.dumps(
+                {
+                    "imagePath": os.path.relpath(image, label_path.parent),
+                    "imageData": None,
+                    "shapes": [],
+                }
+            )
+        )
+    win = main_win(file_or_dir=images, output_dir=out)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert win._label_file_path == str(out / "a" / "0001.json")
+
+    win._window_state.setValue(ANNOTATION_FOLDERS_KEY, {str(images / "a"): str(out)})
+    win._load_from_file_or_dir(file_or_dir=str(image))
+    assert win._label_file_path == str(out / "0001.json")

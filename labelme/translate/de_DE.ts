@@ -24,6 +24,26 @@
         <translation>Mehr Details</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Polygon</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maske</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Rechteck</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Orientiertes Rechteck</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Kreis</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Wählen Sie den Modus &apos;AI-Points&apos; oder &apos;AI-Box&apos;, um den KI-Assistenten zu aktivieren</translation>
     </message>
@@ -522,7 +542,7 @@
     </message>
     <message>
         <source>&amp;About %s</source>
-        <translation>Über %s (&amp;A)</translation>
+        <translation>Ü&amp;ber %s</translation>
     </message>
     <message>
         <source>About %s</source>
@@ -549,6 +569,16 @@
         <translation>Ordner mit Bildern öffnen</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Datei löschen</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Löschen</translation>
+    </message>
+    <message>
         <source>Copy to Clipboard</source>
         <translation>In Zwischenablage kopieren</translation>
     </message>
@@ -563,6 +593,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Formen aus der Zwischenablage in dieses Bild einfügen</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Duplizieren</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -585,8 +620,23 @@
         <translation>Rückgängig</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Bearbeiten</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Weiter</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Vorheriges Bild</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Zurück</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -735,6 +785,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>Sie können vorerst die Standardeinstellungen verwenden. Vor dem Zurücksetzen wird eine Sicherung Ihrer Konfigurationsdatei gespeichert.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Die Annotationsdatei gehört zu einem anderen Bild: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>

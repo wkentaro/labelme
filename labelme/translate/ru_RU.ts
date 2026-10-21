@@ -24,6 +24,26 @@
         <translation>Больше деталей</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>Полигон</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Маска</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Прямоугольник</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Ориентированный прямоугольник</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Окружность</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>Выберите режим &apos;AI-Points&apos; или &apos;AI-Box&apos;, чтобы включить ИИ-помощника</translation>
     </message>
@@ -529,6 +549,16 @@
         <translation>Открыть папку с изображениями</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Удалить файл</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Удалить</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>Изменить метку выбранной фигуры</translation>
     </message>
@@ -547,6 +577,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Вставить фигуры из буфера обмена в это изображение</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Дублировать</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -569,8 +604,23 @@
         <translation>Отменить</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>Изменить</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Далее</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Предыдущее изображение</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Назад</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -727,6 +777,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>Пока можно использовать настройки по умолчанию. Перед сбросом будет сохранена резервная копия вашего файла конфигурации.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Файл аннотаций относится к другому изображению: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>

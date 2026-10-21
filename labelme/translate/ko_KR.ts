@@ -24,6 +24,26 @@
         <translation>더 자세하게</translation>
     </message>
     <message>
+        <source>Polygon</source>
+        <translation>다각형</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>마스크</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>사각형</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>방향 있는 사각형</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>원</translation>
+    </message>
+    <message>
         <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
         <translation>&apos;AI-Points&apos; 또는 &apos;AI-Box&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
     </message>
@@ -529,6 +549,16 @@
         <translation>이미지 폴더 열기</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>파일 삭제</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>삭제</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>선택한 도형의 레이블 수정</translation>
     </message>
@@ -547,6 +577,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>클립보드의 도형을 이 이미지에 삽입</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>복제</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -569,8 +604,23 @@
         <translation>실행 취소</translation>
     </message>
     <message>
+        <source>Edit</source>
+        <comment>toolbar</comment>
+        <translation>편집</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>다음</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>이전 이미지(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>이전</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -727,6 +777,10 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>지금은 기본 설정을 사용할 수 있습니다. 초기화하기 전에 설정 파일의 백업을 저장합니다.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>이 주석 파일은 다른 이미지의 파일입니다: %s</translation>
     </message>
     <message>
         <source>Open Folder</source>
