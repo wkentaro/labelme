@@ -189,13 +189,14 @@ class ModelManager(QtCore.QObject):
 
     def __init__(self, *, parent: QtCore.QObject | None = None) -> None:
         super().__init__(parent)
-        self.models = dict(
-            [
+        self.models = {
+            name: QtCore.QCoreApplication.translate("SettingsDialog", display)
+            for name, display in [
                 (option.model_name, option.display_name)
                 for option in AI_ASSIST_MODEL_OPTIONS
             ]
             + list(AI_TEXT_MODEL_OPTIONS)
-        )
+        }
         self.errors = {}
         self.queue = []
         self.active = None

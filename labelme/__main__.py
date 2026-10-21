@@ -147,19 +147,21 @@ def _handle_exception(
     )
     logger.critical(traceback_str)
 
-    traceback_html: str = traceback_str.replace("\n", "<br/>").replace(" ", "&nbsp;")
     translate = QtCore.QCoreApplication.translate
-    QtWidgets.QMessageBox.critical(
-        None,
+    message = QtWidgets.QMessageBox(
+        QtWidgets.QMessageBox.Icon.Critical,
         translate("main", "Error"),
         translate(
             "main",
             "An unexpected error occurred. The application will close.<br/><br/>"
             "Please report the issue by following "
             "<a href='https://labelme.io/docs/troubleshoot'>Troubleshooting</a>.",
-        )
-        + f"<br/><br/>{traceback_html}",
+        ),
     )
+    message.setTextFormat(QtCore.Qt.TextFormat.RichText)
+    # Plain text, so frames like "<module>" survive instead of parsing as tags.
+    message.setDetailedText(traceback_str)
+    message.exec()
 
     if app := QtWidgets.QApplication.instance():
         app.quit()
