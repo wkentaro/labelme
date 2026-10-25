@@ -1360,24 +1360,18 @@ class Canvas(QtWidgets.QWidget):
         return None
 
     def _commit_pending_shape_move(self) -> None:
-        moved = _pick_pending_moved_shape(
-            is_moving_shape=self._is_moving_shape,
-            hovered_shape=self.hovered_shape,
-            shapes=self.shapes,
-        )
-        if self._is_moving_shape and (moved is None or moved.locked):
-            # Hover says nothing here: it was cleared by a reload, or it rests
-            # on a locked shape. A body drag moves the unlocked selection.
-            moved = next(iter(self._movable_selected_shapes()), None)
-        if moved is None:
+        if not self._is_moving_shape:
             return
-        index = self.shapes.index(moved)
-        if not np.array_equal(
-            self.shape_backups[-1][index].points, self.shapes[index].points
+        self._is_moving_shape = False
+        # Compare every shape: the hovered shape can differ from the dragged
+        # one, e.g. a point shape inside a box leaves the box hovered (#2844).
+        backup = self.shape_backups[-1]
+        if len(backup) != len(self.shapes) or any(
+            not np.array_equal(before.points, after.points)
+            for before, after in zip(backup, self.shapes)
         ):
             self.backup_shapes()
             self.shape_moved.emit()
-        self._is_moving_shape = False
 
     def _can_close_shape(self) -> bool:
         if self.mode != _CanvasMode.CREATE:
@@ -2067,16 +2061,8 @@ class Canvas(QtWidgets.QWidget):
             if not modifiers:
                 self._snapping = True
         elif self.mode == _CanvasMode.EDIT:
-            moved = self._movable_selected_shapes()
-            if self._is_moving_shape and moved and moved[0] in self.shapes:
-                index = self.shapes.index(moved[0])
-                if not np.array_equal(
-                    self.shape_backups[-1][index].points, self.shapes[index].points
-                ):
-                    self.backup_shapes()
-                    self.shape_moved.emit()
-
-                self._is_moving_shape = False
+            if self._is_moving_shape and self._movable_selected_shapes():
+                self._commit_pending_shape_move()
                 self._drag_anchor = None
 
     def set_last_label(self, *, text: str, flags: dict[str, bool]) -> list[Shape]:
@@ -2320,18 +2306,6 @@ def _should_reselect_on_right_press(
     if hovered_shape is None:
         return False
     return hovered_shape not in selected_shapes
-
-
-def _pick_pending_moved_shape(
-    *, is_moving_shape: bool, hovered_shape: Shape | None, shapes: list[Shape]
-) -> Shape | None:
-    if not is_moving_shape:
-        return None
-    if hovered_shape is None:
-        return None
-    if hovered_shape not in shapes:
-        return None
-    return hovered_shape
 
 
 def _opposite_corner_in_parallelogram(
