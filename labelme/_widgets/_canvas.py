@@ -41,7 +41,6 @@ from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
 from ._shape_render import bounds as _shape_bounds
 from ._shape_render import intersects_rect
-from ._shape_render import is_hit_by_point
 from ._shape_render import render_shape
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
@@ -1400,12 +1399,7 @@ class Canvas(QtWidgets.QWidget):
         if a0.button() != Qt.MouseButton.LeftButton:
             return
         pos: QPointF = self.transform_widget_point_to_image(a0.position())
-        # Like a click, a hovered vertex wins over a body lying under it.
-        shape = (
-            self.hovered_shape
-            if self._hovered_vertex is not None
-            else self._find_shape_at_point(pos)
-        )
+        shape = self._find_pointed_shape(pos)
         if shape is None:
             return
         self.select_shapes(shapes=[shape])
@@ -1464,7 +1458,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
             return
 
-        clicked_shape = self._find_shape_at_point(point)
+        clicked_shape = self._find_pointed_shape(point)
         if clicked_shape is None:
             if self.deselect_shape():
                 self.update()
@@ -1483,18 +1477,18 @@ class Canvas(QtWidgets.QWidget):
             self._hovered_shape_is_selected = False
         self._record_drag_anchor(shapes=self._movable_selected_shapes(), click=point)
 
-    def _find_shape_at_point(self, point: QPointF, /) -> Shape | None:
-        query = np.array([point.x(), point.y()])
-        for shape in reversed(self.shapes):
-            if shape.visible and is_hit_by_point(
-                shape=shape,
-                point=query,
-                scale=self.scale,
-                point_size=self._point_size,
-                epsilon=self._epsilon,
-            ):
-                return shape
-        return None
+    def _find_pointed_shape(self, point: QPointF, /) -> Shape | None:
+        # A hovered vertex or rotation handle acts on its own shape, so it wins
+        # over a body lying under it.
+        if self._hovered_vertex is not None or self._hovered_rotation is not None:
+            return self.hovered_shape
+        return _canvas_interaction.find_shape_at(
+            shapes=self.shapes,
+            point=np.array([point.x(), point.y()]),
+            scale=self.scale,
+            point_size=self._point_size,
+            epsilon=self._epsilon,
+        )
 
     def _record_drag_anchor(self, *, shapes: list[Shape], click: QPointF) -> None:
         if not shapes:
