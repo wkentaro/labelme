@@ -30,7 +30,6 @@ from labelme._widgets._canvas import _is_degenerate_draft
 from labelme._widgets._canvas import _is_out_of_image
 from labelme._widgets._canvas import _normalize_bbox_points
 from labelme._widgets._canvas import _opposite_corner_in_parallelogram
-from labelme._widgets._canvas import _pick_pending_moved_shape
 from labelme._widgets._canvas import _project_oriented_rectangle_corners
 from labelme._widgets._canvas import _reproject_oriented_rectangle_corners
 from labelme._widgets._canvas import _shape_to_draft
@@ -2310,44 +2309,6 @@ def test_should_reselect_on_right_press_keeps_selection_hovering_selected() -> N
     )
 
 
-def test_pick_pending_moved_shape_none_when_not_moving() -> None:
-    hovered = Shape()
-    assert (
-        _pick_pending_moved_shape(
-            is_moving_shape=False, hovered_shape=hovered, shapes=[hovered]
-        )
-        is None
-    )
-
-
-def test_pick_pending_moved_shape_none_when_hovering_nothing() -> None:
-    assert (
-        _pick_pending_moved_shape(
-            is_moving_shape=True, hovered_shape=None, shapes=[Shape()]
-        )
-        is None
-    )
-
-
-def test_pick_pending_moved_shape_none_when_hovered_absent_from_shapes() -> None:
-    assert (
-        _pick_pending_moved_shape(
-            is_moving_shape=True, hovered_shape=Shape(), shapes=[Shape()]
-        )
-        is None
-    )
-
-
-def test_pick_pending_moved_shape_returns_hovered_when_present() -> None:
-    hovered = Shape()
-    assert (
-        _pick_pending_moved_shape(
-            is_moving_shape=True, hovered_shape=hovered, shapes=[Shape(), hovered]
-        )
-        is hovered
-    )
-
-
 @pytest.mark.parametrize(
     ("pos", "opposite_vertex", "expected"),
     [
@@ -2866,3 +2827,54 @@ def test_double_click_in_create_mode_finalizes_shape(
     emitted.assert_not_called()
     assert canvas._current is None
     assert len(canvas.shapes) == 1
+
+
+@pytest.mark.gui
+def test_dragging_point_inside_box_commits_move(*, editing_canvas: Canvas) -> None:
+    canvas = editing_canvas
+    box = Shape(
+        shape_type="rectangle",
+        points=np.array([(5, 5), (80, 45)], dtype=np.float64),
+    )
+    point = Shape(shape_type="point", points=np.array([(40, 25)], dtype=np.float64))
+    canvas.load_shapes(shapes=[box, point])
+    moved = Mock()
+    canvas.shape_moved.connect(moved)
+
+    def mouse(
+        kind: QtCore.QEvent.Type, *, image_pos: QPointF, buttons: Qt.MouseButton
+    ) -> QtGui.QMouseEvent:
+        pos = canvas.transform_image_point_to_widget(image_pos)
+        button = Qt.MouseButton.NoButton
+        if kind != QtCore.QEvent.Type.MouseMove:
+            button = Qt.MouseButton.LeftButton
+        return QtGui.QMouseEvent(
+            kind, pos, pos, button, buttons, Qt.KeyboardModifier.NoModifier
+        )
+
+    move = QtCore.QEvent.Type.MouseMove
+    no_button = Qt.MouseButton.NoButton
+    left = Qt.MouseButton.LeftButton
+    # Entering the point from the box body keeps the box hovered.
+    canvas.mouseMoveEvent(mouse(move, image_pos=QPointF(20, 20), buttons=no_button))
+    canvas.mouseMoveEvent(mouse(move, image_pos=QPointF(40, 25), buttons=no_button))
+    assert canvas.hovered_shape is box
+    canvas.mousePressEvent(
+        mouse(
+            QtCore.QEvent.Type.MouseButtonPress,
+            image_pos=QPointF(40, 25),
+            buttons=left,
+        )
+    )
+    canvas.mouseMoveEvent(mouse(move, image_pos=QPointF(90, 40), buttons=left))
+    canvas.mouseReleaseEvent(
+        mouse(
+            QtCore.QEvent.Type.MouseButtonRelease,
+            image_pos=QPointF(90, 40),
+            buttons=no_button,
+        )
+    )
+
+    np.testing.assert_array_equal(point.points, [[90, 40]])
+    moved.assert_called_once()
+    np.testing.assert_array_equal(canvas.shape_backups[-1][1].points, [[90, 40]])
