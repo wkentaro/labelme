@@ -30,7 +30,6 @@ from labelme._widgets._canvas import _is_degenerate_draft
 from labelme._widgets._canvas import _is_out_of_image
 from labelme._widgets._canvas import _normalize_bbox_points
 from labelme._widgets._canvas import _opposite_corner_in_parallelogram
-from labelme._widgets._canvas import _pick_pending_moved_shape
 from labelme._widgets._canvas import _project_oriented_rectangle_corners
 from labelme._widgets._canvas import _reproject_oriented_rectangle_corners
 from labelme._widgets._canvas import _shape_to_draft
@@ -2310,44 +2309,6 @@ def test_should_reselect_on_right_press_keeps_selection_hovering_selected() -> N
     )
 
 
-def test_pick_pending_moved_shape_none_when_not_moving() -> None:
-    hovered = Shape()
-    assert (
-        _pick_pending_moved_shape(
-            is_moving_shape=False, hovered_shape=hovered, shapes=[hovered]
-        )
-        is None
-    )
-
-
-def test_pick_pending_moved_shape_none_when_hovering_nothing() -> None:
-    assert (
-        _pick_pending_moved_shape(
-            is_moving_shape=True, hovered_shape=None, shapes=[Shape()]
-        )
-        is None
-    )
-
-
-def test_pick_pending_moved_shape_none_when_hovered_absent_from_shapes() -> None:
-    assert (
-        _pick_pending_moved_shape(
-            is_moving_shape=True, hovered_shape=Shape(), shapes=[Shape()]
-        )
-        is None
-    )
-
-
-def test_pick_pending_moved_shape_returns_hovered_when_present() -> None:
-    hovered = Shape()
-    assert (
-        _pick_pending_moved_shape(
-            is_moving_shape=True, hovered_shape=hovered, shapes=[Shape(), hovered]
-        )
-        is hovered
-    )
-
-
 @pytest.mark.parametrize(
     ("pos", "opposite_vertex", "expected"),
     [
@@ -3000,3 +2961,114 @@ def test_circle_3p_escape_cancels(*, canvas: Canvas) -> None:
     )
     canvas.keyPressEvent(key_event)
     assert canvas._current is None
+
+
+def _mouse_event(
+    *,
+    canvas: Canvas,
+    kind: QtCore.QEvent.Type,
+    image_pos: QPointF,
+    buttons: Qt.MouseButton,
+) -> QtGui.QMouseEvent:
+    pos = canvas.transform_image_point_to_widget(image_pos)
+    button = Qt.MouseButton.NoButton
+    if kind != QtCore.QEvent.Type.MouseMove:
+        button = Qt.MouseButton.LeftButton
+    return QtGui.QMouseEvent(
+        kind, pos, pos, button, buttons, Qt.KeyboardModifier.NoModifier
+    )
+
+
+@pytest.mark.gui
+def test_dragging_point_inside_box_commits_move(*, editing_canvas: Canvas) -> None:
+    canvas = editing_canvas
+    box = Shape(
+        shape_type="rectangle",
+        points=np.array([(5, 5), (80, 45)], dtype=np.float64),
+    )
+    point = Shape(shape_type="point", points=np.array([(40, 25)], dtype=np.float64))
+    canvas.load_shapes(shapes=[box, point])
+    moved = Mock()
+    canvas.shape_moved.connect(moved)
+
+    move = QtCore.QEvent.Type.MouseMove
+    no_button = Qt.MouseButton.NoButton
+    left = Qt.MouseButton.LeftButton
+    # Entering the point from the box body hovers the point, not the box.
+    canvas.mouseMoveEvent(
+        _mouse_event(
+            canvas=canvas, kind=move, image_pos=QPointF(20, 20), buttons=no_button
+        )
+    )
+    assert canvas.hovered_shape is box
+    canvas.mouseMoveEvent(
+        _mouse_event(
+            canvas=canvas, kind=move, image_pos=QPointF(40, 25), buttons=no_button
+        )
+    )
+    assert canvas.hovered_shape is point
+    canvas.mousePressEvent(
+        _mouse_event(
+            canvas=canvas,
+            kind=QtCore.QEvent.Type.MouseButtonPress,
+            image_pos=QPointF(40, 25),
+            buttons=left,
+        )
+    )
+    canvas.mouseMoveEvent(
+        _mouse_event(canvas=canvas, kind=move, image_pos=QPointF(90, 40), buttons=left)
+    )
+    canvas.mouseReleaseEvent(
+        _mouse_event(
+            canvas=canvas,
+            kind=QtCore.QEvent.Type.MouseButtonRelease,
+            image_pos=QPointF(90, 40),
+            buttons=no_button,
+        )
+    )
+
+    np.testing.assert_array_equal(point.points, [[90, 40]])
+    moved.assert_called_once()
+    np.testing.assert_array_equal(canvas.shape_backups[-1][1].points, [[90, 40]])
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "kind",
+    [QtCore.QEvent.Type.MouseButtonPress, QtCore.QEvent.Type.MouseButtonDblClick],
+    ids=["press", "double_click"],
+)
+def test_click_on_rotation_handle_selects_its_shape(
+    *, editing_canvas: Canvas, kind: QtCore.QEvent.Type
+) -> None:
+    canvas = editing_canvas
+    # The point sits under the rectangle's top rotation handle at (50, 10).
+    point = Shape(shape_type="point", points=np.array([(50, 12)], dtype=np.float64))
+    rectangle = _make_oriented_rectangle(
+        corners=[(20, 10), (80, 10), (80, 40), (20, 40)]
+    )
+    canvas.load_shapes(shapes=[point, rectangle])
+    handle = QPointF(50, 10)
+    canvas.mouseMoveEvent(
+        _mouse_event(
+            canvas=canvas,
+            kind=QtCore.QEvent.Type.MouseMove,
+            image_pos=handle,
+            buttons=Qt.MouseButton.NoButton,
+        )
+    )
+    assert canvas.hovered_shape is rectangle
+    assert canvas._hovered_rotation is not None
+
+    event = _mouse_event(
+        canvas=canvas,
+        kind=kind,
+        image_pos=handle,
+        buttons=Qt.MouseButton.LeftButton,
+    )
+    if kind == QtCore.QEvent.Type.MouseButtonDblClick:
+        canvas.mouseDoubleClickEvent(event)
+    else:
+        canvas.mousePressEvent(event)
+
+    assert canvas.selected_shapes == [rectangle]

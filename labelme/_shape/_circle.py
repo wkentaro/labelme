@@ -10,11 +10,6 @@ def compute_circumcircle(
     p2: tuple[float, float],
     p3: tuple[float, float],
 ) -> tuple[tuple[float, float], float] | None:
-    """Compute the center and radius of the circumcircle defined by three points.
-
-    Returns ((center_x, center_y), radius) or None if the points are collinear
-    or nearly collinear.
-    """
     COLLINEAR_EPSILON: Final[float] = 1e-9
 
     x1, y1 = p1
@@ -38,10 +33,6 @@ def circle_from_three_points(
     p2: tuple[float, float],
     p3: tuple[float, float],
 ) -> tuple[tuple[float, float], tuple[float, float]] | None:
-    """Compute standard circle points (center, edge) from three points.
-
-    Returns ((center_x, center_y), (edge_x, edge_y)) or None if points are collinear.
-    """
     res = compute_circumcircle(p1=p1, p2=p2, p3=p3)
     if res is None:
         return None

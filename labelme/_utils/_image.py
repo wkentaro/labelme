@@ -34,7 +34,7 @@ def img_b64_to_arr(img_b64: str | bytes, /) -> NDArray[np.uint8]:
     return img_arr
 
 
-def img_pil_to_data(img_pil: PIL.Image.Image, /) -> bytes:
+def _img_pil_to_data(img_pil: PIL.Image.Image, /) -> bytes:
     f = io.BytesIO()
     img_pil.save(f, format="PNG")
     img_data = f.getvalue()
@@ -49,7 +49,7 @@ def img_arr_to_b64(img_arr: NDArray[np.uint8], /) -> str:
 
 def img_arr_to_data(img_arr: NDArray[np.uint8], /) -> bytes:
     img_pil = PIL.Image.fromarray(img_arr)
-    img_data = img_pil_to_data(img_pil)
+    img_data = _img_pil_to_data(img_pil)
     return img_data
 
 
