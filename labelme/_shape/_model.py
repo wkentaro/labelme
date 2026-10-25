@@ -7,6 +7,7 @@ from typing import Any
 from typing import Final
 from typing import Literal
 from typing import TypeAlias
+from typing import TypedDict
 
 import numpy as np
 import numpy.typing as npt
@@ -36,6 +37,18 @@ RECTANGLE_POINT_COUNT: Final = 2
 ORIENTED_RECTANGLE_POINT_COUNT: Final = 4
 MIN_LINESTRIP_POINT_COUNT: Final = 2
 MIN_POLYGON_POINT_COUNT: Final = 3
+
+
+class ShapeDict(TypedDict):
+    label: str
+    points: list[list[float]]
+    shape_type: str
+    flags: dict[str, bool]
+    description: str
+    group_id: int | None
+    mask: npt.NDArray[np.bool_] | None
+    locked: bool
+    other_data: dict
 
 
 @dataclasses.dataclass(eq=False)

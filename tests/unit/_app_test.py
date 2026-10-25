@@ -17,8 +17,8 @@ from PySide6 import QtGui
 from labelme import __appname__
 from labelme import _app
 from labelme import _automation
-from labelme._label_file import ShapeDict
 from labelme._shape import Shape
+from labelme._shape import ShapeDict
 
 
 @pytest.mark.parametrize(

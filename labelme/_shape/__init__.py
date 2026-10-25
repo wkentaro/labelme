@@ -14,6 +14,7 @@ from ._model import ORIENTED_RECTANGLE_POINT_COUNT
 from ._model import POLYLINE_SHAPE_TYPES
 from ._model import RECTANGLE_POINT_COUNT
 from ._model import Shape
+from ._model import ShapeDict
 from ._model import ShapeType
 from ._oriented_rectangle import get_rotation_handle
 from ._oriented_rectangle import oriented_rectangle_arrow_points
@@ -29,6 +30,7 @@ __all__ = [
     "POLYLINE_SHAPE_TYPES",
     "RECTANGLE_POINT_COUNT",
     "Shape",
+    "ShapeDict",
     "ShapeType",
     "can_merge_shapes",
     "convert_shape_geometry",

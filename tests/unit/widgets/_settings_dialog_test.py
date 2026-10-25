@@ -10,7 +10,8 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
-from labelme._config import _schema as schema
+from labelme._config import SETTINGS
+from labelme._config import Group
 from labelme._config import load_config
 from labelme._widgets._integer_slider import IntegerSlider
 from labelme._widgets._settings_dialog import SettingsDialog
@@ -145,7 +146,7 @@ def test_unbounded_integer_edit_accepts_python_ints(
 
 
 def test_editors_have_accessible_names(*, dialog: SettingsDialog) -> None:
-    for setting in schema.SETTINGS:
+    for setting in SETTINGS:
         editor = dialog._editors[setting.key_path]
         assert editor.accessibleName() == dialog.tr(setting.label)
         interface = QtGui.QAccessible.queryAccessibleInterface(editor)
@@ -239,7 +240,7 @@ def test_shape_color_picker_applies_rgb(
 def test_setting_note_is_accessible_description(*, dialog: SettingsDialog) -> None:
     setting = next(
         setting
-        for setting in schema.SETTINGS
+        for setting in SETTINGS
         if setting.key_path == ("shape_color", "by_label", "fallback")
     )
     assert setting.note is not None
@@ -251,7 +252,7 @@ def test_setting_note_is_accessible_description(*, dialog: SettingsDialog) -> No
 
 
 def test_beta_settings_render_a_badge(*, dialog: SettingsDialog) -> None:
-    expected = {dialog.tr(setting.label) for setting in schema.SETTINGS if setting.beta}
+    expected = {dialog.tr(setting.label) for setting in SETTINGS if setting.beta}
     assert expected, "no beta settings to verify"
 
     badge_text = dialog.tr("BETA")
@@ -411,7 +412,7 @@ def test_failed_apply_reverts_labels_editor(*, qtbot: QtBot, applied: Applied) -
 
 
 def test_groups_and_navigation_follow_schema_order(*, dialog: SettingsDialog) -> None:
-    expected = list(typing.get_args(schema.Group))
+    expected = list(typing.get_args(Group))
     assert [group.title() for group in dialog._page._groups] == expected
     assert [
         dialog._page._navigation.item(index).text()
@@ -450,7 +451,7 @@ class _LongSectionTranslator(QtCore.QTranslator):
         /,
         disambiguation: str | None = None,  # noqa: ARG002 -- Qt's signature
         n: int = -1,  # noqa: ARG002 -- Qt's signature
-    ) -> str | None:  # noqa: GR005 -- overrides Qt's signature
+    ) -> str | None:  # noqa: GR001 -- overrides Qt's signature
         return self.title if source_text == "Continue between images" else None
 
 
@@ -520,7 +521,7 @@ def test_dialog_prevents_narrow_content_overflow(
     assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
 
 
-@pytest.mark.parametrize("target", range(len(typing.get_args(schema.Group))))
+@pytest.mark.parametrize("target", range(len(typing.get_args(Group))))
 def test_navigation_jumps_to_group(
     *, qtbot: QtBot, dialog: SettingsDialog, target: int
 ) -> None:
@@ -695,9 +696,7 @@ def test_search_matches_metadata_in_both_languages(
     ]
     assert expected in paths
     assert len(paths) == len(set(paths))
-    setting = next(
-        setting for setting in schema.SETTINGS if setting.key_path == expected
-    )
+    setting = next(setting for setting in SETTINGS if setting.key_path == expected)
     item = page._navigation.item(paths.index(expected))
     assert item.text() == f"{dialog.tr(setting.label)}\n{dialog.tr(setting.group)}"
     assert item.data(QtCore.Qt.ItemDataRole.AccessibleTextRole) == (
