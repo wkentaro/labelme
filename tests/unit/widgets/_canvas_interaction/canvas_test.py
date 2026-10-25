@@ -390,6 +390,40 @@ def test_right_release_on_shape_executes_shape_context_menu(
 
 
 @pytest.mark.gui
+def test_right_click_rotation_handle_opens_its_shape_menu(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    point = Shape(shape_type="point", points=np.array([(50, 12)], dtype=np.float64))
+    rectangle = Shape(
+        shape_type="oriented_rectangle",
+        points=np.array([(20, 10), (80, 10), (80, 40), (20, 40)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[point, rectangle])
+    canvas.set_editing(value=True)
+    shape_calls: list[int] = []
+    canvas_calls: list[int] = []
+    monkeypatch.setattr(
+        canvas.shape_context_menu, "exec", lambda _pos=None: shape_calls.append(0)
+    )
+    monkeypatch.setattr(
+        canvas.canvas_context_menu, "exec", lambda _pos=None: canvas_calls.append(0)
+    )
+    # The rotation handle wins over the nearby point, as it does for left-clicks.
+    pos = _image_to_widget(canvas=canvas, img_x=50, img_y=10)
+    canvas.mouseMoveEvent(_make_move_event(pos=pos))
+    assert canvas.hovered_shape is rectangle
+    assert canvas._hovered_rotation is not None
+
+    canvas.mousePressEvent(_make_press_event(pos=pos))
+    canvas.mouseReleaseEvent(_make_release_event(pos=pos))
+
+    assert canvas.selected_shapes == [rectangle]
+    assert shape_calls == [0]
+    assert canvas_calls == []
+
+
+@pytest.mark.gui
 def test_right_menu_failure_restores_origin(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
