@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import math
 import uuid
-from typing import TypedDict
 
 import numpy as np
 import PIL.Image
@@ -17,18 +16,7 @@ from .._shape import LINE_POINT_COUNT
 from .._shape import MIN_POLYGON_POINT_COUNT
 from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
 from .._shape import RECTANGLE_POINT_COUNT
-
-
-class ShapeDict(TypedDict):
-    label: str
-    points: list[list[float]]
-    shape_type: str
-    flags: dict[str, bool]
-    description: str
-    group_id: int | None
-    mask: NDArray[np.bool_] | None
-    locked: bool
-    other_data: dict
+from .._shape import ShapeDict
 
 
 def shape_to_mask(
@@ -38,7 +26,6 @@ def shape_to_mask(
     *,
     shape_type: str | None = None,
     line_width: int = 10,
-    point_size: int = 5,
 ) -> NDArray[np.bool_]:
     mask = PIL.Image.fromarray(np.zeros(img_shape[:2], dtype=np.uint8))
     draw = PIL.ImageDraw.Draw(mask)
@@ -71,7 +58,7 @@ def shape_to_mask(
     elif shape_type == "point":
         assert len(xy) == 1, "Shape of shape_type=point must have 1 points"
         cx, cy = xy[0]
-        r = point_size
+        r = 5
         draw.ellipse(((cx - r, cy - r), (cx + r, cy + r)), outline=1, fill=1)
     elif shape_type == "oriented_rectangle":
         assert len(xy) == ORIENTED_RECTANGLE_POINT_COUNT, (

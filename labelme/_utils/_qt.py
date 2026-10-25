@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import os
+import re
 from collections.abc import Callable
 from collections.abc import Sequence
 from typing import Final
@@ -123,6 +124,28 @@ def new_icon(name: str, /) -> QtGui.QIcon:
     return QtGui.QIcon(path)
 
 
+def _toolbar_label(text: str, /) -> str:
+    # Two lines at most, so no language's label grows the toolbar taller.
+    # Toolbar labels name the command, so they drop the menu's ellipsis, and
+    # toolbar buttons don't use mnemonics, so the "(&O)" form that CJK
+    # translations use goes too. A translation without spaces (e.g. Japanese)
+    # marks its own break with "\n"; otherwise the break goes where the two
+    # lines come out closest in length, or at a slash.
+    label = re.sub(r"\s*\(&\w\)", "", text).removesuffix("…")
+    if "\n" in label:
+        return label
+    if "/" in label:  # "Brightness/Contrast": each half names one thing
+        return "\n".join(part.strip() for part in label.split("/", 1))
+    words = label.split()
+    if not words[1:]:
+        return label
+    split = min(
+        range(1, len(words)),
+        key=lambda i: max(len(" ".join(words[:i])), len(" ".join(words[i:]))),
+    )
+    return " ".join(words[:split]) + "\n" + " ".join(words[split:])
+
+
 def new_action(
     parent: QtCore.QObject,
     /,
@@ -131,12 +154,17 @@ def new_action(
     slot: Callable[..., object] | None = None,
     shortcut: str | Sequence[str] | None = None,
     icon: str | None = None,
+    toolbar_text: str | None = None,
     tip: str | None = None,
     checkable: bool = False,
     enabled: bool = True,
     checked: bool = False,
 ) -> QtGui.QAction:
-    action = QtGui.QAction(new_icon(icon) if icon else QtGui.QIcon(), text, parent)
+    # A translation without spaces (e.g. Japanese) marks where the toolbar label
+    # breaks with "\n"; menus show the text on one line.
+    action = QtGui.QAction(
+        new_icon(icon) if icon else QtGui.QIcon(), text.replace("\n", ""), parent
+    )
     keys = [shortcut] if isinstance(shortcut, str) else shortcut or ()
     action.setShortcuts([QtGui.QKeySequence(key) for key in keys])
     action.setToolTip(tip or "")
@@ -145,11 +173,22 @@ def new_action(
     action.setChecked(checked)
     action.setEnabled(enabled)
     if icon:
-        # Tool buttons show the icon text; stacking words keeps them narrow.
-        action.setIconText(text.replace(" ", "\n"))
+        # A long menu name can pass a shorter one for the toolbar, where every
+        # language's labels have to fit across one row.
+        action.setIconText(_toolbar_label(toolbar_text or text))
     if slot:
         action.triggered.connect(slot)
     return action
+
+
+def modifier_text(modifiers: QtCore.Qt.KeyboardModifier, /) -> str:
+    # Qt maps Ctrl to Command on macOS, so a hint written as "Ctrl" is wrong
+    # there. Spell the keys the platform's way, e.g. ⇧⌘ or Ctrl+Shift.
+    combination = QtCore.QKeyCombination(modifiers, QtCore.Qt.Key.Key_A)
+    text = QtGui.QKeySequence(combination).toString(
+        QtGui.QKeySequence.SequenceFormat.NativeText
+    )
+    return text.removesuffix("A").removesuffix("+")
 
 
 def new_separator(parent: QtWidgets.QWidget, /) -> QtGui.QAction:

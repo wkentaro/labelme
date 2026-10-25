@@ -66,7 +66,20 @@ def find_hover_target(
         if idx is not None:
             return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
 
-    # Pass 3: edge proximity (only shapes that support adding a point)
+    # Pass 3: point dot. A point shape's dot is drawn over the shapes around
+    # it, so it outranks their edges. Bodies follow paint order, not the
+    # priority shape, so hover picks the shape a click selects.
+    top = find_shape_at(
+        shapes=shapes,
+        point=point,
+        scale=scale,
+        point_size=point_size,
+        epsilon=epsilon,
+    )
+    if top is not None and top.shape_type == "point":
+        return HitTarget(kind=HitKind.BODY, shape=top, index=None)
+
+    # Pass 4: edge proximity (only shapes that support adding a point)
     for shape in editable:
         if not shape.can_add_point():
             continue
@@ -74,19 +87,41 @@ def find_hover_target(
         if idx is not None:
             return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
 
-    # Pass 4: body hit
-    for shape in candidates:
-        hit = is_hit_by_point(
+    # Pass 5: body hit
+    if top is not None:
+        return HitTarget(kind=HitKind.BODY, shape=top, index=None)
+
+    return None
+
+
+def find_shape_at(
+    *,
+    shapes: list[Shape],
+    point: npt.NDArray[np.float64],
+    scale: float,
+    point_size: int,
+    epsilon: float,
+) -> Shape | None:
+    # Topmost first, with point shapes ahead of the shapes they sit on. Below
+    # the first hit only a point shape can still win, so skip the rest.
+    first: Shape | None = None
+    for shape in reversed(shapes):
+        if not shape.visible:
+            continue
+        if first is not None and shape.shape_type != "point":
+            continue
+        if not is_hit_by_point(
             shape=shape,
             point=point,
             scale=scale,
             point_size=point_size,
             epsilon=epsilon,
-        )
-        if hit:
-            return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
-
-    return None
+        ):
+            continue
+        if shape.shape_type == "point":
+            return shape
+        first = shape
+    return first
 
 
 def _build_candidates(

@@ -41,7 +41,6 @@ from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
 from ._shape_render import bounds as _shape_bounds
 from ._shape_render import intersects_rect
-from ._shape_render import is_hit_by_point
 from ._shape_render import render_shape
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
@@ -699,8 +698,11 @@ class Canvas(QtWidgets.QWidget):
         is_new: bool = self._current is None
         if self.create_mode == "ai_points_to_shape":
             return self.tr(
-                "Click points to include or Shift+Click to exclude."
-                " Ctrl+LeftClick ends creation."
+                "Click points to include, or hold %s and click to exclude."
+                " Hold %s and click to finish."
+            ) % (
+                _utils.modifier_text(Qt.KeyboardModifier.ShiftModifier),
+                _utils.modifier_text(Qt.KeyboardModifier.ControlModifier),
             )
         if self.create_mode == "ai_box_to_shape":
             if is_new:
@@ -717,8 +719,8 @@ class Canvas(QtWidgets.QWidget):
                 return self.tr("Click start point for linestrip")
             else:
                 return self.tr(
-                    "Click next point or finish by Ctrl/Cmd+Click for linestrip"
-                )
+                    "Click the next point, or hold %s and click to finish the LineStrip"
+                ) % _utils.modifier_text(Qt.KeyboardModifier.ControlModifier)
         if self.create_mode == "circle":
             if is_new:
                 return self.tr("Click center point for circle")
@@ -1002,7 +1004,13 @@ class Canvas(QtWidgets.QWidget):
             self._apply_cursor(CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to move point"))
             if target.shape.can_remove_point():
-                status_messages.append(self.tr("ALT + SHIFT + Click to delete point"))
+                status_messages.append(
+                    self.tr("Hold %s and click to delete the point")
+                    % _utils.modifier_text(
+                        Qt.KeyboardModifier.AltModifier
+                        | Qt.KeyboardModifier.ShiftModifier
+                    )
+                )
             return
 
         if target.kind is HitKind.ROTATION_HANDLE:
@@ -1027,7 +1035,10 @@ class Canvas(QtWidgets.QWidget):
                 hovered_rotation=None,
             )
             self._apply_cursor(CursorRole.HANDLE)
-            status_messages.append(self.tr("ALT + Click to create point on shape"))
+            status_messages.append(
+                self.tr("Hold %s and click to add a point on the edge")
+                % _utils.modifier_text(Qt.KeyboardModifier.AltModifier)
+            )
             return
 
         if target.kind is HitKind.BODY:
@@ -1276,7 +1287,7 @@ class Canvas(QtWidgets.QWidget):
         return False
 
     def _press_right(self, *, pos: QPointF) -> None:
-        shape = self._find_shape_at_point(pos) or self.hovered_shape
+        shape = self._find_pointed_shape(pos)
         if shape is None:
             self._right_click_shape = None
         else:
@@ -1310,11 +1321,7 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self.context_menu_origin = self.mapToGlobal(event.position().toPoint())
         pos: QPointF = self.transform_widget_point_to_image(event.position())
-        shape = (
-            self._right_click_shape
-            or self._find_shape_at_point(pos)
-            or self.hovered_shape
-        )
+        shape = self._right_click_shape or self._find_pointed_shape(pos)
         self._right_click_shape = None
         menu = (
             self.shape_context_menu
@@ -1370,24 +1377,18 @@ class Canvas(QtWidgets.QWidget):
         return None
 
     def _commit_pending_shape_move(self) -> None:
-        moved = _pick_pending_moved_shape(
-            is_moving_shape=self._is_moving_shape,
-            hovered_shape=self.hovered_shape,
-            shapes=self.shapes,
-        )
-        if self._is_moving_shape and (moved is None or moved.locked):
-            # Hover says nothing here: it was cleared by a reload, or it rests
-            # on a locked shape. A body drag moves the unlocked selection.
-            moved = next(iter(self._movable_selected_shapes()), None)
-        if moved is None:
+        if not self._is_moving_shape:
             return
-        index = self.shapes.index(moved)
-        if not np.array_equal(
-            self.shape_backups[-1][index].points, self.shapes[index].points
+        self._is_moving_shape = False
+        # Compare every shape: the hovered shape can differ from the dragged
+        # one, e.g. a point shape inside a box leaves the box hovered (#2844).
+        backup = self.shape_backups[-1]
+        if len(backup) != len(self.shapes) or any(
+            not np.array_equal(before.points, after.points)
+            for before, after in zip(backup, self.shapes)
         ):
             self.backup_shapes()
             self.shape_moved.emit()
-        self._is_moving_shape = False
 
     def _can_close_shape(self) -> bool:
         if self.mode != _CanvasMode.CREATE:
@@ -1416,12 +1417,7 @@ class Canvas(QtWidgets.QWidget):
         if a0.button() != Qt.MouseButton.LeftButton:
             return
         pos: QPointF = self.transform_widget_point_to_image(a0.position())
-        # Like a click, a hovered vertex wins over a body lying under it.
-        shape = (
-            self.hovered_shape
-            if self._hovered_vertex is not None
-            else self._find_shape_at_point(pos)
-        )
+        shape = self._find_pointed_shape(pos)
         if shape is None:
             return
         self.select_shapes(shapes=[shape])
@@ -1435,12 +1431,10 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def select_neighbor_shape(self, *, key: Qt.Key) -> None:
-        """Select the nearest visible shape in the arrow key's direction.
-
-        With nothing selected, the shape closest to the image's top-left
-        corner is selected instead. When no visible shape lies within the
-        90-degree cone opening that way, the selection is left as it is.
-        """
+        # Picks the nearest visible shape within the 90-degree cone opening in
+        # the arrow key's direction, and leaves the selection as it is when
+        # none lies there. With nothing selected, the shape closest to the
+        # image's top-left corner is selected instead.
         candidates = [
             shape
             for shape in self.shapes
@@ -1483,7 +1477,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
             return
 
-        clicked_shape = self._find_shape_at_point(point)
+        clicked_shape = self._find_pointed_shape(point)
         if clicked_shape is None:
             if self.deselect_shape():
                 self.update()
@@ -1502,18 +1496,18 @@ class Canvas(QtWidgets.QWidget):
             self._hovered_shape_is_selected = False
         self._record_drag_anchor(shapes=self._movable_selected_shapes(), click=point)
 
-    def _find_shape_at_point(self, point: QPointF, /) -> Shape | None:
-        query = np.array([point.x(), point.y()])
-        for shape in reversed(self.shapes):
-            if shape.visible and is_hit_by_point(
-                shape=shape,
-                point=query,
-                scale=self.scale,
-                point_size=self._point_size,
-                epsilon=self._epsilon,
-            ):
-                return shape
-        return None
+    def _find_pointed_shape(self, point: QPointF, /) -> Shape | None:
+        # A hovered vertex or rotation handle acts on its own shape, so it wins
+        # over a body lying under it.
+        if self._hovered_vertex is not None or self._hovered_rotation is not None:
+            return self.hovered_shape
+        return _canvas_interaction.find_shape_at(
+            shapes=self.shapes,
+            point=np.array([point.x(), point.y()]),
+            scale=self.scale,
+            point_size=self._point_size,
+            epsilon=self._epsilon,
+        )
 
     def _record_drag_anchor(self, *, shapes: list[Shape], click: QPointF) -> None:
         if not shapes:
@@ -1987,11 +1981,9 @@ class Canvas(QtWidgets.QWidget):
         )
 
     def compute_settled_viewport_size(self) -> QtCore.QSize | None:
-        """Return the viewport size once scrollbars match the current scale.
-
-        The scroll area shows or hides its scrollbars after the next layout
-        pass, so the live viewport size lags a scale change until then.
-        """
+        # The scroll area shows or hides its scrollbars after the next layout
+        # pass, so the live viewport size lags a scale change until then.
+        # Return the size it settles at for the current scale.
         if self.pixmap.isNull():
             return None
         scroll_area = self._find_scroll_area()
@@ -2082,16 +2074,8 @@ class Canvas(QtWidgets.QWidget):
             if not modifiers:
                 self._snapping = True
         elif self.mode == _CanvasMode.EDIT:
-            moved = self._movable_selected_shapes()
-            if self._is_moving_shape and moved and moved[0] in self.shapes:
-                index = self.shapes.index(moved[0])
-                if not np.array_equal(
-                    self.shape_backups[-1][index].points, self.shapes[index].points
-                ):
-                    self.backup_shapes()
-                    self.shape_moved.emit()
-
-                self._is_moving_shape = False
+            if self._is_moving_shape and self._movable_selected_shapes():
+                self._commit_pending_shape_move()
                 self._drag_anchor = None
 
     def set_last_label(self, *, text: str, flags: dict[str, bool]) -> list[Shape]:
@@ -2335,18 +2319,6 @@ def _should_reselect_on_right_press(
     if hovered_shape is None:
         return False
     return hovered_shape not in selected_shapes
-
-
-def _pick_pending_moved_shape(
-    *, is_moving_shape: bool, hovered_shape: Shape | None, shapes: list[Shape]
-) -> Shape | None:
-    if not is_moving_shape:
-        return None
-    if hovered_shape is None:
-        return None
-    if hovered_shape not in shapes:
-        return None
-    return hovered_shape
 
 
 def _opposite_corner_in_parallelogram(

@@ -1,20 +1,16 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
-from .._utils._qt import new_icon
+from .._utils import new_icon
 
 
 class EmptyStateWidget(QtWidgets.QWidget):
     def __init__(
         self,
         *,
-        on_open_image: Callable[[], None],
-        on_open_directory: Callable[[], None],
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent=parent)
@@ -62,19 +58,15 @@ class EmptyStateWidget(QtWidgets.QWidget):
         buttons.setSpacing(8)
         buttons.addStretch()
 
-        open_image = QtWidgets.QPushButton(
-            new_icon("phosphor/folder-open.svg"), self.tr("Open Image")
-        )
-        open_image.setObjectName("emptyStateOpenImage")
-        open_image.clicked.connect(on_open_image)
-        buttons.addWidget(open_image)
+        # The buttons take their text and icon from the File menu actions in
+        # bind_open_actions, so the two entry points cannot drift apart.
+        self._open_file = QtWidgets.QPushButton()
+        self._open_file.setObjectName("emptyStateOpenFile")
+        buttons.addWidget(self._open_file)
 
-        open_directory = QtWidgets.QPushButton(
-            new_icon("phosphor/folders.svg"), self.tr("Open Folder")
-        )
-        open_directory.setObjectName("emptyStateOpenDirectory")
-        open_directory.clicked.connect(on_open_directory)
-        buttons.addWidget(open_directory)
+        self._open_folder = QtWidgets.QPushButton()
+        self._open_folder.setObjectName("emptyStateOpenFolder")
+        buttons.addWidget(self._open_folder)
         buttons.addStretch()
         content_layout.addLayout(buttons)
 
@@ -86,6 +78,17 @@ class EmptyStateWidget(QtWidgets.QWidget):
 
         layout.addWidget(content, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
         layout.addStretch()
+
+    def bind_open_actions(
+        self, *, open_file: QtGui.QAction, open_folder: QtGui.QAction
+    ) -> None:
+        for button, action in (
+            (self._open_file, open_file),
+            (self._open_folder, open_folder),
+        ):
+            button.setText(action.text())
+            button.setIcon(action.icon())
+            button.clicked.connect(action.trigger)
 
     def _refresh_icon(self) -> None:
         self._icon_label.setPixmap(self._icon.pixmap(56, 56))

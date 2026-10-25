@@ -13,6 +13,8 @@ from pytestqt.qtbot import QtBot
 
 from labelme._model_manager import ModelManager
 
+from ..conftest import DOWNLOAD_START_TIMEOUT_MS
+
 
 @pytest.fixture
 def manager(
@@ -133,7 +135,7 @@ def test_cancel_keeps_completed_files_and_quit_discards_queue(
     )
     manager.enqueue(name)
     manager.enqueue("sam:100m")
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     manager.cancel("sam:100m")
     manager.cancel(name)
     assert manager.active is None and not manager.queue
@@ -146,7 +148,9 @@ def test_cancel_keeps_completed_files_and_quit_discards_queue(
     release.clear()
     manager.enqueue(name)
     manager.enqueue("sam:100m")
-    qtbot.waitUntil(lambda: requests == ["/slow", "/slow"])
+    qtbot.waitUntil(
+        lambda: requests == ["/slow", "/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS
+    )
     assert manager.shutdown()
     release.set()
     assert manager.active is None and not manager.queue
@@ -180,7 +184,9 @@ def test_cancel_preserves_blob_completed_before_active_download(
         {"completed": completed, "active": active},
     )
     manager.enqueue(name)
-    qtbot.waitUntil(lambda: requests == ["/weights", "/slow"])
+    qtbot.waitUntil(
+        lambda: requests == ["/weights", "/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS
+    )
 
     manager.cancel(name)
 
@@ -267,7 +273,7 @@ def test_failed_shutdown_keeps_active_download_and_queue(
     )
     manager.enqueue(active)
     manager.enqueue(queued)
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     assert manager._pull is not None
     pull = manager._pull
 
@@ -304,7 +310,7 @@ def test_remove_stops_download_before_deleting_files(
     manager.changed.connect(lambda: notifications.append("changed"))
     manager.progress_changed.connect(lambda: notifications.append("progress"))
     manager.enqueue(name)
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     notifications.clear()
 
     manager.remove(name)

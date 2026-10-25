@@ -11,13 +11,15 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .. import _locale
-from .._config import _schema as schema
-from .._config._shape_color import RGB_CHANNEL_COUNT
-from .._utils._qt import new_icon
+from .._config import RGB_CHANNEL_COUNT
+from .._config import SETTINGS
+from .._config import Group
+from .._config import Setting
+from .._utils import new_icon
 from ._integer_slider import IntegerSlider
 
-ApplySetting = Callable[[tuple[str, ...], object], bool]
-PreviewShapeColor = Callable[[tuple[str, ...], list[int] | None], None]
+_ApplySetting = Callable[[tuple[str, ...], object], bool]
+_PreviewShapeColor = Callable[[tuple[str, ...], list[int] | None], None]
 
 _SOURCE_LABEL_ROLE: typing.Final = QtCore.Qt.ItemDataRole.UserRole + 1
 _CONTEXT_FONT_SCALE: typing.Final = 0.85
@@ -412,8 +414,8 @@ class _SettingsPage(QtWidgets.QWidget):
         self._groups = [group_box for _title, _icon, group_box in groups]
         self._scrolling_to_group = False
         self._editors = editors
-        self._search_index: list[tuple[schema.Setting, tuple[str, ...], str]] = []
-        settings_by_path = {setting.key_path: setting for setting in schema.SETTINGS}
+        self._search_index: list[tuple[Setting, tuple[str, ...], str]] = []
+        settings_by_path = {setting.key_path: setting for setting in SETTINGS}
         for key_path, editor in editors.items():
             setting = settings_by_path[key_path]
             names = (
@@ -775,10 +777,9 @@ class SettingsDialog(QtWidgets.QDialog):
         self,
         *,
         config: dict,
-        apply_setting: ApplySetting,
-        preview_shape_color: PreviewShapeColor,
+        apply_setting: _ApplySetting,
+        preview_shape_color: _PreviewShapeColor,
         open_as_text: Callable[[], None],
-        models_widget: QtWidgets.QWidget | None = None,
         settings_editable: bool = True,  # noqa: FBT001 -- controls config editing
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
@@ -790,7 +791,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self._preview_shape_color = preview_shape_color
         self._editors: dict[tuple[str, ...], QtWidgets.QWidget] = {}
 
-        GROUP_ICONS: typing.Final[dict[schema.Group, str]] = {
+        GROUP_ICONS: typing.Final[dict[Group, str]] = {
             "Appearance and language": "phosphor/palette.svg",
             "Files and saving": "phosphor/floppy-disk-duotone.svg",
             "Drawing and canvas": "phosphor/polygon.svg",
@@ -800,10 +801,8 @@ class SettingsDialog(QtWidgets.QDialog):
             "AI assist": "phosphor/sparkle.svg",
         }
         groups: list[tuple[str, QtGui.QIcon, QtWidgets.QGroupBox]] = []
-        for group in typing.get_args(schema.Group):
-            settings = [
-                setting for setting in schema.SETTINGS if setting.group == group
-            ]
+        for group in typing.get_args(Group):
+            settings = [setting for setting in SETTINGS if setting.group == group]
             if not settings:
                 continue
             groups.append(
@@ -815,13 +814,6 @@ class SettingsDialog(QtWidgets.QDialog):
             )
         for _, _, group_box in groups:
             group_box.setEnabled(settings_editable)
-        self._models_index = len(groups)
-        if models_widget is not None:
-            model_group = QtWidgets.QGroupBox(self.tr("AI Models"))
-            QtWidgets.QVBoxLayout(model_group).addWidget(models_widget)
-            groups.append(
-                (self.tr("AI Models"), new_icon("phosphor/sparkle.svg"), model_group)
-            )
         page = _SettingsPage(groups=groups, editors=self._editors)
         self._page = page
         find_shortcut = QtGui.QShortcut(QtGui.QKeySequence.StandardKey.Find, self)
@@ -878,10 +870,6 @@ class SettingsDialog(QtWidgets.QDialog):
             return
         super().keyPressEvent(event)
 
-    def show_models(self) -> None:
-        self._page.clear_search()
-        self._page._navigation.setCurrentRow(self._models_index)
-
     def accept(self) -> None:
         # Flush text editors whose edits commit on focus-out: clicking Close
         # does not always move focus first, so apply pending input explicitly.
@@ -931,7 +919,7 @@ class SettingsDialog(QtWidgets.QDialog):
         return node
 
     def _build_group(
-        self, *, title: str, settings: list[schema.Setting]
+        self, *, title: str, settings: list[Setting]
     ) -> QtWidgets.QGroupBox:
         group_box = QtWidgets.QGroupBox(title)
         group_box.setFlat(True)
@@ -974,7 +962,7 @@ class SettingsDialog(QtWidgets.QDialog):
         return group_box
 
     def _build_label_cell(
-        self, *, setting: schema.Setting, editor: QtWidgets.QWidget
+        self, *, setting: Setting, editor: QtWidgets.QWidget
     ) -> QtWidgets.QWidget:
         label = QtWidgets.QLabel(self.tr(setting.label))
         label.setBuddy(editor)
@@ -1010,7 +998,7 @@ class SettingsDialog(QtWidgets.QDialog):
         cell_layout.addWidget(note)
         return cell
 
-    def _create_editor(self, *, setting: schema.Setting) -> QtWidgets.QWidget:
+    def _create_editor(self, *, setting: Setting) -> QtWidgets.QWidget:
         value = self._read_value(key_path=setting.key_path)
         if setting.kind == "bool":
             check = QtWidgets.QCheckBox()
@@ -1114,7 +1102,7 @@ class SettingsDialog(QtWidgets.QDialog):
     def _create_combo(
         self,
         *,
-        setting: schema.Setting,
+        setting: Setting,
         value: object,
         items: Sequence[tuple[str, object]],
         min_width: int,
@@ -1130,9 +1118,7 @@ class SettingsDialog(QtWidgets.QDialog):
         )
         return combo
 
-    def _apply_combo(
-        self, *, setting: schema.Setting, combo: QtWidgets.QComboBox
-    ) -> None:
+    def _apply_combo(self, *, setting: Setting, combo: QtWidgets.QComboBox) -> None:
         self._apply(setting.key_path, combo.currentData())
         if setting.key_path == ("shape_color", "mode"):
             self._sync_shape_color_mode()
@@ -1284,8 +1270,8 @@ class SettingsDialog(QtWidgets.QDialog):
 
 
 def _find_settings(
-    *, index: Sequence[tuple[schema.Setting, tuple[str, ...], str]], query: str
-) -> list[schema.Setting]:
+    *, index: Sequence[tuple[Setting, tuple[str, ...], str]], query: str
+) -> list[Setting]:
     query = " ".join(query.casefold().split())
     if not query:
         return []

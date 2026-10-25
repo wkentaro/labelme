@@ -17,6 +17,7 @@ from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
+from ..conftest import DOWNLOAD_START_TIMEOUT_MS
 from .conftest import MainWinFactory
 
 
@@ -30,7 +31,7 @@ def test_recommended_models_are_explained_before_all_models(
 ) -> None:
     win = main_win()
     win._open_models()
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None
@@ -83,20 +84,21 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     win = main_win(config_file=config)
     assist = win._ai_annotation._model_combo
     text = win._ai_text._model_combo
-    for picker in (assist, text):
+    for picker, display in ((assist, "Sam3"), (text, "SAM3 (smart)")):
         assert picker.currentIndex() == -1
-        assert picker.count() == 1
-        assert "Unavailable" in picker.placeholderText()
+        assert picker.findData(name) >= 0
+        assert picker.placeholderText() == display
+        assert picker.toolTip() == f"Unavailable: {display}"
     assert not requests
     assert win._config["ai"]["text_model"] == name
 
     text.setCurrentIndex(text.findData("manage"))
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None
     models._rows[name][1].click()
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     dialog.close()
     assert win._model_manager.active == name
     release.set()
@@ -107,18 +109,18 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "question",
-        lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
+    # An open Settings dialog shows the cleared choices without reopening.
+    win._open_settings()
+    settings = win._settings_dialog
+    assert settings is not None
     win._open_models()
     models._rows[name][2].click()
     assert not Path(blob.path).exists()
     for key in ("default", "text_model"):
-        editor = dialog._editors[("ai", key)]
+        editor = settings._editors[("ai", key)]
         assert isinstance(editor, QtWidgets.QComboBox)
         assert editor.currentData() is None
         assert editor.currentText() == "(none)"
@@ -173,13 +175,9 @@ def test_delete_releases_loaded_assist_and_text_sessions(
     del assist_loaded, text_loaded
     del assist_session, text_session
 
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "question",
-        lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     win._open_models()
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None
@@ -199,27 +197,24 @@ def test_delete_releases_loaded_assist_and_text_sessions(
 
 
 @pytest.mark.gui
-@pytest.mark.parametrize("query", ["download", "AI Models", "SAM3"])
-def test_find_models_and_tab_into_visible_controls(
-    *, main_win: MainWinFactory, qtbot: QtBot, query: str
+def test_file_menu_opens_models_outside_settings_and_tabs_into_controls(
+    *, main_win: MainWinFactory, qtbot: QtBot
 ) -> None:
     win = main_win()
-    win._open_settings()
-    dialog = win._settings_dialog
+    action = next(
+        action for action in win._menus.file.actions() if action.text() == "AI Models…"
+    )
+    action.trigger()
+    dialog = win._models_dialog
     assert dialog is not None
-    page = dialog._page
+    assert win._settings_dialog is None
     qtbot.waitUntil(dialog.isActiveWindow)
-    qtbot.keyClicks(page._search, query)
-    matches = page._navigation.findItems("AI Models", QtCore.Qt.MatchFlag.MatchExactly)
-    assert len(matches) == 1
-    page._navigation.setCurrentItem(matches[0])
-    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
-    qtbot.keyClick(page._navigation, QtCore.Qt.Key.Key_Tab)
+    qtbot.keyClick(dialog, QtCore.Qt.Key.Key_Tab)
     models = dialog.findChild(ModelsWidget)
     assert models is not None
     focused = dialog.focusWidget()
     assert focused is not None and models.isAncestorOf(focused)
-    viewport = page._scroll_area.viewport()
+    viewport = dialog._scroll_area.viewport()
     assert viewport.rect().contains(focused.mapTo(viewport, focused.rect().center()))
 
 
@@ -241,14 +236,14 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     )
     win = main_win()
     win._open_models()
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None
     status, download, _, details = models._rows[name]
     # Large platform fonts can already require scrolling on the offscreen display.
     QtWidgets.QApplication.processEvents()
-    initial_scroll_maximum = dialog._page._scroll_area.horizontalScrollBar().maximum()
+    initial_scroll_maximum = dialog._scroll_area.horizontalScrollBar().maximum()
     download.click()
     qtbot.waitUntil(
         lambda: win._model_manager.get_state(name) == "failed", timeout=20_000
@@ -257,10 +252,7 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     assert download.text() == "Retry"
     assert download.accessibleName() == "Retry EfficientSam (speed)"
     QtWidgets.QApplication.processEvents()
-    assert (
-        dialog._page._scroll_area.horizontalScrollBar().maximum()
-        == initial_scroll_maximum
-    )
+    assert dialog._scroll_area.horizontalScrollBar().maximum() == initial_scroll_maximum
     assert details.isVisible()
 
     messages = []
@@ -285,7 +277,7 @@ def test_model_links_follow_live_theme_contrast(
 ) -> None:
     win = main_win()
     win._open_models()
-    dialog = win._settings_dialog
+    dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
     assert models is not None
@@ -313,3 +305,81 @@ def test_model_links_follow_live_theme_contrast(
             link.textInteractionFlags()
             & QtCore.Qt.TextInteractionFlag.LinksAccessibleByKeyboard
         )
+
+
+@pytest.mark.gui
+def test_picker_downloads_and_selects_a_missing_model_in_place(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    download_server: tuple[str, list[str], threading.Event],
+) -> None:
+    origin, requests, release = download_server
+    name = "sam2:small"
+    blob = osam.types.Blob(
+        url=origin + "/slow", hash="sha256:" + hashlib.sha256(b"weights").hexdigest()
+    )
+    monkeypatch.setattr(
+        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
+    )
+    config = tmp_path / "config.yaml"
+    config.write_text("ai:\n  default: Sam2 (balanced)\n")
+    win = main_win(config_file=config)
+    picker = win._ai_annotation._model_combo
+    header = picker.findText("Download and use")
+    assert 0 <= header < picker.findData(name) < picker.findData("manage")
+
+    picker.setCurrentIndex(picker.findData(name))
+    assert safe_load(config.read_text())["ai"]["default"] == "Sam2 (speed)"
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
+    assert picker.currentIndex() == -1
+    assert picker.placeholderText() == "Sam2 (speed)"
+    assert picker.toolTip() == "Downloading: Sam2 (speed)"
+    assert win._models_dialog is None
+    release.set()
+    qtbot.waitUntil(lambda: picker.currentData() == name)
+    assert win._canvas_widgets.canvas.get_ai_model_name() == name
+
+
+@pytest.mark.gui
+def test_picker_asks_before_downloading_sam3_and_cancel_keeps_setting(
+    *, main_win: MainWinFactory, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    win = main_win()
+    shown: list[str] = []
+
+    def cancel(message: QtWidgets.QMessageBox) -> int:
+        shown.append(message.text())
+        return 0
+
+    monkeypatch.setattr(QtWidgets.QMessageBox, "exec", cancel)
+    text_model = win._config["ai"]["text_model"]
+    picker = win._ai_text._model_combo
+    picker.setCurrentIndex(picker.findData("sam3:latest"))
+
+    assert len(shown) == 1 and "SAM License" in shown[0]
+    assert win._config["ai"]["text_model"] == text_model
+    assert win._model_manager.get_state("sam3:latest") == "missing"
+
+
+@pytest.mark.gui
+def test_point_mode_disables_incompatible_models_before_download(
+    *, main_win: MainWinFactory
+) -> None:
+    win = main_win()
+    picker = win._ai_annotation._model_combo
+    win._ai_annotation.set_point_prompt_mode(enabled=True)
+    model = picker.model()
+    assert isinstance(model, QtGui.QStandardItemModel)
+
+    def enabled(index: int) -> bool:
+        item = model.item(index)
+        assert item is not None
+        return item.isEnabled()
+
+    assert not enabled(picker.findData("sam3:latest"))
+    assert enabled(picker.findData("sam2:latest"))
+    assert not enabled(picker.findText("Download and use"))
+    assert enabled(picker.findData("manage"))
