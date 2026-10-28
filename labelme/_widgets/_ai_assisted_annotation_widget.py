@@ -9,7 +9,7 @@ from PySide6 import QtWidgets
 
 from .. import _ai_models
 from .. import _automation
-from .._utils._qt import new_icon
+from .._utils import new_icon
 from ._info_button import InfoButton
 from ._integer_slider import IntegerSlider
 from ._model_picker import ModelPicker
@@ -72,7 +72,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
         header_layout = QtWidgets.QHBoxLayout()
         header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI-Assisted Annotation"))
+        label = QtWidgets.QLabel(self.tr("AI Assist"))
         header_layout.addWidget(label)
         info_button = InfoButton(
             tooltip=self.tr("AI suggests annotation in 'AI-Points' and 'AI-Box' modes")
@@ -138,11 +138,13 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self._output_format_combo.setAccessibleDescription(
             self.tr("AI-assisted annotation output format")
         )
-        self._output_format_combo.addItem("Polygon", "polygon")
-        self._output_format_combo.addItem("Mask", "mask")
-        self._output_format_combo.addItem("Rectangle", "rectangle")
-        self._output_format_combo.addItem("Oriented Rectangle", "oriented_rectangle")
-        self._output_format_combo.addItem("Circle", "circle")
+        self._output_format_combo.addItem(self.tr("Polygon"), "polygon")
+        self._output_format_combo.addItem(self.tr("Mask"), "mask")
+        self._output_format_combo.addItem(self.tr("Rectangle"), "rectangle")
+        self._output_format_combo.addItem(
+            self.tr("Oriented Rectangle"), "oriented_rectangle"
+        )
+        self._output_format_combo.addItem(self.tr("Circle"), "circle")
         body_layout.addWidget(self._output_format_combo)
 
         layout.addWidget(body)
@@ -214,10 +216,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
-                    self.tr(
-                        "Select 'AI-Points' or 'AI-Box' mode "
-                        "to enable AI-Assisted Annotation"
-                    ),
+                    self.tr("Select 'AI-Points' or 'AI-Box' mode to enable AI Assist"),
                     self,
                 )
                 self.hover_highlight_requested.emit(True)  # noqa: FBT003 -- Qt signal payload is positional

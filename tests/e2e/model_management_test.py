@@ -17,6 +17,7 @@ from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
+from ..conftest import DOWNLOAD_START_TIMEOUT_MS
 from .conftest import MainWinFactory
 
 
@@ -83,10 +84,11 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     win = main_win(config_file=config)
     assist = win._ai_annotation._model_combo
     text = win._ai_text._model_combo
-    for picker in (assist, text):
+    for picker, display in ((assist, "Sam3"), (text, "SAM3 (smart)")):
         assert picker.currentIndex() == -1
         assert picker.findData(name) >= 0
-        assert "Unavailable" in picker.placeholderText()
+        assert picker.placeholderText() == display
+        assert picker.toolTip() == f"Unavailable: {display}"
     assert not requests
     assert win._config["ai"]["text_model"] == name
 
@@ -96,7 +98,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     models = dialog.findChild(ModelsWidget)
     assert models is not None
     models._rows[name][1].click()
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     dialog.close()
     assert win._model_manager.active == name
     release.set()
@@ -107,11 +109,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "question",
-        lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
     # An open Settings dialog shows the cleared choices without reopening.
@@ -177,11 +175,7 @@ def test_delete_releases_loaded_assist_and_text_sessions(
     del assist_loaded, text_loaded
     del assist_session, text_session
 
-    monkeypatch.setattr(
-        QtWidgets.QMessageBox,
-        "question",
-        lambda *_args: QtWidgets.QMessageBox.StandardButton.Yes,
-    )
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     win._open_models()
     dialog = win._models_dialog
     assert dialog is not None
@@ -339,9 +333,10 @@ def test_picker_downloads_and_selects_a_missing_model_in_place(
 
     picker.setCurrentIndex(picker.findData(name))
     assert safe_load(config.read_text())["ai"]["default"] == "Sam2 (speed)"
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     assert picker.currentIndex() == -1
-    assert picker.placeholderText() == "Downloading: Sam2 (speed)"
+    assert picker.placeholderText() == "Sam2 (speed)"
+    assert picker.toolTip() == "Downloading: Sam2 (speed)"
     assert win._models_dialog is None
     release.set()
     qtbot.waitUntil(lambda: picker.currentData() == name)

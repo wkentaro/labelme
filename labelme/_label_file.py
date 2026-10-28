@@ -24,10 +24,11 @@ from numpy.typing import NDArray
 from labelme import __version__
 
 from . import _utils
+from ._shape import ShapeDict
 from ._shape import ShapeType
-from ._utils._shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
+
 
 _SINGLE_CHANNEL_NDIM: Final = 2
 
@@ -342,11 +343,26 @@ def _check_image_dimensions(
         )
 
 
+def read_label_file_image_path(*, filename: str) -> str:
+    # The recorded Image path is relative to the Annotation File.
+    try:
+        with open(filename, encoding="utf-8") as f:
+            return _image_path_from_raw(json.load(f))
+    # RuntimeError covers RecursionError from deeply nested JSON.
+    except (OSError, KeyError, TypeError, ValueError, RuntimeError) as e:
+        raise LabelFileReadError(f"failed to load {filename!r}: {e}") from e
+
+
+def _image_path_from_raw(raw: dict[str, Any], /) -> str:
+    # Annotation Files saved on Windows carry backslashes.
+    return PureWindowsPath(raw["imagePath"]).as_posix()
+
+
 def read_label_file(*, filename: str, max_decode_mb: int | None = None) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
-        image_path = PureWindowsPath(raw["imagePath"]).as_posix()
+        image_path = _image_path_from_raw(raw)
         if raw["imageData"] is None:
             resolved_image_path = str(Path(filename).parent / image_path)
             try:

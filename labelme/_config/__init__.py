@@ -10,12 +10,25 @@ from loguru import logger
 from .. import _yaml
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
 from ._migration import migrate_config
+from ._schema import SETTINGS
+from ._schema import Group
+from ._schema import Setting
+from ._shape_color import RGB_CHANNEL_COUNT
 from ._shape_color import migrate_shape_color
 from ._shape_color import validate_shape_color
 from ._writer import reset_config
 from ._writer import set_overrides
 
-__all__ = ["get_user_config_file", "load_config", "reset_config", "set_overrides"]
+__all__ = [
+    "RGB_CHANNEL_COUNT",
+    "SETTINGS",
+    "Group",
+    "Setting",
+    "get_user_config_file",
+    "load_config",
+    "reset_config",
+    "set_overrides",
+]
 
 here = Path(__file__).resolve().parent
 

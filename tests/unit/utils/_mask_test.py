@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from labelme._label_file import ShapeDict
-from labelme._utils import _shape as shape_module
+from labelme._shape import ShapeDict
+from labelme._utils import _mask as mask_module
 
 from .util import get_img_and_data
 
@@ -17,7 +17,7 @@ def test_shapes_to_label() -> None:
         label_name = shape["label"]
         label_value = len(label_name_to_value)
         label_name_to_value[label_name] = label_value
-    cls, _ = shape_module.shapes_to_label(
+    cls, _ = mask_module.shapes_to_label(
         img_shape=img.shape,
         shapes=data["shapes"],
         label_name_to_value=label_name_to_value,
@@ -38,7 +38,7 @@ def test_shapes_to_label_raises_clear_error_for_unknown_label() -> None:
         other_data={},
     )
     with pytest.raises(ValueError, match="shape labels not in the provided labels"):
-        shape_module.shapes_to_label(
+        mask_module.shapes_to_label(
             img_shape=(20, 20), shapes=[shape], label_name_to_value={"road": 1}
         )
 
@@ -60,7 +60,7 @@ def test_shapes_to_label_places_mask_shape_at_its_bbox() -> None:
         locked=False,
         other_data={},
     )
-    cls, ins = shape_module.shapes_to_label(
+    cls, ins = mask_module.shapes_to_label(
         img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
     )
     assert cls[3, 2] == 0  # patch[0, 0] is False, so the bbox corner stays empty
@@ -84,7 +84,7 @@ def test_shapes_to_label_raises_when_mask_shape_has_no_ndarray() -> None:
         other_data={},
     )
     with pytest.raises(ValueError, match=r"shape\['mask'\] must be numpy.ndarray"):
-        shape_module.shapes_to_label(
+        mask_module.shapes_to_label(
             img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
         )
 
@@ -108,7 +108,7 @@ def test_shapes_to_label_groups_instances_by_label_and_group_id() -> None:
         _rectangle([[10.0, 10.0], [14.0, 14.0]], group_id=2),
         _rectangle([[16.0, 16.0], [19.0, 19.0]], group_id=1),
     ]
-    cls, ins = shape_module.shapes_to_label(
+    cls, ins = mask_module.shapes_to_label(
         img_shape=(20, 20), shapes=shapes, label_name_to_value={"car": 1}
     )
     assert cls[2, 2] == 1
@@ -136,7 +136,7 @@ def _mask_shape(*, points: list[list[float]], mask: NDArray[np.bool_]) -> ShapeD
 def test_shapes_to_label_mask_paints_bbox_pixels() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[2.0, 1.0], [6.0, 3.0]], mask=patch)
-    cls, _ = shape_module.shapes_to_label(
+    cls, _ = mask_module.shapes_to_label(
         img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
     )
     painted = np.zeros((20, 20), dtype=bool)
@@ -149,7 +149,7 @@ def test_shapes_to_label_mask_clips_bbox_off_left_edge() -> None:
     # negative slice would wrap the patch onto the opposite edge instead (ADR 0004).
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[-6.0, 1.0], [-2.0, 3.0]], mask=patch)
-    cls, _ = shape_module.shapes_to_label(
+    cls, _ = mask_module.shapes_to_label(
         img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
     )
     assert not (cls > 0).any()
@@ -160,7 +160,7 @@ def test_shapes_to_label_mask_clips_bbox_over_right_edge() -> None:
     # clipped rather than raising a broadcast error (ADR 0004).
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[17.0, 1.0], [21.0, 3.0]], mask=patch)
-    cls, _ = shape_module.shapes_to_label(
+    cls, _ = mask_module.shapes_to_label(
         img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
     )
     painted = np.zeros((20, 20), dtype=bool)
@@ -177,7 +177,7 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
     patch[1, 2] = True  # -> canvas (0, 0)
     patch[4, 4] = True  # -> canvas (3, 2)
     shape = _mask_shape(points=[[-2.0, -1.0], [2.0, 3.0]], mask=patch)
-    cls, _ = shape_module.shapes_to_label(
+    cls, _ = mask_module.shapes_to_label(
         img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
     )
     painted = np.zeros((20, 20), dtype=bool)
@@ -189,7 +189,7 @@ def test_shapes_to_label_mask_clips_bbox_off_top_left_corner() -> None:
 def test_shapes_to_label_mask_keeps_integer_bbox_extent() -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=[[2.0, 1.0], [4.0, 3.0]], mask=patch)
-    cls, _ = shape_module.shapes_to_label(
+    cls, _ = mask_module.shapes_to_label(
         img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
     )
     painted = np.zeros((20, 20), dtype=bool)
@@ -212,7 +212,7 @@ def test_shapes_to_label_mask_rounds_fractional_bounds(
 ) -> None:
     patch = np.ones((3, 5), dtype=bool)
     shape = _mask_shape(points=points, mask=patch)
-    cls, _ = shape_module.shapes_to_label(
+    cls, _ = mask_module.shapes_to_label(
         img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
     )
     painted = np.zeros((20, 20), dtype=bool)
@@ -226,7 +226,7 @@ def test_shapes_to_label_mask_rounds_negative_bounds_to_nearest_pixel() -> None:
     patch[2, 3] = True  # -> canvas (0, 0)
     patch[4, 4] = True  # -> canvas (2, 1)
     shape = _mask_shape(points=[[-2.6, -1.6], [1.4, 2.4]], mask=patch)
-    cls, _ = shape_module.shapes_to_label(
+    cls, _ = mask_module.shapes_to_label(
         img_shape=(20, 20), shapes=[shape], label_name_to_value={"car": 1}
     )
     painted = np.zeros((20, 20), dtype=bool)
@@ -239,13 +239,13 @@ def test_shape_to_mask() -> None:
     img, data = get_img_and_data()
     for shape in data["shapes"]:
         points = shape["points"]
-        mask = shape_module.shape_to_mask(img.shape[:2], points)
+        mask = mask_module.shape_to_mask(img.shape[:2], points)
         assert mask.shape == img.shape[:2]
 
 
 def test_shape_to_mask_oriented_rectangle_marks_inside_pixels() -> None:
     # Rect spans x in [0, 10], y in [0, 4]; mask is indexed (row=y, col=x).
-    mask = shape_module.shape_to_mask(
+    mask = mask_module.shape_to_mask(
         (20, 20),
         [[0.0, 0.0], [10.0, 0.0], [10.0, 4.0], [0.0, 4.0]],
         shape_type="oriented_rectangle",
@@ -263,7 +263,7 @@ def test_shape_to_mask_linestrip_fills_notch_at_turning_point() -> None:
     img_shape = (100, 100)
     line_width = 25
     apex_x, apex_y = 50, 50
-    mask = shape_module.shape_to_mask(
+    mask = mask_module.shape_to_mask(
         img_shape,
         [[40.0, 10.0], [apex_x, apex_y], [60.0, 10.0]],
         shape_type="linestrip",
@@ -276,13 +276,13 @@ def test_shape_to_mask_linestrip_fills_notch_at_turning_point() -> None:
 def test_shape_to_mask_linestrip_collinear_point_does_not_change_mask() -> None:
     img_shape = (100, 100)
     line_width = 25
-    with_midpoint = shape_module.shape_to_mask(
+    with_midpoint = mask_module.shape_to_mask(
         img_shape,
         [[10.0, 50.0], [50.0, 50.0], [90.0, 50.0]],
         shape_type="linestrip",
         line_width=line_width,
     )
-    without_midpoint = shape_module.shape_to_mask(
+    without_midpoint = mask_module.shape_to_mask(
         img_shape,
         [[10.0, 50.0], [90.0, 50.0]],
         shape_type="linestrip",
@@ -293,16 +293,16 @@ def test_shape_to_mask_linestrip_collinear_point_does_not_change_mask() -> None:
 
 def test_shape_to_mask_rectangle_reversed_coords() -> None:
     img_shape = (100, 100)
-    mask_tl_br = shape_module.shape_to_mask(
+    mask_tl_br = mask_module.shape_to_mask(
         img_shape, [[10, 10], [50, 50]], shape_type="rectangle"
     )
-    mask_br_tl = shape_module.shape_to_mask(
+    mask_br_tl = mask_module.shape_to_mask(
         img_shape, [[50, 50], [10, 10]], shape_type="rectangle"
     )
-    mask_tr_bl = shape_module.shape_to_mask(
+    mask_tr_bl = mask_module.shape_to_mask(
         img_shape, [[50, 10], [10, 50]], shape_type="rectangle"
     )
-    mask_bl_tr = shape_module.shape_to_mask(
+    mask_bl_tr = mask_module.shape_to_mask(
         img_shape, [[10, 50], [50, 10]], shape_type="rectangle"
     )
     assert np.array_equal(mask_tl_br, mask_br_tl)
@@ -314,7 +314,7 @@ def test_shape_to_mask_rectangle_reversed_coords() -> None:
 def test_shape_to_mask_circle_marks_center_and_clears_outside() -> None:
     # points are (x, y); the 2nd point sets the radius (here dist=5). Center
     # cx != cy so an x/y swap is caught. mask is indexed [row=y, col=x].
-    mask = shape_module.shape_to_mask(
+    mask = mask_module.shape_to_mask(
         (30, 30),
         [[12.0, 10.0], [12.0, 15.0]],
         shape_type="circle",
@@ -328,7 +328,7 @@ def test_shape_to_mask_circle_marks_center_and_clears_outside() -> None:
 
 def test_shape_to_mask_line_marks_pixels_along_segment() -> None:
     # points are (x, y); mask is indexed [row=y, col=x].
-    mask = shape_module.shape_to_mask(
+    mask = mask_module.shape_to_mask(
         (100, 100),
         [[10.0, 50.0], [90.0, 50.0]],
         shape_type="line",
@@ -345,14 +345,13 @@ def test_shape_to_mask_line_marks_pixels_along_segment() -> None:
 def test_shape_to_mask_point_marks_pixels_around_center() -> None:
     # points are (x, y); cx != cy so an x/y swap is caught. mask is indexed
     # [row=y, col=x].
-    mask = shape_module.shape_to_mask(
+    mask = mask_module.shape_to_mask(
         (100, 100),
         [[40.0, 60.0]],
         shape_type="point",
-        point_size=5,
     )
     assert mask.dtype == bool
     assert mask[60, 40]
-    assert mask[60, 43]  # 3px from center, inside point_size=5
+    assert mask[60, 43]  # 3px from center, inside the 5px radius
     assert mask[62, 40]  # off the center row: a filled disk, not a horizontal line
-    assert not mask[60, 46]  # 1px past the point_size=5 edge
+    assert not mask[60, 46]  # 1px past the 5px radius

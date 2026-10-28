@@ -16,22 +16,20 @@ from numpy.typing import NDArray
 from labelme._label_file import Annotation
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
-from labelme._label_file import ShapeDict
 from labelme._label_file import _check_image_dimensions
 from labelme._label_file import _dump_shape_to_json_obj
 from labelme._label_file import _load_shape_json_obj
 from labelme._label_file import _normalize_to_uint8
 from labelme._label_file import is_label_file_path
 from labelme._label_file import read_label_file
+from labelme._label_file import read_label_file_image_path
 from labelme._label_file import write_label_file
+from labelme._shape import ShapeDict
 from labelme._utils import img_arr_to_b64
 
 
 def test_read_label_file_load_windows_path(*, data_path: Path, tmp_path: Path) -> None:
-    """Test that read_label_file loads JSON with Windows-style backslash paths.
-
-    Regression test for https://github.com/wkentaro/labelme/issues/1725
-    """
+    # Regression test for https://github.com/wkentaro/labelme/issues/1725
     (tmp_path / "images").mkdir()
     shutil.copy(
         data_path / "annotated" / "2011_000003.jpg",
@@ -934,10 +932,9 @@ def test_normalize_to_uint8_all_non_finite_returns_zeros() -> None:
 
 
 def test_normalize_to_uint8_maps_non_finite_pixels_deterministically() -> None:
-    """Regression: an inf pixel made the max inf, so finite/inf == 0 turned every
-    finite pixel black. Non-finite pixels must saturate instead: +inf -> 255,
-    -inf -> 0, nan -> 0, leaving finite pixels scaled over the finite range.
-    """
+    # Regression: an inf pixel made the max inf, so finite/inf == 0 turned every
+    # finite pixel black. Non-finite pixels must saturate instead: +inf -> 255,
+    # -inf -> 0, nan -> 0, leaving finite pixels scaled over the finite range.
     result = _normalize_to_uint8(
         np.array([[0.0, 50.0, 100.0, np.inf, -np.inf, np.nan]])
     )
@@ -1035,3 +1032,17 @@ def test_load_shape_json_obj_rejects_non_bool_locked(*, locked: object) -> None:
                 "locked": locked,
             }
         )
+
+
+def test_read_label_file_image_path_reports_unreadable_files(*, tmp_path: Path) -> None:
+    path = tmp_path / "x.json"
+    path.write_text(json.dumps({"imagePath": "x.jpg", "imageData": None}))
+    assert read_label_file_image_path(filename=str(path)) == "x.jpg"
+
+    path.write_text(json.dumps({"imagePath": "dir\\x.jpg"}))
+    assert read_label_file_image_path(filename=str(path)) == "dir/x.jpg"
+
+    for text in ("{", "{}", "[" * 100_000 + "]" * 100_000):
+        path.write_text(text)
+        with pytest.raises(LabelFileReadError):
+            read_label_file_image_path(filename=str(path))
