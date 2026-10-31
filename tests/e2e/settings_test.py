@@ -10,9 +10,12 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme import _utils
 from labelme._app import MainWindow
 from labelme._config import _writer
+from labelme._config import load_config
 from labelme._locale import TRANSLATE_DIR
+from labelme._utils import apply_color_theme
 from labelme._widgets import SettingsDialog
 from labelme._widgets._integer_slider import IntegerSlider
 from labelme._widgets._label_list_widget import LABEL_COLOR_ROLE
@@ -883,6 +886,30 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
 
 
 @pytest.mark.gui
+def test_apply_to_live_widgets_table_dispatch(
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
+) -> None:
+    win = main_win(config_file=editable_config_file)
+
+    for key_path in win._persistent_actions:
+        assert key_path in win._live_widget_appliers
+
+    called: list[str] = []
+    win._live_widget_appliers[("mock_key",)] = lambda: called.append("exact")
+    win._apply_to_live_widgets(key_path=("mock_key",))
+    assert called == ["exact"]
+
+    win._live_widget_prefix_appliers["mock_prefix"] = lambda: called.append("prefix")
+    win._apply_to_live_widgets(key_path=("mock_prefix", "sub_key"))
+    assert called == ["exact", "prefix"]
+
+    win._apply_to_live_widgets(key_path=("unhandled_key", "leaf"))
+    assert called == ["exact", "prefix"]
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 @pytest.mark.skipif(
     sys.platform == "win32",
     reason="offscreen Qt on Windows has no system font, so its text widths are a "
@@ -904,3 +931,58 @@ def test_settings_sections_fit_without_eliding(
         width = navigation.sizeHintForIndex(navigation.model().index(row, 0)).width()
         assert width <= navigation.viewport().width(), navigation.item(row).text()
     dialog.close()
+
+
+@pytest.mark.gui
+def test_color_theme_setting_applies_live_and_persists(
+    *,
+    main_win: MainWinFactory,
+    editable_config_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    dialog = _open_settings_dialog(win=win)
+    combo = dialog._editors[("color_theme",)]
+    assert isinstance(combo, QtWidgets.QComboBox)
+    applied: list[str] = []
+
+    def record_theme(*, theme: str) -> None:
+        # Keep the real Qt call, which offscreen plugins may ignore. Record at
+        # its boundary so this also verifies persist/config-before-apply order.
+        assert win._config["color_theme"] == theme
+        assert safe_load(editable_config_file.read_text())["color_theme"] == theme
+        apply_color_theme(theme=theme)
+        applied.append(theme)
+
+    monkeypatch.setattr(_utils, "apply_color_theme", record_theme)
+    try:
+        for theme in ("dark", "light"):
+            combo.setCurrentIndex(combo.findData(theme))
+            assert applied[-1] == theme
+        assert applied == ["dark", "light"]
+    finally:
+        apply_color_theme(theme="system")
+
+
+@pytest.mark.gui
+def test_out_of_bounds_setting_updates_canvas_constraint_and_persists(
+    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    canvas = win._canvas_widgets.canvas
+    canvas.pixmap = QtGui.QPixmap(32, 32)
+    outside = QtCore.QPointF(-1, -1)
+    assert canvas._should_constrain_to_pixmap(outside)
+    dialog = _open_settings_dialog(win=win)
+    checkbox = dialog._editors[("canvas", "allow_out_of_bounds_points")]
+    assert isinstance(checkbox, QtWidgets.QCheckBox)
+    for enabled in (True, False):
+        checkbox.setChecked(enabled)
+        assert canvas._allow_out_of_bounds_points is enabled
+        assert canvas._should_constrain_to_pixmap(outside) is not enabled
+        assert win._config["canvas"]["allow_out_of_bounds_points"] is enabled
+        # Returning to the default prunes the override; reload the persisted
+        # config to check both the explicit true and the default false value.
+        persisted = load_config(config_file=editable_config_file, config_overrides={})
+        assert persisted["canvas"]["allow_out_of_bounds_points"] is enabled
+    close_or_pause(qtbot=qtbot, widget=win, pause=False)
