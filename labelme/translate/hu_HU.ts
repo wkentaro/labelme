@@ -1439,40 +1439,40 @@ Várt hely: {path}</translation>
         <translation>Alapértelmezett modell</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (sebesség)</translation>
+        <source>EfficientSAM (speed)</source>
+        <translation>EfficientSAM (sebesség)</translation>
     </message>
     <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (pontosság)</translation>
+        <source>EfficientSAM (accuracy)</source>
+        <translation>EfficientSAM (pontosság)</translation>
     </message>
     <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (sebesség)</translation>
+        <source>SAM (speed)</source>
+        <translation>SAM (sebesség)</translation>
     </message>
     <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (kiegyensúlyozott)</translation>
+        <source>SAM (balanced)</source>
+        <translation>SAM (kiegyensúlyozott)</translation>
     </message>
     <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (pontosság)</translation>
+        <source>SAM (accuracy)</source>
+        <translation>SAM (pontosság)</translation>
     </message>
     <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (sebesség)</translation>
+        <source>SAM2 (speed)</source>
+        <translation>SAM2 (sebesség)</translation>
     </message>
     <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (kiegyensúlyozott)</translation>
+        <source>SAM2 (balanced)</source>
+        <translation>SAM2 (kiegyensúlyozott)</translation>
     </message>
     <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (pontosság)</translation>
+        <source>SAM2 (accuracy)</source>
+        <translation>SAM2 (pontosság)</translation>
     </message>
     <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
+        <source>SAM3</source>
+        <translation>SAM3</translation>
     </message>
     <message>
         <source>Text prompt model</source>

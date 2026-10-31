@@ -8,6 +8,7 @@ import pytest
 
 from labelme import _config
 from labelme._config._migration import migrate_config
+from labelme._yaml import safe_load
 
 
 def _steer_home(*, monkeypatch: pytest.MonkeyPatch, home: Path) -> None:
@@ -62,20 +63,68 @@ def test_migrate_removes_logger_level(*, tmp_path: Path) -> None:
     assert "logger_level" not in config
 
 
+_AI_MODEL_RENAMES: Final = [
+    ("EfficientSam (speed)", "EfficientSAM (speed)"),
+    ("EfficientSam (accuracy)", "EfficientSAM (accuracy)"),
+    ("Sam (speed)", "SAM (speed)"),
+    ("Sam (balanced)", "SAM (balanced)"),
+    ("Sam (accuracy)", "SAM (accuracy)"),
+    ("Sam2 (speed)", "SAM2 (speed)"),
+    ("Sam2 (balanced)", "SAM2 (balanced)"),
+    ("Sam2 (accuracy)", "SAM2 (accuracy)"),
+    ("Sam3", "SAM3"),
+    ("SegmentAnything (speed)", "SAM (speed)"),
+    ("SegmentAnything (balanced)", "SAM (balanced)"),
+    ("SegmentAnything (accuracy)", "SAM (accuracy)"),
+]
+
+
 @pytest.mark.parametrize(
-    "input_name, expected_name",
+    ("input_name", "expected_name"),
     [
-        ("SegmentAnything (balanced)", "Sam (balanced)"),
-        ("SegmentAnything (tiny)", "Sam (tiny)"),
-        ("Sam (balanced)", "Sam (balanced)"),
+        *_AI_MODEL_RENAMES,
+        ("SegmentAnything (tiny)", "SAM (tiny)"),
         ("Sam (large)", "Sam (large)"),
-        ("Sam2 (balanced)", "Sam2 (balanced)"),
+        ("custom-model", "custom-model"),
+        ("SAM2 (balanced)", "SAM2 (balanced)"),
     ],
 )
 def test_migrate_ai_model_name(*, input_name: str, expected_name: str) -> None:
-    config: dict = {"ai": {"default": input_name}}
+    config: dict = {"ai": {"default": input_name, "text_model": "sam3:latest"}}
+    migrate_config(config_from_yaml=config)
+    assert config["ai"] == {"default": expected_name, "text_model": "sam3:latest"}
     migrate_config(config_from_yaml=config)
     assert config["ai"]["default"] == expected_name
+
+
+@pytest.mark.parametrize(("input_name", "expected_name"), _AI_MODEL_RENAMES)
+@pytest.mark.parametrize("source", ["file", "overrides"])
+def test_load_legacy_ai_model_name(
+    *, tmp_path: Path, input_name: str, expected_name: str, source: str
+) -> None:
+    legacy = {"ai": {"default": input_name, "text_model": "sam3:latest"}}
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(json.dumps(legacy))
+    config = _config.load_config(
+        config_file=config_file if source == "file" else None,
+        config_overrides=legacy if source == "overrides" else {},
+    )
+    assert config["ai"]["default"] == expected_name
+    assert config["ai"]["text_model"] == "sam3:latest"
+    assert legacy["ai"]["default"] == input_name
+    # Loading migrates in memory; an ordinary later save persists the new name.
+    assert json.loads(config_file.read_text()) == legacy
+    _config.set_overrides(config_file=config_file, overrides=[(("auto_save",), True)])
+    reopened = _config.load_config(config_file=config_file, config_overrides={})
+    assert reopened["ai"]["default"] == expected_name
+    assert safe_load(config_file.read_text())["ai"]["default"] == expected_name
+
+
+@pytest.mark.parametrize("ai", [None, True, [], "Sam3", {"default": None}])
+def test_model_name_migration_preserves_malformed_sections(*, ai: object) -> None:
+    config = {"ai": ai}
+    migrate_config(config_from_yaml=config)
+    assert config == {"ai": ai}
 
 
 @pytest.mark.parametrize("model_name", [True, 42, ["Sam"]])
@@ -148,7 +197,7 @@ def test_migrate_tolerates_empty_section(*, section: str) -> None:
 
 @pytest.mark.parametrize(
     ("section", "probe"),
-    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "Sam2 (balanced)"))],
+    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "SAM2 (balanced)"))],
     ids=["shortcuts", "ai"],
 )
 def test_load_config_empty_section_keeps_defaults(

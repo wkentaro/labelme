@@ -1440,40 +1440,40 @@ Expected location: {path}</source>
         <translation>โมเดลเริ่มต้น</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (ความเร็ว)</translation>
+        <source>EfficientSAM (speed)</source>
+        <translation>EfficientSAM (ความเร็ว)</translation>
     </message>
     <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (ความแม่นยำ)</translation>
+        <source>EfficientSAM (accuracy)</source>
+        <translation>EfficientSAM (ความแม่นยำ)</translation>
     </message>
     <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (ความเร็ว)</translation>
+        <source>SAM (speed)</source>
+        <translation>SAM (ความเร็ว)</translation>
     </message>
     <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (สมดุล)</translation>
+        <source>SAM (balanced)</source>
+        <translation>SAM (สมดุล)</translation>
     </message>
     <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (ความแม่นยำ)</translation>
+        <source>SAM (accuracy)</source>
+        <translation>SAM (ความแม่นยำ)</translation>
     </message>
     <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (ความเร็ว)</translation>
+        <source>SAM2 (speed)</source>
+        <translation>SAM2 (ความเร็ว)</translation>
     </message>
     <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (สมดุล)</translation>
+        <source>SAM2 (balanced)</source>
+        <translation>SAM2 (สมดุล)</translation>
     </message>
     <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (ความแม่นยำ)</translation>
+        <source>SAM2 (accuracy)</source>
+        <translation>SAM2 (ความแม่นยำ)</translation>
     </message>
     <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
+        <source>SAM3</source>
+        <translation>SAM3</translation>
     </message>
     <message>
         <source>Text prompt model</source>

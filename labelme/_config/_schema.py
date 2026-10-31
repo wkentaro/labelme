@@ -288,18 +288,18 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         # translation declarations aligned with the shared non-Qt model list.
         choice_labels=(
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "(none)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "EfficientSam (speed)")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "EfficientSAM (speed)")),
             cast(
                 str,
-                QT_TRANSLATE_NOOP("SettingsDialog", "EfficientSam (accuracy)"),
+                QT_TRANSLATE_NOOP("SettingsDialog", "EfficientSAM (accuracy)"),
             ),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam (speed)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam (balanced)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam (accuracy)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam2 (speed)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam2 (balanced)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam2 (accuracy)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam3")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM (speed)")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM (balanced)")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM (accuracy)")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM2 (speed)")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM2 (balanced)")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM2 (accuracy)")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM3")),
         ),
     ),
     Setting(
