@@ -1114,6 +1114,26 @@ Verwachte locatie: {path}</translation>
         <source>Configuration Error</source>
         <translation>Configuratiefout</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Converteren naar</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Geselecteerde vormen converteren naar polygonen</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Rechthoek (begrenzingsvak)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Geselecteerde vormen converteren naar begrenzingsrechthoeken</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Geselecteerde vormen converteren naar lijnstroken</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

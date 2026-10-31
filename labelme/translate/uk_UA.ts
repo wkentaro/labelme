@@ -1114,6 +1114,26 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>Помилка конфігурації</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Перетворити на</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Перетворити вибрані фігури на полігони</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Прямокутник (обмежувальна рамка)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Перетворити вибрані фігури на обмежувальні прямокутники</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Перетворити вибрані фігури на ламані лінії</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

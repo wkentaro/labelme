@@ -1114,6 +1114,26 @@ Local esperado: {path}</translation>
         <source>Configuration Error</source>
         <translation>Erro de Configuração</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Converter para</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Converter formas selecionadas para polígonos</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Retângulo (caixa delimitadora)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Converter formas selecionadas para retângulos de caixa delimitadora</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Converter formas selecionadas para faixas de linhas</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

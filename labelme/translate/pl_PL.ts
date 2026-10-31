@@ -1114,6 +1114,26 @@ Oczekiwana lokalizacja: {path}</translation>
         <source>Configuration Error</source>
         <translation>Błąd konfiguracji</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Konwertuj na</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Konwertuj zaznaczone kształty na wielokąty</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Prostokąt (obwiednia)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Konwertuj zaznaczone kształty na prostokątne obwiednie</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Konwertuj zaznaczone kształty na łamane</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

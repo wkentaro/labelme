@@ -1114,6 +1114,26 @@ Vị trí dự kiến: {path}</translation>
         <source>Configuration Error</source>
         <translation>Lỗi Cấu hình</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Chuyển đổi thành</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Chuyển đổi các hình đã chọn thành đa giác</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Hình chữ nhật (hộp bao)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Chuyển đổi các hình đã chọn thành hình chữ nhật hộp bao</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Chuyển đổi các hình đã chọn thành đường đa đoạn</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
