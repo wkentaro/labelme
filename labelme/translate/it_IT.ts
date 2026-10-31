@@ -255,6 +255,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Clicca e trascina per ruotare la forma</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Clicca sul primo punto della circonferenza del cerchio</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Clicca sul secondo punto della circonferenza del cerchio</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Clicca sul terzo punto della circonferenza per completare il cerchio</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1113,6 +1125,14 @@ Posizione prevista: {path}</translation>
     <message>
         <source>Configuration Error</source>
         <translation>Errore di configurazione</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>Cerchio (3 punti)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Inizia a disegnare cerchi con 3 punti</translation>
     </message>
 </context>
 <context>

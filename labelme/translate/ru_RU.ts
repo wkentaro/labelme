@@ -255,6 +255,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Нажмите и перетащите, чтобы повернуть фигуру</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Нажмите первую точку на окружности для круга</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Нажмите вторую точку на окружности для круга</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Нажмите третью точку на окружности для завершения круга</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1113,6 +1125,14 @@ Expected location: {path}</source>
     <message>
         <source>Configuration Error</source>
         <translation>Ошибка конфигурации</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>Окружность (3 точки)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Начать рисовать окружности по 3 точкам</translation>
     </message>
 </context>
 <context>

@@ -255,6 +255,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>クリック &amp; ドラッグで図形を回転</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>円周上の1点目をクリック</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>円周上の2点目をクリック</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>円周上の3点目をクリックして円を完了</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1123,6 +1135,14 @@ Expected location: {path}</source>
     <message>
         <source>Configuration Error</source>
         <translation>設定エラー</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>円（3点指定）</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>3点で円の描画を開始</translation>
     </message>
 </context>
 <context>

@@ -255,6 +255,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Şekli döndürmek için tıklayıp sürükleyin</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Dairenin çevresindeki birinci noktaya tıklayın</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Dairenin çevresindeki ikinci noktaya tıklayın</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Daireyi tamamlamak için çevresindeki üçüncü noktaya tıklayın</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1113,6 +1125,14 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Configuration Error</source>
         <translation>Yapılandırma Hatası</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>Daire (3 Nokta)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>3 nokta ile daire çizmeye başla</translation>
     </message>
 </context>
 <context>
