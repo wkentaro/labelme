@@ -1114,6 +1114,10 @@ Vị trí dự kiến: {path}</translation>
         <source>Configuration Error</source>
         <translation>Lỗi Cấu hình</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Tìm hình ảnh…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

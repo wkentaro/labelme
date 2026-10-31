@@ -1114,6 +1114,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>Σφάλμα διαμόρφωσης</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Εντοπισμός εικόνας…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

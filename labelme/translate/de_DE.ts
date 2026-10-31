@@ -1114,6 +1114,10 @@ Erwarteter Speicherort: {path}</translation>
         <source>Configuration Error</source>
         <translation>Konfigurationsfehler</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Bild suchen…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

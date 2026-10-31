@@ -1114,6 +1114,10 @@ Verwachte locatie: {path}</translation>
         <source>Configuration Error</source>
         <translation>Configuratiefout</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Afbeelding zoeken…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1114,6 +1114,10 @@ Lokasi yang diharapkan: {path}</translation>
         <source>Configuration Error</source>
         <translation>Error Konfigurasi</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Cari Gambar…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

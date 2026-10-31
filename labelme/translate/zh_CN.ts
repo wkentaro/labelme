@@ -1114,6 +1114,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>配置错误</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>定位图像…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

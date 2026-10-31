@@ -1114,6 +1114,10 @@ Posizione prevista: {path}</translation>
         <source>Configuration Error</source>
         <translation>Errore di configurazione</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Trova immagine…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

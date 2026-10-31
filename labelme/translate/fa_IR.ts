@@ -1114,6 +1114,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>خطای پیکربندی</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>یافتن تصویر…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
