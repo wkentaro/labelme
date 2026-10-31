@@ -1114,6 +1114,30 @@ Posizione prevista: {path}</translation>
         <source>Configuration Error</source>
         <translation>Errore di configurazione</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Rimuovi dall&apos;elenco etichette</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Impossibile rimuovere l&apos;etichetta attualmente utilizzata dalle forme sulla tela</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Cancella etichette inutilizzate</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Nessuna etichetta inutilizzata da cancellare</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Impossibile rimuovere l&apos;etichetta</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>L&apos;etichetta &apos;{label}&apos; è utilizzata dalle forme sulla tela.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

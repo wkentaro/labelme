@@ -1114,6 +1114,30 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>Σφάλμα διαμόρφωσης</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Αφαίρεση από τη λίστα ετικετών</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Δεν είναι δυνατή η αφαίρεση ετικέτας που χρησιμοποιείται από σχήματα στον καμβά</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Εκκαθάριση αχρησιμοποίητων ετικετών</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Δεν υπάρχουν αχρησιμοποίητες ετικέτες για εκκαθάριση</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Αδυναμία αφαίρεσης ετικέτας</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Η ετικέτα &apos;{label}&apos; χρησιμοποιείται από σχήματα στον καμβά.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

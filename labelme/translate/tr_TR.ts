@@ -1114,6 +1114,30 @@ Beklenen konum: {path}</translation>
         <source>Configuration Error</source>
         <translation>Yapılandırma Hatası</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Etiket Listesinden Kaldır</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Tuvaldeki şekiller tarafından kullanılan etiket kaldırılamaz</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Kullanılmayan Etiketleri Temizle</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Temizlenecek kullanılmayan etiket yok</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Etiket Kaldırılamıyor</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>&apos;{label}&apos; etiketi tuvaldeki şekiller tarafından kullanılıyor.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1114,6 +1114,30 @@ Várt hely: {path}</translation>
         <source>Configuration Error</source>
         <translation>Konfigurációs hiba</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Eltávolítás a címkelistából</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>A vásznon lévő alakzatok által használt címke nem távolítható el</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Nem használt címkék törlése</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Nincsenek törölhető nem használt címkék</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>A címke nem távolítható el</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>A(z) &apos;{label}&apos; címkét alakzatok használják a vásznon.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1114,6 +1114,30 @@ Erwarteter Speicherort: {path}</translation>
         <source>Configuration Error</source>
         <translation>Konfigurationsfehler</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Aus Labelliste entfernen</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Label, das von Formen auf der Leinwand verwendet wird, kann nicht entfernt werden</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Ungenutzte Labels bereinigen</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Keine ungenutzten Labels zum Bereinigen vorhanden</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Label kann nicht entfernt werden</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Das Label &apos;{label}&apos; wird von Formen auf der Leinwand verwendet.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
