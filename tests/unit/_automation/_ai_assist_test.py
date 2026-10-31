@@ -103,7 +103,7 @@ def test_point_prompt_uses_best_answer_and_reuses_session(
 
 def test_default_model_name_and_output_format() -> None:
     session = AiAssistSession()
-    assert session.model_name == "sam2:latest"
+    assert session.model_name == "sam3:latest"
     assert session.output_format == "polygon"
     assert session.polygon_detail == 60
 
