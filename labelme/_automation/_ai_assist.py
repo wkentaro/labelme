@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._geometry import round_bbox_to_int
-from ._osam_session import OsamSession
+from ._osam_session import get_osam_session
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
 from ._suppression import match_detections_to_existing_shapes
@@ -31,29 +31,17 @@ class AiAssistSession:
     model_name: str
     output_format: AiOutputFormat
     polygon_detail: int
-    _session: OsamSession | None
 
     def __init__(
         self,
         *,
-        model_name: str = "sam2:latest",
+        model_name: str = "sam3:latest",
         output_format: AiOutputFormat = "polygon",
         polygon_detail: int = 60,
     ) -> None:
         self.model_name = model_name
         self.output_format = output_format
         self.polygon_detail = polygon_detail
-        self._session = None
-
-    def set_model_name(self, model_name: str, /) -> None:
-        if self.model_name != model_name:
-            self._session = None
-            self.model_name = model_name
-
-    def _get_session(self) -> OsamSession:
-        if self._session is None:
-            self._session = OsamSession(model_name=self.model_name)
-        return self._session
 
     def propose_shapes(
         self,
@@ -66,7 +54,9 @@ class AiAssistSession:
         existing_shapes: list[Shape],
         image_size: tuple[int, int] | None = None,
     ) -> AiAssistProposal:
-        response: osam.types.GenerateResponse = self._get_session().run(
+        response: osam.types.GenerateResponse = get_osam_session(
+            model_name=self.model_name
+        ).run(
             image=image,
             image_id=image_id,
             points=points,

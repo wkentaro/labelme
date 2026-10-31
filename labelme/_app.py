@@ -235,7 +235,6 @@ class MainWindow(QtWidgets.QMainWindow):
     _config: dict
     _config_overrides: dict
 
-    _text_osam_session: _automation.OsamSession | None = None
     _is_changed: bool = False
     _shape_clipboard: ShapeClipboard
     _zoom_mode: _ZoomMode
@@ -1664,15 +1663,9 @@ class MainWindow(QtWidgets.QMainWindow):
         model_name: str = self._ai_text.get_model_name()
         if not self._ensure_ai_model_ready(model_name):
             return
-        if (
-            self._text_osam_session is None
-            or self._text_osam_session.model_name != model_name
-        ):
-            self._text_osam_session = _automation.OsamSession(model_name=model_name)
-
         try:
             shapes = _automation.propose_shapes_from_texts(
-                session=self._text_osam_session,
+                session=_automation.get_osam_session(model_name=model_name),
                 image=_utils.img_qt_to_rgb_arr(self._image),
                 image_id=str(hash(self._image_path)),
                 texts=texts,
@@ -3376,11 +3369,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for key_path, value in overrides:
             self._set_setting_value(key_path=key_path, value=value)
             self._sync_setting_controls(key_path=key_path)
-        if (
-            self._text_osam_session is not None
-            and self._text_osam_session.model_name == model_name
-        ):
-            self._text_osam_session = None
+        _automation.release_osam_session(model_name=model_name)
         if self._canvas_widgets.canvas.get_ai_model_name() == model_name:
             self._canvas_widgets.canvas.set_ai_model_name(model_name="")
 

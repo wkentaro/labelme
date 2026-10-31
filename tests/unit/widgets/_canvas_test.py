@@ -17,6 +17,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._automation import get_osam_session
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._shape import Shape
 from labelme._shape import ShapeType
@@ -1297,7 +1298,9 @@ def test_ai_embedding_is_reused_after_reloading_image(
         model=model.name, annotations=[]
     )
     monkeypatch.setattr(
-        canvas._ai_assist_session._get_session(), "_get_or_load_model", lambda: model
+        get_osam_session(model_name=canvas._ai_assist_session.model_name),
+        "_get_or_load_model",
+        lambda: model,
     )
     first = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_RGB32)
     first.fill(Qt.GlobalColor.red)

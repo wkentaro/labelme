@@ -13,6 +13,7 @@ from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme import _automation
+from labelme._automation import _osam_session
 from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
@@ -105,7 +106,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     qtbot.waitUntil(lambda: win._model_manager.get_state(name) == "downloaded")
     # The remembered choice is restored without running inference.
     assert assist.currentData() == text.currentData() == name
-    assert win._text_osam_session is None
+    assert name not in _osam_session._SESSIONS
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 
@@ -136,7 +137,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
 
 
 @pytest.mark.gui
-def test_delete_releases_loaded_assist_and_text_sessions(
+def test_delete_releases_loaded_session(
     *,
     main_win: MainWinFactory,
     tmp_path: Path,
@@ -162,18 +163,10 @@ def test_delete_releases_loaded_assist_and_text_sessions(
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
 
-    assist_session = _automation.OsamSession(model_name=name)
-    text_session = _automation.OsamSession(model_name=name)
-    assist_loaded = _LoadedModel()
-    text_loaded = _LoadedModel()
-    setattr(assist_session, "_model", assist_loaded)
-    setattr(text_session, "_model", text_loaded)
-    canvas._ai_assist_session._session = assist_session
-    win._text_osam_session = text_session
-    assist_model = weakref.ref(assist_loaded)
-    text_model = weakref.ref(text_loaded)
-    del assist_loaded, text_loaded
-    del assist_session, text_session
+    loaded = _LoadedModel()
+    setattr(_automation.get_osam_session(model_name=name), "_model", loaded)
+    model = weakref.ref(loaded)
+    del loaded
 
     monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     win._open_models()
@@ -183,8 +176,7 @@ def test_delete_releases_loaded_assist_and_text_sessions(
     assert models is not None
     models._rows[name][2].click()
 
-    assert assist_model() is None
-    assert text_model() is None
+    assert model() is None
     assert not Path(blob.path).exists()
     assert win._ai_text.get_model_name() == ""
     assert canvas.get_ai_model_name() == ""

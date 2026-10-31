@@ -9,6 +9,7 @@ from numpy.typing import NDArray
 
 from labelme._automation import Detection
 from labelme._automation import _ai_assist
+from labelme._automation import _osam_session
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._automation._ai_assist import AiAssistSession
 from labelme._automation._ai_assist import _detections_from_annotations
@@ -34,7 +35,7 @@ def install_fake_osam_session(
             def run(self, **_: object) -> osam.types.GenerateResponse:
                 return response
 
-        monkeypatch.setattr(_ai_assist, "OsamSession", _FakeOsamSession)
+        monkeypatch.setattr(_osam_session, "OsamSession", _FakeOsamSession)
         return created_model_names
 
     return _install
@@ -95,14 +96,14 @@ def test_point_prompt_uses_best_answer_and_reuses_session(
     _propose(session, prompt_kind="points", existing_shapes=None)
     assert created_model_names == ["a"]
 
-    session.set_model_name("b")
+    session.model_name = "b"
     _propose(session, prompt_kind="points", existing_shapes=None)
     assert created_model_names == ["a", "b"]
 
 
 def test_default_model_name_and_output_format() -> None:
     session = AiAssistSession()
-    assert session.model_name == "sam2:latest"
+    assert session.model_name == "sam3:latest"
     assert session.output_format == "polygon"
     assert session.polygon_detail == 60
 

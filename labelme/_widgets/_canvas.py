@@ -506,7 +506,7 @@ class Canvas(QtWidgets.QWidget):
     def set_ai_model_name(self, *, model_name: str) -> None:
         if self._ai_assist_session.model_name == model_name:
             return
-        self._ai_assist_session.set_model_name(model_name)
+        self._ai_assist_session.model_name = model_name
         self._clear_ai_existing_shape_highlights()
 
     def set_ai_output_format(

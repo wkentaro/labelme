@@ -121,13 +121,23 @@ def get_bboxes_from_texts(
         f"image={(image.shape, image.dtype)}, texts={texts!r}"
     )
     t_start: float = time.time()
-    response: osam.types.GenerateResponse = session.run(
-        image=image,
-        image_id=image_id,
-        texts=texts,
+    # ponytail: SAM3 reads only the first text of a prompt, so it runs once per
+    # text, reusing the cached image embedding. Drop this once osam's SAM3 takes
+    # several texts.
+    batches: list[list[str]] = (
+        [[text] for text in texts]
+        if session.model_name.startswith("sam3:")
+        else [texts]
     )
+    annotations: list[osam.types.Annotation] = [
+        annotation
+        for batch in batches
+        for annotation in session.run(
+            image=image, image_id=image_id, texts=batch
+        ).annotations
+    ]
 
-    num_annotations: int = len(response.annotations)
+    num_annotations: int = len(annotations)
     logger.debug(
         f"Response: num_annotations={num_annotations}, "
         f"elapsed_time={time.time() - t_start:.3f} [s]"
@@ -136,7 +146,7 @@ def get_bboxes_from_texts(
     boxes: NDArray[np.float32] = np.empty((num_annotations, 4), dtype=np.float32)
     scores: NDArray[np.float32] = np.empty((num_annotations,), dtype=np.float32)
     labels: NDArray[np.int32] = np.empty((num_annotations,), dtype=np.int32)
-    for i, annotation in enumerate(response.annotations):
+    for i, annotation in enumerate(annotations):
         if annotation.bounding_box is None:
             raise ValueError("Bounding box is missing in the annotation.")
         if annotation.text not in texts:
@@ -153,9 +163,9 @@ def get_bboxes_from_texts(
         labels[i] = texts.index(annotation.text)
 
     masks: list[NDArray[np.bool_]] | None = None
-    if response.annotations and response.annotations[0].mask is not None:
+    if annotations and annotations[0].mask is not None:
         masks = []
-        for annotation in response.annotations:
+        for annotation in annotations:
             if annotation.mask is None:
                 raise ValueError("Mask is missing in the annotation.")
             masks.append(annotation.mask)

@@ -13,6 +13,7 @@ import pytest
 from pytestqt.qtbot import QtBot
 
 from labelme._automation import AiOutputFormat
+from labelme._automation import _osam_session
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
@@ -69,15 +70,15 @@ def _make_person_response(
 
 
 def _make_multi_label_response(*, texts: list[str]) -> osam.types.GenerateResponse:
-    person_idx = texts.index("person")
-    sofa_idx = texts.index("sofa")
-    return _make_response(
-        texts=texts,
+    response = _make_response(
+        texts=["person", "sofa"],
         boxes=[(50, 30, 200, 300), (10, 150, 400, 330)],
         scores=[0.85, 0.70],
-        label_indices=[person_idx, sofa_idx],
+        label_indices=[0, 1],
         with_masks=False,
     )
+    response.annotations = [a for a in response.annotations if a.text in texts]
+    return response
 
 
 def _make_edge_crossing_response(*, texts: list[str]) -> osam.types.GenerateResponse:
@@ -92,8 +93,7 @@ def _make_edge_crossing_response(*, texts: list[str]) -> osam.types.GenerateResp
 
 def _install_mock_session(
     *,
-    win: MainWindow,
-    monkeypatch: pytest.MonkeyPatch,  # noqa: ARG001 -- retained by response fixtures
+    monkeypatch: pytest.MonkeyPatch,
     response_fn: Callable[..., osam.types.GenerateResponse],
 ) -> None:
     mock_session = MagicMock()
@@ -101,7 +101,7 @@ def _install_mock_session(
     mock_session.run = MagicMock(
         side_effect=lambda **kw: response_fn(texts=kw["texts"])
     )
-    win._text_osam_session = mock_session
+    monkeypatch.setitem(_osam_session._SESSIONS, _AI_TEXT_MODEL, mock_session)
 
 
 def _run_text_prompt(
@@ -204,7 +204,7 @@ def test_text_prompt_creates_shapes(
         output_combo = win._ai_annotation._output_format_combo
         output_combo.setCurrentIndex(output_combo.findData(expected_shape_type))
 
-    _install_mock_session(win=win, monkeypatch=monkeypatch, response_fn=response_fn)
+    _install_mock_session(monkeypatch=monkeypatch, response_fn=response_fn)
     _run_text_prompt(
         win=win,
         qtbot=qtbot,
@@ -251,7 +251,6 @@ def test_nms_deduplicates_existing_shapes(
     canvas = win._canvas_widgets.canvas
 
     _install_mock_session(
-        win=win,
         monkeypatch=monkeypatch,
         response_fn=functools.partial(_make_person_response, with_masks=False),
     )
@@ -294,7 +293,6 @@ def test_score_threshold_filters_detections(
     canvas = win._canvas_widgets.canvas
 
     _install_mock_session(
-        win=win,
         monkeypatch=monkeypatch,
         response_fn=functools.partial(_make_person_response, with_masks=False),
     )
@@ -346,7 +344,6 @@ def test_text_prompt_error_preserves_annotation(
         raise RuntimeError("boom")
 
     _install_mock_session(
-        win=win,
         monkeypatch=monkeypatch,
         response_fn=(
             _raise
