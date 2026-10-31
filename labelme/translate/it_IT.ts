@@ -865,10 +865,6 @@
         <translation>Annulla</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Non disponibile nella modalità AI-Points perché questo modello non supporta i prompt di punti.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Mantenere le modifiche alle annotazioni di «{}»?</translation>
     </message>
@@ -983,16 +979,6 @@ Cambia il modello di prompt testuale IA in &apos;SAM3 (smart)&apos; oppure impos
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Errore durante il salvataggio del file di annotazioni</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points non disponibile</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s non supporta i prompt a punti.
-Selezionare un modello diverso o utilizzare la modalità AI-Box.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

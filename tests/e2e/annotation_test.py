@@ -14,7 +14,6 @@ from PySide6.QtCore import QPoint
 from PySide6.QtCore import Qt
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QComboBox
-from PySide6.QtWidgets import QMessageBox
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
@@ -114,44 +113,13 @@ def ai_model_combo(*, raw_win: MainWindow) -> QComboBox:
 
 @pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
-def test_ai_points_mode_disables_sam3(
+def test_ai_points_mode_keeps_sam3_selected(
     *,
     raw_win: MainWindow,
     ai_model_combo: QComboBox,
     qtbot: QtBot,
     pause: bool,
 ) -> None:
-    sam3_index = ai_model_combo.findData("sam3:latest")
-
-    raw_win._actions.create_ai_points_to_shape_mode.trigger()
-
-    assert raw_win._canvas_widgets.canvas.create_mode == "ai_points_to_shape"
-    model = ai_model_combo.model()
-    assert not model.flags(model.index(sam3_index, 0)) & Qt.ItemFlag.ItemIsEnabled
-
-    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
-
-
-@pytest.mark.gui
-@pytest.mark.usefixtures("cached_ai_models")
-def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
-    *,
-    raw_win: MainWindow,
-    ai_model_combo: QComboBox,
-    qtbot: QtBot,
-    monkeypatch: pytest.MonkeyPatch,
-    pause: bool,
-) -> None:
-    warnings: list[tuple[str, str]] = []
-
-    def _warning(
-        parent: MainWindow, title: str, message: str
-    ) -> QMessageBox.StandardButton:
-        assert parent is raw_win
-        warnings.append((title, message))
-        return QMessageBox.StandardButton.Ok
-
-    monkeypatch.setattr(QMessageBox, "warning", _warning)
     raw_win._actions.create_ai_box_to_shape_mode.trigger()
     sam3_index = ai_model_combo.findData("sam3:latest")
     ai_model_combo.setCurrentIndex(sam3_index)
@@ -161,24 +129,6 @@ def test_ai_points_mode_keeps_selected_sam3_and_rejects_click(
     assert raw_win._canvas_widgets.canvas.create_mode == "ai_points_to_shape"
     assert ai_model_combo.currentData() == "sam3:latest"
     model = ai_model_combo.model()
-    assert not (model.flags(model.index(sam3_index, 0)) & Qt.ItemFlag.ItemIsEnabled)
-
-    canvas = raw_win._canvas_widgets.canvas
-    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=canvas.rect().center())
-
-    assert warnings == [
-        (
-            "AI-Points Unavailable",
-            "Sam3 does not support point prompts.\n"
-            "Please select a different model or use AI-Box mode.",
-        )
-    ]
-    assert canvas._current is None
-
-    raw_win._actions.create_ai_box_to_shape_mode.trigger()
-
-    assert canvas.create_mode == "ai_box_to_shape"
-    assert ai_model_combo.currentData() == "sam3:latest"
     assert model.flags(model.index(sam3_index, 0)) & Qt.ItemFlag.ItemIsEnabled
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

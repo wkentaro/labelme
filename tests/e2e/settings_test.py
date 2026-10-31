@@ -791,49 +791,6 @@ def test_ai_default_dialog_change_syncs_dock_combo(
 
 @pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
-def test_ai_model_choices_follow_point_prompt_mode(
-    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
-) -> None:
-    win = main_win(config_file=editable_config_file)
-    win._switch_canvas_mode(edit=False, create_mode="ai_points_to_shape")
-
-    dialog = _open_settings_dialog(win=win)
-    combo = dialog._editors[("ai", "default")]
-    assert isinstance(combo, QtWidgets.QComboBox)
-    sam3_index = combo.findData("Sam3")
-    assert not combo.model().flags(combo.model().index(sam3_index, 0)) & (
-        Qt.ItemFlag.ItemIsEnabled
-    )
-    assert combo.model().data(
-        combo.model().index(sam3_index, 0), Qt.ItemDataRole.ToolTipRole
-    ) == (
-        "Unavailable in AI-Points mode because this model does not support point "
-        "prompts."
-    )
-
-    combo.setCurrentIndex(sam3_index)
-
-    assert combo.currentData() == "Sam2 (balanced)"
-    assert win._ai_annotation.current_model_id == "sam2:latest"
-    assert win._config["ai"]["default"] == "Sam2 (balanced)"
-
-    win._switch_canvas_mode(edit=False, create_mode="ai_box_to_shape")
-
-    assert combo.model().flags(combo.model().index(sam3_index, 0)) & (
-        Qt.ItemFlag.ItemIsEnabled
-    )
-    assert (
-        combo.model().data(
-            combo.model().index(sam3_index, 0), Qt.ItemDataRole.ToolTipRole
-        )
-        == ""
-    )
-
-    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
-
-
-@pytest.mark.gui
-@pytest.mark.usefixtures("cached_ai_models")
 def test_ai_dock_change_persists_and_syncs_settings_dialog(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:

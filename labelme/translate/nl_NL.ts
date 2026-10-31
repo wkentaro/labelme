@@ -865,10 +865,6 @@
         <translation>Annuleren</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Niet beschikbaar in de modus AI-Points, omdat dit model geen puntprompts ondersteunt.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>De annotatiewijzigingen voor ‘{}’ behouden?</translation>
     </message>
@@ -983,16 +979,6 @@ Wijzig het model voor de AI-tekstprompt naar &apos;SAM3 (smart)&apos; of stel he
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fout bij opslaan van annotatiebestand</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points niet beschikbaar</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s ondersteunt geen puntinvoer.
-Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

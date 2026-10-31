@@ -865,10 +865,6 @@
         <translation>Отмена</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Недоступно в режиме AI-Points, так как эта модель не поддерживает точечные запросы.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Сохранить изменения аннотаций для «{}»?</translation>
     </message>
@@ -967,16 +963,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>%s обнаруживает только ограничивающие рамки и не может создавать фигуры &apos;%s&apos;.
 
 Переключите модель текстового запроса ИИ на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points недоступен</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s не поддерживает точечные запросы.
-Выберите другую модель или используйте режим AI-Box.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

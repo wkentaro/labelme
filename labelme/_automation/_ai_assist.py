@@ -7,7 +7,6 @@ import numpy as np
 from loguru import logger
 from numpy.typing import NDArray
 
-from .._ai_models import supports_point_prompts
 from .._shape import Shape
 from ._geometry import round_bbox_to_int
 from ._osam_session import OsamSession
@@ -67,10 +66,6 @@ class AiAssistSession:
         existing_shapes: list[Shape],
         image_size: tuple[int, int] | None = None,
     ) -> AiAssistProposal:
-        if prompt_kind == "points" and not supports_point_prompts(
-            model_name=self.model_name
-        ):
-            raise ValueError(f"{self.model_name} does not support point prompts")
         response: osam.types.GenerateResponse = self._get_session().run(
             image=image,
             image_id=image_id,

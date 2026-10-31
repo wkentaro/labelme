@@ -865,10 +865,6 @@
         <translation>Hủy</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Không khả dụng trong chế độ AI-Points vì mô hình này không hỗ trợ lời nhắc điểm.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Giữ lại các thay đổi chú thích cho &quot;{}&quot;?</translation>
     </message>
@@ -983,16 +979,6 @@ Chuyển mô hình lời nhắc văn bản AI sang &apos;SAM3 (smart)&apos;, ho�
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Lỗi khi lưu tệp chú thích</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points không khả dụng</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s không hỗ trợ gợi ý điểm.
-Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

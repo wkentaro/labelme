@@ -865,10 +865,6 @@
         <translation>İptal</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Bu model nokta istemlerini desteklemediği için AI-Points modunda kullanılamaz.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>&quot;{}&quot; için açıklama değişiklikleri korunsun mu?</translation>
     </message>
@@ -983,16 +979,6 @@ AI Metin İstemi modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çı
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points Kullanılamıyor</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s nokta istemlerini desteklemiyor.
-Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

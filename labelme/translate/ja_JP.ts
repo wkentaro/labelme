@@ -875,10 +875,6 @@
         <translation>キャンセル</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>このモデルはポイントプロンプトに対応していないため、AI-Points モードでは利用できません。</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>「{}」のアノテーションの変更を保持しますか？</translation>
     </message>
@@ -993,16 +989,6 @@ AI テキストプロンプトのモデルを &apos;SAM3 (smart)&apos; に切り
     <message>
         <source>Error Saving Annotation File</source>
         <translation>アノテーションファイルの保存エラー</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Pointsは利用できません</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s はポイントプロンプトに対応していません。
-別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

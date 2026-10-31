@@ -865,10 +865,6 @@
         <translation>取消</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>此模型不支援點提示，因此無法在 AI-Points 模式中使用。</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>要保留「{}」的標註變更嗎？</translation>
     </message>
@@ -983,16 +979,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
     <message>
         <source>Error Saving Annotation File</source>
         <translation>儲存標註檔案時發生錯誤</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points 無法使用</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s 不支援點提示。
-請選擇其他模型或使用 AI-Box 模式。</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

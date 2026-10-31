@@ -885,10 +885,6 @@ Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluara
         <translation>Batal</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Tidak tersedia dalam mode AI-Points karena model ini tidak mendukung prompt titik.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Pertahankan perubahan anotasi untuk &quot;{}&quot;?</translation>
     </message>
@@ -983,16 +979,6 @@ Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluara
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Gagal menyimpan berkas anotasi</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points tidak tersedia</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s tidak mendukung point prompt.
-Silakan pilih model lain atau gunakan mode AI-Box.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

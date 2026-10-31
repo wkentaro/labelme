@@ -873,10 +873,6 @@
         <translation>Mégse</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Nem érhető el AI-Points módban, mert ez a modell nem támogatja a pont alapú promptokat.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Megtartja a(z) „{}” annotációinak módosításait?</translation>
     </message>
@@ -983,16 +979,6 @@ Váltson az MI-szöveges utasítás modelljénél &apos;SAM3 (smart)&apos;-re, v
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Hiba az annotációs fájl mentésekor</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points nem elérhető</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s nem támogatja a pont alapú promptokat.
-Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
