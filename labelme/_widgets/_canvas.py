@@ -12,6 +12,7 @@ from typing import Literal
 from typing import cast
 
 import numpy as np
+import skimage.measure
 from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -45,6 +46,8 @@ from ._shape_render import render_shape
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
+_DRAG_START_DISTANCE_PIXELS: Final[float] = 4.0
+_STROKE_SIMPLIFY_TOLERANCE_PIXELS: Final[float] = 2.0
 
 
 @dataclasses.dataclass
@@ -227,6 +230,7 @@ class Canvas(QtWidgets.QWidget):
 
     _prev_point: QPointF
     _prev_move_point: QPointF
+    _draw_start_index: int | None
     _drag_anchor: _DragAnchor | None
     _rotation_center: np.ndarray
     _rotation_initial_angle: float
@@ -461,6 +465,7 @@ class Canvas(QtWidgets.QWidget):
         if new_mode == self._create_mode:
             return False
         old_mode = self._create_mode
+        self._draw_start_index = None
         # Update the mode before reconciling so any signals fired from a cancel
         # observe the new mode rather than the one being left behind.
         self._create_mode = new_mode
@@ -602,6 +607,7 @@ class Canvas(QtWidgets.QWidget):
 
     def focusOutEvent(self, _a0: QtGui.QFocusEvent, /) -> None:
         self._drag_anchor = None
+        self._draw_start_index = None
         self._release_cursor()
         self._update_status(extra_messages=None)
 
@@ -615,6 +621,7 @@ class Canvas(QtWidgets.QWidget):
             self._clear_ai_existing_shape_highlights()
         self.mode = new_mode
         if self.mode == _CanvasMode.EDIT:
+            self._draw_start_index = None
             # CREATE -> EDIT
             self.update()  # clear crosshair
         else:
@@ -775,14 +782,46 @@ class Canvas(QtWidgets.QWidget):
             self.update()
             self._update_status(extra_messages=None)
             return
+        if self.create_mode == "polygon":
+            self._clear_highlight_state()
         is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
-        pos = self._project_drawing_pos_into_image(pos=pos)
+        is_dragging_path = (
+            self.create_mode in POLYLINE_SHAPE_TYPES
+            and self._draw_start_index is not None
+            and bool(event.buttons() & Qt.MouseButton.LeftButton)
+        )
+        pos = self._project_drawing_pos_into_image(
+            pos=pos, snap_to_origin=not is_dragging_path
+        )
+        if is_dragging_path and self._drag_exceeds_click_threshold(pos=pos):
+            self._append_drag_vertex(pos=pos)
+        if is_dragging_path and self.create_mode == "polygon":
+            pos = self._project_drawing_pos_into_image(pos=pos)
         self._update_drawing_line(pos=pos, is_shift_pressed=is_shift_pressed)
         assert len(self._line.points) == len(self._line.point_labels)
         self.update()
         self._update_status(extra_messages=None)
 
-    def _project_drawing_pos_into_image(self, *, pos: QPointF) -> QPointF:
+    def _append_drag_vertex(self, *, pos: QPointF) -> None:
+        current = self._current
+        assert current is not None
+        if pos == current.points[-1]:
+            return
+        self._current = current.add_point(pos)
+
+    def _drag_exceeds_click_threshold(self, *, pos: QPointF) -> bool:
+        current = self._current
+        start_index = self._draw_start_index
+        assert current is not None and start_index is not None
+        return (
+            len(current.points) > start_index + 1
+            or QtCore.QLineF(current.points[start_index], pos).length() * self.scale
+            >= _DRAG_START_DISTANCE_PIXELS
+        )
+
+    def _project_drawing_pos_into_image(
+        self, *, pos: QPointF, snap_to_origin: bool = True
+    ) -> QPointF:
         current = self._current
         assert current is not None
         if (
@@ -808,7 +847,9 @@ class Canvas(QtWidgets.QWidget):
             return _compute_intersection_edges_image(
                 p1=current.points[-1], p2=pos, image_size=self.pixmap.size()
             )
-        if not self._cursor_should_snap_to_polygon_origin(pos=pos):
+        if not snap_to_origin or not self._cursor_should_snap_to_polygon_origin(
+            pos=pos
+        ):
             return pos
         self._apply_cursor(CursorRole.HANDLE)
         self._highlight_vertex(index=0, mode="near")
@@ -820,7 +861,7 @@ class Canvas(QtWidgets.QWidget):
         if self.create_mode != "polygon":
             return False
         current = self._current
-        if current is None or len(current.points) <= 1:
+        if current is None or len(current.points) < MIN_POLYGON_POINT_COUNT:
             return False
         origin = current.points[0]
         return _canvas_interaction.is_within_pick_threshold(
@@ -1108,6 +1149,12 @@ class Canvas(QtWidgets.QWidget):
     def _press_left(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         if self.mode == _CanvasMode.CREATE:
+            self._draw_start_index = (
+                len(self._current.points)
+                if self.create_mode in POLYLINE_SHAPE_TYPES
+                and self._current is not None
+                else None
+            )
             self._press_left_while_drawing(
                 pos=pos, event=event, is_shift_pressed=is_shift_pressed
             )
@@ -1127,6 +1174,9 @@ class Canvas(QtWidgets.QWidget):
         if self._reject_incompatible_point_prompt():
             return
         if self._current is not None:
+            if self.create_mode in POLYLINE_SHAPE_TYPES:
+                pos = self._project_drawing_pos_into_image(pos=pos)
+                self._update_drawing_line(pos=pos, is_shift_pressed=is_shift_pressed)
             self._extend_current_shape(current=self._current, event=event)
             return
         self._start_new_shape(pos=pos, event=event, is_shift_pressed=is_shift_pressed)
@@ -1224,6 +1274,8 @@ class Canvas(QtWidgets.QWidget):
         self._current = _DraftShape(
             shape_type=_CREATE_MODE_TO_SHAPE_TYPE[mode]
         ).add_point(pos, label=0 if is_shift_pressed else 1)
+        if mode in POLYLINE_SHAPE_TYPES:
+            self._draw_start_index = 0
 
         if mode == "point":
             self._finalize()
@@ -1291,10 +1343,53 @@ class Canvas(QtWidgets.QWidget):
         self._pan_anchor = QPointF(self.mapToGlobal(event.position().toPoint()))
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent, /) -> None:
+        if (
+            a0.button() == Qt.MouseButton.LeftButton
+            and self.mode == _CanvasMode.CREATE
+            and self.create_mode in POLYLINE_SHAPE_TYPES
+            and self._current is not None
+            and self._draw_start_index is not None
+        ):
+            start_index = self._draw_start_index
+            pos = self._project_drawing_pos_into_image(
+                pos=self.transform_widget_point_to_image(a0.position()),
+                snap_to_origin=False,
+            )
+            if self._drag_exceeds_click_threshold(pos=pos):
+                close_polygon = self.create_mode == "polygon" and (
+                    self._cursor_should_snap_to_polygon_origin(pos=pos)
+                )
+                self._append_drag_vertex(pos=pos)
+                self._simplify_drawn_stroke(start_index=start_index)
+                if close_polygon and self._can_close_shape():
+                    self._finalize()
+                else:
+                    self._update_drawing_line(pos=pos, is_shift_pressed=False)
+                    self.update()
+        if a0.button() == Qt.MouseButton.LeftButton:
+            self._draw_start_index = None
         self._dispatch_pointer_release(event=a0)
         self._commit_pending_shape_move()
         self._drag_anchor = None
         self._update_status(extra_messages=None)
+
+    def _simplify_drawn_stroke(self, *, start_index: int) -> None:
+        current = self._current
+        assert current is not None
+        stroke = current.points[start_index:]
+        if len(stroke) <= MIN_LINESTRIP_POINT_COUNT:
+            return
+        coords = np.array([[p.x(), p.y()] for p in stroke])
+        simplified = skimage.measure.approximate_polygon(
+            coords, tolerance=_STROKE_SIMPLIFY_TOLERANCE_PIXELS / self.scale
+        )
+        points = tuple(QPointF(float(x), float(y)) for x, y in simplified)
+        self._current = dataclasses.replace(
+            current,
+            points=current.points[:start_index] + points,
+            point_labels=current.point_labels[: start_index + 1]
+            + (1,) * (len(points) - 1),
+        )
 
     def _dispatch_pointer_release(self, *, event: QtGui.QMouseEvent) -> None:
         button = event.button()
@@ -1739,6 +1834,8 @@ class Canvas(QtWidgets.QWidget):
             highlight=None,
             rotation_highlight=None,
         )
+        if self._draw_start_index is not None and self.create_mode == "polygon":
+            context = dataclasses.replace(context, show_vertices=False)
         for preview in previews:
             render_shape(painter=painter, shape=preview, context=context)
 
@@ -1775,6 +1872,11 @@ class Canvas(QtWidgets.QWidget):
             highlight=self._highlight if highlighted else None,
             rotation_highlight=self._rotation_highlight if highlighted else None,
         )
+        if (
+            self._draw_start_index is not None
+            and self.create_mode in POLYLINE_SHAPE_TYPES
+        ):
+            context = dataclasses.replace(context, show_vertices=False)
         render_shape(painter=painter, shape=shape, context=context)
 
     def _build_preview_shapes(self) -> list[Shape]:
@@ -1925,6 +2027,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _reset_after_shape_creation(self) -> None:
         self._current = None
+        self._draw_start_index = None
         # new_shape's handler blocks on the modal label dialog, so paint the
         # committed shape synchronously first. Some modes, including point and
         # AI-Box, can finalize without a matching preview on screen.
@@ -1934,6 +2037,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _cancel_current_shape(self) -> None:
         self._current = None
+        self._draw_start_index = None
         self._set_ai_existing_shape_highlights(shapes=[])
         self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
         self.update()
@@ -2187,6 +2291,7 @@ class Canvas(QtWidgets.QWidget):
         self.pixmap = QtGui.QPixmap()
         self._pixmap_hash = None
         self._drag_anchor = None
+        self._draw_start_index = None
         self.shapes = []
         self.shape_backups = collections.deque(maxlen=self._num_backups)
         self._is_moving_shape = False
