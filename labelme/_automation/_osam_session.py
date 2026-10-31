@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import collections
+import time
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -9,6 +10,10 @@ from numpy.typing import NDArray
 
 if TYPE_CHECKING:
     import osam
+
+
+def _elapsed_ms(*, t_start: float) -> float:
+    return (time.perf_counter() - t_start) * 1000
 
 
 class OsamSession:
@@ -70,7 +75,8 @@ class OsamSession:
             )
 
         model: osam.types.Model = self._get_or_load_model()
-        return model.generate(
+        t_start = time.perf_counter()
+        response: osam.types.GenerateResponse = model.generate(
             request=osam.types.GenerateRequest(
                 model=model.name,
                 image=image,
@@ -78,6 +84,13 @@ class OsamSession:
                 prompt=prompt,
             )
         )
+        logger.info(
+            "Generated {} annotations with {!r} in {:.0f} ms",
+            len(response.annotations),
+            self._model_name,
+            _elapsed_ms(t_start=t_start),
+        )
+        return response
 
     def _get_or_compute_embedding(
         self, *, image: NDArray[np.uint8], image_id: str
@@ -87,17 +100,27 @@ class OsamSession:
                 return embedding
 
         model: osam.types.Model = self._get_or_load_model()
-        logger.debug("Computing embedding for cache_key={!r}", image_id)
+        t_start = time.perf_counter()
         embedding: osam.types.ImageEmbedding = model.encode_image(image=image)
         self._embedding_cache.append((image_id, embedding))
-        logger.debug("Cached embedding for cache_key={!r}", image_id)
+        logger.info(
+            "Encoded image {}x{} with {!r} in {:.0f} ms",
+            image.shape[1],
+            image.shape[0],
+            self._model_name,
+            _elapsed_ms(t_start=t_start),
+        )
         return embedding
 
     def _get_or_load_model(self) -> osam.types.Model:
         if self._model is None:
             import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
-            logger.debug("Loading model with name={!r}", self._model_name)
+            t_start = time.perf_counter()
             self._model = osam.apis.get_model_type_by_name(self._model_name)()
-            logger.debug("Loaded model with name={!r}", self._model_name)
+            logger.info(
+                "Loaded {!r} in {:.0f} ms",
+                self._model_name,
+                _elapsed_ms(t_start=t_start),
+            )
         return self._model

@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import importlib.metadata
 import io
 import multiprocessing
 import os
+import platform
 import sys
 import traceback
 import types
@@ -49,6 +51,31 @@ class _LoggerIO(io.StringIO):
 
     def seekable(self) -> bool:
         return False
+
+
+def _log_environment() -> None:
+    # onnxruntime and onnxruntime-gpu install into the same package directory,
+    # so a log showing both explains a broken GPU setup.
+    AI_DISTRIBUTIONS: Final = (
+        "osam",
+        "onnxruntime",
+        "onnxruntime-gpu",
+        "onnxruntime-ep-webgpu",
+    )
+    versions: dict[str, str] = {}
+    for name in AI_DISTRIBUTIONS:
+        try:
+            versions[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            pass
+    logger.info(
+        "Environment: platform={!r}, python={!r}, versions={!r}, "
+        "OSAM_ONNX_PROVIDERS={!r}",
+        platform.platform(),
+        platform.python_version(),
+        versions,
+        os.environ.get("OSAM_ONNX_PROVIDERS"),
+    )
 
 
 def _setup_loguru(*, logger_level: str) -> None:
@@ -336,6 +363,7 @@ def main() -> None:
     _setup_loguru(logger_level=args.logger_level.upper())
     _route_qt_logging_to_loguru()
     logger.info("Starting {} {}", __appname__, __version__)
+    _log_environment()
 
     sys.excepthook = _handle_exception
 
