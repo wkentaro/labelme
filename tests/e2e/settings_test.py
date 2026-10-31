@@ -895,9 +895,7 @@ def test_settings_sections_fit_without_eliding(
     *, main_win: MainWinFactory, language: str
 ) -> None:
     win = main_win(config_overrides={"language": language})
-    win._open_settings()
-    dialog = win._settings_dialog
-    assert dialog is not None
+    dialog = _open_settings_dialog(win=win)
     navigation = dialog.findChild(QtWidgets.QListWidget)
     assert navigation is not None
     for row in range(navigation.count()):
