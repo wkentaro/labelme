@@ -3,6 +3,7 @@ from __future__ import annotations
 import collections
 import time
 from typing import TYPE_CHECKING
+from typing import Final
 
 import numpy as np
 from loguru import logger
@@ -24,7 +25,7 @@ class OsamSession:
     def __init__(
         self,
         *,
-        model_name: str = "sam2:latest",
+        model_name: str,
         embedding_cache_size: int = 3,
     ) -> None:
         logger.debug("Initializing OsamSession with model_name={!r}", model_name)
@@ -124,3 +125,24 @@ class OsamSession:
                 _elapsed_ms(t_start=t_start),
             )
         return self._model
+
+
+# ponytail: process-wide sessions keyed by model, so AI Assist and the AI text
+# prompt load a shared model once. Keeps the two most recently used, one per
+# control; a third model evicts the oldest, which reloads on its next use.
+_SESSIONS: Final[dict[str, OsamSession]] = {}
+
+
+def get_osam_session(*, model_name: str) -> OsamSession:
+    MAX_SESSIONS: Final = 2
+    session = _SESSIONS.pop(model_name, None)
+    if session is None:
+        session = OsamSession(model_name=model_name)
+    _SESSIONS[model_name] = session
+    while len(_SESSIONS) > MAX_SESSIONS:
+        _SESSIONS.pop(next(iter(_SESSIONS)))
+    return session
+
+
+def release_osam_session(*, model_name: str) -> None:
+    _SESSIONS.pop(model_name, None)
