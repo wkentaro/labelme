@@ -865,10 +865,6 @@
         <translation>Cancelar</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>No disponible en el modo AI-Points porque este modelo no admite indicaciones de puntos.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>¿Conservar los cambios en las anotaciones de «{}»?</translation>
     </message>
@@ -983,16 +979,6 @@ Cambie el modelo de indicación de texto IA a &apos;SAM3 (smart)&apos; o estable
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Error al guardar el archivo de anotaciones</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points no disponible</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s no admite indicaciones de puntos.
-Seleccione un modelo diferente o use el modo AI-Box.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

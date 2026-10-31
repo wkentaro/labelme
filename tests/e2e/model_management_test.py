@@ -362,24 +362,3 @@ def test_picker_asks_before_downloading_sam3_and_cancel_keeps_setting(
     assert len(shown) == 1 and "SAM License" in shown[0]
     assert win._config["ai"]["text_model"] == text_model
     assert win._model_manager.get_state("sam3:latest") == "missing"
-
-
-@pytest.mark.gui
-def test_point_mode_disables_incompatible_models_before_download(
-    *, main_win: MainWinFactory
-) -> None:
-    win = main_win()
-    picker = win._ai_annotation._model_combo
-    win._ai_annotation.set_point_prompt_mode(enabled=True)
-    model = picker.model()
-    assert isinstance(model, QtGui.QStandardItemModel)
-
-    def enabled(index: int) -> bool:
-        item = model.item(index)
-        assert item is not None
-        return item.isEnabled()
-
-    assert not enabled(picker.findData("sam3:latest"))
-    assert enabled(picker.findData("sam2:latest"))
-    assert not enabled(picker.findText("Download and use"))
-    assert enabled(picker.findData("manage"))

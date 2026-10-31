@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import cast
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -35,7 +34,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent=parent)
-        self._is_point_prompt_mode = False
         self._init_ui(
             default_model=default_model,
             polygon_detail=polygon_detail,
@@ -47,10 +45,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     @property
     def current_model_id(self) -> str:
         return self._model_combo.currentData() or ""
-
-    @property
-    def is_point_prompt_mode(self) -> bool:
-        return self._is_point_prompt_mode
 
     @property
     def output_format(self) -> _automation.AiOutputFormat:
@@ -192,19 +186,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     def set_polygon_detail(self, detail: int, /) -> None:
         with QtCore.QSignalBlocker(self._polygon_detail_slider):
             self._polygon_detail_slider.set_value(detail)
-
-    def set_point_prompt_mode(self, *, enabled: bool) -> None:
-        self._is_point_prompt_mode = enabled
-        model = cast(QtGui.QStandardItemModel, self._model_combo.model())
-        for index in range(self._model_combo.count()):
-            option = _ai_models.find_ai_assist_model_option(
-                model_name=self._model_combo.itemData(index)
-            )
-            if option is None:
-                continue
-            item = model.item(index)
-            assert item is not None
-            item.setEnabled(not enabled or option.supports_point_prompts)
 
     def setEnabled(self, a0: bool, /) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
         self._body.setEnabled(a0)

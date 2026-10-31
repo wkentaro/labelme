@@ -158,20 +158,6 @@ def test_polygon_proposal_groups_disconnected_lands(
     assert shapes[0].group_id == shapes[1].group_id
 
 
-def test_sam3_point_prompt_is_rejected_before_session_creation(
-    *,
-    install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],
-) -> None:
-    response = osam.types.GenerateResponse(model="stub", annotations=[])
-    created_model_names = install_fake_osam_session(response)
-    session = AiAssistSession(model_name="sam3:latest")
-
-    with pytest.raises(ValueError, match="does not support point prompts"):
-        _propose(session, prompt_kind="points", existing_shapes=None)
-
-    assert created_model_names == []
-
-
 def test_sam3_box_prompt_reaches_session(
     *,
     install_fake_osam_session: Callable[[osam.types.GenerateResponse], list[str]],

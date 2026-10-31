@@ -21,7 +21,6 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import QRectF
 from PySide6.QtCore import Qt
 
-from .. import _ai_models
 from .. import _automation
 from .. import _shape
 from .. import _utils
@@ -206,7 +205,6 @@ class Canvas(QtWidgets.QWidget):
     new_shape = QtCore.Signal()
     inference_produced_no_shapes = QtCore.Signal()
     inference_failed = QtCore.Signal(str)
-    point_prompt_rejected = QtCore.Signal(str)
     degenerate_shape_rejected = QtCore.Signal()
     selection_changed = QtCore.Signal(list)
     shape_double_clicked = QtCore.Signal()
@@ -1124,21 +1122,10 @@ class Canvas(QtWidgets.QWidget):
     ) -> None:
         if self._current is None and self._should_constrain_to_pixmap(pos):
             return
-        if self._reject_incompatible_point_prompt():
-            return
         if self._current is not None:
             self._extend_current_shape(current=self._current, event=event)
             return
         self._start_new_shape(pos=pos, event=event, is_shift_pressed=is_shift_pressed)
-
-    def _reject_incompatible_point_prompt(self) -> bool:
-        if self.create_mode != "ai_points_to_shape":
-            return False
-        model_name = self.get_ai_model_name()
-        if _ai_models.supports_point_prompts(model_name=model_name):
-            return False
-        self.point_prompt_rejected.emit(model_name)
-        return True
 
     def _extend_current_shape(
         self, *, current: _DraftShape, event: QtGui.QMouseEvent
@@ -1818,11 +1805,6 @@ class Canvas(QtWidgets.QWidget):
         if key == self._ai_points_preview_key:
             return
         self._ai_points_preview_key = key
-        if not _ai_models.supports_point_prompts(model_name=self.get_ai_model_name()):
-            self._ai_points_preview = []
-            self._set_ai_existing_shape_highlights(shapes=[])
-            self.update()
-            return
         preview = current.add_point(
             self._line.points[1],
             label=self._line.point_labels[1],
@@ -1873,8 +1855,6 @@ class Canvas(QtWidgets.QWidget):
 
     def _finalize(self) -> None:
         assert self._current is not None
-        if self._reject_incompatible_point_prompt():
-            return
         if self.create_mode in _AI_CREATE_MODES:
             try:
                 proposal = self._build_ai_proposal()

@@ -865,10 +865,6 @@
         <translation>Annuler</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Indisponible en mode AI-Points, car ce modèle ne prend pas en charge les prompts de points.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Conserver les modifications des annotations de « {} » ?</translation>
     </message>
@@ -983,16 +979,6 @@ Changez le modèle d’invite textuelle IA pour &apos;SAM3 (smart)&apos;, ou dé
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Erreur lors de l’enregistrement du fichier d’annotations</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points indisponible</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s ne prend pas en charge les invites par points.
-Veuillez sélectionner un autre modèle ou utiliser le mode AI-Box.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

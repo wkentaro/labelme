@@ -865,10 +865,6 @@
         <translation>Anuluj</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Niedostępne w trybie AI-Points, ponieważ ten model nie obsługuje poleceń punktowych.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Zachować zmiany w adnotacjach dla „{}”?</translation>
     </message>
@@ -983,16 +979,6 @@ Zmień model monitu tekstowego AI na &apos;SAM3 (smart)&apos; lub ustaw format w
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Błąd zapisu pliku adnotacji</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points niedostępne</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s nie obsługuje poleceń punktowych.
-Wybierz inny model lub użyj trybu AI-Box.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

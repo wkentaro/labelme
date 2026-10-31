@@ -873,10 +873,6 @@
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Im AI-Points-Modus nicht verfügbar, da dieses Modell keine Punkt-Prompts unterstützt.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Annotationsänderungen für „{}“ behalten?</translation>
     </message>
@@ -983,16 +979,6 @@ Wechseln Sie das Modell für den KI-Textprompt zu &apos;SAM3 (smart)&apos; oder 
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fehler beim Speichern der Annotationsdatei</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points nicht verfügbar</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s unterstützt keine Punkt-Eingaben.
-Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

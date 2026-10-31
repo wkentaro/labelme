@@ -1354,7 +1354,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self._on_inference_failed,
             Qt.ConnectionType.QueuedConnection,
         )
-        canvas.point_prompt_rejected.connect(self._on_point_prompt_rejected)
         canvas.degenerate_shape_rejected.connect(
             lambda: self.show_status_message(
                 self.tr("Shape had no area; nothing created."), delay=5000
@@ -1764,7 +1763,6 @@ class MainWindow(QtWidgets.QMainWindow):
             in (*typing.get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
         )
         self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
-        self._set_point_prompt_mode(enabled=create_mode == "ai_points_to_shape")
 
     def _highlight_ai_buttons(self, highlight: bool, /) -> None:  # noqa: FBT001 -- hover_highlight_requested slot
         self._ai_buttons_highlighted = highlight
@@ -2265,19 +2263,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_inference_failed(self, message: str, /) -> None:
         self.show_status_message(
             self.tr("AI inference failed: %s") % message, delay=10000
-        )
-
-    def _on_point_prompt_rejected(self, model_name: str, /) -> None:
-        option = _ai_models.find_ai_assist_model_option(model_name=model_name)
-        assert option is not None
-        QtWidgets.QMessageBox.warning(
-            self,
-            self.tr("AI-Points Unavailable"),
-            self.tr(
-                "%s does not support point prompts.\n"
-                "Please select a different model or use AI-Box mode."
-            )
-            % QtCore.QCoreApplication.translate("SettingsDialog", option.display_name),
         )
 
     def _on_scroll_request(self, delta: int, orientation: Qt.Orientation, /) -> None:
@@ -3143,22 +3128,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_ai_polygon_detail_changed(self, detail: int, /) -> None:
         self._apply_setting_change(("mask_polygonization", "detail"), detail)
 
-    def _set_point_prompt_mode(self, *, enabled: bool) -> None:
-        self._ai_annotation.set_point_prompt_mode(enabled=enabled)
-        if self._settings_dialog is None:
-            return
-        disabled_reason = self.tr(
-            "Unavailable in AI-Points mode because this model does not support "
-            "point prompts."
-        )
-        for option in _ai_models.AI_ASSIST_MODEL_OPTIONS:
-            self._settings_dialog.set_choice_enabled(
-                key_path=("ai", "default"),
-                value=option.display_name,
-                enabled=not enabled or option.supports_point_prompts,
-                disabled_reason=disabled_reason,
-            )
-
     def _set_setting_value(self, *, key_path: tuple[str, ...], value: object) -> None:
         node: dict = self._config
         for key in key_path[:-1]:
@@ -3360,9 +3329,6 @@ class MainWindow(QtWidgets.QMainWindow):
             downloading.add(self._model_manager.active)
         for widget in (self._ai_annotation, self._ai_text):
             widget.set_available_models(available=available, downloading=downloading)
-        self._ai_annotation.set_point_prompt_mode(
-            enabled=self._ai_annotation.is_point_prompt_mode
-        )
         self._canvas_widgets.canvas.set_ai_model_name(
             model_name=self._ai_annotation.current_model_id
         )
@@ -3444,7 +3410,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 settings_editable=self._is_settings_editable,
                 parent=self,
             )
-        self._set_point_prompt_mode(enabled=self._ai_annotation.is_point_prompt_mode)
         self._settings_dialog.show()
         self._settings_dialog.raise_()
         self._settings_dialog.activateWindow()

@@ -851,10 +851,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Μη διαθέσιμο στη λειτουργία AI-Points, επειδή αυτό το μοντέλο δεν υποστηρίζει εντολές σημείων.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Να διατηρηθούν οι αλλαγές επισημειώσεων για το «{}»;</translation>
     </message>
@@ -983,16 +979,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
     <message>
         <source>Invalid Label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points μη διαθέσιμο</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s δεν υποστηρίζει εντολές σημείων.
-Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
     </message>
     <message>
         <source>Large Image</source>

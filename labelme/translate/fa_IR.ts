@@ -865,10 +865,6 @@
         <translation>لغو</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>در حالت AI-Points در دسترس نیست، زیرا این مدل از دستورات نقطه‌ای پشتیبانی نمی‌کند.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>تغییرات حاشیه‌نویسی برای «{}» نگه داشته شوند؟</translation>
     </message>
@@ -983,16 +979,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
     <message>
         <source>Error Saving Annotation File</source>
         <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points در دسترس نیست</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s از دستورات نقطه‌ای پشتیبانی نمی‌کند.
-لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
