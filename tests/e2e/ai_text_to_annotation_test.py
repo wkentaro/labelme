@@ -69,15 +69,15 @@ def _make_person_response(
 
 
 def _make_multi_label_response(*, texts: list[str]) -> osam.types.GenerateResponse:
-    person_idx = texts.index("person")
-    sofa_idx = texts.index("sofa")
-    return _make_response(
-        texts=texts,
+    response = _make_response(
+        texts=["person", "sofa"],
         boxes=[(50, 30, 200, 300), (10, 150, 400, 330)],
         scores=[0.85, 0.70],
-        label_indices=[person_idx, sofa_idx],
+        label_indices=[0, 1],
         with_masks=False,
     )
+    response.annotations = [a for a in response.annotations if a.text in texts]
+    return response
 
 
 def _make_edge_crossing_response(*, texts: list[str]) -> osam.types.GenerateResponse:

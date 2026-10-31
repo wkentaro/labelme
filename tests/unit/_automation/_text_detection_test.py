@@ -247,3 +247,49 @@ def test_text_proposal_rejects_maskless_detections_for_mask_output() -> None:
             image_size=(4, 4),
             polygon_detail=80,
         )
+
+
+@pytest.mark.parametrize(
+    ("model_name", "expected_calls"),
+    [
+        ("sam3:latest", [["dog"], ["cat"]]),
+        ("yoloworld:latest", [["dog", "cat"]]),
+    ],
+)
+def test_runs_sam3_once_per_text(
+    *, model_name: str, expected_calls: list[list[str]]
+) -> None:
+    # SAM3 reads only the first text of a prompt; YOLO-World takes them all.
+    calls: list[list[str]] = []
+
+    class _PerTextSession:
+        model_name: str
+
+        def __init__(self) -> None:
+            self.model_name = model_name
+
+        def run(self, *, texts: list[str], **_: object) -> osam.types.GenerateResponse:
+            calls.append(texts)
+            return osam.types.GenerateResponse(
+                model="stub",
+                annotations=[
+                    osam.types.Annotation(
+                        text=text,
+                        score=0.9,
+                        bounding_box=osam.types.BoundingBox(
+                            xmin=0, ymin=0, xmax=3, ymax=3
+                        ),
+                    )
+                    for text in texts
+                ],
+            )
+
+    _, _, labels, _ = get_bboxes_from_texts(
+        session=_PerTextSession(),  # ty: ignore[invalid-argument-type]
+        image=np.zeros((4, 4, 3), dtype=np.uint8),
+        image_id="img",
+        texts=["dog", "cat"],
+    )
+
+    assert calls == expected_calls
+    assert labels.tolist() == [0, 1]
