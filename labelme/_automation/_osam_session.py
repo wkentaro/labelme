@@ -12,8 +12,8 @@ if TYPE_CHECKING:
     import osam
 
 
-def _elapsed_ms(start: float, /) -> float:
-    return (time.perf_counter() - start) * 1000
+def _elapsed_ms(*, t_start: float) -> float:
+    return (time.perf_counter() - t_start) * 1000
 
 
 class OsamSession:
@@ -75,7 +75,7 @@ class OsamSession:
             )
 
         model: osam.types.Model = self._get_or_load_model()
-        start = time.perf_counter()
+        t_start = time.perf_counter()
         response: osam.types.GenerateResponse = model.generate(
             request=osam.types.GenerateRequest(
                 model=model.name,
@@ -88,7 +88,7 @@ class OsamSession:
             "Generated {} annotations with {!r} in {:.0f} ms",
             len(response.annotations),
             self._model_name,
-            _elapsed_ms(start),
+            _elapsed_ms(t_start=t_start),
         )
         return response
 
@@ -100,7 +100,7 @@ class OsamSession:
                 return embedding
 
         model: osam.types.Model = self._get_or_load_model()
-        start = time.perf_counter()
+        t_start = time.perf_counter()
         embedding: osam.types.ImageEmbedding = model.encode_image(image=image)
         self._embedding_cache.append((image_id, embedding))
         logger.info(
@@ -108,7 +108,7 @@ class OsamSession:
             image.shape[1],
             image.shape[0],
             self._model_name,
-            _elapsed_ms(start),
+            _elapsed_ms(t_start=t_start),
         )
         return embedding
 
@@ -116,9 +116,11 @@ class OsamSession:
         if self._model is None:
             import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
-            start = time.perf_counter()
+            t_start = time.perf_counter()
             self._model = osam.apis.get_model_type_by_name(self._model_name)()
             logger.info(
-                "Loaded {!r} in {:.0f} ms", self._model_name, _elapsed_ms(start)
+                "Loaded {!r} in {:.0f} ms",
+                self._model_name,
+                _elapsed_ms(t_start=t_start),
             )
         return self._model
