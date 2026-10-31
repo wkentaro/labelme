@@ -7,6 +7,8 @@ from PySide6.QtCore import QPoint
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._utils import modifier_text
+
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
@@ -115,4 +117,21 @@ def test_image_navigation_while_selecting_shape(
     qtbot.wait(100)
     # }}
 
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_navigation_action_tooltips_use_native_copy_modifier(
+    *, main_win: MainWinFactory, qtbot: QtBot, pause: bool
+) -> None:
+    win = main_win()
+    next_tip = win._actions.open_next_img.toolTip()
+    prev_tip = win._actions.open_prev_img.toolTip()
+    copy_modifier = modifier_text(
+        Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier
+    )
+    assert copy_modifier in next_tip
+    assert "Ctl" not in next_tip
+    assert copy_modifier in prev_tip
+    assert "Ctl" not in prev_tip
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
