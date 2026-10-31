@@ -604,6 +604,48 @@ def test_finalize_polygon_with_enter(
 
 
 @pytest.mark.gui
+def test_drag_to_polygon_origin_opens_label_dialog_on_release(
+    *, qtbot: QtBot, raw_win: MainWindow, tmp_path: Path, pause: bool
+) -> None:
+    canvas = raw_win._canvas_widgets.canvas
+    raw_win._switch_canvas_mode(edit=False, create_mode="polygon")
+    pixmap = canvas.pixmap
+    start = image_to_widget_pos(
+        canvas=canvas, image_pos=QPointF(pixmap.width() * 0.3, pixmap.height() * 0.3)
+    )
+    corners = [
+        image_to_widget_pos(
+            canvas=canvas,
+            image_pos=QPointF(pixmap.width() * x, pixmap.height() * y),
+        )
+        for x, y in [(0.6, 0.3), (0.6, 0.6)]
+    ]
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=start)
+    for pos in [*corners, start + QPoint(1, 1)]:
+        canvas.mouseMoveEvent(
+            QtGui.QMouseEvent(
+                QtGui.QMouseEvent.Type.MouseMove,
+                QPointF(pos),
+                QPointF(canvas.mapToGlobal(pos)),
+                Qt.MouseButton.NoButton,
+                Qt.MouseButton.LeftButton,
+                Qt.KeyboardModifier.NoModifier,
+            )
+        )
+
+    assert canvas._highlight is not None
+    submit_label_dialog(
+        qtbot=qtbot, label_dialog=raw_win._label_dialog, label="drag_polygon"
+    )
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=start + QPoint(1, 1))
+    assert canvas._current is None
+    assert len(canvas.shapes) == 1
+    assert canvas.shapes[0].label == "drag_polygon"
+    _save_and_check(win=raw_win, tmp_path=tmp_path)
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
 def test_undo_shape_creation(
     *,
     qtbot: QtBot,
