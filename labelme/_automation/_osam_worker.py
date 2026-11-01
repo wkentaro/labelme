@@ -41,20 +41,19 @@ class InferenceRequest:
     points: NDArray[np.floating] | None = None
     point_labels: NDArray[np.intp] | None = None
     texts: list[str] | None = None
-    # AI-Detect: keep every candidate for the user's Score and IoU.
-    detect_all: bool = False
 
 
 def _run(
     session: OsamSession, request: InferenceRequest, image: NDArray[np.uint8], /
 ) -> list[osam.types.Annotation]:
-    if request.texts is None:
+    if request.texts is None or request.points is not None:
+        # SAM3 finds every match for a box with text and one object without.
         return session.run(
             image=image,
             image_id=request.image_id,
             points=request.points,
             point_labels=request.point_labels,
-            detect_all=request.detect_all,
+            texts=request.texts,
         ).annotations
     # ponytail: SAM3 reads only the first text of a prompt, so it runs once per
     # text, reusing the cached image embedding. Drop this once osam's SAM3 takes

@@ -3055,6 +3055,7 @@ def test_ai_detect_box_uses_the_ai_detect_model(
     point_labels = _worker(canvas).requests[-1].point_labels
     assert point_labels is not None
     assert point_labels.tolist() == [2, 3]
+    assert _worker(canvas).requests[-1].texts == ["visual"]
 
 
 @pytest.mark.gui
@@ -3098,3 +3099,16 @@ def test_ai_detect_box_applies_the_score_threshold(
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(15, 20))
 
     qtbot.waitUntil(lambda: len(canvas.shapes) == 1)
+
+
+@pytest.mark.gui
+def test_ai_box_sends_the_box_without_text(*, canvas: Canvas, qtbot: QtBot) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.set_editing(value=False, create_mode="ai_box_to_shape")
+    canvas.show()
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
+
+    qtbot.waitUntil(lambda: bool(_worker(canvas).requests))
+    assert _worker(canvas).requests[-1].texts is None

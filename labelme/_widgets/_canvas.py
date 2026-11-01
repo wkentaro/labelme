@@ -655,7 +655,9 @@ class Canvas(QtWidgets.QWidget):
                 image=image,
                 points=job.points,
                 point_labels=job.point_labels,
-                detect_all=self.create_mode == "ai_detect",
+                # A box with text finds every match; "visual" is SAM3's word
+                # for "like the example".
+                texts=["visual"] if prompt_kind == "example_box" else None,
             ),
         )
 
@@ -692,7 +694,7 @@ class Canvas(QtWidgets.QWidget):
     ) -> _automation.AiAssistProposal:
         thresholds = (
             self.get_ai_detect_thresholds()
-            if self.create_mode == "ai_detect"
+            if job.prompt_kind == "example_box"
             # AI-Points and AI-Box have no Score or IoU control.
             else (0.0, 0.5)
         )
@@ -2129,7 +2131,7 @@ class Canvas(QtWidgets.QWidget):
             if self.create_mode in _AI_BOX_CREATE_MODES:
                 # point_labels: 2=box corner, 3=opposite box corner (SAM convention)
                 prompt_kind, points, point_labels = (
-                    "box",
+                    "example_box" if self.create_mode == "ai_detect" else "box",
                     _normalize_bbox_points(bbox_points=draft.points),
                     [2, 3],
                 )

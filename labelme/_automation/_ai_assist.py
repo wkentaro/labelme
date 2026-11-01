@@ -59,7 +59,19 @@ class AiAssistSession:
             for detection in _detections_from_annotations(annotations)
             if detection.score >= score_threshold
         ]
-        if prompt_kind == "points" and detections:
+        if prompt_kind == "box" and detections:
+            # One Shape per box, whichever model answered: the candidate that
+            # best fills the box, then the most confident.
+            detections = [
+                max(
+                    detections,
+                    key=lambda detection: (
+                        _box_iou(detection.bbox, points.ravel()),
+                        detection.score,
+                    ),
+                )
+            ]
+        elif prompt_kind == "points" and detections:
             detections = [
                 max(
                     detections,
@@ -90,6 +102,20 @@ class AiAssistSession:
             ),
             matching_existing_shapes=matches.matching_shapes,
         )
+
+
+def _box_iou(
+    bbox: tuple[float, float, float, float] | None, box: NDArray[np.floating], /
+) -> float:
+    if bbox is None:
+        return 0.0
+    ax1, ay1, ax2, ay2 = bbox
+    bx1, by1, bx2, by2 = (float(v) for v in box)
+    inter = max(0.0, min(ax2, bx2) - max(ax1, bx1)) * max(
+        0.0, min(ay2, by2) - max(ay1, by1)
+    )
+    union = (ax2 - ax1) * (ay2 - ay1) + (bx2 - bx1) * (by2 - by1) - inter
+    return inter / union if union > 0 else 0.0
 
 
 def _count_satisfied_prompt_points(
