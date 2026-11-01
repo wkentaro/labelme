@@ -99,6 +99,10 @@ class _AiTextJob:
     score_threshold: float
     image_size: tuple[int, int] | None
 
+    @property
+    def query(self) -> str:
+        return ", ".join(text.strip() for text in self.texts)
+
 
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
@@ -1703,6 +1707,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         self._ai_text_job = job
+        self._announce(self.tr("Detecting '{query}'…").format(query=job.query))
         self._osam_worker.submit(
             channel="text",
             job=job,
@@ -1722,15 +1727,29 @@ class MainWindow(QtWidgets.QMainWindow):
         return job
 
     def _on_ai_activity_changed(self) -> None:
-        # Inference no longer blocks the window, so this is the only sign it runs.
+        # The canvas rings a slow AI Assist prompt where it was placed; this
+        # names the running task for every prompt, AI Text Prompt included.
         worker = self._osam_worker
-        label = self._status_bar.ai
-        if not worker.busy:
-            label.clear()
-        elif worker.device == "cpu":
-            label.setText(self.tr("Running AI on CPU…"))
+        job = worker.job
+        on_cpu = worker.device == "cpu"
+        if job is None:
+            text = ""
+        elif isinstance(job, _AiTextJob):
+            text = (
+                self.tr("Detecting '{query}' on CPU…")
+                if on_cpu
+                else self.tr("Detecting '{query}'…")
+            ).format(query=job.query)
         else:
-            label.setText(self.tr("Running AI…"))
+            text = self.tr("Segmenting on CPU…") if on_cpu else self.tr("Segmenting…")
+        self._status_bar.ai.setText(text)
+
+    def _announce(self, message: str, /) -> None:
+        if not QtGui.QAccessible.isActive():
+            return
+        event = QtGui.QAccessibleAnnouncementEvent(self._status_bar.ai, message)
+        event.setPoliteness(QtGui.QAccessible.AnnouncementPoliteness.Polite)
+        QtGui.QAccessible.updateAccessibility(event)
 
     def _on_ai_text_failed(self, job: object, message: str, /) -> None:
         if self._take_ai_text_job(job) is None:
@@ -1784,6 +1803,16 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.opt(exception=e).error("AI text inference failed")
             self._on_inference_failed(f"{type(e).__name__}: {e}")
             return
+
+        # Polygons from one mask's separate lands share a Group: one object.
+        count = len({id(s) if s.group_id is None else s.group_id for s in shapes})
+        message = (
+            self.tr("Found {count} new '{query}'")
+            if count
+            else self.tr("No new '{query}' found")
+        ).format(count=count, query=text_job.query)
+        self.show_status_message(message, delay=5000)
+        self._announce(message)
 
         apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
         canvas = self._canvas_widgets.canvas

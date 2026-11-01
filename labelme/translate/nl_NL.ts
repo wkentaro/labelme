@@ -767,14 +767,6 @@
         <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>AI draait op de CPU…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>AI draait…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Het annotatiebestand hoort bij een andere afbeelding: %s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>Back-up maken en resetten</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>&apos;{query}&apos; detecteren…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>&apos;{query}&apos; detecteren op de CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Segmenteren op de CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Segmenteren…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-vormen maken.
 
 Wijzig het model voor de AI-tekstprompt naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} nieuwe &apos;{query}&apos; gevonden</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Geen nieuwe &apos;{query}&apos; gevonden</translation>
     </message>
     <message>
         <source>Invalid Label</source>

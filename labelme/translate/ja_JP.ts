@@ -777,14 +777,6 @@
         <translation>今回は初期設定で続行できます。リセットする場合は、先に設定ファイルのバックアップを保存します。</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>CPU で AI を実行中…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>AI を実行中…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>このアノテーションファイルは別の画像のものです: %s</translation>
     </message>
@@ -983,12 +975,36 @@
         <translation>バックアップしてリセット</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>「{query}」を検出中…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>CPU で「{query}」を検出中…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>CPU でセグメンテーション中…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>セグメンテーション中…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; の図形を作成できません。
 
 AI テキストプロンプトのモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>新しい「{query}」が {count} 件見つかりました</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>新しい「{query}」は見つかりませんでした</translation>
     </message>
     <message>
         <source>Invalid Label</source>

@@ -767,14 +767,6 @@
         <translation>Vous pouvez utiliser les paramètres par défaut pour le moment. Une sauvegarde de votre fichier de configuration sera enregistrée avant la réinitialisation.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>Exécution de l’IA sur le CPU…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>Exécution de l’IA…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Le fichier d’annotations appartient à une autre image : %s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>Sauvegarder et réinitialiser</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Détection de « {query} »…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Détection de « {query} » sur le processeur…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Segmentation sur le processeur…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Segmentation…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s ne détecte que les cadres englobants et ne peut pas créer de formes &apos;%s&apos;.
 
 Changez le modèle d’invite textuelle IA pour &apos;SAM3 (smart)&apos;, ou définissez le format de sortie sur &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} nouveaux « {query} » trouvés</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Aucun nouveau « {query} » trouvé</translation>
     </message>
     <message>
         <source>Invalid Label</source>

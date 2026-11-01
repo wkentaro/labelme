@@ -3,28 +3,50 @@ from __future__ import annotations
 import pytest
 
 from labelme._app import MainWindow
+from labelme._app import _AiTextJob
 from labelme._automation import OsamWorker
 
 from .conftest import MainWinFactory
 
 
 @pytest.mark.gui
-def test_status_bar_shows_where_ai_runs(
+def test_status_bar_names_the_running_ai_task(
     *, main_win: MainWinFactory, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     win: MainWindow = main_win()
-    state: dict[str, object] = {"busy": False, "device": None}
-    monkeypatch.setattr(OsamWorker, "busy", property(lambda _: state["busy"]))
+    text_job = _AiTextJob(
+        pixmap_key=0,
+        texts=["sticky notes", " pens"],
+        shape_type="rectangle",
+        model_display_name="",
+        iou_threshold=0.5,
+        score_threshold=0.1,
+        image_size=None,
+    )
+    state: dict[str, object] = {"job": None, "device": None}
+    monkeypatch.setattr(OsamWorker, "job", property(lambda _: state["job"]))
     monkeypatch.setattr(OsamWorker, "device", property(lambda _: state["device"]))
     label = win._status_bar.ai
 
     texts = []
-    for busy, device in [(True, None), (True, "webgpu"), (True, "cpu"), (False, None)]:
-        state.update(busy=busy, device=device)
+    for job, device in [
+        (object(), None),
+        (object(), "cpu"),
+        (text_job, "webgpu"),
+        (text_job, "cpu"),
+        (None, None),
+    ]:
+        state.update(job=job, device=device)
         win._osam_worker.activity_changed.emit()
         texts.append(label.text())
 
-    assert texts == ["Running AI…", "Running AI…", "Running AI on CPU…", ""]
+    assert texts == [
+        "Segmenting…",
+        "Segmenting on CPU…",
+        "Detecting 'sticky notes, pens'…",
+        "Detecting 'sticky notes, pens' on CPU…",
+        "",
+    ]
 
 
 @pytest.mark.gui

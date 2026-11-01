@@ -767,14 +767,6 @@
         <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>در حال اجرای هوش مصنوعی روی CPU…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>در حال اجرای هوش مصنوعی…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>فایل حاشیه‌نویسی متعلق به تصویر دیگری است: %s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>پشتیبان‌گیری و بازنشانی</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>در حال شناسایی «{query}»…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>در حال شناسایی «{query}» روی CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>در حال قطعه‌بندی روی CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>در حال قطعه‌بندی…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s فقط کادرهای محصورکننده را تشخیص می‌دهد و نمی‌تواند شکل‌های &apos;%s&apos; ایجاد کند.
 
 مدل پرامپت متنی هوش مصنوعی را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} «{query}» جدید پیدا شد</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>«{query}» جدیدی پیدا نشد</translation>
     </message>
     <message>
         <source>Invalid Label</source>

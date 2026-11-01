@@ -715,14 +715,6 @@
         <translation>Anda dapat menggunakan pengaturan bawaan untuk saat ini. Sebelum reset, salinan cadangan file konfigurasi Anda akan disimpan.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>Menjalankan AI di CPU…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>Menjalankan AI…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Berkas anotasi milik gambar lain: %s</translation>
     </message>
@@ -849,12 +841,36 @@
         <translation>Buka gambar berikutnya (tahan %s untuk menyalin bentuk saat ini)</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Mendeteksi &apos;{query}&apos;…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Mendeteksi &apos;{query}&apos; di CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Menyegmentasi di CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Menyegmentasi…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat bentuk &apos;%s&apos;.
 
 Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Ditemukan {count} &apos;{query}&apos; baru</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Tidak ada &apos;{query}&apos; baru yang ditemukan</translation>
     </message>
     <message>
         <source>Large image requires more memory</source>

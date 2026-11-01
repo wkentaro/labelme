@@ -775,14 +775,6 @@
         <translation>Sie können vorerst die Standardeinstellungen verwenden. Vor dem Zurücksetzen wird eine Sicherung Ihrer Konfigurationsdatei gespeichert.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>KI läuft auf der CPU…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>KI läuft…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Die Annotationsdatei gehört zu einem anderen Bild: %s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>Sichern und zurücksetzen</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>„{query}“ wird erkannt…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>„{query}“ wird auf der CPU erkannt…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Segmentierung auf der CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Segmentierung…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s erkennt nur Begrenzungsrahmen und kann keine &apos;%s&apos;-Formen erstellen.
 
 Wechseln Sie das Modell für den KI-Textprompt zu &apos;SAM3 (smart)&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} neue „{query}“ gefunden</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Keine neuen „{query}“ gefunden</translation>
     </message>
     <message>
         <source>Invalid Label</source>
