@@ -187,6 +187,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         with QtCore.QSignalBlocker(self._polygon_detail_slider):
             self._polygon_detail_slider.set_value(detail)
 
+    def set_model_enabled(self, enabled: bool, /) -> None:  # noqa: FBT001 -- mirrors QWidget.setEnabled
+        self._model_combo.setEnabled(enabled)
+
     def setEnabled(self, a0: bool, /) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
         self._body.setEnabled(a0)
         self._polygon_detail_button.setEnabled(a0)
@@ -197,7 +200,10 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
-                    self.tr("Select 'AI-Points' or 'AI-Box' mode to enable AI Assist"),
+                    self.tr(
+                        "Select 'AI-Points', 'AI-Box', or 'AI-Detect' mode to enable"
+                        " AI Assist"
+                    ),
                     self,
                 )
                 self.hover_highlight_requested.emit(True)  # noqa: FBT003 -- Qt signal payload is positional

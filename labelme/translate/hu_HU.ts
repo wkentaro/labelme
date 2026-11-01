@@ -44,8 +44,8 @@
         <translation>Kör</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az MI-segéd engedélyezéséhez</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Válassza az &apos;AI-Points&apos;, &apos;AI-Box&apos; vagy &apos;AI-Detect&apos; módot az MI-segéd engedélyezéséhez</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -71,6 +71,14 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum észlelése</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>pl. kutya,macska,madár</translation>
     </message>
@@ -89,18 +97,6 @@
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>Az AI annotációkat hoz létre a szöveges promptból</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>MI-szöveges utasítás</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Válassza a &apos;Polygon&apos;, &apos;Rectangle&apos; vagy &apos;AI-Points&apos; módot az engedélyezéshez</translation>
     </message>
     <message>
         <source>Model</source>
@@ -174,6 +170,14 @@
     <message>
         <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
         <translation>Kattintson pontokra a belefoglaláshoz, vagy tartsa lenyomva a(z) %s billentyűt, és kattintson a kizáráshoz. A befejezéshez tartsa lenyomva a(z) %s billentyűt, és kattintson.</translation>
+    </message>
+    <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>Írja be az AI-Detect mezőbe, mit kell észlelni, vagy kattintson egy minta köré rajzolt keret első sarkára</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>Kattintson a szemközti sarokra az ehhez hasonló összes objektum észleléséhez</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -613,6 +617,14 @@
         <translation>Szerkesztés</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum észlelése</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Következő</translation>
@@ -775,8 +787,32 @@
         <translation>Egyelőre használhatja az alapértelmezett beállításokat. A visszaállítás előtt biztonsági másolat készül a konfigurációs fájlról.</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>Írja be, mit kell észlelni</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>Keresés a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Keresés…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú alakzatokat létrehozni.
+
+Váltson az AI-Detect modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Az annotációs fájl egy másik képhez tartozik: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>A(z) %s nem tud mintakeret alapján észlelni. Válassza a SAM3 (smart) modellt.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -979,14 +1015,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>Szegmentálás…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú alakzatokat létrehozni.
-
-Váltson az MI-szöveges utasítás modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1425,10 @@ Várt hely: {path}</translation>
         <translation>Soronként egy jelzőnév. Minták: ^car$ pontosan a car értékre, car egy előtagra, .* minden címkére illeszkedik.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect modell</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Poligon részletessége</translation>
     </message>
@@ -1503,10 +1535,6 @@ Várt hely: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Szöveges utasítás modellje</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

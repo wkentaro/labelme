@@ -91,6 +91,7 @@ canvas:
     linestrip: false
     ai_points_to_shape: false
     ai_box_to_shape: true
+    ai_detect: true
 shortcuts:
   close: Ctrl+W
   open: Ctrl+O
@@ -114,6 +115,9 @@ shortcuts:
   create_line:
   create_point:
   create_linestrip:
+  create_ai_points:
+  create_ai_box:
+  create_ai_detect:
   edit_shape: Ctrl+J
   delete_shape: Delete
   duplicate_shape: Ctrl+D

@@ -133,6 +133,14 @@ def _install_mock_session(
     monkeypatch.setattr(OsamWorker, "submit", submit)
 
 
+def _set_output_like_tool(*, win: MainWindow, create_mode: str) -> None:
+    # Run detects with the shared AI Output; match it to a Rectangle or
+    # Polygon tool so YOLO-World (boxes only) can answer.
+    output_combo = win._ai_annotation._output_format_combo
+    if (index := output_combo.findData(create_mode)) >= 0:
+        output_combo.setCurrentIndex(index)
+
+
 def _run_text_prompt(
     *,
     win: MainWindow,
@@ -142,6 +150,7 @@ def _run_text_prompt(
     score_threshold: float,
 ) -> None:
     win._switch_canvas_mode(edit=False, create_mode=create_mode)
+    _set_output_like_tool(win=win, create_mode=create_mode)
     qtbot.wait(50)
 
     win._ai_text._text_input.setText(text)
@@ -154,7 +163,7 @@ def _run_text_prompt(
             combo.setCurrentIndex(i)
             break
 
-    win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
+    win._submit_ai_prompt()
     qtbot.wait(100)
 
 
@@ -242,6 +251,7 @@ def test_text_prompt_creates_shapes(
         score_threshold=0.1,
     )
 
+    assert canvas.create_mode == "ai_detect"
     assert len(canvas.shapes) >= 1
     labels = {shape.label for shape in canvas.shapes}
     assert labels == expected_labels
@@ -304,7 +314,7 @@ def test_box_only_model_is_rejected_before_inference(
         lambda _parent, title, _text: warnings.append(title),
     )
 
-    win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
+    win._submit_ai_prompt()
 
     assert readiness_checks == []
     assert submitted == []
@@ -323,7 +333,12 @@ def test_box_only_model_is_rejected_before_inference(
     settings_index = settings_model.index(editor.findData("yoloworld:latest"), 0)
     assert not settings_model.flags(settings_index) & Qt.ItemFlag.ItemIsEnabled
 
+    # Run creates Shapes in the Output whatever the tool, so only the Output
+    # makes a box-only model usable again.
     win._switch_canvas_mode(edit=False, create_mode="rectangle")
+    assert not model.flags(model.index(yolo_index, 0)) & Qt.ItemFlag.ItemIsEnabled
+    output_combo = win._ai_annotation._output_format_combo
+    output_combo.setCurrentIndex(output_combo.findData("rectangle"))
     assert model.flags(model.index(yolo_index, 0)) & Qt.ItemFlag.ItemIsEnabled
     assert settings_model.flags(settings_index) & Qt.ItemFlag.ItemIsEnabled
 
@@ -504,6 +519,7 @@ def test_text_result_waits_for_the_label_dialog(
         response_fn=functools.partial(_make_person_response, with_masks=False),
     )
     win._switch_canvas_mode(edit=False, create_mode="rectangle")
+    _set_output_like_tool(win=win, create_mode="rectangle")
     win._ai_text._text_input.setText("person")
     win._ai_text._score_spinbox.setValue(0.1)
     combo = win._ai_text._model_combo
@@ -514,7 +530,7 @@ def test_text_result_waits_for_the_label_dialog(
         dialog = QtWidgets.QDialog(win)
         dialog.setModal(True)
         dialog.show()
-        win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
+        win._submit_ai_prompt()
         qtbot.wait(300)
         assert [s.label for s in canvas.shapes] == [None]
         dialog.close()
@@ -589,6 +605,8 @@ def test_text_result_waits_for_the_draft(
     deliver = _hold_text_results(
         win=win, qtbot=qtbot, monkeypatch=monkeypatch, create_mode="polygon"
     )
+    # Run switched to AI-Detect; the user picks Polygon again and draws.
+    win._switch_canvas_mode(edit=False, create_mode="polygon")
     click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.5, 0.5))
 
     deliver()
@@ -727,3 +745,53 @@ def test_text_result_keeps_the_selection_editable(
     )
     win._actions.edit.trigger()
     assert box.label == "renamed"
+
+
+@pytest.mark.gui
+def test_empty_text_prompt_asks_for_a_prompt(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    win._switch_canvas_mode(edit=False, create_mode="polygon")
+
+    win._submit_ai_prompt()
+
+    assert win.statusBar().currentMessage() == "Type what to detect"
+    assert win._canvas_widgets.canvas.create_mode == "polygon"
+
+
+@pytest.mark.gui
+def test_text_prompt_without_an_image_does_nothing(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win()
+    _install_mock_session(
+        monkeypatch=monkeypatch,
+        response_fn=functools.partial(_make_person_response, with_masks=False),
+    )
+    win._ai_text._text_input.setText("person")
+
+    win._submit_ai_prompt()
+
+    assert win._canvas_widgets.canvas.shapes == []
+
+
+@pytest.mark.gui
+def test_ai_detect_box_reads_the_picker_at_use(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    combo = win._ai_text._model_combo
+    combo.setCurrentIndex(combo.findData(_AI_TEXT_MODEL))
+
+    assert win._canvas_widgets.canvas.get_ai_detect_model_name() == _AI_TEXT_MODEL

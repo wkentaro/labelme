@@ -36,6 +36,8 @@ def _propose(
         points=points,
         point_labels=point_labels,
         existing_shapes=[] if existing_shapes is None else existing_shapes,
+        score_threshold=0.0,
+        iou_threshold=0.5,
     )
 
 
@@ -265,6 +267,8 @@ def test_point_prompt_reports_best_matching_existing_shape() -> None:
         points=np.array([[5, 5], [25, 25]], dtype=np.float64),
         point_labels=np.array([1, 0]),
         existing_shapes=[containing, exact],
+        score_threshold=0.0,
+        iou_threshold=0.5,
     )
 
     assert proposal.new_shapes == []

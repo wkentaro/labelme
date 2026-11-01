@@ -44,8 +44,8 @@
         <translation>Окружность</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Выберите режим &apos;AI-Points&apos; или &apos;AI-Box&apos;, чтобы включить ИИ-помощника</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Выберите режим &apos;AI-Points&apos;, &apos;AI-Box&apos; или &apos;AI-Detect&apos;, чтобы включить ИИ-помощника</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -71,6 +71,14 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Обнаружить все объекты, соответствующие текстовому запросу или рамке-примеру</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>например: собака,кот,птица</translation>
     </message>
@@ -89,18 +97,6 @@
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>ИИ создаёт разметку по текстовому запросу</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>Текстовый запрос ИИ</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Выберите режим &apos;Polygon&apos;, &apos;Rectangle&apos; или &apos;AI-Points&apos;, чтобы включить</translation>
     </message>
     <message>
         <source>Model</source>
@@ -190,6 +186,14 @@
     <message>
         <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
         <translation>Щёлкайте по точкам, чтобы включить, или удерживайте %s и щёлкните, чтобы исключить. Удерживайте %s и щёлкните, чтобы завершить.</translation>
+    </message>
+    <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>Введите в AI-Detect, что нужно найти, или щёлкните первый угол рамки вокруг одного примера</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>Щёлкните противоположный угол, чтобы найти все такие же объекты</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -597,6 +601,14 @@
         <translation>Изменить</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Обнаружить все объекты, соответствующие текстовому запросу или рамке-примеру</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Далее</translation>
@@ -767,8 +779,32 @@
         <translation>Пока можно использовать настройки по умолчанию. Перед сбросом будет сохранена резервная копия вашего файла конфигурации.</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>Введите, что нужно найти</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>Поиск на ЦП…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Поиск…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s обнаруживает только ограничивающие рамки и не может создавать фигуры &apos;%s&apos;.
+
+Переключите модель AI-Detect на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Файл аннотаций относится к другому изображению: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s не умеет искать по рамке-примеру. Выберите SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -971,14 +1007,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>Сегментация…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s обнаруживает только ограничивающие рамки и не может создавать фигуры &apos;%s&apos;.
-
-Переключите модель текстового запроса ИИ на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1425,10 @@ Expected location: {path}</source>
         <translation>Одно имя флага на строку. Шаблоны: ^car$ точно соответствует car, car — префиксу, .* — любой метке.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>Модель AI-Detect</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Детализация полигона</translation>
     </message>
@@ -1503,10 +1535,6 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Модель текстового запроса</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

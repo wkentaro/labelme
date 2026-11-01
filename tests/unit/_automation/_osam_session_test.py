@@ -120,6 +120,33 @@ def test_text_prompt_uses_detection_thresholds(
     assert request.prompt.max_annotations == 1000
 
 
+@pytest.mark.parametrize(
+    ("detect_all", "score_threshold", "max_annotations"),
+    [(False, 0.1, 100), (True, 0.01, 1000)],
+)
+def test_detect_all_box_keeps_every_candidate(
+    *,
+    install_fake_model: Callable[..., _FakeModelRegistry],
+    detect_all: bool,
+    score_threshold: float,
+    max_annotations: int,
+) -> None:
+    registry = install_fake_model()
+
+    OsamSession(model_name="x").run(
+        image=_IMAGE,
+        image_id="img",
+        points=np.array([[0, 0], [5, 5]], dtype=float),
+        point_labels=np.array([2, 3]),
+        detect_all=detect_all,
+    )
+
+    (request,) = registry.model.requests
+    assert request.prompt is not None
+    assert request.prompt.score_threshold == score_threshold
+    assert request.prompt.max_annotations == max_annotations
+
+
 def test_run_without_a_prompt_raises_and_never_generates(
     *,
     install_fake_model: Callable[..., _FakeModelRegistry],

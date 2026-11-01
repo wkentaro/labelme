@@ -20,7 +20,6 @@ from pathlib import Path
 from typing import Final
 from typing import Literal
 from typing import NamedTuple
-from typing import TypeAlias
 from typing import cast
 
 import natsort
@@ -109,7 +108,6 @@ class _ZoomMode(enum.Enum):
     MANUAL_ZOOM = enum.auto()
 
 
-_TextToAnnotationCreateMode: TypeAlias = Literal["polygon", "rectangle"]
 _AI_CREATE_MODES: Final[tuple[str, ...]] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
@@ -194,6 +192,7 @@ class _Actions(NamedTuple):
     create_line_strip_mode: QtGui.QAction
     create_ai_points_to_shape_mode: QtGui.QAction
     create_ai_box_to_shape_mode: QtGui.QAction
+    create_ai_detect_mode: QtGui.QAction
     open_next_img: QtGui.QAction
     open_prev_img: QtGui.QAction
     keep_prev_zoom: QtGui.QAction
@@ -363,12 +362,18 @@ class MainWindow(QtWidgets.QMainWindow):
             on_submit=self._submit_ai_prompt, parent=self
         )
         self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"] or "")
+        self._canvas_widgets.canvas.get_ai_detect_model_name = (
+            self._ai_text.get_model_name
+        )
+        self._canvas_widgets.canvas.get_ai_detect_thresholds = lambda: (
+            self._ai_text.get_score_threshold(),
+            self._ai_text.get_iou_threshold(),
+        )
         self._ai_text.model_changed.connect(
             lambda model_name: self._apply_setting_change(
                 ("ai", "text_model"), model_name
             )
         )
-        self._ai_text.setEnabled(False)
 
         self._setup_toolbars()
 
@@ -386,6 +391,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.set_device(self._config["ai"]["device"])
         self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
         self._ai_text_job: _AiTextJob | None = None
+        self._announced_ai_job: object = None
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
@@ -732,7 +738,7 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._switch_canvas_mode(
                 edit=False, create_mode="ai_points_to_shape"
             ),
-            shortcut=None,
+            shortcut=shortcuts["create_ai_points"],
             icon="ai-points.svg",
             tip=self.tr(
                 "Click points to segment the object; hold %s and click to finish."
@@ -744,9 +750,18 @@ class MainWindow(QtWidgets.QMainWindow):
             slot=lambda: self._switch_canvas_mode(
                 edit=False, create_mode="ai_box_to_shape"
             ),
-            shortcut=None,
+            shortcut=shortcuts["create_ai_box"],
             icon="ai-box.svg",
             tip=self.tr("Draw a bounding box to segment object."),
+        )
+        create_ai_detect_mode = mode_action(
+            text=self.tr("AI-Detect"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="ai_detect"),
+            shortcut=shortcuts["create_ai_detect"],
+            icon="ai-detect.svg",
+            tip=self.tr(
+                "Detect every object that matches the text prompt or an example box"
+            ),
         )
         open_next_img = action(
             text=self.tr("&Next Image"),
@@ -946,6 +961,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("linestrip", create_line_strip_mode),
             ("ai_points_to_shape", create_ai_points_to_shape_mode),
             ("ai_box_to_shape", create_ai_box_to_shape_mode),
+            ("ai_detect", create_ai_detect_mode),
         ]
         # Both menus follow the platform Edit-menu convention: history first,
         # then the clipboard group, then the actions that alter a shape.
@@ -1015,6 +1031,7 @@ class MainWindow(QtWidgets.QMainWindow):
             create_line_strip_mode=create_line_strip_mode,
             create_ai_points_to_shape_mode=create_ai_points_to_shape_mode,
             create_ai_box_to_shape_mode=create_ai_box_to_shape_mode,
+            create_ai_detect_mode=create_ai_detect_mode,
             open_next_img=open_next_img,
             open_prev_img=open_prev_img,
             keep_prev_zoom=keep_prev_zoom,
@@ -1377,6 +1394,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.inference_produced_no_shapes.connect(
             self._on_inference_produced_no_shapes
         )
+        canvas.example_box_unsupported.connect(self._on_example_box_unsupported)
         # The preview path emits this from inside paintEvent (an active
         # QPainter); a queued connection defers the status-bar update until
         # after the paint cycle so it never mutates UI mid-paint.
@@ -1679,15 +1697,19 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_status_message(self, message: str, /, *, delay: int = 500) -> None:
         self.statusBar().showMessage(message, delay)
 
-    def _submit_ai_prompt(self, _: bool, /) -> None:  # noqa: FBT001 -- submit callback receives the Qt clicked flag
-        create_mode = self._canvas_widgets.canvas.create_mode
-        shape_type = _resolve_text_annotation_shape_type(
-            create_mode=create_mode,
-            ai_output_format=self._ai_annotation.output_format,
-        )
-        if shape_type is None:
-            logger.warning("Unsupported create_mode={!r}", create_mode)
+    def _submit_ai_prompt(self) -> None:
+        if not self._actions.image.isEnabled():
+            return  # No image to detect in.
+        prompt = self._ai_text.get_text_prompt()
+        if not prompt.strip():
+            self.show_status_message(self.tr("Type what to detect"), delay=5000)
+            self._ai_text.focus_text_prompt()
             return
+        canvas = self._canvas_widgets.canvas
+        # Switching cancels a draft, so a Shape mid-drawing keeps its tool.
+        if not canvas.is_drawing:
+            self._actions.create_ai_detect_mode.trigger()
+        shape_type = self._ai_annotation.output_format
 
         # Checked against the Setting, so a model that is not downloaded yet is
         # rejected before the Models window offers its download.
@@ -1699,19 +1721,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr(
                     "%s only detects bounding boxes and cannot create "
                     "'%s' Shapes.\n\n"
-                    "Switch the AI Text Prompt model to 'SAM3 (smart)', "
+                    "Switch the AI-Detect model to 'SAM3 (smart)', "
                     "or set the output format to 'Rectangle'."
                 )
                 % (self._model_manager.models[requested_model], shape_type),
             )
             return
 
-        texts = self._ai_text.get_text_prompt().split(",")
+        texts = prompt.split(",")
 
         model_name: str = self._ai_text.get_model_name()
         if not self._ensure_ai_model_ready(model_name):
             return
-        canvas = self._canvas_widgets.canvas
         image, image_id = canvas.ai_image()
         job = _AiTextJob(
             pixmap_key=canvas.pixmap.cacheKey(),
@@ -1726,7 +1747,6 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
         self._ai_text_job = job
-        self._announce(self.tr("Detecting '{query}'…").format(query=job.query))
         self._osam_worker.submit(
             channel="text",
             job=job,
@@ -1747,21 +1767,29 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_ai_activity_changed(self) -> None:
         # The canvas rings a slow AI Assist prompt where it was placed; this
-        # names the running task for every prompt, AI Text Prompt included.
+        # names the running task for every prompt, AI-Detect included.
         worker = self._osam_worker
         job = worker.job
         on_cpu = worker.device == "cpu"
+        detecting = True
         if job is None:
-            text = ""
+            text, detecting = "", False
         elif isinstance(job, _AiTextJob):
             text = (
                 self.tr("Detecting '{query}' on CPU…")
                 if on_cpu
                 else self.tr("Detecting '{query}'…")
             ).format(query=job.query)
+        elif job is self._canvas_widgets.canvas.ai_detect_job:
+            text = self.tr("Detecting on CPU…") if on_cpu else self.tr("Detecting…")
         else:
             text = self.tr("Segmenting on CPU…") if on_cpu else self.tr("Segmenting…")
+            detecting = False
         self._status_bar.ai.setText(text)
+        # A detection is announced once as it starts, from text or a box.
+        if detecting and job is not self._announced_ai_job:
+            self._announced_ai_job = job
+            self._announce(text)
 
     def _announce(self, message: str, /) -> None:
         if not QtGui.QAccessible.isActive():
@@ -1874,12 +1902,11 @@ class MainWindow(QtWidgets.QMainWindow):
         # Keep edit_mode disabled while a partial shape is alive so the user
         # can't abandon it mid-draw.
         self._actions.edit_mode.setEnabled(not self._canvas_widgets.canvas.is_drawing)
-        self._ai_text.setEnabled(
-            not edit
-            and create_mode
-            in (*typing.get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
+        # The AI-Detect tool shares the Output, but has its own model.
+        self._ai_annotation.setEnabled(
+            not edit and create_mode in (*_AI_CREATE_MODES, "ai_detect")
         )
-        self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
+        self._ai_annotation.set_model_enabled(create_mode != "ai_detect")
         self._refresh_text_model_choices()
 
     def _on_ai_output_format_changed(
@@ -1889,17 +1916,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._refresh_text_model_choices()
 
     def _refresh_text_model_choices(self) -> None:
-        # Grey out text models that cannot produce the Shapes the current mode
-        # creates; _submit_ai_prompt still rejects a model already chosen.
-        canvas = self._canvas_widgets.canvas
-        shape_type = (
-            None
-            if canvas.is_editing
-            else _resolve_text_annotation_shape_type(
-                create_mode=canvas.create_mode,
-                ai_output_format=self._ai_annotation.output_format,
-            )
-        )
+        # Grey out text models that cannot produce Shapes in the Output, which
+        # AI-Detect always uses; _submit_ai_prompt still rejects a model
+        # already chosen.
+        shape_type = self._ai_annotation.output_format
         reason = self.tr("Detects boxes only. Switch to Rectangle to use this model.")
         unavailable = dict.fromkeys(_text_models_unable_to_create(shape_type), reason)
         self._ai_text.set_unavailable_models(unavailable)
@@ -2405,6 +2425,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_inference_produced_no_shapes(self) -> None:
         self.show_status_message(
             self.tr("AI inference produced no new annotation."), delay=5000
+        )
+
+    def _on_example_box_unsupported(self) -> None:
+        self.show_status_message(
+            self.tr("%s can't detect from an example box. Choose SAM3 (smart).")
+            % self._model_manager.models[
+                self._canvas_widgets.canvas.get_ai_detect_model_name()
+            ],
+            delay=5000,
         )
 
     def _on_inference_failed(self, message: str, /) -> None:
@@ -4011,16 +4040,6 @@ def _text_models_unable_to_create(
     if shape_type in _automation.MASK_REQUIRED_SHAPE_TYPES:
         return _ai_models.AI_TEXT_BOX_ONLY_MODELS
     return frozenset()
-
-
-def _resolve_text_annotation_shape_type(
-    *, create_mode: str, ai_output_format: _automation.AiOutputFormat
-) -> _automation.AiOutputFormat | None:
-    if create_mode in _AI_CREATE_MODES:
-        return ai_output_format
-    if create_mode in typing.get_args(_TextToAnnotationCreateMode):
-        return cast(_TextToAnnotationCreateMode, create_mode)
-    return None
 
 
 def _is_valid_label(

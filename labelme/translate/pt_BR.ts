@@ -44,8 +44,8 @@
         <translation>Círculo</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Selecione o modo &apos;AI-Points&apos; ou &apos;AI-Box&apos; para habilitar a Assistência de IA</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Selecione o modo &apos;AI-Points&apos;, &apos;AI-Box&apos; ou &apos;AI-Detect&apos; para habilitar a Assistência de IA</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -71,8 +71,12 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>IA cria anotações a partir do prompt de texto</translation>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Detectar todos os objetos que correspondem ao prompt de texto ou a uma caixa de exemplo</translation>
     </message>
     <message>
         <source>e.g., dog,cat,bird</source>
@@ -95,16 +99,8 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Selecione o modo &apos;Polygon&apos;, &apos;Rectangle&apos; ou &apos;AI-Points&apos; para ativar</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Modelo</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>Prompt de Texto de IA</translation>
     </message>
     <message>
         <source>Prompt</source>
@@ -190,6 +186,14 @@
     <message>
         <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
         <translation>Clique em pontos para incluir, ou segure %s e clique para excluir. Segure %s e clique para concluir.</translation>
+    </message>
+    <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>Digite o que detectar no AI-Detect ou clique no primeiro canto de uma caixa ao redor de um exemplo</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>Clique no canto oposto para detectar todos os objetos como este</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -597,6 +601,14 @@
         <translation>Editar</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Detectar todos os objetos que correspondem ao prompt de texto ou a uma caixa de exemplo</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Seguinte</translation>
@@ -767,8 +779,32 @@
         <translation>Você pode usar as configurações padrão por enquanto. Antes de redefinir, será salva uma cópia de segurança do seu arquivo de configuração.</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>Digite o que detectar</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>Detectando na CPU…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Detectando…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s detecta apenas caixas delimitadoras e não pode criar formas &apos;%s&apos;.
+
+Mude o modelo do AI-Detect para &apos;SAM3 (smart)&apos; ou defina o formato de saída como &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>O arquivo de anotações pertence a outra imagem: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s não consegue detectar a partir de uma caixa de exemplo. Escolha SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -979,14 +1015,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>Segmentando…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s detecta apenas caixas delimitadoras e não pode criar formas &apos;%s&apos;.
-
-Mude o modelo de Prompt de Texto de IA para &apos;SAM3 (smart)&apos; ou defina o formato de saída como &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1425,10 @@ Local esperado: {path}</translation>
         <translation>Um nome de sinalizador por linha. Padrões: ^car$ corresponde exatamente a car, car a um prefixo, .* a qualquer rótulo.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>Modelo do AI-Detect</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Detalhe do polígono</translation>
     </message>
@@ -1503,10 +1535,6 @@ Local esperado: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Modelo de prompt de texto</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

@@ -44,8 +44,8 @@
         <translation>Kreis</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Wählen Sie den Modus &apos;AI-Points&apos; oder &apos;AI-Box&apos;, um den KI-Assistenten zu aktivieren</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Wählen Sie den Modus &apos;AI-Points&apos;, &apos;AI-Box&apos; oder &apos;AI-Detect&apos;, um den KI-Assistenten zu aktivieren</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -71,6 +71,14 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Alle Objekte erkennen, die zum Textprompt oder zu einem Beispielrahmen passen</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>z.B. Hund,Katze,Vogel</translation>
     </message>
@@ -89,18 +97,6 @@
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>KI erstellt Annotationen aus dem Textprompt</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>KI-Textprompt</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>&apos;Polygon&apos;-, &apos;Rectangle&apos;- oder &apos;AI-Points&apos;-Modus auswählen zum Aktivieren</translation>
     </message>
     <message>
         <source>Model</source>
@@ -174,6 +170,14 @@
     <message>
         <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
         <translation>Punkte zum Einschließen anklicken oder %s gedrückt halten und klicken, um auszuschließen. %s gedrückt halten und klicken, um abzuschließen.</translation>
+    </message>
+    <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>Geben Sie in AI-Detect ein, was erkannt werden soll, oder klicken Sie auf die erste Ecke eines Rahmens um ein Beispiel</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>Klicken Sie auf die gegenüberliegende Ecke, um alle Objekte wie dieses zu erkennen</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -613,6 +617,14 @@
         <translation>Bearbeiten</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Alle Objekte erkennen, die zum Textprompt oder zu einem Beispielrahmen passen</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Weiter</translation>
@@ -779,8 +791,32 @@
         <translation>Erkennt nur Rahmen. Wechseln Sie zu „Rechteck“, um dieses Modell zu verwenden.</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>Geben Sie ein, was erkannt werden soll</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>Wird auf der CPU erkannt…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Wird erkannt…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s erkennt nur Begrenzungsrahmen und kann keine &apos;%s&apos;-Formen erstellen.
+
+Wechseln Sie das AI-Detect-Modell zu &apos;SAM3 (smart)&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Die Annotationsdatei gehört zu einem anderen Bild: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s kann nicht anhand eines Beispielrahmens erkennen. Wählen Sie SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -983,14 +1019,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>Segmentierung…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s erkennt nur Begrenzungsrahmen und kann keine &apos;%s&apos;-Formen erstellen.
-
-Wechseln Sie das Modell für den KI-Textprompt zu &apos;SAM3 (smart)&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1425,10 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Ein Flag-Name pro Zeile. Muster: ^car$ passt genau auf car, car auf ein Präfix, .* auf jedes Label.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect-Modell</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Polygondetails</translation>
     </message>
@@ -1503,10 +1535,6 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Modell für Textprompt</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

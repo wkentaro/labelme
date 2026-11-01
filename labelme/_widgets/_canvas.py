@@ -21,6 +21,7 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import QRectF
 from PySide6.QtCore import Qt
 
+from .. import _ai_models
 from .. import _automation
 from .. import _shape
 from .. import _utils
@@ -152,6 +153,7 @@ _CreateMode = Literal[
     "linestrip",
     "ai_points_to_shape",
     "ai_box_to_shape",
+    "ai_detect",
 ]
 
 
@@ -175,7 +177,9 @@ _AI_PROGRESS_RADIUS: Final = 12
 _AI_CREATE_MODES: Final[tuple[_CreateMode, ...]] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
+    "ai_detect",
 )
+_AI_BOX_CREATE_MODES: Final[tuple[_CreateMode, ...]] = ("ai_box_to_shape", "ai_detect")
 
 
 _CREATE_MODE_TO_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
@@ -188,6 +192,7 @@ _CREATE_MODE_TO_SHAPE_TYPE: Final[dict[_CreateMode, ShapeType]] = {
     "linestrip": "linestrip",
     "ai_points_to_shape": "points",
     "ai_box_to_shape": "rectangle",
+    "ai_detect": "rectangle",
 }
 
 
@@ -198,6 +203,10 @@ class _CanvasMode(enum.Enum):
 
 class Canvas(QtWidgets.QWidget):
     ensure_ai_model_ready: Callable[[str], bool]
+    # Read on use: the AI-Detect picker can change mid-draft or on download.
+    get_ai_detect_model_name: Callable[[], str]
+    # (score, IoU) thresholds of AI-Detect, also read on use.
+    get_ai_detect_thresholds: Callable[[], tuple[float, float]]
 
     pixmap: QtGui.QPixmap
     _pixmap_rgb: tuple[np.ndarray, str] | None
@@ -224,6 +233,7 @@ class Canvas(QtWidgets.QWidget):
     new_shape = QtCore.Signal()
     inference_produced_no_shapes = QtCore.Signal()
     inference_failed = QtCore.Signal(str)
+    example_box_unsupported = QtCore.Signal()
     degenerate_shape_rejected = QtCore.Signal()
     selection_changed = QtCore.Signal(list)
     shape_double_clicked = QtCore.Signal()
@@ -288,6 +298,7 @@ class Canvas(QtWidgets.QWidget):
                 "linestrip": False,
                 "ai_points_to_shape": False,
                 "ai_box_to_shape": True,
+                "ai_detect": True,
             },
         )
         super().__init__(*args, **kwargs)
@@ -311,6 +322,8 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_original_points = np.empty((0, 2))
         self._scale: float = 1.0
         self._ai_assist_session = _automation.AiAssistSession()
+        self.get_ai_detect_model_name = lambda: ""
+        self.get_ai_detect_thresholds = lambda: (0.0, 0.5)
         self._osam_worker: _automation.OsamWorker | None = None
         self._ai_preview_job: _AiJob | None = None
         self._ai_finalize_job: _AiJob | None = None
@@ -510,6 +523,7 @@ class Canvas(QtWidgets.QWidget):
             "point",
             "ai_points_to_shape",
             "ai_box_to_shape",
+            "ai_detect",
         )
 
         if self._current is None:
@@ -542,6 +556,20 @@ class Canvas(QtWidgets.QWidget):
         self._ai_assist_session.model_name = model_name
         self._clear_ai_existing_shape_highlights()
 
+    def _refuses_example_box(self) -> bool:
+        # Prompt Compatibility: refuse before any download or inference.
+        if self.create_mode != "ai_detect" or _ai_models.accepts_example_boxes(
+            model_name=self.get_ai_detect_model_name()
+        ):
+            return False
+        self.example_box_unsupported.emit()
+        return True
+
+    def _get_mode_ai_model_name(self) -> str:
+        if self.create_mode == "ai_detect":
+            return self.get_ai_detect_model_name()
+        return self._ai_assist_session.model_name
+
     def set_ai_output_format(
         self, output_format: _automation.AiOutputFormat, /
     ) -> None:
@@ -566,6 +594,11 @@ class Canvas(QtWidgets.QWidget):
         self._osam_worker = worker
         worker.finished.connect(self._on_ai_job_finished)
         worker.failed.connect(self._on_ai_job_failed)
+
+    @property
+    def ai_detect_job(self) -> object:
+        # The AI-Detect example-box run in flight; None when there is none.
+        return self._ai_finalize_job if self.create_mode == "ai_detect" else None
 
     @property
     def is_ai_finalizing(self) -> bool:
@@ -617,11 +650,12 @@ class Canvas(QtWidgets.QWidget):
             channel=channel,
             job=job,
             request=_automation.InferenceRequest(
-                model_name=self._ai_assist_session.model_name,
+                model_name=self._get_mode_ai_model_name(),
                 image_id=image_id,
                 image=image,
                 points=job.points,
                 point_labels=job.point_labels,
+                detect_all=self.create_mode == "ai_detect",
             ),
         )
 
@@ -656,7 +690,15 @@ class Canvas(QtWidgets.QWidget):
     def _propose_ai_shapes(
         self, *, job: _AiJob, annotations: list[Any]
     ) -> _automation.AiAssistProposal:
+        thresholds = (
+            self.get_ai_detect_thresholds()
+            if self.create_mode == "ai_detect"
+            # AI-Points and AI-Box have no Score or IoU control.
+            else (0.0, 0.5)
+        )
         proposal = self._ai_assist_session.propose_shapes(
+            score_threshold=thresholds[0],
+            iou_threshold=thresholds[1],
             annotations=annotations,
             prompt_kind=job.prompt_kind,
             points=job.points,
@@ -768,10 +810,6 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self._update_status(extra_messages=None)
 
-    @property
-    def is_editing(self) -> bool:
-        return self.mode is _CanvasMode.EDIT
-
     def set_editing(
         self, *, value: bool = True, create_mode: str | None = None
     ) -> None:
@@ -864,6 +902,16 @@ class Canvas(QtWidgets.QWidget):
                 return self.tr("Click first corner of bbox for AI segmentation")
             else:
                 return self.tr("Click opposite corner to segment object")
+        if self.create_mode == "ai_detect":
+            if is_new:
+                return self.tr(
+                    "Type what to detect in AI-Detect, or click the first corner"
+                    " of a box around one example"
+                )
+            else:
+                return self.tr(
+                    "Click the opposite corner to detect every object like this one"
+                )
         if self.create_mode == "line":
             if is_new:
                 return self.tr("Click start point for line")
@@ -1020,7 +1068,7 @@ class Canvas(QtWidgets.QWidget):
                 points=(current.points[-1], pos),
                 point_labels=(current.point_labels[-1], 0 if is_shift_pressed else 1),
             )
-        elif mode in ("rectangle", "ai_box_to_shape"):
+        elif mode in ("rectangle", *_AI_BOX_CREATE_MODES):
             if is_shift_pressed:
                 pos = _snap_cursor_pos_for_square(
                     pos=pos, opposite_vertex=current.points[0]
@@ -1314,7 +1362,7 @@ class Canvas(QtWidgets.QWidget):
                 assert len(current.points) == 1
                 self._lock_oriented_rectangle_first_edge(current=current)
         else:
-            assert mode in ("rectangle", "circle", "line", "ai_box_to_shape")
+            assert mode in ("rectangle", "circle", "line", *_AI_BOX_CREATE_MODES)
             assert len(current.points) == 1
             self._current = dataclasses.replace(current, points=self._line.points)
             self._finalize()
@@ -1378,8 +1426,9 @@ class Canvas(QtWidgets.QWidget):
     ) -> None:
         mode = self.create_mode
         if mode in _AI_CREATE_MODES:
-            model_name = self.get_ai_model_name()
-            if not self.ensure_ai_model_ready(model_name):
+            if self._refuses_example_box():
+                return
+            if not self.ensure_ai_model_ready(self._get_mode_ai_model_name()):
                 return
 
         self._current = _DraftShape(
@@ -2071,9 +2120,13 @@ class Canvas(QtWidgets.QWidget):
     def _finalize(self) -> None:
         assert self._current is not None
         if self.create_mode in _AI_CREATE_MODES:
+            # The model may have changed since the first corner.
+            if self._refuses_example_box():
+                self._cancel_current_shape()
+                return
             # Input waits until the result lands, so the draft stays as sent.
             draft = self._current
-            if self.create_mode == "ai_box_to_shape":
+            if self.create_mode in _AI_BOX_CREATE_MODES:
                 # point_labels: 2=box corner, 3=opposite box corner (SAM convention)
                 prompt_kind, points, point_labels = (
                     "box",

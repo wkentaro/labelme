@@ -11,7 +11,7 @@ from labelme._widgets._info_button import InfoButton
 
 
 def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
-    widget = AiTextToAnnotationWidget(on_submit=lambda _checked: None)
+    widget = AiTextToAnnotationWidget(on_submit=lambda: None)
     qtbot.addWidget(widget)
     widget.set_model_name(model_name="sam3:latest")
 
@@ -30,7 +30,12 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
         (widget._score_spinbox, widget.tr("Score")),
         (widget._iou_spinbox, widget.tr("IoU")),
         (run_button, widget.tr("Run")),
-        (info_button, widget.tr("AI creates annotations from the text prompt")),
+        (
+            info_button,
+            widget.tr(
+                "Detect every object that matches the text prompt or an example box"
+            ),
+        ),
     ):
         interface = QtGui.QAccessible.queryAccessibleInterface(control)
         assert interface.text(QtGui.QAccessible.Text.Name) == name

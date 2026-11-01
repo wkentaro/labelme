@@ -44,8 +44,8 @@
         <translation>Hình tròn</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Chọn chế độ &apos;AI-Points&apos; hoặc &apos;AI-Box&apos; để bật Hỗ trợ AI</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Chọn chế độ &apos;AI-Points&apos;, &apos;AI-Box&apos; hoặc &apos;AI-Detect&apos; để bật Hỗ trợ AI</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -71,6 +71,14 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Phát hiện mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>ví dụ: chó,mèo,chim</translation>
     </message>
@@ -89,18 +97,6 @@
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI tạo chú thích dựa trên nội dung lời nhắc văn bản</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>Lời nhắc văn bản AI</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Chọn chế độ &apos;Polygon&apos;, &apos;Rectangle&apos; hoặc &apos;AI-Points&apos; để bật</translation>
     </message>
     <message>
         <source>Model</source>
@@ -190,6 +186,14 @@
     <message>
         <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
         <translation>Nhấp các điểm để bao gồm, hoặc giữ %s và nhấp để loại trừ. Giữ %s và nhấp để hoàn tất.</translation>
+    </message>
+    <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>Nhập nội dung cần phát hiện vào AI-Detect, hoặc nhấp vào góc đầu tiên của khung bao quanh một mẫu</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>Nhấp vào góc đối diện để phát hiện mọi đối tượng giống mẫu này</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -597,6 +601,14 @@
         <translation>Chỉnh sửa</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Phát hiện mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Tiếp theo</translation>
@@ -767,8 +779,32 @@
         <translation>Bạn có thể dùng cài đặt mặc định lúc này. Trước khi đặt lại, một bản sao lưu của tệp cấu hình sẽ được lưu.</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>Nhập nội dung cần phát hiện</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>Đang phát hiện trên CPU…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Đang phát hiện…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s chỉ phát hiện khung giới hạn và không thể tạo hình dạng &apos;%s&apos;.
+
+Chuyển mô hình AI-Detect sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Tệp chú thích thuộc về một hình ảnh khác: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s không thể phát hiện từ khung mẫu. Hãy chọn SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -979,14 +1015,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>Đang phân đoạn…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s chỉ phát hiện khung giới hạn và không thể tạo hình dạng &apos;%s&apos;.
-
-Chuyển mô hình lời nhắc văn bản AI sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1425,10 @@ Vị trí dự kiến: {path}</translation>
         <translation>Mỗi dòng một tên cờ. Mẫu: ^car$ khớp chính xác với car, car khớp tiền tố, .* khớp mọi nhãn.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>Mô hình AI-Detect</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Độ chi tiết đa giác</translation>
     </message>
@@ -1503,10 +1535,6 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Mô hình lời nhắc văn bản</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

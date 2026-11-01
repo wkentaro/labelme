@@ -42,6 +42,7 @@ class OsamSession:
         points: NDArray[np.floating] | None = None,
         point_labels: NDArray[np.intp] | None = None,
         texts: list[str] | None = None,
+        detect_all: bool = False,
     ) -> osam.types.GenerateResponse:
         import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
@@ -55,21 +56,19 @@ class OsamSession:
 
         prompt: osam.types.Prompt
         if points is not None and point_labels is not None:
-            prompt = osam.types.Prompt(
-                points=points,
-                point_labels=point_labels,
-            )
+            prompt = osam.types.Prompt(points=points, point_labels=point_labels)
         elif texts is not None:
-            prompt = osam.types.Prompt(
-                texts=texts,
-                iou_threshold=1.0,
-                score_threshold=0.01,
-                max_annotations=1000,
-            )
+            prompt = osam.types.Prompt(texts=texts)
         else:
             raise ValueError(
                 "Either points and point_labels, or texts must be provided."
             )
+
+        if detect_all or texts is not None:
+            # Keep every candidate; the user's Score and IoU filter later.
+            prompt.iou_threshold = 1.0
+            prompt.score_threshold = 0.01
+            prompt.max_annotations = 1000
 
         model: osam.types.Model = self._get_or_load_model()
         t_start = time.perf_counter()

@@ -3016,3 +3016,85 @@ def test_ai_points_preview_waits_while_finalizing(*, canvas: Canvas) -> None:
     canvas._refresh_ai_points_preview()
 
     assert len(_worker(canvas).requests) == 1
+
+
+@pytest.mark.gui
+def test_ai_detect_box_rejects_text_only_model_before_loading(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    loaded: list[str] = []
+    canvas.ensure_ai_model_ready = lambda name: loaded.append(name) or True
+    canvas.get_ai_detect_model_name = lambda: "yoloworld:latest"
+    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.show()
+
+    with qtbot.waitSignal(canvas.example_box_unsupported):
+        qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+
+    assert loaded == []
+    assert canvas._current is None
+    assert _worker(canvas).requests == []
+
+
+@pytest.mark.gui
+def test_ai_detect_box_uses_the_ai_detect_model(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    loaded: list[str] = []
+    canvas.ensure_ai_model_ready = lambda name: loaded.append(name) or True
+    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
+    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.show()
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
+
+    assert loaded == ["sam3:latest"]
+    qtbot.waitUntil(lambda: bool(_worker(canvas).requests))
+    assert {r.model_name for r in _worker(canvas).requests} == {"sam3:latest"}
+    point_labels = _worker(canvas).requests[-1].point_labels
+    assert point_labels is not None
+    assert point_labels.tolist() == [2, 3]
+
+
+@pytest.mark.gui
+def test_ai_detect_box_rechecks_the_model_at_the_second_corner(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    model_name = "sam3:latest"
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.get_ai_detect_model_name = lambda: model_name
+    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.show()
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+
+    model_name = "yoloworld:latest"
+    with qtbot.waitSignal(canvas.example_box_unsupported):
+        qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
+
+    assert canvas._current is None
+    assert _worker(canvas).requests == []
+
+
+@pytest.mark.gui
+def test_ai_detect_box_applies_the_score_threshold(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
+    canvas.get_ai_detect_thresholds = lambda: (0.5, 0.5)
+    canvas.set_ai_output_format("rectangle")
+    _worker(canvas).annotations = [
+        osam.types.Annotation(
+            bounding_box=osam.types.BoundingBox(xmin=x, ymin=5, xmax=x + 10, ymax=20),
+            score=score,
+        )
+        for x, score in [(5, 0.9), (40, 0.1)]
+    ]
+    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.show()
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(15, 20))
+
+    qtbot.waitUntil(lambda: len(canvas.shapes) == 1)

@@ -51,11 +51,14 @@ class AiAssistSession:
         point_labels: NDArray[np.intp],
         existing_shapes: list[Shape],
         image_size: tuple[int, int] | None = None,
+        score_threshold: float,
+        iou_threshold: float,
     ) -> AiAssistProposal:
-        # iou_threshold is hardcoded because the AI Assist flow has no
-        # user-facing IoU control (unlike the AI Text Prompt flow); 0.5 matches
-        # the AI Text Prompt widget default.
-        detections = _detections_from_annotations(annotations)
+        detections = [
+            detection
+            for detection in _detections_from_annotations(annotations)
+            if detection.score >= score_threshold
+        ]
         if prompt_kind == "points" and detections:
             detections = [
                 max(
@@ -72,7 +75,7 @@ class AiAssistSession:
             ]
         detections = suppress_detections_greedy(
             detections=detections,
-            iou_threshold=0.5,
+            iou_threshold=iou_threshold,
         )
         matches = match_detections_to_existing_shapes(
             detections=detections,

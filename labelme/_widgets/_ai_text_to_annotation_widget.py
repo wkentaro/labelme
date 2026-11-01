@@ -29,13 +29,13 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     def __init__(
         self,
         *,
-        on_submit: Callable[[bool], None],
+        on_submit: Callable[[], None],
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent=parent)
         self._init_ui(on_submit=on_submit)
 
-    def _init_ui(self, *, on_submit: Callable[[bool], None]) -> None:
+    def _init_ui(self, *, on_submit: Callable[[], None]) -> None:
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(2)
@@ -43,17 +43,18 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
         header_layout = QtWidgets.QHBoxLayout()
         header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI Text Prompt"))
+        label = QtWidgets.QLabel(self.tr("AI-Detect"))
         header_layout.addWidget(label)
         info_button = InfoButton(
-            tooltip=self.tr("AI creates annotations from the text prompt")
+            tooltip=self.tr(
+                "Detect every object that matches the text prompt or an example box"
+            )
         )
         header_layout.addWidget(info_button)
         header_layout.addStretch()
         layout.addLayout(header_layout)
 
         self._body = body = QtWidgets.QWidget()
-        body.installEventFilter(self)
         body_layout = QtWidgets.QVBoxLayout()
         body_layout.setContentsMargins(0, 0, 0, 0)
         body_layout.setSpacing(0)
@@ -67,6 +68,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         text_input.setPlaceholderText(self.tr("e.g., dog,cat,bird"))
         text_input.setAccessibleName(self.tr("Prompt"))
         text_input.setFixedHeight(24)
+        text_input.returnPressed.connect(on_submit)
         grid.addWidget(text_input, 0, 0)
         self._text_input = text_input
 
@@ -74,7 +76,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         run_button.setText(self.tr("Run"))
         run_button.setFixedHeight(24)
         run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
-        run_button.clicked.connect(on_submit)
+        run_button.clicked.connect(lambda: on_submit())
         grid.addWidget(run_button, 0, 1)
 
         settings_layout = QtWidgets.QHBoxLayout()
@@ -156,6 +158,9 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     def get_text_prompt(self) -> str:
         return self._text_input.text()
 
+    def focus_text_prompt(self) -> None:
+        self._text_input.setFocus()
+
     def get_model_name(self) -> str:
         return self._model_combo.currentData() or ""
 
@@ -180,18 +185,3 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     def get_iou_threshold(self) -> float:
         return self._iou_spinbox.value()
-
-    def setEnabled(self, a0: bool, /) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
-        self._body.setEnabled(a0)
-
-    def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent, /) -> bool:
-        if a0 == self._body and not self._body.isEnabled():
-            if a1.type() == QtCore.QEvent.Type.Enter:
-                QtWidgets.QToolTip.showText(
-                    QtGui.QCursor.pos(),
-                    self.tr(
-                        "Select 'Polygon', 'Rectangle', or 'AI-Points' mode to enable"
-                    ),
-                    self._body,
-                )
-        return super().eventFilter(a0, a1)

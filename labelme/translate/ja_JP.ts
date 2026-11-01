@@ -44,8 +44,8 @@
         <translation>円</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos; または &apos;AI-Box&apos; モードを選択すると AI アシストが有効になります</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>&apos;AI-Points&apos;、&apos;AI-Box&apos;、または &apos;AI-Detect&apos; モードを選択すると AI アシストが有効になります</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -71,6 +71,14 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>テキストプロンプトや例のボックスに一致する物体をすべて検出</translation>
+    </message>
+    <message>
         <source>e.g., dog,cat,bird</source>
         <translation>例: dog,cat,bird</translation>
     </message>
@@ -89,18 +97,6 @@
     <message>
         <source>IoU</source>
         <translation>IoU</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AIがテキストプロンプトからアノテーションを作成</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>AI テキストプロンプト</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>「Polygon」「Rectangle」または「AI-Points」モードで有効</translation>
     </message>
     <message>
         <source>Model</source>
@@ -190,6 +186,14 @@
     <message>
         <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
         <translation>点をクリックで含め、%s を押しながらクリックで除外します。%s を押しながらクリックで完了します。</translation>
+    </message>
+    <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>AI-Detect に検出したいものを入力するか、例の周りを囲むボックスの最初の角をクリック</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>対角をクリックすると、これと同じような物体をすべて検出します</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -605,6 +609,14 @@
         <translation>編集</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>テキストプロンプトや例のボックスに一致する物体をすべて検出</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>次へ</translation>
@@ -777,8 +789,32 @@
         <translation>今回は初期設定で続行できます。リセットする場合は、先に設定ファイルのバックアップを保存します。</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>検出したいものを入力してください</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>CPU で検出中…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>検出中…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; の図形を作成できません。
+
+AI-Detect のモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>このアノテーションファイルは別の画像のものです: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s は例のボックスから検出できません。SAM3 (smart) を選択してください。</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -989,14 +1025,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>セグメンテーション中…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; の図形を作成できません。
-
-AI テキストプロンプトのモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1407,6 +1435,10 @@ Expected location: {path}</source>
         <translation>フラグ名は1行に1つ入力します。パターン: ^car$ は car と完全一致、car は前方一致、.* はすべてのラベルに一致します。</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect のモデル</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>ポリゴンの詳細度</translation>
     </message>
@@ -1513,10 +1545,6 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>テキストプロンプトのモデル</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
