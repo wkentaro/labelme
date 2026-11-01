@@ -767,6 +767,14 @@
         <translation>Bạn có thể dùng cài đặt mặc định lúc này. Trước khi đặt lại, một bản sao lưu của tệp cấu hình sẽ được lưu.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>Đang chạy AI trên CPU…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>Đang chạy AI…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Tệp chú thích thuộc về một hình ảnh khác: %s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>trùng lặp tránh trùng lặp loại bỏ trùng lặp</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Thiết bị tính toán</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Tự động dùng GPU và chuyển sang CPU nếu GPU gặp lỗi.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda bộ xử lý chậm lỗi</translation>
     </message>
     <message>
         <source>Predefined labels</source>

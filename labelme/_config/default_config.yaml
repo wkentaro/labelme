@@ -41,6 +41,7 @@ ai:
   default: Sam3
   text_model: sam3:latest
   suppress_existing_shape_matches: false
+  device: auto
 # main
 flag_dock:
   show: true

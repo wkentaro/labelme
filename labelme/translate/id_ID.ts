@@ -715,6 +715,14 @@
         <translation>Anda dapat menggunakan pengaturan bawaan untuk saat ini. Sebelum reset, salinan cadangan file konfigurasi Anda akan disimpan.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>Menjalankan AI di CPU…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>Menjalankan AI…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Berkas anotasi milik gambar lain: %s</translation>
     </message>
@@ -1435,6 +1443,22 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>duplikat hindari duplikat hapus duplikat</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Perangkat komputasi</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Otomatis memakai GPU dan beralih ke CPU jika GPU gagal.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda prosesor lambat crash</translation>
     </message>
     <message>
         <source>Predefined labels</source>

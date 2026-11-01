@@ -767,6 +767,14 @@
         <translation>Puedes usar los ajustes predeterminados por ahora. Antes de restablecerlos, se guardará una copia de seguridad de tu archivo de configuración.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>Ejecutando IA en la CPU…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>Ejecutando IA…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>El archivo de anotaciones pertenece a otra imagen: %s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Ubicación esperada: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>duplicado duplicados evitar duplicados eliminar duplicados</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Dispositivo de cálculo</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Automático usa la GPU y cambia a la CPU si la GPU falla.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda procesador lento fallo</translation>
     </message>
     <message>
         <source>Predefined labels</source>

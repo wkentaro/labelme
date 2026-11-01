@@ -767,6 +767,14 @@
         <translation>Пока можно использовать настройки по умолчанию. Перед сбросом будет сохранена резервная копия вашего файла конфигурации.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>ИИ работает на ЦП…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>ИИ работает…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Файл аннотаций относится к другому изображению: %s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>дубликат дубликаты избегать дубликатов удаление дубликатов</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Вычислительное устройство</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>ЦП</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>«Автоматически» использует ГП и переключается на ЦП при сбое ГП.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda гп цп процессор медленно сбой</translation>
     </message>
     <message>
         <source>Predefined labels</source>

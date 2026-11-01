@@ -763,6 +763,14 @@
         <translation>Збереження…</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>ШІ працює на ЦП…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>ШІ працює…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Вивід маски недоступний</translation>
     </message>
@@ -1383,6 +1391,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>дублікат дублікати уникнення дублікатів видалення дублікатів</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Обчислювальний пристрій</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>ЦП</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>«Автоматично» використовує ГП і перемикається на ЦП у разі збою ГП.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda гп цп процесор повільно збій</translation>
     </message>
     <message>
         <source>Predefined labels</source>

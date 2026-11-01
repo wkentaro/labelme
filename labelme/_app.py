@@ -125,6 +125,7 @@ class _StatusBarWidgets(NamedTuple):
     stats: StatusStats
     save: QtWidgets.QLabel
     retry: QtWidgets.QToolButton
+    ai: QtWidgets.QLabel
 
 
 class _CanvasWidgets(NamedTuple):
@@ -378,6 +379,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker = _automation.OsamWorker(parent=self)
         self._osam_worker.finished.connect(self._on_ai_text_finished)
         self._osam_worker.failed.connect(self._on_ai_text_failed)
+        self._osam_worker.activity_changed.connect(self._on_ai_activity_changed)
+        self._osam_worker.set_device(self._config["ai"]["device"])
         self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
         self._ai_text_job: _AiTextJob | None = None
         self._model_manager.changed.connect(self._refresh_model_availability)
@@ -1306,10 +1309,14 @@ class MainWindow(QtWidgets.QMainWindow):
         retry.setText(self.tr("Retry"))
         retry.clicked.connect(self._retry_save)
         retry.hide()
+        ai = QtWidgets.QLabel()
+        self.statusBar().addPermanentWidget(ai)
         self.statusBar().addPermanentWidget(save)
         self.statusBar().addPermanentWidget(retry)
         self.statusBar().show()
-        return _StatusBarWidgets(message=message, stats=stats, save=save, retry=retry)
+        return _StatusBarWidgets(
+            message=message, stats=stats, save=save, retry=retry, ai=ai
+        )
 
     def _setup_canvas(self) -> _CanvasWidgets:
         zoom_widget = ZoomWidget()
@@ -1713,6 +1720,17 @@ class MainWindow(QtWidgets.QMainWindow):
         if job.pixmap_key != self._canvas_widgets.canvas.pixmap.cacheKey():
             return None
         return job
+
+    def _on_ai_activity_changed(self) -> None:
+        # Inference no longer blocks the window, so this is the only sign it runs.
+        worker = self._osam_worker
+        label = self._status_bar.ai
+        if not worker.busy:
+            label.clear()
+        elif worker.device == "cpu":
+            label.setText(self.tr("Running AI on CPU…"))
+        else:
+            label.setText(self.tr("Running AI…"))
 
     def _on_ai_text_failed(self, job: object, message: str, /) -> None:
         if self._take_ai_text_job(job) is None:
@@ -3347,6 +3365,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self._ai_text.set_model_name(
                 model_name=self._config["ai"]["text_model"] or ""
             )
+        elif key_path == ("ai", "device"):
+            self._osam_worker.set_device(self._config["ai"]["device"])
         elif key_path == ("ai", "suppress_existing_shape_matches"):
             self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
                 enabled=self._config["ai"]["suppress_existing_shape_matches"]

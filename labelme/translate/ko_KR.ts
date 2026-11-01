@@ -767,6 +767,14 @@
         <translation>지금은 기본 설정을 사용할 수 있습니다. 초기화하기 전에 설정 파일의 백업을 저장합니다.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>CPU에서 AI 실행 중…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>AI 실행 중…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>이 주석 파일은 다른 이미지의 파일입니다: %s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>중복 중복 방지 중복 제거</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>연산 장치</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>자동은 GPU를 사용하며 GPU에 오류가 생기면 CPU로 전환합니다.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>GPU CUDA 프로세서 느림 충돌</translation>
     </message>
     <message>
         <source>Predefined labels</source>

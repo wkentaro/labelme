@@ -767,6 +767,14 @@
         <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>در حال اجرای هوش مصنوعی روی CPU…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>در حال اجرای هوش مصنوعی…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>فایل حاشیه‌نویسی متعلق به تصویر دیگری است: %s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>تکراری جلوگیری از تکرار حذف تکراری‌ها</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>دستگاه پردازش</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>حالت خودکار از GPU استفاده می‌کند و اگر GPU از کار بیفتد به CPU می‌رود.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda پردازنده کند خرابی</translation>
     </message>
     <message>
         <source>Predefined labels</source>

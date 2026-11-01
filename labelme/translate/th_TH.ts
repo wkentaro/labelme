@@ -768,6 +768,14 @@
         <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>กำลังเรียกใช้ AI บน CPU…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>กำลังเรียกใช้ AI…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>ไฟล์คำอธิบายประกอบนี้เป็นของรูปอื่น: %s</translation>
     </message>
@@ -1384,6 +1392,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>ซ้ำ รายการซ้ำ หลีกเลี่ยงรายการซ้ำ ลบรายการซ้ำ</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>อุปกรณ์ประมวลผล</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>อัตโนมัติจะใช้ GPU และเปลี่ยนไปใช้ CPU หาก GPU ล้มเหลว</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda โปรเซสเซอร์ ช้า ขัดข้อง</translation>
     </message>
     <message>
         <source>Predefined labels</source>
