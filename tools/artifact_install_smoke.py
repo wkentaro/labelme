@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import os
+import sys
 import tempfile
+import time
 from pathlib import Path
+from typing import Final
 
+import numpy as np
 import onnxruntime  # noqa: F401  # load DLLs before PySide6 on Windows
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -13,6 +17,8 @@ import labelme
 from labelme import __appname__
 from labelme import _locale
 from labelme._app import MainWindow
+from labelme._automation import InferenceRequest
+from labelme._automation import OsamWorker
 
 
 def _check_source_isolation(*, source_root: Path, package_path: Path) -> None:
@@ -66,6 +72,45 @@ def _check_application_starts() -> None:
         app.quit()
 
 
+def _check_ai_inference() -> None:
+    # One real inference in the worker process: the spawned child must import
+    # the installed package, and onnxruntime must load beside Qt on the
+    # device osam picks. The smallest model (~40MB) keeps the download short.
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    worker = OsamWorker()
+    results: list[tuple[str, object]] = []
+    worker.finished.connect(
+        lambda _, annotations: results.append(("done", annotations))
+    )
+    worker.failed.connect(lambda _, message: results.append(("failed", message)))
+    image = np.zeros((64, 64, 3), dtype=np.uint8)
+    image[16:48, 16:48] = 255
+    worker.submit(
+        channel="smoke",
+        job="smoke",
+        request=InferenceRequest(
+            model_name="efficientsam:10m",
+            image_id="smoke",
+            image=image,
+            points=np.array([[32.0, 32.0]], dtype=np.float32),
+            point_labels=np.array([1]),
+        ),
+    )
+    TIMEOUT_S: Final = 600
+    deadline = time.monotonic() + TIMEOUT_S
+    try:
+        while not results and time.monotonic() < deadline:
+            app.processEvents()
+            time.sleep(0.05)
+    finally:
+        worker.shutdown()
+    if not results:
+        raise RuntimeError(f"AI inference gave no result in {TIMEOUT_S} s")
+    kind, payload = results[0]
+    if kind != "done" or not payload:
+        raise RuntimeError(f"AI inference {kind}: {payload!r}")
+
+
 def main() -> None:
     source_root = Path(__file__).resolve().parent.parent
     package_path = Path(labelme.__file__).resolve()
@@ -89,6 +134,8 @@ def main() -> None:
             home_dir,
         )
         _check_application_starts()
+        if "--inference" in sys.argv[1:]:
+            _check_ai_inference()
 
 
 if __name__ == "__main__":
