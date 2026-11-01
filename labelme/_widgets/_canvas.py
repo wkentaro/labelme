@@ -2243,7 +2243,9 @@ class Canvas(QtWidgets.QWidget):
 
     def undo_last_point(self) -> None:
         current = self._current
-        if current is None or current.closed:
+        # The draft stays as sent while its AI Shape is pending; the Undo Last
+        # Point action reaches here without passing the input guards.
+        if current is None or current.closed or self.is_ai_finalizing:
             return
         if (
             self.create_mode == "oriented_rectangle"

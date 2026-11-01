@@ -2903,6 +2903,18 @@ def test_ai_finalize_cancels_its_draft_when_the_pixmap_changes(
 
 
 @pytest.mark.gui
+def test_ai_finalize_ignores_undo_last_point(*, canvas: Canvas) -> None:
+    # The Undo Last Point action calls this directly, past the input guards.
+    draft = _start_ai_box_finalize(canvas)
+
+    canvas.undo_last_point()
+
+    assert canvas._current is draft
+    _worker(canvas).resume()
+    assert [shape.shape_type for shape in canvas.shapes] == ["rectangle"]
+
+
+@pytest.mark.gui
 def test_ai_preview_drops_a_result_for_old_inputs(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
