@@ -48,7 +48,7 @@ _Avoid_: mask-to-points conversion, contour conversion
 
 **AI Assist**:
 Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A SAM3 box prompt is a Sweep. Candidates become new Shapes unless Existing Shape Suppression is enabled.
-_Avoid_: AI annotation (too vague — covers AI Text Prompt too), auto-annotation, automation.
+_Avoid_: AI annotation (too vague — covers AI-Detect too), auto-annotation, automation.
 
 **Sweep**:
 An AI Assist box prompt whose model (SAM3) detects every matching object in and around the boxed region, proposing many candidate Shapes from one user action. Each candidate becomes a new Shape unless Existing Shape Suppression is enabled.
@@ -58,9 +58,9 @@ _Avoid_: propagation (model-internal term), batch detection.
 An optional AI Assist Setting for both point prompts and Sweeps. A candidate that matches an existing Shape highlights that Shape instead of creating a new Shape; unmatched candidates remain new Shapes. The Setting is disabled by default.
 _Avoid_: duplicate suppression, overlap suppression.
 
-**AI Text Prompt**:
-Bulk, text-driven Shape proposal: the user types a class name and an open-vocabulary detector (YOLO-world, SAM3) returns Shapes for every matching instance in the Image. One user action produces many candidate Shapes.
-_Avoid_: AI annotation (too vague), text-to-annotation (verbose), auto-detect.
+**AI-Detect**:
+Bulk Shape proposal for every matching instance in the Image. The user types a class name, or draws a box around one example, and an open-vocabulary detector returns many candidate Shapes from one user action. YOLO-World answers only text; SAM3 answers text and example boxes. Its candidates use the same Output as AI Assist.
+_Avoid_: AI Text Prompt (the prompt is not only text), text-to-annotation (verbose), auto-detect (it always needs a prompt).
 
 **Downloaded Model**:
 A supported model whose required files are present in the local cache; every download is hash-checked before it lands there. It can be selected without a download; this does not guarantee hardware compatibility. Downloading from the AI Models window never selects a model. Choosing a model that is not downloaded in a toolbar model picker changes the Setting at that moment and queues its download; the choice takes effect when the files arrive. Completing a download never changes a selection or runs inference.
@@ -71,7 +71,7 @@ The ordered list of models the user has explicitly requested from the AI Models 
 _Avoid_: background service (downloads do not outlive Labelme).
 
 **Model Session**:
-A loaded ML model that backs AI Assist or AI Text Prompt. One Model Session serves many proposals across the lifetime of the app. The legacy code directory `_automation/` hosts this layer.
+A loaded ML model that backs AI Assist or AI-Detect. One Model Session serves many proposals across the lifetime of the app. The legacy code directory `_automation/` hosts this layer.
 _Avoid_: automation (legacy code-only term), backend, engine.
 
 **Prompt Compatibility**:
@@ -158,9 +158,9 @@ A new contributor (N) asks a maintainer (M) about a bug report.
 >
 > **M:** Check the file first. If it parses, the Annotation is fine; the UI just isn't picking it up. If it doesn't parse, the Annotation File itself is the problem.
 >
-> **N:** They also said their AI shapes disappear. They use AI Text Prompt — type "person", get a bunch of Shapes.
+> **N:** They also said their AI shapes disappear. They use AI-Detect — type "person", get a bunch of Shapes.
 >
-> **M:** Right. Those are still ordinary Shapes once the Model Session returns them; AI Text Prompt only produces them. After that they're stored in the Annotation File like any other Shape.
+> **M:** Right. Those are still ordinary Shapes once the Model Session returns them; AI-Detect only produces them. After that they're stored in the Annotation File like any other Shape.
 >
 > **N:** They mentioned one Shape is a Mask Shape — does that change anything?
 >
