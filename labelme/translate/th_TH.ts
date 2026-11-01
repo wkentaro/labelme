@@ -768,14 +768,6 @@
         <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>กำลังเรียกใช้ AI บน CPU…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>กำลังเรียกใช้ AI…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>ไฟล์คำอธิบายประกอบนี้เป็นของรูปอื่น: %s</translation>
     </message>
@@ -974,12 +966,36 @@
         <translation>สำรองข้อมูลและรีเซ็ต</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>กำลังตรวจหา &apos;{query}&apos;…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>กำลังตรวจหา &apos;{query}&apos; บน CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>กำลังแบ่งส่วนบน CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>กำลังแบ่งส่วน…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างรูปร่าง &apos;%s&apos; ได้
 
 เปลี่ยนโมเดลพรอมต์ข้อความ AI เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>พบ &apos;{query}&apos; ใหม่ {count} รายการ</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>ไม่พบ &apos;{query}&apos; ใหม่</translation>
     </message>
     <message>
         <source>Invalid Label</source>

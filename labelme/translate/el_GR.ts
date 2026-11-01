@@ -763,14 +763,6 @@
         <translation>Αποθήκευση…</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>Εκτέλεση AI στη CPU…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>Εκτέλεση AI…</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
     </message>
@@ -983,6 +975,30 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
     <message>
         <source>Configuration backup saved to %s</source>
         <translation>Το αντίγραφο ασφαλείας των ρυθμίσεων αποθηκεύτηκε στο %s</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Εντοπισμός «{query}»…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Εντοπισμός «{query}» στη CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Τμηματοποίηση στη CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Τμηματοποίηση…</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Βρέθηκαν {count} νέα «{query}»</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Δεν βρέθηκαν νέα «{query}»</translation>
     </message>
     <message>
         <source>Invalid Label</source>

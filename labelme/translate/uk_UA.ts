@@ -763,14 +763,6 @@
         <translation>Збереження…</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>ШІ працює на ЦП…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>ШІ працює…</translation>
-    </message>
-    <message>
         <source>Mask Output Unavailable</source>
         <translation>Вивід маски недоступний</translation>
     </message>
@@ -983,6 +975,30 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
     <message>
         <source>Configuration backup saved to %s</source>
         <translation>Резервну копію конфігурації збережено в %s</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Пошук «{query}»…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Пошук «{query}» на ЦП…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Сегментація на ЦП…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Сегментація…</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Знайдено нових «{query}»: {count}</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Нових «{query}» не знайдено</translation>
     </message>
     <message>
         <source>Invalid Label</source>

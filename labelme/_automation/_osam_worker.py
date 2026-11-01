@@ -152,7 +152,7 @@ class OsamWorker(QtCore.QObject):
 
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
-    activity_changed = QtCore.Signal()  # busy or device changed
+    activity_changed = QtCore.Signal()  # job or device changed
 
     def __init__(
         self,
@@ -188,8 +188,9 @@ class OsamWorker(QtCore.QObject):
         self._start_next()
 
     @property
-    def busy(self) -> bool:
-        return self._active is not None
+    def job(self) -> object:
+        # The running job; None while idle.
+        return None if self._active is None else self._active.job
 
     @property
     def device(self) -> str | None:

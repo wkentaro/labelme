@@ -775,14 +775,6 @@
         <translation>Egyelőre használhatja az alapértelmezett beállításokat. A visszaállítás előtt biztonsági másolat készül a konfigurációs fájlról.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>MI futtatása CPU-n…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>MI futtatása…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Az annotációs fájl egy másik képhez tartozik: %s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>Biztonsági mentés és visszaállítás</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>„{query}” keresése…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>„{query}” keresése a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Szegmentálás a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Szegmentálás…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú alakzatokat létrehozni.
 
 Váltson az MI-szöveges utasítás modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} új „{query}” található</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Nincs új „{query}”</translation>
     </message>
     <message>
         <source>Invalid Label</source>

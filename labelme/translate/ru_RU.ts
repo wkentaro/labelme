@@ -767,14 +767,6 @@
         <translation>Пока можно использовать настройки по умолчанию. Перед сбросом будет сохранена резервная копия вашего файла конфигурации.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>ИИ работает на ЦП…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>ИИ работает…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Файл аннотаций относится к другому изображению: %s</translation>
     </message>
@@ -965,12 +957,36 @@
         <translation>Нарисуйте ограничивающую рамку для сегментации объекта.</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Поиск «{query}»…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Поиск «{query}» на ЦП…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Сегментация на ЦП…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Сегментация…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s обнаруживает только ограничивающие рамки и не может создавать фигуры &apos;%s&apos;.
 
 Переключите модель текстового запроса ИИ на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Найдено новых «{query}»: {count}</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Новых «{query}» не найдено</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

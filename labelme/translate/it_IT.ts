@@ -767,14 +767,6 @@
         <translation>Per ora puoi usare le impostazioni predefinite. Prima del ripristino verrà salvata una copia di backup del file di configurazione.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>Esecuzione dell’IA sulla CPU…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>Esecuzione dell’IA…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Il file di annotazioni appartiene a un’altra immagine: %s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>Esegui backup e ripristina</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Rilevamento di «{query}»…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Rilevamento di «{query}» sulla CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Segmentazione sulla CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Segmentazione…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s rileva solo i riquadri di delimitazione e non può creare forme &apos;%s&apos;.
 
 Cambia il modello di prompt testuale IA in &apos;SAM3 (smart)&apos; oppure imposta il formato di output su &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Trovati {count} nuovi «{query}»</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Nessun nuovo «{query}» trovato</translation>
     </message>
     <message>
         <source>Invalid Label</source>

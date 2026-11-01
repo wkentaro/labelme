@@ -767,14 +767,6 @@
         <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>Yapay zekâ CPU&apos;da çalışıyor…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>Yapay zekâ çalışıyor…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Açıklama dosyası başka bir görüntüye ait: %s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>Yedekle ve sıfırla</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>&apos;{query}&apos; algılanıyor…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>&apos;{query}&apos; CPU&apos;da algılanıyor…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>CPU&apos;da bölütleniyor…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Bölütleniyor…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; şekilleri oluşturamaz.
 
 AI Metin İstemi modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} yeni &apos;{query}&apos; bulundu</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Yeni &apos;{query}&apos; bulunamadı</translation>
     </message>
     <message>
         <source>Invalid Label</source>

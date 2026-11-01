@@ -290,7 +290,9 @@ def test_reports_activity_and_the_device_it_runs_on(
     *, worker: OsamWorker, qtbot: QtBot
 ) -> None:
     seen: list[tuple[bool, str | None]] = []
-    worker.activity_changed.connect(lambda: seen.append((worker.busy, worker.device)))
+    worker.activity_changed.connect(
+        lambda: seen.append((worker.job is not None, worker.device))
+    )
     worker.submit(channel="x", job="job", request=_request(model_name="gpu-ok"))
     _wait_for(qtbot, worker, count=1)
     worker.set_device("cpu")

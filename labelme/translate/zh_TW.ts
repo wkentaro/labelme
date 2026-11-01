@@ -767,14 +767,6 @@
         <translation>你可以暫時使用預設值。重設前會先儲存設定檔的備份。</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>正在 CPU 上執行 AI…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>正在執行 AI…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>此標註檔案屬於另一張影像：%s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>備份並重設</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>正在偵測「{query}」…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>正在 CPU 上偵測「{query}」…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>正在 CPU 上分割…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>正在分割…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 形狀。
 
 請將 AI 文字提示模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>找到 {count} 個新的「{query}」</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>找不到新的「{query}」</translation>
     </message>
     <message>
         <source>Invalid Label</source>

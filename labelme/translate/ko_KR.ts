@@ -767,14 +767,6 @@
         <translation>지금은 기본 설정을 사용할 수 있습니다. 초기화하기 전에 설정 파일의 백업을 저장합니다.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>CPU에서 AI 실행 중…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>AI 실행 중…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>이 주석 파일은 다른 이미지의 파일입니다: %s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>백업 후 초기화</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>&apos;{query}&apos; 감지 중…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>CPU에서 &apos;{query}&apos; 감지 중…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>CPU에서 분할 중…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>분할 중…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 도형을 생성할 수 없습니다.
 
 AI 텍스트 프롬프트 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>새 &apos;{query}&apos; {count}개를 찾았습니다</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>새 &apos;{query}&apos;을(를) 찾지 못했습니다</translation>
     </message>
     <message>
         <source>Invalid Label</source>

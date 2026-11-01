@@ -169,6 +169,9 @@ class _AiJob:
     preview_key: object = None
 
 
+_AI_PROGRESS_RADIUS: Final = 12
+
+
 _AI_CREATE_MODES: Final[tuple[_CreateMode, ...]] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
@@ -311,6 +314,10 @@ class Canvas(QtWidgets.QWidget):
         self._osam_worker: _automation.OsamWorker | None = None
         self._ai_preview_job: _AiJob | None = None
         self._ai_finalize_job: _AiJob | None = None
+        self._ai_finalize_clock = QtCore.QElapsedTimer()
+        self._ai_progress_timer = QtCore.QTimer(self)
+        self._ai_progress_timer.setInterval(16)
+        self._ai_progress_timer.timeout.connect(self._advance_ai_progress)
         self.ensure_ai_model_ready = lambda _model_name: False
         self._ai_inference_failed = False
         self._ai_suppress_existing_shape_matches = False
@@ -318,6 +325,7 @@ class Canvas(QtWidgets.QWidget):
         self._snapping = True
         self._hovered_shape_is_selected: bool = False
         self._painter = QtGui.QPainter()
+        self._dirty_rect = QtCore.QRect()
         self._pan_anchor = None
         self._color_resolver: Callable[[str], tuple[int, int, int]] | None = None
         self._point_size: int = 8
@@ -603,6 +611,8 @@ class Canvas(QtWidgets.QWidget):
             self._ai_preview_job = job
         else:
             self._ai_finalize_job = job
+            self._ai_finalize_clock.start()
+            self._ai_progress_timer.start()
         self._osam_worker.submit(
             channel=channel,
             job=job,
@@ -614,6 +624,34 @@ class Canvas(QtWidgets.QWidget):
                 point_labels=job.point_labels,
             ),
         )
+
+    def _ai_progress_center(self) -> QPointF | None:
+        # Where the ring for a finalize still running past the delay sits, in
+        # widget pixels, at the last point placed: a box's release corner.
+        # A prompt that answers sooner shows no ring, so fast runs never
+        # flicker one on and off.
+        DELAY_MS: Final = 400
+        if not self.is_ai_finalizing or self._ai_finalize_clock.elapsed() < DELAY_MS:
+            return None
+        assert self._current is not None
+        return self.transform_image_point_to_widget(self._current.points[-1])
+
+    def _ai_progress_rect(self) -> QtCore.QRect | None:
+        if (center := self._ai_progress_center()) is None:
+            return None
+        margin = _AI_PROGRESS_RADIUS + 4
+        return (
+            QRectF(center, center)
+            .adjusted(-margin, -margin, margin, margin)
+            .toAlignedRect()
+        )
+
+    def _advance_ai_progress(self) -> None:
+        if not self.is_ai_finalizing:
+            self._ai_progress_timer.stop()
+            return
+        if (rect := self._ai_progress_rect()) is not None:
+            self.update(rect)
 
     def _propose_ai_shapes(
         self, *, job: _AiJob, annotations: list[Any]
@@ -1748,6 +1786,9 @@ class Canvas(QtWidgets.QWidget):
         if self.pixmap.isNull():
             super().paintEvent(a0)
             return
+        # The ring repaints only its own rect each frame; culling shapes
+        # outside the dirty rect keeps that cheap on a busy image.
+        self._dirty_rect = a0.rect()
         self._render_canvas()
         if self._current is not None:
             self._clear_highlight_state()
@@ -1780,7 +1821,31 @@ class Canvas(QtWidgets.QWidget):
             self._draw_active_shape_layer,
             self._draw_preview_overlay_layer,
             self._draw_ai_existing_match_layer,
+            self._draw_ai_progress_layer,
         )
+
+    def _draw_ai_progress_layer(self, painter: QtGui.QPainter, /) -> None:
+        if (center := self._ai_progress_center()) is None:
+            return
+        # A white track under an accent arc reads on light and dark images
+        # alike; one calm linear turn a second, like a native spinner.
+        radius = _AI_PROGRESS_RADIUS
+        painter.save()
+        painter.resetTransform()
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 220), 5))
+        painter.drawEllipse(center, radius, radius)
+        arc = QtGui.QPen(self.palette().color(QtGui.QPalette.ColorRole.Highlight), 2.5)
+        arc.setCapStyle(Qt.PenCapStyle.RoundCap)
+        painter.setPen(arc)
+        TURN_MS: Final = 1000
+        turn = self._ai_finalize_clock.elapsed() % TURN_MS
+        painter.drawArc(
+            QRectF(center, center).adjusted(-radius, -radius, radius, radius),
+            -turn * 360 * 16 // TURN_MS,
+            90 * 16,
+        )
+        painter.restore()
 
     def _draw_pixmap_layer(self, painter: QtGui.QPainter, /) -> None:
         target = QtCore.QRectF(
@@ -1825,10 +1890,11 @@ class Canvas(QtWidgets.QWidget):
         return not self._should_constrain_to_pixmap(cursor)
 
     def _draw_committed_shapes_layer(self, painter: QtGui.QPainter, /) -> None:
-        # Zoomed in, the scroll area shows a small part of the canvas; skip the
-        # shapes outside it. An unshown canvas (offscreen render) has no visible
-        # region, so it paints everything.
-        visible = self.visibleRegion().boundingRect()
+        # Zoomed in, the scroll area shows a small part of the canvas, and a
+        # partial repaint a smaller one still; skip the shapes outside it. An
+        # unshown canvas (offscreen render) has no visible region, so it
+        # paints everything.
+        visible = self.visibleRegion().boundingRect() & self._dirty_rect
         visible_rect = (
             None
             if visible.isEmpty()

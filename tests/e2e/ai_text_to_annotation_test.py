@@ -293,6 +293,7 @@ def test_nms_deduplicates_existing_shapes(
     )
     first_run_count = len(canvas.shapes)
     assert first_run_count == 2
+    assert win.statusBar().currentMessage() == "Found 2 new 'person'"
 
     _run_text_prompt(
         win=win,
@@ -302,6 +303,7 @@ def test_nms_deduplicates_existing_shapes(
         score_threshold=0.1,
     )
     assert len(canvas.shapes) == first_run_count
+    assert win.statusBar().currentMessage() == "No new 'person' found"
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

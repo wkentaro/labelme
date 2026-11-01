@@ -767,14 +767,6 @@
         <translation>Bạn có thể dùng cài đặt mặc định lúc này. Trước khi đặt lại, một bản sao lưu của tệp cấu hình sẽ được lưu.</translation>
     </message>
     <message>
-        <source>Running AI on CPU…</source>
-        <translation>Đang chạy AI trên CPU…</translation>
-    </message>
-    <message>
-        <source>Running AI…</source>
-        <translation>Đang chạy AI…</translation>
-    </message>
-    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Tệp chú thích thuộc về một hình ảnh khác: %s</translation>
     </message>
@@ -973,12 +965,36 @@
         <translation>Sao lưu và đặt lại</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Đang phát hiện &apos;{query}&apos;…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Đang phát hiện &apos;{query}&apos; trên CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Đang phân đoạn trên CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Đang phân đoạn…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s chỉ phát hiện khung giới hạn và không thể tạo hình dạng &apos;%s&apos;.
 
 Chuyển mô hình lời nhắc văn bản AI sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Đã tìm thấy {count} &apos;{query}&apos; mới</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Không tìm thấy &apos;{query}&apos; mới</translation>
     </message>
     <message>
         <source>Invalid Label</source>
