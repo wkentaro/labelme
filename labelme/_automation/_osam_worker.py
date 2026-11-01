@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import itertools
 import multiprocessing
+import os
 import queue
 import threading
 import time
@@ -22,6 +23,8 @@ from PySide6 import QtWidgets
 if TYPE_CHECKING:
     import osam
 
+    from ._osam_session import OsamSession
+
 # ponytail: one deadline covers spawning, loading and running, so a first run
 # that compiles a model counts as slow, not hung. Split it per stage if a
 # real hang needs faster detection.
@@ -40,11 +43,8 @@ class InferenceRequest:
 
 
 def _run(
-    request: InferenceRequest, image: NDArray[np.uint8], /
+    session: OsamSession, request: InferenceRequest, image: NDArray[np.uint8], /
 ) -> list[osam.types.Annotation]:
-    from ._osam_session import get_osam_session  # noqa: PLC0415 -- child only
-
-    session = get_osam_session(model_name=request.model_name)
     if request.texts is None:
         return session.run(
             image=image,
@@ -69,9 +69,16 @@ def _run(
     ]
 
 
-def serve(requests: Connection, responses: Connection, /) -> None:
-    # Answers each ("run", id, request) with ("done", id, annotations) or
-    # ("error", id, message).
+def serve(
+    requests: Connection, responses: Connection, providers: str | None, /
+) -> None:
+    # Answers each ("run", id, request) with ("device", id, device), once the
+    # model loads, then ("done", id, annotations), or ("error" | "fault", id,
+    # message), where a fault comes from ONNX Runtime and may be the device's.
+    from ._osam_session import get_osam_session  # noqa: PLC0415 -- child only
+
+    if providers is not None:
+        os.environ["OSAM_ONNX_PROVIDERS"] = providers
     image: NDArray[np.uint8] | None = None
     image_id: str | None = None
     while True:
@@ -85,10 +92,15 @@ def serve(requests: Connection, responses: Connection, /) -> None:
                 image, image_id = request.image, request.image_id
             if image is None or image_id != request.image_id:
                 raise RuntimeError(f"image {request.image_id!r} was never sent")
-            annotations = _run(request, image)
+            session = get_osam_session(model_name=request.model_name)
+            responses.send(("device", request_id, session.device))
+            annotations = _run(session, request, image)
         except Exception as error:
             logger.opt(exception=error).error("AI inference failed")
-            responses.send(("error", request_id, f"{type(error).__name__}: {error}"))
+            kind = (
+                "fault" if type(error).__module__.startswith("onnxruntime") else "error"
+            )
+            responses.send((kind, request_id, f"{type(error).__name__}: {error}"))
         else:
             responses.send(("done", request_id, annotations))
 
@@ -117,8 +129,11 @@ def _pump_in(connection: Connection, inbox: queue.SimpleQueue, /) -> None:
 @dataclasses.dataclass
 class _Active:
     request_id: int
+    channel: object
     job: object
+    request: InferenceRequest  # with its image, to retry on a new worker
     deadline: float
+    device: str | None = None  # None until the model loads
 
 
 class OsamWorker(QtCore.QObject):
@@ -128,6 +143,9 @@ class OsamWorker(QtCore.QObject):
     Each submit names a channel; a newer submit on a channel replaces its
     request that has not started. A job that a caller replaced or abandoned
     still finishes; callers drop results for jobs they no longer expect.
+
+    A crash, hang or ONNX Runtime error off the CPU restarts the worker on
+    CPU and retries the job there once; the worker stays on CPU after that.
     """
 
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
@@ -137,7 +155,7 @@ class OsamWorker(QtCore.QObject):
         self,
         *,
         parent: QtCore.QObject | None = None,
-        target: Callable[[Connection, Connection], None] = serve,
+        target: Callable[[Connection, Connection, str | None], None] = serve,
         timeout_s: float = _TIMEOUT_S,
     ) -> None:
         super().__init__(parent)
@@ -148,6 +166,7 @@ class OsamWorker(QtCore.QObject):
         self._outbox: queue.SimpleQueue | None = None
         self._inbox: queue.SimpleQueue = queue.SimpleQueue()
         self._sent_image_id: str | None = None
+        self._cpu_only = False
         self._pending: dict[object, tuple[object, InferenceRequest]] = {}
         self._active: _Active | None = None
         self._request_ids = itertools.count()
@@ -185,10 +204,11 @@ class OsamWorker(QtCore.QObject):
         job, request = self._pending.pop(channel)
         try:
             outbox = self._ensure_process()
+            sent = request
             if request.image_id == self._sent_image_id:
-                request = dataclasses.replace(request, image=None)
+                sent = dataclasses.replace(request, image=None)
             request_id = next(self._request_ids)
-            outbox.put(("run", request_id, request))
+            outbox.put(("run", request_id, sent))
         except Exception as error:
             logger.opt(exception=error).error("Failed to start AI inference")
             self._stop_process()
@@ -198,7 +218,9 @@ class OsamWorker(QtCore.QObject):
         self._sent_image_id = request.image_id
         self._active = _Active(
             request_id=request_id,
+            channel=channel,
             job=job,
+            request=request,
             deadline=time.monotonic() + self._timeout_s,
         )
         self._timer.start()
@@ -211,7 +233,13 @@ class OsamWorker(QtCore.QObject):
         child_requests, requests = self._context.Pipe(duplex=False)
         responses, child_responses = self._context.Pipe(duplex=False)
         process = self._context.Process(
-            target=self._target, args=(child_requests, child_responses), daemon=True
+            target=self._target,
+            args=(
+                child_requests,
+                child_responses,
+                "CPUExecutionProvider" if self._cpu_only else None,
+            ),
+            daemon=True,
         )
         try:
             process.start()
@@ -262,15 +290,37 @@ class OsamWorker(QtCore.QObject):
         kind, payload = outcome
         if kind == "done":
             self.finished.emit(active.job, payload)
+        elif kind == "fault" and not self._cpu_only and active.device != "cpu":
+            self._fall_back_to_cpu(active=active, error=payload)
         else:
             self.failed.emit(active.job, payload)
         self._start_next()
+
+    def _fall_back_to_cpu(self, *, active: _Active, error: str) -> None:
+        logger.warning(
+            "AI inference failed on {}: {}; retrying on CPU",
+            active.device or "an unknown device",
+            error,
+        )
+        self._cpu_only = True
+        self._stop_process()
+        if active.channel in self._pending:
+            self.failed.emit(active.job, error)  # a newer job replaces it
+        else:
+            self._pending = {
+                active.channel: (active.job, active.request),
+                **self._pending,
+            }
 
     def _receive(self, *, active: _Active) -> tuple[str, Any] | None:
         assert self._process is not None
         while not self._inbox.empty():  # the only reader, so no race
             kind, request_id, payload = self._inbox.get_nowait()
-            if request_id == active.request_id:
+            if request_id != active.request_id:
+                continue
+            if kind == "device":
+                active.device = payload
+            else:
                 return kind, payload
         if not self._process.is_alive():
             error = f"AI worker exited with code {self._process.exitcode}"
@@ -280,4 +330,4 @@ class OsamWorker(QtCore.QObject):
             return None
         logger.error("{}; restarting the AI worker", error)
         self._stop_process()
-        return "error", error
+        return "fault", error

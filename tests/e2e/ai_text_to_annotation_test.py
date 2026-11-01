@@ -120,7 +120,11 @@ def _install_mock_session(
         del channel
         assert request.image is not None
         try:
-            annotations = _osam_worker._run(request, request.image)
+            annotations = _osam_worker._run(
+                _osam_session.get_osam_session(model_name=request.model_name),
+                request,
+                request.image,
+            )
         except Exception as e:
             self.failed.emit(job, f"{type(e).__name__}: {e}")
         else:
@@ -475,7 +479,17 @@ def _hold_text_results(
     ) -> None:
         del channel
         assert request.image is not None
-        held.append((self, job, _osam_worker._run(request, request.image)))
+        held.append(
+            (
+                self,
+                job,
+                _osam_worker._run(
+                    _osam_session.get_osam_session(model_name=request.model_name),
+                    request,
+                    request.image,
+                ),
+            )
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     _run_text_prompt(

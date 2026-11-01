@@ -109,6 +109,10 @@ class OsamSession:
         )
         return embedding
 
+    @property
+    def device(self) -> str:
+        return self._get_or_load_model().device
+
     def _get_or_load_model(self) -> osam.types.Model:
         if self._model is None:
             import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app

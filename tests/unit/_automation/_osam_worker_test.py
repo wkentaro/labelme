@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import multiprocessing
 import os
 import struct
 import sys
@@ -8,6 +9,7 @@ from collections.abc import Iterator
 from multiprocessing.connection import Connection
 from typing import Any
 from typing import Final
+from typing import cast
 
 import numpy as np
 import osam
@@ -16,6 +18,7 @@ from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._automation import _osam_worker
+from labelme._automation._osam_session import OsamSession
 from labelme._automation._osam_worker import InferenceRequest
 from labelme._automation._osam_worker import OsamWorker
 
@@ -23,13 +26,27 @@ _IMAGE: Final = np.zeros((2, 3, 3), dtype=np.uint8)
 _WAIT_MS: Final = 30_000
 
 
-def _scripted_serve(requests: Connection, responses: Connection, /) -> None:
-    # Spawned in the worker: the model name scripts how the request goes.
+def _scripted_serve(
+    requests: Connection, responses: Connection, providers: str | None, /
+) -> None:
+    # Spawned in the worker: the model name scripts how the request goes. A
+    # "gpu-" model runs on WebGPU and fails there unless the worker is on CPU.
+    cpu_only = providers is not None
     while True:
         try:
             _, request_id, request = requests.recv()
         except EOFError:
             return
+        on_gpu = request.model_name.startswith("gpu-") and not cpu_only
+        responses.send(("device", request_id, "webgpu" if on_gpu else "cpu"))
+        if on_gpu and request.model_name == "gpu-crash":
+            os._exit(3)
+        if on_gpu and request.model_name == "gpu-fault":
+            responses.send(("fault", request_id, "Fail: device lost"))
+            continue
+        if request.model_name == "cpu-fault":
+            responses.send(("fault", request_id, "Fail: bad model"))
+            continue
         if request.model_name == "crash":
             os._exit(3)
         if request.model_name == "hang":
@@ -40,13 +57,19 @@ def _scripted_serve(requests: Connection, responses: Connection, /) -> None:
         if request.model_name == "error":
             responses.send(("error", request_id, "ValueError: bad prompt"))
             continue
-        result = {"pid": os.getpid(), "sent_image": request.image is not None}
+        result = {
+            "pid": os.getpid(),
+            "sent_image": request.image is not None,
+            "cpu_only": cpu_only,
+        }
         responses.send(("done", request_id, result))
 
 
-def _late_serve(requests: Connection, responses: Connection, /) -> None:
+def _late_serve(
+    requests: Connection, responses: Connection, providers: str | None, /
+) -> None:
     time.sleep(1)  # a worker still importing reads nothing yet
-    _scripted_serve(requests, responses)
+    _scripted_serve(requests, responses, providers)
 
 
 def _request(*, model_name: str = "ok", image_id: str = "img") -> InferenceRequest:
@@ -196,6 +219,45 @@ def test_holds_results_while_a_modal_dialog_is_open(
     assert _results(worker)[0][:2] == ("done", "job")
 
 
+@pytest.mark.parametrize("model_name", ["gpu-crash", "gpu-fault"])
+def test_retries_a_gpu_failure_once_on_cpu(
+    *, worker: OsamWorker, qtbot: QtBot, model_name: str
+) -> None:
+    worker.submit(channel="x", job="job", request=_request(model_name=model_name))
+    _wait_for(qtbot, worker, count=1)
+    worker.submit(channel="x", job="later", request=_request(model_name=model_name))
+    _wait_for(qtbot, worker, count=2)
+
+    (kind, job, result), (_, _, later) = _results(worker)
+    assert (kind, job) == ("done", "job")
+    assert result["cpu_only"]
+    assert result["sent_image"]  # the CPU worker gets the image again
+    assert later["pid"] == result["pid"]  # it stays on CPU
+
+
+def test_fails_a_cpu_fault_without_retrying(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    worker.submit(channel="x", job="job", request=_request(model_name="cpu-fault"))
+    worker.submit(channel="y", job="next", request=_request())
+    _wait_for(qtbot, worker, count=2)
+
+    (kind, job, message), (_, _, after) = _results(worker)
+    assert (kind, job, message) == ("error", "job", "Fail: bad model")
+    assert not after["cpu_only"]
+
+
+def test_a_newer_job_replaces_the_retry(*, worker: OsamWorker, qtbot: QtBot) -> None:
+    worker.submit(channel="x", job="old", request=_request(model_name="gpu-crash"))
+    worker.submit(channel="x", job="new", request=_request())
+    _wait_for(qtbot, worker, count=2)
+
+    (kind, job, message), (_, new_job, result) = _results(worker)
+    assert (kind, job, message) == ("error", "old", "AI worker exited with code 3")
+    assert new_job == "new"
+    assert result["cpu_only"]
+
+
 def test_release_fails_the_jobs_it_drops(*, worker: OsamWorker, qtbot: QtBot) -> None:
     worker.submit(channel="x", job="running", request=_request(model_name="hang"))
     worker.submit(channel="y", job="waiting", request=_request())
@@ -236,22 +298,57 @@ class _FakeSession:
 )
 def test_run_sends_sam3_one_text_at_a_time(
     *,
-    monkeypatch: pytest.MonkeyPatch,
     model_name: str,
     expected_batches: list[list[str]],
 ) -> None:
     # SAM3 reads only the first text of a prompt; YOLO-World takes them all.
     session = _FakeSession()
-    monkeypatch.setattr(
-        "labelme._automation._osam_session.get_osam_session",
-        lambda **_: session,
-    )
     request = InferenceRequest(
         model_name=model_name, image_id="img", image=None, texts=["dog", "cat"]
     )
 
-    annotations = _osam_worker._run(request, _IMAGE)
+    annotations = _osam_worker._run(cast(OsamSession, session), request, _IMAGE)
 
     assert [a.text for a in annotations] == ["dog", "cat"]
     assert [call["texts"] for call in session.calls] == expected_batches
     assert all(call["image"] is _IMAGE for call in session.calls)
+
+
+class _OrtFail(Exception):
+    pass
+
+
+_OrtFail.__module__ = "onnxruntime.capi.onnxruntime_pybind11_state"
+
+
+class _FailingSession:
+    device = "webgpu"
+
+    def __init__(self, error: Exception, /) -> None:
+        self._error = error
+
+    def run(self, **_: object) -> osam.types.GenerateResponse:
+        raise self._error
+
+
+@pytest.mark.parametrize(
+    ("error", "kind"),
+    [(_OrtFail("device lost"), "fault"), (ValueError("bad prompt"), "error")],
+)
+def test_serve_reports_onnx_runtime_errors_as_faults(
+    *, monkeypatch: pytest.MonkeyPatch, error: Exception, kind: str
+) -> None:
+    # A fault may be the device's, so the worker retries it on CPU.
+    monkeypatch.setattr(
+        "labelme._automation._osam_session.get_osam_session",
+        lambda **_: _FailingSession(error),
+    )
+    requests, to_serve = multiprocessing.Pipe(duplex=False)
+    from_serve, responses = multiprocessing.Pipe(duplex=False)
+    to_serve.send(("run", 7, _request()))
+    to_serve.close()
+
+    _osam_worker.serve(requests, responses, None)
+
+    assert from_serve.recv() == ("device", 7, "webgpu")
+    assert from_serve.recv()[:2] == (kind, 7)
