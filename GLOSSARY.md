@@ -55,7 +55,7 @@ An optional AI Assist Setting for point prompts, box prompts and AI-Detect examp
 _Avoid_: duplicate suppression, overlap suppression.
 
 **AI-Detect**:
-Bulk Shape proposal for every matching instance in the Image. The user types a class name, or draws a box around one example, and an open-vocabulary detector returns many candidate Shapes from one user action. YOLO-World answers only text; SAM3 answers text and example boxes. Its candidates use the same Output as AI Assist.
+Bulk Shape proposal for every matching instance in the Image. The user types one concept as the query, or draws a box around one example, and an open-vocabulary detector returns many candidate Shapes from one user action. The query is a prompt, not the label: one label entry, from the label dialog prefilled with the query, labels the whole batch, so "black dog" can be saved as "dog", and cancelling it discards the batch. A Run skips detections that overlap an existing Shape of the same Output with the label the batch takes. YOLO-World answers only text; SAM3 answers text and example boxes. Its candidates use the same Output as AI Assist.
 _Avoid_: AI Text Prompt (the prompt is not only text), Sweep (retired name for the SAM3 example-box path), text-to-annotation (verbose), auto-detect (it always needs a prompt).
 
 **Downloaded Model**:
