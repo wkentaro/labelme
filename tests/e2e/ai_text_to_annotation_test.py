@@ -10,6 +10,7 @@ from unittest.mock import MagicMock
 import numpy as np
 import osam.types
 import pytest
+from PySide6 import QtWidgets
 from PySide6.QtCore import QPoint
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
@@ -438,8 +439,13 @@ def test_text_result_waits_for_the_label_dialog(
 
     def popup(**_: object) -> LabelDialogEntry:
         # The result lands while the user types the drawn shape's label.
+        dialog = QtWidgets.QDialog(win)
+        dialog.setModal(True)
+        dialog.show()
         win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
+        qtbot.wait(300)
         assert [s.label for s in canvas.shapes] == [None]
+        dialog.close()
         return LabelDialogEntry(label="manual", flags={}, group_id=None, description="")
 
     monkeypatch.setattr(win._label_dialog, "popup", popup)

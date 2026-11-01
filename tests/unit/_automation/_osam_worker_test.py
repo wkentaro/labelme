@@ -12,6 +12,7 @@ from typing import Final
 import numpy as np
 import osam
 import pytest
+from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._automation import _osam_worker
@@ -176,6 +177,23 @@ def test_submit_returns_before_a_late_worker_reads_a_large_image(
         worker.shutdown()
 
     assert results[0][0] == "big"
+
+
+def test_holds_results_while_a_modal_dialog_is_open(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    # A label edit or a warning: its result would open a second dialog or
+    # change the Shapes under it.
+    dialog = QtWidgets.QDialog()
+    dialog.setModal(True)
+    dialog.show()
+    worker.submit(channel="x", job="job", request=_request())
+    qtbot.wait(1000)
+    assert _results(worker) == []
+
+    dialog.close()
+    _wait_for(qtbot, worker, count=1)
+    assert _results(worker)[0][:2] == ("done", "job")
 
 
 def test_release_fails_the_jobs_it_drops(*, worker: OsamWorker, qtbot: QtBot) -> None:

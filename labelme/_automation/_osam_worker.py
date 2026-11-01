@@ -17,6 +17,7 @@ import numpy as np
 from loguru import logger
 from numpy.typing import NDArray
 from PySide6 import QtCore
+from PySide6 import QtWidgets
 
 if TYPE_CHECKING:
     import osam
@@ -249,6 +250,10 @@ class OsamWorker(QtCore.QObject):
         active = self._active
         if active is None:
             self._timer.stop()
+            return
+        # A result changes what the user edits. A modal dialog, such as a
+        # label edit, runs its own event loop, so the result waits it out.
+        if QtWidgets.QApplication.activeModalWidget() is not None:
             return
         outcome = self._receive(active=active)
         if outcome is None:

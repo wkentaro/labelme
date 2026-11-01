@@ -380,7 +380,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.failed.connect(self._on_ai_text_failed)
         self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
         self._ai_text_job: _AiTextJob | None = None
-        self._labeling_new_shape = False
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
@@ -1723,10 +1722,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_ai_text_finished(self, job: object, annotations: object, /) -> None:
         # A result lands whenever inference ends. Applied mid-draw, mid-drag
-        # or under the label dialog, its Shapes would split that action's
-        # Undo snapshot or join the Shapes being labeled, so it waits.
+        # or under a dialog, its Shapes would split that action's Undo
+        # snapshot or join the Shapes being labeled, so it waits. The worker
+        # holds results under a dialog; this retry must check again.
         if job is self._ai_text_job and (
-            self._labeling_new_shape or self._canvas_widgets.canvas.is_interacting
+            self._canvas_widgets.canvas.is_interacting
+            or QtWidgets.QApplication.activeModalWidget() is not None
         ):
             QtCore.QTimer.singleShot(
                 100,
@@ -2279,13 +2280,6 @@ class MainWindow(QtWidgets.QMainWindow):
     # Callback functions:
 
     def _on_new_shape(self) -> None:
-        self._labeling_new_shape = True
-        try:
-            self._label_new_shape()
-        finally:
-            self._labeling_new_shape = False
-
-    def _label_new_shape(self) -> None:
         items = self._docks.unique_label_list.selectedItems()
         text = items[0].data(Qt.ItemDataRole.UserRole) if items else None
         if self._config["display_label_popup"] or not text:
