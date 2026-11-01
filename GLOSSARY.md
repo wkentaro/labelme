@@ -47,20 +47,16 @@ Deriving one or more Polygon Shapes from a Mask, either while creating an AI Ass
 _Avoid_: mask-to-points conversion, contour conversion
 
 **AI Assist**:
-Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A SAM3 box prompt is a Sweep. Candidates become new Shapes unless Existing Shape Suppression is enabled.
+Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A box prompt contributes one candidate Shape with every model; finding every object like the boxed one is AI-Detect. Candidates become new Shapes unless Existing Shape Suppression is enabled.
 _Avoid_: AI annotation (too vague — covers AI-Detect too), auto-annotation, automation.
 
-**Sweep**:
-An AI Assist box prompt whose model (SAM3) detects every matching object in and around the boxed region, proposing many candidate Shapes from one user action. Each candidate becomes a new Shape unless Existing Shape Suppression is enabled.
-_Avoid_: propagation (model-internal term), batch detection.
-
 **Existing Shape Suppression**:
-An optional AI Assist Setting for both point prompts and Sweeps. A candidate that matches an existing Shape highlights that Shape instead of creating a new Shape; unmatched candidates remain new Shapes. The Setting is disabled by default.
+An optional AI Assist Setting for point prompts, box prompts and AI-Detect example boxes. A candidate that matches an existing Shape highlights that Shape instead of creating a new Shape; unmatched candidates remain new Shapes. The Setting is disabled by default.
 _Avoid_: duplicate suppression, overlap suppression.
 
 **AI-Detect**:
 Bulk Shape proposal for every matching instance in the Image. The user types a class name, or draws a box around one example, and an open-vocabulary detector returns many candidate Shapes from one user action. YOLO-World answers only text; SAM3 answers text and example boxes. Its candidates use the same Output as AI Assist.
-_Avoid_: AI Text Prompt (the prompt is not only text), text-to-annotation (verbose), auto-detect (it always needs a prompt).
+_Avoid_: AI Text Prompt (the prompt is not only text), Sweep (retired name for the SAM3 example-box path), text-to-annotation (verbose), auto-detect (it always needs a prompt).
 
 **Downloaded Model**:
 A supported model whose required files are present in the local cache; every download is hash-checked before it lands there. It can be selected without a download; this does not guarantee hardware compatibility. Downloading from the AI Models window never selects a model. Choosing a model that is not downloaded in a toolbar model picker changes the Setting at that moment and queues its download; the choice takes effect when the files arrive. Completing a download never changes a selection or runs inference.
