@@ -127,17 +127,17 @@ def test_ai_text_model_persists_and_syncs_settings(
     editor = dialog._editors[("ai", "text_model")]
     assert isinstance(editor, QtWidgets.QComboBox)
     combo = win._ai_text._model_combo
-    combo.setCurrentIndex(combo.findData("sam3:latest"))
-    assert editor.currentData() == "sam3:latest"
+    combo.setCurrentIndex(combo.findData("yoloworld:latest"))
+    assert editor.currentData() == "yoloworld:latest"
     win.close()
 
     reopened = main_win(config_file=editable_config_file)
-    assert reopened._ai_text.get_model_name() == "sam3:latest"
+    assert reopened._ai_text.get_model_name() == "yoloworld:latest"
     reopened_dialog = _open_settings_dialog(win=reopened)
     reopened_editor = reopened_dialog._editors[("ai", "text_model")]
     assert isinstance(reopened_editor, QtWidgets.QComboBox)
-    reopened_editor.setCurrentIndex(reopened_editor.findData("yoloworld:latest"))
-    assert reopened._ai_text.get_model_name() == "yoloworld:latest"
+    reopened_editor.setCurrentIndex(reopened_editor.findData("sam3:latest"))
+    assert reopened._ai_text.get_model_name() == "sam3:latest"
     assert "text_model" not in safe_load(editable_config_file.read_text()).get("ai", {})
     reopened.close()
 
@@ -503,7 +503,7 @@ def test_setting_controls_revert_when_write_fails(
     ai_editor = dialog._editors[("ai", "default")]
     assert isinstance(ai_editor, QtWidgets.QComboBox)
     ai_dock = win._ai_annotation._model_combo
-    assert ai_dock.currentText() == "Sam2 (balanced)"
+    assert ai_dock.currentText() == "Sam3"
 
     # Refuse the save at the boundary a read-only config directory would;
     # injecting the failure keeps it reachable on Windows and as root, where
@@ -520,12 +520,12 @@ def test_setting_controls_revert_when_write_fails(
     assert checkbox.isChecked()  # editor reverted to the last-saved value
     assert win._actions.save_auto.isChecked()
     assert auto_save_editor.isChecked()
-    assert ai_dock.currentText() == "Sam2 (balanced)"
-    assert ai_editor.currentData() == "Sam2 (balanced)"
-    assert win._canvas_widgets.canvas.get_ai_model_name() == "sam2:latest"
+    assert ai_dock.currentText() == "Sam3"
+    assert ai_editor.currentData() == "Sam3"
+    assert win._canvas_widgets.canvas.get_ai_model_name() == "sam3:latest"
     assert win._config["display_label_popup"] is True
     assert win._config["auto_save"] is True
-    assert win._config["ai"]["default"] == "Sam2 (balanced)"
+    assert win._config["ai"]["default"] == "Sam3"
     assert safe_load(config_file.read_text()) == {"display_label_popup": True}
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -769,9 +769,9 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
-    assert win._config["ai"]["default"] == "Sam2 (balanced)"
+    assert win._config["ai"]["default"] == "Sam3"
     dock_combo = win._ai_annotation._model_combo
-    assert dock_combo.currentText() == "Sam2 (balanced)"
+    assert dock_combo.currentText() == "Sam3"
 
     dialog = _open_settings_dialog(win=win)
     combo = dialog._editors[("ai", "default")]
@@ -784,49 +784,6 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     assert (
         safe_load(editable_config_file.read_text())["ai"]["default"]
         == "EfficientSam (speed)"
-    )
-
-    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
-
-
-@pytest.mark.gui
-@pytest.mark.usefixtures("cached_ai_models")
-def test_ai_model_choices_follow_point_prompt_mode(
-    *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
-) -> None:
-    win = main_win(config_file=editable_config_file)
-    win._switch_canvas_mode(edit=False, create_mode="ai_points_to_shape")
-
-    dialog = _open_settings_dialog(win=win)
-    combo = dialog._editors[("ai", "default")]
-    assert isinstance(combo, QtWidgets.QComboBox)
-    sam3_index = combo.findData("Sam3")
-    assert not combo.model().flags(combo.model().index(sam3_index, 0)) & (
-        Qt.ItemFlag.ItemIsEnabled
-    )
-    assert combo.model().data(
-        combo.model().index(sam3_index, 0), Qt.ItemDataRole.ToolTipRole
-    ) == (
-        "Unavailable in AI-Points mode because this model does not support point "
-        "prompts."
-    )
-
-    combo.setCurrentIndex(sam3_index)
-
-    assert combo.currentData() == "Sam2 (balanced)"
-    assert win._ai_annotation.current_model_id == "sam2:latest"
-    assert win._config["ai"]["default"] == "Sam2 (balanced)"
-
-    win._switch_canvas_mode(edit=False, create_mode="ai_box_to_shape")
-
-    assert combo.model().flags(combo.model().index(sam3_index, 0)) & (
-        Qt.ItemFlag.ItemIsEnabled
-    )
-    assert (
-        combo.model().data(
-            combo.model().index(sam3_index, 0), Qt.ItemDataRole.ToolTipRole
-        )
-        == ""
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

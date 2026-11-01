@@ -865,10 +865,6 @@
         <translation>取消</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>此模型不支持点提示，因此在 AI-Points 模式下不可用。</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>要保留“{}”的标注更改吗？</translation>
     </message>
@@ -969,6 +965,22 @@
         <translation>备份并重置</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>正在检测“{query}”…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>正在 CPU 上检测“{query}”…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>正在 CPU 上分割…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>正在分割…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -977,22 +989,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 请将 AI 文本提示模型切换为 &apos;SAM3 (smart)&apos;，或将输出格式设置为 &apos;Rectangle&apos;。</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>找到 {count} 个新的“{query}”</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>未找到新的“{query}”</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>无效标签</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>保存标注文件时出错</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points 不可用</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s 不支持点提示。
-请另选模型，或改用 AI-Box 模式。</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1421,6 +1431,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>重复 避免重复 去重</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>计算设备</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>“自动”会使用 GPU，GPU 出错时切换到 CPU。</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>GPU CUDA 处理器 慢 崩溃</translation>
     </message>
     <message>
         <source>Predefined labels</source>

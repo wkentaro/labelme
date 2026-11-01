@@ -851,10 +851,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Скасувати</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Недоступно в режимі AI-Points, оскільки ця модель не підтримує точкові запити.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Зберегти зміни анотацій для «{}»?</translation>
     </message>
@@ -981,18 +977,32 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Резервну копію конфігурації збережено в %s</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Пошук «{query}»…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Пошук «{query}» на ЦП…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Сегментація на ЦП…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Сегментація…</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Знайдено нових «{query}»: {count}</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Нових «{query}» не знайдено</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Недійсна мітка</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points недоступний</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s не підтримує точкові запити.
-Будь ласка, виберіть іншу модель або використовуйте режим AI-Box.</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1421,6 +1431,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>дублікат дублікати уникнення дублікатів видалення дублікатів</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Обчислювальний пристрій</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>ЦП</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>«Автоматично» використовує ГП і перемикається на ЦП у разі збою ГП.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda гп цп процесор повільно збій</translation>
     </message>
     <message>
         <source>Predefined labels</source>

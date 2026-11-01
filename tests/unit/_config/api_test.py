@@ -109,6 +109,17 @@ def test_load_config_rejects_invalid_polygon_detail(
         _config.load_config(config_file=config_file, config_overrides={})
 
 
+@pytest.mark.parametrize("value", ["gpu", None, True])
+def test_load_config_rejects_an_unknown_ai_device(
+    *, tmp_path: Path, value: object
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(f"ai:\n  device: {json.dumps(value)}\n")
+
+    with pytest.raises(ValueError, match=r"ai\.device must be"):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
 _POLYGON_TO_SHAPE_RENAMES: Final = {
     "edit_polygon": "edit_shape",
     "delete_polygon": "delete_shape",
@@ -148,7 +159,7 @@ def test_migrate_tolerates_empty_section(*, section: str) -> None:
 
 @pytest.mark.parametrize(
     ("section", "probe"),
-    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "Sam2 (balanced)"))],
+    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "Sam3"))],
     ids=["shortcuts", "ai"],
 )
 def test_load_config_empty_section_keeps_defaults(

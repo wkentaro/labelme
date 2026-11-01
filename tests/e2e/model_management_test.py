@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import threading
-import weakref
 from pathlib import Path
 
 import osam
@@ -12,17 +11,12 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
-from labelme import _automation
 from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
 from ..conftest import DOWNLOAD_START_TIMEOUT_MS
 from .conftest import MainWinFactory
-
-
-class _LoadedModel:
-    pass
 
 
 @pytest.mark.gui
@@ -105,7 +99,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     qtbot.waitUntil(lambda: win._model_manager.get_state(name) == "downloaded")
     # The remembered choice is restored without running inference.
     assert assist.currentData() == text.currentData() == name
-    assert win._text_osam_session is None
+    assert win._osam_worker._process is None
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 
@@ -136,7 +130,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
 
 
 @pytest.mark.gui
-def test_delete_releases_loaded_assist_and_text_sessions(
+def test_delete_releases_loaded_session(
     *,
     main_win: MainWinFactory,
     tmp_path: Path,
@@ -162,18 +156,13 @@ def test_delete_releases_loaded_assist_and_text_sessions(
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
 
-    assist_session = _automation.OsamSession(model_name=name)
-    text_session = _automation.OsamSession(model_name=name)
-    assist_loaded = _LoadedModel()
-    text_loaded = _LoadedModel()
-    setattr(assist_session, "_model", assist_loaded)
-    setattr(text_session, "_model", text_loaded)
-    canvas._ai_assist_session._session = assist_session
-    win._text_osam_session = text_session
-    assist_model = weakref.ref(assist_loaded)
-    text_model = weakref.ref(text_loaded)
-    del assist_loaded, text_loaded
-    del assist_session, text_session
+    # The worker holds the model's files open, so it stops before they go.
+    blob_existed_at_release: list[bool] = []
+    monkeypatch.setattr(
+        win._osam_worker,
+        "release",
+        lambda: blob_existed_at_release.append(Path(blob.path).exists()),
+    )
 
     monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     win._open_models()
@@ -183,8 +172,7 @@ def test_delete_releases_loaded_assist_and_text_sessions(
     assert models is not None
     models._rows[name][2].click()
 
-    assert assist_model() is None
-    assert text_model() is None
+    assert blob_existed_at_release == [True]
     assert not Path(blob.path).exists()
     assert win._ai_text.get_model_name() == ""
     assert canvas.get_ai_model_name() == ""
@@ -362,24 +350,3 @@ def test_picker_asks_before_downloading_sam3_and_cancel_keeps_setting(
     assert len(shown) == 1 and "SAM License" in shown[0]
     assert win._config["ai"]["text_model"] == text_model
     assert win._model_manager.get_state("sam3:latest") == "missing"
-
-
-@pytest.mark.gui
-def test_point_mode_disables_incompatible_models_before_download(
-    *, main_win: MainWinFactory
-) -> None:
-    win = main_win()
-    picker = win._ai_annotation._model_combo
-    win._ai_annotation.set_point_prompt_mode(enabled=True)
-    model = picker.model()
-    assert isinstance(model, QtGui.QStandardItemModel)
-
-    def enabled(index: int) -> bool:
-        item = model.item(index)
-        assert item is not None
-        return item.isEnabled()
-
-    assert not enabled(picker.findData("sam3:latest"))
-    assert enabled(picker.findData("sam2:latest"))
-    assert not enabled(picker.findText("Download and use"))
-    assert enabled(picker.findData("manage"))

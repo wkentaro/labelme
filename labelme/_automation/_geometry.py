@@ -22,7 +22,7 @@ class Circle(NamedTuple):
     radius: float
 
 
-def _round_bbox_to_int(
+def round_bbox_to_int(
     *,
     bbox: tuple[float, float, float, float] | NDArray[np.floating],
 ) -> tuple[int, int, int, int]:
@@ -36,9 +36,8 @@ def _round_bbox_to_int(
 
 
 def shape_to_xyxy_bbox(*, shape: Shape) -> NDArray[np.float32] | None:
-    """Returns None only when a supported shape is mid-draw (too few points);
-    raises ValueError for shape types that have no bbox interpretation.
-    """
+    # None means a supported shape is mid-draw (too few points); shape types
+    # with no bbox interpretation raise ValueError.
     if shape.shape_type == "circle":
         if len(shape.points) != CIRCLE_POINT_COUNT:
             return None

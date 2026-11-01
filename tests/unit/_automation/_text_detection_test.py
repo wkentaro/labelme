@@ -14,17 +14,6 @@ from labelme._automation._text_detection import propose_shapes_from_texts
 from labelme._shape import Shape
 
 
-class _FakeOsamSession:
-    model_name: str
-
-    def __init__(self, *, response: osam.types.GenerateResponse) -> None:
-        self.model_name = "stub"
-        self._response = response
-
-    def run(self, **_: object) -> osam.types.GenerateResponse:
-        return self._response
-
-
 def _make_annotation(*, with_mask: bool) -> osam.types.Annotation:
     return osam.types.Annotation(
         text="cat",
@@ -38,12 +27,7 @@ def _get_bboxes(
     response: osam.types.GenerateResponse,
     /,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[NDArray[np.bool_]] | None]:
-    return get_bboxes_from_texts(
-        session=_FakeOsamSession(response=response),  # ty: ignore[invalid-argument-type]
-        image=np.zeros((4, 4, 3), dtype=np.uint8),
-        image_id="img",
-        texts=["cat"],
-    )
+    return get_bboxes_from_texts(annotations=response.annotations, texts=["cat"])
 
 
 def test_collects_masks_when_every_annotation_has_one() -> None:
@@ -205,9 +189,7 @@ def test_text_proposal_keeps_mask_and_score_alignment_after_suppression() -> Non
     )
 
     shapes = propose_shapes_from_texts(
-        session=_FakeOsamSession(response=response),  # ty: ignore[invalid-argument-type]
-        image=np.zeros((30, 30, 3), dtype=np.uint8),
-        image_id="img",
+        annotations=response.annotations,
         texts=["cat"],
         shape_type="mask",
         existing_shapes=[existing],
@@ -229,16 +211,9 @@ def test_text_proposal_keeps_mask_and_score_alignment_after_suppression() -> Non
 
 
 def test_text_proposal_rejects_maskless_detections_for_mask_output() -> None:
-    session = _FakeOsamSession(
-        response=osam.types.GenerateResponse(
-            model="stub", annotations=[_make_annotation(with_mask=False)]
-        )
-    )
     with pytest.raises(MaskOutputUnavailableError, match="requires model masks"):
         propose_shapes_from_texts(
-            session=session,  # ty: ignore[invalid-argument-type]
-            image=np.zeros((4, 4, 3), dtype=np.uint8),
-            image_id="img",
+            annotations=[_make_annotation(with_mask=False)],
             texts=["cat"],
             shape_type="mask",
             existing_shapes=[],

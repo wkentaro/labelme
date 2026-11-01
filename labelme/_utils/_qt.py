@@ -182,11 +182,8 @@ def new_action(
 
 
 def modifier_text(modifiers: QtCore.Qt.KeyboardModifier, /) -> str:
-    """Spell modifier keys the way the platform does, e.g. ⇧⌘ or Ctrl+Shift.
-
-    Qt maps Ctrl to Command on macOS, so a hint written as "Ctrl" is wrong
-    there.
-    """
+    # Qt maps Ctrl to Command on macOS, so a hint written as "Ctrl" is wrong
+    # there. Spell the keys the platform's way, e.g. ⇧⌘ or Ctrl+Shift.
     combination = QtCore.QKeyCombination(modifiers, QtCore.Qt.Key.Key_A)
     text = QtGui.QKeySequence(combination).toString(
         QtGui.QKeySequence.SequenceFormat.NativeText
