@@ -763,6 +763,14 @@
         <translation>Αποθήκευση…</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>Εκτέλεση AI στη CPU…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>Εκτέλεση AI…</translation>
+    </message>
+    <message>
         <source>Mask Output Unavailable</source>
         <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
     </message>
@@ -1383,6 +1391,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>διπλότυπο διπλότυπα αποφυγή αφαίρεση διπλοτύπων</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Συσκευή υπολογισμού</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Η αυτόματη επιλογή χρησιμοποιεί τη GPU και μεταβαίνει στη CPU αν η GPU αποτύχει.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda επεξεργαστής αργό κατάρρευση</translation>
     </message>
     <message>
         <source>Predefined labels</source>

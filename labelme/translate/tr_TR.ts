@@ -767,6 +767,14 @@
         <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>Yapay zekâ CPU&apos;da çalışıyor…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>Yapay zekâ çalışıyor…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Açıklama dosyası başka bir görüntüye ait: %s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Beklenen konum: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>yinelenen kopya tekrarları önle tekrarları kaldır</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Hesaplama aygıtı</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Otomatik, GPU&apos;yu kullanır ve GPU başarısız olursa CPU&apos;ya geçer.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda işlemci yavaş çökme</translation>
     </message>
     <message>
         <source>Predefined labels</source>

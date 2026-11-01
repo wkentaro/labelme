@@ -775,6 +775,14 @@
         <translation>Sie können vorerst die Standardeinstellungen verwenden. Vor dem Zurücksetzen wird eine Sicherung Ihrer Konfigurationsdatei gespeichert.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>KI läuft auf der CPU…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>KI läuft…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Die Annotationsdatei gehört zu einem anderen Bild: %s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>Duplikat Duplikate vermeiden entfernen</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Rechengerät</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>„Automatisch“ verwendet die GPU und wechselt zur CPU, wenn die GPU ausfällt.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda prozessor langsam absturz</translation>
     </message>
     <message>
         <source>Predefined labels</source>

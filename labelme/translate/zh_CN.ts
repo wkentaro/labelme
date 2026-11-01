@@ -767,6 +767,14 @@
         <translation>你可以暂时使用默认设置。重置前会先保存配置文件的备份。</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>正在 CPU 上运行 AI…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>正在运行 AI…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>该标注文件属于另一张图像：%s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>重复 避免重复 去重</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>计算设备</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>“自动”会使用 GPU，GPU 出错时切换到 CPU。</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>GPU CUDA 处理器 慢 崩溃</translation>
     </message>
     <message>
         <source>Predefined labels</source>

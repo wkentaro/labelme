@@ -385,6 +385,8 @@ def test_annotate_shape_types(
     label_timer.start(50)
     try:
         click(xy=finalize_click, modifier=finalize_modifier)
+        # AI inference finishes after the click, then opens the label dialog.
+        qtbot.waitUntil(lambda: not canvas.is_ai_finalizing, timeout=120_000)
     finally:
         label_timer.stop()
 

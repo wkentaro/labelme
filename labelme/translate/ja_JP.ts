@@ -777,6 +777,14 @@
         <translation>今回は初期設定で続行できます。リセットする場合は、先に設定ファイルのバックアップを保存します。</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>CPU で AI を実行中…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>AI を実行中…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>このアノテーションファイルは別の画像のものです: %s</translation>
     </message>
@@ -1393,6 +1401,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>重複 重複回避 重複を避ける 重複削除</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>計算デバイス</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>「自動」は GPU を使い、GPU でエラーが起きると CPU に切り替えます。</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>GPU CUDA プロセッサ 遅い クラッシュ</translation>
     </message>
     <message>
         <source>Predefined labels</source>

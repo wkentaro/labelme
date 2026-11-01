@@ -34,10 +34,6 @@ class OsamSession:
         self._embedding_cache = collections.deque(maxlen=embedding_cache_size)
         logger.debug("Initialized OsamSession with model_name={!r}", model_name)
 
-    @property
-    def model_name(self) -> str:
-        return self._model_name
-
     def run(
         self,
         *,
@@ -113,6 +109,10 @@ class OsamSession:
         )
         return embedding
 
+    @property
+    def device(self) -> str:
+        return self._get_or_load_model().device
+
     def _get_or_load_model(self) -> osam.types.Model:
         if self._model is None:
             import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
@@ -142,7 +142,3 @@ def get_osam_session(*, model_name: str) -> OsamSession:
     while len(_SESSIONS) > MAX_SESSIONS:
         _SESSIONS.pop(next(iter(_SESSIONS)))
     return session
-
-
-def release_osam_session(*, model_name: str) -> None:
-    _SESSIONS.pop(model_name, None)

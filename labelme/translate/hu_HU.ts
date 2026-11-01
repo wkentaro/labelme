@@ -775,6 +775,14 @@
         <translation>Egyelőre használhatja az alapértelmezett beállításokat. A visszaállítás előtt biztonsági másolat készül a konfigurációs fájlról.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>MI futtatása CPU-n…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>MI futtatása…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Az annotációs fájl egy másik képhez tartozik: %s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Várt hely: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>másolat másolatok ismétlődés elkerülése duplikátumok eltávolítása</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Számítási eszköz</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Az Automatikus a GPU-t használja, és a CPU-ra vált, ha a GPU hibát jelez.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda processzor lassú összeomlás</translation>
     </message>
     <message>
         <source>Predefined labels</source>

@@ -767,6 +767,14 @@
         <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
     </message>
     <message>
+        <source>Running AI on CPU…</source>
+        <translation>AI draait op de CPU…</translation>
+    </message>
+    <message>
+        <source>Running AI…</source>
+        <translation>AI draait…</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Het annotatiebestand hoort bij een andere afbeelding: %s</translation>
     </message>
@@ -1383,6 +1391,22 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>duplicaat duplicaten voorkomen verwijderen</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Rekenapparaat</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Automatisch gebruikt de GPU en schakelt over naar de CPU als de GPU faalt.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda processor traag crash</translation>
     </message>
     <message>
         <source>Predefined labels</source>

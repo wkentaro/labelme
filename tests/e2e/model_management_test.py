@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import threading
-import weakref
 from pathlib import Path
 
 import osam
@@ -12,18 +11,12 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
-from labelme import _automation
-from labelme._automation import _osam_session
 from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
 from ..conftest import DOWNLOAD_START_TIMEOUT_MS
 from .conftest import MainWinFactory
-
-
-class _LoadedModel:
-    pass
 
 
 @pytest.mark.gui
@@ -106,7 +99,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     qtbot.waitUntil(lambda: win._model_manager.get_state(name) == "downloaded")
     # The remembered choice is restored without running inference.
     assert assist.currentData() == text.currentData() == name
-    assert name not in _osam_session._SESSIONS
+    assert win._osam_worker._process is None
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 
@@ -163,10 +156,13 @@ def test_delete_releases_loaded_session(
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
 
-    loaded = _LoadedModel()
-    setattr(_automation.get_osam_session(model_name=name), "_model", loaded)
-    model = weakref.ref(loaded)
-    del loaded
+    # The worker holds the model's files open, so it stops before they go.
+    blob_existed_at_release: list[bool] = []
+    monkeypatch.setattr(
+        win._osam_worker,
+        "release",
+        lambda: blob_existed_at_release.append(Path(blob.path).exists()),
+    )
 
     monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
     win._open_models()
@@ -176,7 +172,7 @@ def test_delete_releases_loaded_session(
     assert models is not None
     models._rows[name][2].click()
 
-    assert model() is None
+    assert blob_existed_at_release == [True]
     assert not Path(blob.path).exists()
     assert win._ai_text.get_model_name() == ""
     assert canvas.get_ai_model_name() == ""
