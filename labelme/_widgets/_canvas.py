@@ -21,7 +21,6 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import QRectF
 from PySide6.QtCore import Qt
 
-from .. import _ai_models
 from .. import _automation
 from .. import _shape
 from .. import _utils
@@ -155,6 +154,24 @@ _CreateMode = Literal[
     "ai_box_to_shape",
 ]
 
+
+@dataclasses.dataclass(frozen=True, eq=False)
+class _AiJob:
+    """An AI Assist request in flight, with what its result applies to."""
+
+    pixmap_key: int
+    prompt_kind: _automation.AiPromptKind
+    points: np.ndarray
+    point_labels: np.ndarray
+    image_size: tuple[int, int] | None
+    # The draft a finalize commits, or the inputs a preview shows.
+    draft: _DraftShape | None = None
+    preview_key: object = None
+
+
+_AI_PROGRESS_RADIUS: Final = 12
+
+
 _AI_CREATE_MODES: Final[tuple[_CreateMode, ...]] = (
     "ai_points_to_shape",
     "ai_box_to_shape",
@@ -183,7 +200,7 @@ class Canvas(QtWidgets.QWidget):
     ensure_ai_model_ready: Callable[[str], bool]
 
     pixmap: QtGui.QPixmap
-    _pixmap_hash: int | None
+    _pixmap_rgb: tuple[np.ndarray, str] | None
     _cursor: CursorRole
     shapes: list[Shape]
     shape_context_menu: QtWidgets.QMenu
@@ -192,6 +209,7 @@ class Canvas(QtWidgets.QWidget):
     _right_click_shape: Shape | None
     shape_backups: collections.deque[list[Shape]]
     _is_moving_shape: bool
+    _is_pointer_held: bool
     selected_shapes: list[Shape]
     _current: _DraftShape | None
     hovered_shape: Shape | None
@@ -208,7 +226,6 @@ class Canvas(QtWidgets.QWidget):
     new_shape = QtCore.Signal()
     inference_produced_no_shapes = QtCore.Signal()
     inference_failed = QtCore.Signal(str)
-    point_prompt_rejected = QtCore.Signal(str)
     degenerate_shape_rejected = QtCore.Signal()
     selection_changed = QtCore.Signal(list)
     shape_double_clicked = QtCore.Signal()
@@ -296,6 +313,13 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_original_points = np.empty((0, 2))
         self._scale: float = 1.0
         self._ai_assist_session = _automation.AiAssistSession()
+        self._osam_worker: _automation.OsamWorker | None = None
+        self._ai_preview_job: _AiJob | None = None
+        self._ai_finalize_job: _AiJob | None = None
+        self._ai_finalize_clock = QtCore.QElapsedTimer()
+        self._ai_progress_timer = QtCore.QTimer(self)
+        self._ai_progress_timer.setInterval(16)
+        self._ai_progress_timer.timeout.connect(self._advance_ai_progress)
         self.ensure_ai_model_ready = lambda _model_name: False
         self._ai_inference_failed = False
         self._ai_suppress_existing_shape_matches = False
@@ -303,6 +327,7 @@ class Canvas(QtWidgets.QWidget):
         self._snapping = True
         self._hovered_shape_is_selected: bool = False
         self._painter = QtGui.QPainter()
+        self._dirty_rect = QtCore.QRect()
         self._pan_anchor = None
         self._color_resolver: Callable[[str], tuple[int, int, int]] | None = None
         self._point_size: int = 8
@@ -457,6 +482,12 @@ class Canvas(QtWidgets.QWidget):
         return self._current is not None
 
     @property
+    def is_interacting(self) -> bool:
+        # From press to release, a pointer edit holds a selection, a vertex and
+        # an Undo snapshot that a Shape change would reset or split.
+        return self.is_drawing or self._is_moving_shape or self._is_pointer_held
+
+    @property
     def create_mode(self) -> _CreateMode:
         return self._create_mode
 
@@ -520,7 +551,7 @@ class Canvas(QtWidgets.QWidget):
     def set_ai_model_name(self, *, model_name: str) -> None:
         if self._ai_assist_session.model_name == model_name:
             return
-        self._ai_assist_session.set_model_name(model_name)
+        self._ai_assist_session.model_name = model_name
         self._clear_ai_existing_shape_highlights()
 
     def set_ai_output_format(
@@ -543,30 +574,109 @@ class Canvas(QtWidgets.QWidget):
         self._ai_suppress_existing_shape_matches = enabled
         self._clear_ai_existing_shape_highlights()
 
-    def _propose_ai_shapes(
+    def set_osam_worker(self, worker: _automation.OsamWorker, /) -> None:
+        self._osam_worker = worker
+        worker.finished.connect(self._on_ai_job_finished)
+        worker.failed.connect(self._on_ai_job_failed)
+
+    @property
+    def is_ai_finalizing(self) -> bool:
+        # Derived from the draft, so whatever drops the draft also unblocks
+        # input; the job alone outlives a draft that Undo or a reset cleared.
+        job = self._ai_finalize_job
+        return job is not None and job.draft is self._current
+
+    def ai_image(self) -> tuple[np.ndarray, str]:
+        # The id names the image to the AI worker, which caches its embedding.
+        if self._pixmap_rgb is None:
+            image: np.ndarray = _utils.img_qt_to_rgb_arr(self.pixmap.toImage())
+            self._pixmap_rgb = (image, str(hash((image.shape, image.tobytes()))))
+        return self._pixmap_rgb
+
+    def _submit_ai_job(
         self,
         *,
+        channel: Literal["preview", "finalize"],
         prompt_kind: _automation.AiPromptKind,
         points: Sequence[QPointF],
         point_labels: Sequence[int],
-    ) -> _automation.AiAssistProposal:
-        image: np.ndarray = _utils.img_qt_to_rgb_arr(self.pixmap.toImage())
-        if self._pixmap_hash is None:
-            self._pixmap_hash = hash((image.shape, image.tobytes()))
-        proposal = self._ai_assist_session.propose_shapes(
-            image=image,
-            image_id=str(self._pixmap_hash),
+        draft: _DraftShape | None = None,
+        preview_key: object = None,
+    ) -> None:
+        assert self._osam_worker is not None
+        image, image_id = self.ai_image()
+        job = _AiJob(
+            pixmap_key=self.pixmap.cacheKey(),
             prompt_kind=prompt_kind,
             points=np.array([[p.x(), p.y()] for p in points]),
             point_labels=np.array(point_labels),
-            existing_shapes=(
-                self.shapes if self._ai_suppress_existing_shape_matches else []
-            ),
             image_size=(
                 None
                 if self._allow_out_of_bounds_points
                 else (image.shape[1], image.shape[0])
             ),
+            draft=draft,
+            preview_key=preview_key,
+        )
+        # Recorded first: the worker may fail the job before submit returns.
+        if channel == "preview":
+            self._ai_preview_job = job
+        else:
+            self._ai_finalize_job = job
+            self._ai_finalize_clock.start()
+            self._ai_progress_timer.start()
+        self._osam_worker.submit(
+            channel=channel,
+            job=job,
+            request=_automation.InferenceRequest(
+                model_name=self._ai_assist_session.model_name,
+                image_id=image_id,
+                image=image,
+                points=job.points,
+                point_labels=job.point_labels,
+            ),
+        )
+
+    def _ai_progress_center(self) -> QPointF | None:
+        # Where the ring for a finalize still running past the delay sits, in
+        # widget pixels, at the last point placed: a box's release corner.
+        # A prompt that answers sooner shows no ring, so fast runs never
+        # flicker one on and off.
+        DELAY_MS: Final = 400
+        if not self.is_ai_finalizing or self._ai_finalize_clock.elapsed() < DELAY_MS:
+            return None
+        assert self._current is not None
+        return self.transform_image_point_to_widget(self._current.points[-1])
+
+    def _ai_progress_rect(self) -> QtCore.QRect | None:
+        if (center := self._ai_progress_center()) is None:
+            return None
+        margin = _AI_PROGRESS_RADIUS + 4
+        return (
+            QRectF(center, center)
+            .adjusted(-margin, -margin, margin, margin)
+            .toAlignedRect()
+        )
+
+    def _advance_ai_progress(self) -> None:
+        if not self.is_ai_finalizing:
+            self._ai_progress_timer.stop()
+            return
+        if (rect := self._ai_progress_rect()) is not None:
+            self.update(rect)
+
+    def _propose_ai_shapes(
+        self, *, job: _AiJob, annotations: list[Any]
+    ) -> _automation.AiAssistProposal:
+        proposal = self._ai_assist_session.propose_shapes(
+            annotations=annotations,
+            prompt_kind=job.prompt_kind,
+            points=job.points,
+            point_labels=job.point_labels,
+            existing_shapes=(
+                self.shapes if self._ai_suppress_existing_shape_matches else []
+            ),
+            image_size=job.image_size,
         )
         _automation.assign_available_group_ids(
             shapes=proposal.new_shapes,
@@ -574,10 +684,63 @@ class Canvas(QtWidgets.QWidget):
         )
         return proposal
 
-    def _report_inference_failure(self, *, error: Exception) -> None:
+    def _take_ai_job(self, job: object, /) -> _AiJob | None:
+        # Frees the slot the job held; returns it only if its result applies.
+        if not isinstance(job, _AiJob):
+            return None
+        if job is self._ai_preview_job:
+            self._ai_preview_job = None
+            if job.preview_key == self._ai_points_preview_key:
+                return job
+        elif job is self._ai_finalize_job:
+            self._ai_finalize_job = None
+            if self._current is not job.draft:
+                return None
+            if self.pixmap.cacheKey() == job.pixmap_key:
+                return job
+            # The pixmap changed under the draft, as a brightness change does;
+            # the draft stays sent and blocks the next click, so drop it.
+            self._cancel_current_shape()
+        return None
+
+    def _on_ai_job_finished(self, job: object, annotations: object, /) -> None:
+        ai_job = self._take_ai_job(job)
+        if ai_job is None:
+            return
+        try:
+            proposal = self._propose_ai_shapes(
+                job=ai_job, annotations=cast(list, annotations)
+            )
+        except Exception as e:
+            logger.opt(exception=e).error("AI inference failed")
+            self._apply_ai_result(
+                job=ai_job, proposal=None, error=f"{type(e).__name__}: {e}"
+            )
+        else:
+            self._apply_ai_result(job=ai_job, proposal=proposal, error=None)
+
+    def _on_ai_job_failed(self, job: object, message: str, /) -> None:
+        ai_job = self._take_ai_job(job)
+        if ai_job is None:
+            return
+        logger.error("AI inference failed: {}", message)
+        self._apply_ai_result(job=ai_job, proposal=None, error=message)
+
+    def _apply_ai_result(
+        self,
+        *,
+        job: _AiJob,
+        proposal: _automation.AiAssistProposal | None,
+        error: str | None,
+    ) -> None:
+        if job.draft is None:
+            self._show_ai_points_preview(proposal=proposal, error=error)
+        else:
+            self._finish_ai_finalize(proposal=proposal, error=error)
+
+    def _report_inference_failure(self, *, error: str) -> None:
         self._ai_inference_failed = True
-        logger.opt(exception=error).error("AI inference failed")
-        self.inference_failed.emit(f"{type(error).__name__}: {error}")
+        self.inference_failed.emit(error)
 
     def backup_shapes(self) -> None:
         self.shape_backups.append([s.copy() for s in self.shapes])
@@ -746,6 +909,8 @@ class Canvas(QtWidgets.QWidget):
         except AttributeError:
             return
         self.mouse_moved.emit(pos)
+        if self.is_ai_finalizing:
+            return
         self._prev_move_point = pos
         self._dispatch_pointer_move(pos=pos, event=a0)
 
@@ -1097,6 +1262,9 @@ class Canvas(QtWidgets.QWidget):
         return True
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent, /) -> None:
+        self._is_pointer_held = a0.buttons() != Qt.MouseButton.NoButton
+        if self.is_ai_finalizing:
+            return
         pos: QPointF = self.transform_widget_point_to_image(a0.position())
         self._dispatch_pointer_press(pos=pos, event=a0)
         self._update_status(extra_messages=None)
@@ -1136,21 +1304,10 @@ class Canvas(QtWidgets.QWidget):
     ) -> None:
         if self._current is None and self._should_constrain_to_pixmap(pos):
             return
-        if self._reject_incompatible_point_prompt():
-            return
         if self._current is not None:
             self._extend_current_shape(current=self._current, event=event)
             return
         self._start_new_shape(pos=pos, event=event, is_shift_pressed=is_shift_pressed)
-
-    def _reject_incompatible_point_prompt(self) -> bool:
-        if self.create_mode != "ai_points_to_shape":
-            return False
-        model_name = self.get_ai_model_name()
-        if _ai_models.supports_point_prompts(model_name=model_name):
-            return False
-        self.point_prompt_rejected.emit(model_name)
-        return True
 
     def _extend_current_shape(
         self, *, current: _DraftShape, event: QtGui.QMouseEvent
@@ -1301,6 +1458,9 @@ class Canvas(QtWidgets.QWidget):
         self._pan_anchor = QPointF(self.mapToGlobal(event.position().toPoint()))
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent, /) -> None:
+        self._is_pointer_held = a0.buttons() != Qt.MouseButton.NoButton
+        if self.is_ai_finalizing:
+            return
         self._dispatch_pointer_release(event=a0)
         self._commit_pending_shape_move()
         self._drag_anchor = None
@@ -1410,6 +1570,8 @@ class Canvas(QtWidgets.QWidget):
         return len(self._current.points) >= minimum_points
 
     def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent, /) -> None:
+        if self.is_ai_finalizing:
+            return
         if self.mode == _CanvasMode.CREATE:
             if self._double_click == "close" and self._can_close_shape():
                 self._finalize()
@@ -1643,6 +1805,9 @@ class Canvas(QtWidgets.QWidget):
         if self.pixmap.isNull():
             super().paintEvent(a0)
             return
+        # The ring repaints only its own rect each frame; culling shapes
+        # outside the dirty rect keeps that cheap on a busy image.
+        self._dirty_rect = a0.rect()
         self._render_canvas()
         if self._current is not None:
             self._clear_highlight_state()
@@ -1675,7 +1840,31 @@ class Canvas(QtWidgets.QWidget):
             self._draw_active_shape_layer,
             self._draw_preview_overlay_layer,
             self._draw_ai_existing_match_layer,
+            self._draw_ai_progress_layer,
         )
+
+    def _draw_ai_progress_layer(self, painter: QtGui.QPainter, /) -> None:
+        if (center := self._ai_progress_center()) is None:
+            return
+        # A white track under an accent arc reads on light and dark images
+        # alike; one calm linear turn a second, like a native spinner.
+        radius = _AI_PROGRESS_RADIUS
+        painter.save()
+        painter.resetTransform()
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 220), 5))
+        painter.drawEllipse(center, radius, radius)
+        arc = QtGui.QPen(self.palette().color(QtGui.QPalette.ColorRole.Highlight), 2.5)
+        arc.setCapStyle(Qt.PenCapStyle.RoundCap)
+        painter.setPen(arc)
+        TURN_MS: Final = 1000
+        turn = self._ai_finalize_clock.elapsed() % TURN_MS
+        painter.drawArc(
+            QRectF(center, center).adjusted(-radius, -radius, radius, radius),
+            -turn * 360 * 16 // TURN_MS,
+            90 * 16,
+        )
+        painter.restore()
 
     def _draw_pixmap_layer(self, painter: QtGui.QPainter, /) -> None:
         target = QtCore.QRectF(
@@ -1720,10 +1909,11 @@ class Canvas(QtWidgets.QWidget):
         return not self._should_constrain_to_pixmap(cursor)
 
     def _draw_committed_shapes_layer(self, painter: QtGui.QPainter, /) -> None:
-        # Zoomed in, the scroll area shows a small part of the canvas; skip the
-        # shapes outside it. An unshown canvas (offscreen render) has no visible
-        # region, so it paints everything.
-        visible = self.visibleRegion().boundingRect()
+        # Zoomed in, the scroll area shows a small part of the canvas, and a
+        # partial repaint a smaller one still; skip the shapes outside it. An
+        # unshown canvas (offscreen render) has no visible region, so it
+        # paints everything.
+        visible = self.visibleRegion().boundingRect() & self._dirty_rect
         visible_rect = (
             None
             if visible.isEmpty()
@@ -1818,6 +2008,8 @@ class Canvas(QtWidgets.QWidget):
         return _draft_to_shape(preview)
 
     def _refresh_ai_points_preview(self) -> None:
+        if self.is_ai_finalizing:
+            return  # the draft is frozen until its result lands
         current = self._current
         if current is None or self.create_mode != "ai_points_to_shape":
             self._ai_points_preview = []
@@ -1837,27 +2029,28 @@ class Canvas(QtWidgets.QWidget):
         if key == self._ai_points_preview_key:
             return
         self._ai_points_preview_key = key
-        if not _ai_models.supports_point_prompts(model_name=self.get_ai_model_name()):
-            self._ai_points_preview = []
-            self._set_ai_existing_shape_highlights(shapes=[])
-            self.update()
-            return
         preview = current.add_point(
             self._line.points[1],
             label=self._line.point_labels[1],
         )
-        try:
-            proposal = self._propose_ai_shapes(
-                prompt_kind="points",
-                points=preview.points,
-                point_labels=preview.point_labels,
-            )
-        except Exception as e:
+        self._submit_ai_job(
+            channel="preview",
+            prompt_kind="points",
+            points=preview.points,
+            point_labels=preview.point_labels,
+            preview_key=key,
+        )
+
+    def _show_ai_points_preview(
+        self, *, proposal: _automation.AiAssistProposal | None, error: str | None
+    ) -> None:
+        if proposal is None:
             self._ai_points_preview = []
             self._set_ai_existing_shape_highlights(shapes=[])
             # Repeated failed prompts report once; a success re-arms the report.
             if not self._ai_inference_failed:
-                self._report_inference_failure(error=e)
+                assert error is not None
+                self._report_inference_failure(error=error)
         else:
             self._ai_inference_failed = False
             self._ai_points_preview = proposal.new_shapes
@@ -1892,55 +2085,65 @@ class Canvas(QtWidgets.QWidget):
 
     def _finalize(self) -> None:
         assert self._current is not None
-        if self._reject_incompatible_point_prompt():
-            return
         if self.create_mode in _AI_CREATE_MODES:
-            try:
-                proposal = self._build_ai_proposal()
-            except Exception as e:
-                self._report_inference_failure(error=e)
-                self._cancel_current_shape()
-                return
-            self._ai_inference_failed = False
-            new_shapes = proposal.new_shapes
-            if not new_shapes:
-                if not proposal.matching_existing_shapes:
-                    self.inference_produced_no_shapes.emit()
-                self._cancel_current_shape()
-                self._set_ai_existing_shape_highlights(
-                    shapes=proposal.matching_existing_shapes
+            # Input waits until the result lands, so the draft stays as sent.
+            draft = self._current
+            if self.create_mode == "ai_box_to_shape":
+                # point_labels: 2=box corner, 3=opposite box corner (SAM convention)
+                prompt_kind, points, point_labels = (
+                    "box",
+                    _normalize_bbox_points(bbox_points=draft.points),
+                    [2, 3],
                 )
-                return
+            else:
+                assert self.create_mode == "ai_points_to_shape"
+                prompt_kind, points, point_labels = (
+                    "points",
+                    draft.points,
+                    draft.point_labels,
+                )
+            # A Ctrl+click finalizes before drawing ever started, so report it
+            # now: the app disables Undo, which would drop the draft.
+            self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
+            self._submit_ai_job(
+                channel="finalize",
+                prompt_kind=prompt_kind,
+                points=points,
+                point_labels=point_labels,
+                draft=draft,
+            )
+            return
+        self._current = self._current.close()
+        if _is_degenerate_draft(self._current):
+            self.degenerate_shape_rejected.emit()
+            self._cancel_current_shape()
+            return
+        self._commit_new_shapes([_draft_to_shape(self._current)])
+
+    def _finish_ai_finalize(
+        self, *, proposal: _automation.AiAssistProposal | None, error: str | None
+    ) -> None:
+        if proposal is None:
+            assert error is not None
+            self._report_inference_failure(error=error)
+            self._cancel_current_shape()
+            return
+        self._ai_inference_failed = False
+        if proposal.new_shapes:
             self._set_ai_existing_shape_highlights(
                 shapes=proposal.matching_existing_shapes
             )
-        else:
-            self._current = self._current.close()
-            if _is_degenerate_draft(self._current):
-                self.degenerate_shape_rejected.emit()
-                self._cancel_current_shape()
-                return
-            new_shapes = [_draft_to_shape(self._current)]
+            self._commit_new_shapes(proposal.new_shapes)
+            return
+        if not proposal.matching_existing_shapes:
+            self.inference_produced_no_shapes.emit()
+        self._cancel_current_shape()
+        self._set_ai_existing_shape_highlights(shapes=proposal.matching_existing_shapes)
+
+    def _commit_new_shapes(self, new_shapes: list[Shape], /) -> None:
         self.shapes.extend(new_shapes)
         self.backup_shapes()
         self._reset_after_shape_creation()
-
-    def _build_ai_proposal(self) -> _automation.AiAssistProposal:
-        assert self._current is not None
-        if self.create_mode == "ai_points_to_shape":
-            return self._propose_ai_shapes(
-                prompt_kind="points",
-                points=self._current.points,
-                point_labels=self._current.point_labels,
-            )
-        if self.create_mode == "ai_box_to_shape":
-            # point_labels: 2=box corner, 3=opposite box corner (SAM convention)
-            return self._propose_ai_shapes(
-                prompt_kind="box",
-                points=_normalize_bbox_points(bbox_points=self._current.points),
-                point_labels=[2, 3],
-            )
-        raise AssertionError(f"unreachable: {self.create_mode}")
 
     def _reset_after_shape_creation(self) -> None:
         self._current = None
@@ -1953,6 +2156,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _cancel_current_shape(self) -> None:
         self._current = None
+        self._ai_finalize_job = None
         self._set_ai_existing_shape_highlights(shapes=[])
         self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
         self.update()
@@ -2054,6 +2258,8 @@ class Canvas(QtWidgets.QWidget):
         if self.mode == _CanvasMode.CREATE:
             if key == Qt.Key.Key_Escape and self._current is not None:
                 self._cancel_current_shape()
+            elif self.is_ai_finalizing:
+                pass
             elif (
                 key in (Qt.Key.Key_Return, Qt.Key.Key_Space) and self._can_close_shape()
             ):
@@ -2128,7 +2334,9 @@ class Canvas(QtWidgets.QWidget):
 
     def undo_last_point(self) -> None:
         current = self._current
-        if current is None or current.closed:
+        # The draft stays as sent while its AI Shape is pending; the Undo Last
+        # Point action reaches here without passing the input guards.
+        if current is None or current.closed or self.is_ai_finalizing:
             return
         if (
             self.create_mode == "oriented_rectangle"
@@ -2160,7 +2368,7 @@ class Canvas(QtWidgets.QWidget):
     def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
         self.pixmap = pixmap
         self._drag_anchor = None
-        self._pixmap_hash = None
+        self._pixmap_rgb = None
         # A new image is a fresh inference context that should surface its own
         # first failure rather than staying muted by the prior image's latch.
         self._ai_inference_failed = False
@@ -2200,15 +2408,18 @@ class Canvas(QtWidgets.QWidget):
 
     def reset_state(self) -> None:
         self._ai_preview_timer.stop()
+        self._ai_preview_job = None
+        self._ai_finalize_job = None
         self._ai_points_preview = []
         self._ai_points_preview_key = None
         self._release_cursor()
         self.pixmap = QtGui.QPixmap()
-        self._pixmap_hash = None
+        self._pixmap_rgb = None
         self._drag_anchor = None
         self.shapes = []
         self.shape_backups = collections.deque(maxlen=self._num_backups)
         self._is_moving_shape = False
+        self._is_pointer_held = False
         self.selected_shapes = []
         self._current = None
         self._view_offset = QPointF()

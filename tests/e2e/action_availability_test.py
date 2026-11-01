@@ -151,12 +151,12 @@ def test_drawing_tool_survives_file_transitions(
     assert len(canvas.shapes) == (5 if keep_prev else 0)
     assert canvas.create_mode == tool
     assert canvas.mode == drawing_mode
-    assert not selected_action.isEnabled()
+    assert selected_action.isChecked()
     assert win._actions.edit_mode.isEnabled()
 
     win._actions.save_as.trigger()
     assert destination.exists()
-    assert not selected_action.isEnabled()
+    assert selected_action.isChecked()
     assert canvas.create_mode == tool
     assert canvas.mode == drawing_mode
 
@@ -164,15 +164,16 @@ def test_drawing_tool_survives_file_transitions(
     assert not win._actions.edit_mode.isEnabled()
     assert all(not action.isEnabled() for _, action in win._actions.draw)
     assert win._load_file(image_or_label_path=str(destination))
-    assert not selected_action.isEnabled()
+    assert selected_action.isChecked()
     assert canvas.create_mode == tool
     assert canvas.mode == drawing_mode
     assert win._actions.edit_mode.isEnabled()
 
     win._actions.edit_mode.trigger()
     assert canvas.mode != drawing_mode
-    assert not win._actions.edit_mode.isEnabled()
+    assert win._actions.edit_mode.isChecked()
     assert all(action.isEnabled() for _, action in win._actions.draw)
+    assert not any(action.isChecked() for _, action in win._actions.draw)
     win.mark_clean()
 
 

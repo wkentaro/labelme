@@ -865,10 +865,6 @@
         <translation>لغو</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>در حالت AI-Points در دسترس نیست، زیرا این مدل از دستورات نقطه‌ای پشتیبانی نمی‌کند.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>تغییرات حاشیه‌نویسی برای «{}» نگه داشته شوند؟</translation>
     </message>
@@ -969,6 +965,22 @@
         <translation>پشتیبان‌گیری و بازنشانی</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>در حال شناسایی «{query}»…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>در حال شناسایی «{query}» روی CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>در حال قطعه‌بندی روی CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>در حال قطعه‌بندی…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -977,22 +989,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 مدل پرامپت متنی هوش مصنوعی را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} «{query}» جدید پیدا شد</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>«{query}» جدیدی پیدا نشد</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>برچسب نامعتبر</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points در دسترس نیست</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s از دستورات نقطه‌ای پشتیبانی نمی‌کند.
-لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1417,6 +1427,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>تکراری جلوگیری از تکرار حذف تکراری‌ها</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>دستگاه پردازش</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>حالت خودکار از GPU استفاده می‌کند و اگر GPU از کار بیفتد به CPU می‌رود.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda پردازنده کند خرابی</translation>
     </message>
     <message>
         <source>Predefined labels</source>

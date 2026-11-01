@@ -891,25 +891,6 @@ class SettingsDialog(QtWidgets.QDialog):
         if key_path == ("shape_color", "mode"):
             self._sync_shape_color_mode()
 
-    def set_choice_enabled(
-        self,
-        *,
-        key_path: tuple[str, ...],
-        value: object,
-        enabled: bool,
-        disabled_reason: str,
-    ) -> None:
-        editor = self._editors[key_path]
-        assert isinstance(editor, QtWidgets.QComboBox)
-        index = editor.findData(value)
-        assert index >= 0
-        model = editor.model()
-        assert isinstance(model, QtGui.QStandardItemModel)
-        item = model.item(index)
-        assert item is not None
-        item.setEnabled(enabled)
-        item.setToolTip("" if enabled else disabled_reason)
-
     def _read_value(self, *, key_path: tuple[str, ...]) -> object:
         node: object = self._config
         for key in key_path:

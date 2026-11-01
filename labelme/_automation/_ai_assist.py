@@ -7,10 +7,8 @@ import numpy as np
 from loguru import logger
 from numpy.typing import NDArray
 
-from .._ai_models import supports_point_prompts
 from .._shape import Shape
 from ._geometry import round_bbox_to_int
-from ._osam_session import OsamSession
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
 from ._suppression import match_detections_to_existing_shapes
@@ -32,55 +30,32 @@ class AiAssistSession:
     model_name: str
     output_format: AiOutputFormat
     polygon_detail: int
-    _session: OsamSession | None
 
     def __init__(
         self,
         *,
-        model_name: str = "sam2:latest",
+        model_name: str = "sam3:latest",
         output_format: AiOutputFormat = "polygon",
         polygon_detail: int = 60,
     ) -> None:
         self.model_name = model_name
         self.output_format = output_format
         self.polygon_detail = polygon_detail
-        self._session = None
-
-    def set_model_name(self, model_name: str, /) -> None:
-        if self.model_name != model_name:
-            self._session = None
-            self.model_name = model_name
-
-    def _get_session(self) -> OsamSession:
-        if self._session is None:
-            self._session = OsamSession(model_name=self.model_name)
-        return self._session
 
     def propose_shapes(
         self,
         *,
-        image: NDArray[np.uint8],
-        image_id: str,
+        annotations: list[osam.types.Annotation],
         prompt_kind: AiPromptKind,
         points: NDArray[np.floating],
         point_labels: NDArray[np.intp],
         existing_shapes: list[Shape],
         image_size: tuple[int, int] | None = None,
     ) -> AiAssistProposal:
-        if prompt_kind == "points" and not supports_point_prompts(
-            model_name=self.model_name
-        ):
-            raise ValueError(f"{self.model_name} does not support point prompts")
-        response: osam.types.GenerateResponse = self._get_session().run(
-            image=image,
-            image_id=image_id,
-            points=points,
-            point_labels=point_labels,
-        )
         # iou_threshold is hardcoded because the AI Assist flow has no
         # user-facing IoU control (unlike the AI Text Prompt flow); 0.5 matches
         # the AI Text Prompt widget default.
-        detections = _detections_from_annotations(response.annotations)
+        detections = _detections_from_annotations(annotations)
         if prompt_kind == "points" and detections:
             detections = [
                 max(
