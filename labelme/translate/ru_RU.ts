@@ -865,10 +865,6 @@
         <translation>Отмена</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Недоступно в режиме AI-Points, так как эта модель не поддерживает точечные запросы.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Сохранить изменения аннотаций для «{}»?</translation>
     </message>
@@ -961,6 +957,22 @@
         <translation>Нарисуйте ограничивающую рамку для сегментации объекта.</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Поиск «{query}»…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Поиск «{query}» на ЦП…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Сегментация на ЦП…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Сегментация…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -969,14 +981,12 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 Переключите модель текстового запроса ИИ на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points недоступен</translation>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Найдено новых «{query}»: {count}</translation>
     </message>
     <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s не поддерживает точечные запросы.
-Выберите другую модель или используйте режим AI-Box.</translation>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Новых «{query}» не найдено</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1397,6 +1407,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>дубликат дубликаты избегать дубликатов удаление дубликатов</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Вычислительное устройство</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>ЦП</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>«Автоматически» использует ГП и переключается на ЦП при сбое ГП.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda гп цп процессор медленно сбой</translation>
     </message>
     <message>
         <source>Predefined labels</source>

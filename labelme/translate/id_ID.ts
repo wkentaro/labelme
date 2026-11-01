@@ -841,12 +841,36 @@
         <translation>Buka gambar berikutnya (tahan %s untuk menyalin bentuk saat ini)</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Mendeteksi &apos;{query}&apos;…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Mendeteksi &apos;{query}&apos; di CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Menyegmentasi di CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Menyegmentasi…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat bentuk &apos;%s&apos;.
 
 Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Ditemukan {count} &apos;{query}&apos; baru</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Tidak ada &apos;{query}&apos; baru yang ditemukan</translation>
     </message>
     <message>
         <source>Large image requires more memory</source>
@@ -883,10 +907,6 @@ Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluara
     <message>
         <source>Cancel</source>
         <translation>Batal</translation>
-    </message>
-    <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Tidak tersedia dalam mode AI-Points karena model ini tidak mendukung prompt titik.</translation>
     </message>
     <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
@@ -983,16 +1003,6 @@ Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluara
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Gagal menyimpan berkas anotasi</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points tidak tersedia</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s tidak mendukung point prompt.
-Silakan pilih model lain atau gunakan mode AI-Box.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1449,6 +1459,22 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>duplikat hindari duplikat hapus duplikat</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Perangkat komputasi</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Otomatis memakai GPU dan beralih ke CPU jika GPU gagal.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda prosesor lambat crash</translation>
     </message>
     <message>
         <source>Predefined labels</source>

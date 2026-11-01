@@ -355,4 +355,25 @@ SETTINGS: Final[tuple[Setting, ...]] = (
             ),
         ),
     ),
+    Setting(
+        key_path=("ai", "device"),
+        group="AI assist",
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Compute device")),
+        kind="enum",
+        choices=("auto", "cpu"),
+        choice_labels=(
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Automatic")),
+            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "CPU")),
+        ),
+        note=cast(
+            str,
+            QT_TRANSLATE_NOOP(
+                "SettingsDialog",
+                "Automatic uses the GPU and switches to the CPU if the GPU fails.",
+            ),
+        ),
+        search_aliases=cast(
+            str, QT_TRANSLATE_NOOP("SettingsDialog", "gpu cuda processor slow crash")
+        ),
+    ),
 )
