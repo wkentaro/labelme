@@ -24,10 +24,11 @@ from numpy.typing import NDArray
 from labelme import __version__
 
 from . import _utils
+from ._shape import ShapeDict
 from ._shape import ShapeType
-from ._utils._shape import ShapeDict
 
 PIL.Image.MAX_IMAGE_PIXELS = None
+
 
 _SINGLE_CHANNEL_NDIM: Final = 2
 
@@ -343,7 +344,7 @@ def _check_image_dimensions(
 
 
 def read_label_file_image_path(*, filename: str) -> str:
-    """Return the Image path an Annotation File records, relative to the file."""
+    # The recorded Image path is relative to the Annotation File.
     try:
         with open(filename, encoding="utf-8") as f:
             return _image_path_from_raw(json.load(f))

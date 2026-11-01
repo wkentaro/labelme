@@ -8,10 +8,10 @@ import skimage
 from numpy.typing import NDArray
 
 from labelme._automation._geometry import _compute_polygon_deviation
-from labelme._automation._geometry import _round_bbox_to_int
 from labelme._automation._geometry import compute_circle_from_mask
 from labelme._automation._geometry import compute_oriented_rectangle_from_mask
 from labelme._automation._geometry import compute_polygons_from_mask
+from labelme._automation._geometry import round_bbox_to_int
 from labelme._automation._geometry import shape_to_xyxy_bbox
 from labelme._shape import Shape
 
@@ -20,8 +20,8 @@ def test_round_bbox_to_int_uses_ties_to_even_for_tuple_and_array() -> None:
     bbox = (-11.5, -10.5, 10.5, 11.5)
     expected = (-12, -10, 10, 12)
 
-    assert _round_bbox_to_int(bbox=bbox) == expected
-    assert _round_bbox_to_int(bbox=np.array(bbox, dtype=np.float32)) == expected
+    assert round_bbox_to_int(bbox=bbox) == expected
+    assert round_bbox_to_int(bbox=np.array(bbox, dtype=np.float32)) == expected
 
 
 def test_compute_circle_from_mask_returns_none_when_empty() -> None:

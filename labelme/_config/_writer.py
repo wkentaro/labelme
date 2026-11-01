@@ -16,10 +16,10 @@ from .. import _yaml
 from ._migration import migrate_config
 from ._shape_color import validate_shape_color
 
-here = Path(__file__).resolve().parent
+_here = Path(__file__).resolve().parent
 
 _DEFAULT_CONFIG: Final = _yaml.safe_load(
-    (here / "default_config.yaml").read_text(encoding="utf-8")
+    (_here / "default_config.yaml").read_text(encoding="utf-8")
 )
 
 

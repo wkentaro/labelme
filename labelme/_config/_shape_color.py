@@ -80,7 +80,6 @@ def validate_shape_color(*, config: object) -> None:
 
 
 def migrate_shape_color(*, config: dict) -> None:
-    """Migrate legacy shape color keys in place."""
     legacy_siblings = {
         "default_shape_color",
         "shift_auto_shape_color",

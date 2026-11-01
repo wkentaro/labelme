@@ -6,9 +6,11 @@ from typing import Final
 import numpy as np
 import osam
 import pytest
+from loguru import logger
 from numpy.typing import NDArray
 
 from labelme._automation._osam_session import OsamSession
+from labelme._automation._osam_session import get_osam_session
 
 _IMAGE: Final[NDArray[np.uint8]] = np.zeros((2, 3, 3), dtype=np.uint8)
 _POINTS: Final[NDArray[np.floating]] = np.array([[1.0, 2.0]])
@@ -196,3 +198,47 @@ def test_unencodable_model_falls_back_to_no_embedding(
 
     (request,) = registry.model.requests
     assert request.image_embedding is None
+
+
+def test_run_logs_timings(
+    *,
+    install_fake_model: Callable[..., _FakeModelRegistry],
+) -> None:
+    install_fake_model()
+    messages: list[str] = []
+    sink_id = logger.add(lambda m: messages.append(m.record["message"]), level="INFO")
+
+    try:
+        session = OsamSession(model_name="x")
+        _run_point(session, image_id="img")
+        _run_point(session, image_id="img")
+    finally:
+        logger.remove(sink_id)
+
+    prefixes = [
+        "Loaded 'x' in ",
+        "Encoded image 3x2 with 'x' in ",
+        "Generated 0 annotations with 'x' in ",
+        "Generated 0 annotations with 'x' in ",
+    ]
+    assert len(messages) == len(prefixes)
+    for message, prefix in zip(messages, prefixes, strict=True):
+        assert message.startswith(prefix), message
+
+
+def test_get_osam_session_shares_one_session_per_model() -> None:
+    session = get_osam_session(model_name="x")
+
+    assert get_osam_session(model_name="x") is session
+    assert get_osam_session(model_name="y") is not session
+
+
+def test_get_osam_session_evicts_least_recently_used() -> None:
+    a = get_osam_session(model_name="a")
+    b = get_osam_session(model_name="b")
+    assert get_osam_session(model_name="a") is a
+
+    get_osam_session(model_name="c")
+
+    assert get_osam_session(model_name="a") is a
+    assert get_osam_session(model_name="b") is not b

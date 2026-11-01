@@ -1,7 +1,8 @@
 from ._ai_assist import AiAssistProposal
 from ._ai_assist import AiAssistSession
 from ._geometry import shape_to_xyxy_bbox
-from ._osam_session import OsamSession
+from ._osam_worker import InferenceRequest
+from ._osam_worker import OsamWorker
 from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
 from ._shape_builders import Detection
 from ._shape_builders import assign_available_group_ids
@@ -19,8 +20,9 @@ __all__ = [
     "AiOutputFormat",
     "AiPromptKind",
     "Detection",
+    "InferenceRequest",
     "MaskOutputUnavailableError",
-    "OsamSession",
+    "OsamWorker",
     "assign_available_group_ids",
     "propose_shapes_from_texts",
     "shape_to_xyxy_bbox",

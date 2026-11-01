@@ -8,6 +8,8 @@ from ._image import img_b64_to_arr
 from ._image import img_data_to_pil
 from ._image import img_qt_to_arr
 from ._image import img_qt_to_rgb_arr
+from ._mask import shape_to_mask
+from ._mask import shapes_to_label
 from ._qt import apply_color_theme
 from ._qt import direction_angle
 from ._qt import modifier_text
@@ -16,8 +18,6 @@ from ._qt import new_icon
 from ._qt import new_separator
 from ._qt import project_point_on_line
 from ._qt import project_point_on_perpendicular_line
-from ._shape import shape_to_mask
-from ._shape import shapes_to_label
 
 __all__ = [
     "ImageDecodeRequirement",
