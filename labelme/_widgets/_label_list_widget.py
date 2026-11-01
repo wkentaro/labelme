@@ -171,7 +171,7 @@ class _ItemModel(QtGui.QStandardItemModel):
         /,
         parent: QtCore.QModelIndex
         | QtCore.QPersistentModelIndex = _INVALID_MODEL_INDEX,
-    ) -> bool:  # noqa: GR005 -- PySide6 declares `parent` positional-or-keyword
+    ) -> bool:  # noqa: GR001 -- PySide6 declares `parent` positional-or-keyword
         ret = super().removeRows(row, count, parent)
         self.item_dropped.emit()
         return ret

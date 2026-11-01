@@ -146,8 +146,8 @@ def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
     assert not win._actions.save.isEnabled()
     assert not win.windowTitle().endswith("*")
     # The window is still in polygon create mode: a successful auto-save must
-    # clear only the dirty indicators, not re-enable the draw actions.
-    assert not dict(win._actions.draw)["polygon"].isEnabled()
+    # clear only the dirty indicators, not change the selected draw tool.
+    assert dict(win._actions.draw)["polygon"].isChecked()
 
     win.close()
     qtbot.waitUntil(lambda: not win.isVisible(), timeout=3000)

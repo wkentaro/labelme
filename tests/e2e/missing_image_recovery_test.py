@@ -467,7 +467,8 @@ def test_recovery_failed_save_keeps_auto_save_paused_until_retry(
 
     with monkeypatch.context() as patch:
         patch.setattr("labelme._app.write_save_request", fail_save)
-        assert not raw_win.save_labels(label_path=str(annotation), show_error=False)
+        patch.setattr(raw_win, "show_error_message", lambda **_kwargs: None)
+        assert not raw_win.save_labels(label_path=str(annotation))
     raw_win._canvas_widgets.canvas.shapes[0].label = "edited after failure"
     raw_win.mark_dirty()
     qtbot.wait(50)

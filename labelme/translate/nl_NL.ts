@@ -865,10 +865,6 @@
         <translation>Annuleren</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Niet beschikbaar in de modus AI-Points, omdat dit model geen puntprompts ondersteunt.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>De annotatiewijzigingen voor ‘{}’ behouden?</translation>
     </message>
@@ -969,6 +965,22 @@
         <translation>Back-up maken en resetten</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>&apos;{query}&apos; detecteren…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>&apos;{query}&apos; detecteren op de CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Segmenteren op de CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Segmenteren…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -977,22 +989,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 Wijzig het model voor de AI-tekstprompt naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} nieuwe &apos;{query}&apos; gevonden</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Geen nieuwe &apos;{query}&apos; gevonden</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Ongeldig label</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fout bij opslaan van annotatiebestand</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points niet beschikbaar</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s ondersteunt geen puntinvoer.
-Selecteer een ander model of gebruik de AI-Box-modus.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1401,6 +1411,22 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>duplicaat duplicaten voorkomen verwijderen</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Rekenapparaat</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Automatisch gebruikt de GPU en schakelt over naar de CPU als de GPU faalt.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda processor traag crash</translation>
     </message>
     <message>
         <source>Predefined labels</source>
