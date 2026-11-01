@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import struct
+import sys
 import time
 from collections.abc import Iterator
 from multiprocessing.connection import Connection
@@ -115,7 +116,14 @@ def test_reports_a_model_error_and_keeps_the_worker(
     [
         ("crash", "AI worker exited with code 3"),
         ("hang", "AI inference timed out after 1 s"),
-        ("stall", "AI inference timed out after 1 s"),
+        pytest.param(
+            "stall",
+            "AI inference timed out after 1 s",
+            marks=pytest.mark.skipif(
+                sys.platform == "win32",
+                reason="Windows pipes deliver whole messages, so none stalls midway",
+            ),
+        ),
     ],
 )
 def test_restarts_the_worker_after_a_crash_or_hang(
