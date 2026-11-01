@@ -557,3 +557,42 @@ def test_text_result_waits_for_a_drag(
             xmins.append(float(canvas.shapes[0].points[:, 0].min()))
     # Undo steps back over the result, then the whole drag, never mid-drag.
     assert xmins == [pytest.approx(420, abs=2), 400.0]
+
+
+@pytest.mark.gui
+def test_text_result_waits_for_a_held_vertex(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    _install_mock_session(
+        monkeypatch=monkeypatch,
+        response_fn=functools.partial(_make_person_response, with_masks=False),
+    )
+    box = Shape(
+        label="box",
+        shape_type="rectangle",
+        points=np.array([(400.0, 20.0), (460.0, 80.0)]),
+    )
+    win._load_shapes([box], replace=True)
+    deliver = _hold_text_results(
+        win=win, qtbot=qtbot, monkeypatch=monkeypatch, create_mode="rectangle"
+    )
+    win._switch_canvas_mode(edit=True, create_mode=None)
+
+    def at(x: float) -> QPoint:
+        return image_to_widget_pos(canvas=canvas, image_pos=QPointF(x, 20))
+
+    qtbot.mouseMove(canvas, pos=at(400))
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=at(400))
+    deliver()  # lands before the corner moves
+    qtbot.mouseMove(canvas, pos=at(420))
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=at(420))
+    qtbot.waitUntil(lambda: len(canvas.shapes) == 3)
+
+    assert canvas.shapes[0].points[0, 0] == pytest.approx(420, abs=2)

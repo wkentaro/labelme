@@ -204,6 +204,7 @@ class Canvas(QtWidgets.QWidget):
     context_menu_origin: QtCore.QPoint | None
     shape_backups: collections.deque[list[Shape]]
     _is_moving_shape: bool
+    _is_pointer_held: bool
     selected_shapes: list[Shape]
     _current: _DraftShape | None
     hovered_shape: Shape | None
@@ -462,8 +463,9 @@ class Canvas(QtWidgets.QWidget):
 
     @property
     def is_interacting(self) -> bool:
-        # A draft or a drag holds an Undo snapshot that a Shape change would split.
-        return self.is_drawing or self._is_moving_shape
+        # From press to release, a pointer edit holds a selection, a vertex and
+        # an Undo snapshot that a Shape change would reset or split.
+        return self.is_drawing or self._is_moving_shape or self._is_pointer_held
 
     @property
     def create_mode(self) -> _CreateMode:
@@ -1207,6 +1209,7 @@ class Canvas(QtWidgets.QWidget):
         return True
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent, /) -> None:
+        self._is_pointer_held = a0.buttons() != Qt.MouseButton.NoButton
         if self.is_ai_finalizing:
             return
         pos: QPointF = self.transform_widget_point_to_image(a0.position())
@@ -1404,6 +1407,7 @@ class Canvas(QtWidgets.QWidget):
         self._pan_anchor = QPointF(self.mapToGlobal(event.position().toPoint()))
 
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent, /) -> None:
+        self._is_pointer_held = a0.buttons() != Qt.MouseButton.NoButton
         if self.is_ai_finalizing:
             return
         self._dispatch_pointer_release(event=a0)
@@ -2322,6 +2326,7 @@ class Canvas(QtWidgets.QWidget):
         self.shapes = []
         self.shape_backups = collections.deque(maxlen=self._num_backups)
         self._is_moving_shape = False
+        self._is_pointer_held = False
         self.selected_shapes = []
         self._current = None
         self._view_offset = QPointF()
