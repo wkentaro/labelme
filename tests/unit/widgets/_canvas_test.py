@@ -1191,6 +1191,45 @@ def test_finalize_reports_inference_error_and_cancels(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("create_mode", ["ai_points_to_shape", "ai_box_to_shape"])
+def test_slow_finalize_rings_last_point_and_esc_drops_its_result(
+    *, canvas: Canvas, qtbot: QtBot, create_mode: str
+) -> None:
+    worker = _worker(canvas)
+    worker.annotations = [
+        osam.types.Annotation(
+            bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=10, ymax=10),
+            mask=np.ones((11, 11), dtype=bool),
+        )
+    ]
+    worker.paused = True
+    canvas.set_editing(value=False, create_mode=create_mode)
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(30, 20)),
+        point_labels=(1, 1),
+    )
+
+    canvas._finalize()
+
+    assert canvas.is_ai_finalizing
+    assert canvas._ai_progress_rect() is None  # a fast answer shows no ring
+    qtbot.waitUntil(lambda: canvas._ai_progress_rect() is not None, timeout=1000)
+    rect = canvas._ai_progress_rect()
+    assert rect is not None
+    assert rect.contains(
+        canvas.transform_image_point_to_widget(QPointF(30, 20)).toPoint()
+    )
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    worker.resume()
+
+    assert canvas._ai_progress_rect() is None
+    assert canvas._current is None
+    assert canvas.shapes == []
+
+
+@pytest.mark.gui
 def test_points_preview_hides_failed_and_empty_predictions(
     *,
     canvas: Canvas,
