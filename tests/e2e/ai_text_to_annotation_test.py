@@ -36,7 +36,7 @@ if TYPE_CHECKING:
 
 pytestmark = pytest.mark.usefixtures("cached_ai_models")
 
-_AI_TEXT_MODEL: Final = "yoloworld:latest"
+_AI_TEXT_MODEL: Final = "sam3:latest"
 
 
 def _make_response(
@@ -260,6 +260,72 @@ def test_text_prompt_creates_shapes(
     assert not canvas.shapes
     assert not canvas.can_restore_shape
     assert not win._actions.undo.isEnabled()
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("create_mode", "output_format"),
+    [
+        pytest.param("polygon", None, id="polygon"),
+        pytest.param("ai_box_to_shape", "mask", id="ai_box-mask"),
+    ],
+)
+def test_box_only_model_is_rejected_before_inference(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+    create_mode: str,
+    output_format: AiOutputFormat | None,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        config_overrides={"ai": {"text_model": "yoloworld:latest"}},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    if output_format is not None:
+        output_combo = win._ai_annotation._output_format_combo
+        output_combo.setCurrentIndex(output_combo.findData(output_format))
+    win._switch_canvas_mode(edit=False, create_mode=create_mode)
+    win._ai_text._text_input.setText("person")
+
+    submitted: list[object] = []
+    monkeypatch.setattr(OsamWorker, "submit", lambda *_, **kw: submitted.append(kw))
+    readiness_checks: list[str] = []
+    monkeypatch.setattr(win, "_ensure_ai_model_ready", readiness_checks.append)
+    warnings: list[str] = []
+    monkeypatch.setattr(
+        QtWidgets.QMessageBox,
+        "warning",
+        lambda _parent, title, _text: warnings.append(title),
+    )
+
+    win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
+
+    assert readiness_checks == []
+    assert submitted == []
+    assert warnings == ["Mask Output Unavailable"]
+    assert win._config["ai"]["text_model"] == "yoloworld:latest"
+    combo = win._ai_text._model_combo
+    assert combo.currentData() == "yoloworld:latest"
+    model = combo.model()
+    yolo_index = combo.findData("yoloworld:latest")
+    assert not model.flags(model.index(yolo_index, 0)) & Qt.ItemFlag.ItemIsEnabled
+    win._open_settings()
+    assert win._settings_dialog is not None
+    editor = win._settings_dialog._editors[("ai", "text_model")]
+    assert isinstance(editor, QtWidgets.QComboBox)
+    settings_model = editor.model()
+    settings_index = settings_model.index(editor.findData("yoloworld:latest"), 0)
+    assert not settings_model.flags(settings_index) & Qt.ItemFlag.ItemIsEnabled
+
+    win._switch_canvas_mode(edit=False, create_mode="rectangle")
+    assert model.flags(model.index(yolo_index, 0)) & Qt.ItemFlag.ItemIsEnabled
+    assert settings_model.flags(settings_index) & Qt.ItemFlag.ItemIsEnabled
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

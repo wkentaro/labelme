@@ -54,6 +54,8 @@ AI_TEXT_MODEL_OPTIONS: Final[tuple[tuple[str, str], ...]] = (
     ("sam3:latest", "SAM3 (smart)"),
     ("yoloworld:latest", "YOLO-World (fast)"),
 )
+# Text models that return boxes without masks.
+AI_TEXT_BOX_ONLY_MODELS: Final[frozenset[str]] = frozenset({"yoloworld:latest"})
 
 
 def find_ai_assist_model_option(*, model_name: str) -> _AiAssistModelOption | None:

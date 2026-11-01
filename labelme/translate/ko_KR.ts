@@ -1124,6 +1124,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>구성 오류</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>상자만 감지합니다. 이 모델을 사용하려면 사각형으로 전환하세요.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -172,8 +172,8 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     def select_model(self, model_name: str, /) -> None:
         self._model_combo.select_model(model_name)
 
-    def get_model_display_name(self) -> str:
-        return self._model_combo.currentText()
+    def set_unavailable_models(self, unavailable: dict[str, str], /) -> None:
+        self._model_combo.set_unavailable_models(unavailable)
 
     def get_score_threshold(self) -> float:
         return self._score_spinbox.value()

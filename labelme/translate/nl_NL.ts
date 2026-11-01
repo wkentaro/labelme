@@ -1124,6 +1124,10 @@ Verwachte locatie: {path}</translation>
         <source>Configuration Error</source>
         <translation>Configuratiefout</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Detecteert alleen kaders. Schakel over naar Rechthoek om dit model te gebruiken.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

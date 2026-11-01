@@ -1124,6 +1124,10 @@ Ubicación esperada: {path}</translation>
         <source>Configuration Error</source>
         <translation>Error de configuración</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Solo detecta recuadros. Cambia a «Rectángulo» para usar este modelo.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

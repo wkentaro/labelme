@@ -1124,6 +1124,10 @@ Beklenen konum: {path}</translation>
         <source>Configuration Error</source>
         <translation>Yapılandırma Hatası</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Yalnızca kutuları algılar. Bu modeli kullanmak için Dikdörtgen&apos;e geçin.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

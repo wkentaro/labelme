@@ -768,6 +768,10 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self._update_status(extra_messages=None)
 
+    @property
+    def is_editing(self) -> bool:
+        return self.mode is _CanvasMode.EDIT
+
     def set_editing(
         self, *, value: bool = True, create_mode: str | None = None
     ) -> None:

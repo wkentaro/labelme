@@ -1125,6 +1125,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>ข้อผิดพลาดการตั้งค่า</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>ตรวจจับได้เฉพาะกรอบ เปลี่ยนเป็นสี่เหลี่ยมเพื่อใช้โมเดลนี้</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -94,7 +94,6 @@ class _AiTextJob:
     pixmap_key: int
     texts: list[str]
     shape_type: _automation.AiOutputFormat
-    model_display_name: str
     iou_threshold: float
     score_threshold: float
     image_size: tuple[int, int] | None
@@ -344,7 +343,7 @@ class MainWindow(QtWidgets.QMainWindow):
             default_model=self._config["ai"]["default"] or "",
             polygon_detail=self._config["mask_polygonization"]["detail"],
             on_model_changed=self._on_ai_model_changed,
-            on_output_format_changed=self._canvas_widgets.canvas.set_ai_output_format,
+            on_output_format_changed=self._on_ai_output_format_changed,
             on_polygon_detail_changed=self._on_ai_polygon_detail_changed,
             parent=self,
         )
@@ -1690,6 +1689,23 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.warning("Unsupported create_mode={!r}", create_mode)
             return
 
+        # Checked against the Setting, so a model that is not downloaded yet is
+        # rejected before the Models window offers its download.
+        requested_model: str = self._config["ai"]["text_model"] or ""
+        if requested_model in _text_models_unable_to_create(shape_type):
+            QtWidgets.QMessageBox.warning(
+                self,
+                self.tr("Mask Output Unavailable"),
+                self.tr(
+                    "%s only detects bounding boxes and cannot create "
+                    "'%s' Shapes.\n\n"
+                    "Switch the AI Text Prompt model to 'SAM3 (smart)', "
+                    "or set the output format to 'Rectangle'."
+                )
+                % (self._model_manager.models[requested_model], shape_type),
+            )
+            return
+
         texts = self._ai_text.get_text_prompt().split(",")
 
         model_name: str = self._ai_text.get_model_name()
@@ -1701,7 +1717,6 @@ class MainWindow(QtWidgets.QMainWindow):
             pixmap_key=canvas.pixmap.cacheKey(),
             texts=texts,
             shape_type=shape_type,
-            model_display_name=self._ai_text.get_model_display_name(),
             iou_threshold=self._ai_text.get_iou_threshold(),
             score_threshold=self._ai_text.get_score_threshold(),
             image_size=(
@@ -1790,19 +1805,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 image_size=text_job.image_size,
                 polygon_detail=self._config["mask_polygonization"]["detail"],
             )
-        except _automation.MaskOutputUnavailableError:
-            QtWidgets.QMessageBox.warning(
-                self,
-                self.tr("Mask Output Unavailable"),
-                self.tr(
-                    "%s only detects bounding boxes and cannot create "
-                    "'%s' Shapes.\n\n"
-                    "Switch the AI Text Prompt model to 'SAM3 (smart)', "
-                    "or set the output format to 'Rectangle'."
-                )
-                % (text_job.model_display_name, text_job.shape_type),
-            )
-            return
         except Exception as e:
             logger.opt(exception=e).error("AI text inference failed")
             self._on_inference_failed(f"{type(e).__name__}: {e}")
@@ -1878,6 +1880,33 @@ class MainWindow(QtWidgets.QMainWindow):
             in (*typing.get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
         )
         self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
+        self._refresh_text_model_choices()
+
+    def _on_ai_output_format_changed(
+        self, output_format: _automation.AiOutputFormat, /
+    ) -> None:
+        self._canvas_widgets.canvas.set_ai_output_format(output_format)
+        self._refresh_text_model_choices()
+
+    def _refresh_text_model_choices(self) -> None:
+        # Grey out text models that cannot produce the Shapes the current mode
+        # creates; _submit_ai_prompt still rejects a model already chosen.
+        canvas = self._canvas_widgets.canvas
+        shape_type = (
+            None
+            if canvas.is_editing
+            else _resolve_text_annotation_shape_type(
+                create_mode=canvas.create_mode,
+                ai_output_format=self._ai_annotation.output_format,
+            )
+        )
+        reason = self.tr("Detects boxes only. Switch to Rectangle to use this model.")
+        unavailable = dict.fromkeys(_text_models_unable_to_create(shape_type), reason)
+        self._ai_text.set_unavailable_models(unavailable)
+        if self._settings_dialog is not None:
+            self._settings_dialog.set_unavailable_choices(
+                key_path=("ai", "text_model"), unavailable=unavailable
+            )
 
     def _highlight_ai_buttons(self, highlight: bool, /) -> None:  # noqa: FBT001 -- hover_highlight_requested slot
         self._ai_buttons_highlighted = highlight
@@ -3528,6 +3557,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 settings_editable=self._is_settings_editable,
                 parent=self,
             )
+            self._refresh_text_model_choices()
         self._settings_dialog.show()
         self._settings_dialog.raise_()
         self._settings_dialog.activateWindow()
@@ -3973,6 +4003,14 @@ def _shapes_from_dicts(
         shapes.append(shape)
     apply_default_flags(shapes=shapes, label_flags=label_flags)
     return shapes
+
+
+def _text_models_unable_to_create(
+    shape_type: _automation.AiOutputFormat | None, /
+) -> frozenset[str]:
+    if shape_type in _automation.MASK_REQUIRED_SHAPE_TYPES:
+        return _ai_models.AI_TEXT_BOX_ONLY_MODELS
+    return frozenset()
 
 
 def _resolve_text_annotation_shape_type(
