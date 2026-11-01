@@ -10,6 +10,9 @@ from unittest.mock import MagicMock
 import numpy as np
 import osam.types
 import pytest
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._automation import AiOutputFormat
@@ -24,6 +27,7 @@ from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 from .conftest import click_canvas_fraction
+from .conftest import image_to_widget_pos
 from .conftest import show_window_and_wait_for_imagedata
 
 if TYPE_CHECKING:
@@ -446,11 +450,41 @@ def test_text_result_waits_for_the_label_dialog(
 
     win._on_new_shape()
 
+    qtbot.waitUntil(lambda: len(canvas.shapes) == 3)
     assert [s.label for s in canvas.shapes] == ["manual", "person", "person"]
 
 
+def _hold_text_results(
+    *,
+    win: MainWindow,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    create_mode: str,
+) -> Callable[[], None]:
+    # Starts a text prompt now and returns what delivers its result later.
+    held: list[tuple[OsamWorker, object, object]] = []
+
+    def submit(
+        self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
+    ) -> None:
+        del channel
+        assert request.image is not None
+        held.append((self, job, _osam_worker._run(request, request.image)))
+
+    monkeypatch.setattr(OsamWorker, "submit", submit)
+    _run_text_prompt(
+        win=win,
+        qtbot=qtbot,
+        text="person",
+        create_mode=create_mode,
+        score_threshold=0.1,
+    )
+    ((worker, job, annotations),) = held
+    return lambda: worker.finished.emit(job, annotations)
+
+
 @pytest.mark.gui
-def test_text_result_during_drawing_keeps_undo_disabled(
+def test_text_result_waits_for_the_draft(
     *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
@@ -464,25 +498,62 @@ def test_text_result_during_drawing_keeps_undo_disabled(
         monkeypatch=monkeypatch,
         response_fn=functools.partial(_make_person_response, with_masks=True),
     )
-    canvas.load_shapes(
-        shapes=[
-            Shape(
-                label="old",
-                shape_type="rectangle",
-                points=np.array([(0.0, 0.0), (5.0, 5.0)]),
-            )
-        ]
+    deliver = _hold_text_results(
+        win=win, qtbot=qtbot, monkeypatch=monkeypatch, create_mode="polygon"
     )
-    win._switch_canvas_mode(edit=False, create_mode="polygon")
-    win._ai_text._text_input.setText("person")
-    win._ai_text._score_spinbox.setValue(0.1)
-    combo = win._ai_text._model_combo
-    combo.setCurrentIndex(combo.findData(_AI_TEXT_MODEL))
     click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.5, 0.5))
-    assert canvas.is_drawing
 
-    win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
-
+    deliver()
+    qtbot.wait(300)
     assert canvas.is_drawing
-    assert [s.label for s in canvas.shapes] == ["old", "person", "person"]
-    assert not win._actions.undo.isEnabled()
+    assert canvas.shapes == []
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    qtbot.waitUntil(lambda: len(canvas.shapes) == 2)
+    assert win._actions.undo.isEnabled()
+
+
+@pytest.mark.gui
+def test_text_result_waits_for_a_drag(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    _install_mock_session(
+        monkeypatch=monkeypatch,
+        response_fn=functools.partial(_make_person_response, with_masks=False),
+    )
+    box = Shape(
+        label="box",
+        shape_type="rectangle",
+        points=np.array([(400.0, 20.0), (460.0, 80.0)]),
+    )
+    win._load_shapes([box], replace=True)
+    deliver = _hold_text_results(
+        win=win, qtbot=qtbot, monkeypatch=monkeypatch, create_mode="rectangle"
+    )
+    win._switch_canvas_mode(edit=True, create_mode=None)
+
+    def at(x: float) -> QPoint:
+        return image_to_widget_pos(canvas=canvas, image_pos=QPointF(x, 50))
+
+    qtbot.mouseMove(canvas, pos=at(430))
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=at(430))
+    qtbot.mouseMove(canvas, pos=at(440))
+    deliver()  # lands mid-drag
+    qtbot.mouseMove(canvas, pos=at(450))
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=at(450))
+    qtbot.waitUntil(lambda: len(canvas.shapes) == 3)
+
+    xmins = []
+    while win._actions.undo.isEnabled():
+        win._actions.undo.trigger()
+        if canvas.shapes:
+            xmins.append(float(canvas.shapes[0].points[:, 0].min()))
+    # Undo steps back over the result, then the whole drag, never mid-drag.
+    assert xmins == [pytest.approx(420, abs=2), 400.0]

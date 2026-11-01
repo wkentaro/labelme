@@ -2945,20 +2945,3 @@ def test_ai_points_preview_waits_while_finalizing(*, canvas: Canvas) -> None:
     canvas._refresh_ai_points_preview()
 
     assert len(_worker(canvas).requests) == 1
-
-
-@pytest.mark.gui
-def test_appending_shapes_keeps_the_draft_being_drawn(*, canvas: Canvas) -> None:
-    # An AI text result lands while the user is drawing.
-    draft = _DraftShape(
-        shape_type="polygon",
-        points=(QPointF(0, 0), QPointF(10, 10)),
-        point_labels=(1, 1),
-    )
-    canvas._current = draft
-    shape = Shape(shape_type="rectangle", points=np.array([(20, 20), (40, 40)]))
-
-    canvas.load_shapes(shapes=[shape], replace=False)
-
-    assert canvas._current is draft
-    assert canvas.shapes == [shape]

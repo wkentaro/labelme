@@ -381,7 +381,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
         self._ai_text_job: _AiTextJob | None = None
         self._labeling_new_shape = False
-        self._deferred_ai_text: tuple[object, object] | None = None
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
@@ -1595,11 +1594,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def mark_dirty(self) -> None:
         self._save_revision += 1
-        canvas = self._canvas_widgets.canvas
-        # An AI result can land mid-draw; Undo would discard the draft.
-        self._actions.undo.setEnabled(
-            not canvas.is_drawing and canvas.can_restore_shape
-        )
+        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
         self._is_changed = True
         self._actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
@@ -1727,10 +1722,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self._on_inference_failed(message)
 
     def _on_ai_text_finished(self, job: object, annotations: object, /) -> None:
-        # The label dialog runs its own event loop; shapes appended under it
-        # would join the unlabeled tail it is about to label.
-        if self._labeling_new_shape and job is self._ai_text_job:
-            self._deferred_ai_text = (job, annotations)
+        # A result lands whenever inference ends. Applied mid-draw, mid-drag
+        # or under the label dialog, its Shapes would split that action's
+        # Undo snapshot or join the Shapes being labeled, so it waits.
+        if job is self._ai_text_job and (
+            self._labeling_new_shape or self._canvas_widgets.canvas.is_interacting
+        ):
+            QtCore.QTimer.singleShot(
+                100,
+                self,
+                functools.partial(self._on_ai_text_finished, job, annotations),
+            )
             return
         text_job = self._take_ai_text_job(job)
         if text_job is None:
@@ -2278,10 +2280,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self._label_new_shape()
         finally:
             self._labeling_new_shape = False
-        if self._deferred_ai_text is not None:
-            job, annotations = self._deferred_ai_text
-            self._deferred_ai_text = None
-            self._on_ai_text_finished(job, annotations)
 
     def _label_new_shape(self) -> None:
         items = self._docks.unique_label_list.selectedItems()

@@ -461,6 +461,11 @@ class Canvas(QtWidgets.QWidget):
         return self._current is not None
 
     @property
+    def is_interacting(self) -> bool:
+        # A draft or a drag holds an Undo snapshot that a Shape change would split.
+        return self.is_drawing or self._is_moving_shape
+
+    @property
     def create_mode(self) -> _CreateMode:
         return self._create_mode
 
@@ -2278,9 +2283,7 @@ class Canvas(QtWidgets.QWidget):
     def load_shapes(self, *, shapes: list[Shape], replace: bool = True) -> None:
         self.shapes = list(shapes) if replace else self.shapes + list(shapes)
         self.backup_shapes()
-        # Appending, as an AI text result does, keeps the draft being drawn.
-        if replace:
-            self._reset_interaction_state()
+        self._reset_interaction_state()
         self.update()
 
     def set_shape_visible(self, *, shape: Shape, value: bool) -> None:
