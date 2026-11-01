@@ -192,6 +192,10 @@
         <translation>在 AI-Detect 中输入要检测的内容，或点击框选一个示例的第一个角</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>点击对角，排除与此相似的对象</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>点击对角，检测所有与此相似的对象</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>单击对角以分割对象</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>按 Enter 键添加结果，按 Esc 键放弃。按住 %s 框选以排除相似的对象。</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

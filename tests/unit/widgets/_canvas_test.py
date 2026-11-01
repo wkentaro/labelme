@@ -3100,7 +3100,7 @@ def test_ai_detect_box_applies_the_score_threshold(
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(15, 20))
 
-    qtbot.waitUntil(lambda: len(canvas.shapes) == 1)
+    assert len(canvas._ai_detect_draft) == 1
 
 
 @pytest.mark.gui
@@ -3155,5 +3155,213 @@ def test_ai_detect_box_labels_results_with_the_query_it_sent(
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
     canvas.get_ai_detect_query = lambda: "dog"  # Edited during inference.
     worker.resume()
+    qtbot.keyClick(canvas, Qt.Key.Key_Return)
 
     assert labels == ["person"]
+
+
+def _ai_detect_canvas(canvas: Canvas, /) -> Canvas:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
+    canvas.set_ai_output_format("rectangle")
+    _worker(canvas).annotations = [
+        osam.types.Annotation(
+            bounding_box=osam.types.BoundingBox(xmin=x, ymin=5, xmax=x + 10, ymax=20),
+            score=0.9,
+        )
+        for x in (5, 40)
+    ]
+    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.show()
+    return canvas
+
+
+def _draw_box(
+    canvas: Canvas,
+    /,
+    *,
+    corners: tuple[tuple[int, int], tuple[int, int]],
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
+) -> None:
+    # Delivered directly: a synthesized move can land after the click under
+    # load, and the box takes its second corner from the last move.
+    for x, y in corners:
+        pos = QPointF(x, y)
+        for kind, button, buttons, handler in (
+            (
+                QtCore.QEvent.Type.MouseMove,
+                Qt.MouseButton.NoButton,
+                Qt.MouseButton.NoButton,
+                canvas.mouseMoveEvent,
+            ),
+            (
+                QtCore.QEvent.Type.MouseButtonPress,
+                Qt.MouseButton.LeftButton,
+                Qt.MouseButton.LeftButton,
+                canvas.mousePressEvent,
+            ),
+            (
+                QtCore.QEvent.Type.MouseButtonRelease,
+                Qt.MouseButton.LeftButton,
+                Qt.MouseButton.NoButton,
+                canvas.mouseReleaseEvent,
+            ),
+        ):
+            handler(QtGui.QMouseEvent(kind, pos, pos, button, buttons, modifier))
+
+
+@pytest.mark.gui
+def test_ai_detect_counter_example_reruns_with_every_box(*, canvas: Canvas) -> None:
+    _ai_detect_canvas(canvas)
+
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+    _draw_box(
+        canvas,
+        corners=((50, 20), (40, 5)),
+        modifier=Qt.KeyboardModifier.ShiftModifier,
+    )
+
+    request = _worker(canvas).requests[-1]
+    assert request.points is not None
+    assert request.point_labels is not None
+    assert request.texts == ["visual"]
+    assert request.point_labels.tolist() == [2, 3, 4, 5]
+    assert request.points.tolist() == [[5, 5], [15, 20], [40, 5], [50, 20]]
+    assert canvas.shapes == []
+    assert len(canvas._ai_detect_draft) == 2  # The latest run replaced the first.
+
+
+@pytest.mark.gui
+def test_ai_detect_enter_commits_the_draft_as_one_step(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _ai_detect_canvas(canvas)
+    backups = len(canvas.shape_backups)
+    labels: list[str] = []
+    canvas.new_shape.connect(labels.append)
+    selections: list[list[Shape]] = []
+    canvas.selection_changed.connect(selections.append)
+
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+    qtbot.keyClick(canvas, Qt.Key.Key_Return)
+
+    assert len(canvas.shapes) == 2
+    assert len(canvas.shape_backups) == backups + 1
+    assert labels == [""]
+    assert selections == [canvas.shapes]
+    assert not canvas.has_ai_detect_draft
+
+
+@pytest.mark.gui
+def test_ai_detect_escape_discards_the_draft(*, canvas: Canvas, qtbot: QtBot) -> None:
+    _ai_detect_canvas(canvas)
+
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+
+    assert canvas.shapes == []
+    assert not canvas.has_ai_detect_draft
+
+
+@pytest.mark.gui
+def test_ai_detect_draft_clears_on_image_change(*, canvas: Canvas) -> None:
+    _ai_detect_canvas(canvas)
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+
+    canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT))
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+
+    point_labels = _worker(canvas).requests[-1].point_labels
+    assert point_labels is not None
+    assert point_labels.tolist() == [2, 3]
+
+
+@pytest.mark.gui
+def test_ai_detect_rerun_replaces_the_draft_with_the_current_query(
+    *, canvas: Canvas
+) -> None:
+    _ai_detect_canvas(canvas)
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+    canvas.get_ai_detect_query = lambda: "person"
+    _worker(canvas).annotations = _worker(canvas).annotations[:1]
+
+    canvas.rerun_ai_detect_draft()
+
+    request = _worker(canvas).requests[-1]
+    assert request.texts == ["person"]
+    assert request.point_labels is not None
+    assert request.point_labels.tolist() == [2, 3]
+    assert canvas.shapes == []
+    assert len(canvas._ai_detect_draft) == 1
+
+
+@pytest.mark.gui
+def test_ai_detect_rerun_result_is_dropped_after_a_tool_switch(
+    *, canvas: Canvas
+) -> None:
+    _ai_detect_canvas(canvas)
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+    _worker(canvas).paused = True
+    canvas.rerun_ai_detect_draft()
+
+    canvas.set_editing(value=False, create_mode="rectangle")
+    _worker(canvas).resume()
+
+    assert not canvas.has_ai_detect_draft
+    assert not canvas.is_ai_finalizing
+
+
+@pytest.mark.gui
+def test_ai_detect_draft_holds_other_shape_changes(*, canvas: Canvas) -> None:
+    _ai_detect_canvas(canvas)
+
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+
+    assert canvas.is_interacting
+
+
+@pytest.mark.gui
+def test_ai_detect_escape_discards_the_draft_during_a_rerun(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _ai_detect_canvas(canvas)
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+    _worker(canvas).paused = True
+    canvas.rerun_ai_detect_draft()
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    _worker(canvas).resume()
+
+    assert not canvas.has_ai_detect_draft
+    assert not canvas.is_ai_finalizing
+
+
+@pytest.mark.gui
+def test_ai_detect_draft_is_discarded_when_shapes_change(*, canvas: Canvas) -> None:
+    _ai_detect_canvas(canvas)
+    canvas.shapes.append(
+        Shape(shape_type="rectangle", points=np.array([(0.0, 0.0), (1.0, 1.0)]))
+    )
+    canvas.backup_shapes()
+    canvas.backup_shapes()
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+    assert canvas.has_ai_detect_draft
+
+    canvas.restore_last_shape()
+
+    assert not canvas.has_ai_detect_draft
+
+
+@pytest.mark.gui
+def test_ai_detect_clearing_the_draft_drops_a_pending_box(*, canvas: Canvas) -> None:
+    _ai_detect_canvas(canvas)
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+    _worker(canvas).paused = True
+    _draw_box(canvas, corners=((40, 5), (50, 20)))
+
+    canvas.backup_shapes()  # Any Shape change, such as toggling visibility.
+    _worker(canvas).resume()
+
+    assert not canvas.has_ai_detect_draft
+    assert not canvas.is_ai_finalizing
+    assert not canvas.is_drawing

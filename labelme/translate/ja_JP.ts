@@ -192,6 +192,10 @@
         <translation>AI-Detect に検出したいものを入力するか、例の周りを囲むボックスの最初の角をクリック</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>対角をクリックすると、これと同じような物体を除外します</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>対角をクリックすると、これと同じような物体をすべて検出します</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>対角をクリックしてオブジェクトをセグメント</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter で結果を追加、Esc で破棄します。%s を押しながら囲むと、似たものを除外します。</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

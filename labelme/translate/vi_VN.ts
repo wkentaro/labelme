@@ -192,6 +192,10 @@
         <translation>Nhập nội dung cần phát hiện vào AI-Detect, hoặc nhấp vào góc đầu tiên của khung bao quanh một mẫu</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Nhấp vào góc đối diện để loại trừ các đối tượng giống như thế này</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>Nhấp vào góc đối diện để phát hiện mọi đối tượng giống mẫu này</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Nhấp vào góc đối diện để phân đoạn đối tượng</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter thêm kết quả, Esc bỏ kết quả. Giữ %s và vẽ khung để loại trừ các đối tượng tương tự.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

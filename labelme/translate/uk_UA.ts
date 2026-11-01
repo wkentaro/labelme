@@ -176,6 +176,10 @@
         <translation>Введіть в AI-Detect, що потрібно знайти, або клацніть перший кут рамки навколо одного прикладу</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Натисніть протилежний кут, щоб виключити об&apos;єкти, схожі на цей</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>Клацніть протилежний кут, щоб знайти всі такі самі об’єкти</translation>
     </message>
@@ -198,6 +202,10 @@
     <message>
         <source>Click center point for circle</source>
         <translation>Натисніть центральну точку для кола</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter додає результати, Esc відхиляє їх. Утримуючи %s, намалюйте рамку, щоб виключити схожі об&apos;єкти.</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>

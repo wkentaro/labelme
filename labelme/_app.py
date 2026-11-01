@@ -1705,11 +1705,18 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._actions.image.isEnabled():
             return  # No image to detect in.
         prompt = self._ai_text.get_text_prompt()
+        canvas = self._canvas_widgets.canvas
+        if canvas.has_ai_detect_draft:
+            # Refine the example-box draft instead of adding Shapes on top; an
+            # empty query keeps detecting like the examples.
+            canvas.rerun_ai_detect_draft()
+            # Enter and Esc act on the draft from the canvas.
+            canvas.setFocus()
+            return
         if not prompt:
             self.show_status_message(self.tr("Type what to detect"), delay=5000)
             self._ai_text.focus_text_prompt()
             return
-        canvas = self._canvas_widgets.canvas
         # Switching cancels a draft, so a Shape mid-drawing keeps its tool.
         if not canvas.is_drawing:
             self._actions.create_ai_detect_mode.trigger()

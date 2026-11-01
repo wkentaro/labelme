@@ -192,6 +192,10 @@
         <translation>พิมพ์สิ่งที่ต้องการตรวจจับใน AI-Detect หรือคลิกมุมแรกของกรอบรอบตัวอย่างหนึ่งชิ้น</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>คลิกมุมตรงข้ามเพื่อยกเว้นวัตถุที่คล้ายกับสิ่งนี้</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>คลิกมุมตรงข้ามเพื่อตรวจจับวัตถุทุกชิ้นที่เหมือนชิ้นนี้</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>คลิกมุมตรงข้ามเพื่อแบ่งส่วนวัตถุ</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter เพิ่มผลลัพธ์ Esc ทิ้งผลลัพธ์ กด %s ค้างไว้แล้ววาดกรอบเพื่อยกเว้นวัตถุที่คล้ายกัน</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

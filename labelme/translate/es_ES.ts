@@ -192,6 +192,10 @@
         <translation>Escriba qué detectar en AI-Detect o haga clic en la primera esquina de un cuadro alrededor de un ejemplo</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Haz clic en la esquina opuesta para excluir objetos como este</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>Haga clic en la esquina opuesta para detectar todos los objetos como este</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Haga clic en la esquina opuesta para segmentar el objeto</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Intro añade los resultados y Esc los descarta. Mantén pulsado %s y dibuja un recuadro para excluir objetos parecidos.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

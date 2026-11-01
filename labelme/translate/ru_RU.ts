@@ -192,6 +192,10 @@
         <translation>Введите в AI-Detect, что нужно найти, или щёлкните первый угол рамки вокруг одного примера</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Нажмите на противоположный угол, чтобы исключить объекты, похожие на этот</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>Щёлкните противоположный угол, чтобы найти все такие же объекты</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Нажмите на противоположный угол для сегментации объекта</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter добавляет результаты, Esc отменяет их. Удерживая %s, нарисуйте рамку, чтобы исключить похожие объекты.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

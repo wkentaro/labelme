@@ -192,6 +192,10 @@
         <translation>AI-Detect&apos;e neyi algılamak istediğinizi yazın veya bir örneği çevreleyen kutunun ilk köşesine tıklayın</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Bunun gibi nesneleri hariç tutmak için karşı köşeye tıklayın</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>Buna benzeyen tüm nesneleri algılamak için karşı köşeye tıklayın</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Nesneyi bölütlemek için karşı köşeye tıklayın</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter sonuçları ekler, Esc atar. Benzer nesneleri hariç tutmak için %s tuşunu basılı tutup bir kutu çizin.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

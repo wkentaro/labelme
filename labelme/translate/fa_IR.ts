@@ -192,6 +192,10 @@
         <translation>در AI-Detect بنویسید چه چیزی تشخیص داده شود، یا روی گوشهٔ اول کادری دور یک نمونه کلیک کنید</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>برای کنار گذاشتن اشیای مشابه این، روی گوشهٔ مقابل کلیک کنید</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>روی گوشهٔ مقابل کلیک کنید تا همهٔ اشیای مشابه این یکی تشخیص داده شوند</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>روی گوشه مقابل برای قطعه‌بندی شیء کلیک کنید</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter نتایج را اضافه می‌کند و Esc آن‌ها را کنار می‌گذارد. %s را نگه دارید و کادری بکشید تا اشیای مشابه کنار گذاشته شوند.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

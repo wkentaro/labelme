@@ -176,6 +176,10 @@
         <translation>Πληκτρολογήστε τι θέλετε να εντοπίσετε στο AI-Detect ή κάντε κλικ στην πρώτη γωνία ενός πλαισίου γύρω από ένα παράδειγμα</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Κάντε κλικ στην απέναντι γωνία για να εξαιρέσετε αντικείμενα σαν αυτό</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>Κάντε κλικ στην απέναντι γωνία για να εντοπίσετε κάθε αντικείμενο σαν αυτό</translation>
     </message>
@@ -198,6 +202,10 @@
     <message>
         <source>Click center point for circle</source>
         <translation>Κάντε κλικ στο κεντρικό σημείο για τον κύκλο</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Το Enter προσθέτει τα αποτελέσματα, το Esc τα απορρίπτει. Κρατήστε πατημένο το %s και σχεδιάστε ένα πλαίσιο για να εξαιρέσετε παρόμοια αντικείμενα.</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>

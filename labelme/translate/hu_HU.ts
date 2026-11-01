@@ -176,6 +176,10 @@
         <translation>Írja be az AI-Detect mezőbe, mit kell észlelni, vagy kattintson egy minta köré rajzolt keret első sarkára</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Kattintson a szemközti sarokra az ilyen objektumok kizárásához</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>Kattintson a szemközti sarokra az ehhez hasonló összes objektum észleléséhez</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Kattintson az átellenes sarokra az objektum szegmentálásához</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Az Enter hozzáadja az eredményeket, az Esc elveti őket. Tartsa lenyomva a(z) %s billentyűt, és rajzoljon keretet a hasonló objektumok kizárásához.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

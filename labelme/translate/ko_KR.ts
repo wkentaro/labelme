@@ -192,6 +192,10 @@
         <translation>AI-Detect에 감지할 대상을 입력하거나, 예시 하나를 둘러싸는 상자의 첫 번째 모서리를 클릭하세요</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>반대쪽 모서리를 클릭하여 이와 비슷한 객체를 제외합니다</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>반대쪽 모서리를 클릭하면 이와 같은 모든 객체를 감지합니다</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>대각 모서리를 클릭하여 객체를 세그먼트</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter 키로 결과를 추가하고 Esc 키로 취소합니다. %s 키를 누른 채 상자를 그려 비슷한 객체를 제외합니다.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

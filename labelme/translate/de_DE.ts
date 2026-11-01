@@ -176,6 +176,10 @@
         <translation>Geben Sie in AI-Detect ein, was erkannt werden soll, oder klicken Sie auf die erste Ecke eines Rahmens um ein Beispiel</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Klicken Sie auf die gegenüberliegende Ecke, um Objekte wie dieses auszuschließen</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>Klicken Sie auf die gegenüberliegende Ecke, um alle Objekte wie dieses zu erkennen</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Gegenüberliegende Ecke anklicken, um Objekt zu segmentieren</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Eingabetaste fügt die Ergebnisse hinzu, Esc verwirft sie. Halten Sie %s gedrückt und zeichnen Sie einen Rahmen, um ähnliche Objekte auszuschließen.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>

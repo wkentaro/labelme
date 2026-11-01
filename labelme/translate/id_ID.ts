@@ -192,6 +192,10 @@
         <translation>Ketik apa yang ingin dideteksi di AI-Detect, atau klik sudut pertama kotak di sekitar satu contoh</translation>
     </message>
     <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Klik sudut seberang untuk mengecualikan objek seperti ini</translation>
+    </message>
+    <message>
         <source>Click the opposite corner to detect every object like this one</source>
         <translation>Klik sudut seberangnya untuk mendeteksi setiap objek seperti ini</translation>
     </message>
@@ -234,6 +238,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Klik sudut berlawanan untuk segmentasi objek</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter menambahkan hasil, Esc membuangnya. Tahan %s dan gambar kotak untuk mengecualikan objek yang mirip.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
