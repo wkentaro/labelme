@@ -13,11 +13,17 @@ import pytest
 from pytestqt.qtbot import QtBot
 
 from labelme._automation import AiOutputFormat
+from labelme._automation import InferenceRequest
+from labelme._automation import OsamWorker
 from labelme._automation import _osam_session
+from labelme._automation import _osam_worker
+from labelme._shape import Shape
+from labelme._widgets._label_dialog import LabelDialogEntry
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
+from .conftest import click_canvas_fraction
 from .conftest import show_window_and_wait_for_imagedata
 
 if TYPE_CHECKING:
@@ -97,11 +103,25 @@ def _install_mock_session(
     response_fn: Callable[..., osam.types.GenerateResponse],
 ) -> None:
     mock_session = MagicMock()
-    mock_session.model_name = _AI_TEXT_MODEL
     mock_session.run = MagicMock(
         side_effect=lambda **kw: response_fn(texts=kw["texts"])
     )
     monkeypatch.setitem(_osam_session._SESSIONS, _AI_TEXT_MODEL, mock_session)
+
+    # Runs the request in this process, where the mock session lives.
+    def submit(
+        self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
+    ) -> None:
+        del channel
+        assert request.image is not None
+        try:
+            annotations = _osam_worker._run(request, request.image)
+        except Exception as e:
+            self.failed.emit(job, f"{type(e).__name__}: {e}")
+        else:
+            self.finished.emit(job, annotations)
+
+    monkeypatch.setattr(OsamWorker, "submit", submit)
 
 
 def _run_text_prompt(
@@ -389,3 +409,80 @@ def test_canvas_inference_failed_signal_surfaces_status_message(
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_text_result_waits_for_the_label_dialog(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    _install_mock_session(
+        monkeypatch=monkeypatch,
+        response_fn=functools.partial(_make_person_response, with_masks=False),
+    )
+    win._switch_canvas_mode(edit=False, create_mode="rectangle")
+    win._ai_text._text_input.setText("person")
+    win._ai_text._score_spinbox.setValue(0.1)
+    combo = win._ai_text._model_combo
+    combo.setCurrentIndex(combo.findData(_AI_TEXT_MODEL))
+
+    def popup(**_: object) -> LabelDialogEntry:
+        # The result lands while the user types the drawn shape's label.
+        win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
+        assert [s.label for s in canvas.shapes] == [None]
+        return LabelDialogEntry(label="manual", flags={}, group_id=None, description="")
+
+    monkeypatch.setattr(win._label_dialog, "popup", popup)
+    canvas.shapes.append(
+        Shape(shape_type="rectangle", points=np.array([(0.0, 0.0), (10.0, 10.0)]))
+    )
+    canvas.backup_shapes()
+
+    win._on_new_shape()
+
+    assert [s.label for s in canvas.shapes] == ["manual", "person", "person"]
+
+
+@pytest.mark.gui
+def test_text_result_during_drawing_keeps_undo_disabled(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    _install_mock_session(
+        monkeypatch=monkeypatch,
+        response_fn=functools.partial(_make_person_response, with_masks=True),
+    )
+    canvas.load_shapes(
+        shapes=[
+            Shape(
+                label="old",
+                shape_type="rectangle",
+                points=np.array([(0.0, 0.0), (5.0, 5.0)]),
+            )
+        ]
+    )
+    win._switch_canvas_mode(edit=False, create_mode="polygon")
+    win._ai_text._text_input.setText("person")
+    win._ai_text._score_spinbox.setValue(0.1)
+    combo = win._ai_text._model_combo
+    combo.setCurrentIndex(combo.findData(_AI_TEXT_MODEL))
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.5, 0.5))
+    assert canvas.is_drawing
+
+    win._submit_ai_prompt(False)  # noqa: FBT003 -- the slot takes the Qt clicked flag positionally
+
+    assert canvas.is_drawing
+    assert [s.label for s in canvas.shapes] == ["old", "person", "person"]
+    assert not win._actions.undo.isEnabled()

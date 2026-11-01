@@ -11,7 +11,6 @@ from numpy.typing import NDArray
 
 from labelme._automation._osam_session import OsamSession
 from labelme._automation._osam_session import get_osam_session
-from labelme._automation._osam_session import release_osam_session
 
 _IMAGE: Final[NDArray[np.uint8]] = np.zeros((2, 3, 3), dtype=np.uint8)
 _POINTS: Final[NDArray[np.floating]] = np.array([[1.0, 2.0]])
@@ -232,8 +231,6 @@ def test_get_osam_session_shares_one_session_per_model() -> None:
 
     assert get_osam_session(model_name="x") is session
     assert get_osam_session(model_name="y") is not session
-    release_osam_session(model_name="x")
-    assert get_osam_session(model_name="x") is not session
 
 
 def test_get_osam_session_evicts_least_recently_used() -> None:

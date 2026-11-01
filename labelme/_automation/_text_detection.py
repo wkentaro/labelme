@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import time
 from typing import TYPE_CHECKING
 from typing import Final
 
@@ -11,7 +10,6 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._geometry import shape_to_xyxy_bbox
-from ._osam_session import OsamSession
 from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
 from ._shape_builders import Detection
 from ._shape_builders import assign_available_group_ids
@@ -29,9 +27,7 @@ class MaskOutputUnavailableError(ValueError):
 
 def propose_shapes_from_texts(
     *,
-    session: OsamSession,
-    image: np.ndarray,
-    image_id: str,
+    annotations: list[osam.types.Annotation],
     texts: list[str],
     shape_type: AiOutputFormat,
     existing_shapes: list[Shape],
@@ -41,7 +37,7 @@ def propose_shapes_from_texts(
     polygon_detail: int,
 ) -> list[Shape]:
     boxes, scores, labels, masks = get_bboxes_from_texts(
-        session=session, image=image, image_id=image_id, texts=texts
+        annotations=annotations, texts=texts
     )
     if masks is None and len(boxes) > 0 and shape_type in MASK_REQUIRED_SHAPE_TYPES:
         raise MaskOutputUnavailableError(f"{shape_type!r} requires model masks")
@@ -114,34 +110,10 @@ def propose_shapes_from_texts(
 
 
 def get_bboxes_from_texts(
-    *, session: OsamSession, image: np.ndarray, image_id: str, texts: list[str]
+    *, annotations: list[osam.types.Annotation], texts: list[str]
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[NDArray[np.bool_]] | None]:
-    logger.debug(
-        f"Requesting with model={session.model_name!r}, "
-        f"image={(image.shape, image.dtype)}, texts={texts!r}"
-    )
-    t_start: float = time.time()
-    # ponytail: SAM3 reads only the first text of a prompt, so it runs once per
-    # text, reusing the cached image embedding. Drop this once osam's SAM3 takes
-    # several texts.
-    batches: list[list[str]] = (
-        [[text] for text in texts]
-        if session.model_name.startswith("sam3:")
-        else [texts]
-    )
-    annotations: list[osam.types.Annotation] = [
-        annotation
-        for batch in batches
-        for annotation in session.run(
-            image=image, image_id=image_id, texts=batch
-        ).annotations
-    ]
-
     num_annotations: int = len(annotations)
-    logger.debug(
-        f"Response: num_annotations={num_annotations}, "
-        f"elapsed_time={time.time() - t_start:.3f} [s]"
-    )
+    logger.debug("Response: num_annotations={}", num_annotations)
 
     boxes: NDArray[np.float32] = np.empty((num_annotations, 4), dtype=np.float32)
     scores: NDArray[np.float32] = np.empty((num_annotations,), dtype=np.float32)

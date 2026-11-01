@@ -9,7 +9,6 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._geometry import round_bbox_to_int
-from ._osam_session import get_osam_session
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
 from ._suppression import match_detections_to_existing_shapes
@@ -46,26 +45,17 @@ class AiAssistSession:
     def propose_shapes(
         self,
         *,
-        image: NDArray[np.uint8],
-        image_id: str,
+        annotations: list[osam.types.Annotation],
         prompt_kind: AiPromptKind,
         points: NDArray[np.floating],
         point_labels: NDArray[np.intp],
         existing_shapes: list[Shape],
         image_size: tuple[int, int] | None = None,
     ) -> AiAssistProposal:
-        response: osam.types.GenerateResponse = get_osam_session(
-            model_name=self.model_name
-        ).run(
-            image=image,
-            image_id=image_id,
-            points=points,
-            point_labels=point_labels,
-        )
         # iou_threshold is hardcoded because the AI Assist flow has no
         # user-facing IoU control (unlike the AI Text Prompt flow); 0.5 matches
         # the AI Text Prompt widget default.
-        detections = _detections_from_annotations(response.annotations)
+        detections = _detections_from_annotations(annotations)
         if prompt_kind == "points" and detections:
             detections = [
                 max(
