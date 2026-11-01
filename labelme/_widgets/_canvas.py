@@ -561,7 +561,10 @@ class Canvas(QtWidgets.QWidget):
 
     @property
     def is_ai_finalizing(self) -> bool:
-        return self._ai_finalize_job is not None
+        # Derived from the draft, so whatever drops the draft also unblocks
+        # input; the job alone outlives a draft that Undo or a reset cleared.
+        job = self._ai_finalize_job
+        return job is not None and job.draft is self._current
 
     def ai_image(self) -> tuple[np.ndarray, str]:
         # The id names the image to the AI worker, which caches its embedding.
@@ -2014,6 +2017,9 @@ class Canvas(QtWidgets.QWidget):
                     draft.points,
                     draft.point_labels,
                 )
+            # A Ctrl+click finalizes before drawing ever started, so report it
+            # now: the app disables Undo, which would drop the draft.
+            self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
             self._submit_ai_job(
                 channel="finalize",
                 prompt_kind=prompt_kind,

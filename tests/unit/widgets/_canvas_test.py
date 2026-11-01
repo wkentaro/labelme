@@ -814,7 +814,7 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
 
     canvas._finalize()
 
-    assert drawing_polygon_emissions == [False]
+    assert drawing_polygon_emissions[-1:] == [False]
     assert len(inference_no_shapes_emissions) == 1
     assert canvas._current is None
     assert canvas.shapes == []
@@ -2900,6 +2900,26 @@ def test_ai_finalize_cancels_its_draft_when_the_pixmap_changes(
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
     assert canvas._current is not None
     assert len(canvas._current.points) == 1
+
+
+@pytest.mark.gui
+def test_ai_finalize_reports_drawing_and_unblocks_when_its_draft_drops(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    drawing: list[bool] = []
+    canvas.drawing_polygon.connect(drawing.append)
+    _start_ai_box_finalize(canvas)
+    assert drawing == [True]  # the app disables Undo from here
+
+    canvas.load_shapes(shapes=[])  # what Undo does, had it stayed enabled
+
+    assert not canvas.is_ai_finalizing
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.show()
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
+    assert canvas._current is not None
+    _worker(canvas).resume()
+    assert canvas.shapes == []
 
 
 @pytest.mark.gui
