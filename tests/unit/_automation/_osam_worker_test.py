@@ -53,7 +53,7 @@ def _request(*, model_name: str = "ok", image_id: str = "img") -> InferenceReque
 
 @pytest.fixture
 def worker(*, qtbot: QtBot) -> Iterator[OsamWorker]:  # noqa: ARG001 -- needs a QApplication
-    instance = OsamWorker(target=_scripted_serve, timeout_s=5)
+    instance = OsamWorker(target=_scripted_serve, timeout_s=_WAIT_MS / 1000)
     results: list[tuple[str, object, Any]] = []
     instance.finished.connect(lambda job, r: results.append(("done", job, r)))
     instance.failed.connect(lambda job, m: results.append(("error", job, m)))
@@ -121,23 +121,31 @@ def test_reports_a_model_error_and_keeps_the_worker(
 def test_restarts_the_worker_after_a_crash_or_hang(
     *, qtbot: QtBot, model_name: str, message: str
 ) -> None:
-    worker = OsamWorker(target=_scripted_serve, timeout_s=1)
+    # The deadline also covers spawning, which takes seconds on CI, so only
+    # the broken job runs under the short one.
+    worker = OsamWorker(target=_scripted_serve, timeout_s=_WAIT_MS / 1000)
     results: list[tuple[object, Any]] = []
     worker.finished.connect(lambda job, r: results.append((job, r)))
     worker.failed.connect(lambda job, m: results.append((job, m)))
     try:
+        worker.submit(channel="x", job="warm", request=_request())
+        qtbot.waitUntil(lambda: len(results) == 1, timeout=_WAIT_MS)
+        worker._timeout_s = 1
         worker.submit(
             channel="x", job="broken", request=_request(model_name=model_name)
         )
-        worker.submit(channel="y", job="next", request=_request())
         qtbot.waitUntil(lambda: len(results) == 2, timeout=_WAIT_MS)
+        worker._timeout_s = _WAIT_MS / 1000
+        worker.submit(channel="y", job="next", request=_request())
+        qtbot.waitUntil(lambda: len(results) == 3, timeout=_WAIT_MS)
     finally:
         worker.shutdown()
 
-    assert results[0] == ("broken", message)
-    job, result = results[1]
+    assert results[1] == ("broken", message)
+    job, result = results[2]
     assert job == "next"
     assert result["sent_image"]  # the new worker never saw the image
+    assert result["pid"] != results[0][1]["pid"]
 
 
 def test_submit_returns_before_a_late_worker_reads_a_large_image(
