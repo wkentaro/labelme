@@ -18,7 +18,6 @@ def test_status_bar_names_the_running_ai_task(
         pixmap_key=0,
         texts=["sticky notes", " pens"],
         shape_type="rectangle",
-        model_display_name="",
         iou_threshold=0.5,
         score_threshold=0.1,
         image_size=None,
