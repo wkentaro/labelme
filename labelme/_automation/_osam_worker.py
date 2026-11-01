@@ -13,6 +13,7 @@ from multiprocessing.process import BaseProcess
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Final
+from typing import Literal
 
 import numpy as np
 from loguru import logger
@@ -145,11 +146,13 @@ class OsamWorker(QtCore.QObject):
     still finishes; callers drop results for jobs they no longer expect.
 
     A crash, hang or ONNX Runtime error off the CPU restarts the worker on
-    CPU and retries the job there once; the worker stays on CPU after that.
+    CPU and retries the job there once; the worker stays on CPU until the
+    device is set again.
     """
 
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
+    activity_changed = QtCore.Signal()  # busy or device changed
 
     def __init__(
         self,
@@ -166,7 +169,9 @@ class OsamWorker(QtCore.QObject):
         self._outbox: queue.SimpleQueue | None = None
         self._inbox: queue.SimpleQueue = queue.SimpleQueue()
         self._sent_image_id: str | None = None
-        self._cpu_only = False
+        self._device: Literal["auto", "cpu"] = "auto"
+        self._fell_back = False
+        self._process_on_cpu = False
         self._pending: dict[object, tuple[object, InferenceRequest]] = {}
         self._active: _Active | None = None
         self._request_ids = itertools.count()
@@ -182,6 +187,29 @@ class OsamWorker(QtCore.QObject):
         self._pending[channel] = (job, request)
         self._start_next()
 
+    @property
+    def busy(self) -> bool:
+        return self._active is not None
+
+    @property
+    def device(self) -> str | None:
+        # Where the running job's model loaded; None while idle or loading.
+        return None if self._active is None else self._active.device
+
+    def set_device(self, device: Literal["auto", "cpu"], /) -> None:
+        # The running job finishes where it is; the next one starts a worker
+        # on this device. Choosing a device again retries the GPU.
+        self._device = device
+        self._fell_back = False
+
+    @property
+    def _cpu_only(self) -> bool:
+        return self._device == "cpu" or self._fell_back
+
+    def _set_active(self, active: _Active | None, /) -> None:
+        self._active = active
+        self.activity_changed.emit()
+
     def release(self) -> None:
         # Stops the worker, freeing every model it loaded; the next submit
         # restarts it. Jobs it drops fail, so no caller waits for them.
@@ -194,8 +222,9 @@ class OsamWorker(QtCore.QObject):
 
     def shutdown(self) -> None:
         self._pending.clear()
-        self._active = None
         self._stop_process()
+        if self._active is not None:
+            self._set_active(None)
 
     def _start_next(self) -> None:
         if self._active is not None or not self._pending:
@@ -216,17 +245,24 @@ class OsamWorker(QtCore.QObject):
             self._start_next()
             return
         self._sent_image_id = request.image_id
-        self._active = _Active(
-            request_id=request_id,
-            channel=channel,
-            job=job,
-            request=request,
-            deadline=time.monotonic() + self._timeout_s,
+        self._set_active(
+            _Active(
+                request_id=request_id,
+                channel=channel,
+                job=job,
+                request=request,
+                deadline=time.monotonic() + self._timeout_s,
+                device="cpu" if self._process_on_cpu else None,
+            )
         )
         self._timer.start()
 
     def _ensure_process(self) -> queue.SimpleQueue:
-        if self._process is not None and self._process.is_alive():
+        if (
+            self._process is not None
+            and self._process.is_alive()
+            and self._process_on_cpu == self._cpu_only
+        ):
             assert self._outbox is not None
             return self._outbox
         self._stop_process()
@@ -247,6 +283,7 @@ class OsamWorker(QtCore.QObject):
             child_requests.close()
             child_responses.close()
         self._process = process
+        self._process_on_cpu = self._cpu_only
         self._outbox = queue.SimpleQueue()
         self._inbox = queue.SimpleQueue()
         threading.Thread(
@@ -286,11 +323,11 @@ class OsamWorker(QtCore.QObject):
         outcome = self._receive(active=active)
         if outcome is None:
             return
-        self._active = None
+        self._set_active(None)
         kind, payload = outcome
         if kind == "done":
             self.finished.emit(active.job, payload)
-        elif kind == "fault" and not self._cpu_only and active.device != "cpu":
+        elif kind == "fault" and active.device != "cpu":
             self._fall_back_to_cpu(active=active, error=payload)
         else:
             self.failed.emit(active.job, payload)
@@ -302,7 +339,7 @@ class OsamWorker(QtCore.QObject):
             active.device or "an unknown device",
             error,
         )
-        self._cpu_only = True
+        self._fell_back = True
         self._stop_process()
         if active.channel in self._pending:
             self.failed.emit(active.job, error)  # a newer job replaces it
@@ -320,6 +357,7 @@ class OsamWorker(QtCore.QObject):
                 continue
             if kind == "device":
                 active.device = payload
+                self.activity_changed.emit()
             else:
                 return kind, payload
         if not self._process.is_alive():

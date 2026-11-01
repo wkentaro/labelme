@@ -258,6 +258,55 @@ def test_a_newer_job_replaces_the_retry(*, worker: OsamWorker, qtbot: QtBot) -> 
     assert result["cpu_only"]
 
 
+def test_set_device_restarts_the_worker_for_the_next_job(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    worker.submit(channel="x", job="gpu", request=_request(model_name="gpu-ok"))
+    _wait_for(qtbot, worker, count=1)
+    worker.set_device("cpu")
+    worker.submit(channel="x", job="cpu", request=_request(model_name="gpu-ok"))
+    _wait_for(qtbot, worker, count=2)
+
+    (_, _, on_gpu), (_, _, on_cpu) = _results(worker)
+    assert not on_gpu["cpu_only"]
+    assert on_cpu["cpu_only"]
+    assert on_cpu["pid"] != on_gpu["pid"]
+
+
+def test_set_device_retries_the_gpu_after_a_fallback(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    worker.submit(channel="x", job="job", request=_request(model_name="gpu-fault"))
+    _wait_for(qtbot, worker, count=1)
+    worker.set_device("auto")
+    worker.submit(channel="x", job="next", request=_request(model_name="gpu-ok"))
+    _wait_for(qtbot, worker, count=2)
+
+    assert _results(worker)[0][2]["cpu_only"]
+    assert not _results(worker)[1][2]["cpu_only"]
+
+
+def test_reports_activity_and_the_device_it_runs_on(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    seen: list[tuple[bool, str | None]] = []
+    worker.activity_changed.connect(lambda: seen.append((worker.busy, worker.device)))
+    worker.submit(channel="x", job="job", request=_request(model_name="gpu-ok"))
+    _wait_for(qtbot, worker, count=1)
+    worker.set_device("cpu")
+    worker.submit(channel="x", job="next", request=_request())
+    _wait_for(qtbot, worker, count=2)
+
+    assert seen == [
+        (True, None),
+        (True, "webgpu"),
+        (False, None),
+        (True, "cpu"),  # known before loading on a CPU worker
+        (True, "cpu"),
+        (False, None),
+    ]
+
+
 def test_release_fails_the_jobs_it_drops(*, worker: OsamWorker, qtbot: QtBot) -> None:
     worker.submit(channel="x", job="running", request=_request(model_name="hang"))
     worker.submit(channel="y", job="waiting", request=_request())
