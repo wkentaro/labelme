@@ -445,6 +445,10 @@ class MainWindow(QtWidgets.QMainWindow):
         image_actions.setExclusive(False)
         image_actions.setEnabled(False)
         image_action = functools.partial(_utils.new_action, image_actions)
+        # The active mode shows as checked, not disabled, so it reads as the
+        # selected tool. An action joins only one QActionGroup and these are in
+        # the image group, so _switch_canvas_mode keeps one checked by hand.
+        mode_action = functools.partial(image_action, checkable=True)
         action = functools.partial(_utils.new_action, self)
         separator = functools.partial(_utils.new_separator, self)
         shortcuts = self._config["shortcuts"]
@@ -656,30 +660,30 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Insert a new point at the hovered polygon edge"),
             enabled=False,
         )
-        create_mode = image_action(
+        create_mode = mode_action(
             text=self.tr("Polygon"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="polygon"),
             shortcut=shortcuts["create_polygon"],
             icon="phosphor/polygon.svg",
             tip=self.tr("Start drawing polygons"),
         )
-        edit_mode = image_action(
+        edit_mode = mode_action(
             text=self.tr("Edit Shapes"),
             toolbar_text=self.tr("Edit", "toolbar"),
             slot=lambda: self._switch_canvas_mode(edit=True, create_mode=None),
             shortcut=shortcuts["edit_shape"],
             icon="phosphor/note-pencil.svg",
             tip=self.tr("Move and edit the selected shapes"),
-            enabled=False,
+            checked=True,
         )
-        create_rectangle_mode = image_action(
+        create_rectangle_mode = mode_action(
             text=self.tr("Rectangle"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="rectangle"),
             shortcut=shortcuts["create_rectangle"],
             icon="phosphor/rectangle.svg",
             tip=self.tr("Start drawing rectangles"),
         )
-        create_oriented_rectangle_mode = image_action(
+        create_oriented_rectangle_mode = mode_action(
             text=self.tr("Oriented Rectangle"),
             slot=lambda: self._switch_canvas_mode(
                 edit=False, create_mode="oriented_rectangle"
@@ -688,28 +692,28 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="oriented_rectangle.svg",
             tip=self.tr("Start drawing oriented rectangles"),
         )
-        create_circle_mode = image_action(
+        create_circle_mode = mode_action(
             text=self.tr("Circle"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="circle"),
             shortcut=shortcuts["create_circle"],
             icon="phosphor/circle.svg",
             tip=self.tr("Start drawing circles"),
         )
-        create_line_mode = image_action(
+        create_line_mode = mode_action(
             text=self.tr("Line"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="line"),
             shortcut=shortcuts["create_line"],
             icon="phosphor/line-segment.svg",
             tip=self.tr("Start drawing lines"),
         )
-        create_point_mode = image_action(
+        create_point_mode = mode_action(
             text=self.tr("Point"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="point"),
             shortcut=shortcuts["create_point"],
             icon="phosphor/circles-four.svg",
             tip=self.tr("Start drawing points"),
         )
-        create_line_strip_mode = image_action(
+        create_line_strip_mode = mode_action(
             text=self.tr("LineStrip"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="linestrip"),
             shortcut=shortcuts["create_linestrip"],
@@ -720,7 +724,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             % ctrl,
         )
-        create_ai_points_to_shape_mode = image_action(
+        create_ai_points_to_shape_mode = mode_action(
             text=self.tr("AI-Points"),
             slot=lambda: self._switch_canvas_mode(
                 edit=False, create_mode="ai_points_to_shape"
@@ -732,7 +736,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             % ctrl,
         )
-        create_ai_box_to_shape_mode = image_action(
+        create_ai_box_to_shape_mode = mode_action(
             text=self.tr("AI-Box"),
             slot=lambda: self._switch_canvas_mode(
                 edit=False, create_mode="ai_box_to_shape"
@@ -1831,17 +1835,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
         self._refresh_status_stats()
-        if edit:
-            for _, draw_action in self._actions.draw:
-                draw_action.setEnabled(True)
-        else:
-            for draw_mode, draw_action in self._actions.draw:
-                draw_action.setEnabled(create_mode != draw_mode)
+        # Triggering a checkable action toggles it, so re-clicking the active
+        # tool unchecks it until this re-checks it.
+        for draw_mode, draw_action in self._actions.draw:
+            draw_action.setChecked(not edit and create_mode == draw_mode)
+        self._actions.edit_mode.setChecked(edit)
         # Keep edit_mode disabled while a partial shape is alive so the user
         # can't abandon it mid-draw.
-        self._actions.edit_mode.setEnabled(
-            not edit and not self._canvas_widgets.canvas.is_drawing
-        )
+        self._actions.edit_mode.setEnabled(not self._canvas_widgets.canvas.is_drawing)
         self._ai_text.setEnabled(
             not edit
             and create_mode
@@ -1853,18 +1854,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_buttons_highlighted = highlight
         BG_ALPHA: Final = 60
         BORDER_ALPHA: Final = 120
-        # alpha 0 (not highlighted) reads as transparent; HexArgb gives "#AARRGGBB",
-        # which Qt stylesheets accept.
-        bg = self.palette().color(QtGui.QPalette.ColorRole.Highlight)
-        bg.setAlpha(BG_ALPHA if highlight else 0)
-        border = QtGui.QColor(bg)
-        border.setAlpha(BORDER_ALPHA if highlight else 0)
-        style = (
-            "QToolButton:!checked:!pressed {"
-            f" background-color: {bg.name(QtGui.QColor.NameFormat.HexArgb)};"
-            f" border: 1px solid {border.name(QtGui.QColor.NameFormat.HexArgb)};"
-            " }"
-        )
+        # Any sheet on the button drops the native checked panel that marks the
+        # active tool, so clear it rather than leave a transparent one.
+        style = ""
+        if highlight:
+            # HexArgb gives "#AARRGGBB", which Qt stylesheets accept.
+            bg = self.palette().color(QtGui.QPalette.ColorRole.Highlight)
+            bg.setAlpha(BG_ALPHA)
+            border = QtGui.QColor(bg)
+            border.setAlpha(BORDER_ALPHA)
+            style = (
+                "QToolButton:!checked:!pressed {"
+                f" background-color: {bg.name(QtGui.QColor.NameFormat.HexArgb)};"
+                f" border: 1px solid {border.name(QtGui.QColor.NameFormat.HexArgb)};"
+                " }"
+            )
         for mode, action in self._actions.draw:
             if mode not in _AI_CREATE_MODES:
                 continue

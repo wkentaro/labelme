@@ -465,30 +465,45 @@ def test_remove_point_does_not_drag_adjacent(
 
 
 @pytest.mark.gui
-def test_draw_actions_disable_only_active_mode(
+def test_mode_actions_check_only_active_mode(
     *,
     annotated_win: MainWindow,
     qtbot: QtBot,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
+    polygon = dict(annotated_win._actions.draw)["polygon"]
+    mode_actions = [
+        *[action for _, action in annotated_win._actions.draw],
+        annotated_win._actions.edit_mode,
+    ]
 
-    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
-    qtbot.wait(50)
+    assert annotated_win._actions.edit_mode.isChecked()
+
+    polygon.trigger()
     assert canvas.mode == _CanvasMode.CREATE
+    assert [a for a in mode_actions if a.isChecked()] == [polygon]
+    assert all(a.isEnabled() for a in mode_actions)
 
-    for draw_mode, draw_action in annotated_win._actions.draw:
-        if draw_mode == "polygon":
-            assert not draw_action.isEnabled()
-        else:
-            assert draw_action.isEnabled()
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.3, 0.3))
+    assert canvas.is_drawing
+    assert not annotated_win._actions.edit_mode.isEnabled()
 
-    annotated_win._switch_canvas_mode(edit=True, create_mode=None)
-    qtbot.wait(50)
+    # Re-clicking the active tool keeps it selected and the partial shape alive.
+    polygon.trigger()
+    assert polygon.isChecked()
+    assert canvas.is_drawing
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    assert not canvas.is_drawing
+    annotated_win._actions.edit_mode.trigger()
     assert canvas.mode == _CanvasMode.EDIT
+    assert [a for a in mode_actions if a.isChecked()] == [
+        annotated_win._actions.edit_mode
+    ]
 
-    for _, draw_action in annotated_win._actions.draw:
-        assert draw_action.isEnabled()
+    annotated_win._actions.edit_mode.trigger()
+    assert annotated_win._actions.edit_mode.isChecked()
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
