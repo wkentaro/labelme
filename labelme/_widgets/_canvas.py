@@ -634,8 +634,13 @@ class Canvas(QtWidgets.QWidget):
                 return job
         elif job is self._ai_finalize_job:
             self._ai_finalize_job = None
-            if self._current is job.draft and self.pixmap.cacheKey() == job.pixmap_key:
+            if self._current is not job.draft:
+                return None
+            if self.pixmap.cacheKey() == job.pixmap_key:
                 return job
+            # The pixmap changed under the draft, as a brightness change does;
+            # the draft stays sent and blocks the next click, so drop it.
+            self._cancel_current_shape()
         return None
 
     def _on_ai_job_finished(self, job: object, annotations: object, /) -> None:

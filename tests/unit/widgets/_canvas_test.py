@@ -2885,6 +2885,24 @@ def test_ai_finalize_drops_a_result_for_an_abandoned_draft(
 
 
 @pytest.mark.gui
+def test_ai_finalize_cancels_its_draft_when_the_pixmap_changes(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _start_ai_box_finalize(canvas)
+    canvas.load_pixmap(pixmap=QtGui.QPixmap(100, 50), clear_shapes=False)
+
+    _worker(canvas).resume()
+
+    assert canvas.shapes == []
+    assert canvas._current is None
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.show()
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
+    assert canvas._current is not None
+    assert len(canvas._current.points) == 1
+
+
+@pytest.mark.gui
 def test_ai_preview_drops_a_result_for_old_inputs(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
