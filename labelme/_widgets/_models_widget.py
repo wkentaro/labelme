@@ -105,9 +105,7 @@ class ModelsWidget(QtWidgets.QWidget):
             option = find_ai_assist_model_option(model_name=name)
             capabilities = []
             if option is not None:
-                if option.supports_point_prompts:
-                    capabilities.append(self.tr("Points"))
-                capabilities.append(self.tr("Boxes"))
+                capabilities.extend((self.tr("Points"), self.tr("Boxes")))
             if name in {model for model, _ in AI_TEXT_MODEL_OPTIONS}:
                 capabilities.append(self.tr("Text prompts"))
             row_layout.addWidget(QtWidgets.QLabel(" · ".join(capabilities)), 2, 0, 1, 2)

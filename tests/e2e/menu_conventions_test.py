@@ -154,7 +154,14 @@ def test_checkable_menu_items_have_no_icon(*, main_win: MainWinFactory) -> None:
     # items rely on the checkmark alone.
     toggles_with_icon = frozenset({"fit_window", "fit_selection"})
     win = _english_window(main_win)
-    allowed = {id(getattr(win._actions, name)) for name in toggles_with_icon}
+    allowed = {
+        id(a)
+        for a in (
+            *(getattr(win._actions, name) for name in toggles_with_icon),
+            *(a for _, a in win._actions.draw),
+            win._actions.edit_mode,
+        )
+    }
     found = {
         _plain(a.text())
         for a in _menu_actions(win)

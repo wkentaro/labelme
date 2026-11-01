@@ -877,10 +877,6 @@
         <translation>취소</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>이 모델은 포인트 프롬프트를 지원하지 않으므로 AI-Points 모드에서는 사용할 수 없습니다.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>&quot;{}&quot;의 주석 변경 사항을 유지하시겠습니까?</translation>
     </message>
@@ -981,6 +977,22 @@
         <translation>백업 후 초기화</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>&apos;{query}&apos; 감지 중…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>CPU에서 &apos;{query}&apos; 감지 중…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>CPU에서 분할 중…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>분할 중…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -989,22 +1001,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 AI 텍스트 프롬프트 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>새 &apos;{query}&apos; {count}개를 찾았습니다</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>새 &apos;{query}&apos;을(를) 찾지 못했습니다</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>잘못된 레이블</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>주석 파일 저장 오류</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points 사용 불가</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s은(는) 포인트 프롬프트를 지원하지 않습니다.
-다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1417,6 +1427,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>중복 중복 방지 중복 제거</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>연산 장치</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>자동은 GPU를 사용하며 GPU에 오류가 생기면 CPU로 전환합니다.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>GPU CUDA 프로세서 느림 충돌</translation>
     </message>
     <message>
         <source>Predefined labels</source>

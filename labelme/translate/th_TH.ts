@@ -878,10 +878,6 @@
         <translation>ยกเลิก</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>ไม่สามารถใช้ในโหมด AI-Points ได้ เนื่องจากโมเดลนี้ไม่รองรับพรอมต์แบบจุด</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>เก็บการเปลี่ยนแปลงคำอธิบายประกอบของ &quot;{}&quot; ไว้หรือไม่?</translation>
     </message>
@@ -982,6 +978,22 @@
         <translation>สำรองข้อมูลและรีเซ็ต</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>กำลังตรวจหา &apos;{query}&apos;…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>กำลังตรวจหา &apos;{query}&apos; บน CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>กำลังแบ่งส่วนบน CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>กำลังแบ่งส่วน…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -990,22 +1002,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 เปลี่ยนโมเดลพรอมต์ข้อความ AI เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>พบ &apos;{query}&apos; ใหม่ {count} รายการ</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>ไม่พบ &apos;{query}&apos; ใหม่</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>เลเบลไม่ถูกต้อง</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points ไม่พร้อมใช้งาน</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s ไม่รองรับการกำหนดจุด
-กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1418,6 +1428,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>ซ้ำ รายการซ้ำ หลีกเลี่ยงรายการซ้ำ ลบรายการซ้ำ</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>อุปกรณ์ประมวลผล</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>อัตโนมัติจะใช้ GPU และเปลี่ยนไปใช้ CPU หาก GPU ล้มเหลว</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda โปรเซสเซอร์ ช้า ขัดข้อง</translation>
     </message>
     <message>
         <source>Predefined labels</source>

@@ -885,10 +885,6 @@
         <translation>Mégse</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Nem érhető el AI-Points módban, mert ez a modell nem támogatja a pont alapú promptokat.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Megtartja a(z) „{}” annotációinak módosításait?</translation>
     </message>
@@ -981,6 +977,22 @@
         <translation>Biztonsági mentés és visszaállítás</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>„{query}” keresése…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>„{query}” keresése a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Szegmentálás a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Szegmentálás…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -989,22 +1001,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 Váltson az MI-szöveges utasítás modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} új „{query}” található</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Nincs új „{query}”</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Érvénytelen címke</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Hiba az annotációs fájl mentésekor</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points nem elérhető</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s nem támogatja a pont alapú promptokat.
-Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1417,6 +1427,22 @@ Várt hely: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>másolat másolatok ismétlődés elkerülése duplikátumok eltávolítása</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Számítási eszköz</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Az Automatikus a GPU-t használja, és a CPU-ra vált, ha a GPU hibát jelez.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda processzor lassú összeomlás</translation>
     </message>
     <message>
         <source>Predefined labels</source>

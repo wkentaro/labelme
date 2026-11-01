@@ -877,10 +877,6 @@
         <translation>Hủy</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Không khả dụng trong chế độ AI-Points vì mô hình này không hỗ trợ lời nhắc điểm.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Giữ lại các thay đổi chú thích cho &quot;{}&quot;?</translation>
     </message>
@@ -981,6 +977,22 @@
         <translation>Sao lưu và đặt lại</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Đang phát hiện &apos;{query}&apos;…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Đang phát hiện &apos;{query}&apos; trên CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Đang phân đoạn trên CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Đang phân đoạn…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -989,22 +1001,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 Chuyển mô hình lời nhắc văn bản AI sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Đã tìm thấy {count} &apos;{query}&apos; mới</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Không tìm thấy &apos;{query}&apos; mới</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Nhãn không hợp lệ</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Lỗi khi lưu tệp chú thích</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points không khả dụng</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s không hỗ trợ gợi ý điểm.
-Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1417,6 +1427,22 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>trùng lặp tránh trùng lặp loại bỏ trùng lặp</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Thiết bị tính toán</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Tự động dùng GPU và chuyển sang CPU nếu GPU gặp lỗi.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda bộ xử lý chậm lỗi</translation>
     </message>
     <message>
         <source>Predefined labels</source>

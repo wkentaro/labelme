@@ -885,10 +885,6 @@
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Im AI-Points-Modus nicht verfügbar, da dieses Modell keine Punkt-Prompts unterstützt.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Annotationsänderungen für „{}“ behalten?</translation>
     </message>
@@ -981,6 +977,22 @@
         <translation>Sichern und zurücksetzen</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>„{query}“ wird erkannt…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>„{query}“ wird auf der CPU erkannt…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Segmentierung auf der CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Segmentierung…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -989,22 +1001,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 Wechseln Sie das Modell für den KI-Textprompt zu &apos;SAM3 (smart)&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} neue „{query}“ gefunden</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Keine neuen „{query}“ gefunden</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Ungültiges Label</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fehler beim Speichern der Annotationsdatei</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points nicht verfügbar</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s unterstützt keine Punkt-Eingaben.
-Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1417,6 +1427,22 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>Duplikat Duplikate vermeiden entfernen</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Rechengerät</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>„Automatisch“ verwendet die GPU und wechselt zur CPU, wenn die GPU ausfällt.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda prozessor langsam absturz</translation>
     </message>
     <message>
         <source>Predefined labels</source>

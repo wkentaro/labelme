@@ -863,10 +863,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Μη διαθέσιμο στη λειτουργία AI-Points, επειδή αυτό το μοντέλο δεν υποστηρίζει εντολές σημείων.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>Να διατηρηθούν οι αλλαγές επισημειώσεων για το «{}»;</translation>
     </message>
@@ -993,18 +989,32 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Το αντίγραφο ασφαλείας των ρυθμίσεων αποθηκεύτηκε στο %s</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>Εντοπισμός «{query}»…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>Εντοπισμός «{query}» στη CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Τμηματοποίηση στη CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Τμηματοποίηση…</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Βρέθηκαν {count} νέα «{query}»</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Δεν βρέθηκαν νέα «{query}»</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points μη διαθέσιμο</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s δεν υποστηρίζει εντολές σημείων.
-Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1417,6 +1427,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>διπλότυπο διπλότυπα αποφυγή αφαίρεση διπλοτύπων</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Συσκευή υπολογισμού</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Η αυτόματη επιλογή χρησιμοποιεί τη GPU και μεταβαίνει στη CPU αν η GPU αποτύχει.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda επεξεργαστής αργό κατάρρευση</translation>
     </message>
     <message>
         <source>Predefined labels</source>

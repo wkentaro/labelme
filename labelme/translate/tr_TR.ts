@@ -877,10 +877,6 @@
         <translation>İptal</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Bu model nokta istemlerini desteklemediği için AI-Points modunda kullanılamaz.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>&quot;{}&quot; için açıklama değişiklikleri korunsun mu?</translation>
     </message>
@@ -981,6 +977,22 @@
         <translation>Yedekle ve sıfırla</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>&apos;{query}&apos; algılanıyor…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>&apos;{query}&apos; CPU&apos;da algılanıyor…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>CPU&apos;da bölütleniyor…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Bölütleniyor…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -989,22 +1001,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 AI Metin İstemi modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} yeni &apos;{query}&apos; bulundu</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Yeni &apos;{query}&apos; bulunamadı</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Geçersiz etiket</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points Kullanılamıyor</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s nokta istemlerini desteklemiyor.
-Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1417,6 +1427,22 @@ Beklenen konum: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>yinelenen kopya tekrarları önle tekrarları kaldır</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Hesaplama aygıtı</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Otomatik, GPU&apos;yu kullanır ve GPU başarısız olursa CPU&apos;ya geçer.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda işlemci yavaş çökme</translation>
     </message>
     <message>
         <source>Predefined labels</source>

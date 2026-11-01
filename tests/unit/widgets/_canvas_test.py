@@ -17,6 +17,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._automation import InferenceRequest
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._shape import Shape
 from labelme._shape import ShapeType
@@ -40,12 +41,51 @@ _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
 
 
+class _InlineOsamWorker(QtCore.QObject):
+    # Answers each submit before returning, as a worker that fails to start does.
+    finished = QtCore.Signal(object, object)
+    failed = QtCore.Signal(object, str)
+    requests: list[InferenceRequest]
+    annotations: list[osam.types.Annotation]
+    paused: bool
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.requests: list[InferenceRequest] = []
+        self.annotations: list[osam.types.Annotation] = []
+        self.paused = False
+        self._held: list[object] = []
+
+    def submit(
+        self, *, channel: object, job: object, request: InferenceRequest
+    ) -> None:
+        del channel
+        self.requests.append(request)
+        if self.paused:
+            self._held.append(job)
+        else:
+            self.finished.emit(job, self.annotations)
+
+    def resume(self) -> None:
+        self.paused = False
+        held, self._held = self._held, []
+        for job in held:
+            self.finished.emit(job, self.annotations)
+
+
 @pytest.fixture()
 def canvas(*, qtbot: QtBot) -> Canvas:
     canvas = Canvas()
     canvas.pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
+    canvas.set_osam_worker(_InlineOsamWorker())  # ty: ignore[invalid-argument-type]
     qtbot.addWidget(canvas)
     return canvas
+
+
+def _worker(canvas: Canvas, /) -> _InlineOsamWorker:
+    worker = canvas._osam_worker
+    assert isinstance(worker, _InlineOsamWorker)
+    return worker
 
 
 @pytest.mark.gui
@@ -94,23 +134,16 @@ def test_transform_widget_point_to_image(
 
 
 @pytest.mark.gui
-def test_propose_ai_shapes_passes_rgb_image_to_model(
-    *,
-    canvas: Canvas,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def test_ai_job_passes_rgb_image_to_model(*, canvas: Canvas) -> None:
     canvas.pixmap.fill(QtGui.QColor(10, 20, 30))
-    captured_images: list[np.ndarray] = []
 
-    def propose_shapes(*, image: np.ndarray, **_: object) -> AiAssistProposal:
-        captured_images.append(image)
-        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+    canvas._submit_ai_job(
+        channel="preview", prompt_kind="points", points=[], point_labels=[]
+    )
 
-    monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
-
-    canvas._propose_ai_shapes(prompt_kind="points", points=[], point_labels=[])
-
-    np.testing.assert_array_equal(captured_images[0][0, 0], [10, 20, 30])
+    (request,) = _worker(canvas).requests
+    assert request.image is not None
+    np.testing.assert_array_equal(request.image[0, 0], [10, 20, 30])
 
 
 def _make_oriented_rectangle(*, corners: list[tuple[float, float]]) -> Shape:
@@ -781,7 +814,7 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
 
     canvas._finalize()
 
-    assert drawing_polygon_emissions == [False]
+    assert drawing_polygon_emissions[-1:] == [False]
     assert len(inference_no_shapes_emissions) == 1
     assert canvas._current is None
     assert canvas.shapes == []
@@ -845,7 +878,8 @@ def test_ai_proposal_uses_out_of_bounds_setting(
     monkeypatch.setattr(canvas._ai_assist_session, "propose_shapes", propose_shapes)
     canvas.set_allow_out_of_bounds_points(value=allow_out_of_bounds)
 
-    canvas._propose_ai_shapes(
+    canvas._submit_ai_job(
+        channel="preview",
         prompt_kind="points",
         points=[QPointF(1, 1)],
         point_labels=[1],
@@ -1122,139 +1156,6 @@ def test_finalize_paints_new_shape_before_notifying(
     assert counts_when_notified == [1]
 
 
-@dataclasses.dataclass
-class _AiPointsTestHarness:
-    canvas: Canvas
-    downloads: list[str]
-    rejected_models: list[str]
-
-
-@pytest.fixture()
-def ai_points_harness(
-    *,
-    canvas: Canvas,
-    qtbot: QtBot,
-    monkeypatch: pytest.MonkeyPatch,
-) -> _AiPointsTestHarness:
-    downloads: list[str] = []
-    rejected_models: list[str] = []
-
-    def ensure_ready(model_name: str, /) -> bool:
-        downloads.append(model_name)
-        return True
-
-    monkeypatch.setattr(canvas, "ensure_ai_model_ready", ensure_ready)
-    canvas.point_prompt_rejected.connect(rejected_models.append)
-    canvas.resize(_WIDTH, _HEIGHT)
-    canvas.set_editing(value=False)
-    canvas.create_mode = "ai_points_to_shape"
-    with qtbot.waitExposed(canvas):
-        canvas.show()
-    return _AiPointsTestHarness(
-        canvas=canvas,
-        downloads=downloads,
-        rejected_models=rejected_models,
-    )
-
-
-@pytest.mark.gui
-def test_ai_points_rejects_incompatible_model_before_download(
-    *,
-    ai_points_harness: _AiPointsTestHarness,
-    qtbot: QtBot,
-) -> None:
-    canvas = ai_points_harness.canvas
-    canvas.set_ai_model_name(model_name="sam3:latest")
-
-    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
-
-    assert ai_points_harness.rejected_models == ["sam3:latest"]
-    assert ai_points_harness.downloads == []
-    assert canvas._current is None
-
-
-@pytest.mark.gui
-def test_ai_points_rejects_incompatible_model_after_draft_started(
-    *,
-    ai_points_harness: _AiPointsTestHarness,
-    qtbot: QtBot,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    canvas = ai_points_harness.canvas
-    proposal_model_names: list[str] = []
-
-    def _propose_ai_shapes(**_: object) -> list[Shape]:
-        proposal_model_names.append(canvas.get_ai_model_name())
-        return []
-
-    monkeypatch.setattr(canvas, "_propose_ai_shapes", _propose_ai_shapes)
-    canvas.point_prompt_rejected.connect(lambda _: canvas.repaint())
-    canvas.set_ai_model_name(model_name="sam2:latest")
-
-    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
-    draft_before_rejection = canvas._current
-    assert draft_before_rejection is not None
-    canvas.set_ai_model_name(model_name="sam3:latest")
-
-    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
-
-    assert ai_points_harness.rejected_models == ["sam3:latest"]
-    assert ai_points_harness.downloads == ["sam2:latest"]
-    assert "sam3:latest" not in proposal_model_names
-    assert canvas._current == draft_before_rejection
-
-
-@pytest.mark.gui
-def test_ai_points_rejects_incompatible_model_on_finalize(
-    *,
-    ai_points_harness: _AiPointsTestHarness,
-    qtbot: QtBot,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    canvas = ai_points_harness.canvas
-    proposal_model_names: list[str] = []
-    inference_failures: list[str] = []
-
-    def _propose_ai_shapes(**_: object) -> list[Shape]:
-        proposal_model_names.append(canvas.get_ai_model_name())
-        return []
-
-    monkeypatch.setattr(canvas, "_propose_ai_shapes", _propose_ai_shapes)
-    canvas.point_prompt_rejected.connect(lambda _: canvas.repaint())
-    canvas.inference_failed.connect(inference_failures.append)
-    canvas.set_ai_model_name(model_name="sam2:latest")
-
-    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
-    draft_before_rejection = canvas._current
-    assert draft_before_rejection is not None
-    canvas.set_ai_model_name(model_name="sam3:latest")
-
-    qtbot.keyClick(canvas, Qt.Key.Key_Return)
-
-    assert ai_points_harness.rejected_models == ["sam3:latest"]
-    assert ai_points_harness.downloads == ["sam2:latest"]
-    assert "sam3:latest" not in proposal_model_names
-    assert inference_failures == []
-    assert canvas._current == draft_before_rejection
-
-
-@pytest.mark.gui
-def test_ai_points_ignores_incompatible_first_click_outside_image(
-    *,
-    ai_points_harness: _AiPointsTestHarness,
-    qtbot: QtBot,
-) -> None:
-    canvas = ai_points_harness.canvas
-    canvas.resize(_WIDTH * 2, _HEIGHT * 2)
-    canvas.set_ai_model_name(model_name="sam3:latest")
-
-    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(1, 1))
-
-    assert ai_points_harness.rejected_models == []
-    assert ai_points_harness.downloads == []
-    assert canvas._current is None
-
-
 @pytest.mark.gui
 @pytest.mark.parametrize("create_mode", ["ai_box_to_shape", "ai_points_to_shape"])
 def test_finalize_reports_inference_error_and_cancels(
@@ -1285,6 +1186,45 @@ def test_finalize_reports_inference_error_and_cancels(
 
     assert failed == ["RuntimeError: boom"]
     assert no_shapes == []
+    assert canvas._current is None
+    assert canvas.shapes == []
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("create_mode", ["ai_points_to_shape", "ai_box_to_shape"])
+def test_slow_finalize_rings_last_point_and_esc_drops_its_result(
+    *, canvas: Canvas, qtbot: QtBot, create_mode: str
+) -> None:
+    worker = _worker(canvas)
+    worker.annotations = [
+        osam.types.Annotation(
+            bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=10, ymax=10),
+            mask=np.ones((11, 11), dtype=bool),
+        )
+    ]
+    worker.paused = True
+    canvas.set_editing(value=False, create_mode=create_mode)
+    canvas._current = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(30, 20)),
+        point_labels=(1, 1),
+    )
+
+    canvas._finalize()
+
+    assert canvas.is_ai_finalizing
+    assert canvas._ai_progress_rect() is None  # a fast answer shows no ring
+    qtbot.waitUntil(lambda: canvas._ai_progress_rect() is not None, timeout=1000)
+    rect = canvas._ai_progress_rect()
+    assert rect is not None
+    assert rect.contains(
+        canvas.transform_image_point_to_widget(QPointF(30, 20)).toPoint()
+    )
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    worker.resume()
+
+    assert canvas._ai_progress_rect() is None
     assert canvas._current is None
     assert canvas.shapes == []
 
@@ -1409,29 +1349,17 @@ def test_load_pixmap_defers_image_hash(
     monkeypatch.setattr(
         pixmap, "toImage", Mock(side_effect=AssertionError("Image converted on load"))
     )
-    canvas._pixmap_hash = 1
+    canvas._pixmap_rgb = (np.zeros((1, 1, 3), dtype=np.uint8), "1")
     canvas.load_pixmap(pixmap=pixmap)
-    assert canvas._pixmap_hash is None
+    assert canvas._pixmap_rgb is None
 
 
 @pytest.mark.gui
 @pytest.mark.parametrize("change", ["pixels", "dimensions"])
-def test_ai_embedding_is_reused_after_reloading_image(
-    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch, change: str
+def test_ai_image_id_is_reused_after_reloading_image(
+    *, canvas: Canvas, change: str
 ) -> None:
-    model = Mock()
-    model.name = "fake-model"
-    model.encode_image.return_value = osam.types.ImageEmbedding(
-        original_height=_HEIGHT,
-        original_width=_WIDTH,
-        embedding=np.zeros((1, 1, 1), dtype=np.float32),
-    )
-    model.generate.return_value = osam.types.GenerateResponse(
-        model=model.name, annotations=[]
-    )
-    monkeypatch.setattr(
-        canvas._ai_assist_session._get_session(), "_get_or_load_model", lambda: model
-    )
+    # The worker reuses its image embedding for a repeated image id.
     first = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_RGB32)
     first.fill(Qt.GlobalColor.red)
     second = QtGui.QImage(
@@ -1441,16 +1369,21 @@ def test_ai_embedding_is_reused_after_reloading_image(
     )
     second.fill(Qt.GlobalColor.blue if change == "pixels" else Qt.GlobalColor.red)
     keys: list[int] = []
-    for image, expected_encode_calls in [(first, 1), (second, 2), (first, 2)]:
+    for image in [first, second, first]:
         # Fresh image data, as file navigation creates, rather than a shared pixmap.
         pixmap = QtGui.QPixmap.fromImage(image.copy())
         keys.append(pixmap.cacheKey())
         canvas.reset_state()
         canvas.load_pixmap(pixmap=pixmap)
-        canvas._propose_ai_shapes(
-            prompt_kind="points", points=[QPointF(10, 10)], point_labels=[1]
+        canvas._submit_ai_job(
+            channel="preview",
+            prompt_kind="points",
+            points=[QPointF(10, 10)],
+            point_labels=[1],
         )
-        assert model.encode_image.call_count == expected_encode_calls
+    first_id, second_id, reloaded_id = (r.image_id for r in _worker(canvas).requests)
+    assert second_id != first_id
+    assert reloaded_id == first_id
     assert len(set(keys)) == 3
 
 
@@ -2595,13 +2528,6 @@ def test_square_drawing_commits_ai_box_prompt(
 ) -> None:
     # Download and inference are external to box geometry.
     monkeypatch.setattr(canvas, "ensure_ai_model_ready", lambda _: True)
-    prompts: list[list[QPointF]] = []
-
-    def propose_shapes(*, points: list[QPointF], **_: object) -> AiAssistProposal:
-        prompts.append(points)
-        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
-
-    monkeypatch.setattr(canvas, "_propose_ai_shapes", propose_shapes)
     canvas.scale = 1.0
     canvas.set_editing(value=False, create_mode="ai_box_to_shape")
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
@@ -2621,7 +2547,9 @@ def test_square_drawing_commits_ai_box_prompt(
         Qt.KeyboardModifier.ShiftModifier,
         pos=QtCore.QPoint(70, 30),
     )
-    assert prompts == [[QPointF(10, 10), QPointF(30, 30)]]
+    (request,) = _worker(canvas).requests
+    assert request.points is not None
+    np.testing.assert_array_equal(request.points, [[10, 10], [30, 30]])
 
 
 @pytest.mark.gui
@@ -3072,3 +3000,153 @@ def test_click_on_rotation_handle_selects_its_shape(
         canvas.mousePressEvent(event)
 
     assert canvas.selected_shapes == [rectangle]
+
+
+def _start_ai_box_finalize(canvas: Canvas, /) -> _DraftShape:
+    canvas.set_ai_output_format("rectangle")
+    _worker(canvas).annotations = [
+        osam.types.Annotation(
+            score=0.9,
+            bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=10, ymax=10),
+        )
+    ]
+    _worker(canvas).paused = True
+    canvas.set_editing(value=False, create_mode="ai_box_to_shape")
+    draft = _DraftShape(
+        shape_type="rectangle",
+        points=(QPointF(0, 0), QPointF(10, 10)),
+        point_labels=(1, 1),
+    )
+    canvas._current = draft
+    canvas._finalize()
+    return draft
+
+
+@pytest.mark.gui
+def test_ai_finalize_ignores_input_until_the_result_lands(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    draft = _start_ai_box_finalize(canvas)
+    new_shapes: list[None] = []
+    canvas.new_shape.connect(lambda: new_shapes.append(None))
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(50, 50))
+
+    assert canvas.is_ai_finalizing
+    assert canvas._current is draft
+    assert canvas.shapes == []
+    _worker(canvas).resume()
+    assert not canvas.is_ai_finalizing
+    assert [shape.shape_type for shape in canvas.shapes] == ["rectangle"]
+    assert new_shapes == [None]
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("abandon", ["escape", "reset"])
+def test_ai_finalize_drops_a_result_for_an_abandoned_draft(
+    *, canvas: Canvas, qtbot: QtBot, abandon: str
+) -> None:
+    _start_ai_box_finalize(canvas)
+    if abandon == "escape":
+        qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    else:
+        canvas.reset_state()
+
+    assert not canvas.is_ai_finalizing
+    _worker(canvas).resume()
+    assert canvas.shapes == []
+
+
+@pytest.mark.gui
+def test_ai_finalize_cancels_its_draft_when_the_pixmap_changes(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _start_ai_box_finalize(canvas)
+    canvas.load_pixmap(pixmap=QtGui.QPixmap(100, 50), clear_shapes=False)
+
+    _worker(canvas).resume()
+
+    assert canvas.shapes == []
+    assert canvas._current is None
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.show()
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
+    assert canvas._current is not None
+    assert len(canvas._current.points) == 1
+
+
+@pytest.mark.gui
+def test_ai_finalize_reports_drawing_and_unblocks_when_its_draft_drops(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    drawing: list[bool] = []
+    canvas.drawing_polygon.connect(drawing.append)
+    _start_ai_box_finalize(canvas)
+    assert drawing == [True]  # the app disables Undo from here
+
+    canvas.load_shapes(shapes=[])  # what Undo does, had it stayed enabled
+
+    assert not canvas.is_ai_finalizing
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.show()
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
+    assert canvas._current is not None
+    _worker(canvas).resume()
+    assert canvas.shapes == []
+
+
+@pytest.mark.gui
+def test_ai_finalize_ignores_undo_last_point(*, canvas: Canvas) -> None:
+    # The Undo Last Point action calls this directly, past the input guards.
+    draft = _start_ai_box_finalize(canvas)
+
+    canvas.undo_last_point()
+
+    assert canvas._current is draft
+    _worker(canvas).resume()
+    assert [shape.shape_type for shape in canvas.shapes] == ["rectangle"]
+
+
+@pytest.mark.gui
+def test_ai_preview_drops_a_result_for_old_inputs(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    shown: list[object] = []
+
+    def propose(*, job: object, **_: object) -> AiAssistProposal:
+        shown.append(getattr(job, "preview_key"))  # noqa: B009 -- job is typed object
+        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+
+    monkeypatch.setattr(canvas, "_propose_ai_shapes", propose)
+    _worker(canvas).paused = True
+    canvas.create_mode = "ai_points_to_shape"
+    canvas._current = _DraftShape(
+        shape_type="polygon", points=(QPointF(1, 1),), point_labels=(1,)
+    )
+    for x in (5, 6):
+        canvas._line = _DraftShape(
+            shape_type="polygon",
+            points=(QPointF(1, 1), QPointF(x, x)),
+            point_labels=(1, 1),
+        )
+        canvas._refresh_ai_points_preview()
+
+    _worker(canvas).resume()
+
+    assert shown == [canvas._ai_points_preview_key]
+
+
+@pytest.mark.gui
+def test_ai_points_preview_waits_while_finalizing(*, canvas: Canvas) -> None:
+    # A Ctrl+click finalizes on the first point, before any preview segment.
+    _worker(canvas).paused = True
+    canvas.set_editing(value=False, create_mode="ai_points_to_shape")
+    canvas._current = _DraftShape(
+        shape_type="polygon", points=(QPointF(1, 1),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(shape_type="polygon")
+    canvas._finalize()
+
+    canvas._refresh_ai_points_preview()
+
+    assert len(_worker(canvas).requests) == 1

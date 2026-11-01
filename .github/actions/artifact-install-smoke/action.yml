@@ -50,6 +50,10 @@ runs:
           # -I keeps this checkout's own tools/ and labelme/ off sys.path, so
           # the import inside the script can only resolve to the artifact
           # just installed above, never to the source checkout.
+          # The sdist installs the same code, so only the wheel downloads a
+          # model and runs inference.
+          inference=()
+          [[ $artifact == "$WHEEL" ]] && inference=(--inference)
           uv run --isolated --no-project --with "$artifact" \
-            python -I tools/artifact_install_smoke.py
+            python -I tools/artifact_install_smoke.py "${inference[@]}"
         done

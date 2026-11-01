@@ -887,10 +887,6 @@
         <translation>キャンセル</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>このモデルはポイントプロンプトに対応していないため、AI-Points モードでは利用できません。</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>「{}」のアノテーションの変更を保持しますか？</translation>
     </message>
@@ -991,6 +987,22 @@
         <translation>バックアップしてリセット</translation>
     </message>
     <message>
+        <source>Detecting &apos;{query}&apos;…</source>
+        <translation>「{query}」を検出中…</translation>
+    </message>
+    <message>
+        <source>Detecting &apos;{query}&apos; on CPU…</source>
+        <translation>CPU で「{query}」を検出中…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>CPU でセグメンテーション中…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>セグメンテーション中…</translation>
+    </message>
+    <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
 Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
@@ -999,22 +1011,20 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
 AI テキストプロンプトのモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
     </message>
     <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>新しい「{query}」が {count} 件見つかりました</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>新しい「{query}」は見つかりませんでした</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>無効なラベル</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>アノテーションファイルの保存エラー</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Pointsは利用できません</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s はポイントプロンプトに対応していません。
-別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1427,6 +1437,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>重複 重複回避 重複を避ける 重複削除</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>計算デバイス</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>「自動」は GPU を使い、GPU でエラーが起きると CPU に切り替えます。</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>GPU CUDA プロセッサ 遅い クラッシュ</translation>
     </message>
     <message>
         <source>Predefined labels</source>

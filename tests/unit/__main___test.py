@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.metadata
 import os
 import sys
 import types
@@ -14,6 +15,7 @@ from loguru import logger
 from PySide6 import QtCore
 
 from labelme.__main__ import _LOGGER_LEVELS
+from labelme.__main__ import _log_environment
 from labelme.__main__ import _LoggerIO
 from labelme.__main__ import _parse_list_arg
 from labelme.__main__ import _resolve_config_source
@@ -383,3 +385,27 @@ def test_route_qt_logging_drops_noise_and_forwards_the_rest() -> None:
         ("WARNING", "Populating font family alias mentioned outside qt.qpa.fonts"),
         ("ERROR", "genuine failure"),
     ]
+
+
+def test_log_environment_lists_installed_ai_packages_only(
+    *,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    installed: dict[str, str] = {"onnxruntime": "1.28.0", "onnxruntime-gpu": "1.28.0"}
+
+    def version(name: str) -> str:
+        if name not in installed:
+            raise importlib.metadata.PackageNotFoundError(name)
+        return installed[name]
+
+    monkeypatch.setattr(importlib.metadata, "version", version)
+    messages: list[str] = []
+    sink_id = logger.add(lambda m: messages.append(m.record["message"]), level="INFO")
+
+    try:
+        _log_environment()
+    finally:
+        logger.remove(sink_id)
+
+    (message,) = messages
+    assert f"versions={installed!r}" in message
