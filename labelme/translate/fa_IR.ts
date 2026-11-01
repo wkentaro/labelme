@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>جزئیات چندضلعی</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>دایره</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>حالت &apos;AI-Points&apos;، &apos;AI-Box&apos; یا &apos;AI-Detect&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>مدل حاشیه‌نویسی به کمک AI</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>مدل</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>دستیار هوش مصنوعی</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>قالب خروجی</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>تشخیص همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>اجرا</translation>
@@ -103,8 +83,43 @@
         <translation>دستور</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>در حال تشخیص…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>مدل AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>دستیار هوش مصنوعی</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>تشخیص همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>حالت &apos;AI-Points&apos;، &apos;AI-Box&apos; یا &apos;AI-Detect&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
     </message>
 </context>
 <context>

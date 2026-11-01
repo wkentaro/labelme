@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Final
 
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
-from ._info_button import InfoButton
 from ._model_picker import ModelPicker
 
 
@@ -24,7 +22,8 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _model_combo: ModelPicker
     _score_spinbox: QtWidgets.QDoubleSpinBox
     _iou_spinbox: QtWidgets.QDoubleSpinBox
-    _body: QtWidgets.QWidget
+    _run_button: QtWidgets.QToolButton
+    _thresholds: QtWidgets.QWidget
 
     def __init__(
         self,
@@ -36,55 +35,36 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         self._init_ui(on_submit=on_submit)
 
     def _init_ui(self, *, on_submit: Callable[[], None]) -> None:
-        layout = QtWidgets.QVBoxLayout()
-        layout.setContentsMargins(4, 4, 4, 4)
-        layout.setSpacing(2)
-        self.setLayout(layout)
-
-        header_layout = QtWidgets.QHBoxLayout()
-        header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI-Detect"))
-        header_layout.addWidget(label)
-        info_button = InfoButton(
-            tooltip=self.tr(
-                "Detect every object that matches the text prompt or an example box"
-            )
-        )
-        header_layout.addWidget(info_button)
-        header_layout.addStretch()
-        layout.addLayout(header_layout)
-
-        self._body = body = QtWidgets.QWidget()
-        body_layout = QtWidgets.QVBoxLayout()
-        body_layout.setContentsMargins(0, 0, 0, 0)
-        body_layout.setSpacing(0)
-        body.setLayout(body_layout)
-
-        grid = QtWidgets.QGridLayout()
-        grid.setContentsMargins(0, 0, 0, 0)
-        grid.setSpacing(2)
-
-        text_input = QtWidgets.QLineEdit()
+        # AiToolGroup lays these controls out; this widget owns their state.
+        text_input = QtWidgets.QLineEdit(self)
         # The prompt is one concept and becomes the label of what it finds.
         text_input.setPlaceholderText(self.tr("Label to detect"))
         text_input.setAccessibleName(self.tr("Prompt"))
         text_input.setFixedHeight(24)
         text_input.returnPressed.connect(on_submit)
-        grid.addWidget(text_input, 0, 0)
         self._text_input = text_input
 
-        run_button = QtWidgets.QToolButton()
+        self._run_button = run_button = QtWidgets.QToolButton(self)
         run_button.setText(self.tr("Run"))
         run_button.setFixedHeight(24)
         run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         run_button.clicked.connect(lambda: on_submit())
-        grid.addWidget(run_button, 0, 1)
+        # Fits "Detecting…" too, so a run doesn't shift the row.
+        run_button.setMinimumWidth(
+            max(
+                run_button.fontMetrics().horizontalAdvance(text)
+                for text in (self.tr("Run"), self.tr("Detecting…"))
+            )
+            + 16
+        )
 
-        settings_layout = QtWidgets.QHBoxLayout()
+        self._thresholds = thresholds = QtWidgets.QWidget(self)
+        settings_layout = QtWidgets.QHBoxLayout(thresholds)
         settings_layout.setContentsMargins(0, 0, 0, 0)
         settings_layout.setSpacing(4)
 
         self._model_combo = model_combo = ModelPicker(options=AI_TEXT_MODEL_OPTIONS)
+        model_combo.setParent(self)
         # Windows needs an explicit name; Unix exposes the selected option instead.
         model_combo.setAccessibleName(self.tr("Model"))
         model_combo.setAccessibleDescription(self.tr("AI-Detect model"))
@@ -109,7 +89,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
             )
             .width()
         )
-        settings_layout.addWidget(model_combo, stretch=1)
+        settings_layout.addStretch(1)
 
         # Size and mute these via QFont and a palette role, never a stylesheet:
         # a stylesheet switches the widget to QStyleSheetStyle, which pins its
@@ -147,14 +127,9 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         iou_spinbox.setValue(self._default_iou_threshold)
         settings_layout.addWidget(iou_spinbox)
 
-        grid.addLayout(settings_layout, 1, 0, 1, 2)
-
-        body_layout.addLayout(grid)
-        layout.addWidget(body)
-
-        # Compact, but never narrower than a language's labels need.
-        COMPACT_WIDTH: Final[int] = 320
-        self.setMaximumWidth(max(COMPACT_WIDTH, self.minimumSizeHint().width()))
+    def set_detecting(self, detecting: bool, /) -> None:  # noqa: FBT001 -- state flag
+        # Run stays clickable: running again replaces the pending job.
+        self._run_button.setText(self.tr("Detecting…") if detecting else self.tr("Run"))
 
     def get_text_prompt(self) -> str:
         return self._text_input.text().strip()

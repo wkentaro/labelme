@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI在&apos;AI-Points&apos;和&apos;AI-Box&apos;模式下建議標註</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>多邊形細節</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>圓形</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>選擇 &apos;AI-Points&apos;、&apos;AI-Box&apos; 或 &apos;AI-Detect&apos; 模式以啟用 AI 輔助</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI 輔助標註模型</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>模型</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>AI 輔助</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>輸出格式</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>偵測與文字提示或範例框相符的所有物件</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>執行</translation>
@@ -103,8 +83,43 @@
         <translation>提示詞</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>正在偵測…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>AI-Detect 模型</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>AI 輔助</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>偵測與文字提示或範例框相符的所有物件</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI在&apos;AI-Points&apos;和&apos;AI-Box&apos;模式下建議標註</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>選擇 &apos;AI-Points&apos;、&apos;AI-Box&apos; 或 &apos;AI-Detect&apos; 模式以啟用 AI 輔助</translation>
     </message>
 </context>
 <context>

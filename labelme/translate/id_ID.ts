@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Detail poligon</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Lingkaran</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Pilih mode &apos;AI-Points&apos;, &apos;AI-Box&apos;, atau &apos;AI-Detect&apos; untuk mengaktifkan Bantuan AI</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>Model anotasi berbantuan AI</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>Bantuan AI</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Format keluaran</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Deteksi setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>Jalankan</translation>
@@ -103,8 +83,43 @@
         <translation>Prompt</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>Mendeteksi…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>Model AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>Bantuan AI</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Deteksi setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Pilih mode &apos;AI-Points&apos;, &apos;AI-Box&apos;, atau &apos;AI-Detect&apos; untuk mengaktifkan Bantuan AI</translation>
     </message>
 </context>
 <context>

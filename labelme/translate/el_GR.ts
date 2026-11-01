@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Λεπτομέρεια πολυγώνου</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Κύκλος</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos;, &apos;AI-Box&apos; ή &apos;AI-Detect&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>Μοντέλο σχολιασμού με υποβοήθηση AI</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>Μοντέλο</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>Βοήθεια AI</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Μορφή εξόδου</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Εντοπισμός κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
@@ -103,8 +83,43 @@
         <translation>Προτροπή</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>Εντοπισμός…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>Μοντέλο AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>Βοήθεια AI</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Εντοπισμός κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos;, &apos;AI-Box&apos; ή &apos;AI-Detect&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
     </message>
 </context>
 <context>

@@ -154,7 +154,7 @@ class OsamWorker(QtCore.QObject):
 
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
-    activity_changed = QtCore.Signal()  # job or device changed
+    activity_changed = QtCore.Signal()  # job, queued or device changed
 
     def __init__(
         self,
@@ -188,6 +188,8 @@ class OsamWorker(QtCore.QObject):
         self._pending.pop(channel, None)
         self._pending[channel] = (job, request)
         self._start_next()
+        if channel in self._pending:
+            self.activity_changed.emit()  # queued behind the running job
 
     @property
     def job(self) -> object:

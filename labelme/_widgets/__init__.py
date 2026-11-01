@@ -1,5 +1,6 @@
 from ._ai_assisted_annotation_widget import AiAssistedAnnotationWidget
 from ._ai_text_to_annotation_widget import AiTextToAnnotationWidget
+from ._ai_tool_group import AiToolGroup
 from ._annotation_folder_footer import AnnotationFolderFooter
 from ._brightness_contrast_dialog import BrightnessContrastDialog
 from ._canvas import Canvas
@@ -25,6 +26,7 @@ __all__ = [
     "LABEL_COLOR_ROLE",
     "AiAssistedAnnotationWidget",
     "AiTextToAnnotationWidget",
+    "AiToolGroup",
     "AnnotationFolderFooter",
     "BrightnessContrastDialog",
     "Canvas",

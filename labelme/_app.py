@@ -67,6 +67,7 @@ from ._utils import get_image_decode_requirement
 from ._widgets import LABEL_COLOR_ROLE
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
+from ._widgets import AiToolGroup
 from ._widgets import AnnotationFolderFooter
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
@@ -107,11 +108,6 @@ class _ZoomMode(enum.Enum):
     FIT_SELECTION = enum.auto()
     MANUAL_ZOOM = enum.auto()
 
-
-_AI_CREATE_MODES: Final[tuple[str, ...]] = (
-    "ai_points_to_shape",
-    "ai_box_to_shape",
-)
 
 # Keys of the Window State store, shared by the restore, reset, and close paths.
 WINDOW_SIZE_KEY: Final[str] = "window/size"
@@ -272,6 +268,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _shape_color_preview: dict | None
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
+    _ai_group: AiToolGroup
 
     _output_dir_value: Path | None = None
     _image: QtGui.QImage
@@ -355,7 +352,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.set_ai_polygon_detail(
             detail=self._config["mask_polygonization"]["detail"]
         )
-        self._ai_annotation.setEnabled(False)
         self._ai_buttons_highlighted = False
 
         self._ai_text = AiTextToAnnotationWidget(
@@ -377,6 +373,9 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda model_name: self._apply_setting_change(
                 ("ai", "text_model"), model_name
             )
+        )
+        self._ai_group = AiToolGroup(
+            assist=self._ai_annotation, detect=self._ai_text, parent=self
         )
 
         self._setup_toolbars()
@@ -1176,11 +1175,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _setup_toolbars(self) -> None:
         separator = functools.partial(_utils.new_separator, self)
-        select_ai_model = QtWidgets.QWidgetAction(self)
-        select_ai_model.setDefaultWidget(self._ai_annotation)
-
-        ai_prompt_action = QtWidgets.QWidgetAction(self)
-        ai_prompt_action.setDefaultWidget(self._ai_text)
+        ai_group_action = QtWidgets.QWidgetAction(self)
+        ai_group_action.setDefaultWidget(self._ai_group)
 
         self.addToolBar(
             Qt.ToolBarArea.TopToolBarArea,
@@ -1204,9 +1200,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     separator(),
                     self._actions.zoom_widget_action,
                     separator(),
-                    select_ai_model,
-                    separator(),
-                    ai_prompt_action,
+                    ai_group_action,
                 ],
                 font_base=self.font(),
             ),
@@ -1231,9 +1225,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 font_base=self.font(),
             ),
         )
-        self._ai_annotation.hover_highlight_requested.connect(
-            self._highlight_ai_buttons
-        )
+        self._ai_group.hover_highlight_requested.connect(self._highlight_ai_buttons)
 
     def _setup_app_state(
         self,
@@ -1781,6 +1773,12 @@ class MainWindow(QtWidgets.QMainWindow):
         # names the running task for every prompt, AI-Detect included.
         worker = self._osam_worker
         job = worker.job
+        canvas = self._canvas_widgets.canvas
+        # The worker also runs other AI tools, so Run follows only detection.
+        self._ai_text.set_detecting(
+            job is not None
+            and (self._ai_text_job is not None or canvas.ai_detect_job is not None)
+        )
         on_cpu = worker.device == "cpu"
         detecting = True
         if job is None:
@@ -1791,7 +1789,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if on_cpu
                 else self.tr("Detecting '{query}'…")
             ).format(query=job.query)
-        elif (box_job := self._canvas_widgets.canvas.ai_detect_job) is job:
+        elif (box_job := canvas.ai_detect_job) is job:
             assert box_job is not None
             if box_job.query:
                 text = (
@@ -1944,11 +1942,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Keep edit_mode disabled while a partial shape is alive so the user
         # can't abandon it mid-draw.
         self._actions.edit_mode.setEnabled(not self._canvas_widgets.canvas.is_drawing)
-        # The AI-Detect tool shares the Output, but has its own model.
-        self._ai_annotation.setEnabled(
-            not edit and create_mode in (*_AI_CREATE_MODES, "ai_detect")
-        )
-        self._ai_annotation.set_model_enabled(create_mode != "ai_detect")
+        self._ai_group.set_tool(None if edit else create_mode)
+        self._on_ai_activity_changed()
         self._refresh_text_model_choices()
 
     def _on_ai_output_format_changed(
@@ -1990,7 +1985,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 " }"
             )
         for mode, action in self._actions.draw:
-            if mode not in _AI_CREATE_MODES:
+            if mode not in ("ai_points_to_shape", "ai_box_to_shape", "ai_detect"):
                 continue
             for widget in action.associatedObjects():
                 if isinstance(widget, QtWidgets.QToolButton):

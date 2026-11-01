@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI, &apos;AI-Noktalar&apos; ve &apos;AI-Kutu&apos; modlarında açıklama önerir</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Poligon ayrıntısı</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Daire</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos;, &apos;AI-Box&apos; veya &apos;AI-Detect&apos; modunu seçin</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI destekli açıklama modeli</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>AI Yardımı</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Çıktı biçimi</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri algıla</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>Çalıştır</translation>
@@ -103,8 +83,43 @@
         <translation>İstem</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>Algılanıyor…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>AI-Detect modeli</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>AI Yardımı</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri algıla</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI, &apos;AI-Noktalar&apos; ve &apos;AI-Kutu&apos; modlarında açıklama önerir</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos;, &apos;AI-Box&apos; veya &apos;AI-Detect&apos; modunu seçin</translation>
     </message>
 </context>
 <context>

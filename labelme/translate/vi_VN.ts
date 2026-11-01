@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI gợi ý chú thích trong các chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Độ chi tiết đa giác</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Hình tròn</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Chọn chế độ &apos;AI-Points&apos;, &apos;AI-Box&apos; hoặc &apos;AI-Detect&apos; để bật Hỗ trợ AI</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>Mô hình chú thích có AI hỗ trợ</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>Mô hình</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>Hỗ trợ AI</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Định dạng đầu ra</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Phát hiện mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>Chạy</translation>
@@ -103,8 +83,43 @@
         <translation>Lời nhắc</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>Đang phát hiện…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>Mô hình AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>Hỗ trợ AI</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Phát hiện mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI gợi ý chú thích trong các chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Chọn chế độ &apos;AI-Points&apos;, &apos;AI-Box&apos; hoặc &apos;AI-Detect&apos; để bật Hỗ trợ AI</translation>
     </message>
 </context>
 <context>

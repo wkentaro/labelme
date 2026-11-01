@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>La IA sugiere anotaciones en los modos &apos;AI-Points&apos; y &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Detalle del polígono</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Círculo</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Seleccione el modo &apos;AI-Points&apos;, &apos;AI-Box&apos; o &apos;AI-Detect&apos; para habilitar la Asistencia IA</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>Modelo de anotación asistida por AI</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>Modelo</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>Asistencia IA</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Formato de salida</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Detectar todos los objetos que coincidan con la indicación de texto o con un cuadro de ejemplo</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>Ejecutar</translation>
@@ -103,8 +83,43 @@
         <translation>Instrucción</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>Detectando…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>Modelo de AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>Asistencia IA</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Detectar todos los objetos que coincidan con la indicación de texto o con un cuadro de ejemplo</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>La IA sugiere anotaciones en los modos &apos;AI-Points&apos; y &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Seleccione el modo &apos;AI-Points&apos;, &apos;AI-Box&apos; o &apos;AI-Detect&apos; para habilitar la Asistencia IA</translation>
     </message>
 </context>
 <context>

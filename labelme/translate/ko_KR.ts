@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>폴리곤 세부 수준</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>원</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos;, &apos;AI-Box&apos; 또는 &apos;AI-Detect&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI 지원 주석 모델</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>모델</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>AI 어시스트</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>출력 형식</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체를 감지</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>실행</translation>
@@ -103,8 +83,43 @@
         <translation>프롬프트</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>감지 중…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>AI-Detect 모델</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>AI 어시스트</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체를 감지</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>&apos;AI-Points&apos;, &apos;AI-Box&apos; 또는 &apos;AI-Detect&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
     </message>
 </context>
 <context>

@@ -3,25 +3,22 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from PySide6 import QtCore
-from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .. import _ai_models
 from .. import _automation
 from .._utils import new_icon
-from ._info_button import InfoButton
 from ._integer_slider import IntegerSlider
 from ._model_picker import ModelPicker
 
 
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
-    hover_highlight_requested = QtCore.Signal(bool)
     manage_models_requested = QtCore.Signal()
     download_requested = QtCore.Signal(str)
 
     _model_combo: ModelPicker
     _output_format_combo: QtWidgets.QComboBox
-    _body: QtWidgets.QWidget
+    _polygon_detail_button: QtWidgets.QToolButton
 
     def __init__(
         self,
@@ -59,20 +56,8 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         on_output_format_changed: Callable[[_automation.AiOutputFormat], None],
         on_polygon_detail_changed: Callable[[int], None],
     ) -> None:
-        layout = QtWidgets.QVBoxLayout()
-        layout.setContentsMargins(4, 4, 4, 4)
-        layout.setSpacing(2)
-        self.setLayout(layout)
-
-        header_layout = QtWidgets.QHBoxLayout()
-        header_layout.addStretch()
-        label = QtWidgets.QLabel(self.tr("AI Assist"))
-        header_layout.addWidget(label)
-        info_button = InfoButton(
-            tooltip=self.tr("AI suggests annotation in 'AI-Points' and 'AI-Box' modes")
-        )
-        header_layout.addWidget(info_button)
-        self._polygon_detail_button = QtWidgets.QToolButton()
+        # AiToolGroup lays these controls out; this widget owns their state.
+        self._polygon_detail_button = QtWidgets.QToolButton(self)
         self._polygon_detail_button.setAutoRaise(True)
         self._polygon_detail_button.setIcon(new_icon("phosphor/sliders-horizontal.svg"))
         self._polygon_detail_button.setIconSize(QtCore.QSize(16, 16))
@@ -102,17 +87,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         detail_action.setDefaultWidget(detail_panel)
         detail_menu.addAction(detail_action)
         self._polygon_detail_button.setMenu(detail_menu)
-        header_layout.addWidget(self._polygon_detail_button)
-        header_layout.addStretch()
-        layout.addLayout(header_layout)
-
-        self._body = body = QtWidgets.QWidget()
-        self.installEventFilter(self)
-        body.installEventFilter(self)
-        body_layout = QtWidgets.QVBoxLayout()
-        body_layout.setContentsMargins(0, 0, 0, 0)
-        body_layout.setSpacing(0)
-        body.setLayout(body_layout)
 
         self._model_combo = ModelPicker(
             options=[
@@ -120,14 +94,14 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
                 for option in _ai_models.AI_ASSIST_MODEL_OPTIONS
             ]
         )
+        self._model_combo.setParent(self)
         # Windows needs an explicit name; Unix exposes the selected option instead.
         self._model_combo.setAccessibleName(self.tr("Model"))
         self._model_combo.setAccessibleDescription(
             self.tr("AI-assisted annotation model")
         )
-        body_layout.addWidget(self._model_combo)
 
-        self._output_format_combo = QtWidgets.QComboBox()
+        self._output_format_combo = QtWidgets.QComboBox(self)
         self._output_format_combo.setAccessibleName(self.tr("Output format"))
         self._output_format_combo.setAccessibleDescription(
             self.tr("AI-assisted annotation output format")
@@ -139,9 +113,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             self.tr("Oriented Rectangle"), "oriented_rectangle"
         )
         self._output_format_combo.addItem(self.tr("Circle"), "circle")
-        body_layout.addWidget(self._output_format_combo)
-
-        layout.addWidget(body)
 
         self.set_current_model(model_display=default_model)
         self._model_combo.model_changed.connect(on_model_changed)
@@ -159,8 +130,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             handle_output_format_changed
         )
         self._polygon_detail_slider.value_changed.connect(on_polygon_detail_changed)
-
-        self.setMaximumWidth(200)
 
     def set_current_model(self, *, model_display: str) -> None:
         model_name = next(
@@ -186,27 +155,3 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     def set_polygon_detail(self, detail: int, /) -> None:
         with QtCore.QSignalBlocker(self._polygon_detail_slider):
             self._polygon_detail_slider.set_value(detail)
-
-    def set_model_enabled(self, enabled: bool, /) -> None:  # noqa: FBT001 -- mirrors QWidget.setEnabled
-        self._model_combo.setEnabled(enabled)
-
-    def setEnabled(self, a0: bool, /) -> None:  # noqa: FBT001 -- QWidget.setEnabled override
-        self._body.setEnabled(a0)
-        self._polygon_detail_button.setEnabled(a0)
-        self.hover_highlight_requested.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
-
-    def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent, /) -> bool:
-        if a0 in (self, self._body) and not self._body.isEnabled():
-            if a1.type() == QtCore.QEvent.Type.Enter:
-                QtWidgets.QToolTip.showText(
-                    QtGui.QCursor.pos(),
-                    self.tr(
-                        "Select 'AI-Points', 'AI-Box', or 'AI-Detect' mode to enable"
-                        " AI Assist"
-                    ),
-                    self,
-                )
-                self.hover_highlight_requested.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
-            elif a1.type() == QtCore.QEvent.Type.Leave:
-                self.hover_highlight_requested.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
-        return super().eventFilter(a0, a1)

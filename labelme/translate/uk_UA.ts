@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Деталізація полігона</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Коло</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Виберіть режим &apos;AI-Points&apos;, &apos;AI-Box&apos; або &apos;AI-Detect&apos;, щоб увімкнути ШІ-помічника</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>Модель розмітки за допомогою AI</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>Модель</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>ШІ-помічник</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Формат виведення</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Виявити всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>Запустити</translation>
@@ -103,8 +83,43 @@
         <translation>Запит</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>Пошук…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>Модель AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>ШІ-помічник</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Виявити всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Виберіть режим &apos;AI-Points&apos;, &apos;AI-Box&apos; або &apos;AI-Detect&apos;, щоб увімкнути ШІ-помічника</translation>
     </message>
 </context>
 <context>

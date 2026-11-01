@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AIが&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>ポリゴンの詳細度</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>円</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos;、&apos;AI-Box&apos;、または &apos;AI-Detect&apos; モードを選択すると AI アシストが有効になります</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI支援アノテーションモデル</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>モデル</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>AI アシスト</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>出力形式</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>テキストプロンプトや例のボックスに一致する物体をすべて検出</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>実行</translation>
@@ -103,8 +83,43 @@
         <translation>プロンプト</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>検出中…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>AI-Detect のモデル</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>AI アシスト</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>テキストプロンプトや例のボックスに一致する物体をすべて検出</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AIが&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>&apos;AI-Points&apos;、&apos;AI-Box&apos;、または &apos;AI-Detect&apos; モードを選択すると AI アシストが有効になります</translation>
     </message>
 </context>
 <context>

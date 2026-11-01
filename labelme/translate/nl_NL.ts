@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Polygoondetail</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Cirkel</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Selecteer de modus &apos;AI-Points&apos;, &apos;AI-Box&apos; of &apos;AI-Detect&apos; om de AI-assistent in te schakelen</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>Model voor annotatie met AI</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>AI-assistent</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Uitvoerformaat</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Elk object detecteren dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>Uitvoeren</translation>
@@ -103,8 +83,43 @@
         <translation>Prompt</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>Detecteren…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>AI-Detect-model</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>AI-assistent</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Elk object detecteren dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Selecteer de modus &apos;AI-Points&apos;, &apos;AI-Box&apos; of &apos;AI-Detect&apos; om de AI-assistent in te schakelen</translation>
     </message>
 </context>
 <context>

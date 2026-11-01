@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>รายละเอียดโพลีกอน</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>วงกลม</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>เลือกโหมด &apos;AI-Points&apos;, &apos;AI-Box&apos; หรือ &apos;AI-Detect&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>โมเดลสร้างคำอธิบายประกอบด้วย AI</translation>
     </message>
@@ -60,24 +52,12 @@
         <translation>โมเดล</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>ผู้ช่วย AI</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>รูปแบบผลลัพธ์</translation>
     </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
-    </message>
-    <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>ตรวจจับวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>รัน</translation>
@@ -103,8 +83,43 @@
         <translation>พรอมต์</translation>
     </message>
     <message>
+        <source>Detecting…</source>
+        <translation>กำลังตรวจจับ…</translation>
+    </message>
+    <message>
         <source>AI-Detect model</source>
         <translation>โมเดล AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>ผู้ช่วย AI</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>ตรวจจับวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>เลือกโหมด &apos;AI-Points&apos;, &apos;AI-Box&apos; หรือ &apos;AI-Detect&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
     </message>
 </context>
 <context>

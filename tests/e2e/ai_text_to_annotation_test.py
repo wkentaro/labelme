@@ -435,6 +435,78 @@ def test_score_threshold_filters_detections(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("submit", ["run", "enter"])
+def test_query_runs_from_another_tool(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    submit: str,
+) -> None:
+    sent: list[list[str]] = []
+
+    def respond(*, texts: list[str]) -> osam.types.GenerateResponse:
+        sent.append(texts)
+        return _make_person_response(texts=texts, with_masks=True)
+
+    _install_mock_session(monkeypatch=monkeypatch, response_fn=respond)
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    combo = win._ai_text._model_combo
+    combo.setCurrentIndex(combo.findData(_AI_TEXT_MODEL))
+    win._switch_canvas_mode(edit=False, create_mode="polygon")
+    text_input, run_button = win._ai_text._text_input, win._ai_text._run_button
+
+    qtbot.keyClicks(text_input, "person")
+    if submit == "run":
+        qtbot.mouseClick(run_button, Qt.MouseButton.LeftButton)
+    else:
+        qtbot.keyClick(text_input, Qt.Key.Key_Return)
+
+    assert win._canvas_widgets.canvas.create_mode == "ai_detect"
+    assert sent == [["person"]]
+    assert {shape.label for shape in win._canvas_widgets.canvas.shapes} == {"person"}
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("case", ["switched", "drawing", "queued"])
+def test_run_reads_detecting_under_any_tool(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    case: str,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas, worker = win._canvas_widgets.canvas, win._osam_worker
+    monkeypatch.setattr(win, "_ensure_ai_model_ready", lambda _: True)
+    win._switch_canvas_mode(edit=False, create_mode="polygon")
+    if case == "queued":  # Another AI tool's request is still running.
+        worker._set_active(MagicMock())
+    else:
+        monkeypatch.setattr(
+            OsamWorker, "submit", lambda self, **_: self._set_active(MagicMock())
+        )
+    if case == "drawing":  # Submitting keeps the tool of a Shape mid-drawing.
+        click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.5, 0.5))
+        assert canvas.is_drawing
+    win._ai_text._text_input.setText("person")
+    win._submit_ai_prompt()
+    if case == "switched":
+        win._switch_canvas_mode(edit=False, create_mode="polygon")
+
+    run_button = win._ai_text._run_button
+    assert canvas.create_mode == ("ai_detect" if case == "queued" else "polygon")
+    assert run_button.text() == "Detecting…"
+    worker._pending.clear()
+    worker._set_active(None)
+    assert run_button.text() == "Run"
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize("failure_stage", ["inference", "postprocessing"])
 def test_text_prompt_error_preserves_annotation(
     *,
@@ -1111,23 +1183,32 @@ def test_run_with_an_example_box_draft_refines_it(
     assert len(canvas._ai_detect_draft) == 2
     assert win.focusWidget() is canvas  # So Enter and Esc reach the draft.
 
-    # A rerun running past the ring's delay rings at its last example.
+    # A draft rerun reads "Detecting…" on Run and names its query in the status
+    # bar until the worker idles; past the ring's delay it rings at its last
+    # example.
     held: list[tuple[object, InferenceRequest]] = []
-    monkeypatch.setattr(
-        OsamWorker,
-        "submit",
-        lambda _self, *, job, request, **_: held.append((job, request)),
-    )
+
+    def hold(
+        self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
+    ) -> None:
+        del channel
+        held.append((job, request))
+        self._set_active(MagicMock(job=job, device=None))
+
+    monkeypatch.setattr(OsamWorker, "submit", hold)
     monkeypatch.setattr(canvas, "_ai_finalize_clock", MagicMock(elapsed=lambda: 1000))
-    win._submit_ai_prompt()
+    run_button = win._ai_text._run_button
+    qtbot.mouseClick(run_button, Qt.MouseButton.LeftButton)
+    assert run_button.text() == "Detecting…"
+    assert win._status_bar.ai.text() == "Detecting 'person'…"
     assert canvas._ai_progress_center() is not None
     canvas.grab()
-    ((job, request),) = held
+
+    (job, request), worker = held[0], win._osam_worker
     assert request.image is not None
-    win._osam_worker.finished.emit(
-        job, _osam_worker._run(session, request, request.image)
-    )
-    monkeypatch.setattr(OsamWorker, "submit", submit)
+    worker._set_active(None)
+    worker.finished.emit(job, _osam_worker._run(session, request, request.image))
+    assert run_button.text() == "Run"
     assert len(canvas._ai_detect_draft) == 2
 
 
