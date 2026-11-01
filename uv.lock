@@ -1,5 +1,5 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -677,7 +677,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2,<1.29" },
-    { name = "osam", extras = ["webgpu"], specifier = ">=0.9.5" },
+    { name = "osam", extras = ["webgpu"], specifier = ">=0.9.6" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
     { name = "ruamel-yaml", specifier = ">=0.18" },
@@ -1092,7 +1092,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.9.5"
+version = "0.9.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1102,9 +1102,9 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5d/c3/29b42b96b088c8f0ad4deda42fe7f7cfcf3cadeec1e135016949b189a284/osam-0.9.5.tar.gz", hash = "sha256:5f6ac9d65c2f399d148befb9c18683d16e3461a1558693ab6dd812aea840f20f", size = 27554216, upload-time = "2026-10-31T08:02:39.366Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e8/da/ae88f9274cd778ef35f3fd0dfa09cbcaae1ddbe55f2efc003e874abd0120/osam-0.9.6.tar.gz", hash = "sha256:b23ed02a67e8134f635a92f38b652b81303a6982117b6befe665500487ca7378", size = 27555307, upload-time = "2026-11-01T08:29:31.268Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bd/68/99768ab0b2a2f53c1f8a0442502c934f63c6a2c4ecdbf0020905e05ef8b3/osam-0.9.5-py3-none-any.whl", hash = "sha256:3f9f1a6161449dd8f08d0f573e8997380b8b580db33de99a40e4e2689f955103", size = 1437620, upload-time = "2026-10-31T08:02:37.124Z" },
+    { url = "https://files.pythonhosted.org/packages/07/e8/72cb67576d3177c13c40f0cc9add4be651a8088b8f4397261c61595b197a/osam-0.9.6-py3-none-any.whl", hash = "sha256:849a764d9f73997655dbe2abe5bf942a39a6bb555f94bc2f99b3a467d481b002", size = 1438169, upload-time = "2026-11-01T08:29:29.127Z" },
 ]
 
 [package.optional-dependencies]
