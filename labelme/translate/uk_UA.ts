@@ -79,16 +79,8 @@
         <translation>Виявити всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>наприклад, собака, кішка, птах</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Запустити</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Модель текстового запиту ШІ</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Модель</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Мітка для пошуку</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Запит</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Модель AI-Detect</translation>
     </message>
 </context>
 <context>

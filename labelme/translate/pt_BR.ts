@@ -79,16 +79,8 @@
         <translation>Detectar todos os objetos que correspondem ao prompt de texto ou a uma caixa de exemplo</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>ex.: cachorro, gato, pássaro</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Executar</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Modelo de Prompt de Texto de IA</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Modelo</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Rótulo a detectar</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Modelo do AI-Detect</translation>
     </message>
 </context>
 <context>

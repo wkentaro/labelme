@@ -35,7 +35,10 @@ def propose_shapes_from_texts(
     score_threshold: float,
     image_size: tuple[int, int] | None,
     polygon_detail: int,
+    suppressed_by: str | None = None,
 ) -> list[Shape]:
+    # suppressed_by: the label the results will take, when it isn't their
+    # text; only existing Shapes with that label suppress them.
     boxes, scores, labels, masks = get_bboxes_from_texts(
         annotations=annotations, texts=texts
     )
@@ -46,14 +49,22 @@ def propose_shapes_from_texts(
     # without returning the existing Shapes as new proposals.
     SCORE_FOR_EXISTING_SHAPE: Final[float] = 1.01
     for shape in existing_shapes:
-        if shape.shape_type != shape_type or shape.label not in texts:
+        if shape.shape_type != shape_type:
+            continue
+        if suppressed_by is None:
+            if shape.label not in texts:
+                continue
+            classes = [texts.index(shape.label)]
+        elif shape.label == suppressed_by:
+            classes = list(range(len(texts)))
+        else:
             continue
         shape_bbox = shape_to_xyxy_bbox(shape=shape)
         if shape_bbox is None:
             continue
-        boxes = np.r_[boxes, [shape_bbox]]
-        scores = np.r_[scores, [SCORE_FOR_EXISTING_SHAPE]]
-        labels = np.r_[labels, [texts.index(shape.label)]]
+        boxes = np.r_[boxes, [shape_bbox] * len(classes)]
+        scores = np.r_[scores, [SCORE_FOR_EXISTING_SHAPE] * len(classes)]
+        labels = np.r_[labels, classes]
 
     boxes, scores, labels, indices = nms_bboxes(
         boxes=boxes,

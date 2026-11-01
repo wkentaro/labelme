@@ -79,16 +79,8 @@
         <translation>Elk object detecteren dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>bijv. hond, kat, vogel</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Uitvoeren</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Model voor AI-tekstprompt</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Te detecteren label</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect-model</translation>
     </message>
 </context>
 <context>

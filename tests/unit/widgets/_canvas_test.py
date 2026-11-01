@@ -988,7 +988,7 @@ def ai_existing_shape_highlight_harness(
     )
     new_shape_emissions: list[None] = []
     no_shapes_emissions: list[None] = []
-    canvas.new_shape.connect(lambda: new_shape_emissions.append(None))
+    canvas.new_shape.connect(lambda _: new_shape_emissions.append(None))
     canvas.inference_produced_no_shapes.connect(
         lambda: no_shapes_emissions.append(None)
     )
@@ -1136,7 +1136,9 @@ def test_finalize_paints_new_shape_before_notifying(
 
     monkeypatch.setattr(canvas, "_render_canvas", record_then_render)
     counts_when_notified: list[int] = []
-    canvas.new_shape.connect(lambda: counts_when_notified.extend(painted_shape_counts))
+    canvas.new_shape.connect(
+        lambda _: counts_when_notified.extend(painted_shape_counts)
+    )
 
     canvas.create_mode = create_mode
     if create_mode == "point":
@@ -3112,3 +3114,46 @@ def test_ai_box_sends_the_box_without_text(*, canvas: Canvas, qtbot: QtBot) -> N
 
     qtbot.waitUntil(lambda: bool(_worker(canvas).requests))
     assert _worker(canvas).requests[-1].texts is None
+
+
+@pytest.mark.gui
+def test_ai_detect_box_detects_with_the_query(*, canvas: Canvas, qtbot: QtBot) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
+    canvas.get_ai_detect_query = lambda: "dog"
+    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.show()
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
+
+    assert _worker(canvas).requests[-1].texts == ["dog"]
+
+
+@pytest.mark.gui
+def test_ai_detect_box_labels_results_with_the_query_it_sent(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
+    canvas.get_ai_detect_query = lambda: "person"
+    canvas.set_ai_output_format("rectangle")
+    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.show()
+    worker = _worker(canvas)
+    worker.annotations = [
+        osam.types.Annotation(
+            bounding_box=osam.types.BoundingBox(xmin=10, ymin=10, xmax=40, ymax=40),
+            score=0.9,
+        )
+    ]
+    worker.paused = True
+    labels: list[str] = []
+    canvas.new_shape.connect(labels.append)
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
+    canvas.get_ai_detect_query = lambda: "dog"  # Edited during inference.
+    worker.resume()
+
+    assert labels == ["person"]

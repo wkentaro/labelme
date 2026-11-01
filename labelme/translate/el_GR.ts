@@ -79,16 +79,8 @@
         <translation>Εντοπισμός κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>π.χ. σκύλος,γάτα,πουλί</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Μοντέλο κειμένου προτροπής AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Μοντέλο</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Ετικέτα για εντοπισμό</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Προτροπή</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Μοντέλο AI-Detect</translation>
     </message>
 </context>
 <context>

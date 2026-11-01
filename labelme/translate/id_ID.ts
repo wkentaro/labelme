@@ -79,16 +79,8 @@
         <translation>Deteksi setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>contoh: anjing, kucing, burung</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Jalankan</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Model Prompt Teks AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Label yang dideteksi</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Model AI-Detect</translation>
     </message>
 </context>
 <context>

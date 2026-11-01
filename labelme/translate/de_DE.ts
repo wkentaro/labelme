@@ -79,16 +79,8 @@
         <translation>Alle Objekte erkennen, die zum Textprompt oder zu einem Beispielrahmen passen</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>z.B. Hund,Katze,Vogel</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Ausführen</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Modell für KI-Textprompt</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Modell</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Zu erkennendes Label</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect-Modell</translation>
     </message>
 </context>
 <context>

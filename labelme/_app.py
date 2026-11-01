@@ -362,11 +362,13 @@ class MainWindow(QtWidgets.QMainWindow):
             on_submit=self._submit_ai_prompt, parent=self
         )
         self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"] or "")
+        self._ai_text.set_label_suggestions(self._docks.unique_label_list.model())
         # The Setting, not the picker: the picker is empty until the model is
         # downloaded, and Prompt Compatibility is checked before that.
         self._canvas_widgets.canvas.get_ai_detect_model_name = lambda: (
             self._config["ai"]["text_model"] or ""
         )
+        self._canvas_widgets.canvas.get_ai_detect_query = self._ai_text.get_text_prompt
         self._canvas_widgets.canvas.get_ai_detect_thresholds = lambda: (
             self._ai_text.get_score_threshold(),
             self._ai_text.get_iou_threshold(),
@@ -1703,7 +1705,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._actions.image.isEnabled():
             return  # No image to detect in.
         prompt = self._ai_text.get_text_prompt()
-        if not prompt.strip():
+        if not prompt:
             self.show_status_message(self.tr("Type what to detect"), delay=5000)
             self._ai_text.focus_text_prompt()
             return
@@ -1730,7 +1732,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return
 
-        texts = prompt.split(",")
+        texts = [prompt]
 
         model_name: str = self._ai_text.get_model_name()
         if not self._ensure_ai_model_ready(model_name):
@@ -1782,8 +1784,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 if on_cpu
                 else self.tr("Detecting '{query}'…")
             ).format(query=job.query)
-        elif job is self._canvas_widgets.canvas.ai_detect_job:
-            text = self.tr("Detecting on CPU…") if on_cpu else self.tr("Detecting…")
+        elif (box_job := self._canvas_widgets.canvas.ai_detect_job) is job:
+            assert box_job is not None
+            if box_job.query:
+                text = (
+                    self.tr("Detecting '{query}' on CPU…")
+                    if on_cpu
+                    else self.tr("Detecting '{query}'…")
+                ).format(query=box_job.query)
+            else:
+                text = self.tr("Detecting on CPU…") if on_cpu else self.tr("Detecting…")
         else:
             text = self.tr("Segmenting on CPU…") if on_cpu else self.tr("Segmenting…")
             detecting = False
@@ -1824,32 +1834,44 @@ class MainWindow(QtWidgets.QMainWindow):
         text_job = self._take_ai_text_job(job)
         if text_job is None:
             return
+        propose = functools.partial(
+            _automation.propose_shapes_from_texts,
+            annotations=cast(list, annotations),
+            texts=text_job.texts,
+            shape_type=text_job.shape_type,
+            existing_shapes=self._canvas_widgets.canvas.shapes,
+            iou_threshold=text_job.iou_threshold,
+            score_threshold=text_job.score_threshold,
+            image_size=text_job.image_size,
+            polygon_detail=self._config["mask_polygonization"]["detail"],
+        )
         try:
-            shapes = _automation.propose_shapes_from_texts(
-                annotations=cast(list, annotations),
-                texts=text_job.texts,
-                shape_type=text_job.shape_type,
-                existing_shapes=self._canvas_widgets.canvas.shapes,
-                iou_threshold=text_job.iou_threshold,
-                score_threshold=text_job.score_threshold,
-                image_size=text_job.image_size,
-                polygon_detail=self._config["mask_polygonization"]["detail"],
-            )
+            # Ignores existing Shapes: which ones cover the batch depends on
+            # the label it takes, and that isn't known yet.
+            shapes = propose(existing_shapes=[])
         except Exception as e:
             logger.opt(exception=e).error("AI text inference failed")
             self._on_inference_failed(f"{type(e).__name__}: {e}")
             return
 
-        # Polygons from one mask's separate lands share a Group: one object.
-        count = len({id(s) if s.group_id is None else s.group_id for s in shapes})
-        message = (
-            self.tr("Found {count} new '{query}'")
-            if count
-            else self.tr("No new '{query}' found")
-        ).format(count=count, query=text_job.query)
-        self.show_status_message(message, delay=5000)
-        self._announce(message)
-
+        if not shapes:
+            self._report_ai_detect_result(shapes, name=text_job.query)
+            return
+        # One entry labels the whole batch, as for an example box.
+        entry = self._ask_new_shape_entry(query=text_job.query)
+        if entry is None:
+            return  # Cancelled: the batch is never added.
+        # "black dog" saved as "dog": skip what "dog" Shapes cover.
+        shapes = propose(suppressed_by=entry.label)
+        self._report_ai_detect_result(shapes, name=entry.label)
+        if not shapes:
+            return
+        for shape in shapes:
+            shape.label = entry.label
+            shape.flags = dict(entry.flags)
+            shape.description = entry.description
+            if entry.group_id is not None:
+                shape.group_id = entry.group_id
         apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
         canvas = self._canvas_widgets.canvas
         self._load_shapes(shapes, replace=False)
@@ -1857,6 +1879,17 @@ class MainWindow(QtWidgets.QMainWindow):
         # so the user's selection survives a result landing.
         canvas.select_shapes(shapes=list(canvas.selected_shapes))
         self.mark_dirty()
+
+    def _report_ai_detect_result(self, shapes: list[Shape], /, *, name: str) -> None:
+        # Polygons from one mask's separate lands share a Group: one object.
+        count = len({id(s) if s.group_id is None else s.group_id for s in shapes})
+        message = (
+            self.tr("Found {count} new '{query}'")
+            if count
+            else self.tr("No new '{query}' found")
+        ).format(count=count, query=name)
+        self.show_status_message(message, delay=5000)
+        self._announce(message)
 
     def reset_state(self) -> None:
         self._auto_save_path = None
@@ -2381,24 +2414,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Callback functions:
 
-    def _on_new_shape(self) -> None:
-        items = self._docks.unique_label_list.selectedItems()
-        text = items[0].data(Qt.ItemDataRole.UserRole) if items else None
-        if self._config["display_label_popup"] or not text:
-            entry = self._label_dialog.popup(text=text)
-        else:
-            entry = LabelDialogEntry(
-                label=text, flags={}, group_id=None, description=""
-            )
-
-        if entry is not None and not self.validate_label(label=entry.label):
-            self.show_error_message(
-                title=self.tr("Invalid Label"),
-                message=self.tr("Invalid label '{}' with validation type '{}'").format(
-                    entry.label, self._config["validate_label"]
-                ),
-            )
-            entry = None
+    def _on_new_shape(self, query: str = "", /) -> None:
+        entry = self._ask_new_shape_entry(query=query)
         if entry is None:
             self._canvas_widgets.canvas.undo_last_line()
             self._canvas_widgets.canvas.shape_backups.pop()
@@ -2423,6 +2440,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.undo_last_point.setEnabled(False)
         self._actions.undo.setEnabled(True)
         self.mark_dirty()
+
+    def _ask_new_shape_entry(self, *, query: str) -> LabelDialogEntry | None:
+        # One entry labels every Shape one action made. An AI-Detect query is
+        # a prompt, not always the label ("black dog" may be a "dog"), so it
+        # only prefills the dialog. None discards the new Shapes.
+        items = self._docks.unique_label_list.selectedItems()
+        text = items[0].data(Qt.ItemDataRole.UserRole) if items else None
+        if self._config["display_label_popup"] or not text:
+            entry = self._label_dialog.popup(text=query or text)
+        else:
+            entry = LabelDialogEntry(
+                label=text, flags={}, group_id=None, description=""
+            )
+        if entry is not None and not self.validate_label(label=entry.label):
+            self.show_error_message(
+                title=self.tr("Invalid Label"),
+                message=self.tr("Invalid label '{}' with validation type '{}'").format(
+                    entry.label, self._config["validate_label"]
+                ),
+            )
+            return None
+        return entry
 
     def _on_inference_produced_no_shapes(self) -> None:
         self.show_status_message(

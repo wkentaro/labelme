@@ -79,16 +79,8 @@
         <translation>Rileva ogni oggetto che corrisponde al prompt testuale o a un riquadro di esempio</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>es. : cane,gatto,uccello</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Esegui</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Modello di prompt testuale IA</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Modello</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Etichetta da rilevare</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Modello di AI-Detect</translation>
     </message>
 </context>
 <context>

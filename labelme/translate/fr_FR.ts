@@ -79,16 +79,8 @@
         <translation>Détecter tous les objets correspondant à l’invite textuelle ou à un cadre d’exemple</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>ex. : chien,chat,oiseau</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Exécuter</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Modèle d’invite textuelle IA</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Modèle</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Étiquette à détecter</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Consigne</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Modèle AI-Detect</translation>
     </message>
 </context>
 <context>

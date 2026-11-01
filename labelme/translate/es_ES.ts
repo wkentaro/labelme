@@ -79,16 +79,8 @@
         <translation>Detectar todos los objetos que coincidan con la indicación de texto o con un cuadro de ejemplo</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>p. ej., perro, gato, pájaro</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Ejecutar</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Modelo de indicación de texto IA</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Modelo</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Etiqueta que detectar</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Instrucción</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Modelo de AI-Detect</translation>
     </message>
 </context>
 <context>

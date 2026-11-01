@@ -79,16 +79,8 @@
         <translation>تشخیص همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>مثال: سگ، گربه، پرنده</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>اجرا</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>مدل پرامپت متنی هوش مصنوعی</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>مدل</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>برچسبی که باید تشخیص داده شود</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>دستور</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>مدل AI-Detect</translation>
     </message>
 </context>
 <context>

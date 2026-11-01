@@ -79,16 +79,8 @@
         <translation>Phát hiện mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>ví dụ: chó,mèo,chim</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Chạy</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Mô hình lời nhắc văn bản AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Mô hình</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Nhãn cần phát hiện</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Lời nhắc</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Mô hình AI-Detect</translation>
     </message>
 </context>
 <context>

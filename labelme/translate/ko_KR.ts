@@ -79,16 +79,8 @@
         <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체를 감지</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>예: 개, 고양이, 새</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>실행</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI 텍스트 프롬프트 모델</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>모델</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>감지할 레이블</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>프롬프트</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect 모델</translation>
     </message>
 </context>
 <context>

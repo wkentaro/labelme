@@ -79,16 +79,8 @@
         <translation>Обнаружить все объекты, соответствующие текстовому запросу или рамке-примеру</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>например: собака,кот,птица</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Выполнить</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Модель текстового запроса ИИ</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Модель</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Метка для поиска</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Запрос</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Модель AI-Detect</translation>
     </message>
 </context>
 <context>

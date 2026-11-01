@@ -79,16 +79,8 @@
         <translation>Wykryj każdy obiekt pasujący do monitu tekstowego lub ramki przykładu</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>np. pies,kot,ptak</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Uruchom</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Model monitu tekstowego AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Etykieta do wykrycia</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Polecenie</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Model AI-Detect</translation>
     </message>
 </context>
 <context>

@@ -79,16 +79,8 @@
         <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum észlelése</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>pl. kutya,macska,madár</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Futtatás</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>MI-szöveges utasítás modellje</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Modell</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Észlelendő címke</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Utasítás</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect modell</translation>
     </message>
 </context>
 <context>

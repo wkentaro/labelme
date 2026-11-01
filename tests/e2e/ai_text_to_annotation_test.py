@@ -22,6 +22,7 @@ from labelme._automation import OsamWorker
 from labelme._automation import _osam_session
 from labelme._automation import _osam_worker
 from labelme._shape import Shape
+from labelme._widgets._label_dialog import LabelDialog
 from labelme._widgets._label_dialog import LabelDialogEntry
 
 from ..conftest import assert_labelfile_sanity
@@ -37,6 +38,24 @@ if TYPE_CHECKING:
 pytestmark = pytest.mark.usefixtures("cached_ai_models")
 
 _AI_TEXT_MODEL: Final = "sam3:latest"
+
+
+@pytest.fixture(autouse=True)
+def popups(*, monkeypatch: pytest.MonkeyPatch) -> list[str | None]:
+    # Each AI-Detect batch asks for its label once; accept the prefill.
+    texts: list[str | None] = []
+
+    def popup(
+        self: LabelDialog, *, text: str | None = None, **_: object
+    ) -> LabelDialogEntry:
+        del self
+        texts.append(text)
+        return LabelDialogEntry(
+            label=text or "object", flags={}, group_id=None, description=""
+        )
+
+    monkeypatch.setattr(LabelDialog, "popup", popup)
+    return texts
 
 
 def _make_response(
@@ -78,18 +97,6 @@ def _make_person_response(
         label_indices=[person_idx, person_idx],
         with_masks=with_masks,
     )
-
-
-def _make_multi_label_response(*, texts: list[str]) -> osam.types.GenerateResponse:
-    response = _make_response(
-        texts=["person", "sofa"],
-        boxes=[(50, 30, 200, 300), (10, 150, 400, 330)],
-        scores=[0.85, 0.70],
-        label_indices=[0, 1],
-        with_masks=False,
-    )
-    response.annotations = [a for a in response.annotations if a.text in texts]
-    return response
 
 
 def _make_edge_crossing_response(*, texts: list[str]) -> osam.types.GenerateResponse:
@@ -202,14 +209,6 @@ def _run_text_prompt(
             _make_edge_crossing_response,
             {"person"},
             id="ai_box-oriented_rectangle-at-edge",
-        ),
-        pytest.param(
-            "rectangle",
-            "rectangle",
-            "person,sofa",
-            _make_multi_label_response,
-            {"person", "sofa"},
-            id="multiple-labels",
         ),
     ],
 )
@@ -525,7 +524,9 @@ def test_text_result_waits_for_the_label_dialog(
     combo = win._ai_text._model_combo
     combo.setCurrentIndex(combo.findData(_AI_TEXT_MODEL))
 
-    def popup(**_: object) -> LabelDialogEntry:
+    def popup(*, text: str | None = None, **_: object) -> LabelDialogEntry:
+        if text == "person":  # The batch's own dialog, after the first closes.
+            return LabelDialogEntry(label=text, flags={}, group_id=None, description="")
         # The result lands while the user types the drawn shape's label.
         dialog = QtWidgets.QDialog(win)
         dialog.setModal(True)
@@ -818,3 +819,241 @@ def test_ai_detect_box_checks_the_model_setting_before_download(
     # window can offer the download.
     win._switch_canvas_mode(edit=False, create_mode="ai_detect")
     assert not win._canvas_widgets.canvas._refuses_example_box()
+
+
+@pytest.mark.gui
+def test_text_prompt_is_one_concept(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    sent: list[list[str]] = []
+
+    def respond(*, texts: list[str]) -> osam.types.GenerateResponse:
+        sent.append(texts)
+        return _make_response(
+            texts=texts,
+            boxes=[(50, 30, 200, 300)],
+            scores=[0.85],
+            label_indices=[0],
+            with_masks=False,
+        )
+
+    _install_mock_session(monkeypatch=monkeypatch, response_fn=respond)
+    _run_text_prompt(
+        win=win,
+        qtbot=qtbot,
+        text=" person, sofa ",
+        create_mode="rectangle",
+        score_threshold=0.1,
+    )
+
+    assert sent == [["person, sofa"]]
+    shapes = win._canvas_widgets.canvas.shapes
+    assert shapes
+    assert {s.label for s in shapes} == {"person, sofa"}
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(("chosen", "labels"), [("dog", ["dog", "dog"]), (None, [])])
+def test_one_dialog_labels_the_whole_batch(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    chosen: str | None,
+    labels: list[str],
+) -> None:
+    # The query is a prompt: "black dog" isn't a Label, but finds dogs.
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        config_overrides=dict(labels=["dog"], validate_label="exact"),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    _install_mock_session(
+        monkeypatch=monkeypatch,
+        response_fn=lambda *, texts: _make_response(
+            texts=texts,
+            boxes=[(50, 30, 200, 300), (220, 40, 350, 290)],
+            scores=[0.85, 0.45],
+            label_indices=[0, 0],
+            with_masks=False,
+        ),
+    )
+    texts: list[str | None] = []
+
+    def popup(*, text: str | None = None, **_: object) -> LabelDialogEntry | None:
+        texts.append(text)
+        if chosen is None:
+            return None  # Cancel
+        return LabelDialogEntry(label=chosen, flags={}, group_id=None, description="")
+
+    monkeypatch.setattr(win._label_dialog, "popup", popup)
+    undo_enabled = win._actions.undo.isEnabled()
+
+    _run_text_prompt(
+        win=win,
+        qtbot=qtbot,
+        text="black dog",
+        create_mode="rectangle",
+        score_threshold=0.1,
+    )
+
+    assert texts == ["black dog"]
+    assert [s.label for s in win._canvas_widgets.canvas.shapes] == labels
+    assert [s.label for i in win._docks.label_list if (s := i.shape())] == labels
+    if chosen is None:
+        assert win._actions.undo.isEnabled() == undo_enabled  # No undo step.
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("existing", "chosen", "added"),
+    [
+        ("dog", "dog", 0),
+        ("dog", "cat", 1),
+        ("black dog", "black dog", 0),
+        ("black dog", "dog", 1),
+    ],
+)
+def test_batch_skips_what_shapes_with_its_label_cover(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    existing: str,
+    chosen: str,
+    added: int,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    dog = Shape(
+        label=existing,
+        shape_type="rectangle",
+        points=np.array([(50.0, 30.0), (200.0, 300.0)]),
+    )
+    win._load_shapes([dog], replace=True)
+    _install_mock_session(
+        monkeypatch=monkeypatch,
+        response_fn=lambda *, texts: _make_response(
+            texts=texts,
+            boxes=[(50, 30, 200, 300)],
+            scores=[0.85],
+            label_indices=[0],
+            with_masks=False,
+        ),
+    )
+    monkeypatch.setattr(
+        win._label_dialog,
+        "popup",
+        lambda **_: LabelDialogEntry(
+            label=chosen, flags={}, group_id=None, description=""
+        ),
+    )
+
+    _run_text_prompt(
+        win=win,
+        qtbot=qtbot,
+        text="black dog",
+        create_mode="rectangle",
+        score_threshold=0.1,
+    )
+
+    assert [s.label for s in win._canvas_widgets.canvas.shapes] == [
+        existing,
+        *[chosen] * added,
+    ]
+    # Named by the label the batch took, not the query.
+    assert win.statusBar().currentMessage() == (
+        f"Found 1 new '{chosen}'" if added else f"No new '{chosen}' found"
+    )
+
+
+@pytest.mark.gui
+def test_empty_batch_asks_for_no_label(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    popups: list[str | None],
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    _install_mock_session(
+        monkeypatch=monkeypatch,
+        response_fn=lambda *, texts: _make_response(
+            texts=texts, boxes=[], scores=[], label_indices=[], with_masks=False
+        ),
+    )
+
+    _run_text_prompt(
+        win=win, qtbot=qtbot, text="dog", create_mode="rectangle", score_threshold=0.1
+    )
+
+    assert popups == []
+    assert win.statusBar().currentMessage() == "No new 'dog' found"
+
+
+@pytest.mark.gui
+def test_label_list_suggests_the_text_prompt(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        config_overrides=dict(labels=["person", "sofa"]),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    completer = win._ai_text._text_input.completer()
+    assert completer is not None
+
+    completer.setCompletionPrefix("OF")
+
+    assert completer.currentCompletion() == "sofa"
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(("chosen", "labels"), [("dog", ["dog", "dog"]), (None, [])])
+def test_one_dialog_labels_an_example_box_batch(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    chosen: str | None,
+    labels: list[str],
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    texts: list[str | None] = []
+
+    def popup(*, text: str | None = None, **_: object) -> LabelDialogEntry | None:
+        texts.append(text)
+        if chosen is None:
+            return None  # Cancel
+        return LabelDialogEntry(label=chosen, flags={}, group_id=None, description="")
+
+    monkeypatch.setattr(win._label_dialog, "popup", popup)
+    win._switch_canvas_mode(edit=False, create_mode="ai_detect")
+    backups = len(canvas.shape_backups)
+    for x in (0.0, 20.0):
+        canvas.shapes.append(
+            Shape(shape_type="rectangle", points=np.array([(x, 0.0), (x + 10, 10.0)]))
+        )
+    canvas.backup_shapes()
+
+    canvas.new_shape.emit("black dog")
+
+    assert texts == ["black dog"]
+    assert [s.label for s in canvas.shapes] == labels
+    assert len(canvas.shape_backups) == backups + (1 if labels else 0)

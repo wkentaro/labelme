@@ -169,6 +169,8 @@ class _AiJob:
     # The draft a finalize commits, or the inputs a preview shows.
     draft: _DraftShape | None = None
     preview_key: object = None
+    # The AI-Detect query sent with an example box; it labels the results.
+    query: str = ""
 
 
 _AI_PROGRESS_RADIUS: Final = 12
@@ -207,6 +209,8 @@ class Canvas(QtWidgets.QWidget):
     get_ai_detect_model_name: Callable[[], str]
     # (score, IoU) thresholds of AI-Detect, also read on use.
     get_ai_detect_thresholds: Callable[[], tuple[float, float]]
+    # The AI-Detect query, which an example box detects together with.
+    get_ai_detect_query: Callable[[], str]
 
     pixmap: QtGui.QPixmap
     _pixmap_rgb: tuple[np.ndarray, str] | None
@@ -230,7 +234,9 @@ class Canvas(QtWidgets.QWidget):
     zoom_request = QtCore.Signal(int, QPointF)
     scroll_request = QtCore.Signal(int, Qt.Orientation)
     pan_request = QtCore.Signal(QPoint)
-    new_shape = QtCore.Signal()
+    # The AI-Detect query that found the new Shapes; it prefills their label
+    # dialog. Empty for every other tool.
+    new_shape = QtCore.Signal(str)
     inference_produced_no_shapes = QtCore.Signal()
     inference_failed = QtCore.Signal(str)
     example_box_unsupported = QtCore.Signal()
@@ -324,6 +330,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_assist_session = _automation.AiAssistSession()
         self.get_ai_detect_model_name = lambda: ""
         self.get_ai_detect_thresholds = lambda: (0.0, 0.5)
+        self.get_ai_detect_query = lambda: ""
         self._osam_worker: _automation.OsamWorker | None = None
         self._ai_preview_job: _AiJob | None = None
         self._ai_finalize_job: _AiJob | None = None
@@ -596,9 +603,10 @@ class Canvas(QtWidgets.QWidget):
         worker.failed.connect(self._on_ai_job_failed)
 
     @property
-    def ai_detect_job(self) -> object:
+    def ai_detect_job(self) -> _AiJob | None:
         # The AI-Detect example-box run in flight; None when there is none.
-        return self._ai_finalize_job if self.create_mode == "ai_detect" else None
+        job = self._ai_finalize_job
+        return job if job is not None and job.prompt_kind == "example_box" else None
 
     @property
     def is_ai_finalizing(self) -> bool:
@@ -638,6 +646,7 @@ class Canvas(QtWidgets.QWidget):
             ),
             draft=draft,
             preview_key=preview_key,
+            query=self.get_ai_detect_query() if prompt_kind == "example_box" else "",
         )
         # Recorded first: the worker may fail the job before submit returns.
         if channel == "preview":
@@ -656,8 +665,10 @@ class Canvas(QtWidgets.QWidget):
                 points=job.points,
                 point_labels=job.point_labels,
                 # A box with text finds every match; "visual" is SAM3's word
-                # for "like the example".
-                texts=["visual"] if prompt_kind == "example_box" else None,
+                # for "like the example" when there is no query.
+                texts=(
+                    [job.query or "visual"] if prompt_kind == "example_box" else None
+                ),
             ),
         )
 
@@ -768,7 +779,7 @@ class Canvas(QtWidgets.QWidget):
         if job.draft is None:
             self._show_ai_points_preview(proposal=proposal, error=error)
         else:
-            self._finish_ai_finalize(proposal=proposal, error=error)
+            self._finish_ai_finalize(proposal=proposal, error=error, query=job.query)
 
     def _report_inference_failure(self, *, error: str) -> None:
         self._ai_inference_failed = True
@@ -2161,7 +2172,11 @@ class Canvas(QtWidgets.QWidget):
         self._commit_new_shapes([_draft_to_shape(self._current)])
 
     def _finish_ai_finalize(
-        self, *, proposal: _automation.AiAssistProposal | None, error: str | None
+        self,
+        *,
+        proposal: _automation.AiAssistProposal | None,
+        error: str | None,
+        query: str,
     ) -> None:
         if proposal is None:
             assert error is not None
@@ -2173,25 +2188,27 @@ class Canvas(QtWidgets.QWidget):
             self._set_ai_existing_shape_highlights(
                 shapes=proposal.matching_existing_shapes
             )
-            self._commit_new_shapes(proposal.new_shapes)
+            self._commit_new_shapes(proposal.new_shapes, label=query)
             return
         if not proposal.matching_existing_shapes:
             self.inference_produced_no_shapes.emit()
         self._cancel_current_shape()
         self._set_ai_existing_shape_highlights(shapes=proposal.matching_existing_shapes)
 
-    def _commit_new_shapes(self, new_shapes: list[Shape], /) -> None:
+    def _commit_new_shapes(
+        self, new_shapes: list[Shape], /, *, label: str = ""
+    ) -> None:
         self.shapes.extend(new_shapes)
         self.backup_shapes()
-        self._reset_after_shape_creation()
+        self._reset_after_shape_creation(label=label)
 
-    def _reset_after_shape_creation(self) -> None:
+    def _reset_after_shape_creation(self, *, label: str = "") -> None:
         self._current = None
         # new_shape's handler blocks on the modal label dialog, so paint the
         # committed shape synchronously first. Some modes, including point and
         # AI-Box, can finalize without a matching preview on screen.
         self.repaint()
-        self.new_shape.emit()
+        self.new_shape.emit(label)
         self.update()
 
     def _cancel_current_shape(self) -> None:

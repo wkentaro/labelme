@@ -222,3 +222,32 @@ def test_text_proposal_rejects_maskless_detections_for_mask_output() -> None:
             image_size=(4, 4),
             polygon_detail=80,
         )
+
+
+@pytest.mark.parametrize(("chosen", "count"), [("dog", 0), ("cat", 1)])
+def test_text_proposal_is_suppressed_by_the_chosen_label(
+    *, chosen: str, count: int
+) -> None:
+    # "black dog" found this dog before and the user saved it as "dog".
+    annotation = osam.types.Annotation(
+        text="black dog",
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=10, ymax=10),
+    )
+    existing = Shape(
+        label="dog", shape_type="rectangle", points=np.array([[0, 0], [10, 10]])
+    )
+
+    shapes = propose_shapes_from_texts(
+        annotations=[annotation],
+        texts=["black dog"],
+        shape_type="rectangle",
+        existing_shapes=[existing],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(30, 30),
+        polygon_detail=80,
+        suppressed_by=chosen,
+    )
+
+    assert len(shapes) == count

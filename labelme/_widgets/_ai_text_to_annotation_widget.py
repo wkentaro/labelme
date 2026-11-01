@@ -65,7 +65,8 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         grid.setSpacing(2)
 
         text_input = QtWidgets.QLineEdit()
-        text_input.setPlaceholderText(self.tr("e.g., dog,cat,bird"))
+        # The prompt is one concept and becomes the label of what it finds.
+        text_input.setPlaceholderText(self.tr("Label to detect"))
         text_input.setAccessibleName(self.tr("Prompt"))
         text_input.setFixedHeight(24)
         text_input.returnPressed.connect(on_submit)
@@ -86,7 +87,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         self._model_combo = model_combo = ModelPicker(options=AI_TEXT_MODEL_OPTIONS)
         # Windows needs an explicit name; Unix exposes the selected option instead.
         model_combo.setAccessibleName(self.tr("Model"))
-        model_combo.setAccessibleDescription(self.tr("AI Text Prompt model"))
+        model_combo.setAccessibleDescription(self.tr("AI-Detect model"))
         model_combo.model_changed.connect(self.model_changed)
         model_combo.manage_requested.connect(self.manage_models_requested)
         model_combo.download_requested.connect(self.download_requested)
@@ -156,7 +157,13 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         self.setMaximumWidth(max(COMPACT_WIDTH, self.minimumSizeHint().width()))
 
     def get_text_prompt(self) -> str:
-        return self._text_input.text()
+        return self._text_input.text().strip()
+
+    def set_label_suggestions(self, model: QtCore.QAbstractItemModel, /) -> None:
+        completer = QtWidgets.QCompleter(model, self._text_input)
+        completer.setCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive)
+        completer.setFilterMode(QtCore.Qt.MatchFlag.MatchContains)
+        self._text_input.setCompleter(completer)
 
     def focus_text_prompt(self) -> None:
         self._text_input.setFocus()

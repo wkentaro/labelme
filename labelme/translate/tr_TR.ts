@@ -79,16 +79,8 @@
         <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri algıla</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>ör. köpek,kedi,kuş</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Çalıştır</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI Metin İstemi modeli</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>Model</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Algılanacak etiket</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>İstem</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect modeli</translation>
     </message>
 </context>
 <context>

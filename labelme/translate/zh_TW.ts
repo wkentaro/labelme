@@ -79,16 +79,8 @@
         <translation>偵測與文字提示或範例框相符的所有物件</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>例如：狗,貓,鳥</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>執行</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI 文字提示模型</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>模型</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>要偵測的標籤</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>提示詞</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect 模型</translation>
     </message>
 </context>
 <context>

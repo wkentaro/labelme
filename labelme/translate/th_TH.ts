@@ -79,16 +79,8 @@
         <translation>ตรวจจับวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>เช่น สุนัข, แมว, นก</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>รัน</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>โมเดลพรอมต์ข้อความ AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>โมเดล</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>เลเบลที่จะตรวจจับ</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>พรอมต์</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>โมเดล AI-Detect</translation>
     </message>
 </context>
 <context>

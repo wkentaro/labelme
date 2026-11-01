@@ -79,16 +79,8 @@
         <translation>テキストプロンプトや例のボックスに一致する物体をすべて検出</translation>
     </message>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>例: dog,cat,bird</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>実行</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI テキストプロンプトのモデル</translation>
     </message>
     <message>
         <source>Score</source>
@@ -103,8 +95,16 @@
         <translation>モデル</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>検出するラベル</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>プロンプト</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect のモデル</translation>
     </message>
 </context>
 <context>
