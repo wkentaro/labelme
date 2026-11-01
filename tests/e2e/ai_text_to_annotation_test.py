@@ -596,3 +596,46 @@ def test_text_result_waits_for_a_held_vertex(
     qtbot.waitUntil(lambda: len(canvas.shapes) == 3)
 
     assert canvas.shapes[0].points[0, 0] == pytest.approx(420, abs=2)
+
+
+@pytest.mark.gui
+def test_text_result_keeps_the_selection_editable(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    _install_mock_session(
+        monkeypatch=monkeypatch,
+        response_fn=functools.partial(_make_person_response, with_masks=False),
+    )
+    box = Shape(
+        label="box",
+        shape_type="rectangle",
+        points=np.array([(400.0, 20.0), (460.0, 80.0)]),
+    )
+    win._load_shapes([box], replace=True)
+    deliver = _hold_text_results(
+        win=win, qtbot=qtbot, monkeypatch=monkeypatch, create_mode="rectangle"
+    )
+    win._switch_canvas_mode(edit=True, create_mode=None)
+    canvas.select_shapes(shapes=[box])
+
+    deliver()
+
+    assert len(canvas.shapes) == 3
+    assert canvas.selected_shapes == [box]
+    assert [i.shape() for i in win._docks.label_list.selected_items()] == [box]
+    monkeypatch.setattr(
+        win._label_dialog,
+        "popup",
+        lambda **_: LabelDialogEntry(
+            label="renamed", flags={}, group_id=None, description=""
+        ),
+    )
+    win._actions.edit.trigger()
+    assert box.label == "renamed"

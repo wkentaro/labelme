@@ -1767,7 +1767,11 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
+        canvas = self._canvas_widgets.canvas
         self._load_shapes(shapes, replace=False)
+        # Loading clears the Label List's selection; the canvas keeps its own,
+        # so the user's selection survives a result landing.
+        canvas.select_shapes(shapes=list(canvas.selected_shapes))
         self.mark_dirty()
 
     def reset_state(self) -> None:
