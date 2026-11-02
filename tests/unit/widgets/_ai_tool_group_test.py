@@ -13,7 +13,7 @@ from labelme._widgets._ai_tool_group import AiToolGroup
 def _new_group() -> AiToolGroup:
     return AiToolGroup(
         assist=AiAssistedAnnotationWidget(
-            default_model="Sam2 (balanced)",
+            model_name="sam2:latest",
             polygon_detail=80,
             on_model_changed=lambda _: None,
             on_output_format_changed=lambda _: None,

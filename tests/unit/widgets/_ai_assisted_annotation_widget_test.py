@@ -25,11 +25,11 @@ def _make_widget(
     qtbot: QtBot,
     models: list[str],
     formats: list[AiOutputFormat],
-    default_model: str,
+    model_name: str,
     details: list[int] | None,
 ) -> AiAssistedAnnotationWidget:
     widget = AiAssistedAnnotationWidget(
-        default_model=default_model,
+        model_name=model_name,
         polygon_detail=80,
         on_model_changed=models.append,
         on_output_format_changed=formats.append,
@@ -46,7 +46,7 @@ def test_construction_exposes_default_without_firing_callbacks(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="Sam2 (balanced)",
+        model_name="sam2:latest",
         details=None,
     )
     assert widget.current_model_id == "sam2:latest"
@@ -62,7 +62,7 @@ def test_model_and_output_controls_expose_accessible_purpose(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        model_name="efficientsam:10m",
         details=None,
     )
 
@@ -89,7 +89,7 @@ def test_first_listed_default_resolves(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        model_name="efficientsam:10m",
         details=None,
     )
     assert widget.current_model_id == "efficientsam:10m"
@@ -102,7 +102,7 @@ def test_unknown_default_leaves_model_unselected(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="does-not-exist",
+        model_name="does-not-exist",
         details=None,
     )
     assert widget.current_model_id == ""
@@ -115,7 +115,7 @@ def test_selecting_another_model_fires_callback(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        model_name="efficientsam:10m",
         details=None,
     )
     widget._model_combo.setCurrentIndex(widget._model_combo.findData("sam2:latest"))
@@ -129,7 +129,7 @@ def test_selecting_another_output_format_fires_callback(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        model_name="efficientsam:10m",
         details=None,
     )
     widget._output_format_actions["mask"].trigger()
@@ -156,7 +156,7 @@ def test_polygon_detail_control_fires_callback_and_exposes_value(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        model_name="efficientsam:10m",
         details=details,
     )
 
@@ -175,7 +175,7 @@ def test_setting_polygon_detail_from_config_does_not_fire_callback(
         qtbot=qtbot,
         models=models,
         formats=formats,
-        default_model="EfficientSam (speed)",
+        model_name="efficientsam:10m",
         details=details,
     )
 

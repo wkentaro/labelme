@@ -74,7 +74,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
         osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
     )
     config = tmp_path / "config.yaml"
-    config.write_text("ai:\n  default: Sam3\n  text_model: sam3:latest\n")
+    config.write_text("ai:\n  default: sam3:latest\n  text_model: sam3:latest\n")
     win = main_win(config_file=config)
     assist = win._ai_annotation._model_combo
     text = win._ai_text._model_combo
@@ -151,7 +151,7 @@ def test_delete_releases_loaded_session(
         osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
     )
     config = tmp_path / "config.yaml"
-    config.write_text("ai:\n  default: Sam3\n  text_model: sam3:latest\n")
+    config.write_text("ai:\n  default: sam3:latest\n  text_model: sam3:latest\n")
     win = main_win(config_file=config)
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
@@ -313,14 +313,14 @@ def test_picker_downloads_and_selects_a_missing_model_in_place(
         osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
     )
     config = tmp_path / "config.yaml"
-    config.write_text("ai:\n  default: Sam2 (balanced)\n")
+    config.write_text("ai:\n  default: sam2:latest\n")
     win = main_win(config_file=config)
     picker = win._ai_annotation._model_combo
     header = picker.findText("Download and use")
     assert 0 <= header < picker.findData(name) < picker.findData("manage")
 
     picker.setCurrentIndex(picker.findData(name))
-    assert safe_load(config.read_text())["ai"]["default"] == "Sam2 (speed)"
+    assert safe_load(config.read_text())["ai"]["default"] == name
     qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     assert picker.currentIndex() == -1
     assert picker.placeholderText() == "Sam2 (speed)"

@@ -521,11 +521,11 @@ def test_setting_controls_revert_when_write_fails(
     assert win._actions.save_auto.isChecked()
     assert auto_save_editor.isChecked()
     assert ai_dock.currentText() == "Sam3"
-    assert ai_editor.currentData() == "Sam3"
+    assert ai_editor.currentData() == "sam3:latest"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "sam3:latest"
     assert win._config["display_label_popup"] is True
     assert win._config["auto_save"] is True
-    assert win._config["ai"]["default"] == "Sam3"
+    assert win._config["ai"]["default"] == "sam3:latest"
     assert safe_load(config_file.read_text()) == {"display_label_popup": True}
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -769,21 +769,21 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
-    assert win._config["ai"]["default"] == "Sam3"
+    assert win._config["ai"]["default"] == "sam3:latest"
     dock_combo = win._ai_annotation._model_combo
     assert dock_combo.currentText() == "Sam3"
 
     dialog = _open_settings_dialog(win=win)
     combo = dialog._editors[("ai", "default")]
     assert isinstance(combo, QtWidgets.QComboBox)
-    combo.setCurrentIndex(combo.findData("EfficientSam (speed)"))
+    combo.setCurrentIndex(combo.findData("efficientsam:10m"))
 
-    assert win._config["ai"]["default"] == "EfficientSam (speed)"
+    assert win._config["ai"]["default"] == "efficientsam:10m"
     assert dock_combo.currentText() == "EfficientSam (speed)"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "efficientsam:10m"
     assert (
         safe_load(editable_config_file.read_text())["ai"]["default"]
-        == "EfficientSam (speed)"
+        == "efficientsam:10m"
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -802,12 +802,12 @@ def test_ai_dock_change_persists_and_syncs_settings_dialog(
     dock_combo = win._ai_annotation._model_combo
     dock_combo.setCurrentIndex(dock_combo.findText("EfficientSam (speed)"))
 
-    assert win._config["ai"]["default"] == "EfficientSam (speed)"
-    assert settings_combo.currentData() == "EfficientSam (speed)"
+    assert win._config["ai"]["default"] == "efficientsam:10m"
+    assert settings_combo.currentData() == "efficientsam:10m"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "efficientsam:10m"
     assert (
         safe_load(editable_config_file.read_text())["ai"]["default"]
-        == "EfficientSam (speed)"
+        == "efficientsam:10m"
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

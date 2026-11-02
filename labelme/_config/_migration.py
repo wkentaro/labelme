@@ -68,6 +68,29 @@ def migrate_config(*, config_from_yaml: dict) -> None:
             model_name_new,
         )
         ai["default"] = model_name_new
+    # ai.default held a display name before it held the model id.
+    _AI_DEFAULT_DISPLAY_NAMES: Final = {
+        "EfficientSam (speed)": "efficientsam:10m",
+        "EfficientSam (accuracy)": "efficientsam:latest",
+        "Sam (speed)": "sam:100m",
+        "Sam (balanced)": "sam:300m",
+        "Sam (accuracy)": "sam:latest",
+        "Sam2 (speed)": "sam2:small",
+        "Sam2 (balanced)": "sam2:latest",
+        "Sam2 (accuracy)": "sam2:large",
+        "Sam3": "sam3:latest",
+    }
+    if (
+        isinstance(ai, dict)
+        and isinstance(model_name := ai.get("default"), str)
+        and model_name in _AI_DEFAULT_DISPLAY_NAMES
+    ):
+        logger.info(
+            "Migrating old config: ai.default={!r} -> ai.default={!r}",
+            model_name,
+            _AI_DEFAULT_DISPLAY_NAMES[model_name],
+        )
+        ai["default"] = _AI_DEFAULT_DISPLAY_NAMES[model_name]
 
     _SHORTCUT_RENAMES: Final = {
         "edit_polygon": "edit_shape",

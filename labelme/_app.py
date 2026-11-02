@@ -335,7 +335,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._menus = self._setup_menus()
 
         self._ai_annotation = AiAssistedAnnotationWidget(
-            default_model=self._config["ai"]["default"] or "",
+            model_name=self._config["ai"]["default"] or "",
             polygon_detail=self._config["mask_polygonization"]["detail"],
             on_model_changed=self._on_ai_model_changed,
             on_output_format_changed=self._on_ai_output_format_changed,
@@ -3331,12 +3331,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_ai_model_changed(self, model_id: str, /) -> None:
         self._canvas_widgets.canvas.set_ai_model_name(model_name=model_id)
-        option = _ai_models.find_ai_assist_model_option(model_name=model_id)
-        assert option is not None
-        model_display = option.display_name
-        if self._config["ai"]["default"] == model_display:
+        if self._config["ai"]["default"] == model_id:
             return
-        self._apply_setting_change(("ai", "default"), model_display)
+        self._apply_setting_change(("ai", "default"), model_id)
 
     def _on_ai_polygon_detail_changed(self, detail: int, /) -> None:
         self._apply_setting_change(("mask_polygonization", "detail"), detail)
@@ -3483,7 +3480,7 @@ class MainWindow(QtWidgets.QMainWindow):
             old_label_dialog.deleteLater()
         elif key_path == ("ai", "default"):
             self._ai_annotation.set_current_model(
-                model_display=self._config["ai"]["default"] or ""
+                model_name=self._config["ai"]["default"] or ""
             )
             self._canvas_widgets.canvas.set_ai_model_name(
                 model_name=self._ai_annotation.current_model_id
@@ -3576,9 +3573,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._model_manager.enqueue(model_name)
 
     def _remove_ai_model(self, model_name: str, /) -> None:
-        option = _ai_models.find_ai_assist_model_option(model_name=model_name)
         overrides = []
-        if option is not None and self._config["ai"]["default"] == option.display_name:
+        if self._config["ai"]["default"] == model_name:
             overrides.append((("ai", "default"), None))
         if self._config["ai"]["text_model"] == model_name:
             overrides.append((("ai", "text_model"), None))
