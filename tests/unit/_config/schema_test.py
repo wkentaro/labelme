@@ -73,9 +73,14 @@ def test_ai_choice_labels_match_shared_model_names() -> None:
     setting = next(
         setting for setting in SETTINGS if setting.key_path == ("ai", "default")
     )
-    model_names = tuple(option.display_name for option in AI_ASSIST_MODEL_OPTIONS)
-    assert setting.choices == (None, *model_names)
-    assert setting.choice_labels == ("(none)", *model_names)
+    assert setting.choices == (
+        None,
+        *(option.model_name for option in AI_ASSIST_MODEL_OPTIONS),
+    )
+    assert setting.choice_labels == (
+        "(none)",
+        *(option.display_name for option in AI_ASSIST_MODEL_OPTIONS),
+    )
 
 
 @pytest.mark.parametrize("setting", _BOOL_SETTINGS, ids=_ids(_BOOL_SETTINGS))

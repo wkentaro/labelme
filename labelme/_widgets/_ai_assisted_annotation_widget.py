@@ -26,7 +26,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     def __init__(
         self,
         *,
-        default_model: str,
+        model_name: str,
         polygon_detail: int,
         on_model_changed: Callable[[str], None],
         on_output_format_changed: Callable[[_automation.AiOutputFormat], None],
@@ -35,7 +35,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     ) -> None:
         super().__init__(parent=parent)
         self._init_ui(
-            default_model=default_model,
+            model_name=model_name,
             polygon_detail=polygon_detail,
             on_model_changed=on_model_changed,
             on_output_format_changed=on_output_format_changed,
@@ -53,7 +53,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     def _init_ui(
         self,
         *,
-        default_model: str,
+        model_name: str,
         polygon_detail: int,
         on_model_changed: Callable[[str], None],
         on_output_format_changed: Callable[[_automation.AiOutputFormat], None],
@@ -123,7 +123,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             self._output_format_actions[output_format] = action
         self._output_format_button.setMenu(output_menu)
 
-        self.set_current_model(model_display=default_model)
+        self.set_current_model(model_name=model_name)
         self._model_combo.model_changed.connect(on_model_changed)
         self._model_combo.manage_requested.connect(self.manage_models_requested)
         self._model_combo.download_requested.connect(self.download_requested)
@@ -154,15 +154,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         )
         self._polygon_detail_panel.setVisible(output_format == "polygon")
 
-    def set_current_model(self, *, model_display: str) -> None:
-        model_name = next(
-            (
-                option.model_name
-                for option in _ai_models.AI_ASSIST_MODEL_OPTIONS
-                if option.display_name == model_display
-            ),
-            "",
-        )
+    def set_current_model(self, *, model_name: str) -> None:
+        if _ai_models.find_ai_assist_model_option(model_name=model_name) is None:
+            model_name = ""
         self._model_combo.set_model_name(model_name=model_name)
 
     def set_available_models(

@@ -275,15 +275,11 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         ),
     ),
     Setting(
-        # Choices are the models' display names, matching the format
-        # AiAssistedAnnotationWidget itself stores in ai.default (see
-        # _ai_assisted_annotation_widget.py, where the dock combobox looks up
-        # its initial selection by display name, not model id).
         key_path=("ai", "default"),
         group="AI assist",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Default model")),
         kind="enum",
-        choices=(None, *(option.display_name for option in AI_ASSIST_MODEL_OPTIONS)),
+        choices=(None, *(option.model_name for option in AI_ASSIST_MODEL_OPTIONS)),
         # pyside6-lupdate needs literal markers here. A schema test keeps these
         # translation declarations aligned with the shared non-Qt model list.
         choice_labels=(
