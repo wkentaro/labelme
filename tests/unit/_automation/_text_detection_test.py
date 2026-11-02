@@ -282,3 +282,97 @@ def test_text_proposal_covered_candidate_does_not_hide_a_new_one() -> None:
 
     (shape,) = shapes
     np.testing.assert_array_equal(shape.points, [[5, 0], [15, 10]])
+
+
+@pytest.mark.parametrize("chosen_label", ["car", "vehicle"])
+def test_text_proposal_skips_repeated_occluded_object(*, chosen_label: str) -> None:
+    mask = np.zeros((21, 101), dtype=bool)
+    mask[:, :11] = True
+    mask[:, 90:] = True
+    annotation = osam.types.Annotation(
+        text="car",
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=100, ymax=20),
+        mask=mask,
+    )
+
+    def propose(existing_shapes: list[Shape]) -> list[Shape]:
+        return propose_shapes_from_texts(
+            annotations=[annotation],
+            texts=["car"],
+            shape_type="polygon",
+            existing_shapes=existing_shapes,
+            iou_threshold=0.5,
+            score_threshold=0.1,
+            image_size=(101, 21),
+            polygon_detail=60,
+            suppressed_by=chosen_label,
+        )
+
+    first = propose([])
+    assert len(first) == 2
+    assert first[0].group_id == first[1].group_id is not None
+    for shape in first:
+        shape.label = chosen_label
+
+    assert propose(first) == []
+
+
+def test_text_proposal_keeps_an_object_between_existing_polygon_parts() -> None:
+    existing = [
+        Shape(
+            label="car",
+            shape_type="polygon",
+            group_id=1,
+            points=np.array([[x, 0], [x + 10, 0], [x + 10, 20], [x, 20]]),
+        )
+        for x in (0, 90)
+    ]
+    mask = np.zeros((21, 101), dtype=bool)
+    mask[:, 20:81] = True
+    annotation = osam.types.Annotation(
+        text="car",
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=100, ymax=20),
+        mask=mask,
+    )
+
+    shapes = propose_shapes_from_texts(
+        annotations=[annotation],
+        texts=["car"],
+        shape_type="polygon",
+        existing_shapes=existing,
+        iou_threshold=0.5,
+        score_threshold=0.1,
+        image_size=(101, 21),
+        polygon_detail=60,
+    )
+
+    assert len(shapes) == 1
+
+
+@pytest.mark.parametrize(("iou_threshold", "count"), [(0.3, 0), (0.5, 1)])
+def test_text_proposal_uses_the_configured_existing_shape_iou(
+    *, iou_threshold: float, count: int
+) -> None:
+    annotation = osam.types.Annotation(
+        text="car",
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=5, ymin=0, xmax=15, ymax=10),
+    )
+    existing = Shape(
+        label="car", shape_type="rectangle", points=np.array([[0, 0], [10, 10]])
+    )
+
+    shapes = propose_shapes_from_texts(
+        annotations=[annotation],
+        texts=["car"],
+        shape_type="rectangle",
+        existing_shapes=[existing],
+        iou_threshold=iou_threshold,
+        score_threshold=0.1,
+        image_size=(30, 30),
+        polygon_detail=60,
+    )
+
+    assert len(shapes) == count
