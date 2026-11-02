@@ -7,6 +7,7 @@ import sys
 import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
+from PySide6 import QtSvg
 from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
@@ -457,3 +458,10 @@ def test_toolbar_label_wraps_to_two_balanced_lines(*, text: str, label: str) -> 
 )
 def test_toolbar_label_stays_on_one_line_without_wrap(*, text: str, label: str) -> None:
     assert _toolbar_label(text, wrap=False) == label
+
+
+@pytest.mark.parametrize(
+    "path", sorted(pathlib.Path(_ICONS_DIR).rglob("*.svg")), ids=lambda p: p.name
+)
+def test_bundled_svg_icon_parses(*, path: pathlib.Path) -> None:
+    assert QtSvg.QSvgRenderer(str(path)).isValid()
