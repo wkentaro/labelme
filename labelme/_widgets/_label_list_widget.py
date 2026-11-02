@@ -149,6 +149,8 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
     def set_label(self, *, text: str, color: tuple[int, int, int]) -> None:
         self.setText(text)
+        # The row elides long labels; hovering shows the whole name.
+        self.setToolTip(text)
         self.setData(QtGui.QColor(*color), LABEL_COLOR_ROLE)
 
     def shape(self) -> Shape | None:
