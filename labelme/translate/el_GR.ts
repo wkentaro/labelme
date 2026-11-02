@@ -384,6 +384,11 @@
         <translation>Επεξεργασία σχημάτων</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Επιλογή</translation>
+    </message>
+    <message>
         <source>Move and edit the selected shapes</source>
         <translation>Μετακίνηση και επεξεργασία των επιλεγμένων σχημάτων</translation>
     </message>
@@ -609,11 +614,6 @@
     <message>
         <source>Delete the selected point from the polygon or LineStrip</source>
         <translation>Διαγράφει το επιλεγμένο σημείο από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Επεξεργασία</translation>
     </message>
     <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>

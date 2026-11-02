@@ -432,6 +432,11 @@
         <translation>بازگشت آخرین افزودن و ویرایش شکل</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>انتخاب</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>برای قرار دادن نقاط خط شکسته کلیک کنید؛ %s را نگه دارید و کلیک کنید تا آخرین نقطه قرار گیرد.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>بازگشت</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>ویرایش</translation>
     </message>
     <message>
         <source>AI-Segment</source>

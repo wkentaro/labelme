@@ -404,7 +404,7 @@ def test_modifier_text_follows_platform(
 def test_new_action_keeps_translated_line_break_out_of_menu(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="図形を\n編集", icon="phosphor/note-pencil.svg")
+    action = new_action(parent, text="図形を\n編集", icon="phosphor/cursor.svg")
     assert action.text() == "図形を編集"
     assert action.iconText() == "図形を\n編集"
 

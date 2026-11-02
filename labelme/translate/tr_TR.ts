@@ -432,6 +432,11 @@
         <translation>Son şekil ekleme veya düzenleme işlemini geri al</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Seç</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Çoklu çizgi noktalarını yerleştirmek için tıklayın; sonuncuyu yerleştirmek için %s tuşunu basılı tutup tıklayın.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>Geri Al</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Düzenle</translation>
     </message>
     <message>
         <source>AI-Segment</source>

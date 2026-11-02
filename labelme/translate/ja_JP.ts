@@ -437,6 +437,11 @@
         <translation>最後の図形追加・編集を元に戻す</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>選択</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>クリックで折れ線の点を配置し、%s を押しながらクリックで最後の点を配置します。</translation>
     </message>
@@ -589,11 +594,6 @@
     <message>
         <source>Undo</source>
         <translation>元に戻す</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>編集</translation>
     </message>
     <message>
         <source>AI-Segment</source>

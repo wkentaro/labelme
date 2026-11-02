@@ -432,6 +432,11 @@
         <translation>Annuler le dernier ajout et la dernière modification de forme</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Sélectionner</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Cliquez pour placer les points de la polyligne ; maintenez %s et cliquez pour placer le dernier.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>Annuler</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Modifier</translation>
     </message>
     <message>
         <source>AI-Segment</source>

@@ -432,6 +432,11 @@
         <translation>撤销上一次添加或编辑形状的操作</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>选择</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>单击放置折线的点；按住 %s 并单击以放置最后一个点。</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>撤销</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>编辑</translation>
     </message>
     <message>
         <source>AI-Segment</source>

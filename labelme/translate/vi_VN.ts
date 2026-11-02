@@ -432,6 +432,11 @@
         <translation>Hoàn tác lần thêm và chỉnh sửa hình dạng cuối cùng</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Chọn</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Nhấp để đặt các điểm của đường gấp khúc; giữ %s và nhấp để đặt điểm cuối cùng.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>Hoàn tác</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Chỉnh sửa</translation>
     </message>
     <message>
         <source>AI-Segment</source>

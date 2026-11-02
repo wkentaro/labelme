@@ -535,11 +535,6 @@
         <translation>Urungkan</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Edit</translation>
-    </message>
-    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
@@ -858,6 +853,11 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
     <message>
         <source>Delete the selected point from the polygon or LineStrip</source>
         <translation>Menghapus titik terpilih dari poligon atau garis patah</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Pilih</translation>
     </message>
     <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>

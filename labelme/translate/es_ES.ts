@@ -432,6 +432,11 @@
         <translation>Deshacer última adición y edición de forma</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Seleccionar</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Haz clic para colocar puntos de la polilínea; mantén %s y haz clic para colocar el último.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>Deshacer</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Editar</translation>
     </message>
     <message>
         <source>AI-Segment</source>

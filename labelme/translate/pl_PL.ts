@@ -432,6 +432,11 @@
         <translation>Cofnij ostatnie dodanie i edycję kształtu</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Zaznacz</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Kliknij, aby umieścić punkty łamanej; przytrzymaj %s i kliknij, aby umieścić ostatni.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>Cofnij</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Edytuj</translation>
     </message>
     <message>
         <source>AI-Segment</source>

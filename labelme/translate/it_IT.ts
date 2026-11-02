@@ -432,6 +432,11 @@
         <translation>Annulla l&apos;ultimo aggiunto e la modifica della forma</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Seleziona</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Fai clic per inserire i punti della polilinea; tieni premuto %s e fai clic per inserire l&apos;ultimo.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>Annulla</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Modifica</translation>
     </message>
     <message>
         <source>AI-Segment</source>
