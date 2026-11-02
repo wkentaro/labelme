@@ -871,26 +871,40 @@ def test_ai_detect_box_reads_the_picker_at_use(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("text_model", ["sam3:latest", None])
 def test_ai_detect_box_checks_the_model_setting_before_download(
     *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
     qtbot: QtBot,
     data_path: Path,
+    text_model: str | None,
 ) -> None:
     win = main_win(
         file_or_dir=str(data_path / "raw/2011_000003.jpg"),
-        config_overrides={"ai": {"text_model": "sam3:latest"}},
+        config_overrides={"ai": {"text_model": text_model}},
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     monkeypatch.setattr(win._model_manager, "is_ready", lambda _name: False)
     win._refresh_model_availability()
     assert win._ai_text.get_model_name() == ""
 
-    # Not downloaded yet, but compatible: the box is accepted, so the Models
-    # window can offer the download.
+    # Not downloaded yet, or none chosen: the box is accepted, so the Models
+    # window can offer a download.
+    canvas = win._canvas_widgets.canvas
     win._switch_canvas_mode(edit=False, create_mode="ai_detect")
-    assert not win._canvas_widgets.canvas._refuses_example_box()
+    readiness_checks: list[str] = []
+    monkeypatch.setattr(
+        canvas,
+        "ensure_ai_model_ready",
+        lambda name: readiness_checks.append(name) or False,
+    )
+    qtbot.mousePress(
+        canvas,
+        Qt.MouseButton.LeftButton,
+        pos=image_to_widget_pos(canvas=canvas, image_pos=QPointF(50, 50)),
+    )
+    assert readiness_checks == [text_model or ""]
 
 
 @pytest.mark.gui
