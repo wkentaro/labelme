@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Final
 
 from PySide6 import QtCore
 from PySide6 import QtWidgets
@@ -18,7 +19,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
     # The Return key's symbol says Enter runs the query.
-    _RUN_GLYPH: str = "\u21b5"
+    _RUN_GLYPH: Final = "\u21b5"
 
     _text_input: QtWidgets.QLineEdit
     _model_combo: ModelPicker
