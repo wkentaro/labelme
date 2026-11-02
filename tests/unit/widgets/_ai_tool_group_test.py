@@ -85,15 +85,30 @@ def test_model_menu_has_a_section_per_tool(*, group: AiToolGroup) -> None:
 
     segment = texts.index("AI-Segment")
     find_all = texts.index("AI-Find All")
-    assert "SAM 2 Base+" in texts[segment:find_all]
-    assert "YOLO-World\tBoxes only" in texts[find_all:]
-    assert texts[-1] == "Manage models…"
-    # The original SAM folds away; SAM 2 and SAM 3 lead.
+    # One fastest, one balanced and one most accurate model lead each tool.
+    assert texts[segment + 1 : find_all] == [
+        "EfficientSAM Tiny\tFastest",
+        "SAM 2 Base+\tBalanced",
+        "SAM 3\tMost accurate",
+        "More models…",
+    ]
+    assert texts[find_all + 1 :] == [
+        "SAM 3\tMost accurate",
+        "YOLO-World\tFastest · Boxes only",
+        "Manage models…",
+    ]
     more = next(a.menu() for a in menu.actions() if a.text() == "More models…")
     assert isinstance(more, QtWidgets.QMenu)
-    assert _menu_texts(more) == ["SAM Base", "SAM Large", "SAM Huge"]
+    assert _menu_texts(more) == [
+        "EfficientSAM Small",
+        "SAM Base",
+        "SAM Large",
+        "SAM Huge",
+        "SAM 2 Small",
+        "SAM 2 Large",
+    ]
     checked = [a.text() for a in menu.actions() if a.isChecked()]
-    assert checked == ["SAM 2 Base+", "SAM 3"]
+    assert checked == ["SAM 2 Base+\tBalanced", "SAM 3\tMost accurate"]
 
 
 @pytest.mark.gui
@@ -192,9 +207,12 @@ def test_model_menu_shows_the_download_size_of_missing_models(
         available={"sam3:latest"}, downloading=set()
     )
 
-    texts = _menu_texts(group._model_button._build_menu())
+    menu = group._model_button._build_menu()
+    texts = _menu_texts(menu)
+    more = next(a.menu() for a in menu.actions() if a.text() == "More models…")
+    assert isinstance(more, QtWidgets.QMenu)
 
-    assert "SAM 2 Base+" in texts
-    assert "SAM 2 Large\t868 MB" in texts
-    assert "SAM 3\t3.4 GB" in texts
-    assert "YOLO-World\tBoxes only · 642 MB" in texts
+    assert "SAM 2 Base+\tBalanced" in texts
+    assert "SAM 3\tMost accurate · 3.4 GB" in texts
+    assert "YOLO-World\tFastest · Boxes only · 642 MB" in texts
+    assert "SAM 2 Large\t868 MB" in _menu_texts(more)

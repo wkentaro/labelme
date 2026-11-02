@@ -1635,6 +1635,18 @@ Emplacement attendu : {path}</translation>
         <translation>{tool} : {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Le plus rapide</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Équilibré</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Le plus précis</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Cadres uniquement</translation>
     </message>

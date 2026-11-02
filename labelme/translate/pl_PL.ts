@@ -1635,6 +1635,18 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Najszybszy</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Zrównoważony</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Najdokładniejszy</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Tylko ramki</translation>
     </message>

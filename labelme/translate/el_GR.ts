@@ -1635,6 +1635,18 @@ Expected location: {path}</source>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Ταχύτερο</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Ισορροπημένο</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Ακριβέστερο</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Μόνο πλαίσια</translation>
     </message>

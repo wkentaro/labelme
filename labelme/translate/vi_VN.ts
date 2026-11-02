@@ -1635,6 +1635,18 @@ Vị trí dự kiến: {path}</translation>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Nhanh nhất</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Cân bằng</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Chính xác nhất</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Chỉ khung</translation>
     </message>
