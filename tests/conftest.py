@@ -54,6 +54,9 @@ def pytest_addoption(parser: pytest.Parser) -> None:  # noqa: GR005 -- pluggy ca
 def pytest_configure(config: pytest.Config) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
     if not config.getoption("--headed"):
         os.environ["QT_QPA_PLATFORM"] = "offscreen"
+        # A desktop theme such as gtk3 changes fonts and key handling, so
+        # offscreen runs would differ from CI.
+        os.environ.pop("QT_QPA_PLATFORMTHEME", None)
 
 
 @pytest.fixture()
