@@ -755,10 +755,6 @@
         <translation>เครื่องมือรูปทรงเพิ่มเติม</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s เริ่มทำงานแล้ว</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>ลองใหม่</translation>
     </message>

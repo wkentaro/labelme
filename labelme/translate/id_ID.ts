@@ -706,10 +706,6 @@
         <translation>Alat bentuk lainnya</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s dimulai.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Coba lagi</translation>
     </message>

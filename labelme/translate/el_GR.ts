@@ -726,10 +726,6 @@
         <translation>Περισσότερα εργαλεία σχημάτων</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s ξεκίνησε.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Επανάληψη</translation>
     </message>

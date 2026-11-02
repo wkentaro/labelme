@@ -754,10 +754,6 @@
         <translation>Altri strumenti per le forme</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s avviato.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Riprova</translation>
     </message>

@@ -754,10 +754,6 @@
         <translation>Другие инструменты фигур</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s запущен.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Повторить</translation>
     </message>

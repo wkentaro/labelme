@@ -754,10 +754,6 @@
         <translation>Więcej narzędzi kształtów</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s uruchomiono.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Ponów</translation>
     </message>

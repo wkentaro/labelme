@@ -754,10 +754,6 @@
         <translation>Diğer şekil araçları</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s başlatıldı.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Yeniden dene</translation>
     </message>

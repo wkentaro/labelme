@@ -754,10 +754,6 @@
         <translation>추가 도형 도구</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s가 시작되었습니다.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>다시 시도</translation>
     </message>

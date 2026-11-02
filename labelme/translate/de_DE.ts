@@ -762,10 +762,6 @@
         <translation>Weitere Formwerkzeuge</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s gestartet.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Erneut versuchen</translation>
     </message>

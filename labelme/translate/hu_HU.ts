@@ -762,10 +762,6 @@
         <translation>További alakzateszközök</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s elindítva.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Újra</translation>
     </message>
