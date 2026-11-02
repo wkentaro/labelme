@@ -13,16 +13,21 @@ def migrate_config(*, config_from_yaml: dict) -> None:
     if "instance_label_auto_increment" in config_from_yaml:
         logger.info("Migrating old config: removing instance_label_auto_increment")
         del config_from_yaml["instance_label_auto_increment"]
-    keep_prev_brightness: bool = config_from_yaml.pop("keep_prev_brightness", False)
-    keep_prev_contrast: bool = config_from_yaml.pop("keep_prev_contrast", False)
-    if keep_prev_brightness or keep_prev_contrast:
+    if (
+        "keep_prev_brightness" in config_from_yaml
+        or "keep_prev_contrast" in config_from_yaml
+    ):
+        keep_prev_brightness = config_from_yaml.pop("keep_prev_brightness", False)
+        keep_prev_contrast = config_from_yaml.pop("keep_prev_contrast", False)
+        keep_prev = bool(keep_prev_brightness or keep_prev_contrast)
         logger.info(
             "Migrating old config: keep_prev_brightness={} or keep_prev_contrast={} "
-            "-> keep_prev_brightness_contrast=True",
+            "-> keep_prev_brightness_contrast={}",
             keep_prev_brightness,
             keep_prev_contrast,
+            keep_prev,
         )
-        config_from_yaml.setdefault("keep_prev_brightness_contrast", True)
+        config_from_yaml.setdefault("keep_prev_brightness_contrast", keep_prev)
 
     if "store_data" in config_from_yaml:
         logger.info("Migrating old config: store_data -> with_image_data")

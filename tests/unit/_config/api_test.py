@@ -328,9 +328,23 @@ def test_load_config_malformed_crosshair_raises(*, tmp_path: Path) -> None:
             {"keep_prev_brightness": True, "keep_prev_contrast": True},
             {"keep_prev_brightness_contrast": True},
         ),
-        ({"keep_prev_brightness": False, "keep_prev_contrast": False}, {}),
+        (
+            {"keep_prev_brightness": False, "keep_prev_contrast": False},
+            {"keep_prev_brightness_contrast": False},
+        ),
+        ({"keep_prev_brightness": False}, {"keep_prev_brightness_contrast": False}),
+        ({"keep_prev_contrast": False}, {"keep_prev_brightness_contrast": False}),
+        ({}, {}),
     ],
-    ids=["brightness", "contrast", "both", "both_disabled"],
+    ids=[
+        "brightness",
+        "contrast",
+        "both",
+        "both_disabled",
+        "brightness_disabled",
+        "contrast_disabled",
+        "absent",
+    ],
 )
 def test_migrate_keep_prev_brightness_contrast(
     *, old_config: dict[str, bool], expected: dict[str, bool]
@@ -338,6 +352,27 @@ def test_migrate_keep_prev_brightness_contrast(
     config = old_config.copy()
     migrate_config(config_from_yaml=config)
     assert config == expected
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [
+        {"keep_prev_brightness": False},
+        {"keep_prev_contrast": False},
+        {"keep_prev_brightness": False, "keep_prev_contrast": False},
+    ],
+)
+def test_legacy_false_overrides_disable_file_brightness_contrast(
+    *, tmp_path: Path, overrides: dict[str, bool]
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text("keep_prev_brightness_contrast: true\n")
+    original = overrides.copy()
+
+    config = _config.load_config(config_file=config_file, config_overrides=overrides)
+
+    assert config["keep_prev_brightness_contrast"] is False
+    assert overrides == original
 
 
 @pytest.mark.parametrize(
