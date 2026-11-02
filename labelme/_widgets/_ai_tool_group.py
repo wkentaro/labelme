@@ -33,6 +33,15 @@ class _OptionsButton(QtWidgets.QToolButton):
         painter.drawEllipse(QtCore.QRectF(self.width() - DOT - 2, 2, DOT, DOT))
 
 
+class _PanelMenu(QtWidgets.QMenu):
+    """A menu that holds a form, where Tab moves between its fields."""
+
+    def focusNextPrevChild(self, next: bool, /) -> bool:  # noqa: A002, FBT001 -- Qt override
+        # QMenu takes Tab to step through its actions, which strands focus on
+        # the menu itself when a widget action holds several fields.
+        return QtWidgets.QWidget.focusNextPrevChild(self, next)
+
+
 class AiToolGroup(QtWidgets.QWidget):
     """One toolbar group for the AI tools that follows the active tool.
 
@@ -117,7 +126,7 @@ class AiToolGroup(QtWidgets.QWidget):
         button.setAccessibleName(self.tr("Options"))
         button.setToolTip(self.tr("Options"))
         button.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup)
-        menu = QtWidgets.QMenu(button)
+        menu = _PanelMenu(button)
         panel = QtWidgets.QWidget()
         panel_layout = QtWidgets.QVBoxLayout(panel)
         panel_layout.addWidget(self._detect._thresholds)

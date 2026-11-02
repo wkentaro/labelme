@@ -114,3 +114,25 @@ def test_options_button_marks_thresholds_off_their_defaults(
 
     group._detect._score_spinbox.setValue(group._detect._default_score_threshold)
     assert not group._options_button._changed
+
+
+@pytest.mark.gui
+def test_tab_moves_between_fields_in_options(
+    *, group: AiToolGroup, qtbot: QtBot
+) -> None:
+    menu = group._options_button.menu()
+    menu.popup(group._options_button.mapToGlobal(QtCore.QPoint(0, 0)))
+    qtbot.waitExposed(menu)
+    score, iou = group._detect._score_spinbox, group._detect._iou_spinbox
+    score.setFocus()
+
+    qtbot.keyClick(QtWidgets.QApplication.focusWidget(), QtCore.Qt.Key.Key_Tab)
+    assert iou.hasFocus()
+
+    qtbot.keyClick(
+        QtWidgets.QApplication.focusWidget(),
+        QtCore.Qt.Key.Key_Tab,
+        QtCore.Qt.KeyboardModifier.ShiftModifier,
+    )
+    assert score.hasFocus()
+    menu.hide()
