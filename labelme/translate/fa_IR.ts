@@ -892,10 +892,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>لغو</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>تغییرات حاشیه‌نویسی برای «{}» نگه داشته شوند؟</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>تغییرات ذخیره‌نشده</translation>
     </message>
@@ -1016,8 +1012,20 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>پوشهٔ حاشیه‌نویسی: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>فایل حاشیه‌نویسی حذف شود؟ این کار قابل بازگشت نیست.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>«{}» حذف شود؟ این کار قابل بازگشت نیست.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>بارگیری</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>تغییرات حاشیه‌نویسی «{}» ذخیره شوند؟</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>حذف فایل حاشیه‌نویسی</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>این فایل حاشیه‌نویسی برای همیشه حذف شود؟ این عمل قابل بازگشت نیست.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

@@ -892,10 +892,6 @@ Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saíd
         <translation>Cancelar</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Manter as alterações nas anotações de &quot;{}&quot;?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Alterações não salvas</translation>
     </message>
@@ -1016,8 +1012,20 @@ Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saíd
         <translation>Pasta de anotações: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Apagar o arquivo de anotações? Não é possível desfazer esta ação.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Apagar &quot;{}&quot;? Não é possível desfazer esta ação.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Baixar</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Salvar as alterações nas anotações de &quot;{}&quot;?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Local esperado: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Excluir Arquivo de Anotações</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Excluir permanentemente este arquivo de anotações? Esta ação não pode ser desfeita.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

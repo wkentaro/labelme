@@ -892,10 +892,6 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
         <translation>Annuler</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Conserver les modifications des annotations de « {} » ?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Modifications non enregistrées</translation>
     </message>
@@ -1016,8 +1012,20 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
         <translation>Dossier d’annotations : %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Supprimer le fichier d’annotations ? Vous ne pourrez pas annuler cette action.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Supprimer « {} » ? Vous ne pourrez pas annuler cette action.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Télécharger</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Enregistrer les modifications des annotations de « {} » ?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Supprimer le fichier d’annotations</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Supprimer définitivement ce fichier d’annotations ? Cette action est irréversible.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

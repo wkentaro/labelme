@@ -904,10 +904,6 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Annotationsänderungen für „{}“ behalten?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Ungespeicherte Änderungen</translation>
     </message>
@@ -1020,8 +1016,20 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
         <translation>Annotationsordner: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Annotationsdatei löschen? Dies kann nicht widerrufen werden.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>„{}“ löschen? Dies kann nicht widerrufen werden.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Annotationsänderungen an „{}“ speichern?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1134,6 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Annotationsdatei löschen</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Diese Annotationsdatei endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

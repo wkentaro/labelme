@@ -928,10 +928,6 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Batal</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Pertahankan perubahan anotasi untuk &quot;{}&quot;?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Perubahan belum disimpan</translation>
     </message>
@@ -1016,8 +1012,20 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Folder Anotasi: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Hapus berkas anotasi? Tindakan ini tidak dapat diurungkan.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Hapus &quot;{}&quot;? Tindakan ini tidak dapat diurungkan.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Unduh</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Simpan perubahan anotasi untuk &quot;{}&quot;?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Hapus Berkas Anotasi</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Hapus permanen berkas anotasi ini? Tindakan ini tidak dapat dibatalkan.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
