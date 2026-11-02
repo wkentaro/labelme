@@ -1647,6 +1647,38 @@ Várt hely: {path}</translation>
         <translation>Legpontosabb</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Az eredeti SAM. A SAM 2 minden méretben gyorsabb.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>A leggyorsabb, durva körvonalakkal. Bármilyen számítógépen jól fut.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Élesebb körvonalak, mint a Tinynál, de lassabb a SAM 2 Base+-nál.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Kisebb letöltés, mint a Base+, kicsit kevésbé pontos.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Kiegyensúlyozott sebesség és pontosság. CPU-n is jól fut.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Pontosabb a Base+-nál, de lassabb.</translation>
+    </message>
+    <message>
+        <source>Most accurate, and slowest. Best with a GPU.</source>
+        <translation>A legpontosabb és a leglassabb. GPU-val a legjobb.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>A leggyorsabb. Kereteket talál, maszkok nélkül.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Csak keretek</translation>
     </message>

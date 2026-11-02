@@ -1647,6 +1647,38 @@ Expected location: {path}</source>
         <translation>دقیق‌ترین</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM اصلی. SAM 2 در همهٔ اندازه‌ها سریع‌تر است.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>سریع‌ترین، با خطوط تقریبی. روی هر رایانه‌ای خوب اجرا می‌شود.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>خطوطی دقیق‌تر از Tiny، ولی کندتر از SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>حجم دانلود کمتر از Base+، کمی کم‌دقت‌تر.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>تعادل سرعت و دقت. روی CPU خوب اجرا می‌شود.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>دقیق‌تر از Base+، ولی کندتر.</translation>
+    </message>
+    <message>
+        <source>Most accurate, and slowest. Best with a GPU.</source>
+        <translation>دقیق‌ترین و کندترین. با GPU بهترین است.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>سریع‌ترین. کادرها را بدون ماسک پیدا می‌کند.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>فقط کادرها</translation>
     </message>

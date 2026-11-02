@@ -1647,6 +1647,38 @@ Expected location: {path}</source>
         <translation>最准确</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>初代 SAM。各尺寸下 SAM 2 都更快。</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>最快，轮廓较粗略。在任何电脑上都能流畅运行。</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>轮廓比 Tiny 更清晰，但比 SAM 2 Base+ 慢。</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>下载体积比 Base+ 小，准确度略低。</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>兼顾速度与准确度。在 CPU 上也能流畅运行。</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>比 Base+ 更准确，但更慢。</translation>
+    </message>
+    <message>
+        <source>Most accurate, and slowest. Best with a GPU.</source>
+        <translation>最准确，也最慢。最好使用 GPU。</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>最快。只查找框，不生成蒙版。</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>仅边界框</translation>
     </message>

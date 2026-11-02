@@ -1648,6 +1648,38 @@ Expected location: {path}</source>
         <translation>แม่นยำที่สุด</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM รุ่นแรก SAM 2 เร็วกว่าในทุกขนาด</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>เร็วที่สุด เส้นขอบหยาบ ทำงานได้ดีบนทุกคอมพิวเตอร์</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>เส้นขอบคมกว่า Tiny แต่ช้ากว่า SAM 2 Base+</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>ขนาดดาวน์โหลดเล็กกว่า Base+ แม่นยำน้อยกว่าเล็กน้อย</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>สมดุลระหว่างความเร็วและความแม่นยำ ทำงานได้ดีบน CPU</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>แม่นยำกว่า Base+ แต่ช้ากว่า</translation>
+    </message>
+    <message>
+        <source>Most accurate, and slowest. Best with a GPU.</source>
+        <translation>แม่นยำที่สุดและช้าที่สุด เหมาะกับ GPU</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>เร็วที่สุด ค้นหากรอบโดยไม่มีมาสก์</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>กรอบเท่านั้น</translation>
     </message>

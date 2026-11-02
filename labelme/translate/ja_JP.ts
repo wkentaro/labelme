@@ -1657,6 +1657,38 @@ Expected location: {path}</source>
         <translation>最高精度</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>初代SAM。どのサイズでもSAM 2の方が高速です。</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>最速で、輪郭は大まか。どのコンピュータでも快適に動作します。</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Tinyより輪郭が鮮明ですが、SAM 2 Base+より低速です。</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Base+よりダウンロードが小さく、精度はやや下がります。</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>速度と精度のバランス型。CPUでも快適に動作します。</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Base+より高精度ですが、低速です。</translation>
+    </message>
+    <message>
+        <source>Most accurate, and slowest. Best with a GPU.</source>
+        <translation>最も高精度で、最も低速。GPUがあると最適です。</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>最速。マスクなしでボックスを検出します。</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>ボックスのみ</translation>
     </message>

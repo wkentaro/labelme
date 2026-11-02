@@ -128,6 +128,7 @@ class ModelPicker(QtWidgets.QComboBox):
         folded: Collection[str],
         notes: Mapping[str, str],
         sizes: Mapping[str, int],
+        tips: Mapping[str, str],
     ) -> None:
         locale = self.locale()
         group = QtGui.QActionGroup(menu)
@@ -162,6 +163,8 @@ class ModelPicker(QtWidgets.QComboBox):
             if name in self._unavailable:
                 action.setEnabled(False)
                 action.setToolTip(self._unavailable[name])
+            elif name in tips:
+                action.setToolTip(tips[name])
             # The combo's own handler downloads or selects the model.
             action.triggered.connect(
                 lambda _=False, name=name: self.setCurrentIndex(self.findData(name))
