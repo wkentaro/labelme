@@ -15,27 +15,6 @@ from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 
 
-@pytest.mark.gui
-def test_inline_legacy_settings_start_without_config_recovery(
-    *, main_win: MainWinFactory, recovery_messages: list[str]
-) -> None:
-    win = main_win(
-        config_overrides={
-            "auto_save": False,
-            "canvas": {
-                "crosshair": {
-                    "ai_points_to_shape": False,
-                    "ai_box_to_shape": False,
-                }
-            },
-        }
-    )
-
-    assert win._config["canvas"]["crosshair"]["ai_segment"] is False
-    assert win._config["auto_save"] is False
-    assert recovery_messages == []
-
-
 @pytest.fixture()
 def recovery_button_states() -> dict[QMessageBox.ButtonRole, bool]:
     return {}
@@ -120,6 +99,23 @@ def test_MainWindow_config(
     assert not win._settings_dialog._editors[("auto_save",)].isEnabled()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("old_key", ["ai_points_to_shape", "ai_box_to_shape"])
+def test_inline_config_migrates_legacy_ai_crosshair(
+    *,
+    main_win: MainWinFactory,
+    recovery_messages: list[str],
+    old_key: str,
+) -> None:
+    overrides = {"canvas": {"crosshair": {old_key: False}}, "auto_save": False}
+    win = main_win(config_overrides=overrides)
+
+    assert recovery_messages == []
+    assert win._config["canvas"]["crosshair"]["ai_segment"] is False
+    assert win._config["auto_save"] is False
+    assert win._config_overrides == overrides
 
 
 @pytest.mark.gui
