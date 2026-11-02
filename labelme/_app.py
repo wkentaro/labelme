@@ -3255,6 +3255,8 @@ class MainWindow(QtWidgets.QMainWindow):
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
         msg_box.setWindowTitle(self.tr("Delete Annotation File"))
+        # File names may contain "<b>" and would otherwise render as markup.
+        msg_box.setTextFormat(Qt.TextFormat.PlainText)
         msg_box.setText(message)
         delete_button = msg_box.addButton(
             self.tr("Delete"), QtWidgets.QMessageBox.ButtonRole.DestructiveRole
