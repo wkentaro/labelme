@@ -40,6 +40,10 @@
         <translation>Коло</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Формат виведення: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Модель розмітки за допомогою AI</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Модель</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Формат виведення</translation>
     </message>
 </context>
 <context>

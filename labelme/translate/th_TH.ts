@@ -40,6 +40,10 @@
         <translation>วงกลม</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>รูปแบบผลลัพธ์: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>โมเดลสร้างคำอธิบายประกอบด้วย AI</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>โมเดล</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>รูปแบบผลลัพธ์</translation>
     </message>
 </context>
 <context>

@@ -40,6 +40,10 @@
         <translation>Kreis</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Ausgabeformat: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Modell für AI-gestützte Annotation</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Modell</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Ausgabeformat</translation>
     </message>
 </context>
 <context>

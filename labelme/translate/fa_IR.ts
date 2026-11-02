@@ -40,6 +40,10 @@
         <translation>دایره</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>قالب خروجی: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>مدل حاشیه‌نویسی به کمک AI</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>مدل</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>قالب خروجی</translation>
     </message>
 </context>
 <context>

@@ -40,6 +40,10 @@
         <translation>Lingkaran</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Format keluaran: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Model anotasi berbantuan AI</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Model</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Format keluaran</translation>
     </message>
 </context>
 <context>

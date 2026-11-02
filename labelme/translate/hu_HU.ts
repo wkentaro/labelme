@@ -40,6 +40,10 @@
         <translation>Kör</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Kimeneti formátum: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI-támogatott annotációs modell</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Modell</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Kimeneti formátum</translation>
     </message>
 </context>
 <context>

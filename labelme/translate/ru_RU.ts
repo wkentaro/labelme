@@ -40,6 +40,10 @@
         <translation>Окружность</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Формат вывода: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Модель разметки с помощью AI</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Модель</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Формат вывода</translation>
     </message>
 </context>
 <context>

@@ -40,6 +40,10 @@
         <translation>Círculo</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Formato de saída: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Modelo de anotação assistida por AI</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Modelo</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Formato de saída</translation>
     </message>
 </context>
 <context>

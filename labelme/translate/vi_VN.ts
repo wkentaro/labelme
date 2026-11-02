@@ -40,6 +40,10 @@
         <translation>Hình tròn</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Định dạng đầu ra: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Mô hình chú thích có AI hỗ trợ</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Mô hình</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Định dạng đầu ra</translation>
     </message>
 </context>
 <context>

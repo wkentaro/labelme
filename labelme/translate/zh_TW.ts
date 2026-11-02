@@ -40,6 +40,10 @@
         <translation>圓形</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>輸出格式：{format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI 輔助標註模型</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>模型</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>輸出格式</translation>
     </message>
 </context>
 <context>

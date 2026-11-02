@@ -41,13 +41,13 @@ def test_group_follows_the_active_tool(
     *, group: AiToolGroup, create_mode: str, title: str, detect_enabled: bool
 ) -> None:
     width = group.width()
-    output_geometry = group._assist._output_format_combo.geometry()
+    output_geometry = group._assist._output_format_button.geometry()
 
     group.set_tool(create_mode)
 
     assert group._title.text() == title
     assert group._model_stack.isEnabled()
-    assert group._assist._output_format_combo.isEnabled()
+    assert group._assist._output_format_button.isEnabled()
     for control in (group._detect._text_input, group._detect._run_button):
         assert control.isEnabled()  # Running switches to AI-Find All.
     assert group._model_stack.currentWidget() is (
@@ -57,7 +57,7 @@ def test_group_follows_the_active_tool(
         assert control.isVisible()  # Disabled, not hidden.
         assert control.isEnabled() is detect_enabled
     assert group.width() == width
-    assert group._assist._output_format_combo.geometry() == output_geometry
+    assert group._assist._output_format_button.geometry() == output_geometry
 
 
 @pytest.mark.gui
@@ -73,7 +73,7 @@ def test_only_the_query_and_run_work_without_an_ai_tool(
     assert group._detect._run_button.isEnabled()
     for control in (
         group._model_stack,
-        group._assist._output_format_combo,
+        group._assist._output_format_button,
         group._detect._score_spinbox,
     ):
         assert not control.isEnabled()

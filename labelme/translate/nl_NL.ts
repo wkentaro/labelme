@@ -40,6 +40,10 @@
         <translation>Cirkel</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Uitvoerformaat: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Model voor annotatie met AI</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Model</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Uitvoerformaat</translation>
     </message>
 </context>
 <context>

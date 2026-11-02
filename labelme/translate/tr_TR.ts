@@ -40,6 +40,10 @@
         <translation>Daire</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Çıktı biçimi: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI destekli açıklama modeli</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Model</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Çıktı biçimi</translation>
     </message>
 </context>
 <context>

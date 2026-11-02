@@ -40,6 +40,10 @@
         <translation>원</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>출력 형식: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI 지원 주석 모델</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>모델</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>출력 형식</translation>
     </message>
 </context>
 <context>

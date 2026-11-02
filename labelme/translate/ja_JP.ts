@@ -40,6 +40,10 @@
         <translation>円</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>出力形式: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI支援アノテーションモデル</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>モデル</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>出力形式</translation>
     </message>
 </context>
 <context>

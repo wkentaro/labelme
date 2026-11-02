@@ -40,6 +40,10 @@
         <translation>Κύκλος</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Μορφή εξόδου: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Μοντέλο σχολιασμού με υποβοήθηση AI</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Μοντέλο</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Μορφή εξόδου</translation>
     </message>
 </context>
 <context>

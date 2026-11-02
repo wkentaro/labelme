@@ -40,6 +40,10 @@
         <translation>Okrąg</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Format wyjściowy: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Model adnotacji wspomaganej przez AI</translation>
     </message>
@@ -50,10 +54,6 @@
     <message>
         <source>Model</source>
         <translation>Model</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Format wyjściowy</translation>
     </message>
 </context>
 <context>

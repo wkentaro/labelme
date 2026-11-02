@@ -63,13 +63,13 @@ class AiToolGroup(QtWidgets.QWidget):
         self._model_stack.addWidget(assist._model_combo)
         self._model_stack.addWidget(detect._model_combo)
         grid.addWidget(self._model_stack, 1, 0)
-        grid.addWidget(assist._output_format_combo, 1, 1)
+        grid.addWidget(assist._output_format_button, 1, 1)
         grid.addWidget(detect._thresholds, 1, 2)
         grid.setColumnStretch(0, 1)
         grid.setColumnStretch(1, 1)
         layout.addWidget(body)
         # The hint covers what needs an AI tool, not the query and Run.
-        self._hinted = (self._model_stack, assist._output_format_combo)
+        self._hinted = (self._model_stack, assist._output_format_button)
         for widget in self._hinted:
             widget.installEventFilter(self)
         # Their controls now live here; the empty widgets must not cover any.
@@ -102,7 +102,7 @@ class AiToolGroup(QtWidgets.QWidget):
         # The query and Run work from any tool: running switches to AI-Find All.
         for control in (
             self._model_stack,
-            self._assist._output_format_combo,
+            self._assist._output_format_button,
             self._assist._polygon_detail_button,
         ):
             control.setEnabled(self._ai_tool_active)
