@@ -793,7 +793,7 @@ class SettingsDialog(QtWidgets.QDialog):
 
         GROUP_ICONS: typing.Final[dict[Group, str]] = {
             "Appearance and language": "phosphor/palette.svg",
-            "Files and saving": "phosphor/floppy-disk-duotone.svg",
+            "Files and saving": "phosphor/floppy-disk-neutral.svg",
             "Drawing and canvas": "phosphor/polygon.svg",
             "Continue between images": "phosphor/images.svg",
             "Label sources": "phosphor/tag.svg",
@@ -890,6 +890,21 @@ class SettingsDialog(QtWidgets.QDialog):
             self._set_editor_value(editor=editor, value=value)
         if key_path == ("shape_color", "mode"):
             self._sync_shape_color_mode()
+
+    def set_unavailable_choices(
+        self, *, key_path: tuple[str, ...], unavailable: dict[str, str]
+    ) -> None:
+        # Maps each choice the current context cannot use to the reason.
+        editor = self._editors[key_path]
+        assert isinstance(editor, QtWidgets.QComboBox)
+        model = editor.model()
+        assert isinstance(model, QtGui.QStandardItemModel)
+        for index in range(editor.count()):
+            item = model.item(index)
+            assert item is not None
+            reason = unavailable.get(editor.itemData(index))
+            item.setEnabled(reason is None)
+            item.setToolTip(reason or "")
 
     def _read_value(self, *, key_path: tuple[str, ...]) -> object:
         node: object = self._config

@@ -275,37 +275,20 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         ),
     ),
     Setting(
-        # Choices are the models' display names, matching the format
-        # AiAssistedAnnotationWidget itself stores in ai.default (see
-        # _ai_assisted_annotation_widget.py, where the dock combobox looks up
-        # its initial selection by display name, not model id).
         key_path=("ai", "default"),
         group="AI assist",
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Default model")),
         kind="enum",
-        choices=(None, *(option.display_name for option in AI_ASSIST_MODEL_OPTIONS)),
-        # pyside6-lupdate needs literal markers here. A schema test keeps these
-        # translation declarations aligned with the shared non-Qt model list.
+        choices=(None, *(option.model_name for option in AI_ASSIST_MODEL_OPTIONS)),
         choice_labels=(
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "(none)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "EfficientSAM (speed)")),
-            cast(
-                str,
-                QT_TRANSLATE_NOOP("SettingsDialog", "EfficientSAM (accuracy)"),
-            ),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM (speed)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM (balanced)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM (accuracy)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM2 (speed)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM2 (balanced)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM2 (accuracy)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "SAM3")),
+            *(option.display_name for option in AI_ASSIST_MODEL_OPTIONS),
         ),
     ),
     Setting(
         key_path=("ai", "text_model"),
         group="AI assist",
-        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Text prompt model")),
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "AI-Find All model")),
         kind="enum",
         choices=(None, *(model_name for model_name, _ in AI_TEXT_MODEL_OPTIONS)),
         choice_labels=(

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
 from typing import Final
@@ -8,7 +9,27 @@ import pytest
 
 from labelme import _config
 from labelme._config._migration import migrate_config
-from labelme._yaml import safe_load
+
+
+@pytest.mark.parametrize("points", [False, True])
+def test_load_config_migrates_inline_overrides_without_mutating_them(
+    *, tmp_path: Path, points: bool
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text("canvas:\n  crosshair:\n    ai_segment: true\n")
+    overrides = {
+        "canvas": {
+            "crosshair": {"ai_points_to_shape": points, "ai_box_to_shape": False}
+        },
+        "store_data": True,
+    }
+    original = copy.deepcopy(overrides)
+
+    config = _config.load_config(config_file=config_file, config_overrides=overrides)
+
+    assert config["canvas"]["crosshair"]["ai_segment"] is points
+    assert config["with_image_data"] is True
+    assert overrides == original
 
 
 def _steer_home(*, monkeypatch: pytest.MonkeyPatch, home: Path) -> None:
@@ -63,68 +84,31 @@ def test_migrate_removes_logger_level(*, tmp_path: Path) -> None:
     assert "logger_level" not in config
 
 
-_AI_MODEL_RENAMES: Final = [
-    ("EfficientSam (speed)", "EfficientSAM (speed)"),
-    ("EfficientSam (accuracy)", "EfficientSAM (accuracy)"),
-    ("Sam (speed)", "SAM (speed)"),
-    ("Sam (balanced)", "SAM (balanced)"),
-    ("Sam (accuracy)", "SAM (accuracy)"),
-    ("Sam2 (speed)", "SAM2 (speed)"),
-    ("Sam2 (balanced)", "SAM2 (balanced)"),
-    ("Sam2 (accuracy)", "SAM2 (accuracy)"),
-    ("Sam3", "SAM3"),
-    ("SegmentAnything (speed)", "SAM (speed)"),
-    ("SegmentAnything (balanced)", "SAM (balanced)"),
-    ("SegmentAnything (accuracy)", "SAM (accuracy)"),
-]
-
-
 @pytest.mark.parametrize(
-    ("input_name", "expected_name"),
+    "input_name, expected_name",
     [
-        *_AI_MODEL_RENAMES,
-        ("SegmentAnything (tiny)", "SAM (tiny)"),
+        ("SegmentAnything (balanced)", "sam:300m"),
+        ("SegmentAnything (tiny)", "Sam (tiny)"),
+        ("Sam (balanced)", "sam:300m"),
         ("Sam (large)", "Sam (large)"),
-        ("custom-model", "custom-model"),
-        ("SAM2 (balanced)", "SAM2 (balanced)"),
+        ("Sam2 (balanced)", "sam2:latest"),
+        ("Sam3", "sam3:latest"),
+        ("EfficientSAM (speed)", "efficientsam:10m"),
+        ("EfficientSAM (accuracy)", "efficientsam:latest"),
+        ("SAM (speed)", "sam:100m"),
+        ("SAM (balanced)", "sam:300m"),
+        ("SAM (accuracy)", "sam:latest"),
+        ("SAM2 (speed)", "sam2:small"),
+        ("SAM2 (balanced)", "sam2:latest"),
+        ("SAM2 (accuracy)", "sam2:large"),
+        ("SAM3", "sam3:latest"),
+        ("sam2:latest", "sam2:latest"),
     ],
 )
 def test_migrate_ai_model_name(*, input_name: str, expected_name: str) -> None:
-    config: dict = {"ai": {"default": input_name, "text_model": "sam3:latest"}}
-    migrate_config(config_from_yaml=config)
-    assert config["ai"] == {"default": expected_name, "text_model": "sam3:latest"}
+    config: dict = {"ai": {"default": input_name}}
     migrate_config(config_from_yaml=config)
     assert config["ai"]["default"] == expected_name
-
-
-@pytest.mark.parametrize(("input_name", "expected_name"), _AI_MODEL_RENAMES)
-@pytest.mark.parametrize("source", ["file", "overrides"])
-def test_load_legacy_ai_model_name(
-    *, tmp_path: Path, input_name: str, expected_name: str, source: str
-) -> None:
-    legacy = {"ai": {"default": input_name, "text_model": "sam3:latest"}}
-    config_file = tmp_path / "config.yaml"
-    config_file.write_text(json.dumps(legacy))
-    config = _config.load_config(
-        config_file=config_file if source == "file" else None,
-        config_overrides=legacy if source == "overrides" else {},
-    )
-    assert config["ai"]["default"] == expected_name
-    assert config["ai"]["text_model"] == "sam3:latest"
-    assert legacy["ai"]["default"] == input_name
-    # Loading migrates in memory; an ordinary later save persists the new name.
-    assert json.loads(config_file.read_text()) == legacy
-    _config.set_overrides(config_file=config_file, overrides=[(("auto_save",), True)])
-    reopened = _config.load_config(config_file=config_file, config_overrides={})
-    assert reopened["ai"]["default"] == expected_name
-    assert safe_load(config_file.read_text())["ai"]["default"] == expected_name
-
-
-@pytest.mark.parametrize("ai", [None, True, [], "Sam3", {"default": None}])
-def test_model_name_migration_preserves_malformed_sections(*, ai: object) -> None:
-    config = {"ai": ai}
-    migrate_config(config_from_yaml=config)
-    assert config == {"ai": ai}
 
 
 @pytest.mark.parametrize("model_name", [True, 42, ["Sam"]])
@@ -208,7 +192,7 @@ def test_migrate_tolerates_empty_section(*, section: str) -> None:
 
 @pytest.mark.parametrize(
     ("section", "probe"),
-    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "SAM3"))],
+    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "sam3:latest"))],
     ids=["shortcuts", "ai"],
 )
 def test_load_config_empty_section_keeps_defaults(
@@ -303,7 +287,7 @@ def test_load_config_tolerates_removed_fit_width_shortcut(*, tmp_path: Path) -> 
     ],
     ids=["polygon", "mask", "both", "neither"],
 )
-def test_migrate_ai_crosshair_keys_to_ai_points_to_shape(
+def test_migrate_ai_crosshair_keys_to_ai_segment(
     *, ai_polygon: bool, ai_mask: bool, expected: bool
 ) -> None:
     config = {"canvas": {"crosshair": {"ai_polygon": ai_polygon, "ai_mask": ai_mask}}}
@@ -311,17 +295,15 @@ def test_migrate_ai_crosshair_keys_to_ai_points_to_shape(
     crosshair = config["canvas"]["crosshair"]
     assert "ai_polygon" not in crosshair
     assert "ai_mask" not in crosshair
-    assert crosshair["ai_points_to_shape"] is expected
+    assert crosshair["ai_segment"] is expected
 
 
-def test_migrate_ai_crosshair_keeps_explicit_ai_points_to_shape() -> None:
-    config = {
-        "canvas": {"crosshair": {"ai_polygon": True, "ai_points_to_shape": False}}
-    }
+def test_migrate_ai_crosshair_keeps_explicit_ai_segment() -> None:
+    config = {"canvas": {"crosshair": {"ai_polygon": True, "ai_segment": False}}}
     migrate_config(config_from_yaml=config)
     crosshair = config["canvas"]["crosshair"]
     assert "ai_polygon" not in crosshair
-    assert crosshair["ai_points_to_shape"] is False
+    assert crosshair["ai_segment"] is False
 
 
 def test_load_config_tolerates_legacy_ai_crosshair_keys(*, tmp_path: Path) -> None:
@@ -330,7 +312,7 @@ def test_load_config_tolerates_legacy_ai_crosshair_keys(*, tmp_path: Path) -> No
         "canvas:\n  crosshair:\n    ai_polygon: true\n    ai_mask: false\n"
     )
     config = _config.load_config(config_file=config_file, config_overrides={})
-    assert config["canvas"]["crosshair"]["ai_points_to_shape"] is True
+    assert config["canvas"]["crosshair"]["ai_segment"] is True
 
 
 def test_migrate_leaves_malformed_crosshair_for_merge_to_report() -> None:
@@ -357,9 +339,23 @@ def test_load_config_malformed_crosshair_raises(*, tmp_path: Path) -> None:
             {"keep_prev_brightness": True, "keep_prev_contrast": True},
             {"keep_prev_brightness_contrast": True},
         ),
-        ({"keep_prev_brightness": False, "keep_prev_contrast": False}, {}),
+        (
+            {"keep_prev_brightness": False, "keep_prev_contrast": False},
+            {"keep_prev_brightness_contrast": False},
+        ),
+        ({"keep_prev_brightness": False}, {"keep_prev_brightness_contrast": False}),
+        ({"keep_prev_contrast": False}, {"keep_prev_brightness_contrast": False}),
+        ({}, {}),
     ],
-    ids=["brightness", "contrast", "both", "both_disabled"],
+    ids=[
+        "brightness",
+        "contrast",
+        "both",
+        "both_disabled",
+        "brightness_disabled",
+        "contrast_disabled",
+        "absent",
+    ],
 )
 def test_migrate_keep_prev_brightness_contrast(
     *, old_config: dict[str, bool], expected: dict[str, bool]
@@ -367,6 +363,27 @@ def test_migrate_keep_prev_brightness_contrast(
     config = old_config.copy()
     migrate_config(config_from_yaml=config)
     assert config == expected
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [
+        {"keep_prev_brightness": False},
+        {"keep_prev_contrast": False},
+        {"keep_prev_brightness": False, "keep_prev_contrast": False},
+    ],
+)
+def test_legacy_false_overrides_disable_file_brightness_contrast(
+    *, tmp_path: Path, overrides: dict[str, bool]
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text("keep_prev_brightness_contrast: true\n")
+    original = overrides.copy()
+
+    config = _config.load_config(config_file=config_file, config_overrides=overrides)
+
+    assert config["keep_prev_brightness_contrast"] is False
+    assert overrides == original
 
 
 @pytest.mark.parametrize(

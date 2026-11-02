@@ -38,7 +38,7 @@ shape:
 mask_polygonization:
   detail: 60
 ai:
-  default: SAM3
+  default: sam3:latest
   text_model: sam3:latest
   suppress_existing_shape_matches: false
   device: auto
@@ -89,8 +89,8 @@ canvas:
     line: false
     point: false
     linestrip: false
-    ai_points_to_shape: false
-    ai_box_to_shape: true
+    ai_segment: true
+    ai_find_all: true
 shortcuts:
   close: Ctrl+W
   open: Ctrl+O
@@ -114,6 +114,8 @@ shortcuts:
   create_line:
   create_point:
   create_linestrip:
+  create_ai_segment:
+  create_ai_find_all:
   edit_shape: Ctrl+J
   delete_shape: Delete
   duplicate_shape: Ctrl+D

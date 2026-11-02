@@ -38,7 +38,7 @@ def test_shape_mode_actions_update_status_without_pointer_movement(
         assert raw_win._status_bar.message.text().startswith(
             f"Creating {create_mode!r}"
         )
-        assert raw_win._status_bar.stats.text() == "mode=CREATE"
+        assert raw_win._status_bar.stats.text() == ""
 
         status_messages.clear()
         raw_win._actions.edit_mode.trigger()
@@ -46,13 +46,13 @@ def test_shape_mode_actions_update_status_without_pointer_movement(
         assert canvas.mode == _CanvasMode.EDIT
         assert status_messages == ["Editing shapes"]
         assert raw_win._status_bar.message.text() == "Editing shapes"
-        assert raw_win._status_bar.stats.text() == "mode=EDIT"
+        assert raw_win._status_bar.stats.text() == ""
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
 @pytest.mark.gui
-def test_mode_status_preserves_pointer_coordinates_across_transition(
+def test_status_shows_rounded_pointer_coordinates_across_transition(
     *,
     raw_win: MainWindow,
     qtbot: QtBot,
@@ -61,13 +61,13 @@ def test_mode_status_preserves_pointer_coordinates_across_transition(
     canvas = raw_win._canvas_widgets.canvas
     raw_win._actions.create_rectangle_mode.trigger()
 
-    canvas.mouse_moved.emit(QPointF(12, 34))
+    canvas.mouse_moved.emit(QPointF(422.3, 615.9))
 
-    assert raw_win._status_bar.stats.text() == ("mode=CREATE | x=  12.0, y=  34.0")
+    assert raw_win._status_bar.stats.text() == "x  422   y  616"
 
     raw_win._actions.edit_mode.trigger()
 
-    assert raw_win._status_bar.stats.text() == "mode=EDIT | x=  12.0, y=  34.0"
+    assert raw_win._status_bar.stats.text() == "x  422   y  616"
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 

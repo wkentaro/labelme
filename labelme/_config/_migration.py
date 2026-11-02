@@ -8,45 +8,26 @@ from loguru import logger
 from ._shape_color import migrate_shape_color
 
 
-def migrate_ai_model_names(*, config: dict) -> None:
-    ai = config.get("ai")
-    if not isinstance(ai, dict) or not isinstance(name := ai.get("default"), str):
-        return
-    renames = {
-        "EfficientSam (speed)": "EfficientSAM (speed)",
-        "EfficientSam (accuracy)": "EfficientSAM (accuracy)",
-        "Sam (speed)": "SAM (speed)",
-        "Sam (balanced)": "SAM (balanced)",
-        "Sam (accuracy)": "SAM (accuracy)",
-        "Sam2 (speed)": "SAM2 (speed)",
-        "Sam2 (balanced)": "SAM2 (balanced)",
-        "Sam2 (accuracy)": "SAM2 (accuracy)",
-        "Sam3": "SAM3",
-    }
-    if match := re.fullmatch(r"SegmentAnything \((.*)\)", name):
-        new_name = f"SAM ({match.group(1)})"
-    else:
-        new_name = renames.get(name, name)
-    if new_name != name:
-        logger.info("Migrating old config: ai.default={!r} -> {!r}", name, new_name)
-        ai["default"] = new_name
-
-
 def migrate_config(*, config_from_yaml: dict) -> None:
     migrate_shape_color(config=config_from_yaml)
     if "instance_label_auto_increment" in config_from_yaml:
         logger.info("Migrating old config: removing instance_label_auto_increment")
         del config_from_yaml["instance_label_auto_increment"]
-    keep_prev_brightness: bool = config_from_yaml.pop("keep_prev_brightness", False)
-    keep_prev_contrast: bool = config_from_yaml.pop("keep_prev_contrast", False)
-    if keep_prev_brightness or keep_prev_contrast:
+    if (
+        "keep_prev_brightness" in config_from_yaml
+        or "keep_prev_contrast" in config_from_yaml
+    ):
+        keep_prev_brightness = config_from_yaml.pop("keep_prev_brightness", False)
+        keep_prev_contrast = config_from_yaml.pop("keep_prev_contrast", False)
+        keep_prev = bool(keep_prev_brightness or keep_prev_contrast)
         logger.info(
             "Migrating old config: keep_prev_brightness={} or keep_prev_contrast={} "
-            "-> keep_prev_brightness_contrast=True",
+            "-> keep_prev_brightness_contrast={}",
             keep_prev_brightness,
             keep_prev_contrast,
+            keep_prev,
         )
-        config_from_yaml.setdefault("keep_prev_brightness_contrast", True)
+        config_from_yaml.setdefault("keep_prev_brightness_contrast", keep_prev)
 
     if "store_data" in config_from_yaml:
         logger.info("Migrating old config: store_data -> with_image_data")
@@ -74,10 +55,54 @@ def migrate_config(*, config_from_yaml: dict) -> None:
             logger.info("Migrating old config: removing shortcuts.{}", key)
             del shortcuts[key]
 
-    migrate_ai_model_names(config=config_from_yaml)
+    ai = config_from_yaml.get("ai")
+    if (
+        isinstance(ai, dict)
+        and isinstance(model_name := ai.get("default"), str)
+        and (m := re.match(r"^SegmentAnything \((.*)\)$", model_name))
+    ):
+        model_name_new: str = f"Sam ({m.group(1)})"
+        logger.info(
+            "Migrating old config: ai.default={!r} -> ai.default={!r}",
+            model_name,
+            model_name_new,
+        )
+        ai["default"] = model_name_new
+    # ai.default held a display name before it held the model id.
+    _AI_DEFAULT_DISPLAY_NAMES: Final = {
+        "EfficientSam (speed)": "efficientsam:10m",
+        "EfficientSam (accuracy)": "efficientsam:latest",
+        "Sam (speed)": "sam:100m",
+        "Sam (balanced)": "sam:300m",
+        "Sam (accuracy)": "sam:latest",
+        "Sam2 (speed)": "sam2:small",
+        "Sam2 (balanced)": "sam2:latest",
+        "Sam2 (accuracy)": "sam2:large",
+        "Sam3": "sam3:latest",
+        # Display names written by the earlier canonical-name release.
+        "EfficientSAM (speed)": "efficientsam:10m",
+        "EfficientSAM (accuracy)": "efficientsam:latest",
+        "SAM (speed)": "sam:100m",
+        "SAM (balanced)": "sam:300m",
+        "SAM (accuracy)": "sam:latest",
+        "SAM2 (speed)": "sam2:small",
+        "SAM2 (balanced)": "sam2:latest",
+        "SAM2 (accuracy)": "sam2:large",
+        "SAM3": "sam3:latest",
+    }
+    if (
+        isinstance(ai, dict)
+        and isinstance(model_name := ai.get("default"), str)
+        and model_name in _AI_DEFAULT_DISPLAY_NAMES
+    ):
+        logger.info(
+            "Migrating old config: ai.default={!r} -> ai.default={!r}",
+            model_name,
+            _AI_DEFAULT_DISPLAY_NAMES[model_name],
+        )
+        ai["default"] = _AI_DEFAULT_DISPLAY_NAMES[model_name]
 
-    # Migrate polygon shortcut keys to shape
-    _POLYGON_TO_SHAPE_RENAMES: Final = {
+    _SHORTCUT_RENAMES: Final = {
         "edit_polygon": "edit_shape",
         "delete_polygon": "delete_shape",
         "duplicate_polygon": "duplicate_shape",
@@ -86,8 +111,30 @@ def migrate_config(*, config_from_yaml: dict) -> None:
         "show_all_polygons": "show_all_shapes",
         "hide_all_polygons": "hide_all_shapes",
         "toggle_all_polygons": "toggle_all_shapes",
+        "create_ai_detect": "create_ai_find_all",
     }
-    for old_key, new_key in _POLYGON_TO_SHAPE_RENAMES.items():
+    # AI-Points and AI-Box merged into AI-Segment, which keeps the shortcuts
+    # bound to either.
+    old_shortcut_keys = [
+        key for key in ("create_ai_points", "create_ai_box") if key in shortcuts
+    ]
+    if old_shortcut_keys:
+        logger.warning(
+            "Deprecated config: shortcuts.{} -> shortcuts.create_ai_segment",
+            "/".join(old_shortcut_keys),
+        )
+        merged: list = []
+        for key in old_shortcut_keys:
+            value = shortcuts.pop(key)
+            for shortcut in value if isinstance(value, list) else [value]:
+                if shortcut and shortcut not in merged:
+                    merged.append(shortcut)
+        shortcuts.setdefault(
+            "create_ai_segment",
+            merged[0] if len(merged) == 1 else merged or None,
+        )
+
+    for old_key, new_key in _SHORTCUT_RENAMES.items():
         if old_key not in shortcuts:
             continue
         old_value = shortcuts.pop(old_key)
@@ -113,15 +160,24 @@ def migrate_config(*, config_from_yaml: dict) -> None:
     crosshair = canvas.get("crosshair") if isinstance(canvas, dict) else None
     if not isinstance(crosshair, dict):
         crosshair = {}
-    ai_polygon = crosshair.pop("ai_polygon", None)
-    ai_mask = crosshair.pop("ai_mask", None)
-    if ai_polygon is None and ai_mask is None:
-        return
-    logger.info(
-        "Migrating old config: canvas.crosshair.ai_polygon={} or "
-        "canvas.crosshair.ai_mask={} -> canvas.crosshair.ai_points_to_shape",
-        ai_polygon,
-        ai_mask,
-    )
-    if "ai_points_to_shape" not in crosshair:
-        crosshair["ai_points_to_shape"] = bool(ai_polygon) or bool(ai_mask)
+    if "ai_detect" in crosshair:
+        logger.info(
+            "Migrating old config: canvas.crosshair.ai_detect -> "
+            "canvas.crosshair.ai_find_all"
+        )
+        ai_detect = crosshair.pop("ai_detect")
+        crosshair.setdefault("ai_find_all", ai_detect)
+    # AI-Points and AI-Box merged into AI-Segment; either one enabled the
+    # crosshair. Older names for AI-Points (ai_polygon, ai_mask) count too.
+    old_crosshair_keys = [
+        key
+        for key in ("ai_points_to_shape", "ai_box_to_shape", "ai_polygon", "ai_mask")
+        if key in crosshair
+    ]
+    if old_crosshair_keys:
+        logger.warning(
+            "Deprecated config: canvas.crosshair.{} -> canvas.crosshair.ai_segment",
+            "/".join(old_crosshair_keys),
+        )
+        old_values = [crosshair.pop(key) for key in old_crosshair_keys]
+        crosshair.setdefault("ai_segment", any(old_values))

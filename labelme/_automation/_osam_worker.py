@@ -46,12 +46,14 @@ class InferenceRequest:
 def _run(
     session: OsamSession, request: InferenceRequest, image: NDArray[np.uint8], /
 ) -> list[osam.types.Annotation]:
-    if request.texts is None:
+    if request.texts is None or request.points is not None:
+        # SAM3 finds every match for a box with text and one object without.
         return session.run(
             image=image,
             image_id=request.image_id,
             points=request.points,
             point_labels=request.point_labels,
+            texts=request.texts,
         ).annotations
     # ponytail: SAM3 reads only the first text of a prompt, so it runs once per
     # text, reusing the cached image embedding. Drop this once osam's SAM3 takes
@@ -152,7 +154,7 @@ class OsamWorker(QtCore.QObject):
 
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
-    activity_changed = QtCore.Signal()  # job or device changed
+    activity_changed = QtCore.Signal()  # job, queued or device changed
 
     def __init__(
         self,
@@ -186,6 +188,8 @@ class OsamWorker(QtCore.QObject):
         self._pending.pop(channel, None)
         self._pending[channel] = (job, request)
         self._start_next()
+        if channel in self._pending:
+            self.activity_changed.emit()  # queued behind the running job
 
     @property
     def job(self) -> object:

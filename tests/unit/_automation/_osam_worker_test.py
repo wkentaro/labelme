@@ -309,6 +309,17 @@ def test_reports_activity_and_the_device_it_runs_on(
     ]
 
 
+def test_reports_a_job_queued_behind_the_running_one(*, worker: OsamWorker) -> None:
+    worker.submit(channel="x", job="running", request=_request(model_name="hang"))
+    seen: list[bool] = []
+    worker.activity_changed.connect(lambda: seen.append(worker.job is not None))
+
+    worker.submit(channel="y", job="queued", request=_request())
+
+    assert seen == [True]
+    worker.release()
+
+
 def test_release_fails_the_jobs_it_drops(*, worker: OsamWorker, qtbot: QtBot) -> None:
     worker.submit(channel="x", job="running", request=_request(model_name="hang"))
     worker.submit(channel="y", job="waiting", request=_request())

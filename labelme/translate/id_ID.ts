@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Detail poligon</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Sesuaikan detail poligon</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -44,8 +36,8 @@
         <translation>Lingkaran</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Pilih mode &apos;AI-Points&apos; atau &apos;AI-Box&apos; untuk mengaktifkan Bantuan AI</translation>
+        <source>Output format: {format}</source>
+        <translation>Format keluaran: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,28 +51,12 @@
         <source>Model</source>
         <translation>Model</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>Bantuan AI</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Format keluaran</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>contoh: anjing, kucing, burung</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Jalankan</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Model Prompt Teks AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +67,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI membuat anotasi dari prompt teks</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>Prompt Teks AI</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Pilih mode &apos;Polygon&apos;, &apos;Rectangle&apos;, atau &apos;AI-Points&apos; untuk mengaktifkan</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Model</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>Yang dicari</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>Mencari…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>Model AI-Find All</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Opsi</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -188,8 +179,20 @@
         <translation>Mengedit bentuk</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Klik titik untuk menyertakan, atau tahan %s lalu klik untuk mengecualikan. Tahan %s lalu klik untuk menyelesaikan.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Klik titik untuk menyertakan, tahan %s lalu klik untuk mengecualikan, atau seret sebuah kotak. Tahan %s lalu klik untuk menyelesaikan.</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Ketik apa yang ingin dicari di AI-Find All, atau klik sudut pertama kotak di sekitar satu contoh</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Klik sudut seberang untuk mengecualikan objek seperti ini</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Klik sudut seberangnya untuk menemukan setiap objek seperti ini</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -224,12 +227,8 @@
         <translation>Pilih sudut lainnya. Tahan Shift untuk membuat persegi.</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Klik sudut pertama bbox untuk segmentasi AI</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Klik sudut berlawanan untuk segmentasi objek</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter menambahkan hasil, Esc membuangnya. Tahan %s dan gambar kotak untuk mengecualikan objek yang mirip.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -545,6 +544,22 @@
         <translation>Edit</translation>
     </message>
     <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Klik titik atau seret sebuah kotak untuk menyegmentasi satu objek; tahan %s lalu klik untuk menyelesaikan.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Temukan setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Berikutnya</translation>
@@ -691,10 +706,6 @@
         <translation>Alat bentuk lainnya</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s dimulai.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Coba lagi</translation>
     </message>
@@ -715,8 +726,32 @@
         <translation>Anda dapat menggunakan pengaturan bawaan untuk saat ini. Sebelum reset, salinan cadangan file konfigurasi Anda akan disimpan.</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>Ketik apa yang ingin dicari</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>Mencari kecocokan di CPU…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Mencari kecocokan…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat bentuk &apos;%s&apos;.
+
+Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Berkas anotasi milik gambar lain: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s tidak dapat menggunakan kotak contoh. Pilih SAM 3.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -833,20 +868,16 @@
         <translation>Klik untuk menempatkan titik garis patah; tahan %s lalu klik untuk menempatkan titik terakhir.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Klik titik untuk menyegmentasi objek; tahan %s lalu klik untuk menyelesaikan.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Buka gambar berikutnya (tahan %s untuk menyalin bentuk saat ini)</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>Mendeteksi &apos;{query}&apos;…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Mencari semua &apos;{query}&apos;…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>Mendeteksi &apos;{query}&apos; di CPU…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Mencari semua &apos;{query}&apos; di CPU…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -855,14 +886,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>Menyegmentasi…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat bentuk &apos;%s&apos;.
-
-Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -975,18 +998,6 @@ Ganti model Prompt Teks AI ke &apos;SAM3 (smart)&apos;, atau atur format keluara
     <message>
         <source>LineStrip</source>
         <translation>Garis Patah</translation>
-    </message>
-    <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Gambar bounding box untuk mensegmentasi objek.</translation>
     </message>
     <message>
         <source>Continue with Defaults</source>
@@ -1124,6 +1135,10 @@ Lokasi yang diharapkan: {path}</translation>
         <source>Configuration Error</source>
         <translation>Error Konfigurasi</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Hanya mendeteksi kotak. Beralih ke Persegi Panjang untuk menggunakan model ini.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
@@ -1146,6 +1161,10 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Unavailable: {model}</source>
         <translation>Tidak tersedia: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Model lainnya…</translation>
     </message>
 </context>
 <context>
@@ -1445,6 +1464,10 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Satu nama flag per baris. Pola: ^car$ cocok persis dengan car, car cocok dengan awalan, .* cocok dengan setiap label.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>Model AI-Find All</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Detail poligon</translation>
     </message>
@@ -1515,46 +1538,6 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Default model</source>
         <translation>Model default</translation>
-    </message>
-    <message>
-        <source>EfficientSAM (speed)</source>
-        <translation>EfficientSAM (kecepatan)</translation>
-    </message>
-    <message>
-        <source>EfficientSAM (accuracy)</source>
-        <translation>EfficientSAM (akurasi)</translation>
-    </message>
-    <message>
-        <source>SAM (speed)</source>
-        <translation>SAM (kecepatan)</translation>
-    </message>
-    <message>
-        <source>SAM (balanced)</source>
-        <translation>SAM (seimbang)</translation>
-    </message>
-    <message>
-        <source>SAM (accuracy)</source>
-        <translation>SAM (akurasi)</translation>
-    </message>
-    <message>
-        <source>SAM2 (speed)</source>
-        <translation>SAM2 (kecepatan)</translation>
-    </message>
-    <message>
-        <source>SAM2 (balanced)</source>
-        <translation>SAM2 (seimbang)</translation>
-    </message>
-    <message>
-        <source>SAM2 (accuracy)</source>
-        <translation>SAM2 (akurasi)</translation>
-    </message>
-    <message>
-        <source>SAM3</source>
-        <translation>SAM3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Model prompt teks</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1635,6 +1618,65 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Baris {row}: {error} Perubahan belum diterapkan.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>Tercepat</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Seimbang</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Paling akurat</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM asli. SAM 2 lebih cepat di setiap ukuran.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Tercepat, dengan garis tepi kasar. Berjalan baik di komputer apa pun.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Garis tepi lebih tajam daripada Tiny, tetapi lebih lambat daripada SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Unduhan lebih kecil daripada Base+, sedikit kurang akurat.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Seimbang antara kecepatan dan akurasi. Berjalan baik di CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Lebih akurat daripada Base+, tetapi lebih lambat.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Paling akurat, tetapi lebih lambat daripada SAM 2 Base+. Terbaik dengan GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Tercepat. Menemukan kotak, tanpa mask.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Hanya kotak</translation>
     </message>
 </context>
 <context>
