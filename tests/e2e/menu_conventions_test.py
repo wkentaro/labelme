@@ -266,3 +266,21 @@ def test_menu_mnemonics_are_unique_in_every_language(
             if _mnemonic(source) and not _mnemonic(text)
         ]
         assert dropped == [], name
+
+
+@pytest.mark.gui
+def test_file_menu_groups_actions_by_task(*, main_win: MainWinFactory) -> None:
+    win = _english_window(main_win)
+    groups: list[list[QtGui.QAction]] = [[]]
+    for action in win._menus.file.actions():
+        if action.isSeparator():
+            groups.append([])
+        else:
+            groups[-1].append(action)
+    a = win._actions
+    assert groups[:4] == [
+        [a.open, a.open_dir],
+        [a.open_prev_img, a.open_next_img],
+        [a.save, a.save_as, a.save_auto, a.change_output_dir, a.save_with_image_data],
+        [a.close, a.delete_file],
+    ]
