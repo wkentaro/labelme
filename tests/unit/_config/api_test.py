@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
 from typing import Final
@@ -8,6 +9,27 @@ import pytest
 
 from labelme import _config
 from labelme._config._migration import migrate_config
+
+
+@pytest.mark.parametrize("points", [False, True])
+def test_load_config_migrates_inline_overrides_without_mutating_them(
+    *, tmp_path: Path, points: bool
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text("canvas:\n  crosshair:\n    ai_segment: true\n")
+    overrides = {
+        "canvas": {
+            "crosshair": {"ai_points_to_shape": points, "ai_box_to_shape": False}
+        },
+        "store_data": True,
+    }
+    original = copy.deepcopy(overrides)
+
+    config = _config.load_config(config_file=config_file, config_overrides=overrides)
+
+    assert config["canvas"]["crosshair"]["ai_segment"] is points
+    assert config["with_image_data"] is True
+    assert overrides == original
 
 
 def _steer_home(*, monkeypatch: pytest.MonkeyPatch, home: Path) -> None:

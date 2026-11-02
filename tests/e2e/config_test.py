@@ -15,6 +15,27 @@ from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 
 
+@pytest.mark.gui
+def test_inline_legacy_settings_start_without_config_recovery(
+    *, main_win: MainWinFactory, recovery_messages: list[str]
+) -> None:
+    win = main_win(
+        config_overrides={
+            "auto_save": False,
+            "canvas": {
+                "crosshair": {
+                    "ai_points_to_shape": False,
+                    "ai_box_to_shape": False,
+                }
+            },
+        }
+    )
+
+    assert win._config["canvas"]["crosshair"]["ai_segment"] is False
+    assert win._config["auto_save"] is False
+    assert recovery_messages == []
+
+
 @pytest.fixture()
 def recovery_button_states() -> dict[QMessageBox.ButtonRole, bool]:
     return {}
