@@ -126,10 +126,12 @@ def _count_satisfied_prompt_points(
     points: NDArray[np.floating],
     point_labels: NDArray[np.intp],
 ) -> int:
+    # Box corners (labels 2, 3) say nothing about which mask is right.
     return sum(
         _is_point_inside_detection(detection=detection, point=point)
         == (point_label == 1)
         for point, point_label in zip(points, point_labels, strict=True)
+        if point_label in (0, 1)
     )
 
 

@@ -38,7 +38,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         # AiToolGroup lays these controls out; this widget owns their state.
         text_input = QtWidgets.QLineEdit(self)
         # The prompt is one concept and becomes the label of what it finds.
-        text_input.setPlaceholderText(self.tr("Label to detect"))
+        text_input.setPlaceholderText(self.tr("What to find"))
         text_input.setAccessibleName(self.tr("Prompt"))
         text_input.setFixedHeight(24)
         text_input.returnPressed.connect(on_submit)
@@ -49,11 +49,11 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         run_button.setFixedHeight(24)
         run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         run_button.clicked.connect(lambda: on_submit())
-        # Fits "Detecting…" too, so a run doesn't shift the row.
+        # Fits "Finding…" too, so a run doesn't shift the row.
         run_button.setMinimumWidth(
             max(
                 run_button.fontMetrics().horizontalAdvance(text)
-                for text in (self.tr("Run"), self.tr("Detecting…"))
+                for text in (self.tr("Run"), self.tr("Finding…"))
             )
             + 16
         )
@@ -67,7 +67,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         model_combo.setParent(self)
         # Windows needs an explicit name; Unix exposes the selected option instead.
         model_combo.setAccessibleName(self.tr("Model"))
-        model_combo.setAccessibleDescription(self.tr("AI-Detect model"))
+        model_combo.setAccessibleDescription(self.tr("AI-Find All model"))
         model_combo.model_changed.connect(self.model_changed)
         model_combo.manage_requested.connect(self.manage_models_requested)
         model_combo.download_requested.connect(self.download_requested)
@@ -129,7 +129,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     def set_detecting(self, detecting: bool, /) -> None:  # noqa: FBT001 -- state flag
         # Run stays clickable: running again replaces the pending job.
-        self._run_button.setText(self.tr("Detecting…") if detecting else self.tr("Run"))
+        self._run_button.setText(self.tr("Finding…") if detecting else self.tr("Run"))
 
     def get_text_prompt(self) -> str:
         return self._text_input.text().strip()

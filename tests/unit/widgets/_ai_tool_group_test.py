@@ -32,9 +32,9 @@ def group(*, qtbot: QtBot) -> AiToolGroup:
 @pytest.mark.parametrize(
     ("create_mode", "title", "detect_enabled"),
     [
-        ("ai_points_to_shape", "AI-Points", False),
-        ("ai_box_to_shape", "AI-Box", False),
-        ("ai_detect", "AI-Detect", True),
+        ("ai_segment", "AI-Segment", False),
+        ("ai_segment", "AI-Segment", False),
+        ("ai_find_all", "AI-Find All", True),
     ],
 )
 def test_group_follows_the_active_tool(
@@ -49,7 +49,7 @@ def test_group_follows_the_active_tool(
     assert group._model_stack.isEnabled()
     assert group._assist._output_format_combo.isEnabled()
     for control in (group._detect._text_input, group._detect._run_button):
-        assert control.isEnabled()  # Running switches to AI-Detect.
+        assert control.isEnabled()  # Running switches to AI-Find All.
     assert group._model_stack.currentWidget() is (
         group._detect._model_combo if detect_enabled else group._assist._model_combo
     )
@@ -64,7 +64,7 @@ def test_group_follows_the_active_tool(
 def test_only_the_query_and_run_work_without_an_ai_tool(
     *, group: AiToolGroup, qtbot: QtBot
 ) -> None:
-    group.set_tool("ai_detect")
+    group.set_tool("ai_find_all")
 
     group.set_tool("polygon")
 
@@ -86,23 +86,23 @@ def test_only_the_query_and_run_work_without_an_ai_tool(
 
 @pytest.mark.gui
 def test_info_button_names_the_tool(*, group: AiToolGroup) -> None:
-    group.set_tool("ai_detect")
+    group.set_tool("ai_find_all")
 
     interface = QtGui.QAccessible.queryAccessibleInterface(group._info_button)
 
     assert interface.text(QtGui.QAccessible.Text.Name) == (
-        "Detect every object that matches the text prompt or an example box"
+        "Find every object that matches the text prompt or an example box"
     )
 
 
 @pytest.mark.gui
 def test_run_reads_detecting_while_a_job_runs(*, group: AiToolGroup) -> None:
-    group.set_tool("ai_detect")
+    group.set_tool("ai_find_all")
     detect = group._detect
 
     detect.set_detecting(True)  # noqa: FBT003 -- state flag
 
-    assert detect._run_button.text() == "Detecting…"
+    assert detect._run_button.text() == "Finding…"
 
     detect.set_detecting(False)  # noqa: FBT003 -- state flag
 

@@ -75,51 +75,47 @@
         <translation>模型</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>要检测的标签</translation>
+        <source>What to find</source>
+        <translation>要查找的内容</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>提示词</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>正在检测…</translation>
+        <source>Finding…</source>
+        <translation>正在查找…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect 模型</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 模型</translation>
     </message>
 </context>
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>AI 辅助</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>检测与文本提示或示例框匹配的所有对象</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>查找与文本提示或示例框匹配的所有对象</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>在 &apos;AI-Points&apos; 和 &apos;AI-Box&apos; 模式下，AI 会提供标注建议</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>根据点和一个框分割一个对象</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>请选择 &apos;AI-Points&apos;、&apos;AI-Box&apos; 或 &apos;AI-Detect&apos; 模式以启用 AI 辅助</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>请选择 &apos;AI-Segment&apos; 或 &apos;AI-Find All&apos; 以启用 AI 辅助</translation>
     </message>
 </context>
 <context>
@@ -199,20 +195,20 @@
         <translation>正在编辑形状</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>单击各点以包含，或按住 %s 并单击以排除。按住 %s 并单击以完成。</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>单击各点以包含，按住 %s 并单击以排除，或拖动出一个框。按住 %s 并单击以完成。</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>在 AI-Detect 中输入要检测的内容，或点击框选一个示例的第一个角</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>在 AI-Find All 中输入要查找的内容，或点击框选一个示例的第一个角</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>点击对角，排除与此相似的对象</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>点击对角，检测所有与此相似的对象</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>点击对角，查找所有与此相似的对象</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>选择另一个角。按住Shift可绘制正方形。</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>单击确定 AI 分割边界框的第一个角</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>单击对角以分割对象</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>单击放置折线的点；按住 %s 并单击以放置最后一个点。</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>单击各点以分割对象；按住 %s 并单击以完成。</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>打开下一张图像（按住 %s 可复制当前形状）</translation>
     </message>
@@ -624,12 +608,20 @@
         <translation>编辑</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>检测与文本提示或示例框匹配的所有对象</translation>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>单击各点或拖动出一个框以分割一个对象；按住 %s 并单击以完成。</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>查找与文本提示或示例框匹配的所有对象</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +794,32 @@
         <translation>你可以暂时使用默认设置。重置前会先保存配置文件的备份。</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>请输入要检测的内容</translation>
+        <source>Type what to find</source>
+        <translation>输入要查找的内容</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>正在 CPU 上检测…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>正在 CPU 上查找匹配项…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>正在检测…</translation>
+        <source>Finding matches…</source>
+        <translation>正在查找匹配项…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s 仅检测边界框，无法创建 &apos;%s&apos; 形状。
 
-请将 AI-Detect 模型切换为 &apos;SAM3 (smart)&apos;，或将输出格式设置为 &apos;Rectangle&apos;。</translation>
+请将 AI-Find All 模型切换为 &apos;SAM3 (smart)&apos;，或将输出格式设置为 &apos;Rectangle&apos;。</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>该标注文件属于另一张图像：%s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s 无法根据示例框进行检测。请选择 SAM3 (smart)。</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s 无法使用示例框。请选择 SAM3 (smart)。</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1004,18 +996,6 @@ Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format
         <translation>折线</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>绘制边界框以分割对象。</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>使用默认设置继续</translation>
     </message>
@@ -1024,12 +1004,12 @@ Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format
         <translation>备份并重置</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>正在检测“{query}”…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>正在查找所有“{query}”…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>正在 CPU 上检测“{query}”…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>正在 CPU 上查找所有“{query}”…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1428,8 @@ Expected location: {path}</source>
         <translation>每行一个标志名称。模式：^car$ 精确匹配 car，car 匹配前缀，.* 匹配所有标签。</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect 模型</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 模型</translation>
     </message>
     <message>
         <source>Polygon detail</source>

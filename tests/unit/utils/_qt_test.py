@@ -309,7 +309,7 @@ def test_new_action_with_icon_sets_icon_text(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     # Use an icon file that actually exists so Qt loads it as non-null.
-    action = new_action(parent, text="Save File", icon="ai-box.svg")
+    action = new_action(parent, text="Save File", icon="ai-points.svg")
     # multi-word labels are presented so words are not shown on a single unbroken line
     icon_text = action.iconText()
     assert icon_text != "Save File"  # must not be the original single-line text

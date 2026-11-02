@@ -75,51 +75,47 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Te detecteren label</translation>
+        <source>What to find</source>
+        <translation>Wat zoeken</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Detecteren…</translation>
+        <source>Finding…</source>
+        <translation>Zoeken…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect-model</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All-model</translation>
     </message>
 </context>
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>AI-assistent</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Elk object detecteren dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Elk object zoeken dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Eén object segmenteren uit punten en een kader</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Selecteer de modus &apos;AI-Points&apos;, &apos;AI-Box&apos; of &apos;AI-Detect&apos; om de AI-assistent in te schakelen</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Selecteer &apos;AI-Segment&apos; of &apos;AI-Find All&apos; om de AI-assistent in te schakelen</translation>
     </message>
 </context>
 <context>
@@ -199,20 +195,20 @@
         <translation>Vormen bewerken</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Klik op punten om op te nemen, of houd %s ingedrukt en klik om uit te sluiten. Houd %s ingedrukt en klik om te voltooien.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Klik op punten om op te nemen, houd %s ingedrukt en klik om uit te sluiten, of sleep een kader. Houd %s ingedrukt en klik om te voltooien.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>Typ in AI-Detect wat je wilt detecteren, of klik op de eerste hoek van een kader rond één voorbeeld</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Typ in AI-Find All wat je wilt zoeken, of klik op de eerste hoek van een kader rond één voorbeeld</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Klik op de tegenoverliggende hoek om objecten zoals dit uit te sluiten</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>Klik op de tegenoverliggende hoek om elk object zoals dit te detecteren</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Klik op de tegenoverliggende hoek om elk object zoals dit te zoeken</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Kies de andere hoek. Houd Shift ingedrukt voor een vierkant.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Klik op de eerste hoek van de bbox voor AI-segmentatie</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Klik op de tegenoverliggende hoek om het object te segmenteren</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>Klik om punten van de polylijn te plaatsen; houd %s ingedrukt en klik om het laatste te plaatsen.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Klik op punten om het object te segmenteren; houd %s ingedrukt en klik om te voltooien.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Volgende afbeelding openen (houd %s ingedrukt om de huidige vormen te kopiëren)</translation>
     </message>
@@ -624,12 +608,20 @@
         <translation>Bewerken</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Elk object detecteren dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Klik op punten of sleep een kader om één object te segmenteren; houd %s ingedrukt en klik om te voltooien.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Elk object zoeken dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +794,32 @@
         <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>Typ wat je wilt detecteren</translation>
+        <source>Type what to find</source>
+        <translation>Typ wat je wilt zoeken</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>Detecteren op de CPU…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Overeenkomsten zoeken op de CPU…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Detecteren…</translation>
+        <source>Finding matches…</source>
+        <translation>Overeenkomsten zoeken…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-vormen maken.
 
-Wijzig het AI-Detect-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
+Wijzig het AI-Find All-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Het annotatiebestand hoort bij een andere afbeelding: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s kan niet detecteren op basis van een voorbeeldkader. Kies SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s kan geen voorbeeldkader gebruiken. Kies SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1004,18 +996,6 @@ Wijzig het AI-Detect-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerform
         <translation>Lijnstrip</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Teken een begrenzingskader om een object te segmenteren.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Doorgaan met standaardinstellingen</translation>
     </message>
@@ -1024,12 +1004,12 @@ Wijzig het AI-Detect-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerform
         <translation>Back-up maken en resetten</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>&apos;{query}&apos; detecteren…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Alle &apos;{query}&apos; zoeken…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>&apos;{query}&apos; detecteren op de CPU…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Alle &apos;{query}&apos; zoeken op de CPU…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1428,8 @@ Verwachte locatie: {path}</translation>
         <translation>Eén vlagnaam per regel. Patronen: ^car$ komt exact overeen met car, car met een voorvoegsel, .* met elk label.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect-model</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All-model</translation>
     </message>
     <message>
         <source>Polygon detail</source>

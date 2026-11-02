@@ -75,51 +75,47 @@
         <translation>Mô hình</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Nhãn cần phát hiện</translation>
+        <source>What to find</source>
+        <translation>Nội dung cần tìm</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Lời nhắc</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Đang phát hiện…</translation>
+        <source>Finding…</source>
+        <translation>Đang tìm…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Mô hình AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Mô hình AI-Find All</translation>
     </message>
 </context>
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>Hỗ trợ AI</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Phát hiện mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Tìm mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI gợi ý chú thích trong các chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Phân đoạn một đối tượng từ các điểm và một khung</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Chọn chế độ &apos;AI-Points&apos;, &apos;AI-Box&apos; hoặc &apos;AI-Detect&apos; để bật Hỗ trợ AI</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Chọn &apos;AI-Segment&apos; hoặc &apos;AI-Find All&apos; để bật Hỗ trợ AI</translation>
     </message>
 </context>
 <context>
@@ -199,20 +195,20 @@
         <translation>Chỉnh sửa hình dạng</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Nhấp các điểm để bao gồm, hoặc giữ %s và nhấp để loại trừ. Giữ %s và nhấp để hoàn tất.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Nhấp các điểm để bao gồm, giữ %s và nhấp để loại trừ, hoặc kéo một khung. Giữ %s và nhấp để hoàn tất.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>Nhập nội dung cần phát hiện vào AI-Detect, hoặc nhấp vào góc đầu tiên của khung bao quanh một mẫu</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Nhập nội dung cần tìm vào AI-Find All, hoặc nhấp vào góc đầu tiên của khung bao quanh một mẫu</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Nhấp vào góc đối diện để loại trừ các đối tượng giống như thế này</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>Nhấp vào góc đối diện để phát hiện mọi đối tượng giống mẫu này</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Nhấp vào góc đối diện để tìm mọi đối tượng giống mẫu này</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Chọn góc còn lại. Giữ Shift để vẽ hình vuông.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Nhấp vào góc đầu tiên của bbox để phân đoạn AI</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Nhấp vào góc đối diện để phân đoạn đối tượng</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>Nhấp để đặt các điểm của đường gấp khúc; giữ %s và nhấp để đặt điểm cuối cùng.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Nhấp các điểm để phân đoạn đối tượng; giữ %s và nhấp để hoàn tất.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Mở hình ảnh tiếp theo (giữ %s để sao chép các hình dạng hiện tại)</translation>
     </message>
@@ -624,12 +608,20 @@
         <translation>Chỉnh sửa</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Phát hiện mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Nhấp các điểm hoặc kéo một khung để phân đoạn một đối tượng; giữ %s và nhấp để hoàn tất.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Tìm mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +794,32 @@
         <translation>Bạn có thể dùng cài đặt mặc định lúc này. Trước khi đặt lại, một bản sao lưu của tệp cấu hình sẽ được lưu.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>Nhập nội dung cần phát hiện</translation>
+        <source>Type what to find</source>
+        <translation>Nhập nội dung cần tìm</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>Đang phát hiện trên CPU…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Đang tìm kết quả khớp trên CPU…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Đang phát hiện…</translation>
+        <source>Finding matches…</source>
+        <translation>Đang tìm kết quả khớp…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s chỉ phát hiện khung giới hạn và không thể tạo hình dạng &apos;%s&apos;.
 
-Chuyển mô hình AI-Detect sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
+Chuyển mô hình AI-Find All sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Tệp chú thích thuộc về một hình ảnh khác: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s không thể phát hiện từ khung mẫu. Hãy chọn SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s không thể dùng khung mẫu. Hãy chọn SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1004,18 +996,6 @@ Chuyển mô hình AI-Detect sang &apos;SAM3 (smart)&apos;, hoặc đặt địn
         <translation>Đường gấp khúc</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Vẽ một hộp giới hạn để phân đoạn đối tượng.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Tiếp tục với mặc định</translation>
     </message>
@@ -1024,12 +1004,12 @@ Chuyển mô hình AI-Detect sang &apos;SAM3 (smart)&apos;, hoặc đặt địn
         <translation>Sao lưu và đặt lại</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>Đang phát hiện &apos;{query}&apos;…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Đang tìm tất cả &apos;{query}&apos;…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>Đang phát hiện &apos;{query}&apos; trên CPU…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Đang tìm tất cả &apos;{query}&apos; trên CPU…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1428,8 @@ Vị trí dự kiến: {path}</translation>
         <translation>Mỗi dòng một tên cờ. Mẫu: ^car$ khớp chính xác với car, car khớp tiền tố, .* khớp mọi nhãn.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Mô hình AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Mô hình AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>

@@ -75,51 +75,47 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Algılanacak etiket</translation>
+        <source>What to find</source>
+        <translation>Ne bulunacak</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>İstem</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Algılanıyor…</translation>
+        <source>Finding…</source>
+        <translation>Aranıyor…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect modeli</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All modeli</translation>
     </message>
 </context>
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>AI Yardımı</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri algıla</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri bul</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI, &apos;AI-Noktalar&apos; ve &apos;AI-Kutu&apos; modlarında açıklama önerir</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Noktalardan ve bir kutudan tek bir nesneyi bölütle</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos;, &apos;AI-Box&apos; veya &apos;AI-Detect&apos; modunu seçin</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>AI Yardımını etkinleştirmek için &apos;AI-Segment&apos; veya &apos;AI-Find All&apos; seçin</translation>
     </message>
 </context>
 <context>
@@ -199,20 +195,20 @@
         <translation>Şekiller düzenleniyor</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Dahil etmek için noktalara tıklayın veya hariç tutmak için %s tuşunu basılı tutup tıklayın. Bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Dahil etmek için noktalara tıklayın, hariç tutmak için %s tuşunu basılı tutup tıklayın veya bir kutu sürükleyin. Bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>AI-Detect&apos;e neyi algılamak istediğinizi yazın veya bir örneği çevreleyen kutunun ilk köşesine tıklayın</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>AI-Find All&apos;a neyi bulmak istediğinizi yazın veya bir örneği çevreleyen kutunun ilk köşesine tıklayın</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Bunun gibi nesneleri hariç tutmak için karşı köşeye tıklayın</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>Buna benzeyen tüm nesneleri algılamak için karşı köşeye tıklayın</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Buna benzeyen tüm nesneleri bulmak için karşı köşeye tıklayın</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Diğer köşeyi seçin. Kare çizmek için Shift tuşunu basılı tutun.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Yapay zeka bölütlemesi için sınır kutusunun ilk köşesine tıklayın</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Nesneyi bölütlemek için karşı köşeye tıklayın</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>Çoklu çizgi noktalarını yerleştirmek için tıklayın; sonuncuyu yerleştirmek için %s tuşunu basılı tutup tıklayın.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Nesneyi bölütlemek için noktalara tıklayın; bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Sonraki görüntüyü aç (geçerli şekilleri kopyalamak için %s tuşunu basılı tutun)</translation>
     </message>
@@ -624,12 +608,20 @@
         <translation>Düzenle</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri algıla</translation>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Tek bir nesneyi bölütlemek için noktalara tıklayın veya bir kutu sürükleyin; bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri bul</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +794,32 @@
         <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>Neyi algılamak istediğinizi yazın</translation>
+        <source>Type what to find</source>
+        <translation>Neyi bulmak istediğinizi yazın</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>CPU&apos;da algılanıyor…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>CPU&apos;da eşleşmeler aranıyor…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Algılanıyor…</translation>
+        <source>Finding matches…</source>
+        <translation>Eşleşmeler aranıyor…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; şekilleri oluşturamaz.
 
-AI-Detect modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
+AI-Find All modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Açıklama dosyası başka bir görüntüye ait: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s örnek kutusundan algılama yapamaz. SAM3 (smart) seçin.</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s örnek kutusu kullanamaz. SAM3 (smart) seçin.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1004,18 +996,6 @@ AI-Detect modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı bi
         <translation>Çizgi Şeridi</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Nesneyi bölütlemek için bir sınır kutusu çizin.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Varsayılanlarla devam et</translation>
     </message>
@@ -1024,12 +1004,12 @@ AI-Detect modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı bi
         <translation>Yedekle ve sıfırla</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>&apos;{query}&apos; algılanıyor…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Tüm &apos;{query}&apos; aranıyor…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>&apos;{query}&apos; CPU&apos;da algılanıyor…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>CPU&apos;da tüm &apos;{query}&apos; aranıyor…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1428,8 @@ Beklenen konum: {path}</translation>
         <translation>Her satıra bir bayrak adı. Desenler: ^car$ tam olarak car ile, car bir önekle, .* her etiketle eşleşir.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect modeli</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All modeli</translation>
     </message>
     <message>
         <source>Polygon detail</source>

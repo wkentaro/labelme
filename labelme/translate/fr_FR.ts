@@ -75,51 +75,47 @@
         <translation>Modèle</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Étiquette à détecter</translation>
+        <source>What to find</source>
+        <translation>Ce qu’il faut trouver</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Consigne</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Détection…</translation>
+        <source>Finding…</source>
+        <translation>Recherche…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Modèle AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Modèle AI-Find All</translation>
     </message>
 </context>
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>Assistance IA</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Détecter tous les objets correspondant à l’invite textuelle ou à un cadre d’exemple</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Trouver tous les objets correspondant à l’invite textuelle ou à un cadre d’exemple</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>L&apos;IA suggère des annotations dans les modes &apos;AI-Points&apos; et &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Segmenter un objet à partir de points et d&apos;un cadre</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Sélectionnez le mode &apos;AI-Points&apos;, &apos;AI-Box&apos; ou &apos;AI-Detect&apos; pour activer l&apos;Assistance IA</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Sélectionnez &apos;AI-Segment&apos; ou &apos;AI-Find All&apos; pour activer l&apos;Assistance IA</translation>
     </message>
 </context>
 <context>
@@ -199,20 +195,20 @@
         <translation>Modification des formes</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Cliquez sur des points pour inclure, ou maintenez %s et cliquez pour exclure. Maintenez %s et cliquez pour terminer.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Cliquez sur des points pour inclure, maintenez %s et cliquez pour exclure, ou faites glisser un cadre. Maintenez %s et cliquez pour terminer.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>Saisissez ce qu’il faut détecter dans AI-Detect, ou cliquez sur le premier coin d’un cadre autour d’un exemple</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Saisissez ce qu’il faut trouver dans AI-Find All, ou cliquez sur le premier coin d’un cadre autour d’un exemple</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Cliquez sur le coin opposé pour exclure les objets comme celui-ci</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>Cliquez sur le coin opposé pour détecter tous les objets semblables à celui-ci</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Cliquez sur le coin opposé pour trouver tous les objets semblables à celui-ci</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Choisissez l’autre coin. Maintenez Shift pour un carré.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Cliquez sur le premier coin de la bbox pour la segmentation IA</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Cliquez sur le coin opposé pour segmenter l&apos;objet</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>Cliquez pour placer les points de la polyligne ; maintenez %s et cliquez pour placer le dernier.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Cliquez sur des points pour segmenter l&apos;objet ; maintenez %s et cliquez pour terminer.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Ouvrir l&apos;image suivante (maintenez %s pour copier les formes actuelles)</translation>
     </message>
@@ -624,12 +608,20 @@
         <translation>Modifier</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Détecter tous les objets correspondant à l’invite textuelle ou à un cadre d’exemple</translation>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Cliquez sur des points ou faites glisser un cadre pour segmenter un objet ; maintenez %s et cliquez pour terminer.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Trouver tous les objets correspondant à l’invite textuelle ou à un cadre d’exemple</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +794,32 @@
         <translation>Vous pouvez utiliser les paramètres par défaut pour le moment. Une sauvegarde de votre fichier de configuration sera enregistrée avant la réinitialisation.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>Saisissez ce qu’il faut détecter</translation>
+        <source>Type what to find</source>
+        <translation>Saisissez ce qu’il faut trouver</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>Détection sur le processeur…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Recherche des correspondances sur le processeur…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Détection…</translation>
+        <source>Finding matches…</source>
+        <translation>Recherche des correspondances…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s ne détecte que les cadres englobants et ne peut pas créer de formes &apos;%s&apos;.
 
-Changez le modèle AI-Detect pour &apos;SAM3 (smart)&apos;, ou définissez le format de sortie sur &apos;Rectangle&apos;.</translation>
+Changez le modèle AI-Find All pour &apos;SAM3 (smart)&apos;, ou définissez le format de sortie sur &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Le fichier d’annotations appartient à une autre image : %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s ne peut pas détecter à partir d’un cadre d’exemple. Choisissez SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s ne peut pas utiliser de cadre d’exemple. Choisissez SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1004,18 +996,6 @@ Changez le modèle AI-Detect pour &apos;SAM3 (smart)&apos;, ou définissez le fo
         <translation>Polyligne</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Dessinez un cadre englobant pour segmenter l&apos;objet.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Continuer avec les valeurs par défaut</translation>
     </message>
@@ -1024,12 +1004,12 @@ Changez le modèle AI-Detect pour &apos;SAM3 (smart)&apos;, ou définissez le fo
         <translation>Sauvegarder et réinitialiser</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>Détection de « {query} »…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Recherche de tous les « {query} »…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>Détection de « {query} » sur le processeur…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Recherche de tous les « {query} » sur le processeur…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1428,8 @@ Emplacement attendu : {path}</translation>
         <translation>Un nom d’indicateur par ligne. Motifs : ^car$ correspond exactement à car, car à un préfixe, .* à toute étiquette.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Modèle AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Modèle AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>

@@ -31,7 +31,7 @@ def test_status_bar_names_the_running_ai_task(
     state: dict[str, object] = {"job": None, "device": None}
     monkeypatch.setattr(OsamWorker, "job", property(lambda _: state["job"]))
     monkeypatch.setattr(OsamWorker, "device", property(lambda _: state["device"]))
-    monkeypatch.setattr(Canvas, "ai_detect_job", property(lambda _: box["job"]))
+    monkeypatch.setattr(Canvas, "ai_find_all_job", property(lambda _: box["job"]))
     announced: list[str] = []
     monkeypatch.setattr(win, "_announce", announced.append)
     label = win._status_bar.ai
@@ -56,18 +56,18 @@ def test_status_bar_names_the_running_ai_task(
     assert texts == [
         "Segmenting…",
         "Segmenting on CPU…",
-        "Detecting 'sticky notes, pens'…",
-        "Detecting 'sticky notes, pens' on CPU…",
-        "Detecting…",
-        "Detecting on CPU…",
-        "Detecting 'dog'…",
+        "Finding all 'sticky notes, pens'…",
+        "Finding all 'sticky notes, pens' on CPU…",
+        "Finding matches…",
+        "Finding matches on CPU…",
+        "Finding all 'dog'…",
         "",
     ]
     # Each detection, from text or an example box, is announced once.
     assert announced == [
-        "Detecting 'sticky notes, pens'…",
-        "Detecting…",
-        "Detecting 'dog'…",
+        "Finding all 'sticky notes, pens'…",
+        "Finding matches…",
+        "Finding all 'dog'…",
     ]
 
 

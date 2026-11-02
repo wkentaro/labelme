@@ -186,9 +186,8 @@ class _Actions(NamedTuple):
     create_line_mode: QtGui.QAction
     create_point_mode: QtGui.QAction
     create_line_strip_mode: QtGui.QAction
-    create_ai_points_to_shape_mode: QtGui.QAction
-    create_ai_box_to_shape_mode: QtGui.QAction
-    create_ai_detect_mode: QtGui.QAction
+    create_ai_segment_mode: QtGui.QAction
+    create_ai_find_all_mode: QtGui.QAction
     open_next_img: QtGui.QAction
     open_prev_img: QtGui.QAction
     keep_prev_zoom: QtGui.QAction
@@ -361,11 +360,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_text.set_label_suggestions(self._docks.unique_label_list.model())
         # The Setting, not the picker: the picker is empty until the model is
         # downloaded, and Prompt Compatibility is checked before that.
-        self._canvas_widgets.canvas.get_ai_detect_model_name = lambda: (
+        self._canvas_widgets.canvas.get_ai_find_all_model_name = lambda: (
             self._config["ai"]["text_model"] or ""
         )
-        self._canvas_widgets.canvas.get_ai_detect_query = self._ai_text.get_text_prompt
-        self._canvas_widgets.canvas.get_ai_detect_thresholds = lambda: (
+        self._canvas_widgets.canvas.get_ai_find_all_query = (
+            self._ai_text.get_text_prompt
+        )
+        self._canvas_widgets.canvas.get_ai_find_all_thresholds = lambda: (
             self._ai_text.get_score_threshold(),
             self._ai_text.get_iou_threshold(),
         )
@@ -736,34 +737,26 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             % ctrl,
         )
-        create_ai_points_to_shape_mode = mode_action(
-            text=self.tr("AI-Points"),
-            slot=lambda: self._switch_canvas_mode(
-                edit=False, create_mode="ai_points_to_shape"
-            ),
-            shortcut=shortcuts["create_ai_points"],
+        create_ai_segment_mode = mode_action(
+            text=self.tr("AI-Segment"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="ai_segment"),
+            shortcut=shortcuts["create_ai_segment"],
             icon="ai-points.svg",
             tip=self.tr(
-                "Click points to segment the object; hold %s and click to finish."
+                "Click points or drag a box to segment one object; hold %s and"
+                " click to finish."
             )
             % ctrl,
         )
-        create_ai_box_to_shape_mode = mode_action(
-            text=self.tr("AI-Box"),
+        create_ai_find_all_mode = mode_action(
+            text=self.tr("AI-Find All"),
             slot=lambda: self._switch_canvas_mode(
-                edit=False, create_mode="ai_box_to_shape"
+                edit=False, create_mode="ai_find_all"
             ),
-            shortcut=shortcuts["create_ai_box"],
-            icon="ai-box.svg",
-            tip=self.tr("Draw a bounding box to segment object."),
-        )
-        create_ai_detect_mode = mode_action(
-            text=self.tr("AI-Detect"),
-            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="ai_detect"),
-            shortcut=shortcuts["create_ai_detect"],
-            icon="ai-detect.svg",
+            shortcut=shortcuts["create_ai_find_all"],
+            icon="ai-find-all.svg",
             tip=self.tr(
-                "Detect every object that matches the text prompt or an example box"
+                "Find every object that matches the text prompt or an example box"
             ),
         )
         open_next_img = action(
@@ -962,9 +955,8 @@ class MainWindow(QtWidgets.QMainWindow):
             ("point", create_point_mode),
             ("line", create_line_mode),
             ("linestrip", create_line_strip_mode),
-            ("ai_points_to_shape", create_ai_points_to_shape_mode),
-            ("ai_box_to_shape", create_ai_box_to_shape_mode),
-            ("ai_detect", create_ai_detect_mode),
+            ("ai_segment", create_ai_segment_mode),
+            ("ai_find_all", create_ai_find_all_mode),
         ]
         # Both menus follow the platform Edit-menu convention: history first,
         # then the clipboard group, then the actions that alter a shape.
@@ -1032,9 +1024,8 @@ class MainWindow(QtWidgets.QMainWindow):
             create_line_mode=create_line_mode,
             create_point_mode=create_point_mode,
             create_line_strip_mode=create_line_strip_mode,
-            create_ai_points_to_shape_mode=create_ai_points_to_shape_mode,
-            create_ai_box_to_shape_mode=create_ai_box_to_shape_mode,
-            create_ai_detect_mode=create_ai_detect_mode,
+            create_ai_segment_mode=create_ai_segment_mode,
+            create_ai_find_all_mode=create_ai_find_all_mode,
             open_next_img=open_next_img,
             open_prev_img=open_prev_img,
             keep_prev_zoom=keep_prev_zoom,
@@ -1387,7 +1378,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.pan_request.connect(self._on_pan_request)
 
         canvas.new_shape.connect(self._on_new_shape)
-        canvas.ai_detect_draft_committed.connect(self._on_ai_detect_draft_committed)
+        canvas.ai_find_all_draft_committed.connect(self._on_ai_find_all_draft_committed)
         canvas.inference_produced_no_shapes.connect(
             self._on_inference_produced_no_shapes
         )
@@ -1699,20 +1690,20 @@ class MainWindow(QtWidgets.QMainWindow):
             return  # No image to detect in.
         prompt = self._ai_text.get_text_prompt()
         canvas = self._canvas_widgets.canvas
-        if canvas.has_ai_detect_draft:
+        if canvas.has_ai_find_all_draft:
             # Refine the example-box draft instead of adding Shapes on top; an
             # empty query keeps detecting like the examples.
-            canvas.rerun_ai_detect_draft()
+            canvas.rerun_ai_find_all_draft()
             # Enter and Esc act on the draft from the canvas.
             canvas.setFocus()
             return
         if not prompt:
-            self.show_status_message(self.tr("Type what to detect"), delay=5000)
+            self.show_status_message(self.tr("Type what to find"), delay=5000)
             self._ai_text.focus_text_prompt()
             return
         # Switching cancels a draft, so a Shape mid-drawing keeps its tool.
         if not canvas.is_drawing:
-            self._actions.create_ai_detect_mode.trigger()
+            self._actions.create_ai_find_all_mode.trigger()
         shape_type = self._ai_annotation.output_format
 
         # Checked against the Setting, so a model that is not downloaded yet is
@@ -1725,7 +1716,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr(
                     "%s only detects bounding boxes and cannot create "
                     "'%s' Shapes.\n\n"
-                    "Switch the AI-Detect model to 'SAM3 (smart)', "
+                    "Switch the AI-Find All model to 'SAM3 (smart)', "
                     "or set the output format to 'Rectangle'."
                 )
                 % (self._model_manager.models[requested_model], shape_type),
@@ -1771,14 +1762,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_ai_activity_changed(self) -> None:
         # The canvas rings a slow AI Assist prompt where it was placed; this
-        # names the running task for every prompt, AI-Detect included.
+        # names the running task for every prompt, AI-Find All included.
         worker = self._osam_worker
         job = worker.job
         canvas = self._canvas_widgets.canvas
         # The worker also runs other AI tools, so Run follows only detection.
         self._ai_text.set_detecting(
             job is not None
-            and (self._ai_text_job is not None or canvas.ai_detect_job is not None)
+            and (self._ai_text_job is not None or canvas.ai_find_all_job is not None)
         )
         on_cpu = worker.device == "cpu"
         detecting = True
@@ -1786,20 +1777,24 @@ class MainWindow(QtWidgets.QMainWindow):
             text, detecting = "", False
         elif isinstance(job, _AiTextJob):
             text = (
-                self.tr("Detecting '{query}' on CPU…")
+                self.tr("Finding all '{query}' on CPU…")
                 if on_cpu
-                else self.tr("Detecting '{query}'…")
+                else self.tr("Finding all '{query}'…")
             ).format(query=job.query)
-        elif (box_job := canvas.ai_detect_job) is job:
+        elif (box_job := canvas.ai_find_all_job) is job:
             assert box_job is not None
             if box_job.query:
                 text = (
-                    self.tr("Detecting '{query}' on CPU…")
+                    self.tr("Finding all '{query}' on CPU…")
                     if on_cpu
-                    else self.tr("Detecting '{query}'…")
+                    else self.tr("Finding all '{query}'…")
                 ).format(query=box_job.query)
             else:
-                text = self.tr("Detecting on CPU…") if on_cpu else self.tr("Detecting…")
+                text = (
+                    self.tr("Finding matches on CPU…")
+                    if on_cpu
+                    else self.tr("Finding matches…")
+                )
         else:
             text = self.tr("Segmenting on CPU…") if on_cpu else self.tr("Segmenting…")
             detecting = False
@@ -1859,7 +1854,7 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.opt(exception=e).error("AI text inference failed")
             self._on_inference_failed(f"{type(e).__name__}: {e}")
             return
-        self._commit_ai_detect(
+        self._commit_ai_find_all(
             shapes,
             propose_for_label=lambda label: propose(suppressed_by=label),
             query=text_job.query,
@@ -1869,20 +1864,20 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas = self._canvas_widgets.canvas
         canvas.select_shapes(shapes=list(canvas.selected_shapes))
 
-    def _on_ai_detect_draft_committed(
+    def _on_ai_find_all_draft_committed(
         self,
         shapes: list[Shape],
         propose_for_label: Callable[[str], list[Shape]],
         query: str,
         /,
     ) -> None:
-        added = self._commit_ai_detect(
+        added = self._commit_ai_find_all(
             shapes, propose_for_label=propose_for_label, query=query
         )
         # Select what the batch added, so it can be relabeled or deleted.
         self._canvas_widgets.canvas.select_shapes(shapes=added)
 
-    def _commit_ai_detect(
+    def _commit_ai_find_all(
         self,
         candidates: list[Shape],
         /,
@@ -1890,10 +1885,10 @@ class MainWindow(QtWidgets.QMainWindow):
         propose_for_label: Callable[[str], list[Shape]],
         query: str,
     ) -> list[Shape]:
-        # Every AI-Detect batch lands here, from a query or an example box, so
+        # Every AI-Find All batch lands here, from a query or an example box, so
         # labeling, skipping covered objects and the result message stay one.
         if not candidates:
-            self._report_ai_detect_result(candidates, name=query)
+            self._report_ai_find_all_result(candidates, name=query)
             return []
         # One entry labels the whole batch.
         entry = self._ask_new_shape_entry(query=query)
@@ -1901,7 +1896,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return []  # Cancelled: the batch is never added.
         # "black dog" saved as "dog": skip what "dog" Shapes cover.
         shapes = propose_for_label(entry.label)
-        self._report_ai_detect_result(shapes, name=entry.label)
+        self._report_ai_find_all_result(shapes, name=entry.label)
         if not shapes:
             return []
         for shape in shapes:
@@ -1915,7 +1910,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mark_dirty()
         return shapes
 
-    def _report_ai_detect_result(self, shapes: list[Shape], /, *, name: str) -> None:
+    def _report_ai_find_all_result(self, shapes: list[Shape], /, *, name: str) -> None:
         # Polygons from one mask's separate lands share a Group: one object.
         count = len({id(s) if s.group_id is None else s.group_id for s in shapes})
         message = (
@@ -1984,7 +1979,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _refresh_text_model_choices(self) -> None:
         # Grey out text models that cannot produce Shapes in the Output, which
-        # AI-Detect always uses; _submit_ai_prompt still rejects a model
+        # AI-Find All always uses; _submit_ai_prompt still rejects a model
         # already chosen.
         shape_type = self._ai_annotation.output_format
         reason = self.tr("Detects boxes only. Switch to Rectangle to use this model.")
@@ -2015,7 +2010,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 " }"
             )
         for mode, action in self._actions.draw:
-            if mode not in ("ai_points_to_shape", "ai_box_to_shape", "ai_detect"):
+            if mode not in ("ai_segment", "ai_find_all"):
                 continue
             for widget in action.associatedObjects():
                 if isinstance(widget, QtWidgets.QToolButton):
@@ -2474,7 +2469,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mark_dirty()
 
     def _ask_new_shape_entry(self, *, query: str) -> LabelDialogEntry | None:
-        # One entry labels every Shape one action made. An AI-Detect query is
+        # One entry labels every Shape one action made. An AI-Find All query is
         # a prompt, not always the label ("black dog" may be a "dog"), so it
         # only prefills the dialog. None discards the new Shapes.
         items = self._docks.unique_label_list.selectedItems()
@@ -2502,9 +2497,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_example_box_unsupported(self) -> None:
         self.show_status_message(
-            self.tr("%s can't detect from an example box. Choose SAM3 (smart).")
+            self.tr("%s can't use an example box. Choose SAM3 (smart).")
             % self._model_manager.models[
-                self._canvas_widgets.canvas.get_ai_detect_model_name()
+                self._canvas_widgets.canvas.get_ai_find_all_model_name()
             ],
             delay=5000,
         )

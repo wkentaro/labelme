@@ -75,51 +75,47 @@
         <translation>مدل</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>برچسبی که باید تشخیص داده شود</translation>
+        <source>What to find</source>
+        <translation>چه چیزی پیدا شود</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>دستور</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>در حال تشخیص…</translation>
+        <source>Finding…</source>
+        <translation>در حال جست‌وجو…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>مدل AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>مدل AI-Find All</translation>
     </message>
 </context>
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>دستیار هوش مصنوعی</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>تشخیص همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>پیدا کردن همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>بخش‌بندی یک شیء از روی نقاط و یک کادر</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>حالت &apos;AI-Points&apos;، &apos;AI-Box&apos; یا &apos;AI-Detect&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>برای فعال‌سازی دستیار هوش مصنوعی، &apos;AI-Segment&apos; یا &apos;AI-Find All&apos; را انتخاب کنید</translation>
     </message>
 </context>
 <context>
@@ -199,20 +195,20 @@
         <translation>ویرایش اشکال</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>برای افزودن روی نقاط کلیک کنید، یا %s را نگه دارید و کلیک کنید تا حذف شوند. %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>برای افزودن روی نقاط کلیک کنید، %s را نگه دارید و کلیک کنید تا حذف شوند، یا یک کادر بکشید. %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>در AI-Detect بنویسید چه چیزی تشخیص داده شود، یا روی گوشهٔ اول کادری دور یک نمونه کلیک کنید</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>در AI-Find All بنویسید چه چیزی پیدا شود، یا روی گوشهٔ اول کادری دور یک نمونه کلیک کنید</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>برای کنار گذاشتن اشیای مشابه این، روی گوشهٔ مقابل کلیک کنید</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>روی گوشهٔ مقابل کلیک کنید تا همهٔ اشیای مشابه این یکی تشخیص داده شوند</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>روی گوشهٔ مقابل کلیک کنید تا همهٔ اشیای مشابه این یکی پیدا شوند</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>گوشهٔ دیگر را انتخاب کنید. برای مربع، Shift را نگه دارید.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>برای قطعه‌بندی AI روی اولین گوشه bbox کلیک کنید</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>روی گوشه مقابل برای قطعه‌بندی شیء کلیک کنید</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>برای قرار دادن نقاط خط شکسته کلیک کنید؛ %s را نگه دارید و کلیک کنید تا آخرین نقطه قرار گیرد.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>روی نقاط کلیک کنید تا شیء بخش‌بندی شود؛ %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>باز کردن تصویر بعدی (برای کپی شکل‌های فعلی، %s را نگه دارید)</translation>
     </message>
@@ -624,12 +608,20 @@
         <translation>ویرایش</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>تشخیص همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>روی نقاط کلیک کنید یا یک کادر بکشید تا یک شیء بخش‌بندی شود؛ %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>پیدا کردن همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +794,32 @@
         <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>بنویسید چه چیزی تشخیص داده شود</translation>
+        <source>Type what to find</source>
+        <translation>بنویسید چه چیزی پیدا شود</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>در حال شناسایی روی CPU…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>در حال جست‌وجوی موارد مطابق روی CPU…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>در حال شناسایی…</translation>
+        <source>Finding matches…</source>
+        <translation>در حال جست‌وجوی موارد مطابق…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s فقط کادرهای محصورکننده را تشخیص می‌دهد و نمی‌تواند شکل‌های &apos;%s&apos; ایجاد کند.
 
-مدل AI-Detect را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
+مدل AI-Find All را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>فایل حاشیه‌نویسی متعلق به تصویر دیگری است: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s نمی‌تواند از روی کادر نمونه تشخیص دهد. SAM3 (smart) را انتخاب کنید.</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s نمی‌تواند از کادر نمونه استفاده کند. SAM3 (smart) را انتخاب کنید.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1004,18 +996,6 @@ Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format
         <translation>خط چندتکه‌ای</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>یک کادر محصورکننده برای قطعه‌بندی شیء رسم کنید.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>ادامه با پیش‌فرض‌ها</translation>
     </message>
@@ -1024,12 +1004,12 @@ Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format
         <translation>پشتیبان‌گیری و بازنشانی</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>در حال شناسایی «{query}»…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>در حال پیدا کردن همهٔ «{query}»…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>در حال شناسایی «{query}» روی CPU…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>در حال پیدا کردن همهٔ «{query}» روی CPU…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1428,8 @@ Expected location: {path}</source>
         <translation>هر نام پرچم در یک خط. الگوها: ^car$ دقیقاً با car، car با پیشوند و .* با هر برچسب مطابقت دارد.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>مدل AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>مدل AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>
