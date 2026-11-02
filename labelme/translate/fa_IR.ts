@@ -1120,10 +1120,6 @@ Expected location: {path}</source>
         <translation>تنظیمات این نشست از طریق --config مدیریت می‌شوند</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s نمی‌تواند نقاط را همراه با کادر استفاده کند. از نقاط یا یک کادر استفاده کنید.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>تصویر بزرگ</translation>
     </message>

@@ -2326,11 +2326,12 @@ def _drag(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("model_name", ["sam2:small", "sam3:latest"])
 def test_ai_segment_combines_clicks_and_one_dragged_box(
-    *, canvas: Canvas, qtbot: QtBot
+    *, canvas: Canvas, qtbot: QtBot, model_name: str
 ) -> None:
     canvas.ensure_ai_model_ready = lambda _: True
-    canvas.set_ai_model_name(model_name="sam2:small")
+    canvas.set_ai_model_name(model_name=model_name)
     canvas.scale = 1.0
     canvas.set_editing(value=False, create_mode="ai_segment")
 
@@ -2374,40 +2375,6 @@ def test_ai_segment_combines_clicks_and_one_dragged_box(
         request.points, [[40, 20], [60, 25], [20, 5], [80, 40]]
     )
     assert request.point_labels.tolist() == [1, 0, 2, 3]
-
-
-@pytest.mark.gui
-@pytest.mark.parametrize("box_first", [True, False])
-def test_ai_segment_refuses_points_with_a_box_for_sam3(
-    *, canvas: Canvas, qtbot: QtBot, box_first: bool
-) -> None:
-    canvas.ensure_ai_model_ready = lambda _: True
-    canvas.set_ai_model_name(model_name="sam3:latest")
-    canvas.scale = 1.0
-    canvas.set_editing(value=False, create_mode="ai_segment")
-    refused: list[str] = []
-    canvas.points_with_box_unsupported.connect(refused.append)
-
-    def drag_box() -> None:
-        _drag(
-            qtbot=qtbot,
-            canvas=canvas,
-            start=QtCore.QPoint(10, 10),
-            end=QtCore.QPoint(70, 30),
-        )
-
-    def click() -> None:
-        qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 20))
-
-    first, second = (drag_box, click) if box_first else (click, drag_box)
-    first()
-    kept = canvas._current
-    second()
-
-    assert refused == ["sam3:latest"]
-    assert canvas._current == kept
-    assert canvas.get_ai_model_name() == "sam3:latest"
-    assert _worker(canvas).requests == []
 
 
 @pytest.mark.gui
@@ -2479,34 +2446,6 @@ def test_ai_segment_escape_mid_drag_drops_the_box(
     qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=end)
 
     assert canvas._current is None
-
-
-@pytest.mark.gui
-def test_ai_segment_preview_skips_a_draft_the_new_model_refuses(
-    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    canvas.ensure_ai_model_ready = lambda _: True
-    canvas.set_ai_model_name(model_name="sam2:small")
-    canvas.scale = 1.0
-    canvas.set_editing(value=False, create_mode="ai_segment")
-    _drag(
-        qtbot=qtbot,
-        canvas=canvas,
-        start=QtCore.QPoint(10, 10),
-        end=QtCore.QPoint(70, 30),
-    )
-    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 20))
-    canvas._ai_segment_preview = [Shape(shape_type="polygon")]
-    canvas.set_ai_model_name(model_name="sam3:latest")
-    repaints: list[None] = []
-    monkeypatch.setattr(canvas, "update", lambda: repaints.append(None))
-
-    canvas._refresh_ai_segment_preview()
-
-    assert _worker(canvas).requests == []
-    # The stale mask goes without waiting for more input.
-    assert canvas._ai_segment_preview == []
-    assert repaints
 
 
 @pytest.mark.gui

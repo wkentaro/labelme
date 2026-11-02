@@ -1120,10 +1120,6 @@ Expected location: {path}</source>
         <translation>Ошибка сохранения файла аннотаций</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s не может использовать точки вместе с рамкой. Используйте точки или рамку.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Большое изображение</translation>
     </message>

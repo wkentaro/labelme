@@ -68,9 +68,3 @@ def find_ai_assist_model_option(*, model_name: str) -> _AiAssistModelOption | No
 def accepts_example_boxes(*, model_name: str) -> bool:
     # YOLO-World detects from text only; SAM3 also takes example boxes.
     return model_name.startswith("sam3:")
-
-
-def accepts_points_with_box(*, model_name: str) -> bool:
-    # ponytail: osam rejects SAM3 points with a box until wkentaro/osam#127
-    # ships; drop this check once Labelme requires that release.
-    return not model_name.startswith("sam3:")

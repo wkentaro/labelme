@@ -1036,10 +1036,6 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
         <translation>Το %s δεν μπορεί να χρησιμοποιήσει πλαίσιο παραδείγματος. Επιλέξτε SAM3 (smart).</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>Το %s δεν μπορεί να χρησιμοποιήσει σημεία μαζί με πλαίσιο. Χρησιμοποιήστε σημεία ή ένα πλαίσιο.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Μεγάλη εικόνα</translation>
     </message>

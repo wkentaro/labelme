@@ -1120,10 +1120,6 @@ Posizione prevista: {path}</translation>
         <translation>Le impostazioni sono gestite tramite --config per questa sessione</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s non può usare punti insieme a un riquadro. Usa punti o un riquadro.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Immagine grande</translation>
     </message>

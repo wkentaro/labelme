@@ -1120,10 +1120,6 @@ Vị trí dự kiến: {path}</translation>
         <translation>Cài đặt được quản lý qua --config trong phiên này</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s không thể dùng điểm cùng với khung. Hãy dùng điểm hoặc một khung.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Ảnh lớn</translation>
     </message>

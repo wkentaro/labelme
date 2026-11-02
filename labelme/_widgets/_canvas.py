@@ -179,7 +179,6 @@ _AI_PROGRESS_RADIUS: Final = 12
 
 _AI_CREATE_MODES: Final[tuple[_CreateMode, ...]] = ("ai_segment", "ai_find_all")
 # AI-Segment prompt labels: 0, 1 = negative, positive point; 2, 3 = box corners.
-_AI_POINT_LABELS: Final = (0, 1)
 _AI_BOX_LABELS: Final = (2, 3)
 
 
@@ -238,8 +237,6 @@ class Canvas(QtWidgets.QWidget):
     inference_produced_no_shapes = QtCore.Signal()
     inference_failed = QtCore.Signal(str)
     example_box_unsupported = QtCore.Signal()
-    # The AI-Segment model name, when it can't take points with a box.
-    points_with_box_unsupported = QtCore.Signal(str)
     # (draft Shapes, propose for a label, query): the app labels the batch and
     # adds what propose returns for that label.
     ai_find_all_draft_committed = QtCore.Signal(list, object, str)
@@ -1582,29 +1579,12 @@ class Canvas(QtWidgets.QWidget):
         if draft is None:  # A box with no area.
             self.update()
             return
-        if self._refuses_points_with_box(draft, report=True):
-            self.update()
-            return
         self._current = draft
         self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
         if press[2] & Qt.KeyboardModifier.ControlModifier:
             self._finalize()
             return
         self.update()
-
-    def _refuses_points_with_box(self, draft: _DraftShape, /, *, report: bool) -> bool:
-        # Prompt Compatibility: refuse before any inference.
-        model_name = self._ai_assist_session.model_name
-        labels = set(draft.point_labels)
-        if (
-            labels.isdisjoint(_AI_POINT_LABELS)
-            or labels.isdisjoint(_AI_BOX_LABELS)
-            or _ai_models.accepts_points_with_box(model_name=model_name)
-        ):
-            return False
-        if report:
-            self.points_with_box_unsupported.emit(model_name)
-        return True
 
     def _is_final_open_path_click(self, *, event: QtGui.QMouseEvent) -> bool:
         # A polygon ends by returning to its first vertex; the modes with no
@@ -2326,10 +2306,9 @@ class Canvas(QtWidgets.QWidget):
         self._ai_segment_preview_key = key
         base = current or _DraftShape(shape_type="points")
         preview = _with_ai_segment_input(base, self._line)
-        if preview is None or self._refuses_points_with_box(preview, report=False):
+        if preview is None:
             preview = base  # What a release would keep.
-        # A model switch can leave the draft itself incompatible.
-        if not preview.points or self._refuses_points_with_box(preview, report=False):
+        if not preview.points:
             self._ai_segment_preview = []
             self.update()
             return
@@ -2399,9 +2378,6 @@ class Canvas(QtWidgets.QWidget):
                 )
                 return
             assert self.create_mode == "ai_segment"
-            # The model may have changed since the draft took both.
-            if self._refuses_points_with_box(draft, report=True):
-                return
             # The app disables Undo while the result is pending, which would
             # otherwise drop the draft.
             self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
@@ -2839,7 +2815,7 @@ def _without_ai_segment_box(draft: _DraftShape, /) -> _DraftShape:
     kept = [
         (point, label)
         for point, label in zip(draft.points, draft.point_labels, strict=True)
-        if label in _AI_POINT_LABELS
+        if label not in _AI_BOX_LABELS
     ]
     return dataclasses.replace(
         draft,

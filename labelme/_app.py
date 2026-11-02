@@ -1383,7 +1383,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self._on_inference_produced_no_shapes
         )
         canvas.example_box_unsupported.connect(self._on_example_box_unsupported)
-        canvas.points_with_box_unsupported.connect(self._on_points_with_box_unsupported)
         # The preview path emits this from inside paintEvent (an active
         # QPainter); a queued connection defers the status-bar update until
         # after the paint cycle so it never mutates UI mid-paint.
@@ -2502,13 +2501,6 @@ class MainWindow(QtWidgets.QMainWindow):
             % self._model_manager.models[
                 self._canvas_widgets.canvas.get_ai_find_all_model_name()
             ],
-            delay=5000,
-        )
-
-    def _on_points_with_box_unsupported(self, model_name: str, /) -> None:
-        self.show_status_message(
-            self.tr("%s can't use points with a box. Use points or a box.")
-            % self._model_manager.models[model_name],
             delay=5000,
         )
 

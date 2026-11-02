@@ -55,7 +55,7 @@ An optional AI Assist Setting for point prompts and box prompts. A candidate tha
 _Avoid_: duplicate suppression, overlap suppression.
 
 **AI-Segment**:
-The AI Assist tool that makes one Shape from positive points (click), negative points (Shift-click), and at most one box (drag), combined in any order. A new box replaces the previous one. Enter or a Ctrl-click makes the Shape. A model that can't take points with a box refuses that prompt before inference and keeps the model Setting.
+The AI Assist tool that makes one Shape from positive points (click), negative points (Shift-click), and at most one box (drag), combined in any order. A new box replaces the previous one. Enter or a Ctrl-click makes the Shape.
 _Avoid_: AI-Points, AI-Box (former tools it replaces), AI-Polygon, AI-Mask (older names of AI-Points).
 
 **AI-Find All**:

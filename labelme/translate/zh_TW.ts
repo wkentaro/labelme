@@ -1120,10 +1120,6 @@ Expected location: {path}</source>
         <translation>本次工作階段的設定由 --config 管理</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s 無法同時使用點和框。請使用點或框。</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>大型影像</translation>
     </message>

@@ -1120,10 +1120,6 @@ Expected location: {path}</source>
         <translation>本次会话的设置通过 --config 管理</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s 无法同时使用点和框。请使用点或框。</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>大图像</translation>
     </message>

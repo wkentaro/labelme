@@ -1036,10 +1036,6 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
         <translation>%s не може використати рамку-приклад. Виберіть SAM3 (smart).</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s не може використовувати точки разом із рамкою. Використовуйте точки або рамку.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Велике зображення</translation>
     </message>

@@ -1130,10 +1130,6 @@ Expected location: {path}</source>
         <translation>このセッションの設定は --config で管理されています</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s は点とボックスを一緒に使えません。点かボックスのどちらかを使ってください。</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>大きな画像</translation>
     </message>

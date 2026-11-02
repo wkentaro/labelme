@@ -1120,10 +1120,6 @@ Emplacement attendu : {path}</translation>
         <translation>Les réglages sont gérés via --config pour cette session</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s ne peut pas utiliser des points avec un cadre. Utilisez des points ou un cadre.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Grande image</translation>
     </message>

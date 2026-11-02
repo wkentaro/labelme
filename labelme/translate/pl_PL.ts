@@ -1120,10 +1120,6 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Ustawienia są zarządzane przez --config w tej sesji</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s nie może użyć punktów razem z ramką. Użyj punktów albo ramki.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Duży obraz</translation>
     </message>

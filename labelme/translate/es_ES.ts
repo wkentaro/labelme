@@ -1120,10 +1120,6 @@ Ubicación esperada: {path}</translation>
         <translation>Los ajustes se gestionan mediante --config para esta sesión</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s no puede usar puntos junto con un cuadro. Use puntos o un cuadro.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Imagen grande</translation>
     </message>

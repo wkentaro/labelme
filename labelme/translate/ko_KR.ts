@@ -1120,10 +1120,6 @@ Expected location: {path}</source>
         <translation>이 세션의 설정은 --config로 관리됩니다</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s은(는) 점과 상자를 함께 사용할 수 없습니다. 점이나 상자 중 하나를 사용하세요.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>큰 이미지</translation>
     </message>

@@ -1121,10 +1121,6 @@ Expected location: {path}</source>
         <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s ใช้จุดร่วมกับกรอบไม่ได้ ใช้จุดหรือกรอบอย่างใดอย่างหนึ่ง</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>รูปภาพขนาดใหญ่</translation>
     </message>

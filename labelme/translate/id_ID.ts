@@ -916,10 +916,6 @@ Ganti model AI-Find All ke &apos;SAM3 (smart)&apos;, atau atur format keluaran k
         <translation>Tidak ada &apos;{query}&apos; baru yang ditemukan</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s tidak dapat menggunakan titik bersama kotak. Gunakan titik atau sebuah kotak.</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Gambar besar memerlukan lebih banyak memori</translation>
     </message>

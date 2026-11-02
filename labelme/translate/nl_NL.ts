@@ -1120,10 +1120,6 @@ Verwachte locatie: {path}</translation>
         <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s kan geen punten samen met een kader gebruiken. Gebruik punten of een kader.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Grote afbeelding</translation>
     </message>

@@ -1124,10 +1124,6 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Einstellungen werden für diese Sitzung über --config verwaltet</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s kann keine Punkte zusammen mit einem Rahmen verwenden. Verwenden Sie Punkte oder einen Rahmen.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Großes Bild</translation>
     </message>

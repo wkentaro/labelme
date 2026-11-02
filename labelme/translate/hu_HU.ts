@@ -1120,10 +1120,6 @@ Várt hely: {path}</translation>
         <translation>A beállítások ebben a munkamenetben --config segítségével vannak kezelve</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>A(z) %s nem tud pontokat és keretet együtt használni. Használjon pontokat vagy egy keretet.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Nagyméretű kép</translation>
     </message>

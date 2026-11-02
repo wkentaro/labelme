@@ -1120,10 +1120,6 @@ Beklenen konum: {path}</translation>
         <translation>Bu oturumda ayarlar --config ile yönetiliyor</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s noktaları bir kutuyla birlikte kullanamaz. Noktaları veya bir kutuyu kullanın.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Büyük görüntü</translation>
     </message>

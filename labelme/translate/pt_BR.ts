@@ -1120,10 +1120,6 @@ Local esperado: {path}</translation>
         <translation>As configurações desta sessão são gerenciadas via --config</translation>
     </message>
     <message>
-        <source>%s can&apos;t use points with a box. Use points or a box.</source>
-        <translation>%s não pode usar pontos junto com uma caixa. Use pontos ou uma caixa.</translation>
-    </message>
-    <message>
         <source>Large Image</source>
         <translation>Imagem grande</translation>
     </message>
