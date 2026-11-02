@@ -792,18 +792,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s detecta apenas caixas delimitadoras e não pode criar formas &apos;%s&apos;.
 
-Mude o modelo do AI-Find All para &apos;SAM3 (smart)&apos; ou defina o formato de saída como &apos;Rectangle&apos;.</translation>
+Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saída como &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>O arquivo de anotações pertence a outra imagem: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s não pode usar uma caixa de exemplo. Escolha SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s não pode usar uma caixa de exemplo. Escolha SAM 3.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1486,42 +1486,6 @@ Local esperado: {path}</translation>
     <message>
         <source>Default model</source>
         <translation>Modelo padrão</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (velocidade)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (precisão)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (velocidade)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (equilibrado)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (precisão)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (velocidade)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (equilibrado)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (precisão)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

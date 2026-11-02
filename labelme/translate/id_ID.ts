@@ -744,18 +744,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat bentuk &apos;%s&apos;.
 
-Ganti model AI-Find All ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
+Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Berkas anotasi milik gambar lain: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s tidak dapat menggunakan kotak contoh. Pilih SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s tidak dapat menggunakan kotak contoh. Pilih SAM 3.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1538,42 +1538,6 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Default model</source>
         <translation>Model default</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (kecepatan)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (akurasi)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (kecepatan)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (seimbang)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (akurasi)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (kecepatan)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (seimbang)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (akurasi)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

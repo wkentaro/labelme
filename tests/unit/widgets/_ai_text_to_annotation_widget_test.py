@@ -15,7 +15,7 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
 
     run_button = widget._run_button
 
-    model_name = widget.tr("Model") if sys.platform == "win32" else "SAM3 (smart)"
+    model_name = widget.tr("Model") if sys.platform == "win32" else "SAM 3"
     for control, name in (
         (widget._text_input, widget.tr("Prompt")),
         (widget._model_combo, model_name),
@@ -27,7 +27,7 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
         assert interface.text(QtGui.QAccessible.Text.Name) == name
 
     interface = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
-    assert interface.text(QtGui.QAccessible.Text.Value) == "SAM3 (smart)"
+    assert interface.text(QtGui.QAccessible.Text.Value) == "SAM 3"
     assert interface.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-Find All model"
     )

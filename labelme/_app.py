@@ -1711,7 +1711,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr(
                     "%s only detects bounding boxes and cannot create "
                     "'%s' Shapes.\n\n"
-                    "Switch the AI-Find All model to 'SAM3 (smart)', "
+                    "Switch the AI-Find All model to 'SAM 3', "
                     "or set the output format to 'Rectangle'."
                 )
                 % (self._model_manager.models[requested_model], shape_type),
@@ -2465,7 +2465,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_example_box_unsupported(self) -> None:
         self.show_status_message(
-            self.tr("%s can't use an example box. Choose SAM3 (smart).")
+            self.tr("%s can't use an example box. Choose SAM 3.")
             % self._model_manager.models[
                 self._canvas_widgets.canvas.get_ai_find_all_model_name()
             ],

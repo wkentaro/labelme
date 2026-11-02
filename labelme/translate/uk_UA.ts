@@ -1002,10 +1002,10 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s виявляє лише обмежувальні рамки й не може створювати фігури &apos;%s&apos;.
 
-Перемкніть модель AI-Find All на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
+Перемкніть модель AI-Find All на &apos;SAM 3&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
@@ -1016,8 +1016,8 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
         <translation>Недійсна мітка</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s не може використати рамку-приклад. Виберіть SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s не може використати рамку-приклад. Виберіть SAM 3.</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1486,42 +1486,6 @@ Expected location: {path}</source>
     <message>
         <source>Default model</source>
         <translation>Модель за замовчуванням</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (швидкість)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (точність)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (швидкість)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (збалансований)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (точність)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (швидкість)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (збалансований)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (точність)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
