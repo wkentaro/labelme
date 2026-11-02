@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>รายละเอียดโพลีกอน</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>วงกลม</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>เลือกโหมด &apos;AI-Points&apos; หรือ &apos;AI-Box&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>โมเดลสร้างคำอธิบายประกอบด้วย AI</translation>
     </message>
@@ -60,10 +52,6 @@
         <translation>โมเดล</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>ผู้ช่วย AI</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>รูปแบบผลลัพธ์</translation>
     </message>
@@ -71,16 +59,8 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>เช่น สุนัข, แมว, นก</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>รัน</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>โมเดลพรอมต์ข้อความ AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,55 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI สร้างแอนโนเทชันจากข้อความที่ป้อน</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>พรอมต์ข้อความ AI</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>เลือกโหมด &apos;Polygon&apos;, &apos;Rectangle&apos; หรือ &apos;AI-Points&apos; เพื่อเปิดใช้งาน</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>โมเดล</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>เลเบลที่จะตรวจจับ</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>พรอมต์</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>กำลังตรวจจับ…</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>โมเดล AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>ผู้ช่วย AI</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>ตรวจจับวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>เลือกโหมด &apos;AI-Points&apos;, &apos;AI-Box&apos; หรือ &apos;AI-Detect&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
     </message>
 </context>
 <context>
@@ -192,6 +203,18 @@
         <translation>คลิกจุดเพื่อรวม หรือกด %s ค้างไว้แล้วคลิกเพื่อยกเว้น กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
     </message>
     <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>พิมพ์สิ่งที่ต้องการตรวจจับใน AI-Detect หรือคลิกมุมแรกของกรอบรอบตัวอย่างหนึ่งชิ้น</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>คลิกมุมตรงข้ามเพื่อยกเว้นวัตถุที่คล้ายกับสิ่งนี้</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>คลิกมุมตรงข้ามเพื่อตรวจจับวัตถุทุกชิ้นที่เหมือนชิ้นนี้</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>คลิกจุดเริ่มต้นของเส้น</translation>
     </message>
@@ -230,6 +253,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>คลิกมุมตรงข้ามเพื่อแบ่งส่วนวัตถุ</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter เพิ่มผลลัพธ์ Esc ทิ้งผลลัพธ์ กด %s ค้างไว้แล้ววาดกรอบเพื่อยกเว้นวัตถุที่คล้ายกัน</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -598,6 +625,14 @@
         <translation>แก้ไข</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>ตรวจจับวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>ถัดไป</translation>
@@ -768,8 +803,32 @@
         <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>พิมพ์สิ่งที่ต้องการตรวจจับ</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>กำลังตรวจหาบน CPU…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>กำลังตรวจหา…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างรูปร่าง &apos;%s&apos; ได้
+
+เปลี่ยนโมเดล AI-Detect เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>ไฟล์คำอธิบายประกอบนี้เป็นของรูปอื่น: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s ตรวจจับจากกรอบตัวอย่างไม่ได้ เลือก SAM3 (smart)</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -980,14 +1039,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>กำลังแบ่งส่วน…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างรูปร่าง &apos;%s&apos; ได้
-
-เปลี่ยนโมเดลพรอมต์ข้อความ AI เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1398,6 +1449,10 @@ Expected location: {path}</source>
         <translation>หนึ่งชื่อแฟล็กต่อบรรทัด รูปแบบ: ^car$ ตรงกับ car เท่านั้น, car ตรงกับคำนำหน้า, .* ตรงกับทุกป้ายกำกับ</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>โมเดล AI-Detect</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>รายละเอียดโพลีกอน</translation>
     </message>
@@ -1504,10 +1559,6 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>โมเดลพรอมต์ข้อความ</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

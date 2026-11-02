@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI, &apos;AI-Noktalar&apos; ve &apos;AI-Kutu&apos; modlarında açıklama önerir</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Poligon ayrıntısı</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Daire</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos; veya &apos;AI-Box&apos; modunu seçin</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI destekli açıklama modeli</translation>
     </message>
@@ -60,10 +52,6 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>AI Yardımı</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Çıktı biçimi</translation>
     </message>
@@ -71,16 +59,8 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>ör. köpek,kedi,kuş</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Çalıştır</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI Metin İstemi modeli</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,55 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI, metin isteminden açıklamalar oluşturur</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>AI Metin İstemi</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Etkinleştirmek için &apos;Çokgen&apos;, &apos;Dikdörtgen&apos; veya &apos;AI-Noktalar&apos; modunu seçin</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Model</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>Algılanacak etiket</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>İstem</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Algılanıyor…</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect modeli</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>AI Yardımı</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri algıla</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI, &apos;AI-Noktalar&apos; ve &apos;AI-Kutu&apos; modlarında açıklama önerir</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos;, &apos;AI-Box&apos; veya &apos;AI-Detect&apos; modunu seçin</translation>
     </message>
 </context>
 <context>
@@ -192,6 +203,18 @@
         <translation>Dahil etmek için noktalara tıklayın veya hariç tutmak için %s tuşunu basılı tutup tıklayın. Bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
     </message>
     <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>AI-Detect&apos;e neyi algılamak istediğinizi yazın veya bir örneği çevreleyen kutunun ilk köşesine tıklayın</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Bunun gibi nesneleri hariç tutmak için karşı köşeye tıklayın</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>Buna benzeyen tüm nesneleri algılamak için karşı köşeye tıklayın</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Çizginin başlangıç noktasına tıklayın</translation>
     </message>
@@ -230,6 +253,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Nesneyi bölütlemek için karşı köşeye tıklayın</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter sonuçları ekler, Esc atar. Benzer nesneleri hariç tutmak için %s tuşunu basılı tutup bir kutu çizin.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -597,6 +624,14 @@
         <translation>Düzenle</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri algıla</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Sonraki</translation>
@@ -767,8 +802,32 @@
         <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>Neyi algılamak istediğinizi yazın</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>CPU&apos;da algılanıyor…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Algılanıyor…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; şekilleri oluşturamaz.
+
+AI-Detect modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Açıklama dosyası başka bir görüntüye ait: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s örnek kutusundan algılama yapamaz. SAM3 (smart) seçin.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -979,14 +1038,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>Bölütleniyor…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; şekilleri oluşturamaz.
-
-AI Metin İstemi modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1448,10 @@ Beklenen konum: {path}</translation>
         <translation>Her satıra bir bayrak adı. Desenler: ^car$ tam olarak car ile, car bir önekle, .* her etiketle eşleşir.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect modeli</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Poligon ayrıntısı</translation>
     </message>
@@ -1503,10 +1558,6 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Metin istemi modeli</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

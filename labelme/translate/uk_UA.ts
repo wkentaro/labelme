@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Деталізація полігона</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Коло</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Виберіть режим &apos;AI-Points&apos; або &apos;AI-Box&apos;, щоб увімкнути ШІ-помічника</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>Модель розмітки за допомогою AI</translation>
     </message>
@@ -60,10 +52,6 @@
         <translation>Модель</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>ШІ-помічник</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Формат виведення</translation>
     </message>
@@ -71,20 +59,8 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI створює анотації з текстової підказки</translation>
-    </message>
-    <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>наприклад, собака, кішка, птах</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Запустити</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Модель текстового запиту ШІ</translation>
     </message>
     <message>
         <source>Score</source>
@@ -95,20 +71,55 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Виберіть режим &apos;Polygon&apos;, &apos;Rectangle&apos; або &apos;AI-Points&apos;, щоб увімкнути</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Модель</translation>
     </message>
     <message>
-        <source>AI Text Prompt</source>
-        <translation>Текстовий запит ШІ</translation>
+        <source>Label to detect</source>
+        <translation>Мітка для пошуку</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Запит</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Пошук…</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Модель AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>ШІ-помічник</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Виявити всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Виберіть режим &apos;AI-Points&apos;, &apos;AI-Box&apos; або &apos;AI-Detect&apos;, щоб увімкнути ШІ-помічника</translation>
     </message>
 </context>
 <context>
@@ -176,6 +187,18 @@
         <translation>Клацайте точки, щоб включити, або утримуйте %s і клацніть, щоб виключити. Утримуйте %s і клацніть, щоб завершити.</translation>
     </message>
     <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>Введіть в AI-Detect, що потрібно знайти, або клацніть перший кут рамки навколо одного прикладу</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Натисніть протилежний кут, щоб виключити об&apos;єкти, схожі на цей</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>Клацніть протилежний кут, щоб знайти всі такі самі об’єкти</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Натисніть початкову точку лінії</translation>
     </message>
@@ -194,6 +217,10 @@
     <message>
         <source>Click center point for circle</source>
         <translation>Натисніть центральну точку для кола</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter додає результати, Esc відхиляє їх. Утримуючи %s, намалюйте рамку, щоб виключити схожі об&apos;єкти.</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>
@@ -621,6 +648,14 @@
         <translation>Клацайте точки, щоб сегментувати об&apos;єкт; утримуйте %s і клацніть, щоб завершити.</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Виявити всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Далі</translation>
@@ -763,16 +798,20 @@
         <translation>Збереження…</translation>
     </message>
     <message>
-        <source>Mask Output Unavailable</source>
-        <translation>Вивід маски недоступний</translation>
+        <source>Type what to detect</source>
+        <translation>Введіть, що потрібно знайти</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s виявляє лише обмежувальні рамки й не може створювати фігури &apos;%s&apos;.
-
-Перемкніть модель текстового запиту ШІ на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
+        <source>Detecting on CPU…</source>
+        <translation>Пошук на ЦП…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Пошук…</translation>
+    </message>
+    <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Вивід маски недоступний</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
@@ -997,12 +1036,24 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Знайдено нових «{query}»: {count}</translation>
     </message>
     <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s виявляє лише обмежувальні рамки й не може створювати фігури &apos;%s&apos;.
+
+Перемкніть модель AI-Detect на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Нових «{query}» не знайдено</translation>
     </message>
     <message>
         <source>Invalid Label</source>
         <translation>Недійсна мітка</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s не вміє шукати за рамкою-прикладом. Виберіть SAM3 (smart).</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1397,6 +1448,10 @@ Expected location: {path}</source>
         <translation>Одна назва прапорця на рядок. Шаблони: ^car$ точно відповідає car, car — префіксу, .* — будь-якій мітці.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>Модель AI-Detect</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Деталізація полігона</translation>
     </message>
@@ -1503,10 +1558,6 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Модель текстового запиту</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

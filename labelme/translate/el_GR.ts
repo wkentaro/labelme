@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Λεπτομέρεια πολυγώνου</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Κύκλος</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos; ή &apos;AI-Box&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>Μοντέλο σχολιασμού με υποβοήθηση AI</translation>
     </message>
@@ -60,10 +52,6 @@
         <translation>Μοντέλο</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>Βοήθεια AI</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Μορφή εξόδου</translation>
     </message>
@@ -71,20 +59,8 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>Η τεχνητή νοημοσύνη δημιουργεί σχολιασμούς από την προτροπή κειμένου</translation>
-    </message>
-    <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>π.χ. σκύλος,γάτα,πουλί</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Μοντέλο κειμένου προτροπής AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -95,20 +71,55 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;Polygon&apos;, &apos;Rectangle&apos; ή &apos;AI-Points&apos; για ενεργοποίηση</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Μοντέλο</translation>
     </message>
     <message>
-        <source>AI Text Prompt</source>
-        <translation>Κείμενο προτροπής AI</translation>
+        <source>Label to detect</source>
+        <translation>Ετικέτα για εντοπισμό</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Προτροπή</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Εντοπισμός…</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>Μοντέλο AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>Βοήθεια AI</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Εντοπισμός κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos;, &apos;AI-Box&apos; ή &apos;AI-Detect&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
     </message>
 </context>
 <context>
@@ -176,6 +187,18 @@
         <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή κρατήστε πατημένο το %s και κάντε κλικ για εξαίρεση. Κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
     </message>
     <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>Πληκτρολογήστε τι θέλετε να εντοπίσετε στο AI-Detect ή κάντε κλικ στην πρώτη γωνία ενός πλαισίου γύρω από ένα παράδειγμα</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Κάντε κλικ στην απέναντι γωνία για να εξαιρέσετε αντικείμενα σαν αυτό</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>Κάντε κλικ στην απέναντι γωνία για να εντοπίσετε κάθε αντικείμενο σαν αυτό</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Κάντε κλικ στο σημείο έναρξης για τη γραμμή</translation>
     </message>
@@ -194,6 +217,10 @@
     <message>
         <source>Click center point for circle</source>
         <translation>Κάντε κλικ στο κεντρικό σημείο για τον κύκλο</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Το Enter προσθέτει τα αποτελέσματα, το Esc τα απορρίπτει. Κρατήστε πατημένο το %s και σχεδιάστε ένα πλαίσιο για να εξαιρέσετε παρόμοια αντικείμενα.</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>
@@ -621,6 +648,14 @@
         <translation>Κάντε κλικ σε σημεία για να τμηματοποιήσετε το αντικείμενο· κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Εντοπισμός κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Επόμενη</translation>
@@ -763,16 +798,20 @@
         <translation>Αποθήκευση…</translation>
     </message>
     <message>
-        <source>Mask Output Unavailable</source>
-        <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
+        <source>Type what to detect</source>
+        <translation>Πληκτρολογήστε τι θέλετε να εντοπίσετε</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχήματα &apos;%s&apos;.
-
-Αλλάξτε το μοντέλο κειμένου προτροπής AI σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+        <source>Detecting on CPU…</source>
+        <translation>Εντοπισμός στη CPU…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Εντοπισμός…</translation>
+    </message>
+    <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
@@ -997,12 +1036,24 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Βρέθηκαν {count} νέα «{query}»</translation>
     </message>
     <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχήματα &apos;%s&apos;.
+
+Αλλάξτε το μοντέλο AI-Detect σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Δεν βρέθηκαν νέα «{query}»</translation>
     </message>
     <message>
         <source>Invalid Label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>Το %s δεν μπορεί να εντοπίσει από πλαίσιο παραδείγματος. Επιλέξτε SAM3 (smart).</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1397,6 +1448,10 @@ Expected location: {path}</source>
         <translation>Ένα όνομα σημαίας ανά γραμμή. Μοτίβα: ^car$ αντιστοιχεί ακριβώς στο car, car σε πρόθεμα, .* σε κάθε ετικέτα.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>Μοντέλο AI-Detect</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Λεπτομέρεια πολυγώνου</translation>
     </message>
@@ -1503,10 +1558,6 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Μοντέλο κειμένου προτροπής</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

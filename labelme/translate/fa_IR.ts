@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>جزئیات چندضلعی</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>دایره</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>مدل حاشیه‌نویسی به کمک AI</translation>
     </message>
@@ -60,10 +52,6 @@
         <translation>مدل</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>دستیار هوش مصنوعی</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>قالب خروجی</translation>
     </message>
@@ -71,16 +59,8 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>مثال: سگ، گربه، پرنده</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>اجرا</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>مدل پرامپت متنی هوش مصنوعی</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,55 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>هوش مصنوعی حاشیه‌نویسی‌ها را از متن ایجاد می‌کند</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>پرامپت متنی هوش مصنوعی</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>حالت &apos;Polygon&apos;، &apos;Rectangle&apos; یا &apos;AI-Points&apos; را برای فعال‌سازی انتخاب کنید</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>مدل</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>برچسبی که باید تشخیص داده شود</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>دستور</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>در حال تشخیص…</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>مدل AI-Detect</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>دستیار هوش مصنوعی</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>تشخیص همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>حالت &apos;AI-Points&apos;، &apos;AI-Box&apos; یا &apos;AI-Detect&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
     </message>
 </context>
 <context>
@@ -192,6 +203,18 @@
         <translation>برای افزودن روی نقاط کلیک کنید، یا %s را نگه دارید و کلیک کنید تا حذف شوند. %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
     </message>
     <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>در AI-Detect بنویسید چه چیزی تشخیص داده شود، یا روی گوشهٔ اول کادری دور یک نمونه کلیک کنید</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>برای کنار گذاشتن اشیای مشابه این، روی گوشهٔ مقابل کلیک کنید</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>روی گوشهٔ مقابل کلیک کنید تا همهٔ اشیای مشابه این یکی تشخیص داده شوند</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>کلیک روی نقطه شروع خط</translation>
     </message>
@@ -230,6 +253,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>روی گوشه مقابل برای قطعه‌بندی شیء کلیک کنید</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter نتایج را اضافه می‌کند و Esc آن‌ها را کنار می‌گذارد. %s را نگه دارید و کادری بکشید تا اشیای مشابه کنار گذاشته شوند.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -597,6 +624,14 @@
         <translation>ویرایش</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>تشخیص همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>بعدی</translation>
@@ -767,8 +802,32 @@
         <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>بنویسید چه چیزی تشخیص داده شود</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>در حال شناسایی روی CPU…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>در حال شناسایی…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s فقط کادرهای محصورکننده را تشخیص می‌دهد و نمی‌تواند شکل‌های &apos;%s&apos; ایجاد کند.
+
+مدل AI-Detect را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>فایل حاشیه‌نویسی متعلق به تصویر دیگری است: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s نمی‌تواند از روی کادر نمونه تشخیص دهد. SAM3 (smart) را انتخاب کنید.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -979,14 +1038,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>در حال قطعه‌بندی…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s فقط کادرهای محصورکننده را تشخیص می‌دهد و نمی‌تواند شکل‌های &apos;%s&apos; ایجاد کند.
-
-مدل پرامپت متنی هوش مصنوعی را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1448,10 @@ Expected location: {path}</source>
         <translation>هر نام پرچم در یک خط. الگوها: ^car$ دقیقاً با car، car با پیشوند و .* با هر برچسب مطابقت دارد.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>مدل AI-Detect</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>جزئیات چندضلعی</translation>
     </message>
@@ -1503,10 +1558,6 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>مدل پرامپت متنی</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

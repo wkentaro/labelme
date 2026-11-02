@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>폴리곤 세부 수준</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>원</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos; 또는 &apos;AI-Box&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI 지원 주석 모델</translation>
     </message>
@@ -60,10 +52,6 @@
         <translation>모델</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>AI 어시스트</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>출력 형식</translation>
     </message>
@@ -71,16 +59,8 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>예: 개, 고양이, 새</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>실행</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI 텍스트 프롬프트 모델</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,55 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI가 텍스트 프롬프트에서 주석을 생성합니다</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>AI 텍스트 프롬프트</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>&apos;Polygon&apos;, &apos;Rectangle&apos; 또는 &apos;AI-Points&apos; 모드를 선택하여 활성화</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>모델</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>감지할 레이블</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>프롬프트</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>감지 중…</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect 모델</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>AI 어시스트</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체를 감지</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>&apos;AI-Points&apos;, &apos;AI-Box&apos; 또는 &apos;AI-Detect&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
     </message>
 </context>
 <context>
@@ -192,6 +203,18 @@
         <translation>점을 클릭하여 포함하거나 %s 키를 누른 채 클릭하여 제외합니다. %s 키를 누른 채 클릭하여 완료합니다.</translation>
     </message>
     <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>AI-Detect에 감지할 대상을 입력하거나, 예시 하나를 둘러싸는 상자의 첫 번째 모서리를 클릭하세요</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>반대쪽 모서리를 클릭하여 이와 비슷한 객체를 제외합니다</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>반대쪽 모서리를 클릭하면 이와 같은 모든 객체를 감지합니다</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>선의 시작점 클릭</translation>
     </message>
@@ -230,6 +253,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>대각 모서리를 클릭하여 객체를 세그먼트</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter 키로 결과를 추가하고 Esc 키로 취소합니다. %s 키를 누른 채 상자를 그려 비슷한 객체를 제외합니다.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -597,6 +624,14 @@
         <translation>편집</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체를 감지</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>다음</translation>
@@ -767,8 +802,32 @@
         <translation>지금은 기본 설정을 사용할 수 있습니다. 초기화하기 전에 설정 파일의 백업을 저장합니다.</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>감지할 대상을 입력하세요</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>CPU에서 감지 중…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>감지 중…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 도형을 생성할 수 없습니다.
+
+AI-Detect 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>이 주석 파일은 다른 이미지의 파일입니다: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s은(는) 예시 상자로 감지할 수 없습니다. SAM3 (smart)를 선택하세요.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -979,14 +1038,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>분할 중…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 도형을 생성할 수 없습니다.
-
-AI 텍스트 프롬프트 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1448,10 @@ Expected location: {path}</source>
         <translation>한 줄에 플래그 이름 하나를 입력합니다. 패턴: ^car$는 car와 정확히 일치하고, car는 접두사와 일치하며, .*는 모든 레이블과 일치합니다.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect 모델</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>폴리곤 세부 수준</translation>
     </message>
@@ -1503,10 +1558,6 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>텍스트 프롬프트 모델</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

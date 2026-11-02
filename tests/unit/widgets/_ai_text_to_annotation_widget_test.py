@@ -7,11 +7,10 @@ from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._widgets._ai_text_to_annotation_widget import AiTextToAnnotationWidget
-from labelme._widgets._info_button import InfoButton
 
 
 def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
-    widget = AiTextToAnnotationWidget(on_submit=lambda _checked: None)
+    widget = AiTextToAnnotationWidget(on_submit=lambda: None)
     qtbot.addWidget(widget)
     widget.set_model_name(model_name="sam3:latest")
 
@@ -20,8 +19,6 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
         for button in widget.findChildren(QtWidgets.QToolButton)
         if button.text() == widget.tr("Run")
     )
-    info_button = widget.findChild(InfoButton)
-    assert info_button is not None
 
     model_name = widget.tr("Model") if sys.platform == "win32" else "SAM3 (smart)"
     for control, name in (
@@ -30,7 +27,6 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
         (widget._score_spinbox, widget.tr("Score")),
         (widget._iou_spinbox, widget.tr("IoU")),
         (run_button, widget.tr("Run")),
-        (info_button, widget.tr("AI creates annotations from the text prompt")),
     ):
         interface = QtGui.QAccessible.queryAccessibleInterface(control)
         assert interface.text(QtGui.QAccessible.Text.Name) == name
@@ -38,5 +34,5 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
     interface = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
     assert interface.text(QtGui.QAccessible.Text.Value) == "SAM3 (smart)"
     assert interface.text(QtGui.QAccessible.Text.Description) == widget.tr(
-        "AI Text Prompt model"
+        "AI-Detect model"
     )

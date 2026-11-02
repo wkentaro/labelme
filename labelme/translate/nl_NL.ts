@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Polygoondetail</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>Cirkel</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Selecteer de modus &apos;AI-Points&apos; of &apos;AI-Box&apos; om de AI-assistent in te schakelen</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>Model voor annotatie met AI</translation>
     </message>
@@ -60,10 +52,6 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>AI-assistent</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>Uitvoerformaat</translation>
     </message>
@@ -71,20 +59,8 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI genereert annotaties op basis van de tekstprompt</translation>
-    </message>
-    <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>bijv. hond, kat, vogel</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Uitvoeren</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Model voor AI-tekstprompt</translation>
     </message>
     <message>
         <source>Score</source>
@@ -95,20 +71,55 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Selecteer &apos;Polygon&apos;, &apos;Rectangle&apos; of &apos;AI-Points&apos;-modus om in te schakelen</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Model</translation>
     </message>
     <message>
-        <source>AI Text Prompt</source>
-        <translation>AI-tekstprompt</translation>
+        <source>Label to detect</source>
+        <translation>Te detecteren label</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Detecteren…</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect-model</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>AI-assistent</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Elk object detecteren dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>Selecteer de modus &apos;AI-Points&apos;, &apos;AI-Box&apos; of &apos;AI-Detect&apos; om de AI-assistent in te schakelen</translation>
     </message>
 </context>
 <context>
@@ -192,6 +203,18 @@
         <translation>Klik op punten om op te nemen, of houd %s ingedrukt en klik om uit te sluiten. Houd %s ingedrukt en klik om te voltooien.</translation>
     </message>
     <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>Typ in AI-Detect wat je wilt detecteren, of klik op de eerste hoek van een kader rond één voorbeeld</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Klik op de tegenoverliggende hoek om objecten zoals dit uit te sluiten</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>Klik op de tegenoverliggende hoek om elk object zoals dit te detecteren</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Klik op startpunt voor lijn</translation>
     </message>
@@ -230,6 +253,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>Klik op de tegenoverliggende hoek om het object te segmenteren</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter voegt de resultaten toe, Esc verwerpt ze. Houd %s ingedrukt en teken een kader om vergelijkbare objecten uit te sluiten.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -597,6 +624,14 @@
         <translation>Bewerken</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>Elk object detecteren dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>Volgende</translation>
@@ -767,8 +802,32 @@
         <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>Typ wat je wilt detecteren</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>Detecteren op de CPU…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>Detecteren…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-vormen maken.
+
+Wijzig het AI-Detect-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Het annotatiebestand hoort bij een andere afbeelding: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s kan niet detecteren op basis van een voorbeeldkader. Kies SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -979,14 +1038,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>Segmenteren…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-vormen maken.
-
-Wijzig het model voor de AI-tekstprompt naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1448,10 @@ Verwachte locatie: {path}</translation>
         <translation>Eén vlagnaam per regel. Patronen: ^car$ komt exact overeen met car, car met een voorvoegsel, .* met elk label.</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect-model</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Polygoondetail</translation>
     </message>
@@ -1503,10 +1558,6 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Model voor tekstprompt</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

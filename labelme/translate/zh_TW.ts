@@ -4,10 +4,6 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI在&apos;AI-Points&apos;和&apos;AI-Box&apos;模式下建議標註</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>多邊形細節</translation>
     </message>
@@ -44,10 +40,6 @@
         <translation>圓形</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>選擇 &apos;AI-Points&apos; 或 &apos;AI-Box&apos; 模式以啟用 AI 輔助</translation>
-    </message>
-    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI 輔助標註模型</translation>
     </message>
@@ -60,10 +52,6 @@
         <translation>模型</translation>
     </message>
     <message>
-        <source>AI Assist</source>
-        <translation>AI 輔助</translation>
-    </message>
-    <message>
         <source>Output format</source>
         <translation>輸出格式</translation>
     </message>
@@ -71,16 +59,8 @@
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>例如：狗,貓,鳥</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>執行</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI 文字提示模型</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,55 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI根據文字提示創建標註</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>AI 文字提示</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>選擇&apos;Polygon&apos;、&apos;Rectangle&apos;或&apos;AI-Points&apos;模式以啟用</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>模型</translation>
     </message>
     <message>
+        <source>Label to detect</source>
+        <translation>要偵測的標籤</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>提示詞</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>正在偵測…</translation>
+    </message>
+    <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect 模型</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>AI-Points</source>
+        <translation>AI-Points</translation>
+    </message>
+    <message>
+        <source>AI-Box</source>
+        <translation>AI-Box</translation>
+    </message>
+    <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>AI Assist</source>
+        <translation>AI 輔助</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>偵測與文字提示或範例框相符的所有物件</translation>
+    </message>
+    <message>
+        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
+        <translation>AI在&apos;AI-Points&apos;和&apos;AI-Box&apos;模式下建議標註</translation>
+    </message>
+    <message>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
+        <translation>選擇 &apos;AI-Points&apos;、&apos;AI-Box&apos; 或 &apos;AI-Detect&apos; 模式以啟用 AI 輔助</translation>
     </message>
 </context>
 <context>
@@ -192,6 +203,18 @@
         <translation>按一下各點以包含，或按住 %s 並按一下以排除。按住 %s 並按一下以完成。</translation>
     </message>
     <message>
+        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
+        <translation>在 AI-Detect 中輸入要偵測的內容，或按一下框選一個範例的第一個角</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>按一下對角，排除與此相似的物件</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to detect every object like this one</source>
+        <translation>按一下對角，偵測所有與此相似的物件</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>點擊線段起點</translation>
     </message>
@@ -230,6 +253,10 @@
     <message>
         <source>Click opposite corner to segment object</source>
         <translation>點擊對角以分割物件</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>按 Enter 鍵加入結果，按 Esc 鍵捨棄。按住 %s 框選以排除相似的物件。</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -597,6 +624,14 @@
         <translation>編輯</translation>
     </message>
     <message>
+        <source>AI-Detect</source>
+        <translation>AI-Detect</translation>
+    </message>
+    <message>
+        <source>Detect every object that matches the text prompt or an example box</source>
+        <translation>偵測與文字提示或範例框相符的所有物件</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>下一張</translation>
@@ -767,8 +802,32 @@
         <translation>你可以暫時使用預設值。重設前會先儲存設定檔的備份。</translation>
     </message>
     <message>
+        <source>Type what to detect</source>
+        <translation>請輸入要偵測的內容</translation>
+    </message>
+    <message>
+        <source>Detecting on CPU…</source>
+        <translation>正在 CPU 上偵測…</translation>
+    </message>
+    <message>
+        <source>Detecting…</source>
+        <translation>正在偵測…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 形狀。
+
+請將 AI-Detect 模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>此標註檔案屬於另一張影像：%s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
+        <translation>%s 無法根據範例框進行偵測。請選擇 SAM3 (smart)。</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -979,14 +1038,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>正在分割…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 形狀。
-
-請將 AI 文字提示模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1397,6 +1448,10 @@ Expected location: {path}</source>
         <translation>每行一個旗標名稱。模式：^car$ 精確符合 car，car 符合前綴，.* 符合所有標籤。</translation>
     </message>
     <message>
+        <source>AI-Detect model</source>
+        <translation>AI-Detect 模型</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>多邊形細節</translation>
     </message>
@@ -1503,10 +1558,6 @@ Expected location: {path}</source>
     <message>
         <source>Sam3</source>
         <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>文字提示模型</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>

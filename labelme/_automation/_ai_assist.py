@@ -51,12 +51,27 @@ class AiAssistSession:
         point_labels: NDArray[np.intp],
         existing_shapes: list[Shape],
         image_size: tuple[int, int] | None = None,
+        score_threshold: float,
+        iou_threshold: float,
     ) -> AiAssistProposal:
-        # iou_threshold is hardcoded because the AI Assist flow has no
-        # user-facing IoU control (unlike the AI Text Prompt flow); 0.5 matches
-        # the AI Text Prompt widget default.
-        detections = _detections_from_annotations(annotations)
-        if prompt_kind == "points" and detections:
+        detections = [
+            detection
+            for detection in _detections_from_annotations(annotations)
+            if detection.score >= score_threshold
+        ]
+        if prompt_kind == "box" and detections:
+            # One Shape per box, whichever model answered: the candidate that
+            # best fills the box, then the most confident.
+            detections = [
+                max(
+                    detections,
+                    key=lambda detection: (
+                        _box_iou(detection.bbox, points.ravel()),
+                        detection.score,
+                    ),
+                )
+            ]
+        elif prompt_kind == "points" and detections:
             detections = [
                 max(
                     detections,
@@ -70,23 +85,39 @@ class AiAssistSession:
                     ),
                 )
             ]
-        detections = suppress_detections_greedy(
-            detections=detections,
-            iou_threshold=0.5,
-        )
+        # Existing Shapes cover candidates before candidates suppress each
+        # other, so a covered candidate never hides a new one.
         matches = match_detections_to_existing_shapes(
             detections=detections,
             existing_shapes=existing_shapes,
         )
+        new_detections = suppress_detections_greedy(
+            detections=matches.new_detections,
+            iou_threshold=iou_threshold,
+        )
         return AiAssistProposal(
             new_shapes=shapes_from_detections(
-                detections=matches.new_detections,
+                detections=new_detections,
                 shape_type=self.output_format,
                 image_size=image_size,
                 polygon_detail=self.polygon_detail,
             ),
             matching_existing_shapes=matches.matching_shapes,
         )
+
+
+def _box_iou(
+    bbox: tuple[float, float, float, float] | None, box: NDArray[np.floating], /
+) -> float:
+    if bbox is None:
+        return 0.0
+    ax1, ay1, ax2, ay2 = bbox
+    bx1, by1, bx2, by2 = (float(v) for v in box)
+    inter = max(0.0, min(ax2, bx2) - max(ax1, bx1)) * max(
+        0.0, min(ay2, by2) - max(ay1, by1)
+    )
+    union = (ax2 - ax1) * (ay2 - ay1) + (bx2 - bx1) * (by2 - by1) - inter
+    return inter / union if union > 0 else 0.0
 
 
 def _count_satisfied_prompt_points(

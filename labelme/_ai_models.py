@@ -63,3 +63,8 @@ def find_ai_assist_model_option(*, model_name: str) -> _AiAssistModelOption | No
         if option.model_name == model_name:
             return option
     return None
+
+
+def accepts_example_boxes(*, model_name: str) -> bool:
+    # YOLO-World detects from text only; SAM3 also takes example boxes.
+    return model_name.startswith("sam3:")
