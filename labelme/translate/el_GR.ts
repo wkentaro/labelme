@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>Εύρεση κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Τμηματοποίηση ενός αντικειμένου από σημεία και ένα πλαίσιο</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos;, &apos;AI-Box&apos; ή &apos;AI-Find All&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Επιλέξτε &apos;AI-Segment&apos; ή &apos;AI-Find All&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
     </message>
 </context>
 <context>
@@ -183,10 +179,6 @@
         <translation>Επεξεργασία σχημάτων</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή κρατήστε πατημένο το %s και κάντε κλικ για εξαίρεση. Κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
-    </message>
-    <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
         <translation>Πληκτρολογήστε τι θέλετε να βρείτε στο AI-Find All ή κάντε κλικ στην πρώτη γωνία ενός πλαισίου γύρω από ένα παράδειγμα</translation>
     </message>
@@ -219,6 +211,10 @@
         <translation>Κάντε κλικ στο κεντρικό σημείο για τον κύκλο</translation>
     </message>
     <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Κάντε κλικ σε σημεία για συμπερίληψη, κρατήστε πατημένο το %s και κάντε κλικ για εξαίρεση ή σύρετε ένα πλαίσιο. Κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
+    </message>
+    <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
         <translation>Το Enter προσθέτει τα αποτελέσματα, το Esc τα απορρίπτει. Κρατήστε πατημένο το %s και σχεδιάστε ένα πλαίσιο για να εξαιρέσετε παρόμοια αντικείμενα.</translation>
     </message>
@@ -249,14 +245,6 @@
     <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Κάντε κλικ και σύρετε για να μετακινήσετε το σχήμα</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Κάντε κλικ στην πρώτη γωνία του bbox για τμηματοποίηση AI</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Κάντε κλικ στην απέναντι γωνία για τμηματοποίηση αντικειμένου</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -434,6 +422,14 @@
     <message>
         <source>Start drawing points</source>
         <translation>Έναρξη σχεδίασης σημείων</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Κάντε κλικ σε σημεία ή σύρετε ένα πλαίσιο για να τμηματοποιήσετε ένα αντικείμενο· κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -642,10 +638,6 @@
     <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Κάντε κλικ για να τοποθετήσετε σημεία της τεθλασμένης γραμμής· κρατήστε πατημένο το %s και κάντε κλικ για το τελευταίο.</translation>
-    </message>
-    <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Κάντε κλικ σε σημεία για να τμηματοποιήσετε το αντικείμενο· κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -954,18 +946,6 @@
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Σχεδιάστε ένα πλαίσιο οριοθέτησης για τμηματοποίηση αντικειμένου.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>Π&amp;ροσαρμογή παραθύρου</translation>
     </message>
@@ -1054,6 +1034,10 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
     <message>
         <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
         <translation>Το %s δεν μπορεί να χρησιμοποιήσει πλαίσιο παραδείγματος. Επιλέξτε SAM3 (smart).</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>Το %s δεν μπορεί να χρησιμοποιήσει σημεία μαζί με πλαίσιο. Χρησιμοποιήστε σημεία ή ένα πλαίσιο.</translation>
     </message>
     <message>
         <source>Large Image</source>

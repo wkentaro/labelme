@@ -186,8 +186,7 @@ class _Actions(NamedTuple):
     create_line_mode: QtGui.QAction
     create_point_mode: QtGui.QAction
     create_line_strip_mode: QtGui.QAction
-    create_ai_points_to_shape_mode: QtGui.QAction
-    create_ai_box_to_shape_mode: QtGui.QAction
+    create_ai_segment_mode: QtGui.QAction
     create_ai_find_all_mode: QtGui.QAction
     open_next_img: QtGui.QAction
     open_prev_img: QtGui.QAction
@@ -738,26 +737,16 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             % ctrl,
         )
-        create_ai_points_to_shape_mode = mode_action(
-            text=self.tr("AI-Points"),
-            slot=lambda: self._switch_canvas_mode(
-                edit=False, create_mode="ai_points_to_shape"
-            ),
-            shortcut=shortcuts["create_ai_points"],
+        create_ai_segment_mode = mode_action(
+            text=self.tr("AI-Segment"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="ai_segment"),
+            shortcut=shortcuts["create_ai_segment"],
             icon="ai-points.svg",
             tip=self.tr(
-                "Click points to segment the object; hold %s and click to finish."
+                "Click points or drag a box to segment one object; hold %s and"
+                " click to finish."
             )
             % ctrl,
-        )
-        create_ai_box_to_shape_mode = mode_action(
-            text=self.tr("AI-Box"),
-            slot=lambda: self._switch_canvas_mode(
-                edit=False, create_mode="ai_box_to_shape"
-            ),
-            shortcut=shortcuts["create_ai_box"],
-            icon="ai-box.svg",
-            tip=self.tr("Draw a bounding box to segment object."),
         )
         create_ai_find_all_mode = mode_action(
             text=self.tr("AI-Find All"),
@@ -966,8 +955,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("point", create_point_mode),
             ("line", create_line_mode),
             ("linestrip", create_line_strip_mode),
-            ("ai_points_to_shape", create_ai_points_to_shape_mode),
-            ("ai_box_to_shape", create_ai_box_to_shape_mode),
+            ("ai_segment", create_ai_segment_mode),
             ("ai_find_all", create_ai_find_all_mode),
         ]
         # Both menus follow the platform Edit-menu convention: history first,
@@ -1036,8 +1024,7 @@ class MainWindow(QtWidgets.QMainWindow):
             create_line_mode=create_line_mode,
             create_point_mode=create_point_mode,
             create_line_strip_mode=create_line_strip_mode,
-            create_ai_points_to_shape_mode=create_ai_points_to_shape_mode,
-            create_ai_box_to_shape_mode=create_ai_box_to_shape_mode,
+            create_ai_segment_mode=create_ai_segment_mode,
             create_ai_find_all_mode=create_ai_find_all_mode,
             open_next_img=open_next_img,
             open_prev_img=open_prev_img,
@@ -1396,6 +1383,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._on_inference_produced_no_shapes
         )
         canvas.example_box_unsupported.connect(self._on_example_box_unsupported)
+        canvas.points_with_box_unsupported.connect(self._on_points_with_box_unsupported)
         # The preview path emits this from inside paintEvent (an active
         # QPainter); a queued connection defers the status-bar update until
         # after the paint cycle so it never mutates UI mid-paint.
@@ -2023,7 +2011,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 " }"
             )
         for mode, action in self._actions.draw:
-            if mode not in ("ai_points_to_shape", "ai_box_to_shape", "ai_find_all"):
+            if mode not in ("ai_segment", "ai_find_all"):
                 continue
             for widget in action.associatedObjects():
                 if isinstance(widget, QtWidgets.QToolButton):
@@ -2514,6 +2502,13 @@ class MainWindow(QtWidgets.QMainWindow):
             % self._model_manager.models[
                 self._canvas_widgets.canvas.get_ai_find_all_model_name()
             ],
+            delay=5000,
+        )
+
+    def _on_points_with_box_unsupported(self, model_name: str, /) -> None:
+        self.show_status_message(
+            self.tr("%s can't use points with a box. Use points or a box.")
+            % self._model_manager.models[model_name],
             delay=5000,
         )
 

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from labelme import _config
 
 
@@ -68,3 +70,27 @@ shortcuts:
     config = _config.load_config(config_file=config_file, config_overrides={})
     assert config["canvas"]["crosshair"]["ai_find_all"] is False
     assert config["shortcuts"]["create_ai_find_all"] == "Ctrl+Shift+F"
+
+
+@pytest.mark.parametrize(
+    ("points", "box", "expected"),
+    [(False, True, True), (True, False, True), (False, False, False)],
+)
+def test_load_ai_points_and_ai_box_keys_as_ai_segment(
+    *, tmp_path: Path, points: bool, box: bool, expected: bool
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text(f"""\
+canvas:
+  crosshair:
+    ai_points_to_shape: {str(points).lower()}
+    ai_box_to_shape: {str(box).lower()}
+shortcuts:
+  create_ai_points:
+  create_ai_box: Ctrl+B
+""")
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert config["canvas"]["crosshair"]["ai_segment"] is expected
+    assert "ai_points_to_shape" not in config["canvas"]["crosshair"]
+    assert config["shortcuts"]["create_ai_segment"] == "Ctrl+B"
+    assert "create_ai_box" not in config["shortcuts"]

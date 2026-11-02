@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>Знайти всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Сегментувати один об&apos;єкт за точками й рамкою</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>Виберіть режим &apos;AI-Points&apos;, &apos;AI-Box&apos; або &apos;AI-Find All&apos;, щоб увімкнути ШІ-помічника</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Виберіть &apos;AI-Segment&apos; або &apos;AI-Find All&apos;, щоб увімкнути ШІ-помічника</translation>
     </message>
 </context>
 <context>
@@ -183,10 +179,6 @@
         <translation>Редагування фігур</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Клацайте точки, щоб включити, або утримуйте %s і клацніть, щоб виключити. Утримуйте %s і клацніть, щоб завершити.</translation>
-    </message>
-    <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
         <translation>Введіть в AI-Find All, що потрібно знайти, або клацніть перший кут рамки навколо одного прикладу</translation>
     </message>
@@ -219,6 +211,10 @@
         <translation>Натисніть центральну точку для кола</translation>
     </message>
     <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Клацайте точки, щоб включити, утримуйте %s і клацніть, щоб виключити, або перетягніть рамку. Утримуйте %s і клацніть, щоб завершити.</translation>
+    </message>
+    <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
         <translation>Enter додає результати, Esc відхиляє їх. Утримуючи %s, намалюйте рамку, щоб виключити схожі об&apos;єкти.</translation>
     </message>
@@ -249,14 +245,6 @@
     <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Натисніть і перетягніть, щоб перемістити фігуру</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Натисніть на перший кут bbox для сегментації ШІ</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Натисніть на протилежний кут для сегментації об&apos;єкта</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -434,6 +422,14 @@
     <message>
         <source>Start drawing points</source>
         <translation>Почніть малювати точки</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Клацайте точки або перетягніть рамку, щоб сегментувати один об&apos;єкт; утримуйте %s і клацніть, щоб завершити.</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -642,10 +638,6 @@
     <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Клацайте, щоб ставити точки ламаної; утримуйте %s і клацніть, щоб поставити останню.</translation>
-    </message>
-    <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Клацайте точки, щоб сегментувати об&apos;єкт; утримуйте %s і клацніть, щоб завершити.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -954,18 +946,6 @@
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Намалюйте обмежувальну рамку для сегментації об&apos;єкта.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>Припасувати &amp;вікно</translation>
     </message>
@@ -1054,6 +1034,10 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
     <message>
         <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
         <translation>%s не може використати рамку-приклад. Виберіть SAM3 (smart).</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s не може використовувати точки разом із рамкою. Використовуйте точки або рамку.</translation>
     </message>
     <message>
         <source>Large Image</source>

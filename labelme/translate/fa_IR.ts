@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>پیدا کردن همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>بخش‌بندی یک شیء از روی نقاط و یک کادر</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>حالت &apos;AI-Points&apos;، &apos;AI-Box&apos; یا &apos;AI-Find All&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>برای فعال‌سازی دستیار هوش مصنوعی، &apos;AI-Segment&apos; یا &apos;AI-Find All&apos; را انتخاب کنید</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>ویرایش اشکال</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>برای افزودن روی نقاط کلیک کنید، یا %s را نگه دارید و کلیک کنید تا حذف شوند. %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>برای افزودن روی نقاط کلیک کنید، %s را نگه دارید و کلیک کنید تا حذف شوند، یا یک کادر بکشید. %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>گوشهٔ دیگر را انتخاب کنید. برای مربع، Shift را نگه دارید.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>برای قطعه‌بندی AI روی اولین گوشه bbox کلیک کنید</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>روی گوشه مقابل برای قطعه‌بندی شیء کلیک کنید</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>برای قرار دادن نقاط خط شکسته کلیک کنید؛ %s را نگه دارید و کلیک کنید تا آخرین نقطه قرار گیرد.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>روی نقاط کلیک کنید تا شیء بخش‌بندی شود؛ %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>باز کردن تصویر بعدی (برای کپی شکل‌های فعلی، %s را نگه دارید)</translation>
     </message>
@@ -622,6 +606,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>ویرایش</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>روی نقاط کلیک کنید یا یک کادر بکشید تا یک شیء بخش‌بندی شود؛ %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1004,18 +996,6 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
         <translation>خط چندتکه‌ای</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>یک کادر محصورکننده برای قطعه‌بندی شیء رسم کنید.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>ادامه با پیش‌فرض‌ها</translation>
     </message>
@@ -1138,6 +1118,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>تنظیمات این نشست از طریق --config مدیریت می‌شوند</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s نمی‌تواند نقاط را همراه با کادر استفاده کند. از نقاط یا یک کادر استفاده کنید.</translation>
     </message>
     <message>
         <source>Large Image</source>

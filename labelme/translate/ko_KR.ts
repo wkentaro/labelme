@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체 찾기</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>점과 상자로 객체 하나를 분할</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos;, &apos;AI-Box&apos; 또는 &apos;AI-Find All&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>AI 어시스트를 활성화하려면 &apos;AI-Segment&apos; 또는 &apos;AI-Find All&apos;을 선택하세요</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>도형 편집 중</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>점을 클릭하여 포함하거나 %s 키를 누른 채 클릭하여 제외합니다. %s 키를 누른 채 클릭하여 완료합니다.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>점을 클릭하여 포함하거나, %s 키를 누른 채 클릭하여 제외하거나, 상자를 드래그합니다. %s 키를 누른 채 클릭하여 완료합니다.</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>다른 모서리를 선택하세요. 정사각형을 그리려면 Shift를 누른 상태로 조작하세요.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>AI 세그멘테이션을 위해 bbox의 첫 번째 모서리 클릭</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>대각 모서리를 클릭하여 객체를 세그먼트</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>클릭하여 꺾은선의 점을 배치하고, %s 키를 누른 채 클릭하여 마지막 점을 배치합니다.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>점을 클릭하여 객체를 분할하고, %s 키를 누른 채 클릭하여 완료합니다.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>다음 이미지 열기(%s 키를 누르고 있으면 현재 도형을 복사)</translation>
     </message>
@@ -622,6 +606,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>편집</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>점을 클릭하거나 상자를 드래그하여 객체 하나를 분할하고, %s 키를 누른 채 클릭하여 완료합니다.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1004,18 +996,6 @@ AI-Find All 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 �
         <translation>연결선</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>바운딩 박스를 그려서 객체를 세그먼트.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>기본 설정으로 계속</translation>
     </message>
@@ -1138,6 +1118,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>이 세션의 설정은 --config로 관리됩니다</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s은(는) 점과 상자를 함께 사용할 수 없습니다. 점이나 상자 중 하나를 사용하세요.</translation>
     </message>
     <message>
         <source>Large Image</source>

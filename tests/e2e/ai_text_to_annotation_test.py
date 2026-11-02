@@ -195,20 +195,20 @@ def _run_text_prompt(
             id="polygon",
         ),
         pytest.param(
-            "ai_box_to_shape",
+            "ai_segment",
             "polygon",
             "person",
             functools.partial(_make_person_response, with_masks=True),
             {"person"},
-            id="ai_box-polygon",
+            id="ai_segment-polygon",
         ),
         pytest.param(
-            "ai_box_to_shape",
+            "ai_segment",
             "oriented_rectangle",
             "person",
             _make_edge_crossing_response,
             {"person"},
-            id="ai_box-oriented_rectangle-at-edge",
+            id="ai_segment-oriented_rectangle-at-edge",
         ),
     ],
 )
@@ -237,7 +237,7 @@ def test_text_prompt_creates_shapes(
     canvas = win._canvas_widgets.canvas
     assert len(canvas.shapes) == 0
 
-    if create_mode == "ai_box_to_shape":
+    if create_mode == "ai_segment":
         output_combo = win._ai_annotation._output_format_combo
         output_combo.setCurrentIndex(output_combo.findData(expected_shape_type))
 
@@ -278,7 +278,7 @@ def test_text_prompt_creates_shapes(
     ("create_mode", "output_format"),
     [
         pytest.param("polygon", None, id="polygon"),
-        pytest.param("ai_box_to_shape", "mask", id="ai_box-mask"),
+        pytest.param("ai_segment", "mask", id="ai_segment-mask"),
     ],
 )
 def test_box_only_model_is_rejected_before_inference(

@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>Elk object zoeken dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Eén object segmenteren uit punten en een kader</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>Selecteer de modus &apos;AI-Points&apos;, &apos;AI-Box&apos; of &apos;AI-Find All&apos; om de AI-assistent in te schakelen</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Selecteer &apos;AI-Segment&apos; of &apos;AI-Find All&apos; om de AI-assistent in te schakelen</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>Vormen bewerken</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Klik op punten om op te nemen, of houd %s ingedrukt en klik om uit te sluiten. Houd %s ingedrukt en klik om te voltooien.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Klik op punten om op te nemen, houd %s ingedrukt en klik om uit te sluiten, of sleep een kader. Houd %s ingedrukt en klik om te voltooien.</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Kies de andere hoek. Houd Shift ingedrukt voor een vierkant.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Klik op de eerste hoek van de bbox voor AI-segmentatie</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Klik op de tegenoverliggende hoek om het object te segmenteren</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>Klik om punten van de polylijn te plaatsen; houd %s ingedrukt en klik om het laatste te plaatsen.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Klik op punten om het object te segmenteren; houd %s ingedrukt en klik om te voltooien.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Volgende afbeelding openen (houd %s ingedrukt om de huidige vormen te kopiëren)</translation>
     </message>
@@ -622,6 +606,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>Bewerken</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Klik op punten of sleep een kader om één object te segmenteren; houd %s ingedrukt en klik om te voltooien.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1004,18 +996,6 @@ Wijzig het AI-Find All-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerfo
         <translation>Lijnstrip</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Teken een begrenzingskader om een object te segmenteren.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Doorgaan met standaardinstellingen</translation>
     </message>
@@ -1138,6 +1118,10 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s kan geen punten samen met een kader gebruiken. Gebruik punten of een kader.</translation>
     </message>
     <message>
         <source>Large Image</source>

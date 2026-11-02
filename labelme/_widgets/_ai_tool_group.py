@@ -85,15 +85,14 @@ class AiToolGroup(QtWidgets.QWidget):
     def set_tool(self, create_mode: str | None, /) -> None:
         detect = create_mode == "ai_find_all"
         titles = {
-            "ai_points_to_shape": self.tr("AI-Points"),
-            "ai_box_to_shape": self.tr("AI-Box"),
+            "ai_segment": self.tr("AI-Segment"),
             "ai_find_all": self.tr("AI-Find All"),
         }
         self._title.setText(titles.get(create_mode or "", self.tr("AI Assist")))
         self._info_button.setToolTip(
             self.tr("Find every object that matches the text prompt or an example box")
             if detect
-            else self.tr("AI suggests annotation in 'AI-Points' and 'AI-Box' modes")
+            else self.tr("Segment one object from points and a box")
         )
         self._info_button.setAccessibleName(self._info_button.toolTip())
         self._model_stack.setCurrentWidget(
@@ -115,10 +114,7 @@ class AiToolGroup(QtWidgets.QWidget):
             if a1.type() == QtCore.QEvent.Type.Enter:
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
-                    self.tr(
-                        "Select 'AI-Points', 'AI-Box', or 'AI-Find All' mode to enable"
-                        " AI Assist"
-                    ),
+                    self.tr("Select 'AI-Segment' or 'AI-Find All' to enable AI Assist"),
                     self,
                 )
                 self.hover_highlight_requested.emit(True)  # noqa: FBT003 -- Qt signal payload is positional

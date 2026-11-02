@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>テキストプロンプトや例のボックスに一致する物体をすべて探す</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AIが&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>点とボックスから物体を1つセグメント化</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos;、&apos;AI-Box&apos;、または &apos;AI-Find All&apos; モードを選択すると AI アシストが有効になります</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>&apos;AI-Segment&apos; または &apos;AI-Find All&apos; を選択すると AI アシストが有効になります</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>図形を編集中</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>点をクリックで含め、%s を押しながらクリックで除外します。%s を押しながらクリックで完了します。</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>点をクリックで含め、%s を押しながらクリックで除外するか、ドラッグでボックスを描きます。%s を押しながらクリックで完了します。</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>もう一方の角を指定してください。Shiftを押しながら操作すると正方形になります。</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>AIセグメンテーション用にbboxの最初の角をクリック</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>対角をクリックしてオブジェクトをセグメント</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -473,10 +461,6 @@
         <translation>クリックで折れ線の点を配置し、%s を押しながらクリックで最後の点を配置します。</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>点をクリックしてオブジェクトをセグメント化し、%s を押しながらクリックで完了します。</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>次の画像を開く（%s を押したままにすると現在の図形をコピー）</translation>
     </message>
@@ -630,6 +614,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>編集</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>点をクリックするかボックスをドラッグして物体を1つセグメント化し、%s を押しながらクリックで完了します。</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1014,18 +1006,6 @@ AI-Find All のモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出
         <translation>折れ線</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>バウンディングボックスを描画してオブジェクトをセグメント。</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>初期設定で続行</translation>
     </message>
@@ -1148,6 +1128,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>このセッションの設定は --config で管理されています</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s は点とボックスを一緒に使えません。点かボックスのどちらかを使ってください。</translation>
     </message>
     <message>
         <source>Large Image</source>

@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>Buscar todos los objetos que coincidan con la indicación de texto o con un cuadro de ejemplo</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>La IA sugiere anotaciones en los modos &apos;AI-Points&apos; y &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Segmentar un objeto a partir de puntos y un cuadro</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>Seleccione el modo &apos;AI-Points&apos;, &apos;AI-Box&apos; o &apos;AI-Find All&apos; para habilitar la Asistencia IA</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Seleccione &apos;AI-Segment&apos; o &apos;AI-Find All&apos; para habilitar la Asistencia IA</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>Editando formas</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Haz clic en puntos para incluir, o mantén %s y haz clic para excluir. Mantén %s y haz clic para terminar.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Haz clic en puntos para incluir, mantén %s y haz clic para excluir, o arrastra un cuadro. Mantén %s y haz clic para terminar.</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Elige la otra esquina. Mantén pulsado Shift para un cuadrado.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Haga clic en la primera esquina del bbox para segmentación con IA</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Haga clic en la esquina opuesta para segmentar el objeto</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>Haz clic para colocar puntos de la polilínea; mantén %s y haz clic para colocar el último.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Haz clic en puntos para segmentar el objeto; mantén %s y haz clic para terminar.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Abrir la imagen siguiente (mantén %s para copiar las formas actuales)</translation>
     </message>
@@ -622,6 +606,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>Editar</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Haz clic en puntos o arrastra un cuadro para segmentar un objeto; mantén %s y haz clic para terminar.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1004,18 +996,6 @@ Cambie el modelo de AI-Find All a &apos;SAM3 (smart)&apos; o establezca el forma
         <translation>Línea continua</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Dibuje un cuadro delimitador para segmentar el objeto.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Continuar con valores predeterminados</translation>
     </message>
@@ -1138,6 +1118,10 @@ Ubicación esperada: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Los ajustes se gestionan mediante --config para esta sesión</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s no puede usar puntos junto con un cuadro. Use puntos o un cuadro.</translation>
     </message>
     <message>
         <source>Large Image</source>

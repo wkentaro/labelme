@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>Tìm mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI gợi ý chú thích trong các chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Phân đoạn một đối tượng từ các điểm và một khung</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>Chọn chế độ &apos;AI-Points&apos;, &apos;AI-Box&apos; hoặc &apos;AI-Find All&apos; để bật Hỗ trợ AI</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Chọn &apos;AI-Segment&apos; hoặc &apos;AI-Find All&apos; để bật Hỗ trợ AI</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>Chỉnh sửa hình dạng</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Nhấp các điểm để bao gồm, hoặc giữ %s và nhấp để loại trừ. Giữ %s và nhấp để hoàn tất.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Nhấp các điểm để bao gồm, giữ %s và nhấp để loại trừ, hoặc kéo một khung. Giữ %s và nhấp để hoàn tất.</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Chọn góc còn lại. Giữ Shift để vẽ hình vuông.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Nhấp vào góc đầu tiên của bbox để phân đoạn AI</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Nhấp vào góc đối diện để phân đoạn đối tượng</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>Nhấp để đặt các điểm của đường gấp khúc; giữ %s và nhấp để đặt điểm cuối cùng.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Nhấp các điểm để phân đoạn đối tượng; giữ %s và nhấp để hoàn tất.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Mở hình ảnh tiếp theo (giữ %s để sao chép các hình dạng hiện tại)</translation>
     </message>
@@ -622,6 +606,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>Chỉnh sửa</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Nhấp các điểm hoặc kéo một khung để phân đoạn một đối tượng; giữ %s và nhấp để hoàn tất.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1004,18 +996,6 @@ Chuyển mô hình AI-Find All sang &apos;SAM3 (smart)&apos;, hoặc đặt đ�
         <translation>Đường gấp khúc</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Vẽ một hộp giới hạn để phân đoạn đối tượng.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Tiếp tục với mặc định</translation>
     </message>
@@ -1138,6 +1118,10 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Cài đặt được quản lý qua --config trong phiên này</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s không thể dùng điểm cùng với khung. Hãy dùng điểm hoặc một khung.</translation>
     </message>
     <message>
         <source>Large Image</source>

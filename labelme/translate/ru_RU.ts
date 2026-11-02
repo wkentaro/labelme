@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>Найти все объекты, соответствующие текстовому запросу или рамке-примеру</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>ИИ предлагает аннотацию в режимах &apos;AI-Points&apos; и &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Сегментировать один объект по точкам и рамке</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>Выберите режим &apos;AI-Points&apos;, &apos;AI-Box&apos; или &apos;AI-Find All&apos;, чтобы включить ИИ-помощника</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Выберите &apos;AI-Segment&apos; или &apos;AI-Find All&apos;, чтобы включить ИИ-помощника</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>Редактирование фигур</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Щёлкайте по точкам, чтобы включить, или удерживайте %s и щёлкните, чтобы исключить. Удерживайте %s и щёлкните, чтобы завершить.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Щёлкайте по точкам, чтобы включить, удерживайте %s и щёлкните, чтобы исключить, или перетащите рамку. Удерживайте %s и щёлкните, чтобы завершить.</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Выберите другой угол. Удерживайте Shift, чтобы нарисовать квадрат.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Нажмите на первый угол bbox для сегментации ИИ</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Нажмите на противоположный угол для сегментации объекта</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>Щёлкайте, чтобы ставить точки ломаной; удерживайте %s и щёлкните, чтобы поставить последнюю.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Щёлкайте по точкам, чтобы сегментировать объект; удерживайте %s и щёлкните, чтобы завершить.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Открыть следующее изображение (удерживайте %s, чтобы скопировать текущие фигуры)</translation>
     </message>
@@ -622,6 +606,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>Изменить</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Щёлкайте по точкам или перетащите рамку, чтобы сегментировать один объект; удерживайте %s и щёлкните, чтобы завершить.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1004,18 +996,6 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
         <translation>Ломаная</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Нарисуйте ограничивающую рамку для сегментации объекта.</translation>
-    </message>
-    <message>
         <source>Finding all &apos;{query}&apos;…</source>
         <translation>Поиск всех «{query}»…</translation>
     </message>
@@ -1138,6 +1118,10 @@ Expected location: {path}</source>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Ошибка сохранения файла аннотаций</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s не может использовать точки вместе с рамкой. Используйте точки или рамку.</translation>
     </message>
     <message>
         <source>Large Image</source>

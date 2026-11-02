@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum megkeresése</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Az AI annotációt javasol &apos;AI-Points&apos; és &apos;AI-Box&apos; módokban</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Egy objektum szegmentálása pontokból és egy keretből</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>Válassza az &apos;AI-Points&apos;, &apos;AI-Box&apos; vagy &apos;AI-Find All&apos; módot az MI-segéd engedélyezéséhez</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Válassza az &apos;AI-Segment&apos; vagy az &apos;AI-Find All&apos; eszközt az MI-segéd engedélyezéséhez</translation>
     </message>
 </context>
 <context>
@@ -183,10 +179,6 @@
         <translation>Alakzatok szerkesztése</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Kattintson pontokra a belefoglaláshoz, vagy tartsa lenyomva a(z) %s billentyűt, és kattintson a kizáráshoz. A befejezéshez tartsa lenyomva a(z) %s billentyűt, és kattintson.</translation>
-    </message>
-    <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
         <translation>Írja be az AI-Find All mezőbe, mit kell megtalálni, vagy kattintson egy minta köré rajzolt keret első sarkára</translation>
     </message>
@@ -219,6 +211,10 @@
         <translation>Kattintson a kör középpontjára</translation>
     </message>
     <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Kattintson pontokra a belefoglaláshoz, tartsa lenyomva a(z) %s billentyűt, és kattintson a kizáráshoz, vagy húzzon egy keretet. A befejezéshez tartsa lenyomva a(z) %s billentyűt, és kattintson.</translation>
+    </message>
+    <message>
         <source>Click point on circumference for circle</source>
         <translation>Kattintson a kör kerületén lévő pontra</translation>
     </message>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Válassza ki a másik sarkot. Négyzethez tartsa lenyomva a Shift billentyűt.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Kattintson a bbox első sarkára az AI szegmentáláshoz</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Kattintson az átellenes sarokra az objektum szegmentálásához</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -472,10 +460,6 @@
         <translation>Kattintson a töröttvonal pontjainak elhelyezéséhez; tartsa lenyomva a(z) %s billentyűt, és kattintson az utolsóhoz.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Kattintson pontokra az objektum szegmentálásához; tartsa lenyomva a(z) %s billentyűt, és kattintson a befejezéshez.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Következő kép megnyitása (a jelenlegi alakzatok másolásához tartsa lenyomva a(z) %s billentyűt)</translation>
     </message>
@@ -638,6 +622,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>Szerkesztés</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Kattintson pontokra, vagy húzzon egy keretet egy objektum szegmentálásához; tartsa lenyomva a(z) %s billentyűt, és kattintson a befejezéshez.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1004,18 +996,6 @@ Váltson az AI-Find All modelljénél &apos;SAM3 (smart)&apos;-re, vagy állíts
         <translation>Vonallánc</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Rajzoljon befoglaló keretet az objektum szegmentálásához.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Folytatás az alapértékekkel</translation>
     </message>
@@ -1138,6 +1118,10 @@ Várt hely: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>A beállítások ebben a munkamenetben --config segítségével vannak kezelve</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>A(z) %s nem tud pontokat és keretet együtt használni. Használjon pontokat vagy egy keretet.</translation>
     </message>
     <message>
         <source>Large Image</source>

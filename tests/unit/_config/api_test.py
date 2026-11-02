@@ -254,7 +254,7 @@ def test_load_config_tolerates_removed_fit_width_shortcut(*, tmp_path: Path) -> 
     ],
     ids=["polygon", "mask", "both", "neither"],
 )
-def test_migrate_ai_crosshair_keys_to_ai_points_to_shape(
+def test_migrate_ai_crosshair_keys_to_ai_segment(
     *, ai_polygon: bool, ai_mask: bool, expected: bool
 ) -> None:
     config = {"canvas": {"crosshair": {"ai_polygon": ai_polygon, "ai_mask": ai_mask}}}
@@ -262,17 +262,15 @@ def test_migrate_ai_crosshair_keys_to_ai_points_to_shape(
     crosshair = config["canvas"]["crosshair"]
     assert "ai_polygon" not in crosshair
     assert "ai_mask" not in crosshair
-    assert crosshair["ai_points_to_shape"] is expected
+    assert crosshair["ai_segment"] is expected
 
 
-def test_migrate_ai_crosshair_keeps_explicit_ai_points_to_shape() -> None:
-    config = {
-        "canvas": {"crosshair": {"ai_polygon": True, "ai_points_to_shape": False}}
-    }
+def test_migrate_ai_crosshair_keeps_explicit_ai_segment() -> None:
+    config = {"canvas": {"crosshair": {"ai_polygon": True, "ai_segment": False}}}
     migrate_config(config_from_yaml=config)
     crosshair = config["canvas"]["crosshair"]
     assert "ai_polygon" not in crosshair
-    assert crosshair["ai_points_to_shape"] is False
+    assert crosshair["ai_segment"] is False
 
 
 def test_load_config_tolerates_legacy_ai_crosshair_keys(*, tmp_path: Path) -> None:
@@ -281,7 +279,7 @@ def test_load_config_tolerates_legacy_ai_crosshair_keys(*, tmp_path: Path) -> No
         "canvas:\n  crosshair:\n    ai_polygon: true\n    ai_mask: false\n"
     )
     config = _config.load_config(config_file=config_file, config_overrides={})
-    assert config["canvas"]["crosshair"]["ai_points_to_shape"] is True
+    assert config["canvas"]["crosshair"]["ai_segment"] is True
 
 
 def test_migrate_leaves_malformed_crosshair_for_merge_to_report() -> None:

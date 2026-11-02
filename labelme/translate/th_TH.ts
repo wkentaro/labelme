@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>ค้นหาวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>แบ่งส่วนวัตถุหนึ่งชิ้นจากจุดและกรอบ</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>เลือกโหมด &apos;AI-Points&apos;, &apos;AI-Box&apos; หรือ &apos;AI-Find All&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>เลือก &apos;AI-Segment&apos; หรือ &apos;AI-Find All&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>แก้ไขรูปร่าง</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>คลิกจุดเพื่อรวม หรือกด %s ค้างไว้แล้วคลิกเพื่อยกเว้น กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>คลิกจุดเพื่อรวม กด %s ค้างไว้แล้วคลิกเพื่อยกเว้น หรือลากกรอบ กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Click to add point</source>
         <translation>คลิกเพื่อเพิ่มจุด</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>คลิกมุมแรกของ bbox สำหรับ AI segmentation</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>คลิกมุมตรงข้ามเพื่อแบ่งส่วนวัตถุ</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -469,10 +457,6 @@
         <translation>คลิกเพื่อวางจุดของเส้นหักมุม กด %s ค้างไว้แล้วคลิกเพื่อวางจุดสุดท้าย</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>คลิกจุดเพื่อแบ่งส่วนวัตถุ กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>เปิดรูปถัดไป (กด %s ค้างไว้เพื่อคัดลอกรูปร่างปัจจุบัน)</translation>
     </message>
@@ -623,6 +607,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>แก้ไข</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>คลิกจุดหรือลากกรอบเพื่อแบ่งส่วนวัตถุหนึ่งชิ้น กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1005,18 +997,6 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
         <translation>เส้นต่อเนื่อง</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>วาดกรอบสี่เหลี่ยมเพื่อแบ่งส่วนวัตถุ</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>ใช้ค่าเริ่มต้นต่อไป</translation>
     </message>
@@ -1139,6 +1119,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s ใช้จุดร่วมกับกรอบไม่ได้ ใช้จุดหรือกรอบอย่างใดอย่างหนึ่ง</translation>
     </message>
     <message>
         <source>Large Image</source>

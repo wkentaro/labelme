@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri bul</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI, &apos;AI-Noktalar&apos; ve &apos;AI-Kutu&apos; modlarında açıklama önerir</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Noktalardan ve bir kutudan tek bir nesneyi bölütle</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos;, &apos;AI-Box&apos; veya &apos;AI-Find All&apos; modunu seçin</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>AI Yardımını etkinleştirmek için &apos;AI-Segment&apos; veya &apos;AI-Find All&apos; seçin</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>Şekiller düzenleniyor</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Dahil etmek için noktalara tıklayın veya hariç tutmak için %s tuşunu basılı tutup tıklayın. Bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Dahil etmek için noktalara tıklayın, hariç tutmak için %s tuşunu basılı tutup tıklayın veya bir kutu sürükleyin. Bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Diğer köşeyi seçin. Kare çizmek için Shift tuşunu basılı tutun.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Yapay zeka bölütlemesi için sınır kutusunun ilk köşesine tıklayın</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Nesneyi bölütlemek için karşı köşeye tıklayın</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>Çoklu çizgi noktalarını yerleştirmek için tıklayın; sonuncuyu yerleştirmek için %s tuşunu basılı tutup tıklayın.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Nesneyi bölütlemek için noktalara tıklayın; bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Sonraki görüntüyü aç (geçerli şekilleri kopyalamak için %s tuşunu basılı tutun)</translation>
     </message>
@@ -622,6 +606,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>Düzenle</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Tek bir nesneyi bölütlemek için noktalara tıklayın veya bir kutu sürükleyin; bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1004,18 +996,6 @@ AI-Find All modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı 
         <translation>Çizgi Şeridi</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Nesneyi bölütlemek için bir sınır kutusu çizin.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Varsayılanlarla devam et</translation>
     </message>
@@ -1138,6 +1118,10 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Bu oturumda ayarlar --config ile yönetiliyor</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s noktaları bir kutuyla birlikte kullanamaz. Noktaları veya bir kutuyu kullanın.</translation>
     </message>
     <message>
         <source>Large Image</source>

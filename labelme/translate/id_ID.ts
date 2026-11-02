@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>Temukan setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>Segmentasikan satu objek dari titik dan sebuah kotak</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>Pilih mode &apos;AI-Points&apos;, &apos;AI-Box&apos;, atau &apos;AI-Find All&apos; untuk mengaktifkan Bantuan AI</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>Pilih &apos;AI-Segment&apos; atau &apos;AI-Find All&apos; untuk mengaktifkan Bantuan AI</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>Mengedit bentuk</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Klik titik untuk menyertakan, atau tahan %s lalu klik untuk mengecualikan. Tahan %s lalu klik untuk menyelesaikan.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Klik titik untuk menyertakan, tahan %s lalu klik untuk mengecualikan, atau seret sebuah kotak. Tahan %s lalu klik untuk menyelesaikan.</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Pilih sudut lainnya. Tahan Shift untuk membuat persegi.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Klik sudut pertama bbox untuk segmentasi AI</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Klik sudut berlawanan untuk segmentasi objek</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -570,6 +558,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>Edit</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Klik titik atau seret sebuah kotak untuk menyegmentasi satu objek; tahan %s lalu klik untuk menyelesaikan.</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -892,10 +888,6 @@ Ganti model AI-Find All ke &apos;SAM3 (smart)&apos;, atau atur format keluaran k
         <translation>Klik untuk menempatkan titik garis patah; tahan %s lalu klik untuk menempatkan titik terakhir.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Klik titik untuk menyegmentasi objek; tahan %s lalu klik untuk menyelesaikan.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>Buka gambar berikutnya (tahan %s untuk menyalin bentuk saat ini)</translation>
     </message>
@@ -922,6 +914,10 @@ Ganti model AI-Find All ke &apos;SAM3 (smart)&apos;, atau atur format keluaran k
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Tidak ada &apos;{query}&apos; baru yang ditemukan</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s tidak dapat menggunakan titik bersama kotak. Gunakan titik atau sebuah kotak.</translation>
     </message>
     <message>
         <source>Large image requires more memory</source>
@@ -1026,18 +1022,6 @@ Ganti model AI-Find All ke &apos;SAM3 (smart)&apos;, atau atur format keluaran k
     <message>
         <source>LineStrip</source>
         <translation>Garis Patah</translation>
-    </message>
-    <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Gambar bounding box untuk mensegmentasi objek.</translation>
     </message>
     <message>
         <source>Continue with Defaults</source>

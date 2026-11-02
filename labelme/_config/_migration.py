@@ -75,6 +75,22 @@ def migrate_config(*, config_from_yaml: dict) -> None:
         "toggle_all_polygons": "toggle_all_shapes",
         "create_ai_detect": "create_ai_find_all",
     }
+    # AI-Points and AI-Box merged into AI-Segment, which takes the first
+    # bound shortcut of the two.
+    old_shortcut_keys = [
+        key for key in ("create_ai_points", "create_ai_box") if key in shortcuts
+    ]
+    if old_shortcut_keys:
+        logger.warning(
+            "Deprecated config: shortcuts.{} -> shortcuts.create_ai_segment",
+            "/".join(old_shortcut_keys),
+        )
+        old_shortcuts = [shortcuts.pop(key) for key in old_shortcut_keys]
+        shortcuts.setdefault(
+            "create_ai_segment",
+            next((value for value in old_shortcuts if value), None),
+        )
+
     for old_key, new_key in _SHORTCUT_RENAMES.items():
         if old_key not in shortcuts:
             continue
@@ -108,15 +124,17 @@ def migrate_config(*, config_from_yaml: dict) -> None:
         )
         ai_detect = crosshair.pop("ai_detect")
         crosshair.setdefault("ai_find_all", ai_detect)
-    ai_polygon = crosshair.pop("ai_polygon", None)
-    ai_mask = crosshair.pop("ai_mask", None)
-    if ai_polygon is None and ai_mask is None:
-        return
-    logger.info(
-        "Migrating old config: canvas.crosshair.ai_polygon={} or "
-        "canvas.crosshair.ai_mask={} -> canvas.crosshair.ai_points_to_shape",
-        ai_polygon,
-        ai_mask,
-    )
-    if "ai_points_to_shape" not in crosshair:
-        crosshair["ai_points_to_shape"] = bool(ai_polygon) or bool(ai_mask)
+    # AI-Points and AI-Box merged into AI-Segment; either one enabled the
+    # crosshair. Older names for AI-Points (ai_polygon, ai_mask) count too.
+    old_crosshair_keys = [
+        key
+        for key in ("ai_points_to_shape", "ai_box_to_shape", "ai_polygon", "ai_mask")
+        if key in crosshair
+    ]
+    if old_crosshair_keys:
+        logger.warning(
+            "Deprecated config: canvas.crosshair.{} -> canvas.crosshair.ai_segment",
+            "/".join(old_crosshair_keys),
+        )
+        old_values = [crosshair.pop(key) for key in old_crosshair_keys]
+        crosshair.setdefault("ai_segment", any(old_values))

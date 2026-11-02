@@ -32,8 +32,8 @@ def group(*, qtbot: QtBot) -> AiToolGroup:
 @pytest.mark.parametrize(
     ("create_mode", "title", "detect_enabled"),
     [
-        ("ai_points_to_shape", "AI-Points", False),
-        ("ai_box_to_shape", "AI-Box", False),
+        ("ai_segment", "AI-Segment", False),
+        ("ai_segment", "AI-Segment", False),
         ("ai_find_all", "AI-Find All", True),
     ],
 )

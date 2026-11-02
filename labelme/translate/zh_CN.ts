@@ -94,12 +94,8 @@
 <context>
     <name>AiToolGroup</name>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -114,12 +110,12 @@
         <translation>查找与文本提示或示例框匹配的所有对象</translation>
     </message>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>在 &apos;AI-Points&apos; 和 &apos;AI-Box&apos; 模式下，AI 会提供标注建议</translation>
+        <source>Segment one object from points and a box</source>
+        <translation>根据点和一个框分割一个对象</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
-        <translation>请选择 &apos;AI-Points&apos;、&apos;AI-Box&apos; 或 &apos;AI-Find All&apos; 模式以启用 AI 辅助</translation>
+        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
+        <translation>请选择 &apos;AI-Segment&apos; 或 &apos;AI-Find All&apos; 以启用 AI 辅助</translation>
     </message>
 </context>
 <context>
@@ -199,8 +195,8 @@
         <translation>正在编辑形状</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>单击各点以包含，或按住 %s 并单击以排除。按住 %s 并单击以完成。</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>单击各点以包含，按住 %s 并单击以排除，或拖动出一个框。按住 %s 并单击以完成。</translation>
     </message>
     <message>
         <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
@@ -245,14 +241,6 @@
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>选择另一个角。按住Shift可绘制正方形。</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>单击确定 AI 分割边界框的第一个角</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>单击对角以分割对象</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -468,10 +456,6 @@
         <translation>单击放置折线的点；按住 %s 并单击以放置最后一个点。</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>单击各点以分割对象；按住 %s 并单击以完成。</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>打开下一张图像（按住 %s 可复制当前形状）</translation>
     </message>
@@ -622,6 +606,14 @@
         <source>Edit</source>
         <comment>toolbar</comment>
         <translation>编辑</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>单击各点或拖动出一个框以分割一个对象；按住 %s 并单击以完成。</translation>
     </message>
     <message>
         <source>AI-Find All</source>
@@ -1004,18 +996,6 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
         <translation>折线</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>绘制边界框以分割对象。</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>使用默认设置继续</translation>
     </message>
@@ -1138,6 +1118,10 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>本次会话的设置通过 --config 管理</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use points with a box. Use points or a box.</source>
+        <translation>%s 无法同时使用点和框。请使用点或框。</translation>
     </message>
     <message>
         <source>Large Image</source>
