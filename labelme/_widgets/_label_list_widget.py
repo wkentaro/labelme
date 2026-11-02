@@ -46,6 +46,8 @@ def _is_locked_row(index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, /) 
 
 class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
     _PAD: Final = "\u2003"
+    # The lock's slot; the thin space keeps the icon off the name.
+    _LOCK_PAD: Final = "\u2003\u2009"
 
     def sizeHint(
         self,
@@ -59,9 +61,9 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
                 size.width() + option.fontMetrics.horizontalAdvance(self._PAD)
             )
         if _is_locked_row(index):
-            # Room for the lock; the height stays that of an icon-less row,
-            # since the style pads any row that has an icon.
-            size.setWidth(size.width() + option.fontMetrics.ascent())
+            size.setWidth(
+                size.width() + option.fontMetrics.horizontalAdvance(self._LOCK_PAD)
+            )
         return size
 
     def paint(
@@ -78,13 +80,7 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
 
         opt = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
-        if _is_locked_row(index):
-            # Only locked rows get the icon, so the common unlocked row wastes no
-            # space; it is added at paint time to keep the row height unchanged.
-            side = opt.fontMetrics.ascent()
-            opt.features |= QtWidgets.QStyleOptionViewItem.ViewItemFeature.HasDecoration
-            opt.decorationSize = QtCore.QSize(side, side)
-            opt.icon = _lock_icon()
+        locked = _is_locked_row(index)
         widget_style = (
             opt.widget.style() if opt.widget else QtWidgets.QApplication.style()
         )
@@ -98,11 +94,19 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
             + 1
         )
         # The swatch leads the text, so the colors form one column the eye can
-        # scan. The em space reserves its slot inside the text, after the
-        # checkbox, and is painted over here rather than drawn as a glyph.
-        gutter = opt.fontMetrics.horizontalAdvance(self._PAD)
-        available_width = max(0, text_rect.width() - 2 * text_margin - gutter)
-        opt.text = self._PAD + opt.fontMetrics.elidedText(
+        # scan. Em spaces reserve slots inside the text, after the checkbox,
+        # for the swatch and then the lock, so the lock never shifts the
+        # swatch. Both are painted here rather than drawn as glyphs or as a
+        # decoration, which would also make the style pad the row taller.
+        pad = self._PAD + (self._LOCK_PAD if locked else "")
+        slot = opt.fontMetrics.horizontalAdvance(self._PAD)
+        available_width = max(
+            0,
+            text_rect.width()
+            - 2 * text_margin
+            - opt.fontMetrics.horizontalAdvance(pad),
+        )
+        opt.text = pad + opt.fontMetrics.elidedText(
             opt.text, opt.textElideMode, available_width
         )
         widget_style.drawControl(
@@ -123,6 +127,22 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
         painter.setBrush(color)
         painter.drawEllipse(center, diameter / 2, diameter / 2)
         painter.restore()
+
+        if not locked:
+            return
+        side = opt.fontMetrics.ascent()
+        _lock_icon().paint(
+            painter,
+            QtCore.QRect(
+                text_rect.left() + text_margin + slot,
+                text_rect.center().y() - side // 2,
+                side,
+                side,
+            ),
+            mode=QtGui.QIcon.Mode.Selected
+            if opt.state & QStyle.StateFlag.State_Selected
+            else QtGui.QIcon.Mode.Normal,
+        )
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):

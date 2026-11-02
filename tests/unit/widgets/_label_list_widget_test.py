@@ -33,20 +33,13 @@ def _paint_item(
 
 
 def _pixels_with_color(
-    *, image: QtGui.QImage, color: QtGui.QColor, tolerance: int = 0
+    *, image: QtGui.QImage, color: QtGui.QColor
 ) -> list[QtCore.QPoint]:
-    def matches(pixel: QtGui.QColor) -> bool:
-        return (
-            abs(pixel.red() - color.red()) <= tolerance
-            and abs(pixel.green() - color.green()) <= tolerance
-            and abs(pixel.blue() - color.blue()) <= tolerance
-        )
-
     return [
         QtCore.QPoint(x, y)
         for x in range(image.width())
         for y in range(image.height())
-        if matches(image.pixelColor(x, y))
+        if image.pixelColor(x, y).rgb() == color.rgb()
     ]
 
 
@@ -80,25 +73,50 @@ def test_label_list_text_matches_stock_delegate_when_selected_unfocused(
     item = LabelListWidgetItem(shape=Shape(label="bottle"))
     item.set_label(text="bottle", color=(0, 255, 0))
     actual = _paint_item(delegate=widget.itemDelegate(), item=item, option=option)
-    # The swatch takes the slot of a leading em space; the text after it
-    # must render as the stock delegate renders it.
-    expected = _paint_item(
-        delegate=QtWidgets.QStyledItemDelegate(),
-        item=LabelListWidgetItem(text="\u2003bottle", shape=Shape(label="bottle")),
-        option=option,
-    )
 
-    # Small antialiased text may leave no pixel exactly blue.
-    label_pixels = _pixels_with_color(
-        image=expected, color=QtGui.QColor("blue"), tolerance=48
+    def stock(text: str) -> QtGui.QImage:
+        return _paint_item(
+            delegate=QtWidgets.QStyledItemDelegate(),
+            item=LabelListWidgetItem(text=text, shape=Shape(label="bottle")),
+            option=option,
+        )
+
+    # The swatch takes the slot of a leading em space; the text after it
+    # must render as the stock delegate renders it. The label is found as
+    # what its text adds to the row, since a style may draw the checkbox in
+    # a color close to the text.
+    expected = stock("\u2003bottle")
+    blank = stock("\u2003")
+    label_left = min(
+        x
+        for x in range(expected.width())
+        for y in range(expected.height())
+        if expected.pixel(x, y) != blank.pixel(x, y)
     )
     swatch_pixels = _pixels_with_color(image=actual, color=QtGui.QColor(0, 255, 0))
-    assert label_pixels
     assert swatch_pixels
-    label_left = min(point.x() for point in label_pixels)
     assert max(point.x() for point in swatch_pixels) < label_left
     text = QtCore.QRect(label_left, 0, actual.width() - label_left, actual.height())
     assert actual.copy(text) == expected.copy(text)
+
+
+def test_lock_leaves_the_swatch_column_in_place(*, widget: LabelListWidget) -> None:
+    option = QtWidgets.QStyleOptionViewItem()
+    option.rect = QtCore.QRect(0, 0, 200, 24)
+    option.state = QStyle.StateFlag.State_Enabled
+
+    def swatch_xs(*, locked: bool) -> set[int]:
+        item = LabelListWidgetItem(shape=Shape(label="bottle", locked=locked))
+        item.set_label(text="bottle", color=(0, 255, 0))
+        image = _paint_item(delegate=widget.itemDelegate(), item=item, option=option)
+        return {
+            point.x()
+            for point in _pixels_with_color(image=image, color=QtGui.QColor(0, 255, 0))
+        }
+
+    unlocked = swatch_xs(locked=False)
+    assert unlocked
+    assert swatch_xs(locked=True) == unlocked
 
 
 def test_label_list_item_clone_preserves_color_swatch(
