@@ -94,3 +94,14 @@ shortcuts:
     assert "ai_points_to_shape" not in config["canvas"]["crosshair"]
     assert config["shortcuts"]["create_ai_segment"] == "Ctrl+B"
     assert "create_ai_box" not in config["shortcuts"]
+
+
+def test_load_ai_points_and_ai_box_shortcuts_both_kept(*, tmp_path: Path) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text("""\
+shortcuts:
+  create_ai_points: [Ctrl+P, Ctrl+B]
+  create_ai_box: [Ctrl+B, Ctrl+X]
+""")
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert config["shortcuts"]["create_ai_segment"] == ["Ctrl+P", "Ctrl+B", "Ctrl+X"]

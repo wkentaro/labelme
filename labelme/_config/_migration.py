@@ -80,8 +80,8 @@ def migrate_config(*, config_from_yaml: dict) -> None:
         "toggle_all_polygons": "toggle_all_shapes",
         "create_ai_detect": "create_ai_find_all",
     }
-    # AI-Points and AI-Box merged into AI-Segment, which takes the first
-    # bound shortcut of the two.
+    # AI-Points and AI-Box merged into AI-Segment, which keeps the shortcuts
+    # bound to either.
     old_shortcut_keys = [
         key for key in ("create_ai_points", "create_ai_box") if key in shortcuts
     ]
@@ -90,10 +90,15 @@ def migrate_config(*, config_from_yaml: dict) -> None:
             "Deprecated config: shortcuts.{} -> shortcuts.create_ai_segment",
             "/".join(old_shortcut_keys),
         )
-        old_shortcuts = [shortcuts.pop(key) for key in old_shortcut_keys]
+        merged: list = []
+        for key in old_shortcut_keys:
+            value = shortcuts.pop(key)
+            for shortcut in value if isinstance(value, list) else [value]:
+                if shortcut and shortcut not in merged:
+                    merged.append(shortcut)
         shortcuts.setdefault(
             "create_ai_segment",
-            next((value for value in old_shortcuts if value), None),
+            merged[0] if len(merged) == 1 else merged or None,
         )
 
     for old_key, new_key in _SHORTCUT_RENAMES.items():
