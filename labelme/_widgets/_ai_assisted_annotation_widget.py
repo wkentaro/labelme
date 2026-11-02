@@ -105,15 +105,15 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self._output_format_group = QtGui.QActionGroup(output_menu)
         self._output_format_actions = {}
         output_formats: list[tuple[_automation.AiOutputFormat, str, str]] = [
-            ("polygon", self.tr("Polygon"), "phosphor/polygon.svg"),
+            ("polygon", self.tr("Polygon"), "polygon.svg"),
             ("mask", self.tr("Mask"), "mask.svg"),
-            ("rectangle", self.tr("Rectangle"), "phosphor/rectangle.svg"),
+            ("rectangle", self.tr("Rectangle"), "rectangle.svg"),
             (
                 "oriented_rectangle",
                 self.tr("Oriented Rectangle"),
                 "oriented_rectangle.svg",
             ),
-            ("circle", self.tr("Circle"), "phosphor/circle.svg"),
+            ("circle", self.tr("Circle"), "circle.svg"),
         ]
         for output_format, text, icon in output_formats:
             action = output_menu.addAction(new_icon(icon), text)

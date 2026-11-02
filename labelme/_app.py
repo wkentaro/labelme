@@ -626,7 +626,7 @@ class MainWindow(QtWidgets.QMainWindow):
         merge = action(
             text=self.tr("Merge Shapes"),
             slot=self._merge_selected_shapes,
-            icon="phosphor/unite-duotone.svg",
+            icon="phosphor/unite.svg",
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
         )
@@ -673,7 +673,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Polygon"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="polygon"),
             shortcut=shortcuts["create_polygon"],
-            icon="phosphor/polygon.svg",
+            icon="polygon.svg",
             tip=self.tr("Start drawing polygons"),
         )
         edit_mode = mode_action(
@@ -689,7 +689,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Rectangle"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="rectangle"),
             shortcut=shortcuts["create_rectangle"],
-            icon="phosphor/rectangle.svg",
+            icon="rectangle.svg",
             tip=self.tr("Start drawing rectangles"),
         )
         create_oriented_rectangle_mode = mode_action(
@@ -705,28 +705,28 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Circle"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="circle"),
             shortcut=shortcuts["create_circle"],
-            icon="phosphor/circle.svg",
+            icon="circle.svg",
             tip=self.tr("Start drawing circles"),
         )
         create_line_mode = mode_action(
             text=self.tr("Line"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="line"),
             shortcut=shortcuts["create_line"],
-            icon="phosphor/line-segment.svg",
+            icon="line.svg",
             tip=self.tr("Start drawing lines"),
         )
         create_point_mode = mode_action(
             text=self.tr("Point"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="point"),
             shortcut=shortcuts["create_point"],
-            icon="phosphor/circles-four.svg",
+            icon="point.svg",
             tip=self.tr("Start drawing points"),
         )
         create_line_strip_mode = mode_action(
             text=self.tr("LineStrip"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="linestrip"),
             shortcut=shortcuts["create_linestrip"],
-            icon="phosphor/line-segments.svg",
+            icon="linestrip.svg",
             tip=self.tr(
                 "Click to place LineStrip points; hold %s and click to place the"
                 " last one."
@@ -827,7 +827,7 @@ class MainWindow(QtWidgets.QMainWindow):
         reset_layout = action(
             text=self.tr("Reset Layout"),
             slot=self._reset_layout,
-            icon="phosphor/layout-duotone.svg",
+            icon="phosphor/layout.svg",
         )
         fill_drawing = action(
             text=self.tr("Fill Drawing Polygon"),
