@@ -2309,6 +2309,7 @@ def _drag(
     canvas: Canvas,
     start: QtCore.QPoint,
     end: QtCore.QPoint,
+    release: QtCore.QPoint | None = None,
 ) -> None:
     qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=start)
     canvas.mouseMoveEvent(
@@ -2321,7 +2322,7 @@ def _drag(
             Qt.KeyboardModifier.NoModifier,
         )
     )
-    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=end)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=release or end)
 
 
 @pytest.mark.gui
@@ -2430,6 +2431,28 @@ def test_ai_segment_undo_removes_the_last_input(
     assert canvas._current.point_labels == (2, 3)
     canvas.undo_last_point()
     assert canvas._current is None
+
+
+@pytest.mark.gui
+def test_ai_segment_box_ends_where_the_mouse_is_released(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.set_ai_model_name(model_name="sam2:small")
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="ai_segment")
+
+    # The last move stops short of the release.
+    _drag(
+        qtbot=qtbot,
+        canvas=canvas,
+        start=QtCore.QPoint(10, 10),
+        end=QtCore.QPoint(40, 20),
+        release=QtCore.QPoint(70, 30),
+    )
+
+    assert canvas._current is not None
+    assert canvas._current.points == (QPointF(10, 10), QPointF(70, 30))
 
 
 @pytest.mark.gui

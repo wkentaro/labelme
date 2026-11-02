@@ -1141,24 +1141,29 @@ class Canvas(QtWidgets.QWidget):
             # The release went elsewhere, e.g. while a finalize blocked input.
             self._ai_segment_press = None
             self._ai_segment_dragging = False
-        if self._should_constrain_to_pixmap(pos):
-            pos = _clamp_into_image(pos, self.pixmap.size())
-        press = self._ai_segment_press
-        if press is not None and not self._ai_segment_dragging:
-            self._ai_segment_dragging = (
-                event.position() - press[1]
-            ).manhattanLength() >= QtWidgets.QApplication.startDragDistance()
-        if self._ai_segment_dragging:
-            assert press is not None
-            self._line = _DraftShape(
-                shape_type="points",
-                points=(press[0], pos),
-                point_labels=_AI_BOX_LABELS,
-            )
-        elif press is None:
+        if self._ai_segment_press is None:
+            if self._should_constrain_to_pixmap(pos):
+                pos = _clamp_into_image(pos, self.pixmap.size())
             self._line = _ai_segment_point(pos, event.modifiers())
+        else:
+            self._drag_ai_segment(pos=pos, widget_pos=event.position())
         self.update()
         self._update_status(extra_messages=None)
+
+    def _drag_ai_segment(self, *, pos: QPointF, widget_pos: QPointF) -> None:
+        press = self._ai_segment_press
+        assert press is not None
+        if not self._ai_segment_dragging:
+            self._ai_segment_dragging = (
+                widget_pos - press[1]
+            ).manhattanLength() >= QtWidgets.QApplication.startDragDistance()
+        if not self._ai_segment_dragging:
+            return
+        if self._should_constrain_to_pixmap(pos):
+            pos = _clamp_into_image(pos, self.pixmap.size())
+        self._line = _DraftShape(
+            shape_type="points", points=(press[0], pos), point_labels=_AI_BOX_LABELS
+        )
 
     def _project_drawing_pos_into_image(self, *, pos: QPointF) -> QPointF:
         current = self._current
@@ -1559,10 +1564,15 @@ class Canvas(QtWidgets.QWidget):
         # A release before the drag distance places this point.
         self._line = _ai_segment_point(pos, modifiers)
 
-    def _release_ai_segment(self) -> None:
+    def _release_ai_segment(self, *, event: QtGui.QMouseEvent) -> None:
         press = self._ai_segment_press
         if press is None:
             return
+        # The release can land past the last move event.
+        self._drag_ai_segment(
+            pos=self.transform_widget_point_to_image(event.position()),
+            widget_pos=event.position(),
+        )
         self._ai_segment_press = None
         self._ai_segment_dragging = False
         draft = _with_ai_segment_input(
@@ -1713,7 +1723,7 @@ class Canvas(QtWidgets.QWidget):
             return
         if button == Qt.MouseButton.LeftButton:
             if self.mode == _CanvasMode.CREATE and self.create_mode == "ai_segment":
-                self._release_ai_segment()
+                self._release_ai_segment(event=event)
             self._release_left()
             return
         if button == Qt.MouseButton.MiddleButton:
