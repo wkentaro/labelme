@@ -53,7 +53,11 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
     def _tinted_pixmap(
         self, *, size: QtCore.QSize, color: QtGui.QColor
     ) -> QtGui.QPixmap:
-        key = (size.width(), size.height(), color.name())
+        key = (
+            size.width(),
+            size.height(),
+            color.name(QtGui.QColor.NameFormat.HexArgb),
+        )
         cached = self._pixmaps.get(key)
         if cached is not None:
             return cached
@@ -62,6 +66,8 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         image = QtGui.QImage(size, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
         image.fill(QtCore.Qt.GlobalColor.transparent)
         painter = QtGui.QPainter(image)
+        # macOS palettes dim disabled text with alpha, which color.name() drops.
+        painter.setOpacity(color.alphaF())
         renderer.render(painter, QtCore.QRectF(0, 0, size.width(), size.height()))
         painter.end()
         pixmap = QtGui.QPixmap.fromImage(image)

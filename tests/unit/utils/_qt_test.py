@@ -118,11 +118,15 @@ def test_new_icon_with_path_that_includes_subdir() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _set_window_text(app: QtWidgets.QApplication, /, *, color: QtGui.QColor) -> None:
+def _set_window_text(
+    app: QtWidgets.QApplication,
+    /,
+    *,
+    color: QtGui.QColor,
+    group: QtGui.QPalette.ColorGroup = QtGui.QPalette.ColorGroup.Normal,
+) -> None:
     palette = app.palette()
-    palette.setColor(
-        QtGui.QPalette.ColorGroup.Normal, QtGui.QPalette.ColorRole.WindowText, color
-    )
+    palette.setColor(group, QtGui.QPalette.ColorRole.WindowText, color)
     app.setPalette(palette)
 
 
@@ -168,6 +172,35 @@ def test_tinted_svg_engine_renders_highlighted_text_color_when_selected(
             QtCore.QSize(4, 4), QtGui.QIcon.Mode.Selected, QtGui.QIcon.State.Off
         )
         assert pixmap.toImage().pixelColor(2, 2).getRgb() == (0, 255, 0, 255)
+    finally:
+        qapp.setPalette(original)
+
+
+def test_tinted_svg_engine_dims_disabled_icon_by_palette_alpha(
+    *,
+    qapp: QtWidgets.QApplication,
+) -> None:
+    original = qapp.palette()
+    try:
+        # macOS palettes: Normal WindowText #d8000000, Disabled #3f000000.
+        _set_window_text(qapp, color=QtGui.QColor("#d8000000"))
+        _set_window_text(
+            qapp,
+            color=QtGui.QColor("#3f000000"),
+            group=QtGui.QPalette.ColorGroup.Disabled,
+        )
+        svg = (
+            b'<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4">'
+            b'<rect width="4" height="4" fill="currentColor"/></svg>'
+        )
+        engine = _TintedSvgIconEngine(svg=svg)
+        size = QtCore.QSize(4, 4)
+        off = QtGui.QIcon.State.Off
+        normal = engine.pixmap(size, QtGui.QIcon.Mode.Normal, off)
+        disabled = engine.pixmap(size, QtGui.QIcon.Mode.Disabled, off)
+        normal_alpha = normal.toImage().pixelColor(2, 2).alpha()
+        disabled_alpha = disabled.toImage().pixelColor(2, 2).alpha()
+        assert disabled_alpha < normal_alpha
     finally:
         qapp.setPalette(original)
 
