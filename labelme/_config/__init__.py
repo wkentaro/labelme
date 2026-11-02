@@ -14,7 +14,6 @@ from ._schema import SETTINGS
 from ._schema import Group
 from ._schema import Setting
 from ._shape_color import RGB_CHANNEL_COUNT
-from ._shape_color import migrate_shape_color
 from ._shape_color import validate_shape_color
 from ._writer import reset_config
 from ._writer import set_overrides
@@ -135,7 +134,7 @@ def load_config(*, config_file: Path | None, config_overrides: dict) -> dict:
             _update_dict(target_dict=config, new_dict=config_from_yaml, key_path=())
 
     config_overrides = copy.deepcopy(config_overrides)
-    migrate_shape_color(config=config_overrides)
+    migrate_config(config_from_yaml=config_overrides)
     if "shape_color" in config_overrides:
         validate_shape_color(config=config_overrides["shape_color"])
     _update_dict(target_dict=config, new_dict=config_overrides, key_path=())
