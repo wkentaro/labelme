@@ -163,10 +163,6 @@
         <translation>کلیک و کشیدن برای جابجایی شکل</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>در حال ایجاد %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC برای لغو</translation>
     </message>

@@ -163,10 +163,6 @@
         <translation>點擊並拖拽以移動形狀</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>正在創建 %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>按 ESC 取消</translation>
     </message>

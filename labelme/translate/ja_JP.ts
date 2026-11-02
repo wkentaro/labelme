@@ -163,10 +163,6 @@
         <translation>クリック &amp; ドラッグで図形を移動</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>%r を作成中</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC でキャンセル</translation>
     </message>

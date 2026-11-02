@@ -163,10 +163,6 @@
         <translation>Nhấn và kéo để di chuyển hình dạng</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Đang tạo %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>Nhấn ESC để hủy</translation>
     </message>

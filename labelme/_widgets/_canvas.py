@@ -997,7 +997,7 @@ class Canvas(QtWidgets.QWidget):
     def _update_status(self, *, extra_messages: list[str] | None) -> None:
         messages: list[str] = []
         if self.mode == _CanvasMode.CREATE:
-            messages.append(self.tr("Creating %r") % self.create_mode)
+            messages.append(self._get_create_mode_name())
             messages.append(self._get_create_mode_message())
             if self._current is not None:
                 messages.append(self.tr("ESC to cancel"))
@@ -1009,6 +1009,29 @@ class Canvas(QtWidgets.QWidget):
         if extra_messages:
             messages.extend(extra_messages)
         self.status_updated.emit(" • ".join(messages))
+
+    def _get_create_mode_name(self) -> str:
+        # Reuse the draw actions' names and their translations from MainWindow.
+        translate = QtCore.QCoreApplication.translate
+        match self.create_mode:
+            case "polygon":
+                return translate("MainWindow", "Polygon")
+            case "rectangle":
+                return translate("MainWindow", "Rectangle")
+            case "oriented_rectangle":
+                return translate("MainWindow", "Oriented Rectangle")
+            case "circle":
+                return translate("MainWindow", "Circle")
+            case "line":
+                return translate("MainWindow", "Line")
+            case "point":
+                return translate("MainWindow", "Point")
+            case "linestrip":
+                return translate("MainWindow", "LineStrip")
+            case "ai_segment":
+                return translate("MainWindow", "AI-Segment")
+            case "ai_find_all":
+                return translate("MainWindow", "AI-Find All")
 
     def _get_create_mode_message(self) -> str:
         assert self.mode == _CanvasMode.CREATE

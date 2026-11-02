@@ -147,10 +147,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>Δημιουργία %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>(Esc για ακύρωση)</translation>
     </message>

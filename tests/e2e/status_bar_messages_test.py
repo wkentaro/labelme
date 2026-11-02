@@ -35,9 +35,7 @@ def test_shape_mode_actions_update_status_without_pointer_movement(
         assert canvas.mode == _CanvasMode.CREATE
         assert canvas.create_mode == create_mode
         assert len(status_messages) == 1
-        assert raw_win._status_bar.message.text().startswith(
-            f"Creating {create_mode!r}"
-        )
+        assert raw_win._status_bar.message.text().startswith(f"{action.text()} • ")
         assert raw_win._status_bar.stats.text() == ""
 
         status_messages.clear()

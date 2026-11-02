@@ -163,10 +163,6 @@
         <translation>Klik &amp; seret untuk memindahkan bentuk</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Membuat %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC untuk membatalkan</translation>
     </message>

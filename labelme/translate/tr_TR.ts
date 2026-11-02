@@ -163,10 +163,6 @@
         <translation>Şekli taşımak için tıklayın &amp; sürükleyin</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>%r oluşturuluyor</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>İptal etmek için ESC</translation>
     </message>
