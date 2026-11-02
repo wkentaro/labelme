@@ -8,6 +8,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._utils import new_action
 from labelme._widgets._tool_bar import ToolBar
 
 
@@ -250,6 +251,26 @@ def test_toolbar_vertical_buttons_have_equal_width_and_alignment(
     assert len(set(widths)) == 1, f"Button minimum widths not equal: {widths}"
     assert widths[0] > 0
     assert len({(button.x(), button.width()) for button in buttons}) == 1
+
+
+def test_toolbar_vertical_label_wraps_only_when_one_line_is_wider(
+    *, qtbot: QtBot
+) -> None:
+    parent = QtWidgets.QWidget()
+    qtbot.addWidget(parent)
+    ICON: Final = "phosphor/floppy-disk.svg"
+    fits = new_action(parent, text="Find All", icon=ICON)
+    widest = new_action(parent, text="Abcdefghijklmnopqrstu", icon=ICON)
+    wide = new_action(parent, text="Abcdefghijk Lmnopqrstuvw", icon=ICON)
+    assert fits.iconText() == "Find\nAll"
+
+    toolbar = ToolBar(
+        title="T", actions=[fits, widest, wide], orientation=Qt.Orientation.Vertical
+    )
+    qtbot.addWidget(toolbar)
+
+    assert fits.iconText() == "Find All"
+    assert wide.iconText() == "Abcdefghijk\nLmnopqrstuvw"
 
 
 def test_toolbar_horizontal_buttons_not_equalized(*, toolbar_h: ToolBar) -> None:

@@ -309,7 +309,7 @@ def test_new_action_with_icon_sets_icon_text(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     # Use an icon file that actually exists so Qt loads it as non-null.
-    action = new_action(parent, text="Save File", icon="ai-box.svg")
+    action = new_action(parent, text="Save File", icon="ai-points.svg")
     # multi-word labels are presented so words are not shown on a single unbroken line
     icon_text = action.iconText()
     assert icon_text != "Save File"  # must not be the original single-line text
@@ -417,3 +417,15 @@ def test_new_action_drops_cjk_mnemonic_from_toolbar_label(*, qtbot: QtBot) -> No
 )
 def test_toolbar_label_wraps_to_two_balanced_lines(*, text: str, label: str) -> None:
     assert _toolbar_label(text) == label
+
+
+@pytest.mark.parametrize(
+    ("text", "label"),
+    [
+        ("&Open File…", "&Open File"),
+        ("Hình ảnh Tiếp theo(&N)", "Hình ảnh Tiếp theo"),
+        ("図形を\n編集", "図形を編集"),
+    ],
+)
+def test_toolbar_label_stays_on_one_line_without_wrap(*, text: str, label: str) -> None:
+    assert _toolbar_label(text, wrap=False) == label
