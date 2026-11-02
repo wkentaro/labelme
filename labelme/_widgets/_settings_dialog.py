@@ -793,7 +793,7 @@ class SettingsDialog(QtWidgets.QDialog):
 
         GROUP_ICONS: typing.Final[dict[Group, str]] = {
             "Appearance and language": "phosphor/palette.svg",
-            "Files and saving": "phosphor/floppy-disk-duotone.svg",
+            "Files and saving": "phosphor/floppy-disk-neutral.svg",
             "Drawing and canvas": "phosphor/polygon.svg",
             "Continue between images": "phosphor/images.svg",
             "Label sources": "phosphor/tag.svg",

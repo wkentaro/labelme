@@ -626,7 +626,7 @@ class MainWindow(QtWidgets.QMainWindow):
         merge = action(
             text=self.tr("Merge Shapes"),
             slot=self._merge_selected_shapes,
-            icon="phosphor/unite-duotone.svg",
+            icon="phosphor/unite.svg",
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
         )
@@ -827,7 +827,7 @@ class MainWindow(QtWidgets.QMainWindow):
         reset_layout = action(
             text=self.tr("Reset Layout"),
             slot=self._reset_layout,
-            icon="phosphor/layout-duotone.svg",
+            icon="phosphor/layout.svg",
         )
         fill_drawing = action(
             text=self.tr("Fill Drawing Polygon"),
