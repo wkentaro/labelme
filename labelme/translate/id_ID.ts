@@ -1671,8 +1671,8 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Lebih akurat daripada Base+, tetapi lebih lambat.</translation>
     </message>
     <message>
-        <source>Most accurate, and slowest. Best with a GPU.</source>
-        <translation>Paling akurat dan paling lambat. Terbaik dengan GPU.</translation>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Paling akurat, tetapi lebih lambat daripada SAM 2 Base+. Terbaik dengan GPU.</translation>
     </message>
     <message>
         <source>Fastest. Finds boxes, without masks.</source>

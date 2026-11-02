@@ -1671,8 +1671,8 @@ Verwachte locatie: {path}</translation>
         <translation>Nauwkeuriger dan Base+, maar trager.</translation>
     </message>
     <message>
-        <source>Most accurate, and slowest. Best with a GPU.</source>
-        <translation>Nauwkeurigst en traagst. Het best met een GPU.</translation>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Nauwkeurigst, maar trager dan SAM 2 Base+. Het best met een GPU.</translation>
     </message>
     <message>
         <source>Fastest. Finds boxes, without masks.</source>

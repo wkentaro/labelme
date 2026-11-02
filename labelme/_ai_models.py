@@ -104,7 +104,8 @@ AI_MODEL_TOOLTIPS: Final[dict[str, str]] = {
     "sam3:latest": cast(
         str,
         QT_TRANSLATE_NOOP(
-            "_ModelMenuButton", "Most accurate, and slowest. Best with a GPU."
+            "_ModelMenuButton",
+            "Most accurate, but slower than SAM 2 Base+. Best with a GPU.",
         ),
     ),
     "yoloworld:latest": cast(

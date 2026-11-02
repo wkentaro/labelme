@@ -1671,8 +1671,8 @@ Beklenen konum: {path}</translation>
         <translation>Base+&apos;tan daha doğru, ancak daha yavaş.</translation>
     </message>
     <message>
-        <source>Most accurate, and slowest. Best with a GPU.</source>
-        <translation>En doğru ve en yavaş. GPU ile en iyisi.</translation>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>En doğru, ancak SAM 2 Base+&apos;tan daha yavaş. GPU ile en iyisi.</translation>
     </message>
     <message>
         <source>Fastest. Finds boxes, without masks.</source>

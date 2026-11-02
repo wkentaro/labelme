@@ -1671,8 +1671,8 @@ Expected location: {path}</source>
         <translation>Base+보다 정확하지만 느립니다.</translation>
     </message>
     <message>
-        <source>Most accurate, and slowest. Best with a GPU.</source>
-        <translation>가장 정확하지만 가장 느립니다. GPU에서 가장 좋습니다.</translation>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>가장 정확하지만 SAM 2 Base+보다 느립니다. GPU에서 가장 좋습니다.</translation>
     </message>
     <message>
         <source>Fastest. Finds boxes, without masks.</source>

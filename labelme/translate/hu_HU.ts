@@ -1671,8 +1671,8 @@ Várt hely: {path}</translation>
         <translation>Pontosabb a Base+-nál, de lassabb.</translation>
     </message>
     <message>
-        <source>Most accurate, and slowest. Best with a GPU.</source>
-        <translation>A legpontosabb és a leglassabb. GPU-val a legjobb.</translation>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>A legpontosabb, de lassabb a SAM 2 Base+-nál. GPU-val a legjobb.</translation>
     </message>
     <message>
         <source>Fastest. Finds boxes, without masks.</source>

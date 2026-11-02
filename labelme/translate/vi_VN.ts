@@ -1671,8 +1671,8 @@ Vị trí dự kiến: {path}</translation>
         <translation>Chính xác hơn Base+, nhưng chậm hơn.</translation>
     </message>
     <message>
-        <source>Most accurate, and slowest. Best with a GPU.</source>
-        <translation>Chính xác nhất và chậm nhất. Tốt nhất khi có GPU.</translation>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Chính xác nhất, nhưng chậm hơn SAM 2 Base+. Tốt nhất khi có GPU.</translation>
     </message>
     <message>
         <source>Fastest. Finds boxes, without masks.</source>

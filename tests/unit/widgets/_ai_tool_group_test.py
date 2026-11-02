@@ -227,7 +227,7 @@ def test_model_menu_explains_each_model_on_hover(*, group: AiToolGroup) -> None:
     tips = {a.text(): a.toolTip() for a in group._model_button._build_menu().actions()}
 
     assert tips["SAM 3\tMost accurate"] == (
-        "Most accurate, and slowest. Best with a GPU."
+        "Most accurate, but slower than SAM 2 Base+. Best with a GPU."
     )
     # A reason the model can't be used here wins over its description.
     assert tips["YOLO-World\tFastest · Boxes only"] == "Not for masks"

@@ -1671,8 +1671,8 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Dokładniejszy od Base+, ale wolniejszy.</translation>
     </message>
     <message>
-        <source>Most accurate, and slowest. Best with a GPU.</source>
-        <translation>Najdokładniejszy i najwolniejszy. Najlepiej z GPU.</translation>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Najdokładniejszy, ale wolniejszy od SAM 2 Base+. Najlepiej z GPU.</translation>
     </message>
     <message>
         <source>Fastest. Finds boxes, without masks.</source>
