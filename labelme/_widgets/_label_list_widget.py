@@ -44,8 +44,8 @@ def _is_locked_row(index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, /) 
     return isinstance(shape, Shape) and shape.locked
 
 
-class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
-    _DOT: Final = " ●"
+class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
+    _PAD: Final = "\u2003"
 
     def sizeHint(
         self,
@@ -56,7 +56,7 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
         size = super().sizeHint(option, index)
         if isinstance(index.data(LABEL_COLOR_ROLE), QtGui.QColor):
             size.setWidth(
-                size.width() + option.fontMetrics.horizontalAdvance(self._DOT)
+                size.width() + option.fontMetrics.horizontalAdvance(self._PAD)
             )
         if _is_locked_row(index):
             # Room for the lock; the height stays that of an icon-less row,
@@ -97,29 +97,31 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
             )
             + 1
         )
-        dot_width = opt.fontMetrics.horizontalAdvance(self._DOT)
-        available_width = max(0, text_rect.width() - 2 * text_margin - dot_width)
-
-        # The dot is painted here rather than appended to opt.text, so that Qt
-        # never draws the glyph in the text color underneath it: the two draws
-        # land a subpixel apart and the one below shows as a fringe.
-        opt.text = opt.fontMetrics.elidedText(
+        # The swatch leads the text, so the colors form one column the eye can
+        # scan. The em space reserves its slot inside the text, after the
+        # checkbox, and is painted over here rather than drawn as a glyph.
+        gutter = opt.fontMetrics.horizontalAdvance(self._PAD)
+        available_width = max(0, text_rect.width() - 2 * text_margin - gutter)
+        opt.text = self._PAD + opt.fontMetrics.elidedText(
             opt.text, opt.textElideMode, available_width
         )
         widget_style.drawControl(
             QStyle.ControlElement.CE_ItemViewItem, opt, painter, opt.widget
         )
 
-        dot_rect = QtCore.QRect(text_rect)
-        dot_rect.setLeft(
-            text_rect.left() + text_margin + opt.fontMetrics.horizontalAdvance(opt.text)
+        # The ring keeps dark label colors visible against a dark background.
+        diameter = opt.fontMetrics.ascent() * 0.6
+        center = QtCore.QPointF(
+            text_rect.left() + text_margin + diameter / 2,
+            text_rect.center().y() + 0.5,
         )
-        dot_rect.setWidth(dot_width)
-
+        ring = QtGui.QColor(opt.palette.color(QtGui.QPalette.ColorRole.Text))
+        ring.setAlphaF(0.35)
         painter.save()
-        painter.setFont(opt.font)
-        painter.setPen(color)
-        painter.drawText(dot_rect, opt.displayAlignment, self._DOT)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+        painter.setPen(QtGui.QPen(ring, 1))
+        painter.setBrush(color)
+        painter.drawEllipse(center, diameter / 2, diameter / 2)
         painter.restore()
 
 
@@ -202,7 +204,9 @@ class LabelListWidget(QtWidgets.QListView):
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)
 
-        self.setItemDelegate(TrailingColorDotDelegate())
+        self.setItemDelegate(ColorSwatchDelegate())
+        # Long labels elide instead of scrolling the list sideways.
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setSelectionMode(
             QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )

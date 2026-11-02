@@ -80,9 +80,11 @@ def test_label_list_text_matches_stock_delegate_when_selected_unfocused(
     item = LabelListWidgetItem(shape=Shape(label="bottle"))
     item.set_label(text="bottle", color=(0, 255, 0))
     actual = _paint_item(delegate=widget.itemDelegate(), item=item, option=option)
+    # The swatch takes the slot of a leading em space; the text after it
+    # must render as the stock delegate renders it.
     expected = _paint_item(
         delegate=QtWidgets.QStyledItemDelegate(),
-        item=LabelListWidgetItem(text="bottle", shape=Shape(label="bottle")),
+        item=LabelListWidgetItem(text="\u2003bottle", shape=Shape(label="bottle")),
         option=option,
     )
 
@@ -90,50 +92,18 @@ def test_label_list_text_matches_stock_delegate_when_selected_unfocused(
     label_pixels = _pixels_with_color(
         image=expected, color=QtGui.QColor("blue"), tolerance=48
     )
-    dot_pixels = _pixels_with_color(image=actual, color=QtGui.QColor(0, 255, 0))
+    swatch_pixels = _pixels_with_color(image=actual, color=QtGui.QColor(0, 255, 0))
     assert label_pixels
-    assert dot_pixels
-    label_right = max(point.x() for point in label_pixels)
-    assert label_right < min(point.x() for point in dot_pixels)
-    prefix = QtCore.QRect(0, 0, label_right + 1, actual.height())
-    assert actual.copy(prefix) == expected.copy(prefix)
+    assert swatch_pixels
+    label_left = min(point.x() for point in label_pixels)
+    assert max(point.x() for point in swatch_pixels) < label_left
+    text = QtCore.QRect(label_left, 0, actual.width() - label_left, actual.height())
+    assert actual.copy(text) == expected.copy(text)
 
 
-def test_color_dot_is_painted_without_a_text_colored_fringe(
-    *,
-    widget: LabelListWidget,
+def test_label_list_item_clone_preserves_color_swatch(
+    *, widget: LabelListWidget
 ) -> None:
-    option = QtWidgets.QStyleOptionViewItem()
-    option.rect = QtCore.QRect(0, 0, 200, 24)
-    option.state = QStyle.StateFlag.State_Enabled | QStyle.StateFlag.State_Selected
-    for group in (QPalette.ColorGroup.Active, QPalette.ColorGroup.Inactive):
-        option.palette.setColor(
-            group, QPalette.ColorRole.Highlight, QtGui.QColor("blue")
-        )
-        option.palette.setColor(
-            group, QPalette.ColorRole.HighlightedText, QtGui.QColor("white")
-        )
-
-    item = LabelListWidgetItem(shape=Shape(label="bottle"))
-    item.set_label(text="bottle", color=(255, 0, 0))
-    image = _paint_item(delegate=widget.itemDelegate(), item=item, option=option)
-
-    dot_pixels = _pixels_with_color(image=image, color=QtGui.QColor(255, 0, 0))
-    assert dot_pixels
-    # Only the dot blended into the highlight belongs around the dot, and
-    # neither carries a green channel. Any green there is the white glyph Qt
-    # paints for a dot left in the item text, showing out from underneath.
-    xs = [point.x() for point in dot_pixels]
-    ys = [point.y() for point in dot_pixels]
-    assert not [
-        (x, y)
-        for x in range(min(xs) - 1, max(xs) + 2)
-        for y in range(min(ys) - 1, max(ys) + 2)
-        if image.pixelColor(x, y).green() != 0
-    ]
-
-
-def test_label_list_item_clone_preserves_color_dot(*, widget: LabelListWidget) -> None:
     item = LabelListWidgetItem(shape=Shape(label="cat"))
     item.set_label(text="cat", color=(0, 255, 0))
     option = QtWidgets.QStyleOptionViewItem()
