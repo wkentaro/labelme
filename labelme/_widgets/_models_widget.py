@@ -105,9 +105,7 @@ class ModelsWidget(QtWidgets.QWidget):
             option = find_ai_assist_model_option(model_name=name)
             capabilities = []
             if option is not None:
-                if option.supports_point_prompts:
-                    capabilities.append(self.tr("Points"))
-                capabilities.append(self.tr("Boxes"))
+                capabilities.extend((self.tr("Points"), self.tr("Boxes")))
             if name in {model for model, _ in AI_TEXT_MODEL_OPTIONS}:
                 capabilities.append(self.tr("Text prompts"))
             row_layout.addWidget(QtWidgets.QLabel(" · ".join(capabilities)), 2, 0, 1, 2)
@@ -209,10 +207,16 @@ class ModelsWidget(QtWidgets.QWidget):
         if not filename:
             return self.tr("Downloading…")
         locale = self.locale()
+        # MB and GB, like the model menu's download sizes.
+        traditional = QtCore.QLocale.DataSizeFormat.DataSizeTraditionalFormat
         return self.tr("Downloading {filename} · {done} / {total}").format(
             filename=filename,
-            done=locale.formattedDataSize(done, 1),
-            total=locale.formattedDataSize(total, 1) if total is not None else "?",
+            done=locale.formattedDataSize(done, 1, traditional),
+            total=(
+                locale.formattedDataSize(total, 1, traditional)
+                if total is not None
+                else "?"
+            ),
         )
 
     def _download_or_cancel(self, model_name: str, /) -> None:

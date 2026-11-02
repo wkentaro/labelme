@@ -150,11 +150,20 @@ def test_dialog_actions_end_with_ellipsis(*, main_win: MainWinFactory) -> None:
 
 @pytest.mark.gui
 def test_checkable_menu_items_have_no_icon(*, main_win: MainWinFactory) -> None:
-    # Mode toggles that also sit on the toolbar keep their icon; other checkable
-    # items rely on the checkmark alone.
+    # Mode toggles that also sit on the toolbar keep their icon, and so do
+    # shape pickers, whose icon names the shape; other checkable items rely on
+    # the checkmark alone.
     toggles_with_icon = frozenset({"fit_window", "fit_selection"})
     win = _english_window(main_win)
-    allowed = {id(getattr(win._actions, name)) for name in toggles_with_icon}
+    allowed = {
+        id(a)
+        for a in (
+            *(getattr(win._actions, name) for name in toggles_with_icon),
+            *(a for _, a in win._actions.draw),
+            win._actions.edit_mode,
+            *win._ai_annotation._output_format_actions.values(),
+        )
+    }
     found = {
         _plain(a.text())
         for a in _menu_actions(win)
@@ -257,3 +266,21 @@ def test_menu_mnemonics_are_unique_in_every_language(
             if _mnemonic(source) and not _mnemonic(text)
         ]
         assert dropped == [], name
+
+
+@pytest.mark.gui
+def test_file_menu_groups_actions_by_task(*, main_win: MainWinFactory) -> None:
+    win = _english_window(main_win)
+    groups: list[list[QtGui.QAction]] = [[]]
+    for action in win._menus.file.actions():
+        if action.isSeparator():
+            groups.append([])
+        else:
+            groups[-1].append(action)
+    a = win._actions
+    assert groups[:4] == [
+        [a.open, a.open_dir],
+        [a.open_prev_img, a.open_next_img],
+        [a.save, a.save_as, a.save_auto, a.change_output_dir, a.save_with_image_data],
+        [a.close, a.delete_file],
+    ]

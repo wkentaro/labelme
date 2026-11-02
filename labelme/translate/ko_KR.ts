@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>폴리곤 세부 수준</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>폴리곤 세부 수준 조정</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -44,8 +36,8 @@
         <translation>원</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos; 또는 &apos;AI-Box&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
+        <source>Output format: {format}</source>
+        <translation>출력 형식: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,28 +51,12 @@
         <source>Model</source>
         <translation>모델</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI 어시스트</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>출력 형식</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>예: 개, 고양이, 새</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>실행</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI 텍스트 프롬프트 모델</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +67,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI가 텍스트 프롬프트에서 주석을 생성합니다</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>AI 텍스트 프롬프트</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>&apos;Polygon&apos;, &apos;Rectangle&apos; 또는 &apos;AI-Points&apos; 모드를 선택하여 활성화</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>모델</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>찾을 대상</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>프롬프트</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>찾는 중…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 모델</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>옵션</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -188,8 +179,20 @@
         <translation>도형 편집 중</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>점을 클릭하여 포함하거나 %s 키를 누른 채 클릭하여 제외합니다. %s 키를 누른 채 클릭하여 완료합니다.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>점을 클릭하여 포함하거나, %s 키를 누른 채 클릭하여 제외하거나, 상자를 드래그합니다. %s 키를 누른 채 클릭하여 완료합니다.</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>AI-Find All에 찾을 대상을 입력하거나, 예시 하나를 둘러싸는 상자의 첫 번째 모서리를 클릭하세요</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>반대쪽 모서리를 클릭하여 이와 비슷한 객체를 제외합니다</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>반대쪽 모서리를 클릭하면 이와 같은 모든 객체를 찾습니다</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -224,12 +227,8 @@
         <translation>다른 모서리를 선택하세요. 정사각형을 그리려면 Shift를 누른 상태로 조작하세요.</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>AI 세그멘테이션을 위해 bbox의 첫 번째 모서리 클릭</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>대각 모서리를 클릭하여 객체를 세그먼트</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter 키로 결과를 추가하고 Esc 키로 취소합니다. %s 키를 누른 채 상자를 그려 비슷한 객체를 제외합니다.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -441,10 +440,6 @@
         <translation>클릭하여 꺾은선의 점을 배치하고, %s 키를 누른 채 클릭하여 마지막 점을 배치합니다.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>점을 클릭하여 객체를 분할하고, %s 키를 누른 채 클릭하여 완료합니다.</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>다음 이미지 열기(%s 키를 누르고 있으면 현재 도형을 복사)</translation>
     </message>
@@ -597,6 +592,22 @@
         <translation>편집</translation>
     </message>
     <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>점을 클릭하거나 상자를 드래그하여 객체 하나를 분할하고, %s 키를 누른 채 클릭하여 완료합니다.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체 찾기</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>다음</translation>
@@ -743,10 +754,6 @@
         <translation>추가 도형 도구</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s가 시작되었습니다.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>다시 시도</translation>
     </message>
@@ -767,8 +774,32 @@
         <translation>지금은 기본 설정을 사용할 수 있습니다. 초기화하기 전에 설정 파일의 백업을 저장합니다.</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>찾을 대상을 입력하세요</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>CPU에서 일치 항목 찾는 중…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>일치 항목 찾는 중…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 도형을 생성할 수 없습니다.
+
+AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>이 주석 파일은 다른 이미지의 파일입니다: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s은(는) 예시 상자를 사용할 수 없습니다. SAM 3를 선택하세요.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -865,10 +896,6 @@
         <translation>취소</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>이 모델은 포인트 프롬프트를 지원하지 않으므로 AI-Points 모드에서는 사용할 수 없습니다.</translation>
-    </message>
-    <message>
         <source>Keep the annotation changes for &quot;{}&quot;?</source>
         <translation>&quot;{}&quot;의 주석 변경 사항을 유지하시겠습니까?</translation>
     </message>
@@ -949,18 +976,6 @@
         <translation>연결선</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>바운딩 박스를 그려서 객체를 세그먼트.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>기본 설정으로 계속</translation>
     </message>
@@ -969,12 +984,28 @@
         <translation>백업 후 초기화</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 도형을 생성할 수 없습니다.
-
-AI 텍스트 프롬프트 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>모든 &apos;{query}&apos; 찾는 중…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>CPU에서 모든 &apos;{query}&apos; 찾는 중…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>CPU에서 분할 중…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>분할 중…</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>새 &apos;{query}&apos; {count}개를 찾았습니다</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>새 &apos;{query}&apos;을(를) 찾지 못했습니다</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -983,16 +1014,6 @@ AI 텍스트 프롬프트 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하�
     <message>
         <source>Error Saving Annotation File</source>
         <translation>주석 파일 저장 오류</translation>
-    </message>
-    <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points 사용 불가</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s은(는) 포인트 프롬프트를 지원하지 않습니다.
-다른 모델을 선택하거나 AI-Box 모드를 사용하세요.</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1114,6 +1135,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>구성 오류</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>상자만 감지합니다. 이 모델을 사용하려면 사각형으로 전환하세요.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
@@ -1136,6 +1161,10 @@ Expected location: {path}</source>
     <message>
         <source>Unavailable: {model}</source>
         <translation>사용 불가: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>모델 더 보기…</translation>
     </message>
 </context>
 <context>
@@ -1383,6 +1412,10 @@ Expected location: {path}</source>
         <translation>한 줄에 플래그 이름 하나를 입력합니다. 패턴: ^car$는 car와 정확히 일치하고, car는 접두사와 일치하며, .*는 모든 레이블과 일치합니다.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 모델</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>폴리곤 세부 수준</translation>
     </message>
@@ -1397,6 +1430,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>중복 중복 방지 중복 제거</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>연산 장치</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>자동은 GPU를 사용하며 GPU에 오류가 생기면 CPU로 전환합니다.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>GPU CUDA 프로세서 느림 충돌</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1437,46 +1486,6 @@ Expected location: {path}</source>
     <message>
         <source>Default model</source>
         <translation>기본 모델</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (속도)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (정확도)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (속도)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (균형)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (정확도)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (속도)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (균형)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (정확도)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>텍스트 프롬프트 모델</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1609,6 +1618,65 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>{row}행: {error} 변경 사항이 적용되지 않았습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>모델</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>가장 빠름</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>균형</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>가장 정확함</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>원래 SAM입니다. 모든 크기에서 SAM 2가 더 빠릅니다.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>가장 빠르며 윤곽선이 거칩니다. 어떤 컴퓨터에서도 잘 실행됩니다.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Tiny보다 윤곽선이 선명하지만 SAM 2 Base+보다 느립니다.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Base+보다 다운로드 크기가 작고, 정확도가 약간 낮습니다.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>속도와 정확도의 균형. CPU에서도 잘 실행됩니다.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Base+보다 정확하지만 느립니다.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>가장 정확하지만 SAM 2 Base+보다 느립니다. GPU에서 가장 좋습니다.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>가장 빠릅니다. 마스크 없이 상자를 찾습니다.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>상자만</translation>
     </message>
 </context>
 <context>

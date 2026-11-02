@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import dataclasses
 import enum
 import functools
 import html
@@ -19,7 +20,6 @@ from pathlib import Path
 from typing import Final
 from typing import Literal
 from typing import NamedTuple
-from typing import TypeAlias
 from typing import cast
 
 import natsort
@@ -47,7 +47,6 @@ from ._label_file import ImageNotFoundError
 from ._label_file import ImageTooLargeError
 from ._label_file import LabelFileError
 from ._label_file import LabelFileReadError
-from ._label_file import ShapeDict
 from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
@@ -58,6 +57,7 @@ from ._save_request import SaveRequest
 from ._save_request import write_save_request
 from ._save_writer import SaveWriter
 from ._shape import Shape
+from ._shape import ShapeDict
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
 from ._shape import merge_masks
@@ -65,8 +65,10 @@ from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
 from ._utils import ImageDecodeRequirement
 from ._utils import get_image_decode_requirement
+from ._widgets import LABEL_COLOR_ROLE
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
+from ._widgets import AiToolGroup
 from ._widgets import AnnotationFolderFooter
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
@@ -76,6 +78,7 @@ from ._widgets import LabelDialogEntry
 from ._widgets import LabelDialogField
 from ._widgets import LabelListWidget
 from ._widgets import LabelListWidgetItem
+from ._widgets import ModelsDialog
 from ._widgets import Palette
 from ._widgets import SettingsDialog
 from ._widgets import StatusStats
@@ -83,10 +86,22 @@ from ._widgets import ToolBar
 from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
 from ._widgets import format_shape_label
-from ._widgets._label_list_widget import LABEL_COLOR_ROLE
-from ._widgets._models_widget import ModelsDialog
-from ._widgets._models_widget import license_link
-from ._widgets._models_widget import license_notice
+from ._widgets import license_link
+from ._widgets import license_notice
+
+
+@dataclasses.dataclass(frozen=True, eq=False)
+class _AiTextJob:
+    pixmap_key: int
+    texts: list[str]
+    shape_type: _automation.AiOutputFormat
+    iou_threshold: float
+    score_threshold: float
+    image_size: tuple[int, int] | None
+
+    @property
+    def query(self) -> str:
+        return ", ".join(text.strip() for text in self.texts)
 
 
 class _ZoomMode(enum.Enum):
@@ -94,12 +109,6 @@ class _ZoomMode(enum.Enum):
     FIT_SELECTION = enum.auto()
     MANUAL_ZOOM = enum.auto()
 
-
-_TextToAnnotationCreateMode: TypeAlias = Literal["polygon", "rectangle"]
-_AI_CREATE_MODES: Final[tuple[str, ...]] = (
-    "ai_points_to_shape",
-    "ai_box_to_shape",
-)
 
 # Keys of the Window State store, shared by the restore, reset, and close paths.
 WINDOW_SIZE_KEY: Final[str] = "window/size"
@@ -114,6 +123,7 @@ class _StatusBarWidgets(NamedTuple):
     stats: StatusStats
     save: QtWidgets.QLabel
     retry: QtWidgets.QToolButton
+    ai: QtWidgets.QLabel
 
 
 class _CanvasWidgets(NamedTuple):
@@ -177,8 +187,8 @@ class _Actions(NamedTuple):
     create_line_mode: QtGui.QAction
     create_point_mode: QtGui.QAction
     create_line_strip_mode: QtGui.QAction
-    create_ai_points_to_shape_mode: QtGui.QAction
-    create_ai_box_to_shape_mode: QtGui.QAction
+    create_ai_segment_mode: QtGui.QAction
+    create_ai_find_all_mode: QtGui.QAction
     open_next_img: QtGui.QAction
     open_prev_img: QtGui.QAction
     keep_prev_zoom: QtGui.QAction
@@ -236,7 +246,6 @@ class MainWindow(QtWidgets.QMainWindow):
     _config: dict
     _config_overrides: dict
 
-    _text_osam_session: _automation.OsamSession | None = None
     _is_changed: bool = False
     _shape_clipboard: ShapeClipboard
     _zoom_mode: _ZoomMode
@@ -246,7 +255,6 @@ class MainWindow(QtWidgets.QMainWindow):
     _prev_opened_dir: str | None
     _canvas_widgets: _CanvasWidgets
     _status_bar: _StatusBarWidgets
-    _status_mouse_pos: QtCore.QPointF | None
     _zoom_mode_label: QtWidgets.QLabel
     _zoom_mode_captions: dict[_ZoomMode, str]
     _docks: _DockWidgets
@@ -259,6 +267,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _shape_color_preview: dict | None
     _ai_annotation: AiAssistedAnnotationWidget
     _ai_text: AiTextToAnnotationWidget
+    _ai_group: AiToolGroup
 
     _output_dir_value: Path | None = None
     _image: QtGui.QImage
@@ -298,7 +307,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._prev_opened_dir = None
         self._label_list_menu_origin: QtCore.QPoint | None = None
-        self._status_mouse_pos = None
         self._docks = self._setup_dock_widgets()
 
         self.setAcceptDrops(True)
@@ -326,10 +334,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._menus = self._setup_menus()
 
         self._ai_annotation = AiAssistedAnnotationWidget(
-            default_model=self._config["ai"]["default"] or "",
+            model_name=self._config["ai"]["default"] or "",
             polygon_detail=self._config["mask_polygonization"]["detail"],
             on_model_changed=self._on_ai_model_changed,
-            on_output_format_changed=self._canvas_widgets.canvas.set_ai_output_format,
+            on_output_format_changed=self._on_ai_output_format_changed,
             on_polygon_detail_changed=self._on_ai_polygon_detail_changed,
             parent=self,
         )
@@ -342,19 +350,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.set_ai_polygon_detail(
             detail=self._config["mask_polygonization"]["detail"]
         )
-        self._ai_annotation.setEnabled(False)
-        self._ai_buttons_highlighted = False
 
         self._ai_text = AiTextToAnnotationWidget(
             on_submit=self._submit_ai_prompt, parent=self
         )
         self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"] or "")
+        self._ai_text.set_label_suggestions(self._docks.unique_label_list.model())
+        # The Setting, not the picker: the picker is empty until the model is
+        # downloaded, and Prompt Compatibility is checked before that.
+        self._canvas_widgets.canvas.get_ai_find_all_model_name = lambda: (
+            self._config["ai"]["text_model"] or ""
+        )
+        self._canvas_widgets.canvas.get_ai_find_all_query = (
+            self._ai_text.get_text_prompt
+        )
+        self._canvas_widgets.canvas.get_ai_find_all_thresholds = lambda: (
+            self._ai_text.get_score_threshold(),
+            self._ai_text.get_iou_threshold(),
+        )
         self._ai_text.model_changed.connect(
             lambda model_name: self._apply_setting_change(
                 ("ai", "text_model"), model_name
             )
         )
-        self._ai_text.setEnabled(False)
+        self._ai_group = AiToolGroup(
+            assist=self._ai_annotation, detect=self._ai_text, parent=self
+        )
 
         self._setup_toolbars()
 
@@ -365,6 +386,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._save_writer.finished.connect(self._on_save_finished)
         self._image_prefetcher = ImagePrefetcher()
         self._model_manager = ModelManager(parent=self)
+        self._osam_worker = _automation.OsamWorker(parent=self)
+        self._osam_worker.finished.connect(self._on_ai_text_finished)
+        self._osam_worker.failed.connect(self._on_ai_text_failed)
+        self._osam_worker.activity_changed.connect(self._on_ai_activity_changed)
+        self._osam_worker.set_device(self._config["ai"]["device"])
+        self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
+        self._ai_text_job: _AiTextJob | None = None
+        self._announced_ai_job: object = None
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
@@ -418,15 +447,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 widget.setStyleSheet(sheet)  # re-resolve palette refs; also repaints
             else:
                 widget.update()
-        # The AI-button highlight bakes palette colors into its stylesheet (no
-        # palette() ref), so recompute it against the new palette.
-        self._highlight_ai_buttons(self._ai_buttons_highlighted)
 
     def _setup_actions(self) -> _Actions:
         image_actions = QtGui.QActionGroup(self)
         image_actions.setExclusive(False)
         image_actions.setEnabled(False)
         image_action = functools.partial(_utils.new_action, image_actions)
+        # The active mode shows as checked, not disabled, so it reads as the
+        # selected tool. An action joins only one QActionGroup and these are in
+        # the image group, so _switch_canvas_mode keeps one checked by hand.
+        mode_action = functools.partial(image_action, checkable=True)
         action = functools.partial(_utils.new_action, self)
         separator = functools.partial(_utils.new_separator, self)
         shortcuts = self._config["shortcuts"]
@@ -595,7 +625,7 @@ class MainWindow(QtWidgets.QMainWindow):
         merge = action(
             text=self.tr("Merge Shapes"),
             slot=self._merge_selected_shapes,
-            icon="phosphor/unite-duotone.svg",
+            icon="phosphor/unite.svg",
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
         )
@@ -638,30 +668,30 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Insert a new point at the hovered polygon edge"),
             enabled=False,
         )
-        create_mode = image_action(
+        create_mode = mode_action(
             text=self.tr("Polygon"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="polygon"),
             shortcut=shortcuts["create_polygon"],
-            icon="phosphor/polygon.svg",
+            icon="polygon.svg",
             tip=self.tr("Start drawing polygons"),
         )
-        edit_mode = image_action(
+        edit_mode = mode_action(
             text=self.tr("Edit Shapes"),
             toolbar_text=self.tr("Edit", "toolbar"),
             slot=lambda: self._switch_canvas_mode(edit=True, create_mode=None),
             shortcut=shortcuts["edit_shape"],
             icon="phosphor/note-pencil.svg",
             tip=self.tr("Move and edit the selected shapes"),
-            enabled=False,
+            checked=True,
         )
-        create_rectangle_mode = image_action(
+        create_rectangle_mode = mode_action(
             text=self.tr("Rectangle"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="rectangle"),
             shortcut=shortcuts["create_rectangle"],
-            icon="phosphor/rectangle.svg",
+            icon="rectangle.svg",
             tip=self.tr("Start drawing rectangles"),
         )
-        create_oriented_rectangle_mode = image_action(
+        create_oriented_rectangle_mode = mode_action(
             text=self.tr("Oriented Rectangle"),
             slot=lambda: self._switch_canvas_mode(
                 edit=False, create_mode="oriented_rectangle"
@@ -670,58 +700,59 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="oriented_rectangle.svg",
             tip=self.tr("Start drawing oriented rectangles"),
         )
-        create_circle_mode = image_action(
+        create_circle_mode = mode_action(
             text=self.tr("Circle"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="circle"),
             shortcut=shortcuts["create_circle"],
-            icon="phosphor/circle.svg",
+            icon="circle.svg",
             tip=self.tr("Start drawing circles"),
         )
-        create_line_mode = image_action(
+        create_line_mode = mode_action(
             text=self.tr("Line"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="line"),
             shortcut=shortcuts["create_line"],
-            icon="phosphor/line-segment.svg",
+            icon="line.svg",
             tip=self.tr("Start drawing lines"),
         )
-        create_point_mode = image_action(
+        create_point_mode = mode_action(
             text=self.tr("Point"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="point"),
             shortcut=shortcuts["create_point"],
-            icon="phosphor/circles-four.svg",
+            icon="point.svg",
             tip=self.tr("Start drawing points"),
         )
-        create_line_strip_mode = image_action(
+        create_line_strip_mode = mode_action(
             text=self.tr("LineStrip"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="linestrip"),
             shortcut=shortcuts["create_linestrip"],
-            icon="phosphor/line-segments.svg",
+            icon="linestrip.svg",
             tip=self.tr(
                 "Click to place LineStrip points; hold %s and click to place the"
                 " last one."
             )
             % ctrl,
         )
-        create_ai_points_to_shape_mode = image_action(
-            text=self.tr("AI-Points"),
-            slot=lambda: self._switch_canvas_mode(
-                edit=False, create_mode="ai_points_to_shape"
-            ),
-            shortcut=None,
+        create_ai_segment_mode = mode_action(
+            text=self.tr("AI-Segment"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="ai_segment"),
+            shortcut=shortcuts["create_ai_segment"],
             icon="ai-points.svg",
             tip=self.tr(
-                "Click points to segment the object; hold %s and click to finish."
+                "Click points or drag a box to segment one object; hold %s and"
+                " click to finish."
             )
             % ctrl,
         )
-        create_ai_box_to_shape_mode = image_action(
-            text=self.tr("AI-Box"),
+        create_ai_find_all_mode = mode_action(
+            text=self.tr("AI-Find All"),
             slot=lambda: self._switch_canvas_mode(
-                edit=False, create_mode="ai_box_to_shape"
+                edit=False, create_mode="ai_find_all"
             ),
-            shortcut=None,
-            icon="ai-box.svg",
-            tip=self.tr("Draw a bounding box to segment object."),
+            shortcut=shortcuts["create_ai_find_all"],
+            icon="ai-find-all.svg",
+            tip=self.tr(
+                "Find every object that matches the text prompt or an example box"
+            ),
         )
         open_next_img = action(
             text=self.tr("&Next Image"),
@@ -768,7 +799,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Brightness/Contrast…"),
             slot=self.open_brightness_contrast_dialog,
             shortcut=None,
-            icon="brightness-contrast.svg",
+            icon="phosphor/circle-half-tilt.svg",
             tip=self.tr("Adjust brightness and contrast"),
         )
         zoom_in = image_action(
@@ -795,7 +826,7 @@ class MainWindow(QtWidgets.QMainWindow):
         reset_layout = action(
             text=self.tr("Reset Layout"),
             slot=self._reset_layout,
-            icon="phosphor/layout-duotone.svg",
+            icon="phosphor/layout.svg",
         )
         fill_drawing = action(
             text=self.tr("Fill Drawing Polygon"),
@@ -919,8 +950,8 @@ class MainWindow(QtWidgets.QMainWindow):
             ("point", create_point_mode),
             ("line", create_line_mode),
             ("linestrip", create_line_strip_mode),
-            ("ai_points_to_shape", create_ai_points_to_shape_mode),
-            ("ai_box_to_shape", create_ai_box_to_shape_mode),
+            ("ai_segment", create_ai_segment_mode),
+            ("ai_find_all", create_ai_find_all_mode),
         ]
         # Both menus follow the platform Edit-menu convention: history first,
         # then the clipboard group, then the actions that alter a shape.
@@ -988,8 +1019,8 @@ class MainWindow(QtWidgets.QMainWindow):
             create_line_mode=create_line_mode,
             create_point_mode=create_point_mode,
             create_line_strip_mode=create_line_strip_mode,
-            create_ai_points_to_shape_mode=create_ai_points_to_shape_mode,
-            create_ai_box_to_shape_mode=create_ai_box_to_shape_mode,
+            create_ai_segment_mode=create_ai_segment_mode,
+            create_ai_find_all_mode=create_ai_find_all_mode,
             open_next_img=open_next_img,
             open_prev_img=open_prev_img,
             keep_prev_zoom=keep_prev_zoom,
@@ -1069,14 +1100,17 @@ class MainWindow(QtWidgets.QMainWindow):
         file_menu.addActions(
             (
                 self._actions.open,
-                self._actions.open_next_img,
-                self._actions.open_prev_img,
                 self._actions.open_dir,
+                separator(),
+                self._actions.open_prev_img,
+                self._actions.open_next_img,
+                separator(),
                 self._actions.save,
                 self._actions.save_as,
                 self._actions.save_auto,
                 self._actions.change_output_dir,
                 self._actions.save_with_image_data,
+                separator(),
                 self._actions.close,
                 self._actions.delete_file,
                 separator(),
@@ -1130,11 +1164,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _setup_toolbars(self) -> None:
         separator = functools.partial(_utils.new_separator, self)
-        select_ai_model = QtWidgets.QWidgetAction(self)
-        select_ai_model.setDefaultWidget(self._ai_annotation)
-
-        ai_prompt_action = QtWidgets.QWidgetAction(self)
-        ai_prompt_action.setDefaultWidget(self._ai_text)
+        ai_group_action = QtWidgets.QWidgetAction(self)
+        ai_group_action.setDefaultWidget(self._ai_group)
 
         self.addToolBar(
             Qt.ToolBarArea.TopToolBarArea,
@@ -1158,9 +1189,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     separator(),
                     self._actions.zoom_widget_action,
                     separator(),
-                    select_ai_model,
-                    separator(),
-                    ai_prompt_action,
+                    ai_group_action,
                 ],
                 font_base=self.font(),
             ),
@@ -1184,9 +1213,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 button_style=Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
                 font_base=self.font(),
             ),
-        )
-        self._ai_annotation.hover_highlight_requested.connect(
-            self._highlight_ai_buttons
         )
 
     def _setup_app_state(
@@ -1281,7 +1307,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._load_from_file_or_dir(file_or_dir=file_or_dir)
 
     def _setup_status_bar(self) -> _StatusBarWidgets:
-        message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
+        message = QtWidgets.QLabel()
         stats = StatusStats()
         self.statusBar().addWidget(message, 1)
         self.statusBar().addWidget(stats, 0)
@@ -1291,10 +1317,14 @@ class MainWindow(QtWidgets.QMainWindow):
         retry.setText(self.tr("Retry"))
         retry.clicked.connect(self._retry_save)
         retry.hide()
+        ai = QtWidgets.QLabel()
+        self.statusBar().addPermanentWidget(ai)
         self.statusBar().addPermanentWidget(save)
         self.statusBar().addPermanentWidget(retry)
         self.statusBar().show()
-        return _StatusBarWidgets(message=message, stats=stats, save=save, retry=retry)
+        return _StatusBarWidgets(
+            message=message, stats=stats, save=save, retry=retry, ai=ai
+        )
 
     def _setup_canvas(self) -> _CanvasWidgets:
         zoom_widget = ZoomWidget()
@@ -1345,9 +1375,11 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.pan_request.connect(self._on_pan_request)
 
         canvas.new_shape.connect(self._on_new_shape)
+        canvas.ai_find_all_draft_committed.connect(self._on_ai_find_all_draft_committed)
         canvas.inference_produced_no_shapes.connect(
             self._on_inference_produced_no_shapes
         )
+        canvas.example_box_unsupported.connect(self._on_example_box_unsupported)
         # The preview path emits this from inside paintEvent (an active
         # QPainter); a queued connection defers the status-bar update until
         # after the paint cycle so it never mutates UI mid-paint.
@@ -1355,7 +1387,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self._on_inference_failed,
             Qt.ConnectionType.QueuedConnection,
         )
-        canvas.point_prompt_rejected.connect(self._on_point_prompt_rejected)
         canvas.degenerate_shape_rejected.connect(
             lambda: self.show_status_message(
                 self.tr("Shape had no area; nothing created."), delay=5000
@@ -1651,64 +1682,241 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_status_message(self, message: str, /, *, delay: int = 500) -> None:
         self.statusBar().showMessage(message, delay)
 
-    def _submit_ai_prompt(self, _: bool, /) -> None:  # noqa: FBT001 -- submit callback receives the Qt clicked flag
-        create_mode = self._canvas_widgets.canvas.create_mode
-        shape_type = _resolve_text_annotation_shape_type(
-            create_mode=create_mode,
-            ai_output_format=self._ai_annotation.output_format,
-        )
-        if shape_type is None:
-            logger.warning("Unsupported create_mode={!r}", create_mode)
+    def _submit_ai_prompt(self) -> None:
+        if not self._actions.image.isEnabled():
+            return  # No image to detect in.
+        prompt = self._ai_text.get_text_prompt()
+        canvas = self._canvas_widgets.canvas
+        if canvas.has_ai_find_all_draft:
+            # Refine the example-box draft instead of adding Shapes on top; an
+            # empty query keeps detecting like the examples.
+            canvas.rerun_ai_find_all_draft()
+            # Enter and Esc act on the draft from the canvas.
+            canvas.setFocus()
             return
-
-        texts = self._ai_text.get_text_prompt().split(",")
-
-        model_name: str = self._ai_text.get_model_name()
-        if not self._ensure_ai_model_ready(model_name):
+        if not prompt:
+            self.show_status_message(self.tr("Type what to find"), delay=5000)
+            self._ai_text.focus_text_prompt()
             return
-        if (
-            self._text_osam_session is None
-            or self._text_osam_session.model_name != model_name
-        ):
-            self._text_osam_session = _automation.OsamSession(model_name=model_name)
+        # Switching cancels a draft, so a Shape mid-drawing keeps its tool.
+        if not canvas.is_drawing:
+            self._actions.create_ai_find_all_mode.trigger()
+        shape_type = self._ai_annotation.output_format
 
-        try:
-            shapes = _automation.propose_shapes_from_texts(
-                session=self._text_osam_session,
-                image=_utils.img_qt_to_rgb_arr(self._image),
-                image_id=str(hash(self._image_path)),
-                texts=texts,
-                shape_type=shape_type,
-                existing_shapes=self._canvas_widgets.canvas.shapes,
-                iou_threshold=self._ai_text.get_iou_threshold(),
-                score_threshold=self._ai_text.get_score_threshold(),
-                image_size=(
-                    None
-                    if self._config["canvas"]["allow_out_of_bounds_points"]
-                    else (self._image.width(), self._image.height())
-                ),
-                polygon_detail=self._config["mask_polygonization"]["detail"],
-            )
-        except _automation.MaskOutputUnavailableError:
+        # Checked against the Setting, so a model that is not downloaded yet is
+        # rejected before the Models window offers its download.
+        requested_model: str = self._config["ai"]["text_model"] or ""
+        if requested_model in _text_models_unable_to_create(shape_type):
             QtWidgets.QMessageBox.warning(
                 self,
                 self.tr("Mask Output Unavailable"),
                 self.tr(
                     "%s only detects bounding boxes and cannot create "
                     "'%s' Shapes.\n\n"
-                    "Switch the AI Text Prompt model to 'SAM3 (smart)', "
+                    "Switch the AI-Find All model to 'SAM 3', "
                     "or set the output format to 'Rectangle'."
                 )
-                % (self._ai_text.get_model_display_name(), shape_type),
+                % (self._model_manager.models[requested_model], shape_type),
             )
             return
+
+        texts = [prompt]
+
+        model_name: str = self._ai_text.get_model_name()
+        if not self._ensure_ai_model_ready(model_name):
+            return
+        image, image_id = canvas.ai_image()
+        job = _AiTextJob(
+            pixmap_key=canvas.pixmap.cacheKey(),
+            texts=texts,
+            shape_type=shape_type,
+            iou_threshold=self._ai_text.get_iou_threshold(),
+            score_threshold=self._ai_text.get_score_threshold(),
+            image_size=(
+                None
+                if self._config["canvas"]["allow_out_of_bounds_points"]
+                else (self._image.width(), self._image.height())
+            ),
+        )
+        self._ai_text_job = job
+        self._osam_worker.submit(
+            channel="text",
+            job=job,
+            request=_automation.InferenceRequest(
+                model_name=model_name, image_id=image_id, image=image, texts=texts
+            ),
+        )
+
+    def _take_ai_text_job(self, job: object, /) -> _AiTextJob | None:
+        if job is not self._ai_text_job:
+            return None
+        self._ai_text_job = None
+        assert isinstance(job, _AiTextJob)
+        # A result for an image no longer shown is dropped.
+        if job.pixmap_key != self._canvas_widgets.canvas.pixmap.cacheKey():
+            return None
+        return job
+
+    def _on_ai_activity_changed(self) -> None:
+        # The canvas rings a slow AI Assist prompt where it was placed; this
+        # names the running task for every prompt, AI-Find All included.
+        worker = self._osam_worker
+        job = worker.job
+        canvas = self._canvas_widgets.canvas
+        # The worker also runs other AI tools, so Run follows only detection.
+        self._ai_text.set_detecting(
+            job is not None
+            and (self._ai_text_job is not None or canvas.ai_find_all_job is not None)
+        )
+        on_cpu = worker.device == "cpu"
+        detecting = True
+        if job is None:
+            text, detecting = "", False
+        elif isinstance(job, _AiTextJob):
+            text = (
+                self.tr("Finding all '{query}' on CPU…")
+                if on_cpu
+                else self.tr("Finding all '{query}'…")
+            ).format(query=job.query)
+        elif (box_job := canvas.ai_find_all_job) is job:
+            assert box_job is not None
+            if box_job.query:
+                text = (
+                    self.tr("Finding all '{query}' on CPU…")
+                    if on_cpu
+                    else self.tr("Finding all '{query}'…")
+                ).format(query=box_job.query)
+            else:
+                text = (
+                    self.tr("Finding matches on CPU…")
+                    if on_cpu
+                    else self.tr("Finding matches…")
+                )
+        else:
+            text = self.tr("Segmenting on CPU…") if on_cpu else self.tr("Segmenting…")
+            detecting = False
+        self._status_bar.ai.setText(text)
+        # A detection is announced once as it starts, from text or a box.
+        if detecting and job is not self._announced_ai_job:
+            self._announced_ai_job = job
+            self._announce(text)
+
+    def _announce(self, message: str, /) -> None:
+        if not QtGui.QAccessible.isActive():
+            return
+        event = QtGui.QAccessibleAnnouncementEvent(self._status_bar.ai, message)
+        event.setPoliteness(QtGui.QAccessible.AnnouncementPoliteness.Polite)
+        QtGui.QAccessible.updateAccessibility(event)
+
+    def _on_ai_text_failed(self, job: object, message: str, /) -> None:
+        if self._take_ai_text_job(job) is None:
+            return
+        logger.error("AI text inference failed: {}", message)
+        self._on_inference_failed(message)
+
+    def _on_ai_text_finished(self, job: object, annotations: object, /) -> None:
+        # A result lands whenever inference ends. Applied mid-draw, mid-drag
+        # or under a dialog, its Shapes would split that action's Undo
+        # snapshot or join the Shapes being labeled, so it waits. The worker
+        # holds results under a dialog; this retry must check again.
+        if job is self._ai_text_job and (
+            self._canvas_widgets.canvas.is_interacting
+            or QtWidgets.QApplication.activeModalWidget() is not None
+        ):
+            QtCore.QTimer.singleShot(
+                100,
+                self,
+                functools.partial(self._on_ai_text_finished, job, annotations),
+            )
+            return
+        text_job = self._take_ai_text_job(job)
+        if text_job is None:
+            return
+        propose = functools.partial(
+            _automation.propose_shapes_from_texts,
+            annotations=cast(list, annotations),
+            texts=text_job.texts,
+            shape_type=text_job.shape_type,
+            existing_shapes=self._canvas_widgets.canvas.shapes,
+            iou_threshold=text_job.iou_threshold,
+            score_threshold=text_job.score_threshold,
+            image_size=text_job.image_size,
+            polygon_detail=self._config["mask_polygonization"]["detail"],
+        )
+        try:
+            # Ignores existing Shapes: which ones cover the batch depends on
+            # the label it takes, and that isn't known yet.
+            shapes = propose(existing_shapes=[])
         except Exception as e:
             logger.opt(exception=e).error("AI text inference failed")
             self._on_inference_failed(f"{type(e).__name__}: {e}")
             return
+        self._commit_ai_find_all(
+            shapes,
+            propose_for_label=lambda label: propose(suppressed_by=label),
+            query=text_job.query,
+        )
+        # Loading clears the Label List's selection; the canvas keeps its own,
+        # so the user's selection survives a result landing.
+        canvas = self._canvas_widgets.canvas
+        canvas.select_shapes(shapes=list(canvas.selected_shapes))
 
+    def _on_ai_find_all_draft_committed(
+        self,
+        shapes: list[Shape],
+        propose_for_label: Callable[[str], list[Shape]],
+        query: str,
+        /,
+    ) -> None:
+        added = self._commit_ai_find_all(
+            shapes, propose_for_label=propose_for_label, query=query
+        )
+        # Select what the batch added, so it can be relabeled or deleted.
+        self._canvas_widgets.canvas.select_shapes(shapes=added)
+
+    def _commit_ai_find_all(
+        self,
+        candidates: list[Shape],
+        /,
+        *,
+        propose_for_label: Callable[[str], list[Shape]],
+        query: str,
+    ) -> list[Shape]:
+        # Every AI-Find All batch lands here, from a query or an example box, so
+        # labeling, skipping covered objects and the result message stay one.
+        if not candidates:
+            self._report_ai_find_all_result(candidates, name=query)
+            return []
+        # One entry labels the whole batch.
+        entry = self._ask_new_shape_entry(query=query)
+        if entry is None:
+            return []  # Cancelled: the batch is never added.
+        # "black dog" saved as "dog": skip what "dog" Shapes cover.
+        shapes = propose_for_label(entry.label)
+        self._report_ai_find_all_result(shapes, name=entry.label)
+        if not shapes:
+            return []
+        for shape in shapes:
+            shape.label = entry.label
+            shape.flags = dict(entry.flags)
+            shape.description = entry.description
+            if entry.group_id is not None:
+                shape.group_id = entry.group_id
         apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
-        self._commit_shapes([*self._canvas_widgets.canvas.shapes, *shapes])
+        self._load_shapes(shapes, replace=False)
+        self.mark_dirty()
+        return shapes
+
+    def _report_ai_find_all_result(self, shapes: list[Shape], /, *, name: str) -> None:
+        # Polygons from one mask's separate lands share a Group: one object.
+        count = len({id(s) if s.group_id is None else s.group_id for s in shapes})
+        message = (
+            self.tr("Found {count} new '{query}'")
+            if count
+            else self.tr("No new '{query}' found")
+        ).format(count=count, query=name)
+        self.show_status_message(message, delay=5000)
+        self._announce(message)
 
     def reset_state(self) -> None:
         self._auto_save_path = None
@@ -1747,48 +1955,35 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
-        self._refresh_status_stats()
-        if edit:
-            for _, draw_action in self._actions.draw:
-                draw_action.setEnabled(True)
-        else:
-            for draw_mode, draw_action in self._actions.draw:
-                draw_action.setEnabled(create_mode != draw_mode)
+        # Triggering a checkable action toggles it, so re-clicking the active
+        # tool unchecks it until this re-checks it.
+        for draw_mode, draw_action in self._actions.draw:
+            draw_action.setChecked(not edit and create_mode == draw_mode)
+        self._actions.edit_mode.setChecked(edit)
         # Keep edit_mode disabled while a partial shape is alive so the user
         # can't abandon it mid-draw.
-        self._actions.edit_mode.setEnabled(
-            not edit and not self._canvas_widgets.canvas.is_drawing
-        )
-        self._ai_text.setEnabled(
-            not edit
-            and create_mode
-            in (*typing.get_args(_TextToAnnotationCreateMode), *_AI_CREATE_MODES)
-        )
-        self._ai_annotation.setEnabled(not edit and create_mode in _AI_CREATE_MODES)
-        self._set_point_prompt_mode(enabled=create_mode == "ai_points_to_shape")
+        self._actions.edit_mode.setEnabled(not self._canvas_widgets.canvas.is_drawing)
+        self._on_ai_activity_changed()
+        self._refresh_text_model_choices()
 
-    def _highlight_ai_buttons(self, highlight: bool, /) -> None:  # noqa: FBT001 -- hover_highlight_requested slot
-        self._ai_buttons_highlighted = highlight
-        BG_ALPHA: Final = 60
-        BORDER_ALPHA: Final = 120
-        # alpha 0 (not highlighted) reads as transparent; HexArgb gives "#AARRGGBB",
-        # which Qt stylesheets accept.
-        bg = self.palette().color(QtGui.QPalette.ColorRole.Highlight)
-        bg.setAlpha(BG_ALPHA if highlight else 0)
-        border = QtGui.QColor(bg)
-        border.setAlpha(BORDER_ALPHA if highlight else 0)
-        style = (
-            "QToolButton:!checked:!pressed {"
-            f" background-color: {bg.name(QtGui.QColor.NameFormat.HexArgb)};"
-            f" border: 1px solid {border.name(QtGui.QColor.NameFormat.HexArgb)};"
-            " }"
-        )
-        for mode, action in self._actions.draw:
-            if mode not in _AI_CREATE_MODES:
-                continue
-            for widget in action.associatedObjects():
-                if isinstance(widget, QtWidgets.QToolButton):
-                    widget.setStyleSheet(style)
+    def _on_ai_output_format_changed(
+        self, output_format: _automation.AiOutputFormat, /
+    ) -> None:
+        self._canvas_widgets.canvas.set_ai_output_format(output_format)
+        self._refresh_text_model_choices()
+
+    def _refresh_text_model_choices(self) -> None:
+        # Grey out text models that cannot produce Shapes in the Output, which
+        # AI-Find All always uses; _submit_ai_prompt still rejects a model
+        # already chosen.
+        shape_type = self._ai_annotation.output_format
+        reason = self.tr("Detects boxes only. Switch to Rectangle to use this model.")
+        unavailable = dict.fromkeys(_text_models_unable_to_create(shape_type), reason)
+        self._ai_text.set_unavailable_models(unavailable)
+        if self._settings_dialog is not None:
+            self._settings_dialog.set_unavailable_choices(
+                key_path=("ai", "text_model"), unavailable=unavailable
+            )
 
     def show_label_list_menu(self, point: QtCore.QPoint, /) -> None:
         self._label_list_menu_origin = self._docks.label_list.mapToGlobal(point)
@@ -2119,7 +2314,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._failed_save_path is not None:
             self._queue_auto_save(label_path=self._failed_save_path)
 
-    def save_labels(self, *, label_path: str, show_error: bool = True) -> bool:
+    def save_labels(self, *, label_path: str) -> bool:
         self._save_writer.discard_pending()
         self._wait_for_save()
         try:
@@ -2127,11 +2322,10 @@ class MainWindow(QtWidgets.QMainWindow):
             write_save_request(request)
         except (LabelFileError, OSError, ValueError) as e:
             self._show_save_failure(label_path=label_path, error=e)
-            if show_error:
-                self.show_error_message(
-                    title=self.tr("Error Saving Annotation File"),
-                    message=self.tr("<b>%s</b>") % e,
-                )
+            self.show_error_message(
+                title=self.tr("Error Saving Annotation File"),
+                message=self.tr("<b>%s</b>") % e,
+            )
             return False
         self._record_saved_annotation(label_path=request.filename)
         return True
@@ -2217,23 +2411,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # Callback functions:
 
     def _on_new_shape(self) -> None:
-        items = self._docks.unique_label_list.selectedItems()
-        text = items[0].data(Qt.ItemDataRole.UserRole) if items else None
-        if self._config["display_label_popup"] or not text:
-            entry = self._label_dialog.popup(text=text)
-        else:
-            entry = LabelDialogEntry(
-                label=text, flags={}, group_id=None, description=""
-            )
-
-        if entry is not None and not self.validate_label(label=entry.label):
-            self.show_error_message(
-                title=self.tr("Invalid Label"),
-                message=self.tr("Invalid label '{}' with validation type '{}'").format(
-                    entry.label, self._config["validate_label"]
-                ),
-            )
-            entry = None
+        entry = self._ask_new_shape_entry(query="")
         if entry is None:
             self._canvas_widgets.canvas.undo_last_line()
             self._canvas_widgets.canvas.shape_backups.pop()
@@ -2259,27 +2437,45 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.undo.setEnabled(True)
         self.mark_dirty()
 
+    def _ask_new_shape_entry(self, *, query: str) -> LabelDialogEntry | None:
+        # One entry labels every Shape one action made. An AI-Find All query is
+        # a prompt, not always the label ("black dog" may be a "dog"), so it
+        # only prefills the dialog. None discards the new Shapes.
+        items = self._docks.unique_label_list.selectedItems()
+        text = items[0].data(Qt.ItemDataRole.UserRole) if items else None
+        if self._config["display_label_popup"] or not text:
+            entry = self._label_dialog.popup(text=query or text)
+        else:
+            entry = LabelDialogEntry(
+                label=text, flags={}, group_id=None, description=""
+            )
+        if entry is not None and not self.validate_label(label=entry.label):
+            self.show_error_message(
+                title=self.tr("Invalid Label"),
+                message=self.tr("Invalid label '{}' with validation type '{}'").format(
+                    entry.label, self._config["validate_label"]
+                ),
+            )
+            return None
+        return entry
+
     def _on_inference_produced_no_shapes(self) -> None:
         self.show_status_message(
             self.tr("AI inference produced no new annotation."), delay=5000
         )
 
+    def _on_example_box_unsupported(self) -> None:
+        self.show_status_message(
+            self.tr("%s can't use an example box. Choose SAM 3.")
+            % self._model_manager.models[
+                self._canvas_widgets.canvas.get_ai_find_all_model_name()
+            ],
+            delay=5000,
+        )
+
     def _on_inference_failed(self, message: str, /) -> None:
         self.show_status_message(
             self.tr("AI inference failed: %s") % message, delay=10000
-        )
-
-    def _on_point_prompt_rejected(self, model_name: str, /) -> None:
-        option = _ai_models.find_ai_assist_model_option(model_name=model_name)
-        assert option is not None
-        QtWidgets.QMessageBox.warning(
-            self,
-            self.tr("AI-Points Unavailable"),
-            self.tr(
-                "%s does not support point prompts.\n"
-                "Please select a different model or use AI-Box mode."
-            )
-            % QtCore.QCoreApplication.translate("SettingsDialog", option.display_name),
         )
 
     def _on_scroll_request(self, delta: int, orientation: Qt.Orientation, /) -> None:
@@ -2841,6 +3037,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         self._save_writer.shutdown()
         self._image_prefetcher.shutdown()
+        self._osam_worker.shutdown()
         self._window_state.setValue(WINDOW_SIZE_KEY, self.size())
         self._window_state.setValue(WINDOW_POSITION_KEY, self.pos())
         self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())
@@ -2923,7 +3120,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if image_or_label_path:
             self._load_from_file_or_dir(file_or_dir=image_or_label_path)
 
-    def prompt_output_dir(self, _value: bool = False, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+    def prompt_output_dir(self) -> None:
         default_output_dir: str
         if self._output_dir is not None:
             default_output_dir = str(self._output_dir)
@@ -3028,7 +3225,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         return label_path
 
-    def close_file(self, _value: bool = False, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
+    def close_file(self) -> None:
         if not self._can_continue():
             return
         self._remember_current_viewport()
@@ -3131,31 +3328,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_ai_model_changed(self, model_id: str, /) -> None:
         self._canvas_widgets.canvas.set_ai_model_name(model_name=model_id)
-        option = _ai_models.find_ai_assist_model_option(model_name=model_id)
-        assert option is not None
-        model_display = option.display_name
-        if self._config["ai"]["default"] == model_display:
+        if self._config["ai"]["default"] == model_id:
             return
-        self._apply_setting_change(("ai", "default"), model_display)
+        self._apply_setting_change(("ai", "default"), model_id)
 
     def _on_ai_polygon_detail_changed(self, detail: int, /) -> None:
         self._apply_setting_change(("mask_polygonization", "detail"), detail)
-
-    def _set_point_prompt_mode(self, *, enabled: bool) -> None:
-        self._ai_annotation.set_point_prompt_mode(enabled=enabled)
-        if self._settings_dialog is None:
-            return
-        disabled_reason = self.tr(
-            "Unavailable in AI-Points mode because this model does not support "
-            "point prompts."
-        )
-        for option in _ai_models.AI_ASSIST_MODEL_OPTIONS:
-            self._settings_dialog.set_choice_enabled(
-                key_path=("ai", "default"),
-                value=option.display_name,
-                enabled=not enabled or option.supports_point_prompts,
-                disabled_reason=disabled_reason,
-            )
 
     def _set_setting_value(self, *, key_path: tuple[str, ...], value: object) -> None:
         node: dict = self._config
@@ -3299,7 +3477,7 @@ class MainWindow(QtWidgets.QMainWindow):
             old_label_dialog.deleteLater()
         elif key_path == ("ai", "default"):
             self._ai_annotation.set_current_model(
-                model_display=self._config["ai"]["default"] or ""
+                model_name=self._config["ai"]["default"] or ""
             )
             self._canvas_widgets.canvas.set_ai_model_name(
                 model_name=self._ai_annotation.current_model_id
@@ -3308,6 +3486,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self._ai_text.set_model_name(
                 model_name=self._config["ai"]["text_model"] or ""
             )
+        elif key_path == ("ai", "device"):
+            self._osam_worker.set_device(self._config["ai"]["device"])
         elif key_path == ("ai", "suppress_existing_shape_matches"):
             self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
                 enabled=self._config["ai"]["suppress_existing_shape_matches"]
@@ -3358,9 +3538,6 @@ class MainWindow(QtWidgets.QMainWindow):
             downloading.add(self._model_manager.active)
         for widget in (self._ai_annotation, self._ai_text):
             widget.set_available_models(available=available, downloading=downloading)
-        self._ai_annotation.set_point_prompt_mode(
-            enabled=self._ai_annotation.is_point_prompt_mode
-        )
         self._canvas_widgets.canvas.set_ai_model_name(
             model_name=self._ai_annotation.current_model_id
         )
@@ -3393,9 +3570,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._model_manager.enqueue(model_name)
 
     def _remove_ai_model(self, model_name: str, /) -> None:
-        option = _ai_models.find_ai_assist_model_option(model_name=model_name)
         overrides = []
-        if option is not None and self._config["ai"]["default"] == option.display_name:
+        if self._config["ai"]["default"] == model_name:
             overrides.append((("ai", "default"), None))
         if self._config["ai"]["text_model"] == model_name:
             overrides.append((("ai", "text_model"), None))
@@ -3408,11 +3584,8 @@ class MainWindow(QtWidgets.QMainWindow):
         for key_path, value in overrides:
             self._set_setting_value(key_path=key_path, value=value)
             self._sync_setting_controls(key_path=key_path)
-        if (
-            self._text_osam_session is not None
-            and self._text_osam_session.model_name == model_name
-        ):
-            self._text_osam_session = None
+        # The worker holds the model's files open; stopping it lets them go.
+        self._osam_worker.release()
         if self._canvas_widgets.canvas.get_ai_model_name() == model_name:
             self._canvas_widgets.canvas.set_ai_model_name(model_name="")
 
@@ -3442,7 +3615,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 settings_editable=self._is_settings_editable,
                 parent=self,
             )
-        self._set_point_prompt_mode(enabled=self._ai_annotation.is_point_prompt_mode)
+            self._refresh_text_model_choices()
         self._settings_dialog.show()
         self._settings_dialog.raise_()
         self._settings_dialog.activateWindow()
@@ -3850,18 +4023,9 @@ class MainWindow(QtWidgets.QMainWindow):
         return bool(self._file_search_pattern.search(self._file_list_label(image_path)))
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
-        self._status_mouse_pos = QtCore.QPointF(mouse_pos)
-        self._refresh_status_stats()
-
-    def _refresh_status_stats(self) -> None:
-        stats: list[str] = []
-        stats.append(f"mode={self._canvas_widgets.canvas.mode.name}")
-        if self._status_mouse_pos is not None:
-            stats.append(
-                f"x={self._status_mouse_pos.x():6.1f}, "
-                f"y={self._status_mouse_pos.y():6.1f}"
-            )
-        self._status_bar.stats.setText(" | ".join(stats))
+        self._status_bar.stats.setText(
+            f"x {round(mouse_pos.x()):>4}   y {round(mouse_pos.y()):>4}"
+        )
 
 
 def _shapes_from_dicts(
@@ -3890,14 +4054,12 @@ def _shapes_from_dicts(
     return shapes
 
 
-def _resolve_text_annotation_shape_type(
-    *, create_mode: str, ai_output_format: _automation.AiOutputFormat
-) -> _automation.AiOutputFormat | None:
-    if create_mode in _AI_CREATE_MODES:
-        return ai_output_format
-    if create_mode in typing.get_args(_TextToAnnotationCreateMode):
-        return cast(_TextToAnnotationCreateMode, create_mode)
-    return None
+def _text_models_unable_to_create(
+    shape_type: _automation.AiOutputFormat | None, /
+) -> frozenset[str]:
+    if shape_type in _automation.MASK_REQUIRED_SHAPE_TYPES:
+        return _ai_models.AI_TEXT_BOX_ONLY_MODELS
+    return frozenset()
 
 
 def _is_valid_label(

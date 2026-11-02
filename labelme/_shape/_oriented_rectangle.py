@@ -9,27 +9,25 @@ from ._model import ORIENTED_RECTANGLE_POINT_COUNT
 from ._model import Shape
 
 
-def _is_full_oriented_rectangle(shape: Shape, /) -> bool:
+def is_full_oriented_rectangle(shape: Shape, /) -> bool:
     return (
         shape.shape_type == "oriented_rectangle"
         and len(shape.points) == ORIENTED_RECTANGLE_POINT_COUNT
     )
 
 
-def _get_rotation_handles(
-    points: npt.NDArray[np.float64], /
-) -> npt.NDArray[np.float64]:
+def get_rotation_handles(points: npt.NDArray[np.float64], /) -> npt.NDArray[np.float64]:
     # Handle i sits at the midpoint of the edge from points[i - 1] to points[i].
     return (points + np.roll(points, shift=1, axis=0)) / 2
 
 
 def get_rotation_handle(*, shape: Shape, index: int) -> npt.NDArray[np.float64]:
-    if not _is_full_oriented_rectangle(shape):
+    if not is_full_oriented_rectangle(shape):
         raise ValueError(
             "Rotation handles are only defined for 4-point oriented rectangles, "
             f"got shape_type={shape.shape_type!r}, len(points)={len(shape.points)}"
         )
-    return _get_rotation_handles(shape.points)[index]
+    return get_rotation_handles(shape.points)[index]
 
 
 def oriented_rectangle_center(*, shape: Shape) -> npt.NDArray[np.float64]:

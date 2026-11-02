@@ -17,9 +17,8 @@ from PySide6 import QtGui
 
 from labelme import __appname__
 from labelme import _app
-from labelme import _automation
-from labelme._label_file import ShapeDict
 from labelme._shape import Shape
+from labelme._shape import ShapeDict
 
 
 @pytest.mark.parametrize("has_openjpeg", [True, False])
@@ -38,37 +37,6 @@ def test_supported_image_extensions_include_jpeg2000_with_openjpeg(
     assert ".png" in extensions
     for suffix in (".jp2", ".jpx", ".j2k", ".j2c"):
         assert (suffix in extensions) is has_openjpeg
-
-
-@pytest.mark.parametrize(
-    "create_mode, ai_output_format, expected",
-    [
-        ("ai_points_to_shape", "mask", "mask"),
-        ("ai_box_to_shape", "polygon", "polygon"),
-        ("polygon", "mask", "polygon"),
-        ("rectangle", "mask", "rectangle"),
-        ("edit", "polygon", None),
-    ],
-    ids=[
-        "ai-points-passthrough",
-        "ai-box-passthrough",
-        "text-polygon",
-        "text-rectangle",
-        "unrelated-mode",
-    ],
-)
-def test_resolve_text_annotation_shape_type(
-    *,
-    create_mode: str,
-    ai_output_format: _automation.AiOutputFormat,
-    expected: _automation.AiOutputFormat | None,
-) -> None:
-    assert (
-        _app._resolve_text_annotation_shape_type(
-            create_mode=create_mode, ai_output_format=ai_output_format
-        )
-        == expected
-    )
 
 
 @pytest.mark.parametrize(
