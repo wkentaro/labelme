@@ -8,10 +8,6 @@
         <translation>Szczegółowość wielokąta</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Dostosuj szczegółowość wielokąta</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Gładszy</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Opcje</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

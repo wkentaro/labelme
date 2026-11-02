@@ -8,10 +8,6 @@
         <translation>Độ chi tiết đa giác</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Điều chỉnh độ chi tiết đa giác</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Mượt hơn</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Tùy chọn</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

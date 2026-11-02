@@ -8,10 +8,6 @@
         <translation>Dettaglio poligono</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Regola dettaglio poligono</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Più uniforme</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Opzioni</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

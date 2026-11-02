@@ -21,7 +21,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     _output_format_button: QtWidgets.QToolButton
     _output_format_actions: dict[_automation.AiOutputFormat, QtGui.QAction]
     _output_format_group: QtGui.QActionGroup
-    _polygon_detail_button: QtWidgets.QToolButton
+    _polygon_detail_panel: QtWidgets.QWidget
 
     def __init__(
         self,
@@ -60,18 +60,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         on_polygon_detail_changed: Callable[[int], None],
     ) -> None:
         # AiToolGroup lays these controls out; this widget owns their state.
-        self._polygon_detail_button = QtWidgets.QToolButton(self)
-        self._polygon_detail_button.setAutoRaise(True)
-        self._polygon_detail_button.setIcon(new_icon("phosphor/sliders-horizontal.svg"))
-        self._polygon_detail_button.setIconSize(QtCore.QSize(16, 16))
-        self._polygon_detail_button.setAccessibleName(self.tr("Polygon detail"))
-        self._polygon_detail_button.setToolTip(self.tr("Adjust polygon detail"))
-        self._polygon_detail_button.setPopupMode(
-            QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup
-        )
-        detail_menu = QtWidgets.QMenu(self._polygon_detail_button)
-        detail_panel = QtWidgets.QWidget()
+        self._polygon_detail_panel = detail_panel = QtWidgets.QWidget(self)
         detail_layout = QtWidgets.QVBoxLayout(detail_panel)
+        detail_layout.setContentsMargins(0, 0, 0, 0)
         detail_layout.addWidget(QtWidgets.QLabel(self.tr("Polygon detail")))
         self._polygon_detail_slider = IntegerSlider(
             minimum=0,
@@ -86,10 +77,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         endpoints.addStretch(1)
         endpoints.addWidget(QtWidgets.QLabel(self.tr("More detail")))
         detail_layout.addLayout(endpoints)
-        detail_action = QtWidgets.QWidgetAction(detail_menu)
-        detail_action.setDefaultWidget(detail_panel)
-        detail_menu.addAction(detail_action)
-        self._polygon_detail_button.setMenu(detail_menu)
 
         self._model_combo = ModelPicker(
             options=[
@@ -165,7 +152,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self._output_format_button.setAccessibleName(
             self.tr("Output format: {format}").format(format=action.text())
         )
-        self._polygon_detail_button.setVisible(output_format == "polygon")
+        self._polygon_detail_panel.setVisible(output_format == "polygon")
 
     def set_current_model(self, *, model_display: str) -> None:
         model_name = next(

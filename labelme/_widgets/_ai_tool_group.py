@@ -6,16 +6,39 @@ from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
+from .._utils import new_icon
 from ._ai_assisted_annotation_widget import AiAssistedAnnotationWidget
 from ._ai_text_to_annotation_widget import AiTextToAnnotationWidget
 from ._info_button import InfoButton
+
+
+class _OptionsButton(QtWidgets.QToolButton):
+    """Shows a dot while an AI-Find All threshold is off its default."""
+
+    _changed: bool = False
+
+    def set_changed(self, changed: bool, /) -> None:  # noqa: FBT001 -- state flag
+        self._changed = changed
+        self.update()
+
+    def paintEvent(self, arg__1: QtGui.QPaintEvent, /) -> None:
+        super().paintEvent(arg__1)
+        if not self._changed:
+            return
+        DOT: Final = 5
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+        painter.setPen(QtCore.Qt.PenStyle.NoPen)
+        painter.setBrush(self.palette().color(QtGui.QPalette.ColorRole.Accent))
+        painter.drawEllipse(QtCore.QRectF(self.width() - DOT - 2, 2, DOT, DOT))
 
 
 class AiToolGroup(QtWidgets.QWidget):
     """One toolbar group for the AI tools that follows the active tool.
 
     Every control keeps its slot for every tool, so switching tools never
-    moves the Model or Output; controls the tool can't use are disabled.
+    moves the Model or Output. Without an AI tool, Model and Output are
+    disabled; Options stays editable because Run works from any tool.
     """
 
     hover_highlight_requested = QtCore.Signal(bool)
@@ -25,6 +48,7 @@ class AiToolGroup(QtWidgets.QWidget):
     _title: QtWidgets.QLabel
     _info_button: InfoButton
     _model_stack: QtWidgets.QStackedWidget
+    _options_button: _OptionsButton
     _ai_tool_active: bool
     _hinted: tuple[QtWidgets.QWidget, ...]
 
@@ -49,7 +73,6 @@ class AiToolGroup(QtWidgets.QWidget):
         header.addWidget(self._title)
         self._info_button = InfoButton(tooltip="")
         header.addWidget(self._info_button)
-        header.addWidget(assist._polygon_detail_button)
         header.addStretch()
         layout.addLayout(header)
 
@@ -64,7 +87,8 @@ class AiToolGroup(QtWidgets.QWidget):
         self._model_stack.addWidget(detect._model_combo)
         grid.addWidget(self._model_stack, 1, 0)
         grid.addWidget(assist._output_format_button, 1, 1)
-        grid.addWidget(detect._thresholds, 1, 2)
+        self._options_button = self._make_options_button()
+        grid.addWidget(self._options_button, 1, 2)
         grid.setColumnStretch(0, 1)
         grid.setColumnStretch(1, 1)
         layout.addWidget(body)
@@ -81,6 +105,29 @@ class AiToolGroup(QtWidgets.QWidget):
         # than a language's labels need.
         COMPACT_WIDTH: Final[int] = 320
         self.setFixedWidth(max(COMPACT_WIDTH, self.minimumSizeHint().width()))
+
+    def _make_options_button(self) -> _OptionsButton:
+        # Settings changed once per project, not per click, so they stay out
+        # of the toolbar. Run uses the thresholds from any tool, so they are
+        # always editable.
+        button = _OptionsButton()
+        button.setAutoRaise(True)
+        button.setIcon(new_icon("phosphor/sliders-horizontal.svg"))
+        button.setIconSize(QtCore.QSize(16, 16))
+        button.setAccessibleName(self.tr("Options"))
+        button.setToolTip(self.tr("Options"))
+        button.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup)
+        menu = QtWidgets.QMenu(button)
+        panel = QtWidgets.QWidget()
+        panel_layout = QtWidgets.QVBoxLayout(panel)
+        panel_layout.addWidget(self._detect._thresholds)
+        panel_layout.addWidget(self._assist._polygon_detail_panel)
+        action = QtWidgets.QWidgetAction(menu)
+        action.setDefaultWidget(panel)
+        menu.addAction(action)
+        button.setMenu(menu)
+        self._detect.thresholds_changed.connect(button.set_changed)
+        return button
 
     def set_tool(self, create_mode: str | None, /) -> None:
         detect = create_mode == "ai_find_all"
@@ -103,10 +150,8 @@ class AiToolGroup(QtWidgets.QWidget):
         for control in (
             self._model_stack,
             self._assist._output_format_button,
-            self._assist._polygon_detail_button,
         ):
             control.setEnabled(self._ai_tool_active)
-        self._detect._thresholds.setEnabled(detect)
         self.hover_highlight_requested.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
 
     def eventFilter(self, a0: QtCore.QObject, a1: QtCore.QEvent, /) -> bool:

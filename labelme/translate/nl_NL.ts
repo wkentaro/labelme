@@ -8,10 +8,6 @@
         <translation>Polygoondetail</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Polygoondetail aanpassen</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Gladder</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Opties</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

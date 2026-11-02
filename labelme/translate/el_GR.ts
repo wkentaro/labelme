@@ -8,10 +8,6 @@
         <translation>Λεπτομέρεια πολυγώνου</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Προσαρμογή λεπτομέρειας πολυγώνου</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Πιο ομαλό</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Επιλογές</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

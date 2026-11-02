@@ -8,10 +8,6 @@
         <translation>多边形细节</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>调整多边形细节</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>更平滑</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>选项</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

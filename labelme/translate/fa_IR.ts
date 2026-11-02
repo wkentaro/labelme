@@ -8,10 +8,6 @@
         <translation>جزئیات چندضلعی</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>تنظیم جزئیات چندضلعی</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>هموارتر</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>گزینه‌ها</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

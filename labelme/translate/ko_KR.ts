@@ -8,10 +8,6 @@
         <translation>폴리곤 세부 수준</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>폴리곤 세부 수준 조정</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>더 부드럽게</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>옵션</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

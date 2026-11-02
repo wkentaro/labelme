@@ -8,10 +8,6 @@
         <translation>Poligon részletessége</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Poligon részletességének beállítása</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Simább</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Beállítások</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

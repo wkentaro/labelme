@@ -8,10 +8,6 @@
         <translation>Детализация полигона</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Настроить детализацию полигона</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Более гладко</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Параметры</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>

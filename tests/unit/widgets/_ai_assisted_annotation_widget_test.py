@@ -136,7 +136,7 @@ def test_selecting_another_output_format_fires_callback(
     assert formats == ["mask"]
     assert widget.output_format == "mask"
     assert widget._output_format_button.toolTip() == "Mask"
-    assert not widget._polygon_detail_button.isVisibleTo(widget)
+    assert not widget._polygon_detail_panel.isVisibleTo(widget)
 
     widget._output_format_actions["mask"].trigger()
     assert formats == ["mask"]  # Picking the current shape again is a no-op.
@@ -145,7 +145,7 @@ def test_selecting_another_output_format_fires_callback(
     assert formats == ["mask", "polygon"]
     assert widget._output_format_actions["polygon"].isChecked()
     assert not widget._output_format_actions["mask"].isChecked()
-    assert widget._polygon_detail_button.isVisibleTo(widget)
+    assert widget._polygon_detail_panel.isVisibleTo(widget)
 
 
 def test_polygon_detail_control_fires_callback_and_exposes_value(
@@ -164,7 +164,7 @@ def test_polygon_detail_control_fires_callback_and_exposes_value(
 
     assert details == [60]
     assert widget._polygon_detail_slider.value == 60
-    assert widget._polygon_detail_button.accessibleName() == "Polygon detail"
+    assert widget._polygon_detail_slider.accessibleName() == "Polygon detail"
 
 
 def test_setting_polygon_detail_from_config_does_not_fire_callback(

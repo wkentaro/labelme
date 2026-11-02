@@ -30,15 +30,14 @@ def group(*, qtbot: QtBot) -> AiToolGroup:
 
 @pytest.mark.gui
 @pytest.mark.parametrize(
-    ("create_mode", "title", "detect_enabled"),
+    ("create_mode", "title", "is_find_all"),
     [
-        ("ai_segment", "AI-Segment", False),
         ("ai_segment", "AI-Segment", False),
         ("ai_find_all", "AI-Find All", True),
     ],
 )
 def test_group_follows_the_active_tool(
-    *, group: AiToolGroup, create_mode: str, title: str, detect_enabled: bool
+    *, group: AiToolGroup, create_mode: str, title: str, is_find_all: bool
 ) -> None:
     width = group.width()
     output_geometry = group._assist._output_format_button.geometry()
@@ -51,11 +50,8 @@ def test_group_follows_the_active_tool(
     for control in (group._detect._text_input, group._detect._run_button):
         assert control.isEnabled()  # Running switches to AI-Find All.
     assert group._model_stack.currentWidget() is (
-        group._detect._model_combo if detect_enabled else group._assist._model_combo
+        group._detect._model_combo if is_find_all else group._assist._model_combo
     )
-    for control in (group._detect._score_spinbox, group._detect._iou_spinbox):
-        assert control.isVisible()  # Disabled, not hidden.
-        assert control.isEnabled() is detect_enabled
     assert group.width() == width
     assert group._assist._output_format_button.geometry() == output_geometry
 
@@ -71,12 +67,10 @@ def test_only_the_query_and_run_work_without_an_ai_tool(
     assert group._title.text() == "AI Assist"
     assert group._detect._text_input.isEnabled()
     assert group._detect._run_button.isEnabled()
-    for control in (
-        group._model_stack,
-        group._assist._output_format_button,
-        group._detect._score_spinbox,
-    ):
+    for control in (group._model_stack, group._assist._output_format_button):
         assert not control.isEnabled()
+    # Run uses the thresholds from any tool.
+    assert group._options_button.isEnabled()
     with qtbot.waitSignal(group.hover_highlight_requested) as blocker:
         QtWidgets.QApplication.sendEvent(
             group._model_stack, QtCore.QEvent(QtCore.QEvent.Type.Enter)
@@ -107,3 +101,16 @@ def test_run_reads_detecting_while_a_job_runs(*, group: AiToolGroup) -> None:
     detect.set_detecting(False)  # noqa: FBT003 -- state flag
 
     assert detect._run_button.text() == "Run"
+
+
+@pytest.mark.gui
+def test_options_button_marks_thresholds_off_their_defaults(
+    *, group: AiToolGroup
+) -> None:
+    assert not group._options_button._changed
+
+    group._detect._score_spinbox.setValue(0.3)
+    assert group._options_button._changed
+
+    group._detect._score_spinbox.setValue(group._detect._default_score_threshold)
+    assert not group._options_button._changed

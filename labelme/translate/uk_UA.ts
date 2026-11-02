@@ -8,10 +8,6 @@
         <translation>Деталізація полігона</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Налаштувати деталізацію полігона</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Плавніше</translation>
     </message>
@@ -93,6 +89,10 @@
 </context>
 <context>
     <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Параметри</translation>
+    </message>
     <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
