@@ -179,3 +179,22 @@ def test_model_button_opens_the_model_menu(*, group: AiToolGroup, qtbot: QtBot) 
     assert "AI-Find All" in _menu_texts(menu)
 
     menu.hide()
+
+
+@pytest.mark.gui
+def test_model_menu_shows_the_download_size_of_missing_models(
+    *, group: AiToolGroup
+) -> None:
+    group._assist._model_combo.set_available_models(
+        available={"sam2:latest"}, downloading=set()
+    )
+    group._detect._model_combo.set_available_models(
+        available={"sam3:latest"}, downloading=set()
+    )
+
+    texts = _menu_texts(group._model_button._build_menu())
+
+    assert "SAM 2 Base+" in texts
+    assert "SAM 2 Large\t868 MB" in texts
+    assert "SAM 3\t3.4 GB" in texts
+    assert "YOLO-World\tBoxes only · 642 MB" in texts

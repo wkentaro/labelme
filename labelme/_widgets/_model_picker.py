@@ -127,7 +127,9 @@ class ModelPicker(QtWidgets.QComboBox):
         *,
         folded: Collection[str],
         notes: Mapping[str, str],
+        sizes: Mapping[str, int],
     ) -> None:
+        locale = self.locale()
         group = QtGui.QActionGroup(menu)
         more: QtWidgets.QMenu | None = None
         # Folded models follow the others, in a submenu at the section's end.
@@ -140,8 +142,19 @@ class ModelPicker(QtWidgets.QComboBox):
                     menu.addMenu(more)
                     more.setToolTipsVisible(True)
                 target = more
+            column = [notes[name]] if name in notes else []
+            if name not in self._available and name in sizes:
+                # What choosing it costs: a download before first use.
+                size = sizes[name]
+                column.append(
+                    locale.formattedDataSize(
+                        size,
+                        0 if size < 2**30 else 1,
+                        QtCore.QLocale.DataSizeFormat.DataSizeTraditionalFormat,
+                    )
+                )
             # Text after a tab shows in the menu's muted shortcut column.
-            text = f"{display}\t{notes[name]}" if name in notes else display
+            text = "\t".join([display, " · ".join(column)]) if column else display
             action = target.addAction(text)
             action.setCheckable(True)
             action.setChecked(name == self._selected)
