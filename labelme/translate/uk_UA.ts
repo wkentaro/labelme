@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Деталізація полігона</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Налаштувати деталізацію полігона</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -44,8 +36,8 @@
         <translation>Коло</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Виберіть режим &apos;AI-Points&apos; або &apos;AI-Box&apos;, щоб увімкнути ШІ-помічника</translation>
+        <source>Output format: {format}</source>
+        <translation>Формат виведення: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,32 +51,12 @@
         <source>Model</source>
         <translation>Модель</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>ШІ-помічник</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Формат виведення</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI створює анотації з текстової підказки</translation>
-    </message>
-    <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>наприклад, собака, кішка, птах</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Запустити</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Модель текстового запиту ШІ</translation>
     </message>
     <message>
         <source>Score</source>
@@ -95,20 +67,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Виберіть режим &apos;Polygon&apos;, &apos;Rectangle&apos; або &apos;AI-Points&apos;, щоб увімкнути</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Модель</translation>
     </message>
     <message>
-        <source>AI Text Prompt</source>
-        <translation>Текстовий запит ШІ</translation>
+        <source>What to find</source>
+        <translation>Що знайти</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Запит</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>Пошук…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>Модель AI-Find All</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Параметри</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -172,8 +163,16 @@
         <translation>Редагування фігур</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Клацайте точки, щоб включити, або утримуйте %s і клацніть, щоб виключити. Утримуйте %s і клацніть, щоб завершити.</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Введіть в AI-Find All, що потрібно знайти, або клацніть перший кут рамки навколо одного прикладу</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Натисніть протилежний кут, щоб виключити об&apos;єкти, схожі на цей</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Клацніть протилежний кут, щоб знайти всі такі самі об’єкти</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -194,6 +193,14 @@
     <message>
         <source>Click center point for circle</source>
         <translation>Натисніть центральну точку для кола</translation>
+    </message>
+    <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Клацайте точки, щоб включити, утримуйте %s і клацніть, щоб виключити, або перетягніть рамку. Утримуйте %s і клацніть, щоб завершити.</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter додає результати, Esc відхиляє їх. Утримуючи %s, намалюйте рамку, щоб виключити схожі об&apos;єкти.</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>
@@ -222,14 +229,6 @@
     <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Натисніть і перетягніть, щоб перемістити фігуру</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Натисніть на перший кут bbox для сегментації ШІ</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Натисніть на протилежний кут для сегментації об&apos;єкта</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -407,6 +406,14 @@
     <message>
         <source>Start drawing points</source>
         <translation>Почніть малювати точки</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Клацайте точки або перетягніть рамку, щоб сегментувати один об&apos;єкт; утримуйте %s і клацніть, щоб завершити.</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -617,8 +624,12 @@
         <translation>Клацайте, щоб ставити точки ламаної; утримуйте %s і клацніть, щоб поставити останню.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Клацайте точки, щоб сегментувати об&apos;єкт; утримуйте %s і клацніть, щоб завершити.</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Знайти всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
     </message>
     <message>
         <source>Next</source>
@@ -715,10 +726,6 @@
         <translation>Інші інструменти фігур</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s розпочато.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Повторити</translation>
     </message>
@@ -763,16 +770,20 @@
         <translation>Збереження…</translation>
     </message>
     <message>
-        <source>Mask Output Unavailable</source>
-        <translation>Вивід маски недоступний</translation>
+        <source>Type what to find</source>
+        <translation>Введіть, що потрібно знайти</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s виявляє лише обмежувальні рамки й не може створювати фігури &apos;%s&apos;.
-
-Перемкніть модель текстового запиту ШІ на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Пошук збігів на ЦП…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Пошук збігів…</translation>
+    </message>
+    <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Вивід маски недоступний</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
@@ -915,18 +926,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Намалюйте обмежувальну рамку для сегментації об&apos;єкта.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>Припасувати &amp;вікно</translation>
     </message>
@@ -977,12 +976,12 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Резервну копію конфігурації збережено в %s</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>Пошук «{query}»…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Пошук усіх «{query}»…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>Пошук «{query}» на ЦП…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Пошук усіх «{query}» на ЦП…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -997,12 +996,24 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Знайдено нових «{query}»: {count}</translation>
     </message>
     <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s виявляє лише обмежувальні рамки й не може створювати фігури &apos;%s&apos;.
+
+Перемкніть модель AI-Find All на &apos;SAM 3&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Нових «{query}» не знайдено</translation>
     </message>
     <message>
         <source>Invalid Label</source>
         <translation>Недійсна мітка</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s не може використати рамку-приклад. Виберіть SAM 3.</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1125,6 +1136,10 @@ Expected location: {path}</source>
         <translation>Помилка конфігурації</translation>
     </message>
     <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Розпізнає лише рамки. Перейдіть на «Прямокутник», щоб використати цю модель.</translation>
+    </message>
+    <message>
         <source>Locate Image…</source>
         <translation>Знайти зображення…</translation>
     </message>
@@ -1150,6 +1165,10 @@ Expected location: {path}</source>
     <message>
         <source>Unavailable: {model}</source>
         <translation>Недоступно: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Інші моделі…</translation>
     </message>
 </context>
 <context>
@@ -1397,6 +1416,10 @@ Expected location: {path}</source>
         <translation>Одна назва прапорця на рядок. Шаблони: ^car$ точно відповідає car, car — префіксу, .* — будь-якій мітці.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>Модель AI-Find All</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Деталізація полігона</translation>
     </message>
@@ -1467,46 +1490,6 @@ Expected location: {path}</source>
     <message>
         <source>Default model</source>
         <translation>Модель за замовчуванням</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (швидкість)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (точність)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (швидкість)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (збалансований)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (точність)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (швидкість)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (збалансований)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (точність)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Модель текстового запиту</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1639,6 +1622,65 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Рядок {row}: {error} Зміни не застосовано.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Модель</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>Найшвидша</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Збалансована</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Найточніша</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Оригінальна SAM. SAM 2 швидша в будь-якому розмірі.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Найшвидша, з грубими контурами. Добре працює на будь-якому комп’ютері.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Чіткіші контури, ніж у Tiny, але повільніша за SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Менший обсяг завантаження, ніж у Base+, трохи менш точна.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Баланс швидкості й точності. Добре працює на CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Точніша за Base+, але повільніша.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Найточніша, але повільніша за SAM 2 Base+. Найкраще з GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Найшвидша. Знаходить рамки без масок.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Лише рамки</translation>
     </message>
 </context>
 <context>

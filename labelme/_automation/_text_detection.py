@@ -2,18 +2,17 @@ from __future__ import annotations
 
 import json
 from typing import TYPE_CHECKING
-from typing import Final
 
 import numpy as np
 from loguru import logger
 from numpy.typing import NDArray
 
 from .._shape import Shape
-from ._geometry import shape_to_xyxy_bbox
 from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
 from ._shape_builders import Detection
 from ._shape_builders import assign_available_group_ids
 from ._shape_builders import shapes_from_detections
+from ._suppression import match_detections_to_existing_shapes
 from ._suppression import suppress_detections_greedy
 from ._types import AiOutputFormat
 
@@ -35,25 +34,48 @@ def propose_shapes_from_texts(
     score_threshold: float,
     image_size: tuple[int, int] | None,
     polygon_detail: int,
+    suppressed_by: str | None = None,
 ) -> list[Shape]:
+    # suppressed_by: the label the results will take, when it isn't their
+    # text; only existing Shapes with that label suppress them.
     boxes, scores, labels, masks = get_bboxes_from_texts(
         annotations=annotations, texts=texts
     )
     if masks is None and len(boxes) > 0 and shape_type in MASK_REQUIRED_SHAPE_TYPES:
         raise MaskOutputUnavailableError(f"{shape_type!r} requires model masks")
 
-    # Existing Shapes outrank model scores so overlapping predictions disappear
-    # without returning the existing Shapes as new proposals.
-    SCORE_FOR_EXISTING_SHAPE: Final[float] = 1.01
-    for shape in existing_shapes:
-        if shape.shape_type != shape_type or shape.label not in texts:
-            continue
-        shape_bbox = shape_to_xyxy_bbox(shape=shape)
-        if shape_bbox is None:
-            continue
-        boxes = np.r_[boxes, [shape_bbox]]
-        scores = np.r_[scores, [SCORE_FOR_EXISTING_SHAPE]]
-        labels = np.r_[labels, [texts.index(shape.label)]]
+    # Use the same mask overlap as example boxes; a polygon part can cover an
+    # occluded object even when its bounding box is much smaller.
+    is_new = np.zeros(len(boxes), dtype=bool)
+    for label, text in enumerate(texts):
+        indices = np.flatnonzero(labels == label)
+        candidates = [
+            Detection(
+                bbox=(
+                    float(boxes[i, 0]),
+                    float(boxes[i, 1]),
+                    float(boxes[i, 2]),
+                    float(boxes[i, 3]),
+                ),
+                mask=None if masks is None else masks[i],
+            )
+            for i in indices
+        ]
+        matches = match_detections_to_existing_shapes(
+            detections=candidates,
+            existing_shapes=[
+                shape
+                for shape in existing_shapes
+                if shape.shape_type == shape_type
+                and shape.label == (text if suppressed_by is None else suppressed_by)
+            ],
+            iou_threshold=iou_threshold,
+        )
+        new_ids = {id(detection) for detection in matches.new_detections}
+        is_new[indices] = [id(detection) in new_ids for detection in candidates]
+    boxes, scores, labels = boxes[is_new], scores[is_new], labels[is_new]
+    if masks is not None:
+        masks = [mask for mask, keep in zip(masks, is_new) if keep]
 
     boxes, scores, labels, indices = nms_bboxes(
         boxes=boxes,
@@ -63,12 +85,6 @@ def propose_shapes_from_texts(
         score_threshold=score_threshold,
         max_num_detections=100,
     )
-
-    is_new = scores != SCORE_FOR_EXISTING_SHAPE
-    boxes = boxes[is_new]
-    scores = scores[is_new]
-    labels = labels[is_new]
-    indices = indices[is_new]
 
     if masks is None:
         masks = [None] * len(boxes)

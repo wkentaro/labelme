@@ -124,7 +124,11 @@ def new_icon(name: str, /) -> QtGui.QIcon:
     return QtGui.QIcon(path)
 
 
-def _toolbar_label(text: str, /) -> str:
+# The toolbar label on one line, for a column of buttons where it may fit.
+ONE_LINE_ICON_TEXT: Final = "one_line_icon_text"
+
+
+def _toolbar_label(text: str, /, *, wrap: bool = True) -> str:
     # Two lines at most, so no language's label grows the toolbar taller.
     # Toolbar labels name the command, so they drop the menu's ellipsis, and
     # toolbar buttons don't use mnemonics, so the "(&O)" form that CJK
@@ -132,6 +136,8 @@ def _toolbar_label(text: str, /) -> str:
     # marks its own break with "\n"; otherwise the break goes where the two
     # lines come out closest in length, or at a slash.
     label = re.sub(r"\s*\(&\w\)", "", text).removesuffix("…")
+    if not wrap:
+        return label.replace("\n", "")
     if "\n" in label:
         return label
     if "/" in label:  # "Brightness/Contrast": each half names one thing
@@ -176,6 +182,9 @@ def new_action(
         # A long menu name can pass a shorter one for the toolbar, where every
         # language's labels have to fit across one row.
         action.setIconText(_toolbar_label(toolbar_text or text))
+        action.setProperty(
+            ONE_LINE_ICON_TEXT, _toolbar_label(toolbar_text or text, wrap=False)
+        )
     if slot:
         action.triggered.connect(slot)
     return action

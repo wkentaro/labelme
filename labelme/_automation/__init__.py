@@ -8,7 +8,6 @@ from ._shape_builders import Detection
 from ._shape_builders import assign_available_group_ids
 from ._shape_builders import shapes_from_detections
 from ._suppression import suppress_detections_greedy
-from ._text_detection import MaskOutputUnavailableError
 from ._text_detection import propose_shapes_from_texts
 from ._types import AiOutputFormat
 from ._types import AiPromptKind
@@ -21,7 +20,6 @@ __all__ = [
     "AiPromptKind",
     "Detection",
     "InferenceRequest",
-    "MaskOutputUnavailableError",
     "OsamWorker",
     "assign_available_group_ids",
     "propose_shapes_from_texts",
