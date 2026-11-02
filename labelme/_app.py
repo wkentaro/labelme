@@ -800,7 +800,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("&Brightness/Contrast…"),
             slot=self.open_brightness_contrast_dialog,
             shortcut=None,
-            icon="brightness-contrast.svg",
+            icon="phosphor/circle-half-tilt.svg",
             tip=self.tr("Adjust brightness and contrast"),
         )
         zoom_in = image_action(
