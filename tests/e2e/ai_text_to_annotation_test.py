@@ -795,3 +795,26 @@ def test_ai_detect_box_reads_the_picker_at_use(
     combo.setCurrentIndex(combo.findData(_AI_TEXT_MODEL))
 
     assert win._canvas_widgets.canvas.get_ai_detect_model_name() == _AI_TEXT_MODEL
+
+
+@pytest.mark.gui
+def test_ai_detect_box_checks_the_model_setting_before_download(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        config_overrides={"ai": {"text_model": "sam3:latest"}},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    monkeypatch.setattr(win._model_manager, "is_ready", lambda _name: False)
+    win._refresh_model_availability()
+    assert win._ai_text.get_model_name() == ""
+
+    # Not downloaded yet, but compatible: the box is accepted, so the Models
+    # window can offer the download.
+    win._switch_canvas_mode(edit=False, create_mode="ai_detect")
+    assert not win._canvas_widgets.canvas._refuses_example_box()

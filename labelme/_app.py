@@ -362,8 +362,10 @@ class MainWindow(QtWidgets.QMainWindow):
             on_submit=self._submit_ai_prompt, parent=self
         )
         self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"] or "")
-        self._canvas_widgets.canvas.get_ai_detect_model_name = (
-            self._ai_text.get_model_name
+        # The Setting, not the picker: the picker is empty until the model is
+        # downloaded, and Prompt Compatibility is checked before that.
+        self._canvas_widgets.canvas.get_ai_detect_model_name = lambda: (
+            self._config["ai"]["text_model"] or ""
         )
         self._canvas_widgets.canvas.get_ai_detect_thresholds = lambda: (
             self._ai_text.get_score_threshold(),
