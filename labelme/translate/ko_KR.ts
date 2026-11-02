@@ -1166,6 +1166,10 @@ Expected location: {path}</source>
         <source>Unavailable: {model}</source>
         <translation>사용 불가: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>모델 더 보기…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>{row}행: {error} 변경 사항이 적용되지 않았습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>모델</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>상자만</translation>
     </message>
 </context>
 <context>

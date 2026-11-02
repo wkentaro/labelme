@@ -1166,6 +1166,10 @@ Local esperado: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Indisponível: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Mais modelos…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Local esperado: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Linha {row}: {error} As alterações não foram aplicadas.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modelo</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Somente caixas</translation>
     </message>
 </context>
 <context>

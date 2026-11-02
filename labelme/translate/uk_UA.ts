@@ -1166,6 +1166,10 @@ Expected location: {path}</source>
         <source>Unavailable: {model}</source>
         <translation>Недоступно: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Інші моделі…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Рядок {row}: {error} Зміни не застосовано.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Модель</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Лише рамки</translation>
     </message>
 </context>
 <context>

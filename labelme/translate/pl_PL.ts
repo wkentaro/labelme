@@ -1166,6 +1166,10 @@ Oczekiwana lokalizacja: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Niedostępny: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Więcej modeli…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Wiersz {row}: {error} Zmiany nie zostały zastosowane.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Tylko ramki</translation>
     </message>
 </context>
 <context>

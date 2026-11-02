@@ -1166,6 +1166,10 @@ Emplacement attendu : {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Indisponible : {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Plus de modèles…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Ligne {row} : {error} Les modifications n’ont pas été appliquées.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modèle</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool} : {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Cadres uniquement</translation>
     </message>
 </context>
 <context>

@@ -1166,6 +1166,10 @@ Verwachte locatie: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Niet beschikbaar: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Meer modellen…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Rij {row}: {error} Wijzigingen zijn niet toegepast.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Alleen kaders</translation>
     </message>
 </context>
 <context>

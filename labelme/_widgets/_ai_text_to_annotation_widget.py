@@ -72,24 +72,6 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         model_combo.model_changed.connect(self.model_changed)
         model_combo.manage_requested.connect(self.manage_models_requested)
         model_combo.download_requested.connect(self.download_requested)
-        # Room for the longest model name, which shows even before its download.
-        model_combo.ensurePolished()
-        metrics = model_combo.fontMetrics()
-        longest = max(
-            metrics.horizontalAdvance(display) for _, display in AI_TEXT_MODEL_OPTIONS
-        )
-        option = QtWidgets.QStyleOptionComboBox()
-        model_combo.initStyleOption(option)
-        model_combo.setMinimumWidth(
-            model_combo.style()
-            .sizeFromContents(
-                QtWidgets.QStyle.ContentsType.CT_ComboBox,
-                option,
-                QtCore.QSize(longest, metrics.height()),
-                model_combo,
-            )
-            .width()
-        )
 
         self._thresholds = thresholds = QtWidgets.QWidget(self)
         thresholds_layout = QtWidgets.QFormLayout(thresholds)

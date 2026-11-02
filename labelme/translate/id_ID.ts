@@ -1166,6 +1166,10 @@ Lokasi yang diharapkan: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Tidak tersedia: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Model lainnya…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Baris {row}: {error} Perubahan belum diterapkan.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Hanya kotak</translation>
     </message>
 </context>
 <context>

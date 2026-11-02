@@ -1167,6 +1167,10 @@ Expected location: {path}</source>
         <source>Unavailable: {model}</source>
         <translation>ไม่พร้อมใช้งาน: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>โมเดลเพิ่มเติม…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1619,6 +1623,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>แถว {row}: {error} ยังไม่ได้นำการเปลี่ยนแปลงไปใช้</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>โมเดล</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>กรอบเท่านั้น</translation>
     </message>
 </context>
 <context>

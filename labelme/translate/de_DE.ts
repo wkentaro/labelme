@@ -1166,6 +1166,10 @@ Erwarteter Speicherort: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Nicht verfügbar: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Weitere Modelle…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Zeile {row}: {error} Änderungen wurden nicht angewendet.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Nur Rahmen</translation>
     </message>
 </context>
 <context>

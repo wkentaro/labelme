@@ -11,6 +11,8 @@ from labelme._widgets._ai_tool_group import AiToolGroup
 
 
 def _new_group() -> AiToolGroup:
+    detect = AiTextToAnnotationWidget(on_submit=lambda: None)
+    detect.set_model_name(model_name="sam3:latest")
     return AiToolGroup(
         assist=AiAssistedAnnotationWidget(
             model_name="sam2:latest",
@@ -19,7 +21,7 @@ def _new_group() -> AiToolGroup:
             on_output_format_changed=lambda _: None,
             on_polygon_detail_changed=lambda _: None,
         ),
-        detect=AiTextToAnnotationWidget(on_submit=lambda: None),
+        detect=detect,
     )
 
 
@@ -37,7 +39,7 @@ def test_every_control_works_from_any_tool(*, group: AiToolGroup) -> None:
     for control in (
         group._detect._text_input,
         group._detect._run_button,
-        group._detect._model_combo,
+        group._model_button,
         group._assist._output_format_button,
         group._options_button,
     ):
@@ -72,11 +74,52 @@ def test_run_keeps_clear_of_right_to_left_text(*, qtbot: QtBot) -> None:
         QtWidgets.QApplication.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
 
 
-@pytest.mark.gui
-def test_options_holds_the_ai_segment_model(*, group: AiToolGroup) -> None:
-    menu = group._options_button.menu()
+def _menu_texts(menu: QtWidgets.QMenu, /) -> list[str]:
+    return [action.text() for action in menu.actions() if not action.isSeparator()]
 
-    assert menu.isAncestorOf(group._assist._model_combo)
+
+@pytest.mark.gui
+def test_model_menu_has_a_section_per_tool(*, group: AiToolGroup) -> None:
+    menu = group._model_button._build_menu()
+    texts = _menu_texts(menu)
+
+    segment = texts.index("AI-Segment")
+    find_all = texts.index("AI-Find All")
+    assert "SAM 2 Base+" in texts[segment:find_all]
+    assert "YOLO-World\tBoxes only" in texts[find_all:]
+    assert texts[-1] == "Manage models…"
+    # The original SAM folds away; SAM 2 and SAM 3 lead.
+    more = next(a.menu() for a in menu.actions() if a.text() == "More models…")
+    assert isinstance(more, QtWidgets.QMenu)
+    assert _menu_texts(more) == ["SAM Base", "SAM Large", "SAM Huge"]
+    checked = [a.text() for a in menu.actions() if a.isChecked()]
+    assert checked == ["SAM 2 Base+", "SAM 3"]
+
+
+@pytest.mark.gui
+def test_model_button_names_one_model_when_both_tools_share_it(
+    *, group: AiToolGroup
+) -> None:
+    assert group._model_button.currentText() == "SAM 2 Base+ · SAM 3"
+
+    group._assist.select_model("sam3:latest")
+
+    assert group._model_button.currentText() == "SAM 3"
+    assert group._model_button.toolTip() == "AI-Segment: SAM 3\nAI-Find All: SAM 3"
+
+
+@pytest.mark.gui
+def test_choosing_from_the_model_menu_selects_that_tools_model(
+    *, group: AiToolGroup
+) -> None:
+    menu = group._model_button._build_menu()
+    yolo = next(a for a in menu.actions() if a.text().startswith("YOLO-World"))
+
+    yolo.trigger()
+
+    assert group._detect.get_model_name() == "yoloworld:latest"
+    assert group._assist.current_model_id == "sam2:latest"
+    assert group._model_button.currentText() == "SAM 2 Base+ · YOLO-World"
 
 
 @pytest.mark.gui
@@ -124,4 +167,15 @@ def test_tab_moves_between_fields_in_options(
         QtCore.Qt.KeyboardModifier.ShiftModifier,
     )
     assert score.hasFocus()
+    menu.hide()
+
+
+@pytest.mark.gui
+def test_model_button_opens_the_model_menu(*, group: AiToolGroup, qtbot: QtBot) -> None:
+    group._model_button.showPopup()
+    menu = QtWidgets.QApplication.activePopupWidget()
+    assert isinstance(menu, QtWidgets.QMenu)
+    qtbot.waitExposed(menu)
+    assert "AI-Find All" in _menu_texts(menu)
+
     menu.hide()

@@ -1176,6 +1176,10 @@ Expected location: {path}</source>
         <source>Unavailable: {model}</source>
         <translation>利用不可: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>その他のモデル…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1628,6 +1632,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>行 {row}: {error} 変更は適用されていません。</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}：{model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>ボックスのみ</translation>
     </message>
 </context>
 <context>

@@ -48,6 +48,11 @@ AI_ASSIST_MODEL_OPTIONS: Final[tuple[_AiAssistModelOption, ...]] = (
         display_name="SAM 3",
     ),
 )
+# Listed under "More models…": the original SAM is slower than SAM 2 at every
+# size.
+AI_ASSIST_FOLDED_MODELS: Final[frozenset[str]] = frozenset(
+    {"sam:100m", "sam:300m", "sam:latest"}
+)
 
 
 AI_TEXT_MODEL_OPTIONS: Final[tuple[tuple[str, str], ...]] = (

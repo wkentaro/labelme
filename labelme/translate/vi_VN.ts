@@ -1166,6 +1166,10 @@ Vị trí dự kiến: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Không khả dụng: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Mô hình khác…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Dòng {row}: {error} Các thay đổi chưa được áp dụng.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Mô hình</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Chỉ khung</translation>
     </message>
 </context>
 <context>

@@ -1166,6 +1166,10 @@ Beklenen konum: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Kullanılamıyor: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Diğer modeller…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Satır {row}: {error} Değişiklikler uygulanmadı.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Yalnızca kutular</translation>
     </message>
 </context>
 <context>

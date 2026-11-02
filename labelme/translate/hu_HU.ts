@@ -1166,6 +1166,10 @@ Várt hely: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Nem érhető el: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>További modellek…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Várt hely: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>{row}. sor: {error} A módosítások nem lettek alkalmazva.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Csak keretek</translation>
     </message>
 </context>
 <context>

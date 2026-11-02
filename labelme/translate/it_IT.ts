@@ -1166,6 +1166,10 @@ Posizione prevista: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Non disponibile: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Altri modelli…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1618,6 +1622,21 @@ Posizione prevista: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Riga {row}: {error} Le modifiche non sono state applicate.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modello</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Solo riquadri</translation>
     </message>
 </context>
 <context>
