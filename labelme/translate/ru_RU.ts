@@ -75,20 +75,20 @@
         <translation>Модель</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Метка для поиска</translation>
+        <source>What to find</source>
+        <translation>Что найти</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Запрос</translation>
     </message>
     <message>
-        <source>Detecting…</source>
+        <source>Finding…</source>
         <translation>Поиск…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Модель AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Модель AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>ИИ-помощник</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Обнаружить все объекты, соответствующие текстовому запросу или рамке-примеру</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Найти все объекты, соответствующие текстовому запросу или рамке-примеру</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>ИИ предлагает аннотацию в режимах &apos;AI-Points&apos; и &apos;AI-Box&apos;</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Выберите режим &apos;AI-Points&apos;, &apos;AI-Box&apos; или &apos;AI-Detect&apos;, чтобы включить ИИ-помощника</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>Выберите режим &apos;AI-Points&apos;, &apos;AI-Box&apos; или &apos;AI-Find All&apos;, чтобы включить ИИ-помощника</translation>
     </message>
 </context>
 <context>
@@ -203,15 +203,15 @@
         <translation>Щёлкайте по точкам, чтобы включить, или удерживайте %s и щёлкните, чтобы исключить. Удерживайте %s и щёлкните, чтобы завершить.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>Введите в AI-Detect, что нужно найти, или щёлкните первый угол рамки вокруг одного примера</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Введите в AI-Find All, что нужно найти, или щёлкните первый угол рамки вокруг одного примера</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Нажмите на противоположный угол, чтобы исключить объекты, похожие на этот</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
+        <source>Click the opposite corner to find every object like this one</source>
         <translation>Щёлкните противоположный угол, чтобы найти все такие же объекты</translation>
     </message>
     <message>
@@ -624,12 +624,12 @@
         <translation>Изменить</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Обнаружить все объекты, соответствующие текстовому запросу или рамке-примеру</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Найти все объекты, соответствующие текстовому запросу или рамке-примеру</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +802,32 @@
         <translation>Пока можно использовать настройки по умолчанию. Перед сбросом будет сохранена резервная копия вашего файла конфигурации.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
+        <source>Type what to find</source>
         <translation>Введите, что нужно найти</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>Поиск на ЦП…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Поиск совпадений на ЦП…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Поиск…</translation>
+        <source>Finding matches…</source>
+        <translation>Поиск совпадений…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s обнаруживает только ограничивающие рамки и не может создавать фигуры &apos;%s&apos;.
 
-Переключите модель AI-Detect на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
+Переключите модель AI-Find All на &apos;SAM3 (smart)&apos; или установите формат вывода &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Файл аннотаций относится к другому изображению: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s не умеет искать по рамке-примеру. Выберите SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s не может использовать рамку-пример. Выберите SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1016,12 +1016,12 @@ Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format
         <translation>Нарисуйте ограничивающую рамку для сегментации объекта.</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>Поиск «{query}»…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Поиск всех «{query}»…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>Поиск «{query}» на ЦП…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Поиск всех «{query}» на ЦП…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1448,8 @@ Expected location: {path}</source>
         <translation>Одно имя флага на строку. Шаблоны: ^car$ точно соответствует car, car — префиксу, .* — любой метке.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Модель AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Модель AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>

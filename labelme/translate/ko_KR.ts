@@ -75,20 +75,20 @@
         <translation>모델</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>감지할 레이블</translation>
+        <source>What to find</source>
+        <translation>찾을 대상</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>프롬프트</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>감지 중…</translation>
+        <source>Finding…</source>
+        <translation>찾는 중…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect 모델</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 모델</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>AI 어시스트</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체를 감지</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체 찾기</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI가 &apos;AI-Points&apos; 및 &apos;AI-Box&apos; 모드에서 주석을 제안합니다</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos;, &apos;AI-Box&apos; 또는 &apos;AI-Detect&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>&apos;AI-Points&apos;, &apos;AI-Box&apos; 또는 &apos;AI-Find All&apos; 모드를 선택하여 AI 어시스트를 활성화</translation>
     </message>
 </context>
 <context>
@@ -203,16 +203,16 @@
         <translation>점을 클릭하여 포함하거나 %s 키를 누른 채 클릭하여 제외합니다. %s 키를 누른 채 클릭하여 완료합니다.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>AI-Detect에 감지할 대상을 입력하거나, 예시 하나를 둘러싸는 상자의 첫 번째 모서리를 클릭하세요</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>AI-Find All에 찾을 대상을 입력하거나, 예시 하나를 둘러싸는 상자의 첫 번째 모서리를 클릭하세요</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>반대쪽 모서리를 클릭하여 이와 비슷한 객체를 제외합니다</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>반대쪽 모서리를 클릭하면 이와 같은 모든 객체를 감지합니다</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>반대쪽 모서리를 클릭하면 이와 같은 모든 객체를 찾습니다</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -624,12 +624,12 @@
         <translation>편집</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체를 감지</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체 찾기</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +802,32 @@
         <translation>지금은 기본 설정을 사용할 수 있습니다. 초기화하기 전에 설정 파일의 백업을 저장합니다.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>감지할 대상을 입력하세요</translation>
+        <source>Type what to find</source>
+        <translation>찾을 대상을 입력하세요</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>CPU에서 감지 중…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>CPU에서 일치 항목 찾는 중…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>감지 중…</translation>
+        <source>Finding matches…</source>
+        <translation>일치 항목 찾는 중…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 도형을 생성할 수 없습니다.
 
-AI-Detect 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
+AI-Find All 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>이 주석 파일은 다른 이미지의 파일입니다: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s은(는) 예시 상자로 감지할 수 없습니다. SAM3 (smart)를 선택하세요.</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s은(는) 예시 상자를 사용할 수 없습니다. SAM3 (smart)를 선택하세요.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1024,12 +1024,12 @@ AI-Detect 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형�
         <translation>백업 후 초기화</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>&apos;{query}&apos; 감지 중…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>모든 &apos;{query}&apos; 찾는 중…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>CPU에서 &apos;{query}&apos; 감지 중…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>CPU에서 모든 &apos;{query}&apos; 찾는 중…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1448,8 @@ Expected location: {path}</source>
         <translation>한 줄에 플래그 이름 하나를 입력합니다. 패턴: ^car$는 car와 정확히 일치하고, car는 접두사와 일치하며, .*는 모든 레이블과 일치합니다.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect 모델</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 모델</translation>
     </message>
     <message>
         <source>Polygon detail</source>

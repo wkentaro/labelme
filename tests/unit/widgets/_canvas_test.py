@@ -3019,13 +3019,13 @@ def test_ai_points_preview_waits_while_finalizing(*, canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
-def test_ai_detect_box_rejects_text_only_model_before_loading(
+def test_ai_find_all_box_rejects_text_only_model_before_loading(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
     loaded: list[str] = []
     canvas.ensure_ai_model_ready = lambda name: loaded.append(name) or True
-    canvas.get_ai_detect_model_name = lambda: "yoloworld:latest"
-    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.get_ai_find_all_model_name = lambda: "yoloworld:latest"
+    canvas.set_editing(value=False, create_mode="ai_find_all")
     canvas.show()
 
     with qtbot.waitSignal(canvas.example_box_unsupported):
@@ -3037,13 +3037,13 @@ def test_ai_detect_box_rejects_text_only_model_before_loading(
 
 
 @pytest.mark.gui
-def test_ai_detect_box_uses_the_ai_detect_model(
+def test_ai_find_all_box_uses_the_ai_find_all_model(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
     loaded: list[str] = []
     canvas.ensure_ai_model_ready = lambda name: loaded.append(name) or True
-    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
-    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.get_ai_find_all_model_name = lambda: "sam3:latest"
+    canvas.set_editing(value=False, create_mode="ai_find_all")
     canvas.show()
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
@@ -3059,13 +3059,13 @@ def test_ai_detect_box_uses_the_ai_detect_model(
 
 
 @pytest.mark.gui
-def test_ai_detect_box_rechecks_the_model_at_the_second_corner(
+def test_ai_find_all_box_rechecks_the_model_at_the_second_corner(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
     model_name = "sam3:latest"
     canvas.ensure_ai_model_ready = lambda _: True
-    canvas.get_ai_detect_model_name = lambda: model_name
-    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.get_ai_find_all_model_name = lambda: model_name
+    canvas.set_editing(value=False, create_mode="ai_find_all")
     canvas.show()
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
 
@@ -3078,12 +3078,12 @@ def test_ai_detect_box_rechecks_the_model_at_the_second_corner(
 
 
 @pytest.mark.gui
-def test_ai_detect_box_applies_the_score_threshold(
+def test_ai_find_all_box_applies_the_score_threshold(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
     canvas.ensure_ai_model_ready = lambda _: True
-    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
-    canvas.get_ai_detect_thresholds = lambda: (0.5, 0.5)
+    canvas.get_ai_find_all_model_name = lambda: "sam3:latest"
+    canvas.get_ai_find_all_thresholds = lambda: (0.5, 0.5)
     canvas.set_ai_output_format("rectangle")
     _worker(canvas).annotations = [
         osam.types.Annotation(
@@ -3092,13 +3092,13 @@ def test_ai_detect_box_applies_the_score_threshold(
         )
         for x, score in [(5, 0.9), (40, 0.1)]
     ]
-    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.set_editing(value=False, create_mode="ai_find_all")
     canvas.show()
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(15, 20))
 
-    assert len(canvas._ai_detect_draft) == 1
+    assert len(canvas._ai_find_all_draft) == 1
 
 
 @pytest.mark.gui
@@ -3115,11 +3115,13 @@ def test_ai_box_sends_the_box_without_text(*, canvas: Canvas, qtbot: QtBot) -> N
 
 
 @pytest.mark.gui
-def test_ai_detect_box_detects_with_the_query(*, canvas: Canvas, qtbot: QtBot) -> None:
+def test_ai_find_all_box_detects_with_the_query(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
     canvas.ensure_ai_model_ready = lambda _: True
-    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
-    canvas.get_ai_detect_query = lambda: "dog"
-    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.get_ai_find_all_model_name = lambda: "sam3:latest"
+    canvas.get_ai_find_all_query = lambda: "dog"
+    canvas.set_editing(value=False, create_mode="ai_find_all")
     canvas.show()
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
@@ -3129,14 +3131,14 @@ def test_ai_detect_box_detects_with_the_query(*, canvas: Canvas, qtbot: QtBot) -
 
 
 @pytest.mark.gui
-def test_ai_detect_box_labels_results_with_the_query_it_sent(
+def test_ai_find_all_box_labels_results_with_the_query_it_sent(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
     canvas.ensure_ai_model_ready = lambda _: True
-    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
-    canvas.get_ai_detect_query = lambda: "person"
+    canvas.get_ai_find_all_model_name = lambda: "sam3:latest"
+    canvas.get_ai_find_all_query = lambda: "person"
     canvas.set_ai_output_format("rectangle")
-    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.set_editing(value=False, create_mode="ai_find_all")
     canvas.show()
     worker = _worker(canvas)
     worker.annotations = [
@@ -3147,22 +3149,22 @@ def test_ai_detect_box_labels_results_with_the_query_it_sent(
     ]
     worker.paused = True
     queries: list[str] = []
-    canvas.ai_detect_draft_committed.connect(
+    canvas.ai_find_all_draft_committed.connect(
         lambda _shapes, _propose, query: queries.append(query)
     )
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
-    canvas.get_ai_detect_query = lambda: "dog"  # Edited during inference.
+    canvas.get_ai_find_all_query = lambda: "dog"  # Edited during inference.
     worker.resume()
     qtbot.keyClick(canvas, Qt.Key.Key_Return)
 
     assert queries == ["person"]
 
 
-def _ai_detect_canvas(canvas: Canvas, /) -> Canvas:
+def _ai_find_all_canvas(canvas: Canvas, /) -> Canvas:
     canvas.ensure_ai_model_ready = lambda _: True
-    canvas.get_ai_detect_model_name = lambda: "sam3:latest"
+    canvas.get_ai_find_all_model_name = lambda: "sam3:latest"
     canvas.set_ai_output_format("rectangle")
     _worker(canvas).annotations = [
         osam.types.Annotation(
@@ -3171,7 +3173,7 @@ def _ai_detect_canvas(canvas: Canvas, /) -> Canvas:
         )
         for x in (5, 40)
     ]
-    canvas.set_editing(value=False, create_mode="ai_detect")
+    canvas.set_editing(value=False, create_mode="ai_find_all")
     canvas.show()
     return canvas
 
@@ -3211,8 +3213,8 @@ def _draw_box(
 
 
 @pytest.mark.gui
-def test_ai_detect_counter_example_reruns_with_every_box(*, canvas: Canvas) -> None:
-    _ai_detect_canvas(canvas)
+def test_ai_find_all_counter_example_reruns_with_every_box(*, canvas: Canvas) -> None:
+    _ai_find_all_canvas(canvas)
 
     _draw_box(canvas, corners=((5, 5), (15, 20)))
     _draw_box(
@@ -3228,14 +3230,14 @@ def test_ai_detect_counter_example_reruns_with_every_box(*, canvas: Canvas) -> N
     assert request.point_labels.tolist() == [2, 3, 4, 5]
     assert request.points.tolist() == [[5, 5], [15, 20], [40, 5], [50, 20]]
     assert canvas.shapes == []
-    assert len(canvas._ai_detect_draft) == 2  # The latest run replaced the first.
+    assert len(canvas._ai_find_all_draft) == 2  # The latest run replaced the first.
 
 
 @pytest.mark.gui
-def test_ai_detect_enter_commits_the_draft_as_one_step(
+def test_ai_find_all_enter_commits_the_draft_as_one_step(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
-    _ai_detect_canvas(canvas)
+    _ai_find_all_canvas(canvas)
     backups = len(canvas.shape_backups)
     queries: list[str] = []
 
@@ -3246,7 +3248,7 @@ def test_ai_detect_enter_commits_the_draft_as_one_step(
         assert len(propose("dog")) == len(draft)  # No "dog" Shapes yet.
         canvas.load_shapes(shapes=propose("dog"), replace=False)  # As the app does.
 
-    canvas.ai_detect_draft_committed.connect(add)
+    canvas.ai_find_all_draft_committed.connect(add)
 
     _draw_box(canvas, corners=((5, 5), (15, 20)))
     qtbot.keyClick(canvas, Qt.Key.Key_Return)
@@ -3254,14 +3256,14 @@ def test_ai_detect_enter_commits_the_draft_as_one_step(
     assert len(canvas.shapes) == 2
     assert len(canvas.shape_backups) == backups + 1
     assert queries == [""]
-    assert not canvas.has_ai_detect_draft
+    assert not canvas.has_ai_find_all_draft
 
 
 def _commit_draft_proposals(
     canvas: Canvas, qtbot: QtBot, /, *, label: str
 ) -> list[Shape]:
     proposed: list[Shape] = []
-    canvas.ai_detect_draft_committed.connect(
+    canvas.ai_find_all_draft_committed.connect(
         lambda _draft, propose, _query: proposed.extend(propose(label))
     )
     qtbot.keyClick(canvas, Qt.Key.Key_Return)
@@ -3269,10 +3271,10 @@ def _commit_draft_proposals(
 
 
 @pytest.mark.gui
-def test_ai_detect_commit_keeps_the_settings_the_draft_showed(
+def test_ai_find_all_commit_keeps_the_settings_the_draft_showed(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
-    _ai_detect_canvas(canvas)
+    _ai_find_all_canvas(canvas)
     _draw_box(canvas, corners=((5, 5), (15, 20)))
 
     canvas.set_ai_output_format("polygon")  # Changed with the draft shown.
@@ -3282,10 +3284,10 @@ def test_ai_detect_commit_keeps_the_settings_the_draft_showed(
 
 
 @pytest.mark.gui
-def test_ai_detect_commit_skips_only_the_label_and_output_it_covers(
+def test_ai_find_all_commit_skips_only_the_label_and_output_it_covers(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
-    _ai_detect_canvas(canvas)
+    _ai_find_all_canvas(canvas)
     for label, shape_type in (("dog", "polygon"), ("cat", "rectangle")):
         canvas.shapes.append(
             Shape(
@@ -3311,19 +3313,19 @@ def test_ai_detect_commit_skips_only_the_label_and_output_it_covers(
 
 
 @pytest.mark.gui
-def test_ai_detect_escape_discards_the_draft(*, canvas: Canvas, qtbot: QtBot) -> None:
-    _ai_detect_canvas(canvas)
+def test_ai_find_all_escape_discards_the_draft(*, canvas: Canvas, qtbot: QtBot) -> None:
+    _ai_find_all_canvas(canvas)
 
     _draw_box(canvas, corners=((5, 5), (15, 20)))
     qtbot.keyClick(canvas, Qt.Key.Key_Escape)
 
     assert canvas.shapes == []
-    assert not canvas.has_ai_detect_draft
+    assert not canvas.has_ai_find_all_draft
 
 
 @pytest.mark.gui
-def test_ai_detect_draft_clears_on_image_change(*, canvas: Canvas) -> None:
-    _ai_detect_canvas(canvas)
+def test_ai_find_all_draft_clears_on_image_change(*, canvas: Canvas) -> None:
+    _ai_find_all_canvas(canvas)
     _draw_box(canvas, corners=((5, 5), (15, 20)))
 
     canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT))
@@ -3335,43 +3337,43 @@ def test_ai_detect_draft_clears_on_image_change(*, canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
-def test_ai_detect_rerun_replaces_the_draft_with_the_current_query(
+def test_ai_find_all_rerun_replaces_the_draft_with_the_current_query(
     *, canvas: Canvas
 ) -> None:
-    _ai_detect_canvas(canvas)
+    _ai_find_all_canvas(canvas)
     _draw_box(canvas, corners=((5, 5), (15, 20)))
-    canvas.get_ai_detect_query = lambda: "person"
+    canvas.get_ai_find_all_query = lambda: "person"
     _worker(canvas).annotations = _worker(canvas).annotations[:1]
 
-    canvas.rerun_ai_detect_draft()
+    canvas.rerun_ai_find_all_draft()
 
     request = _worker(canvas).requests[-1]
     assert request.texts == ["person"]
     assert request.point_labels is not None
     assert request.point_labels.tolist() == [2, 3]
     assert canvas.shapes == []
-    assert len(canvas._ai_detect_draft) == 1
+    assert len(canvas._ai_find_all_draft) == 1
 
 
 @pytest.mark.gui
-def test_ai_detect_rerun_result_is_dropped_after_a_tool_switch(
+def test_ai_find_all_rerun_result_is_dropped_after_a_tool_switch(
     *, canvas: Canvas
 ) -> None:
-    _ai_detect_canvas(canvas)
+    _ai_find_all_canvas(canvas)
     _draw_box(canvas, corners=((5, 5), (15, 20)))
     _worker(canvas).paused = True
-    canvas.rerun_ai_detect_draft()
+    canvas.rerun_ai_find_all_draft()
 
     canvas.set_editing(value=False, create_mode="rectangle")
     _worker(canvas).resume()
 
-    assert not canvas.has_ai_detect_draft
+    assert not canvas.has_ai_find_all_draft
     assert not canvas.is_ai_finalizing
 
 
 @pytest.mark.gui
-def test_ai_detect_draft_holds_other_shape_changes(*, canvas: Canvas) -> None:
-    _ai_detect_canvas(canvas)
+def test_ai_find_all_draft_holds_other_shape_changes(*, canvas: Canvas) -> None:
+    _ai_find_all_canvas(canvas)
 
     _draw_box(canvas, corners=((5, 5), (15, 20)))
 
@@ -3379,40 +3381,40 @@ def test_ai_detect_draft_holds_other_shape_changes(*, canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
-def test_ai_detect_escape_discards_the_draft_during_a_rerun(
+def test_ai_find_all_escape_discards_the_draft_during_a_rerun(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
-    _ai_detect_canvas(canvas)
+    _ai_find_all_canvas(canvas)
     _draw_box(canvas, corners=((5, 5), (15, 20)))
     _worker(canvas).paused = True
-    canvas.rerun_ai_detect_draft()
+    canvas.rerun_ai_find_all_draft()
 
     qtbot.keyClick(canvas, Qt.Key.Key_Escape)
     _worker(canvas).resume()
 
-    assert not canvas.has_ai_detect_draft
+    assert not canvas.has_ai_find_all_draft
     assert not canvas.is_ai_finalizing
 
 
 @pytest.mark.gui
-def test_ai_detect_draft_is_discarded_when_shapes_change(*, canvas: Canvas) -> None:
-    _ai_detect_canvas(canvas)
+def test_ai_find_all_draft_is_discarded_when_shapes_change(*, canvas: Canvas) -> None:
+    _ai_find_all_canvas(canvas)
     canvas.shapes.append(
         Shape(shape_type="rectangle", points=np.array([(0.0, 0.0), (1.0, 1.0)]))
     )
     canvas.backup_shapes()
     canvas.backup_shapes()
     _draw_box(canvas, corners=((5, 5), (15, 20)))
-    assert canvas.has_ai_detect_draft
+    assert canvas.has_ai_find_all_draft
 
     canvas.restore_last_shape()
 
-    assert not canvas.has_ai_detect_draft
+    assert not canvas.has_ai_find_all_draft
 
 
 @pytest.mark.gui
-def test_ai_detect_clearing_the_draft_drops_a_pending_box(*, canvas: Canvas) -> None:
-    _ai_detect_canvas(canvas)
+def test_ai_find_all_clearing_the_draft_drops_a_pending_box(*, canvas: Canvas) -> None:
+    _ai_find_all_canvas(canvas)
     _draw_box(canvas, corners=((5, 5), (15, 20)))
     _worker(canvas).paused = True
     _draw_box(canvas, corners=((40, 5), (50, 20)))
@@ -3420,6 +3422,6 @@ def test_ai_detect_clearing_the_draft_drops_a_pending_box(*, canvas: Canvas) -> 
     canvas.backup_shapes()  # Any Shape change, such as toggling visibility.
     _worker(canvas).resume()
 
-    assert not canvas.has_ai_detect_draft
+    assert not canvas.has_ai_find_all_draft
     assert not canvas.is_ai_finalizing
     assert not canvas.is_drawing

@@ -64,8 +64,7 @@ def migrate_config(*, config_from_yaml: dict) -> None:
         )
         ai["default"] = model_name_new
 
-    # Migrate polygon shortcut keys to shape
-    _POLYGON_TO_SHAPE_RENAMES: Final = {
+    _SHORTCUT_RENAMES: Final = {
         "edit_polygon": "edit_shape",
         "delete_polygon": "delete_shape",
         "duplicate_polygon": "duplicate_shape",
@@ -74,8 +73,9 @@ def migrate_config(*, config_from_yaml: dict) -> None:
         "show_all_polygons": "show_all_shapes",
         "hide_all_polygons": "hide_all_shapes",
         "toggle_all_polygons": "toggle_all_shapes",
+        "create_ai_detect": "create_ai_find_all",
     }
-    for old_key, new_key in _POLYGON_TO_SHAPE_RENAMES.items():
+    for old_key, new_key in _SHORTCUT_RENAMES.items():
         if old_key not in shortcuts:
             continue
         old_value = shortcuts.pop(old_key)
@@ -101,6 +101,13 @@ def migrate_config(*, config_from_yaml: dict) -> None:
     crosshair = canvas.get("crosshair") if isinstance(canvas, dict) else None
     if not isinstance(crosshair, dict):
         crosshair = {}
+    if "ai_detect" in crosshair:
+        logger.info(
+            "Migrating old config: canvas.crosshair.ai_detect -> "
+            "canvas.crosshair.ai_find_all"
+        )
+        ai_detect = crosshair.pop("ai_detect")
+        crosshair.setdefault("ai_find_all", ai_detect)
     ai_polygon = crosshair.pop("ai_polygon", None)
     ai_mask = crosshair.pop("ai_mask", None)
     if ai_polygon is None and ai_mask is None:

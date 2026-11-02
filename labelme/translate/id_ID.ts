@@ -75,20 +75,20 @@
         <translation>Model</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Label yang dideteksi</translation>
+        <source>What to find</source>
+        <translation>Yang dicari</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Mendeteksi…</translation>
+        <source>Finding…</source>
+        <translation>Mencari…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Model AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Model AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>Bantuan AI</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Deteksi setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Temukan setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Pilih mode &apos;AI-Points&apos;, &apos;AI-Box&apos;, atau &apos;AI-Detect&apos; untuk mengaktifkan Bantuan AI</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>Pilih mode &apos;AI-Points&apos;, &apos;AI-Box&apos;, atau &apos;AI-Find All&apos; untuk mengaktifkan Bantuan AI</translation>
     </message>
 </context>
 <context>
@@ -203,16 +203,16 @@
         <translation>Klik titik untuk menyertakan, atau tahan %s lalu klik untuk mengecualikan. Tahan %s lalu klik untuk menyelesaikan.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>Ketik apa yang ingin dideteksi di AI-Detect, atau klik sudut pertama kotak di sekitar satu contoh</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Ketik apa yang ingin dicari di AI-Find All, atau klik sudut pertama kotak di sekitar satu contoh</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Klik sudut seberang untuk mengecualikan objek seperti ini</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>Klik sudut seberangnya untuk mendeteksi setiap objek seperti ini</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Klik sudut seberangnya untuk menemukan setiap objek seperti ini</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -572,12 +572,12 @@
         <translation>Edit</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Deteksi setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Temukan setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
     </message>
     <message>
         <source>Next</source>
@@ -750,32 +750,32 @@
         <translation>Anda dapat menggunakan pengaturan bawaan untuk saat ini. Sebelum reset, salinan cadangan file konfigurasi Anda akan disimpan.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>Ketik apa yang ingin dideteksi</translation>
+        <source>Type what to find</source>
+        <translation>Ketik apa yang ingin dicari</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>Mendeteksi di CPU…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Mencari kecocokan di CPU…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Mendeteksi…</translation>
+        <source>Finding matches…</source>
+        <translation>Mencari kecocokan…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat bentuk &apos;%s&apos;.
 
-Ganti model AI-Detect ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
+Ganti model AI-Find All ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Berkas anotasi milik gambar lain: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s tidak dapat mendeteksi dari kotak contoh. Pilih SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s tidak dapat menggunakan kotak contoh. Pilih SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -900,12 +900,12 @@ Ganti model AI-Detect ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke 
         <translation>Buka gambar berikutnya (tahan %s untuk menyalin bentuk saat ini)</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>Mendeteksi &apos;{query}&apos;…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Mencari semua &apos;{query}&apos;…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>Mendeteksi &apos;{query}&apos; di CPU…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Mencari semua &apos;{query}&apos; di CPU…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1500,8 +1500,8 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Satu nama flag per baris. Pola: ^car$ cocok persis dengan car, car cocok dengan awalan, .* cocok dengan setiap label.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Model AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Model AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>

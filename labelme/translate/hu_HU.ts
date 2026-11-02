@@ -75,20 +75,20 @@
         <translation>Modell</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Észlelendő címke</translation>
+        <source>What to find</source>
+        <translation>Mit keressen</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Utasítás</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Észlelés…</translation>
+        <source>Finding…</source>
+        <translation>Keresés…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect modell</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All modell</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>MI-segéd</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum észlelése</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum megkeresése</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>Az AI annotációt javasol &apos;AI-Points&apos; és &apos;AI-Box&apos; módokban</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Válassza az &apos;AI-Points&apos;, &apos;AI-Box&apos; vagy &apos;AI-Detect&apos; módot az MI-segéd engedélyezéséhez</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>Válassza az &apos;AI-Points&apos;, &apos;AI-Box&apos; vagy &apos;AI-Find All&apos; módot az MI-segéd engedélyezéséhez</translation>
     </message>
 </context>
 <context>
@@ -187,16 +187,16 @@
         <translation>Kattintson pontokra a belefoglaláshoz, vagy tartsa lenyomva a(z) %s billentyűt, és kattintson a kizáráshoz. A befejezéshez tartsa lenyomva a(z) %s billentyűt, és kattintson.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>Írja be az AI-Detect mezőbe, mit kell észlelni, vagy kattintson egy minta köré rajzolt keret első sarkára</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Írja be az AI-Find All mezőbe, mit kell megtalálni, vagy kattintson egy minta köré rajzolt keret első sarkára</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Kattintson a szemközti sarokra az ilyen objektumok kizárásához</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>Kattintson a szemközti sarokra az ehhez hasonló összes objektum észleléséhez</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Kattintson a szemközti sarokra az ehhez hasonló összes objektum megkereséséhez</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -640,12 +640,12 @@
         <translation>Szerkesztés</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum észlelése</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum megkeresése</translation>
     </message>
     <message>
         <source>Next</source>
@@ -810,32 +810,32 @@
         <translation>Egyelőre használhatja az alapértelmezett beállításokat. A visszaállítás előtt biztonsági másolat készül a konfigurációs fájlról.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>Írja be, mit kell észlelni</translation>
+        <source>Type what to find</source>
+        <translation>Írja be, mit kell megtalálni</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>Keresés a CPU-n…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Egyezések keresése a CPU-n…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Keresés…</translation>
+        <source>Finding matches…</source>
+        <translation>Egyezések keresése…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú alakzatokat létrehozni.
 
-Váltson az AI-Detect modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
+Váltson az AI-Find All modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Az annotációs fájl egy másik képhez tartozik: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>A(z) %s nem tud mintakeret alapján észlelni. Válassza a SAM3 (smart) modellt.</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>A(z) %s nem tud mintakeretet használni. Válassza a SAM3 (smart) modellt.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1024,12 +1024,12 @@ Váltson az AI-Detect modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa 
         <translation>Biztonsági mentés és visszaállítás</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>„{query}” keresése…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Az összes „{query}” keresése…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>„{query}” keresése a CPU-n…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Az összes „{query}” keresése a CPU-n…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1448,8 @@ Várt hely: {path}</translation>
         <translation>Soronként egy jelzőnév. Minták: ^car$ pontosan a car értékre, car egy előtagra, .* minden címkére illeszkedik.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect modell</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All modell</translation>
     </message>
     <message>
         <source>Polygon detail</source>

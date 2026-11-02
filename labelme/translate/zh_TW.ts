@@ -75,20 +75,20 @@
         <translation>模型</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>要偵測的標籤</translation>
+        <source>What to find</source>
+        <translation>要尋找的內容</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>提示詞</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>正在偵測…</translation>
+        <source>Finding…</source>
+        <translation>正在尋找…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect 模型</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 模型</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>AI 輔助</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>偵測與文字提示或範例框相符的所有物件</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>尋找與文字提示或範例框相符的所有物件</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI在&apos;AI-Points&apos;和&apos;AI-Box&apos;模式下建議標註</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>選擇 &apos;AI-Points&apos;、&apos;AI-Box&apos; 或 &apos;AI-Detect&apos; 模式以啟用 AI 輔助</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>選擇 &apos;AI-Points&apos;、&apos;AI-Box&apos; 或 &apos;AI-Find All&apos; 模式以啟用 AI 輔助</translation>
     </message>
 </context>
 <context>
@@ -203,16 +203,16 @@
         <translation>按一下各點以包含，或按住 %s 並按一下以排除。按住 %s 並按一下以完成。</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>在 AI-Detect 中輸入要偵測的內容，或按一下框選一個範例的第一個角</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>在 AI-Find All 中輸入要尋找的內容，或按一下框選一個範例的第一個角</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>按一下對角，排除與此相似的物件</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>按一下對角，偵測所有與此相似的物件</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>按一下對角，尋找所有與此相似的物件</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -624,12 +624,12 @@
         <translation>編輯</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>偵測與文字提示或範例框相符的所有物件</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>尋找與文字提示或範例框相符的所有物件</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +802,32 @@
         <translation>你可以暫時使用預設值。重設前會先儲存設定檔的備份。</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>請輸入要偵測的內容</translation>
+        <source>Type what to find</source>
+        <translation>輸入要尋找的內容</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>正在 CPU 上偵測…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>正在 CPU 上尋找相符項目…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>正在偵測…</translation>
+        <source>Finding matches…</source>
+        <translation>正在尋找相符項目…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 形狀。
 
-請將 AI-Detect 模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
+請將 AI-Find All 模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>此標註檔案屬於另一張影像：%s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s 無法根據範例框進行偵測。請選擇 SAM3 (smart)。</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s 無法使用範例框。請選擇 SAM3 (smart)。</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1024,12 +1024,12 @@ Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format
         <translation>備份並重設</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>正在偵測「{query}」…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>正在尋找所有「{query}」…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>正在 CPU 上偵測「{query}」…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>正在 CPU 上尋找所有「{query}」…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1448,8 @@ Expected location: {path}</source>
         <translation>每行一個旗標名稱。模式：^car$ 精確符合 car，car 符合前綴，.* 符合所有標籤。</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect 模型</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 模型</translation>
     </message>
     <message>
         <source>Polygon detail</source>

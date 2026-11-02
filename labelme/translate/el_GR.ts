@@ -75,20 +75,20 @@
         <translation>Μοντέλο</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Ετικέτα για εντοπισμό</translation>
+        <source>What to find</source>
+        <translation>Τι να βρεθεί</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Προτροπή</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Εντοπισμός…</translation>
+        <source>Finding…</source>
+        <translation>Αναζήτηση…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Μοντέλο AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Μοντέλο AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>Βοήθεια AI</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Εντοπισμός κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Εύρεση κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos;, &apos;AI-Box&apos; ή &apos;AI-Detect&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos;, &apos;AI-Box&apos; ή &apos;AI-Find All&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
     </message>
 </context>
 <context>
@@ -187,16 +187,16 @@
         <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή κρατήστε πατημένο το %s και κάντε κλικ για εξαίρεση. Κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>Πληκτρολογήστε τι θέλετε να εντοπίσετε στο AI-Detect ή κάντε κλικ στην πρώτη γωνία ενός πλαισίου γύρω από ένα παράδειγμα</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Πληκτρολογήστε τι θέλετε να βρείτε στο AI-Find All ή κάντε κλικ στην πρώτη γωνία ενός πλαισίου γύρω από ένα παράδειγμα</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Κάντε κλικ στην απέναντι γωνία για να εξαιρέσετε αντικείμενα σαν αυτό</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>Κάντε κλικ στην απέναντι γωνία για να εντοπίσετε κάθε αντικείμενο σαν αυτό</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Κάντε κλικ στην απέναντι γωνία για να βρείτε κάθε αντικείμενο σαν αυτό</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -648,12 +648,12 @@
         <translation>Κάντε κλικ σε σημεία για να τμηματοποιήσετε το αντικείμενο· κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Εντοπισμός κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Εύρεση κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
     </message>
     <message>
         <source>Next</source>
@@ -798,16 +798,16 @@
         <translation>Αποθήκευση…</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>Πληκτρολογήστε τι θέλετε να εντοπίσετε</translation>
+        <source>Type what to find</source>
+        <translation>Πληκτρολογήστε τι θέλετε να βρείτε</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>Εντοπισμός στη CPU…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Αναζήτηση αντιστοιχιών στη CPU…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Εντοπισμός…</translation>
+        <source>Finding matches…</source>
+        <translation>Αναζήτηση αντιστοιχιών…</translation>
     </message>
     <message>
         <source>Mask Output Unavailable</source>
@@ -1016,12 +1016,12 @@
         <translation>Το αντίγραφο ασφαλείας των ρυθμίσεων αποθηκεύτηκε στο %s</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>Εντοπισμός «{query}»…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Εύρεση όλων των «{query}»…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>Εντοπισμός «{query}» στη CPU…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Εύρεση όλων των «{query}» στη CPU…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1038,10 +1038,10 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχήματα &apos;%s&apos;.
 
-Αλλάξτε το μοντέλο AI-Detect σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+Αλλάξτε το μοντέλο AI-Find All σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
@@ -1052,8 +1052,8 @@ Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format
         <translation>Μη έγκυρη ετικέτα</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>Το %s δεν μπορεί να εντοπίσει από πλαίσιο παραδείγματος. Επιλέξτε SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>Το %s δεν μπορεί να χρησιμοποιήσει πλαίσιο παραδείγματος. Επιλέξτε SAM3 (smart).</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1448,8 +1448,8 @@ Expected location: {path}</source>
         <translation>Ένα όνομα σημαίας ανά γραμμή. Μοτίβα: ^car$ αντιστοιχεί ακριβώς στο car, car σε πρόθεμα, .* σε κάθε ετικέτα.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Μοντέλο AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Μοντέλο AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>

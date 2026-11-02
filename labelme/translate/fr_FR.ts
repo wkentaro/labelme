@@ -75,20 +75,20 @@
         <translation>Modèle</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Étiquette à détecter</translation>
+        <source>What to find</source>
+        <translation>Ce qu’il faut trouver</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Consigne</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Détection…</translation>
+        <source>Finding…</source>
+        <translation>Recherche…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Modèle AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Modèle AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>Assistance IA</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Détecter tous les objets correspondant à l’invite textuelle ou à un cadre d’exemple</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Trouver tous les objets correspondant à l’invite textuelle ou à un cadre d’exemple</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>L&apos;IA suggère des annotations dans les modes &apos;AI-Points&apos; et &apos;AI-Box&apos;</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Sélectionnez le mode &apos;AI-Points&apos;, &apos;AI-Box&apos; ou &apos;AI-Detect&apos; pour activer l&apos;Assistance IA</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>Sélectionnez le mode &apos;AI-Points&apos;, &apos;AI-Box&apos; ou &apos;AI-Find All&apos; pour activer l&apos;Assistance IA</translation>
     </message>
 </context>
 <context>
@@ -203,16 +203,16 @@
         <translation>Cliquez sur des points pour inclure, ou maintenez %s et cliquez pour exclure. Maintenez %s et cliquez pour terminer.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>Saisissez ce qu’il faut détecter dans AI-Detect, ou cliquez sur le premier coin d’un cadre autour d’un exemple</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Saisissez ce qu’il faut trouver dans AI-Find All, ou cliquez sur le premier coin d’un cadre autour d’un exemple</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Cliquez sur le coin opposé pour exclure les objets comme celui-ci</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>Cliquez sur le coin opposé pour détecter tous les objets semblables à celui-ci</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Cliquez sur le coin opposé pour trouver tous les objets semblables à celui-ci</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -624,12 +624,12 @@
         <translation>Modifier</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Détecter tous les objets correspondant à l’invite textuelle ou à un cadre d’exemple</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Trouver tous les objets correspondant à l’invite textuelle ou à un cadre d’exemple</translation>
     </message>
     <message>
         <source>Next</source>
@@ -802,32 +802,32 @@
         <translation>Vous pouvez utiliser les paramètres par défaut pour le moment. Une sauvegarde de votre fichier de configuration sera enregistrée avant la réinitialisation.</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>Saisissez ce qu’il faut détecter</translation>
+        <source>Type what to find</source>
+        <translation>Saisissez ce qu’il faut trouver</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>Détection sur le processeur…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Recherche des correspondances sur le processeur…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Détection…</translation>
+        <source>Finding matches…</source>
+        <translation>Recherche des correspondances…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s ne détecte que les cadres englobants et ne peut pas créer de formes &apos;%s&apos;.
 
-Changez le modèle AI-Detect pour &apos;SAM3 (smart)&apos;, ou définissez le format de sortie sur &apos;Rectangle&apos;.</translation>
+Changez le modèle AI-Find All pour &apos;SAM3 (smart)&apos;, ou définissez le format de sortie sur &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Le fichier d’annotations appartient à une autre image : %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s ne peut pas détecter à partir d’un cadre d’exemple. Choisissez SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s ne peut pas utiliser de cadre d’exemple. Choisissez SAM3 (smart).</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1024,12 +1024,12 @@ Changez le modèle AI-Detect pour &apos;SAM3 (smart)&apos;, ou définissez le fo
         <translation>Sauvegarder et réinitialiser</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>Détection de « {query} »…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Recherche de tous les « {query} »…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>Détection de « {query} » sur le processeur…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Recherche de tous les « {query} » sur le processeur…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1448,8 +1448,8 @@ Emplacement attendu : {path}</translation>
         <translation>Un nom d’indicateur par ligne. Motifs : ^car$ correspond exactement à car, car à un préfixe, .* à toute étiquette.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Modèle AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Modèle AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>

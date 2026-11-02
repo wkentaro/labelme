@@ -47,16 +47,16 @@ Deriving one or more Polygon Shapes from a Mask, either while creating an AI Ass
 _Avoid_: mask-to-points conversion, contour conversion
 
 **AI Assist**:
-Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A box prompt contributes one candidate Shape with every model; finding every object like the boxed one is AI-Detect. Candidates become new Shapes unless Existing Shape Suppression is enabled.
-_Avoid_: AI annotation (too vague — covers AI-Detect too), auto-annotation, automation.
+Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A box prompt contributes one candidate Shape with every model; finding every object like the boxed one is AI-Find All. Candidates become new Shapes unless Existing Shape Suppression is enabled.
+_Avoid_: AI annotation (too vague — covers AI-Find All too), auto-annotation, automation.
 
 **Existing Shape Suppression**:
 An optional AI Assist Setting for point prompts and box prompts. A candidate that matches an existing Shape highlights that Shape instead of creating a new Shape; unmatched candidates remain new Shapes. The Setting is disabled by default.
 _Avoid_: duplicate suppression, overlap suppression.
 
-**AI-Detect**:
+**AI-Find All**:
 Bulk Shape proposal for every matching instance in the Image. The user types one concept as the query, or draws a box around one example, and an open-vocabulary detector returns many candidate Shapes from one user action. The query is a prompt, not the label: one label entry, from the label dialog prefilled with the query, labels the whole batch, so "black dog" can be saved as "dog", and cancelling it discards the batch. Every batch, from a query or from example boxes, skips detections that overlap an existing Shape of the same Output with the label the batch takes, and reports how many it added. YOLO-World answers only text; SAM3 answers text and example boxes. Its candidates use the same Output as AI Assist. Example boxes build up: each new example, or counter-example drawn with Shift, re-runs the detection and replaces a draft of candidates. Enter asks for the batch's label and adds the draft as one undo step; Esc discards it.
-_Avoid_: AI Text Prompt (the prompt is not only text), Sweep (retired name for the SAM3 example-box path), text-to-annotation (verbose), auto-detect (it always needs a prompt).
+_Avoid_: AI-Detect (former name; detection reads as boxes only), AI Text Prompt (the prompt is not only text), Sweep (retired name for the SAM3 example-box path), text-to-annotation (verbose), auto-detect (it always needs a prompt).
 
 **Downloaded Model**:
 A supported model whose required files are present in the local cache; every download is hash-checked before it lands there. It can be selected without a download; this does not guarantee hardware compatibility. Downloading from the AI Models window never selects a model. Choosing a model that is not downloaded in a toolbar model picker changes the Setting at that moment and queues its download; the choice takes effect when the files arrive. Completing a download never changes a selection or runs inference.
@@ -67,7 +67,7 @@ The ordered list of models the user has explicitly requested from the AI Models 
 _Avoid_: background service (downloads do not outlive Labelme).
 
 **Model Session**:
-A loaded ML model that backs AI Assist or AI-Detect. One Model Session serves many proposals across the lifetime of the app. The legacy code directory `_automation/` hosts this layer.
+A loaded ML model that backs AI Assist or AI-Find All. One Model Session serves many proposals across the lifetime of the app. The legacy code directory `_automation/` hosts this layer.
 _Avoid_: automation (legacy code-only term), backend, engine.
 
 **Prompt Compatibility**:
@@ -154,9 +154,9 @@ A new contributor (N) asks a maintainer (M) about a bug report.
 >
 > **M:** Check the file first. If it parses, the Annotation is fine; the UI just isn't picking it up. If it doesn't parse, the Annotation File itself is the problem.
 >
-> **N:** They also said their AI shapes disappear. They use AI-Detect — type "person", get a bunch of Shapes.
+> **N:** They also said their AI shapes disappear. They use AI-Find All — type "person", get a bunch of Shapes.
 >
-> **M:** Right. Those are still ordinary Shapes once the Model Session returns them; AI-Detect only produces them. After that they're stored in the Annotation File like any other Shape.
+> **M:** Right. Those are still ordinary Shapes once the Model Session returns them; AI-Find All only produces them. After that they're stored in the Annotation File like any other Shape.
 >
 > **N:** They mentioned one Shape is a Mask Shape — does that change anything?
 >

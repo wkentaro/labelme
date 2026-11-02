@@ -75,20 +75,20 @@
         <translation>モデル</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>検出するラベル</translation>
+        <source>What to find</source>
+        <translation>探すもの</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>プロンプト</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>検出中…</translation>
+        <source>Finding…</source>
+        <translation>検索中…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect のモデル</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All のモデル</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>AI アシスト</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>テキストプロンプトや例のボックスに一致する物体をすべて検出</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>テキストプロンプトや例のボックスに一致する物体をすべて探す</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AIが&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos;、&apos;AI-Box&apos;、または &apos;AI-Detect&apos; モードを選択すると AI アシストが有効になります</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>&apos;AI-Points&apos;、&apos;AI-Box&apos;、または &apos;AI-Find All&apos; モードを選択すると AI アシストが有効になります</translation>
     </message>
 </context>
 <context>
@@ -203,16 +203,16 @@
         <translation>点をクリックで含め、%s を押しながらクリックで除外します。%s を押しながらクリックで完了します。</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>AI-Detect に検出したいものを入力するか、例の周りを囲むボックスの最初の角をクリック</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>AI-Find All に探したいものを入力するか、例の周りを囲むボックスの最初の角をクリック</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>対角をクリックすると、これと同じような物体を除外します</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>対角をクリックすると、これと同じような物体をすべて検出します</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>対角をクリックすると、これと同じような物体をすべて探します</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -632,12 +632,12 @@
         <translation>編集</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>テキストプロンプトや例のボックスに一致する物体をすべて検出</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>テキストプロンプトや例のボックスに一致する物体をすべて探す</translation>
     </message>
     <message>
         <source>Next</source>
@@ -812,32 +812,32 @@
         <translation>今回は初期設定で続行できます。リセットする場合は、先に設定ファイルのバックアップを保存します。</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>検出したいものを入力してください</translation>
+        <source>Type what to find</source>
+        <translation>探したいものを入力してください</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>CPU で検出中…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>CPU で一致するものを検索中…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>検出中…</translation>
+        <source>Finding matches…</source>
+        <translation>一致するものを検索中…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; の図形を作成できません。
 
-AI-Detect のモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
+AI-Find All のモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>このアノテーションファイルは別の画像のものです: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s は例のボックスから検出できません。SAM3 (smart) を選択してください。</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s は例のボックスを使えません。SAM3 (smart) を選択してください。</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1034,12 +1034,12 @@ AI-Detect のモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出�
         <translation>バックアップしてリセット</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>「{query}」を検出中…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>「{query}」をすべて検索中…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>CPU で「{query}」を検出中…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>CPU で「{query}」をすべて検索中…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1458,8 +1458,8 @@ Expected location: {path}</source>
         <translation>フラグ名は1行に1つ入力します。パターン: ^car$ は car と完全一致、car は前方一致、.* はすべてのラベルに一致します。</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>AI-Detect のモデル</translation>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All のモデル</translation>
     </message>
     <message>
         <source>Polygon detail</source>

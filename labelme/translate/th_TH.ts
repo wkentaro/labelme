@@ -75,20 +75,20 @@
         <translation>โมเดล</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>เลเบลที่จะตรวจจับ</translation>
+        <source>What to find</source>
+        <translation>สิ่งที่จะค้นหา</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>พรอมต์</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>กำลังตรวจจับ…</translation>
+        <source>Finding…</source>
+        <translation>กำลังค้นหา…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>โมเดล AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>โมเดล AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>ผู้ช่วย AI</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>ตรวจจับวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>ค้นหาวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>เลือกโหมด &apos;AI-Points&apos;, &apos;AI-Box&apos; หรือ &apos;AI-Detect&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>เลือกโหมด &apos;AI-Points&apos;, &apos;AI-Box&apos; หรือ &apos;AI-Find All&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
     </message>
 </context>
 <context>
@@ -203,16 +203,16 @@
         <translation>คลิกจุดเพื่อรวม หรือกด %s ค้างไว้แล้วคลิกเพื่อยกเว้น กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>พิมพ์สิ่งที่ต้องการตรวจจับใน AI-Detect หรือคลิกมุมแรกของกรอบรอบตัวอย่างหนึ่งชิ้น</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>พิมพ์สิ่งที่ต้องการค้นหาใน AI-Find All หรือคลิกมุมแรกของกรอบรอบตัวอย่างหนึ่งชิ้น</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>คลิกมุมตรงข้ามเพื่อยกเว้นวัตถุที่คล้ายกับสิ่งนี้</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
-        <translation>คลิกมุมตรงข้ามเพื่อตรวจจับวัตถุทุกชิ้นที่เหมือนชิ้นนี้</translation>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>คลิกมุมตรงข้ามเพื่อค้นหาวัตถุทุกชิ้นที่เหมือนชิ้นนี้</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -625,12 +625,12 @@
         <translation>แก้ไข</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>ตรวจจับวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>ค้นหาวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
     </message>
     <message>
         <source>Next</source>
@@ -803,32 +803,32 @@
         <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
-        <translation>พิมพ์สิ่งที่ต้องการตรวจจับ</translation>
+        <source>Type what to find</source>
+        <translation>พิมพ์สิ่งที่ต้องการค้นหา</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>กำลังตรวจหาบน CPU…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>กำลังค้นหารายการที่ตรงกันบน CPU…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>กำลังตรวจหา…</translation>
+        <source>Finding matches…</source>
+        <translation>กำลังค้นหารายการที่ตรงกัน…</translation>
     </message>
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างรูปร่าง &apos;%s&apos; ได้
 
-เปลี่ยนโมเดล AI-Detect เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
+เปลี่ยนโมเดล AI-Find All เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>ไฟล์คำอธิบายประกอบนี้เป็นของรูปอื่น: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s ตรวจจับจากกรอบตัวอย่างไม่ได้ เลือก SAM3 (smart)</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s ใช้กรอบตัวอย่างไม่ได้ เลือก SAM3 (smart)</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1025,12 +1025,12 @@ Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format
         <translation>สำรองข้อมูลและรีเซ็ต</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>กำลังตรวจหา &apos;{query}&apos;…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>กำลังค้นหา &apos;{query}&apos; ทั้งหมด…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>กำลังตรวจหา &apos;{query}&apos; บน CPU…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>กำลังค้นหา &apos;{query}&apos; ทั้งหมดบน CPU…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1449,8 +1449,8 @@ Expected location: {path}</source>
         <translation>หนึ่งชื่อแฟล็กต่อบรรทัด รูปแบบ: ^car$ ตรงกับ car เท่านั้น, car ตรงกับคำนำหน้า, .* ตรงกับทุกป้ายกำกับ</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>โมเดล AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>โมเดล AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>

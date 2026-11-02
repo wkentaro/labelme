@@ -75,20 +75,20 @@
         <translation>Модель</translation>
     </message>
     <message>
-        <source>Label to detect</source>
-        <translation>Мітка для пошуку</translation>
+        <source>What to find</source>
+        <translation>Що знайти</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Запит</translation>
     </message>
     <message>
-        <source>Detecting…</source>
+        <source>Finding…</source>
         <translation>Пошук…</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Модель AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Модель AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -102,24 +102,24 @@
         <translation>AI-Box</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
         <source>AI Assist</source>
         <translation>ШІ-помічник</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Виявити всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Знайти всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
     </message>
     <message>
         <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
         <translation>ШІ пропонує анотацію в режимах &apos;AI-Points&apos; та &apos;AI-Box&apos;</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Detect&apos; mode to enable AI Assist</source>
-        <translation>Виберіть режим &apos;AI-Points&apos;, &apos;AI-Box&apos; або &apos;AI-Detect&apos;, щоб увімкнути ШІ-помічника</translation>
+        <source>Select &apos;AI-Points&apos;, &apos;AI-Box&apos;, or &apos;AI-Find All&apos; mode to enable AI Assist</source>
+        <translation>Виберіть режим &apos;AI-Points&apos;, &apos;AI-Box&apos; або &apos;AI-Find All&apos;, щоб увімкнути ШІ-помічника</translation>
     </message>
 </context>
 <context>
@@ -187,15 +187,15 @@
         <translation>Клацайте точки, щоб включити, або утримуйте %s і клацніть, щоб виключити. Утримуйте %s і клацніть, щоб завершити.</translation>
     </message>
     <message>
-        <source>Type what to detect in AI-Detect, or click the first corner of a box around one example</source>
-        <translation>Введіть в AI-Detect, що потрібно знайти, або клацніть перший кут рамки навколо одного прикладу</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Введіть в AI-Find All, що потрібно знайти, або клацніть перший кут рамки навколо одного прикладу</translation>
     </message>
     <message>
         <source>Click the opposite corner to exclude objects like this one</source>
         <translation>Натисніть протилежний кут, щоб виключити об&apos;єкти, схожі на цей</translation>
     </message>
     <message>
-        <source>Click the opposite corner to detect every object like this one</source>
+        <source>Click the opposite corner to find every object like this one</source>
         <translation>Клацніть протилежний кут, щоб знайти всі такі самі об’єкти</translation>
     </message>
     <message>
@@ -648,12 +648,12 @@
         <translation>Клацайте точки, щоб сегментувати об&apos;єкт; утримуйте %s і клацніть, щоб завершити.</translation>
     </message>
     <message>
-        <source>AI-Detect</source>
-        <translation>AI-Detect</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
     <message>
-        <source>Detect every object that matches the text prompt or an example box</source>
-        <translation>Виявити всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Знайти всі об’єкти, що відповідають текстовому запиту або рамці-прикладу</translation>
     </message>
     <message>
         <source>Next</source>
@@ -798,16 +798,16 @@
         <translation>Збереження…</translation>
     </message>
     <message>
-        <source>Type what to detect</source>
+        <source>Type what to find</source>
         <translation>Введіть, що потрібно знайти</translation>
     </message>
     <message>
-        <source>Detecting on CPU…</source>
-        <translation>Пошук на ЦП…</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Пошук збігів на ЦП…</translation>
     </message>
     <message>
-        <source>Detecting…</source>
-        <translation>Пошук…</translation>
+        <source>Finding matches…</source>
+        <translation>Пошук збігів…</translation>
     </message>
     <message>
         <source>Mask Output Unavailable</source>
@@ -1016,12 +1016,12 @@
         <translation>Резервну копію конфігурації збережено в %s</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>Пошук «{query}»…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Пошук усіх «{query}»…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>Пошук «{query}» на ЦП…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Пошук усіх «{query}» на ЦП…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -1038,10 +1038,10 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s виявляє лише обмежувальні рамки й не може створювати фігури &apos;%s&apos;.
 
-Перемкніть модель AI-Detect на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
+Перемкніть модель AI-Find All на &apos;SAM3 (smart)&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
@@ -1052,8 +1052,8 @@ Switch the AI-Detect model to &apos;SAM3 (smart)&apos;, or set the output format
         <translation>Недійсна мітка</translation>
     </message>
     <message>
-        <source>%s can&apos;t detect from an example box. Choose SAM3 (smart).</source>
-        <translation>%s не вміє шукати за рамкою-прикладом. Виберіть SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
+        <translation>%s не може використати рамку-приклад. Виберіть SAM3 (smart).</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1448,8 +1448,8 @@ Expected location: {path}</source>
         <translation>Одна назва прапорця на рядок. Шаблони: ^car$ точно відповідає car, car — префіксу, .* — будь-якій мітці.</translation>
     </message>
     <message>
-        <source>AI-Detect model</source>
-        <translation>Модель AI-Detect</translation>
+        <source>AI-Find All model</source>
+        <translation>Модель AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>

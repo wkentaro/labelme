@@ -54,3 +54,17 @@ def test_reset_to_default_does_not_revive_legacy_overrides(*, tmp_path: Path) ->
     assert config["keep_prev_brightness_contrast"] is False
     assert config["shortcuts"]["edit_shape"] == "Ctrl+J"
     assert config_file.read_text() == ""
+
+
+def test_load_ai_detect_keys_as_ai_find_all(*, tmp_path: Path) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text("""\
+canvas:
+  crosshair:
+    ai_detect: false
+shortcuts:
+  create_ai_detect: Ctrl+Shift+F
+""")
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert config["canvas"]["crosshair"]["ai_find_all"] is False
+    assert config["shortcuts"]["create_ai_find_all"] == "Ctrl+Shift+F"

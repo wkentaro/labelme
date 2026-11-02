@@ -305,7 +305,7 @@ SETTINGS: Final[tuple[Setting, ...]] = (
     Setting(
         key_path=("ai", "text_model"),
         group="AI assist",
-        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "AI-Detect model")),
+        label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "AI-Find All model")),
         kind="enum",
         choices=(None, *(model_name for model_name, _ in AI_TEXT_MODEL_OPTIONS)),
         choice_labels=(

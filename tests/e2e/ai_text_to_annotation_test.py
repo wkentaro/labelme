@@ -42,7 +42,7 @@ _AI_TEXT_MODEL: Final = "sam3:latest"
 
 @pytest.fixture(autouse=True)
 def popups(*, monkeypatch: pytest.MonkeyPatch) -> list[str | None]:
-    # Each AI-Detect batch asks for its label once; accept the prefill.
+    # Each AI-Find All batch asks for its label once; accept the prefill.
     texts: list[str | None] = []
 
     def popup(
@@ -250,7 +250,7 @@ def test_text_prompt_creates_shapes(
         score_threshold=0.1,
     )
 
-    assert canvas.create_mode == "ai_detect"
+    assert canvas.create_mode == "ai_find_all"
     assert len(canvas.shapes) >= 1
     labels = {shape.label for shape in canvas.shapes}
     assert labels == expected_labels
@@ -464,7 +464,7 @@ def test_query_runs_from_another_tool(
     else:
         qtbot.keyClick(text_input, Qt.Key.Key_Return)
 
-    assert win._canvas_widgets.canvas.create_mode == "ai_detect"
+    assert win._canvas_widgets.canvas.create_mode == "ai_find_all"
     assert sent == [["person"]]
     assert {shape.label for shape in win._canvas_widgets.canvas.shapes} == {"person"}
 
@@ -499,8 +499,8 @@ def test_run_reads_detecting_under_any_tool(
         win._switch_canvas_mode(edit=False, create_mode="polygon")
 
     run_button = win._ai_text._run_button
-    assert canvas.create_mode == ("ai_detect" if case == "queued" else "polygon")
-    assert run_button.text() == "Detecting…"
+    assert canvas.create_mode == ("ai_find_all" if case == "queued" else "polygon")
+    assert run_button.text() == "Finding…"
     worker._pending.clear()
     worker._set_active(None)
     assert run_button.text() == "Run"
@@ -678,7 +678,7 @@ def test_text_result_waits_for_the_draft(
     deliver = _hold_text_results(
         win=win, qtbot=qtbot, monkeypatch=monkeypatch, create_mode="polygon"
     )
-    # Run switched to AI-Detect; the user picks Polygon again and draws.
+    # Run switched to AI-Find All; the user picks Polygon again and draws.
     win._switch_canvas_mode(edit=False, create_mode="polygon")
     click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.5, 0.5))
 
@@ -833,7 +833,7 @@ def test_empty_text_prompt_asks_for_a_prompt(
 
     win._submit_ai_prompt()
 
-    assert win.statusBar().currentMessage() == "Type what to detect"
+    assert win.statusBar().currentMessage() == "Type what to find"
     assert win._canvas_widgets.canvas.create_mode == "polygon"
 
 
@@ -856,7 +856,7 @@ def test_text_prompt_without_an_image_does_nothing(
 
 
 @pytest.mark.gui
-def test_ai_detect_box_reads_the_picker_at_use(
+def test_ai_find_all_box_reads_the_picker_at_use(
     *,
     main_win: MainWinFactory,
     qtbot: QtBot,
@@ -867,12 +867,12 @@ def test_ai_detect_box_reads_the_picker_at_use(
     combo = win._ai_text._model_combo
     combo.setCurrentIndex(combo.findData(_AI_TEXT_MODEL))
 
-    assert win._canvas_widgets.canvas.get_ai_detect_model_name() == _AI_TEXT_MODEL
+    assert win._canvas_widgets.canvas.get_ai_find_all_model_name() == _AI_TEXT_MODEL
 
 
 @pytest.mark.gui
 @pytest.mark.parametrize("text_model", ["sam3:latest", None])
-def test_ai_detect_box_checks_the_model_setting_before_download(
+def test_ai_find_all_box_checks_the_model_setting_before_download(
     *,
     main_win: MainWinFactory,
     monkeypatch: pytest.MonkeyPatch,
@@ -892,7 +892,7 @@ def test_ai_detect_box_checks_the_model_setting_before_download(
     # Not downloaded yet, or none chosen: the box is accepted, so the Models
     # window can offer a download.
     canvas = win._canvas_widgets.canvas
-    win._switch_canvas_mode(edit=False, create_mode="ai_detect")
+    win._switch_canvas_mode(edit=False, create_mode="ai_find_all")
     readiness_checks: list[str] = []
     monkeypatch.setattr(
         canvas,
@@ -1130,14 +1130,14 @@ def test_one_dialog_labels_an_example_box_batch(
         return LabelDialogEntry(label=chosen, flags={}, group_id=None, description="")
 
     monkeypatch.setattr(win._label_dialog, "popup", popup)
-    win._switch_canvas_mode(edit=False, create_mode="ai_detect")
+    win._switch_canvas_mode(edit=False, create_mode="ai_find_all")
     backups = len(canvas.shape_backups)
     draft = [
         Shape(shape_type="rectangle", points=np.array([(x, 0.0), (x + 10, 10.0)]))
         for x in (0.0, 20.0)
     ]
 
-    canvas.ai_detect_draft_committed.emit(draft, lambda _: draft, "black dog")
+    canvas.ai_find_all_draft_committed.emit(draft, lambda _: draft, "black dog")
 
     assert texts == ["black dog"]
     assert [s.label for s in canvas.shapes] == labels
@@ -1194,12 +1194,12 @@ def test_example_box_batch_skips_and_reports_like_a_query(
     )
     announced: list[str] = []
     monkeypatch.setattr(win, "_announce", announced.append)
-    win._switch_canvas_mode(edit=False, create_mode="ai_detect")
+    win._switch_canvas_mode(edit=False, create_mode="ai_find_all")
     for x, y in ((50.0, 30.0), (200.0, 300.0)):
         pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(x, y))
         qtbot.mouseMove(canvas, pos=pos)
         qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
-    assert len(canvas._ai_detect_draft) == 2
+    assert len(canvas._ai_find_all_draft) == 2
 
     qtbot.keyClick(canvas, Qt.Key.Key_Return)
 
@@ -1244,12 +1244,12 @@ def test_run_with_an_example_box_draft_refines_it(
     combo = win._ai_text._model_combo
     combo.setCurrentIndex(combo.findData("sam3:latest"))
     _set_output_like_tool(win=win, create_mode="rectangle")
-    win._switch_canvas_mode(edit=False, create_mode="ai_detect")
+    win._switch_canvas_mode(edit=False, create_mode="ai_find_all")
     for x, y in ((50.0, 30.0), (200.0, 300.0)):
         pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(x, y))
         qtbot.mouseMove(canvas, pos=pos)
         qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
-    assert canvas.has_ai_detect_draft
+    assert canvas.has_ai_find_all_draft
 
     win._submit_ai_prompt()  # No query yet: refines like the example.
     win._ai_text._text_input.setText("person")
@@ -1258,10 +1258,10 @@ def test_run_with_an_example_box_draft_refines_it(
     assert [texts for texts, _ in sent] == [["visual"], ["visual"], ["person"]]
     assert [labels for _, labels in sent] == [[2, 3], [2, 3], [2, 3]]
     assert canvas.shapes == []
-    assert len(canvas._ai_detect_draft) == 2
+    assert len(canvas._ai_find_all_draft) == 2
     assert win.focusWidget() is canvas  # So Enter and Esc reach the draft.
 
-    # A draft rerun reads "Detecting…" on Run and names its query in the status
+    # A draft rerun reads "Finding…" on Run and names its query in the status
     # bar until the worker idles; past the ring's delay it rings at its last
     # example.
     held: list[tuple[object, InferenceRequest]] = []
@@ -1277,8 +1277,8 @@ def test_run_with_an_example_box_draft_refines_it(
     monkeypatch.setattr(canvas, "_ai_finalize_clock", MagicMock(elapsed=lambda: 1000))
     run_button = win._ai_text._run_button
     qtbot.mouseClick(run_button, Qt.MouseButton.LeftButton)
-    assert run_button.text() == "Detecting…"
-    assert win._status_bar.ai.text() == "Detecting 'person'…"
+    assert run_button.text() == "Finding…"
+    assert win._status_bar.ai.text() == "Finding all 'person'…"
     assert canvas._ai_progress_center() is not None
     canvas.grab()
 
@@ -1287,7 +1287,7 @@ def test_run_with_an_example_box_draft_refines_it(
     worker._set_active(None)
     worker.finished.emit(job, _osam_worker._run(session, request, request.image))
     assert run_button.text() == "Run"
-    assert len(canvas._ai_detect_draft) == 2
+    assert len(canvas._ai_find_all_draft) == 2
 
 
 @pytest.mark.gui
@@ -1329,7 +1329,7 @@ def test_enter_asks_once_for_the_draft_label(
     combo.setCurrentIndex(combo.findData("sam3:latest"))
     _set_output_like_tool(win=win, create_mode="rectangle")
     win._ai_text._text_input.setText("black dog")
-    win._switch_canvas_mode(edit=False, create_mode="ai_detect")
+    win._switch_canvas_mode(edit=False, create_mode="ai_find_all")
     texts: list[str | None] = []
 
     def popup(*, text: str | None = None, **_: object) -> LabelDialogEntry | None:
@@ -1343,11 +1343,11 @@ def test_enter_asks_once_for_the_draft_label(
         pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(x, y))
         qtbot.mouseMove(canvas, pos=pos)
         qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
-    assert len(canvas._ai_detect_draft) == 2
+    assert len(canvas._ai_find_all_draft) == 2
     assert texts == []  # The draft asks nothing until Enter.
 
     qtbot.keyClick(canvas, Qt.Key.Key_Return)
 
     assert texts == ["black dog"]
     assert [s.label for s in canvas.shapes] == labels
-    assert not canvas.has_ai_detect_draft
+    assert not canvas.has_ai_find_all_draft

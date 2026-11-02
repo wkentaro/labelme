@@ -83,17 +83,15 @@ class AiToolGroup(QtWidgets.QWidget):
         self.setFixedWidth(max(COMPACT_WIDTH, self.minimumSizeHint().width()))
 
     def set_tool(self, create_mode: str | None, /) -> None:
-        detect = create_mode == "ai_detect"
+        detect = create_mode == "ai_find_all"
         titles = {
             "ai_points_to_shape": self.tr("AI-Points"),
             "ai_box_to_shape": self.tr("AI-Box"),
-            "ai_detect": self.tr("AI-Detect"),
+            "ai_find_all": self.tr("AI-Find All"),
         }
         self._title.setText(titles.get(create_mode or "", self.tr("AI Assist")))
         self._info_button.setToolTip(
-            self.tr(
-                "Detect every object that matches the text prompt or an example box"
-            )
+            self.tr("Find every object that matches the text prompt or an example box")
             if detect
             else self.tr("AI suggests annotation in 'AI-Points' and 'AI-Box' modes")
         )
@@ -102,7 +100,7 @@ class AiToolGroup(QtWidgets.QWidget):
             self._detect._model_combo if detect else self._assist._model_combo
         )
         self._ai_tool_active = create_mode in titles
-        # The query and Run work from any tool: running switches to AI-Detect.
+        # The query and Run work from any tool: running switches to AI-Find All.
         for control in (
             self._model_stack,
             self._assist._output_format_combo,
@@ -118,7 +116,7 @@ class AiToolGroup(QtWidgets.QWidget):
                 QtWidgets.QToolTip.showText(
                     QtGui.QCursor.pos(),
                     self.tr(
-                        "Select 'AI-Points', 'AI-Box', or 'AI-Detect' mode to enable"
+                        "Select 'AI-Points', 'AI-Box', or 'AI-Find All' mode to enable"
                         " AI Assist"
                     ),
                     self,
