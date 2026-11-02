@@ -1124,6 +1124,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>Ошибка конфигурации</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Распознаёт только рамки. Переключитесь на «Прямоугольник», чтобы использовать эту модель.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

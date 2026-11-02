@@ -1134,6 +1134,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>設定エラー</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>バウンディングボックスのみを検出します。このモデルを使うには「矩形」に切り替えてください。</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

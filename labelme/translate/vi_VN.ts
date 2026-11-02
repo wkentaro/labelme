@@ -1124,6 +1124,10 @@ Vị trí dự kiến: {path}</translation>
         <source>Configuration Error</source>
         <translation>Lỗi Cấu hình</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Chỉ phát hiện khung. Chuyển sang Hình chữ nhật để dùng mô hình này.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

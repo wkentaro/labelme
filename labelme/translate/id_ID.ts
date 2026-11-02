@@ -1124,6 +1124,10 @@ Lokasi yang diharapkan: {path}</translation>
         <source>Configuration Error</source>
         <translation>Error Konfigurasi</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Hanya mendeteksi kotak. Beralih ke Persegi Panjang untuk menggunakan model ini.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

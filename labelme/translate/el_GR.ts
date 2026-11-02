@@ -1124,6 +1124,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>Σφάλμα διαμόρφωσης</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Εντοπίζει μόνο πλαίσια. Επιλέξτε «Ορθογώνιο» για να χρησιμοποιήσετε αυτό το μοντέλο.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

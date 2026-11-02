@@ -24,6 +24,7 @@ class ModelPicker(QtWidgets.QComboBox):
         self._downloading: set[str] = set()
         self._selected = ""
         self._requested = ""
+        self._unavailable: dict[str, str] = {}
         self._populate()
         self.currentIndexChanged.connect(self._on_changed)
 
@@ -49,6 +50,16 @@ class ModelPicker(QtWidgets.QComboBox):
                 header.setEnabled(False)
                 for name, display in missing:
                     self.addItem(display, name)
+            model = self.model()
+            assert isinstance(model, QtGui.QStandardItemModel)
+            for name, reason in self._unavailable.items():
+                index = self.findData(name)
+                if index < 0:
+                    continue
+                item = model.item(index)
+                assert item is not None
+                item.setEnabled(False)
+                item.setToolTip(reason)
             self.insertSeparator(self.count())
             self.addItem(self.tr("Manage models…"), "manage")
             self._show_missing_selection()
@@ -81,6 +92,14 @@ class ModelPicker(QtWidgets.QComboBox):
         # The remembered choice already lives in the config, so it is restored
         # as soon as its files exist; only other models stay unselected.
         self._selected = self._requested if self._requested in available else ""
+        self._populate()
+
+    def set_unavailable_models(self, unavailable: dict[str, str], /) -> None:
+        # Maps each model that the current context cannot use to the reason.
+        # The selection stays, so the Setting is unchanged.
+        if self._unavailable == unavailable:
+            return
+        self._unavailable = unavailable
         self._populate()
 
     def set_model_name(self, *, model_name: str) -> None:

@@ -1124,6 +1124,10 @@ Expected location: {path}</source>
         <source>Configuration Error</source>
         <translation>خطای پیکربندی</translation>
     </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>فقط کادرها را تشخیص می‌دهد. برای استفاده از این مدل به «مستطیل» بروید.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
