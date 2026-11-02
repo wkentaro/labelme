@@ -2483,7 +2483,7 @@ def test_ai_segment_escape_mid_drag_drops_the_box(
 
 @pytest.mark.gui
 def test_ai_segment_preview_skips_a_draft_the_new_model_refuses(
-    *, canvas: Canvas, qtbot: QtBot
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     canvas.ensure_ai_model_ready = lambda _: True
     canvas.set_ai_model_name(model_name="sam2:small")
@@ -2496,11 +2496,17 @@ def test_ai_segment_preview_skips_a_draft_the_new_model_refuses(
         end=QtCore.QPoint(70, 30),
     )
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 20))
+    canvas._ai_segment_preview = [Shape(shape_type="polygon")]
     canvas.set_ai_model_name(model_name="sam3:latest")
+    repaints: list[None] = []
+    monkeypatch.setattr(canvas, "update", lambda: repaints.append(None))
 
     canvas._refresh_ai_segment_preview()
 
     assert _worker(canvas).requests == []
+    # The stale mask goes without waiting for more input.
+    assert canvas._ai_segment_preview == []
+    assert repaints
 
 
 @pytest.mark.gui

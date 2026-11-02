@@ -2331,6 +2331,7 @@ class Canvas(QtWidgets.QWidget):
         # A model switch can leave the draft itself incompatible.
         if not preview.points or self._refuses_points_with_box(preview, report=False):
             self._ai_segment_preview = []
+            self.update()
             return
         self._submit_ai_job(
             channel="preview",
