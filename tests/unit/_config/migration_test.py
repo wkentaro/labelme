@@ -101,7 +101,7 @@ def test_load_ai_points_and_ai_box_shortcuts_both_kept(*, tmp_path: Path) -> Non
     config_file.write_text("""\
 shortcuts:
   create_ai_points: [Ctrl+P, Ctrl+B]
-  create_ai_box: Ctrl+B
+  create_ai_box: [Ctrl+B, Ctrl+X]
 """)
     config = _config.load_config(config_file=config_file, config_overrides={})
-    assert config["shortcuts"]["create_ai_segment"] == ["Ctrl+P", "Ctrl+B"]
+    assert config["shortcuts"]["create_ai_segment"] == ["Ctrl+P", "Ctrl+B", "Ctrl+X"]
