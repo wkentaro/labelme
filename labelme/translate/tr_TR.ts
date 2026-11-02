@@ -101,22 +101,6 @@
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI Yardımı</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri bul</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>Noktalardan ve bir kutudan tek bir nesneyi bölütle</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>AI Yardımını etkinleştirmek için &apos;AI-Segment&apos; veya &apos;AI-Find All&apos; seçin</translation>
-    </message>
 </context>
 <context>
     <name>AnnotationFolderFooter</name>

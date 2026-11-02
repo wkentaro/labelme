@@ -351,7 +351,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.set_ai_polygon_detail(
             detail=self._config["mask_polygonization"]["detail"]
         )
-        self._ai_buttons_highlighted = False
 
         self._ai_text = AiTextToAnnotationWidget(
             on_submit=self._submit_ai_prompt, parent=self
@@ -449,9 +448,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 widget.setStyleSheet(sheet)  # re-resolve palette refs; also repaints
             else:
                 widget.update()
-        # The AI-button highlight bakes palette colors into its stylesheet (no
-        # palette() ref), so recompute it against the new palette.
-        self._highlight_ai_buttons(self._ai_buttons_highlighted)
 
     def _setup_actions(self) -> _Actions:
         image_actions = QtGui.QActionGroup(self)
@@ -1216,7 +1212,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 font_base=self.font(),
             ),
         )
-        self._ai_group.hover_highlight_requested.connect(self._highlight_ai_buttons)
 
     def _setup_app_state(
         self,
@@ -1967,7 +1962,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # Keep edit_mode disabled while a partial shape is alive so the user
         # can't abandon it mid-draw.
         self._actions.edit_mode.setEnabled(not self._canvas_widgets.canvas.is_drawing)
-        self._ai_group.set_tool(None if edit else create_mode)
         self._on_ai_activity_changed()
         self._refresh_text_model_choices()
 
@@ -1989,32 +1983,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self._settings_dialog.set_unavailable_choices(
                 key_path=("ai", "text_model"), unavailable=unavailable
             )
-
-    def _highlight_ai_buttons(self, highlight: bool, /) -> None:  # noqa: FBT001 -- hover_highlight_requested slot
-        self._ai_buttons_highlighted = highlight
-        BG_ALPHA: Final = 60
-        BORDER_ALPHA: Final = 120
-        # Any sheet on the button drops the native checked panel that marks the
-        # active tool, so clear it rather than leave a transparent one.
-        style = ""
-        if highlight:
-            # HexArgb gives "#AARRGGBB", which Qt stylesheets accept.
-            bg = self.palette().color(QtGui.QPalette.ColorRole.Highlight)
-            bg.setAlpha(BG_ALPHA)
-            border = QtGui.QColor(bg)
-            border.setAlpha(BORDER_ALPHA)
-            style = (
-                "QToolButton:!checked:!pressed {"
-                f" background-color: {bg.name(QtGui.QColor.NameFormat.HexArgb)};"
-                f" border: 1px solid {border.name(QtGui.QColor.NameFormat.HexArgb)};"
-                " }"
-            )
-        for mode, action in self._actions.draw:
-            if mode not in ("ai_segment", "ai_find_all"):
-                continue
-            for widget in action.associatedObjects():
-                if isinstance(widget, QtWidgets.QToolButton):
-                    widget.setStyleSheet(style)
 
     def show_label_list_menu(self, point: QtCore.QPoint, /) -> None:
         self._label_list_menu_origin = self._docks.label_list.mapToGlobal(point)

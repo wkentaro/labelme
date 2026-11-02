@@ -500,7 +500,7 @@ def test_run_reads_detecting_under_any_tool(
     assert run_button.text() == "Finding…"
     worker._pending.clear()
     worker._set_active(None)
-    assert run_button.text() == "Run"
+    assert run_button.text() == win._ai_text._RUN_GLYPH
 
 
 @pytest.mark.gui
@@ -1283,7 +1283,7 @@ def test_run_with_an_example_box_draft_refines_it(
     assert request.image is not None
     worker._set_active(None)
     worker.finished.emit(job, _osam_worker._run(session, request, request.image))
-    assert run_button.text() == "Run"
+    assert run_button.text() == win._ai_text._RUN_GLYPH
     assert len(canvas._ai_find_all_draft) == 2
 
 

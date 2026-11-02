@@ -101,22 +101,6 @@
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>Hỗ trợ AI</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>Tìm mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>Phân đoạn một đối tượng từ các điểm và một khung</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>Chọn &apos;AI-Segment&apos; hoặc &apos;AI-Find All&apos; để bật Hỗ trợ AI</translation>
-    </message>
 </context>
 <context>
     <name>AnnotationFolderFooter</name>

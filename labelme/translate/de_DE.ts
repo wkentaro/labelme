@@ -101,22 +101,6 @@
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>KI-Assistent</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>Alle Objekte finden, die zum Textprompt oder zu einem Beispielrahmen passen</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>Ein Objekt aus Punkten und einem Rahmen segmentieren</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>Wählen Sie &apos;AI-Segment&apos; oder &apos;AI-Find All&apos;, um den KI-Assistenten zu aktivieren</translation>
-    </message>
 </context>
 <context>
     <name>AnnotationFolderFooter</name>

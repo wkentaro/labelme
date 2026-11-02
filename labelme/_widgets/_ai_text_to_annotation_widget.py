@@ -17,6 +17,8 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
+    # The Return key's symbol says Enter runs the query.
+    _RUN_GLYPH: str = "\u21b5"
 
     _text_input: QtWidgets.QLineEdit
     _model_combo: ModelPicker
@@ -45,18 +47,21 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         self._text_input = text_input
 
         self._run_button = run_button = QtWidgets.QToolButton(self)
-        run_button.setText(self.tr("Run"))
-        run_button.setFixedHeight(24)
+        run_button.setAutoRaise(True)
+        run_button.setAccessibleName(self.tr("Run"))
+        run_button.setToolTip(self.tr("Run"))
         run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         run_button.clicked.connect(lambda: on_submit())
-        # Fits "Finding…" too, so a run doesn't shift the row.
-        run_button.setMinimumWidth(
+        # Fixed to fit "Finding…" too, so a run doesn't shift the query text
+        # and the field can reserve exactly this width.
+        run_button.setFixedWidth(
             max(
                 run_button.fontMetrics().horizontalAdvance(text)
-                for text in (self.tr("Run"), self.tr("Finding…"))
+                for text in (self._RUN_GLYPH, self.tr("Finding…"))
             )
-            + 16
+            + 12
         )
+        self.set_detecting(False)  # noqa: FBT003 -- state flag
 
         self._model_combo = model_combo = ModelPicker(options=AI_TEXT_MODEL_OPTIONS)
         model_combo.setParent(self)
@@ -108,7 +113,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     def set_detecting(self, detecting: bool, /) -> None:  # noqa: FBT001 -- state flag
         # Run stays clickable: running again replaces the pending job.
-        self._run_button.setText(self.tr("Finding…") if detecting else self.tr("Run"))
+        self._run_button.setText(self.tr("Finding…") if detecting else self._RUN_GLYPH)
 
     def get_text_prompt(self) -> str:
         return self._text_input.text().strip()

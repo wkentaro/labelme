@@ -101,22 +101,6 @@
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>Asistencia IA</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>Buscar todos los objetos que coincidan con la indicación de texto o con un cuadro de ejemplo</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>Segmentar un objeto a partir de puntos y un cuadro</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>Seleccione &apos;AI-Segment&apos; o &apos;AI-Find All&apos; para habilitar la Asistencia IA</translation>
-    </message>
 </context>
 <context>
     <name>AnnotationFolderFooter</name>

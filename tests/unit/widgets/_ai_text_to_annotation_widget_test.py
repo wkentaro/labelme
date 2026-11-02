@@ -3,7 +3,6 @@ from __future__ import annotations
 import sys
 
 from PySide6 import QtGui
-from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._widgets._ai_text_to_annotation_widget import AiTextToAnnotationWidget
@@ -14,11 +13,7 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
     qtbot.addWidget(widget)
     widget.set_model_name(model_name="sam3:latest")
 
-    run_button = next(
-        button
-        for button in widget.findChildren(QtWidgets.QToolButton)
-        if button.text() == widget.tr("Run")
-    )
+    run_button = widget._run_button
 
     model_name = widget.tr("Model") if sys.platform == "win32" else "SAM3 (smart)"
     for control, name in (

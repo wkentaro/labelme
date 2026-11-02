@@ -101,22 +101,6 @@
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI 어시스트</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체 찾기</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>점과 상자로 객체 하나를 분할</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>AI 어시스트를 활성화하려면 &apos;AI-Segment&apos; 또는 &apos;AI-Find All&apos;을 선택하세요</translation>
-    </message>
 </context>
 <context>
     <name>AnnotationFolderFooter</name>
