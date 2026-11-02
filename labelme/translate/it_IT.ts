@@ -1647,6 +1647,38 @@ Posizione prevista: {path}</translation>
         <translation>Più preciso</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Il SAM originale. SAM 2 è più veloce in ogni dimensione.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Il più veloce, con contorni approssimativi. Funziona bene su qualsiasi computer.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Contorni più nitidi di Tiny, ma più lento di SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Download più leggero di Base+, un po’ meno preciso.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Equilibrio tra velocità e precisione. Funziona bene su CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Più preciso di Base+, ma più lento.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Il più preciso, ma più lento di SAM 2 Base+. Ideale con una GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Il più veloce. Trova riquadri, senza maschere.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Solo riquadri</translation>
     </message>

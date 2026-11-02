@@ -9,6 +9,7 @@ from PySide6 import QtWidgets
 from .._ai_models import AI_ASSIST_FOLDED_MODELS
 from .._ai_models import AI_MODEL_DOWNLOAD_SIZES
 from .._ai_models import AI_MODEL_TIERS
+from .._ai_models import AI_MODEL_TOOLTIPS
 from .._ai_models import AI_TEXT_BOX_ONLY_MODELS
 from .._utils import new_icon
 from ._ai_assisted_annotation_widget import AiAssistedAnnotationWidget
@@ -104,6 +105,7 @@ class _ModelMenuButton(QtWidgets.QComboBox):
         menu = QtWidgets.QMenu(self)
         menu.setToolTipsVisible(True)
         notes = {name: self.tr(tier) for name, tier in AI_MODEL_TIERS.items()}
+        tips = {name: self.tr(tip) for name, tip in AI_MODEL_TOOLTIPS.items()}
         boxes_only = self.tr("Boxes only")
         for name in AI_TEXT_BOX_ONLY_MODELS:
             notes[name] = " · ".join(filter(None, [notes.get(name), boxes_only]))
@@ -116,6 +118,7 @@ class _ModelMenuButton(QtWidgets.QComboBox):
                 folded=AI_ASSIST_FOLDED_MODELS,
                 notes=notes,
                 sizes=AI_MODEL_DOWNLOAD_SIZES,
+                tips=tips,
             )
         menu.addSeparator()
         segment = self._pickers[0][1]

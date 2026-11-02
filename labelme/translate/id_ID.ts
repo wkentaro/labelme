@@ -1647,6 +1647,38 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Paling akurat</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM asli. SAM 2 lebih cepat di setiap ukuran.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Tercepat, dengan garis tepi kasar. Berjalan baik di komputer apa pun.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Garis tepi lebih tajam daripada Tiny, tetapi lebih lambat daripada SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Unduhan lebih kecil daripada Base+, sedikit kurang akurat.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Seimbang antara kecepatan dan akurasi. Berjalan baik di CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Lebih akurat daripada Base+, tetapi lebih lambat.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Paling akurat, tetapi lebih lambat daripada SAM 2 Base+. Terbaik dengan GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Tercepat. Menemukan kotak, tanpa mask.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Hanya kotak</translation>
     </message>

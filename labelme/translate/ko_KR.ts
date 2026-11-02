@@ -1647,6 +1647,38 @@ Expected location: {path}</source>
         <translation>가장 정확함</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>원래 SAM입니다. 모든 크기에서 SAM 2가 더 빠릅니다.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>가장 빠르며 윤곽선이 거칩니다. 어떤 컴퓨터에서도 잘 실행됩니다.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Tiny보다 윤곽선이 선명하지만 SAM 2 Base+보다 느립니다.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Base+보다 다운로드 크기가 작고, 정확도가 약간 낮습니다.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>속도와 정확도의 균형. CPU에서도 잘 실행됩니다.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Base+보다 정확하지만 느립니다.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>가장 정확하지만 SAM 2 Base+보다 느립니다. GPU에서 가장 좋습니다.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>가장 빠릅니다. 마스크 없이 상자를 찾습니다.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>상자만</translation>
     </message>

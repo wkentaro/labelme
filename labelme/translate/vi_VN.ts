@@ -1647,6 +1647,38 @@ Vị trí dự kiến: {path}</translation>
         <translation>Chính xác nhất</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM gốc. SAM 2 nhanh hơn ở mọi kích thước.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Nhanh nhất, đường viền thô. Chạy tốt trên mọi máy tính.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Đường viền sắc nét hơn Tiny, nhưng chậm hơn SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Dung lượng tải xuống nhỏ hơn Base+, kém chính xác hơn một chút.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Cân bằng tốc độ và độ chính xác. Chạy tốt trên CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Chính xác hơn Base+, nhưng chậm hơn.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Chính xác nhất, nhưng chậm hơn SAM 2 Base+. Tốt nhất khi có GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Nhanh nhất. Tìm hộp, không có mặt nạ.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Chỉ khung</translation>
     </message>

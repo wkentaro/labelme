@@ -1647,6 +1647,38 @@ Beklenen konum: {path}</translation>
         <translation>En doğru</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Orijinal SAM. SAM 2 her boyutta daha hızlı.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>En hızlı, kaba ana hatlarla. Her bilgisayarda iyi çalışır.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Tiny&apos;den daha net ana hatlar, ancak SAM 2 Base+&apos;tan daha yavaş.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Base+&apos;tan daha küçük indirme, biraz daha az doğru.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Hız ve doğruluk dengesi. CPU&apos;da iyi çalışır.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Base+&apos;tan daha doğru, ancak daha yavaş.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>En doğru, ancak SAM 2 Base+&apos;tan daha yavaş. GPU ile en iyisi.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>En hızlı. Maske olmadan kutular bulur.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Yalnızca kutular</translation>
     </message>

@@ -1647,6 +1647,38 @@ Expected location: {path}</source>
         <translation>Самая точная</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Оригинальная SAM. SAM 2 быстрее в любом размере.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Самая быстрая, с грубыми контурами. Хорошо работает на любом компьютере.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Более чёткие контуры, чем у Tiny, но медленнее SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Меньший объём загрузки, чем у Base+, немного менее точная.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Баланс скорости и точности. Хорошо работает на CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Точнее Base+, но медленнее.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Самая точная, но медленнее SAM 2 Base+. Лучше всего с GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Самая быстрая. Находит рамки без масок.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Только рамки</translation>
     </message>

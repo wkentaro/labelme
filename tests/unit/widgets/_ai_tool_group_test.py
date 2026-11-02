@@ -216,3 +216,18 @@ def test_model_menu_shows_the_download_size_of_missing_models(
     assert "SAM 3\tMost accurate · 3.4 GB" in texts
     assert "YOLO-World\tFastest · Boxes only · 642 MB" in texts
     assert "SAM 2 Large\t868 MB" in _menu_texts(more)
+
+
+@pytest.mark.gui
+def test_model_menu_explains_each_model_on_hover(*, group: AiToolGroup) -> None:
+    group._detect._model_combo.set_unavailable_models(
+        {"yoloworld:latest": "Not for masks"}
+    )
+
+    tips = {a.text(): a.toolTip() for a in group._model_button._build_menu().actions()}
+
+    assert tips["SAM 3\tMost accurate"] == (
+        "Most accurate, but slower than SAM 2 Base+. Best with a GPU."
+    )
+    # A reason the model can't be used here wins over its description.
+    assert tips["YOLO-World\tFastest · Boxes only"] == "Not for masks"

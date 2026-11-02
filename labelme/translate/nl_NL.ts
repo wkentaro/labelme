@@ -1647,6 +1647,38 @@ Verwachte locatie: {path}</translation>
         <translation>Nauwkeurigst</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>De oorspronkelijke SAM. SAM 2 is bij elke grootte sneller.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Snelst, met ruwe omtrekken. Werkt goed op elke computer.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Scherpere omtrekken dan Tiny, maar trager dan SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Kleinere download dan Base+, iets minder nauwkeurig.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Evenwicht tussen snelheid en nauwkeurigheid. Werkt goed op een CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Nauwkeuriger dan Base+, maar trager.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Nauwkeurigst, maar trager dan SAM 2 Base+. Het best met een GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Snelst. Vindt kaders, zonder maskers.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Alleen kaders</translation>
     </message>

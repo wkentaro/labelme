@@ -1647,6 +1647,38 @@ Expected location: {path}</source>
         <translation>Ακριβέστερο</translation>
     </message>
     <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Το αρχικό SAM. Το SAM 2 είναι ταχύτερο σε κάθε μέγεθος.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Ταχύτερο, με πρόχειρα περιγράμματα. Λειτουργεί καλά σε κάθε υπολογιστή.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Πιο καθαρά περιγράμματα από το Tiny, αλλά πιο αργό από το SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Μικρότερη λήψη από το Base+, λίγο λιγότερο ακριβές.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Ισορροπία ταχύτητας και ακρίβειας. Λειτουργεί καλά σε CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Ακριβέστερο από το Base+, αλλά πιο αργό.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Ακριβέστερο, αλλά πιο αργό από το SAM 2 Base+. Ιδανικό με GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Ταχύτερο. Βρίσκει πλαίσια, χωρίς μάσκες.</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Μόνο πλαίσια</translation>
     </message>

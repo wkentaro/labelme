@@ -60,6 +60,59 @@ AI_MODEL_TIERS: Final[dict[str, str]] = {
     "sam3:latest": cast(str, QT_TRANSLATE_NOOP("_ModelMenuButton", "Most accurate")),
     "yoloworld:latest": cast(str, QT_TRANSLATE_NOOP("_ModelMenuButton", "Fastest")),
 }
+# What each model trades, shown when the pointer rests on it in the menu.
+_ORIGINAL_SAM: Final = cast(
+    str,
+    QT_TRANSLATE_NOOP(
+        "_ModelMenuButton", "The original SAM. SAM 2 is faster at every size."
+    ),
+)
+AI_MODEL_TOOLTIPS: Final[dict[str, str]] = {
+    "efficientsam:10m": cast(
+        str,
+        QT_TRANSLATE_NOOP(
+            "_ModelMenuButton",
+            "Fastest, with rough outlines. Runs well on any computer.",
+        ),
+    ),
+    "efficientsam:latest": cast(
+        str,
+        QT_TRANSLATE_NOOP(
+            "_ModelMenuButton",
+            "Sharper outlines than Tiny, but slower than SAM 2 Base+.",
+        ),
+    ),
+    "sam:100m": _ORIGINAL_SAM,
+    "sam:300m": _ORIGINAL_SAM,
+    "sam:latest": _ORIGINAL_SAM,
+    "sam2:small": cast(
+        str,
+        QT_TRANSLATE_NOOP(
+            "_ModelMenuButton", "A smaller download than Base+, a little less accurate."
+        ),
+    ),
+    "sam2:latest": cast(
+        str,
+        QT_TRANSLATE_NOOP(
+            "_ModelMenuButton", "Balanced speed and accuracy. Runs well on a CPU."
+        ),
+    ),
+    "sam2:large": cast(
+        str,
+        QT_TRANSLATE_NOOP("_ModelMenuButton", "More accurate than Base+, but slower."),
+    ),
+    "sam3:latest": cast(
+        str,
+        QT_TRANSLATE_NOOP(
+            "_ModelMenuButton",
+            "Most accurate, but slower than SAM 2 Base+. Best with a GPU.",
+        ),
+    ),
+    "yoloworld:latest": cast(
+        str,
+        QT_TRANSLATE_NOOP("_ModelMenuButton", "Fastest. Finds boxes, without masks."),
+    ),
+}
 # The rest go under "More models…".
 AI_ASSIST_FOLDED_MODELS: Final[frozenset[str]] = frozenset(
     option.model_name
