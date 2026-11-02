@@ -1118,17 +1118,81 @@ def test_one_dialog_labels_an_example_box_batch(
     monkeypatch.setattr(win._label_dialog, "popup", popup)
     win._switch_canvas_mode(edit=False, create_mode="ai_detect")
     backups = len(canvas.shape_backups)
-    for x in (0.0, 20.0):
-        canvas.shapes.append(
-            Shape(shape_type="rectangle", points=np.array([(x, 0.0), (x + 10, 10.0)]))
-        )
-    canvas.backup_shapes()
+    draft = [
+        Shape(shape_type="rectangle", points=np.array([(x, 0.0), (x + 10, 10.0)]))
+        for x in (0.0, 20.0)
+    ]
 
-    canvas.new_shape.emit("black dog")
+    canvas.ai_detect_draft_committed.emit(draft, lambda _: draft, "black dog")
 
     assert texts == ["black dog"]
     assert [s.label for s in canvas.shapes] == labels
     assert len(canvas.shape_backups) == backups + (1 if labels else 0)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("existing", "message"), [(0, "Found 2 new 'dog'"), (2, "No new 'dog' found")]
+)
+def test_example_box_batch_skips_and_reports_like_a_query(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    existing: int,
+    message: str,
+) -> None:
+    session = MagicMock()
+    session.run = MagicMock(
+        side_effect=lambda **_: _make_person_response(
+            texts=["person"], with_masks=False
+        )
+    )
+    monkeypatch.setitem(_osam_session._SESSIONS, "sam3:latest", session)
+
+    def submit(
+        self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
+    ) -> None:
+        del channel
+        assert request.image is not None
+        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+
+    monkeypatch.setattr(OsamWorker, "submit", submit)
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    monkeypatch.setattr(win, "_ensure_ai_model_ready", lambda *_: True)
+    combo = win._ai_text._model_combo
+    combo.setCurrentIndex(combo.findData("sam3:latest"))
+    _set_output_like_tool(win=win, create_mode="rectangle")
+    dogs = [
+        Shape(label="dog", shape_type="rectangle", points=np.array(box, dtype=float))
+        for box in ([(50, 30), (200, 300)], [(220, 40), (350, 290)])
+    ]
+    win._load_shapes(dogs[:existing], replace=True)
+    monkeypatch.setattr(
+        win._label_dialog,
+        "popup",
+        lambda **_: LabelDialogEntry(
+            label="dog", flags={}, group_id=None, description=""
+        ),
+    )
+    announced: list[str] = []
+    monkeypatch.setattr(win, "_announce", announced.append)
+    win._switch_canvas_mode(edit=False, create_mode="ai_detect")
+    for x, y in ((50.0, 30.0), (200.0, 300.0)):
+        pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(x, y))
+        qtbot.mouseMove(canvas, pos=pos)
+        qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
+    assert len(canvas._ai_detect_draft) == 2
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Return)
+
+    assert [s.label for s in canvas.shapes] == ["dog", "dog"]
+    assert win.statusBar().currentMessage() == message
+    assert announced == [message]
+    assert canvas.selected_shapes == canvas.shapes[existing:]
 
 
 @pytest.mark.gui

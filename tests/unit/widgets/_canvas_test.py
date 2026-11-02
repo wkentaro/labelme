@@ -988,7 +988,7 @@ def ai_existing_shape_highlight_harness(
     )
     new_shape_emissions: list[None] = []
     no_shapes_emissions: list[None] = []
-    canvas.new_shape.connect(lambda _: new_shape_emissions.append(None))
+    canvas.new_shape.connect(lambda: new_shape_emissions.append(None))
     canvas.inference_produced_no_shapes.connect(
         lambda: no_shapes_emissions.append(None)
     )
@@ -1136,9 +1136,7 @@ def test_finalize_paints_new_shape_before_notifying(
 
     monkeypatch.setattr(canvas, "_render_canvas", record_then_render)
     counts_when_notified: list[int] = []
-    canvas.new_shape.connect(
-        lambda _: counts_when_notified.extend(painted_shape_counts)
-    )
+    canvas.new_shape.connect(lambda: counts_when_notified.extend(painted_shape_counts))
 
     canvas.create_mode = create_mode
     if create_mode == "point":
@@ -3148,8 +3146,10 @@ def test_ai_detect_box_labels_results_with_the_query_it_sent(
         )
     ]
     worker.paused = True
-    labels: list[str] = []
-    canvas.new_shape.connect(labels.append)
+    queries: list[str] = []
+    canvas.ai_detect_draft_committed.connect(
+        lambda _shapes, _propose, query: queries.append(query)
+    )
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
@@ -3157,7 +3157,7 @@ def test_ai_detect_box_labels_results_with_the_query_it_sent(
     worker.resume()
     qtbot.keyClick(canvas, Qt.Key.Key_Return)
 
-    assert labels == ["person"]
+    assert queries == ["person"]
 
 
 def _ai_detect_canvas(canvas: Canvas, /) -> Canvas:
@@ -3237,19 +3237,77 @@ def test_ai_detect_enter_commits_the_draft_as_one_step(
 ) -> None:
     _ai_detect_canvas(canvas)
     backups = len(canvas.shape_backups)
-    labels: list[str] = []
-    canvas.new_shape.connect(labels.append)
-    selections: list[list[Shape]] = []
-    canvas.selection_changed.connect(selections.append)
+    queries: list[str] = []
+
+    def add(
+        draft: list[Shape], propose: Callable[[str], list[Shape]], query: str
+    ) -> None:
+        queries.append(query)
+        assert len(propose("dog")) == len(draft)  # No "dog" Shapes yet.
+        canvas.load_shapes(shapes=propose("dog"), replace=False)  # As the app does.
+
+    canvas.ai_detect_draft_committed.connect(add)
 
     _draw_box(canvas, corners=((5, 5), (15, 20)))
     qtbot.keyClick(canvas, Qt.Key.Key_Return)
 
     assert len(canvas.shapes) == 2
     assert len(canvas.shape_backups) == backups + 1
-    assert labels == [""]
-    assert selections == [canvas.shapes]
+    assert queries == [""]
     assert not canvas.has_ai_detect_draft
+
+
+def _commit_draft_proposals(
+    canvas: Canvas, qtbot: QtBot, /, *, label: str
+) -> list[Shape]:
+    proposed: list[Shape] = []
+    canvas.ai_detect_draft_committed.connect(
+        lambda _draft, propose, _query: proposed.extend(propose(label))
+    )
+    qtbot.keyClick(canvas, Qt.Key.Key_Return)
+    return proposed
+
+
+@pytest.mark.gui
+def test_ai_detect_commit_keeps_the_settings_the_draft_showed(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _ai_detect_canvas(canvas)
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+
+    canvas.set_ai_output_format("polygon")  # Changed with the draft shown.
+
+    proposed = _commit_draft_proposals(canvas, qtbot, label="dog")
+    assert [s.shape_type for s in proposed] == ["rectangle", "rectangle"]
+
+
+@pytest.mark.gui
+def test_ai_detect_commit_skips_only_the_label_and_output_it_covers(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _ai_detect_canvas(canvas)
+    for label, shape_type in (("dog", "polygon"), ("cat", "rectangle")):
+        canvas.shapes.append(
+            Shape(
+                label=label,
+                shape_type=shape_type,
+                points=np.array([(5.0, 5.0), (15.0, 5.0), (15.0, 20.0), (5.0, 20.0)])
+                if shape_type == "polygon"
+                else np.array([(5.0, 5.0), (15.0, 20.0)]),
+            )
+        )
+    canvas.shapes.append(
+        Shape(
+            label="dog",
+            shape_type="rectangle",
+            points=np.array([(40.0, 5.0), (50.0, 20.0)]),
+        )
+    )
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+
+    proposed = _commit_draft_proposals(canvas, qtbot, label="dog")
+    # Only the dog rectangle covers; the dog polygon and the cat do not.
+    assert [s.points[0, 0] for s in proposed] == [5]
 
 
 @pytest.mark.gui

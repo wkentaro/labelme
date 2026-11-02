@@ -1387,6 +1387,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.pan_request.connect(self._on_pan_request)
 
         canvas.new_shape.connect(self._on_new_shape)
+        canvas.ai_detect_draft_committed.connect(self._on_ai_detect_draft_committed)
         canvas.inference_produced_no_shapes.connect(
             self._on_inference_produced_no_shapes
         )
@@ -1858,19 +1859,51 @@ class MainWindow(QtWidgets.QMainWindow):
             logger.opt(exception=e).error("AI text inference failed")
             self._on_inference_failed(f"{type(e).__name__}: {e}")
             return
+        self._commit_ai_detect(
+            shapes,
+            propose_for_label=lambda label: propose(suppressed_by=label),
+            query=text_job.query,
+        )
+        # Loading clears the Label List's selection; the canvas keeps its own,
+        # so the user's selection survives a result landing.
+        canvas = self._canvas_widgets.canvas
+        canvas.select_shapes(shapes=list(canvas.selected_shapes))
 
-        if not shapes:
-            self._report_ai_detect_result(shapes, name=text_job.query)
-            return
-        # One entry labels the whole batch, as for an example box.
-        entry = self._ask_new_shape_entry(query=text_job.query)
+    def _on_ai_detect_draft_committed(
+        self,
+        shapes: list[Shape],
+        propose_for_label: Callable[[str], list[Shape]],
+        query: str,
+        /,
+    ) -> None:
+        added = self._commit_ai_detect(
+            shapes, propose_for_label=propose_for_label, query=query
+        )
+        # Select what the batch added, so it can be relabeled or deleted.
+        self._canvas_widgets.canvas.select_shapes(shapes=added)
+
+    def _commit_ai_detect(
+        self,
+        candidates: list[Shape],
+        /,
+        *,
+        propose_for_label: Callable[[str], list[Shape]],
+        query: str,
+    ) -> list[Shape]:
+        # Every AI-Detect batch lands here, from a query or an example box, so
+        # labeling, skipping covered objects and the result message stay one.
+        if not candidates:
+            self._report_ai_detect_result(candidates, name=query)
+            return []
+        # One entry labels the whole batch.
+        entry = self._ask_new_shape_entry(query=query)
         if entry is None:
-            return  # Cancelled: the batch is never added.
+            return []  # Cancelled: the batch is never added.
         # "black dog" saved as "dog": skip what "dog" Shapes cover.
-        shapes = propose(suppressed_by=entry.label)
+        shapes = propose_for_label(entry.label)
         self._report_ai_detect_result(shapes, name=entry.label)
         if not shapes:
-            return
+            return []
         for shape in shapes:
             shape.label = entry.label
             shape.flags = dict(entry.flags)
@@ -1878,12 +1911,9 @@ class MainWindow(QtWidgets.QMainWindow):
             if entry.group_id is not None:
                 shape.group_id = entry.group_id
         apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
-        canvas = self._canvas_widgets.canvas
         self._load_shapes(shapes, replace=False)
-        # Loading clears the Label List's selection; the canvas keeps its own,
-        # so the user's selection survives a result landing.
-        canvas.select_shapes(shapes=list(canvas.selected_shapes))
         self.mark_dirty()
+        return shapes
 
     def _report_ai_detect_result(self, shapes: list[Shape], /, *, name: str) -> None:
         # Polygons from one mask's separate lands share a Group: one object.
@@ -2416,8 +2446,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Callback functions:
 
-    def _on_new_shape(self, query: str = "", /) -> None:
-        entry = self._ask_new_shape_entry(query=query)
+    def _on_new_shape(self) -> None:
+        entry = self._ask_new_shape_entry(query="")
         if entry is None:
             self._canvas_widgets.canvas.undo_last_line()
             self._canvas_widgets.canvas.shape_backups.pop()

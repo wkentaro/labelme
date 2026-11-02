@@ -251,3 +251,34 @@ def test_text_proposal_is_suppressed_by_the_chosen_label(
     )
 
     assert len(shapes) == count
+
+
+def test_text_proposal_covered_candidate_does_not_hide_a_new_one() -> None:
+    # The detection on the existing "dog" overlaps the one beside it; once
+    # covered it must not suppress that one.
+    annotations = [
+        osam.types.Annotation(
+            text="dog",
+            score=score,
+            bounding_box=osam.types.BoundingBox(xmin=x, ymin=0, xmax=x + 10, ymax=10),
+        )
+        for x, score in ((2, 0.9), (5, 0.8))
+    ]
+    existing = Shape(
+        label="dog", shape_type="rectangle", points=np.array([[0, 0], [10, 10]])
+    )
+
+    shapes = propose_shapes_from_texts(
+        annotations=annotations,
+        texts=["dog"],
+        shape_type="rectangle",
+        existing_shapes=[existing],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(30, 30),
+        polygon_detail=80,
+        suppressed_by="dog",
+    )
+
+    (shape,) = shapes
+    np.testing.assert_array_equal(shape.points, [[5, 0], [15, 10]])

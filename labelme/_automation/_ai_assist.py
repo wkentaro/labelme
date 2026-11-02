@@ -85,17 +85,19 @@ class AiAssistSession:
                     ),
                 )
             ]
-        detections = suppress_detections_greedy(
-            detections=detections,
-            iou_threshold=iou_threshold,
-        )
+        # Existing Shapes cover candidates before candidates suppress each
+        # other, so a covered candidate never hides a new one.
         matches = match_detections_to_existing_shapes(
             detections=detections,
             existing_shapes=existing_shapes,
         )
+        new_detections = suppress_detections_greedy(
+            detections=matches.new_detections,
+            iou_threshold=iou_threshold,
+        )
         return AiAssistProposal(
             new_shapes=shapes_from_detections(
-                detections=matches.new_detections,
+                detections=new_detections,
                 shape_type=self.output_format,
                 image_size=image_size,
                 polygon_detail=self.polygon_detail,

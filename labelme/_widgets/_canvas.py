@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import collections
+import copy
 import dataclasses
 import enum
+import functools
 import typing
 from collections.abc import Callable
 from collections.abc import Sequence
@@ -236,10 +238,13 @@ class Canvas(QtWidgets.QWidget):
     pan_request = QtCore.Signal(QPoint)
     # The AI-Detect query that found the new Shapes; it prefills their label
     # dialog. Empty for every other tool.
-    new_shape = QtCore.Signal(str)
+    new_shape = QtCore.Signal()
     inference_produced_no_shapes = QtCore.Signal()
     inference_failed = QtCore.Signal(str)
     example_box_unsupported = QtCore.Signal()
+    # (draft Shapes, propose for a label, query): the app labels the batch and
+    # adds what propose returns for that label.
+    ai_detect_draft_committed = QtCore.Signal(list, object, str)
     degenerate_shape_rejected = QtCore.Signal()
     selection_changed = QtCore.Signal(list)
     shape_double_clicked = QtCore.Signal()
@@ -286,6 +291,11 @@ class Canvas(QtWidgets.QWidget):
     _ai_detect_point_labels: np.ndarray
     _ai_detect_draft: list[Shape]
     _ai_detect_query: str
+    # Proposes the draft's run again, with the settings it was shown with.
+    _ai_detect_run: (
+        tuple[Callable[..., _automation.AiAssistProposal], _automation.AiOutputFormat]
+        | None
+    )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         self._epsilon: float = kwargs.pop("epsilon", 10.0)
@@ -589,21 +599,47 @@ class Canvas(QtWidgets.QWidget):
         self._ai_detect_point_labels = np.zeros((0,), dtype=np.int_)
         self._ai_detect_draft = []
         self._ai_detect_query = ""
+        self._ai_detect_run = None
 
     @property
     def has_ai_detect_draft(self) -> bool:
         return len(self._ai_detect_point_labels) > 0
 
     def _commit_ai_detect_draft(self) -> None:
-        shapes, query = self._ai_detect_draft, self._ai_detect_query
-        self._clear_ai_detect_draft()
-        if not shapes:
-            self.update()
+        shapes, query, run = (
+            self._ai_detect_draft,
+            self._ai_detect_query,
+            self._ai_detect_run,
+        )
+        if not shapes or run is None:
+            self._discard_ai_detect_draft()
             return
-        self._commit_new_shapes(shapes, label=query)
-        # Select what the label step kept, so it can be relabeled or deleted.
-        kept = {id(shape) for shape in self.shapes}
-        self.select_shapes(shapes=[shape for shape in shapes if id(shape) in kept])
+        # The draft stays on screen under the label dialog.
+        self.ai_detect_draft_committed.emit(
+            shapes, functools.partial(self._propose_ai_detect_batch, *run), query
+        )
+        self._discard_ai_detect_draft()  # Adding Shapes already dropped it.
+
+    def _propose_ai_detect_batch(
+        self,
+        propose: Callable[..., _automation.AiAssistProposal],
+        output_format: _automation.AiOutputFormat,
+        label: str,
+        /,
+    ) -> list[Shape]:
+        # Shapes with the batch's label and Output cover objects before
+        # candidates suppress each other, so a covered one never hides a new one.
+        shapes = propose(
+            existing_shapes=[
+                shape
+                for shape in self.shapes
+                if shape.label == label and shape.shape_type == output_format
+            ]
+        ).new_shapes
+        _automation.assign_available_group_ids(
+            shapes=shapes, existing_shapes=self.shapes
+        )
+        return shapes
 
     def _discard_ai_detect_draft(self) -> None:
         if not self.has_ai_detect_draft:
@@ -753,26 +789,38 @@ class Canvas(QtWidgets.QWidget):
         if (rect := self._ai_progress_rect()) is not None:
             self.update(rect)
 
-    def _propose_ai_shapes(
+    def _ai_proposer(
         self, *, job: _AiJob, annotations: list[Any]
-    ) -> _automation.AiAssistProposal:
+    ) -> Callable[..., _automation.AiAssistProposal]:
+        # Takes existing_shapes; the settings are fixed as they are now.
         thresholds = (
             self.get_ai_detect_thresholds()
             if job.prompt_kind == "example_box"
             # AI-Points and AI-Box have no Score or IoU control.
             else (0.0, 0.5)
         )
-        proposal = self._ai_assist_session.propose_shapes(
+        return functools.partial(
+            copy.copy(self._ai_assist_session).propose_shapes,
             score_threshold=thresholds[0],
             iou_threshold=thresholds[1],
             annotations=annotations,
             prompt_kind=job.prompt_kind,
             points=job.points,
             point_labels=job.point_labels,
-            existing_shapes=(
-                self.shapes if self._ai_suppress_existing_shape_matches else []
-            ),
             image_size=job.image_size,
+        )
+
+    def _propose_ai_shapes(
+        self, *, job: _AiJob, annotations: list[Any]
+    ) -> _automation.AiAssistProposal:
+        proposal = self._ai_proposer(job=job, annotations=annotations)(
+            # AI-Detect skips covered objects once its batch has a label.
+            existing_shapes=(
+                self.shapes
+                if self._ai_suppress_existing_shape_matches
+                and job.prompt_kind != "example_box"
+                else []
+            ),
         )
         _automation.assign_available_group_ids(
             shapes=proposal.new_shapes,
@@ -814,6 +862,11 @@ class Canvas(QtWidgets.QWidget):
             )
         else:
             self._apply_ai_result(job=ai_job, proposal=proposal, error=None)
+            if ai_job.prompt_kind == "example_box":
+                self._ai_detect_run = (
+                    self._ai_proposer(job=ai_job, annotations=cast(list, annotations)),
+                    self._ai_assist_session.output_format,
+                )
 
     def _on_ai_job_failed(self, job: object, message: str, /) -> None:
         ai_job = self._take_ai_job(job)
@@ -2349,20 +2402,18 @@ class Canvas(QtWidgets.QWidget):
         self._cancel_current_shape()
         self._set_ai_existing_shape_highlights(shapes=proposal.matching_existing_shapes)
 
-    def _commit_new_shapes(
-        self, new_shapes: list[Shape], /, *, label: str = ""
-    ) -> None:
+    def _commit_new_shapes(self, new_shapes: list[Shape], /) -> None:
         self.shapes.extend(new_shapes)
         self.backup_shapes()
-        self._reset_after_shape_creation(label=label)
+        self._reset_after_shape_creation()
 
-    def _reset_after_shape_creation(self, *, label: str = "") -> None:
+    def _reset_after_shape_creation(self) -> None:
         self._current = None
         # new_shape's handler blocks on the modal label dialog, so paint the
         # committed shape synchronously first. Some modes, including point and
         # AI-Box, can finalize without a matching preview on screen.
         self.repaint()
-        self.new_shape.emit(label)
+        self.new_shape.emit()
         self.update()
 
     def _cancel_current_shape(self) -> None:

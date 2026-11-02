@@ -418,3 +418,23 @@ def test_box_keeps_the_candidate_that_fills_the_box() -> None:
 
     assert len(proposal.new_shapes) == 1
     np.testing.assert_array_equal(proposal.new_shapes[0].points, [[10, 10], [30, 30]])
+
+
+def test_example_box_covered_candidate_does_not_hide_a_new_one(
+    *,
+    existing_rectangle: Shape,
+) -> None:
+    # The candidate on the existing Shape overlaps the one beside it; once
+    # covered it must not suppress that one.
+    proposal = _propose(
+        AiAssistSession(output_format="rectangle"),
+        annotations=[
+            _annotation(score=0.9, bbox=(2, 0, 12, 10), mask=None),
+            _annotation(score=0.8, bbox=(5, 0, 15, 10), mask=None),
+        ],
+        prompt_kind="example_box",
+        existing_shapes=[existing_rectangle],
+    )
+
+    (shape,) = proposal.new_shapes
+    np.testing.assert_array_equal(shape.points, [[5, 0], [15, 10]])
