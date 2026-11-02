@@ -82,8 +82,8 @@ def match_detections_to_existing_shapes(
     *,
     detections: list[Detection],
     existing_shapes: list[Shape],
+    iou_threshold: float = 0.5,
 ) -> _ExistingShapeMatchResult:
-    OVERLAP_IOU_THRESHOLD: Final[float] = 0.5
     if not detections:
         return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
     existing_shape_masks = [
@@ -109,7 +109,7 @@ def match_detections_to_existing_shapes(
             overlap = _compute_mask_overlap(a=new_local, b=existing_mask)
             if _is_redundant_overlap(
                 overlap=overlap,
-                iou_threshold=OVERLAP_IOU_THRESHOLD,
+                iou_threshold=iou_threshold,
             ):
                 matches.append((shape, overlap))
         if not matches:
