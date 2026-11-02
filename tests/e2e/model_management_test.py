@@ -78,7 +78,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     win = main_win(config_file=config)
     assist = win._ai_annotation._model_combo
     text = win._ai_text._model_combo
-    for picker, display in ((assist, "Sam3"), (text, "SAM3 (smart)")):
+    for picker, display in ((assist, "SAM 3"), (text, "SAM 3")):
         assert picker.currentIndex() == -1
         assert picker.findData(name) >= 0
         assert picker.placeholderText() == display
@@ -238,7 +238,7 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     )
     assert status.text() == "Failed"
     assert download.text() == "Retry"
-    assert download.accessibleName() == "Retry EfficientSam (speed)"
+    assert download.accessibleName() == "Retry EfficientSAM Tiny"
     QtWidgets.QApplication.processEvents()
     assert dialog._scroll_area.horizontalScrollBar().maximum() == initial_scroll_maximum
     assert details.isVisible()
@@ -323,8 +323,8 @@ def test_picker_downloads_and_selects_a_missing_model_in_place(
     assert safe_load(config.read_text())["ai"]["default"] == name
     qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     assert picker.currentIndex() == -1
-    assert picker.placeholderText() == "Sam2 (speed)"
-    assert picker.toolTip() == "Downloading: Sam2 (speed)"
+    assert picker.placeholderText() == "SAM 2 Small"
+    assert picker.toolTip() == "Downloading: SAM 2 Small"
     assert win._models_dialog is None
     release.set()
     qtbot.waitUntil(lambda: picker.currentData() == name)

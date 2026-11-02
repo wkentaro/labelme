@@ -793,18 +793,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างรูปร่าง &apos;%s&apos; ได้
 
-เปลี่ยนโมเดล AI-Find All เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
+เปลี่ยนโมเดล AI-Find All เป็น &apos;SAM 3&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>ไฟล์คำอธิบายประกอบนี้เป็นของรูปอื่น: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s ใช้กรอบตัวอย่างไม่ได้ เลือก SAM3 (smart)</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s ใช้กรอบตัวอย่างไม่ได้ เลือก SAM 3</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1167,6 +1167,10 @@ Expected location: {path}</source>
         <source>Unavailable: {model}</source>
         <translation>ไม่พร้อมใช้งาน: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>โมเดลเพิ่มเติม…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1489,42 +1493,6 @@ Expected location: {path}</source>
         <translation>โมเดลเริ่มต้น</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (ความเร็ว)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (ความแม่นยำ)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (ความเร็ว)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (สมดุล)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (ความแม่นยำ)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (ความเร็ว)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (สมดุล)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (ความแม่นยำ)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>ระงับรายการที่ตรงกับรูปร่างที่มีอยู่</translation>
     </message>
@@ -1655,6 +1623,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>แถว {row}: {error} ยังไม่ได้นำการเปลี่ยนแปลงไปใช้</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>โมเดล</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>กรอบเท่านั้น</translation>
     </message>
 </context>
 <context>

@@ -792,18 +792,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 形狀。
 
-請將 AI-Find All 模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
+請將 AI-Find All 模型切換為 &apos;SAM 3&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>此標註檔案屬於另一張影像：%s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s 無法使用範例框。請選擇 SAM3 (smart)。</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s 無法使用範例框。請選擇 SAM 3。</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1166,6 +1166,10 @@ Expected location: {path}</source>
         <source>Unavailable: {model}</source>
         <translation>無法使用：{model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>更多模型…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1488,42 +1492,6 @@ Expected location: {path}</source>
         <translation>預設模型</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (速度)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (準確度)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (速度)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (平衡)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (準確度)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (速度)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (平衡)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (準確度)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>抑制與現有圖形相符的結果</translation>
     </message>
@@ -1654,6 +1622,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>第 {row} 行：{error} 變更尚未套用。</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>模型</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}：{model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>僅邊界框</translation>
     </message>
 </context>
 <context>

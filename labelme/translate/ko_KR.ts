@@ -792,18 +792,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s은(는) 경계 상자만 감지하므로 &apos;%s&apos; 도형을 생성할 수 없습니다.
 
-AI-Find All 모델을 &apos;SAM3 (smart)&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
+AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을 &apos;Rectangle&apos;(으)로 설정하세요.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>이 주석 파일은 다른 이미지의 파일입니다: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s은(는) 예시 상자를 사용할 수 없습니다. SAM3 (smart)를 선택하세요.</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s은(는) 예시 상자를 사용할 수 없습니다. SAM 3를 선택하세요.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1166,6 +1166,10 @@ Expected location: {path}</source>
         <source>Unavailable: {model}</source>
         <translation>사용 불가: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>모델 더 보기…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1488,42 +1492,6 @@ Expected location: {path}</source>
         <translation>기본 모델</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (속도)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (정확도)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (속도)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (균형)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (정확도)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (속도)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (균형)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (정확도)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>기존 도형과 일치하는 항목 억제</translation>
     </message>
@@ -1654,6 +1622,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>{row}행: {error} 변경 사항이 적용되지 않았습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>모델</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>상자만</translation>
     </message>
 </context>
 <context>

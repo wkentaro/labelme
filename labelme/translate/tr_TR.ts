@@ -792,18 +792,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; şekilleri oluşturamaz.
 
-AI-Find All modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
+AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Açıklama dosyası başka bir görüntüye ait: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s örnek kutusu kullanamaz. SAM3 (smart) seçin.</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s örnek kutusu kullanamaz. SAM 3 seçin.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1166,6 +1166,10 @@ Beklenen konum: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Kullanılamıyor: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Diğer modeller…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1488,42 +1492,6 @@ Beklenen konum: {path}</translation>
         <translation>Varsayılan model</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (hız)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (doğruluk)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (hız)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (dengeli)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (doğruluk)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (hız)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (dengeli)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (doğruluk)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Mevcut şekillerle eşleşenleri bastır</translation>
     </message>
@@ -1654,6 +1622,21 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Satır {row}: {error} Değişiklikler uygulanmadı.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Yalnızca kutular</translation>
     </message>
 </context>
 <context>

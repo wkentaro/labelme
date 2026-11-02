@@ -13,49 +13,68 @@ class _AiAssistModelOption:
 AI_ASSIST_MODEL_OPTIONS: Final[tuple[_AiAssistModelOption, ...]] = (
     _AiAssistModelOption(
         model_name="efficientsam:10m",
-        display_name="EfficientSam (speed)",
+        display_name="EfficientSAM Tiny",
     ),
     _AiAssistModelOption(
         model_name="efficientsam:latest",
-        display_name="EfficientSam (accuracy)",
+        display_name="EfficientSAM Small",
     ),
     _AiAssistModelOption(
         model_name="sam:100m",
-        display_name="Sam (speed)",
+        display_name="SAM Base",
     ),
     _AiAssistModelOption(
         model_name="sam:300m",
-        display_name="Sam (balanced)",
+        display_name="SAM Large",
     ),
     _AiAssistModelOption(
         model_name="sam:latest",
-        display_name="Sam (accuracy)",
+        display_name="SAM Huge",
     ),
     _AiAssistModelOption(
         model_name="sam2:small",
-        display_name="Sam2 (speed)",
+        display_name="SAM 2 Small",
     ),
     _AiAssistModelOption(
         model_name="sam2:latest",
-        display_name="Sam2 (balanced)",
+        display_name="SAM 2 Base+",
     ),
     _AiAssistModelOption(
         model_name="sam2:large",
-        display_name="Sam2 (accuracy)",
+        display_name="SAM 2 Large",
     ),
     _AiAssistModelOption(
         model_name="sam3:latest",
-        display_name="Sam3",
+        display_name="SAM 3",
     ),
+)
+# Listed under "More models…": the original SAM is slower than SAM 2 at every
+# size.
+AI_ASSIST_FOLDED_MODELS: Final[frozenset[str]] = frozenset(
+    {"sam:100m", "sam:300m", "sam:latest"}
 )
 
 
 AI_TEXT_MODEL_OPTIONS: Final[tuple[tuple[str, str], ...]] = (
-    ("sam3:latest", "SAM3 (smart)"),
-    ("yoloworld:latest", "YOLO-World (fast)"),
+    ("sam3:latest", "SAM 3"),
+    ("yoloworld:latest", "YOLO-World"),
 )
 # Text models that return boxes without masks.
 AI_TEXT_BOX_ONLY_MODELS: Final[frozenset[str]] = frozenset({"yoloworld:latest"})
+
+# Bytes each model downloads before its first use.
+AI_MODEL_DOWNLOAD_SIZES: Final[dict[str, int]] = {
+    "efficientsam:10m": 41_365_489,
+    "efficientsam:latest": 106_124_065,
+    "sam:100m": 108_571_344,
+    "sam:300m": 331_312_787,
+    "sam:latest": 664_987_190,
+    "sam2:small": 183_345_862,
+    "sam2:latest": 326_727_239,
+    "sam2:large": 909_984_581,
+    "sam3:latest": 3_621_579_145,
+    "yoloworld:latest": 672_850_840,
+}
 
 
 def find_ai_assist_model_option(*, model_name: str) -> _AiAssistModelOption | None:

@@ -792,18 +792,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-vormen maken.
 
-Wijzig het AI-Find All-model naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
+Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Het annotatiebestand hoort bij een andere afbeelding: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s kan geen voorbeeldkader gebruiken. Kies SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s kan geen voorbeeldkader gebruiken. Kies SAM 3.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1166,6 +1166,10 @@ Verwachte locatie: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Niet beschikbaar: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Meer modellen…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1488,42 +1492,6 @@ Verwachte locatie: {path}</translation>
         <translation>Standaardmodel</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (snelheid)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (nauwkeurigheid)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (snelheid)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (gebalanceerd)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (nauwkeurigheid)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (snelheid)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (gebalanceerd)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (nauwkeurigheid)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Overeenkomsten met bestaande vormen onderdrukken</translation>
     </message>
@@ -1654,6 +1622,21 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Rij {row}: {error} Wijzigingen zijn niet toegepast.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Alleen kaders</translation>
     </message>
 </context>
 <context>

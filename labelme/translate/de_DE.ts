@@ -804,18 +804,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s erkennt nur Begrenzungsrahmen und kann keine &apos;%s&apos;-Formen erstellen.
 
-Wechseln Sie das AI-Find All-Modell zu &apos;SAM3 (smart)&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
+Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Die Annotationsdatei gehört zu einem anderen Bild: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s kann keinen Beispielrahmen verwenden. Wählen Sie SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s kann keinen Beispielrahmen verwenden. Wählen Sie SAM 3.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1166,6 +1166,10 @@ Erwarteter Speicherort: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Nicht verfügbar: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Weitere Modelle…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1488,42 +1492,6 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Standardmodell</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (Geschwindigkeit)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (Genauigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (Geschwindigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (Ausgewogen)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (Genauigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (Geschwindigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (Ausgewogen)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (Genauigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Übereinstimmungen mit vorhandenen Formen unterdrücken</translation>
     </message>
@@ -1654,6 +1622,21 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Zeile {row}: {error} Änderungen wurden nicht angewendet.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Nur Rahmen</translation>
     </message>
 </context>
 <context>

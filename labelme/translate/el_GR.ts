@@ -1002,10 +1002,10 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχήματα &apos;%s&apos;.
 
-Αλλάξτε το μοντέλο AI-Find All σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+Αλλάξτε το μοντέλο AI-Find All σε &apos;SAM 3&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
@@ -1016,8 +1016,8 @@ Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output form
         <translation>Μη έγκυρη ετικέτα</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>Το %s δεν μπορεί να χρησιμοποιήσει πλαίσιο παραδείγματος. Επιλέξτε SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>Το %s δεν μπορεί να χρησιμοποιήσει πλαίσιο παραδείγματος. Επιλέξτε SAM 3.</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1165,6 +1165,10 @@ Expected location: {path}</source>
     <message>
         <source>Unavailable: {model}</source>
         <translation>Μη διαθέσιμο: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Περισσότερα μοντέλα…</translation>
     </message>
 </context>
 <context>
@@ -1488,42 +1492,6 @@ Expected location: {path}</source>
         <translation>Προεπιλεγμένο μοντέλο</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (ταχύτητα)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (ακρίβεια)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (ταχύτητα)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (ισορροπημένο)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (ακρίβεια)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (ταχύτητα)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (ισορροπημένο)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (ακρίβεια)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Καταστολή αντιστοιχιών με υπάρχοντα σχήματα</translation>
     </message>
@@ -1654,6 +1622,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Γραμμή {row}: {error} Οι αλλαγές δεν εφαρμόστηκαν.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Μοντέλο</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Μόνο πλαίσια</translation>
     </message>
 </context>
 <context>

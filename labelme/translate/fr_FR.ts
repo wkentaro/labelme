@@ -792,18 +792,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s ne détecte que les cadres englobants et ne peut pas créer de formes &apos;%s&apos;.
 
-Changez le modèle AI-Find All pour &apos;SAM3 (smart)&apos;, ou définissez le format de sortie sur &apos;Rectangle&apos;.</translation>
+Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format de sortie sur &apos;Rectangle&apos;.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Le fichier d’annotations appartient à une autre image : %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s ne peut pas utiliser de cadre d’exemple. Choisissez SAM3 (smart).</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s ne peut pas utiliser de cadre d’exemple. Choisissez SAM 3.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1166,6 +1166,10 @@ Emplacement attendu : {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Indisponible : {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>Plus de modèles…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1488,42 +1492,6 @@ Emplacement attendu : {path}</translation>
         <translation>Modèle par défaut</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (vitesse)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (précision)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (vitesse)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (équilibré)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (précision)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (vitesse)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (équilibré)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (précision)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Ignorer les correspondances avec les formes existantes</translation>
     </message>
@@ -1654,6 +1622,21 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Ligne {row} : {error} Les modifications n’ont pas été appliquées.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modèle</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool} : {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Cadres uniquement</translation>
     </message>
 </context>
 <context>

@@ -68,11 +68,9 @@ def test_model_and_output_controls_expose_accessible_purpose(
 
     model = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
     output = QtGui.QAccessible.queryAccessibleInterface(widget._output_format_button)
-    model_name = (
-        widget.tr("Model") if sys.platform == "win32" else "EfficientSam (speed)"
-    )
+    model_name = widget.tr("Model") if sys.platform == "win32" else "EfficientSAM Tiny"
     assert model.text(QtGui.QAccessible.Text.Name) == model_name
-    assert model.text(QtGui.QAccessible.Text.Value) == "EfficientSam (speed)"
+    assert model.text(QtGui.QAccessible.Text.Value) == "EfficientSAM Tiny"
     assert model.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-assisted annotation model"
     )

@@ -792,18 +792,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s فقط کادرهای محصورکننده را تشخیص می‌دهد و نمی‌تواند شکل‌های &apos;%s&apos; ایجاد کند.
 
-مدل AI-Find All را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
+مدل AI-Find All را به &apos;SAM 3&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>فایل حاشیه‌نویسی متعلق به تصویر دیگری است: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s نمی‌تواند از کادر نمونه استفاده کند. SAM3 (smart) را انتخاب کنید.</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s نمی‌تواند از کادر نمونه استفاده کند. SAM 3 را انتخاب کنید.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1166,6 +1166,10 @@ Expected location: {path}</source>
         <source>Unavailable: {model}</source>
         <translation>در دسترس نیست: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>مدل‌های بیشتر…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1488,42 +1492,6 @@ Expected location: {path}</source>
         <translation>مدل پیش‌فرض</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (سرعت)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (دقت)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (سرعت)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (متعادل)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (دقت)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (سرعت)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (متعادل)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (دقت)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>نادیده گرفتن موارد منطبق با شکل‌های موجود</translation>
     </message>
@@ -1654,6 +1622,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>ردیف {row}: {error} تغییرات اعمال نشده‌اند.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>مدل</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>فقط کادرها</translation>
     </message>
 </context>
 <context>

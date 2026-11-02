@@ -800,18 +800,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú alakzatokat létrehozni.
 
-Váltson az AI-Find All modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
+Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Az annotációs fájl egy másik képhez tartozik: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>A(z) %s nem tud mintakeretet használni. Válassza a SAM3 (smart) modellt.</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>A(z) %s nem tud mintakeretet használni. Válassza a SAM 3 modellt.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1166,6 +1166,10 @@ Várt hely: {path}</translation>
         <source>Unavailable: {model}</source>
         <translation>Nem érhető el: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>További modellek…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1488,42 +1492,6 @@ Várt hely: {path}</translation>
         <translation>Alapértelmezett modell</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (sebesség)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (pontosság)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (sebesség)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (kiegyensúlyozott)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (pontosság)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (sebesség)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (kiegyensúlyozott)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (pontosság)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Meglévő alakzatokkal való egyezések elnyomása</translation>
     </message>
@@ -1654,6 +1622,21 @@ Várt hely: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>{row}. sor: {error} A módosítások nem lettek alkalmazva.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Csak keretek</translation>
     </message>
 </context>
 <context>

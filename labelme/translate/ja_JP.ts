@@ -802,18 +802,18 @@
     <message>
         <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
 
-Switch the AI-Find All model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
         <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; の図形を作成できません。
 
-AI-Find All のモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
+AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>このアノテーションファイルは別の画像のものです: %s</translation>
     </message>
     <message>
-        <source>%s can&apos;t use an example box. Choose SAM3 (smart).</source>
-        <translation>%s は例のボックスを使えません。SAM3 (smart) を選択してください。</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s は例のボックスを使えません。SAM 3 を選択してください。</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -1176,6 +1176,10 @@ Expected location: {path}</source>
         <source>Unavailable: {model}</source>
         <translation>利用不可: {model}</translation>
     </message>
+    <message>
+        <source>More models…</source>
+        <translation>その他のモデル…</translation>
+    </message>
 </context>
 <context>
     <name>ModelsDialog</name>
@@ -1498,42 +1502,6 @@ Expected location: {path}</source>
         <translation>デフォルトモデル</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (高速)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (高精度)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (高速)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (バランス)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (高精度)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (高速)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (バランス)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (高精度)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>既存の図形と一致する候補を抑制</translation>
     </message>
@@ -1664,6 +1632,21 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>行 {row}: {error} 変更は適用されていません。</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}：{model}</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>ボックスのみ</translation>
     </message>
 </context>
 <context>

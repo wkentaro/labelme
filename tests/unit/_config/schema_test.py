@@ -5,7 +5,6 @@ from typing import Final
 
 import pytest
 
-from labelme._ai_models import AI_ASSIST_MODEL_OPTIONS
 from labelme._config import load_config
 from labelme._config._schema import SETTINGS
 from labelme._config._schema import Group
@@ -67,20 +66,6 @@ def test_enum_choice_labels_match_choices(*, setting: Setting) -> None:
     assert setting.choices is not None
     if setting.choice_labels is not None:
         assert len(setting.choice_labels) == len(setting.choices)
-
-
-def test_ai_choice_labels_match_shared_model_names() -> None:
-    setting = next(
-        setting for setting in SETTINGS if setting.key_path == ("ai", "default")
-    )
-    assert setting.choices == (
-        None,
-        *(option.model_name for option in AI_ASSIST_MODEL_OPTIONS),
-    )
-    assert setting.choice_labels == (
-        "(none)",
-        *(option.display_name for option in AI_ASSIST_MODEL_OPTIONS),
-    )
 
 
 @pytest.mark.parametrize("setting", _BOOL_SETTINGS, ids=_ids(_BOOL_SETTINGS))

@@ -280,22 +280,9 @@ SETTINGS: Final[tuple[Setting, ...]] = (
         label=cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Default model")),
         kind="enum",
         choices=(None, *(option.model_name for option in AI_ASSIST_MODEL_OPTIONS)),
-        # pyside6-lupdate needs literal markers here. A schema test keeps these
-        # translation declarations aligned with the shared non-Qt model list.
         choice_labels=(
             cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "(none)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "EfficientSam (speed)")),
-            cast(
-                str,
-                QT_TRANSLATE_NOOP("SettingsDialog", "EfficientSam (accuracy)"),
-            ),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam (speed)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam (balanced)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam (accuracy)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam2 (speed)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam2 (balanced)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam2 (accuracy)")),
-            cast(str, QT_TRANSLATE_NOOP("SettingsDialog", "Sam3")),
+            *(option.display_name for option in AI_ASSIST_MODEL_OPTIONS),
         ),
     ),
     Setting(

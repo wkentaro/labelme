@@ -503,7 +503,7 @@ def test_setting_controls_revert_when_write_fails(
     ai_editor = dialog._editors[("ai", "default")]
     assert isinstance(ai_editor, QtWidgets.QComboBox)
     ai_dock = win._ai_annotation._model_combo
-    assert ai_dock.currentText() == "Sam3"
+    assert ai_dock.currentText() == "SAM 3"
 
     # Refuse the save at the boundary a read-only config directory would;
     # injecting the failure keeps it reachable on Windows and as root, where
@@ -514,13 +514,13 @@ def test_setting_controls_revert_when_write_fails(
     monkeypatch.setattr(_writer, "_atomic_write", _refuse_write)
     checkbox.setChecked(False)
     win._actions.save_auto.trigger()
-    ai_dock.setCurrentIndex(ai_dock.findText("EfficientSam (speed)"))
+    ai_dock.setCurrentIndex(ai_dock.findText("EfficientSAM Tiny"))
 
     assert len(warned) == 3
     assert checkbox.isChecked()  # editor reverted to the last-saved value
     assert win._actions.save_auto.isChecked()
     assert auto_save_editor.isChecked()
-    assert ai_dock.currentText() == "Sam3"
+    assert ai_dock.currentText() == "SAM 3"
     assert ai_editor.currentData() == "sam3:latest"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "sam3:latest"
     assert win._config["display_label_popup"] is True
@@ -771,7 +771,7 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     win = main_win(config_file=editable_config_file)
     assert win._config["ai"]["default"] == "sam3:latest"
     dock_combo = win._ai_annotation._model_combo
-    assert dock_combo.currentText() == "Sam3"
+    assert dock_combo.currentText() == "SAM 3"
 
     dialog = _open_settings_dialog(win=win)
     combo = dialog._editors[("ai", "default")]
@@ -779,7 +779,7 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     combo.setCurrentIndex(combo.findData("efficientsam:10m"))
 
     assert win._config["ai"]["default"] == "efficientsam:10m"
-    assert dock_combo.currentText() == "EfficientSam (speed)"
+    assert dock_combo.currentText() == "EfficientSAM Tiny"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "efficientsam:10m"
     assert (
         safe_load(editable_config_file.read_text())["ai"]["default"]
@@ -800,7 +800,7 @@ def test_ai_dock_change_persists_and_syncs_settings_dialog(
     assert isinstance(settings_combo, QtWidgets.QComboBox)
 
     dock_combo = win._ai_annotation._model_combo
-    dock_combo.setCurrentIndex(dock_combo.findText("EfficientSam (speed)"))
+    dock_combo.setCurrentIndex(dock_combo.findText("EfficientSAM Tiny"))
 
     assert win._config["ai"]["default"] == "efficientsam:10m"
     assert settings_combo.currentData() == "efficientsam:10m"
