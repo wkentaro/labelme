@@ -148,12 +148,23 @@ def test_label_list_item_clone_preserves_color_dot(*, widget: LabelListWidget) -
     assert _pixels_with_color(image=image, color=QtGui.QColor(0, 255, 0))
 
 
-def test_label_list_item_tooltip_shows_full_label() -> None:
-    label = "a_very_long_label_that_the_dock_cuts_off (3) [occluded]"
-    item = LabelListWidgetItem(shape=Shape(label="a_very_long_label"))
+@pytest.mark.parametrize(
+    "label",
+    [
+        "a_very_long_label_that_the_dock_cuts_off (3) [occluded]",
+        "<b>",
+        "<b>cat</b>",
+        "a & b",
+    ],
+)
+def test_label_list_item_tooltip_shows_full_label(*, label: str) -> None:
+    item = LabelListWidgetItem(shape=Shape(label=label))
     item.set_label(text=label, color=(0, 255, 0))
 
-    assert item.toolTip() == label
+    document = QtGui.QTextDocument()
+    document.setHtml(item.toolTip())
+    assert QtGui.Qt.mightBeRichText(item.toolTip())
+    assert document.toPlainText() == label
 
 
 @pytest.fixture()
