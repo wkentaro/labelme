@@ -33,13 +33,20 @@ def _paint_item(
 
 
 def _pixels_with_color(
-    *, image: QtGui.QImage, color: QtGui.QColor
+    *, image: QtGui.QImage, color: QtGui.QColor, tolerance: int = 0
 ) -> list[QtCore.QPoint]:
+    def matches(pixel: QtGui.QColor) -> bool:
+        return (
+            abs(pixel.red() - color.red()) <= tolerance
+            and abs(pixel.green() - color.green()) <= tolerance
+            and abs(pixel.blue() - color.blue()) <= tolerance
+        )
+
     return [
         QtCore.QPoint(x, y)
         for x in range(image.width())
         for y in range(image.height())
-        if image.pixelColor(x, y) == color
+        if matches(image.pixelColor(x, y))
     ]
 
 
@@ -79,7 +86,10 @@ def test_label_list_text_matches_stock_delegate_when_selected_unfocused(
         option=option,
     )
 
-    label_pixels = _pixels_with_color(image=expected, color=QtGui.QColor("blue"))
+    # Small antialiased text may leave no pixel exactly blue.
+    label_pixels = _pixels_with_color(
+        image=expected, color=QtGui.QColor("blue"), tolerance=48
+    )
     dot_pixels = _pixels_with_color(image=actual, color=QtGui.QColor(0, 255, 0))
     assert label_pixels
     assert dot_pixels

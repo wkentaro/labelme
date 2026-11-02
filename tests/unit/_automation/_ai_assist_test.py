@@ -24,7 +24,7 @@ def _propose(
     existing_shapes: list[Shape] | None,
     annotations: list[osam.types.Annotation],
 ) -> AiAssistProposal:
-    if prompt_kind == "box":
+    if prompt_kind in ("box", "example_box"):
         points = np.zeros((2, 2))
         point_labels = np.array([2, 3])
     else:
@@ -36,6 +36,8 @@ def _propose(
         points=points,
         point_labels=point_labels,
         existing_shapes=[] if existing_shapes is None else existing_shapes,
+        score_threshold=0.0,
+        iou_threshold=0.5,
     )
 
 
@@ -265,6 +267,8 @@ def test_point_prompt_reports_best_matching_existing_shape() -> None:
         points=np.array([[5, 5], [25, 25]], dtype=np.float64),
         point_labels=np.array([1, 0]),
         existing_shapes=[containing, exact],
+        score_threshold=0.0,
+        iou_threshold=0.5,
     )
 
     assert proposal.new_shapes == []
@@ -307,7 +311,7 @@ def test_point_prompt_reports_matching_existing_shape(
     assert proposal.matching_existing_shapes[0] is existing
 
 
-def test_sweep_suppresses_only_proposals_matching_existing_shapes(
+def test_example_box_suppresses_only_proposals_matching_existing_shapes(
     *,
     existing_rectangle: Shape,
 ) -> None:
@@ -323,7 +327,7 @@ def test_sweep_suppresses_only_proposals_matching_existing_shapes(
     proposal = _propose(
         session,
         annotations=response.annotations,
-        prompt_kind="box",
+        prompt_kind="example_box",
         existing_shapes=[existing_rectangle],
     )
 
@@ -336,7 +340,7 @@ def test_sweep_suppresses_only_proposals_matching_existing_shapes(
     assert proposal.matching_existing_shapes[0] is existing_rectangle
 
 
-def test_single_result_sweep_reports_matching_existing_shape(
+def test_single_result_example_box_reports_matching_existing_shape(
     *,
     existing_rectangle: Shape,
 ) -> None:
@@ -349,7 +353,7 @@ def test_single_result_sweep_reports_matching_existing_shape(
     proposal = _propose(
         session,
         annotations=response.annotations,
-        prompt_kind="box",
+        prompt_kind="example_box",
         existing_shapes=[existing_rectangle],
     )
 
@@ -364,14 +368,14 @@ _DUPLICATE_ANNOTATIONS: Final = [
 ]
 
 
-def test_sweep_matches_existing_shape_after_greedy_suppression(
+def test_example_box_matches_existing_shape_after_greedy_suppression(
     *,
     existing_rectangle: Shape,
 ) -> None:
     proposal = _propose(
         AiAssistSession(output_format="rectangle"),
         annotations=_DUPLICATE_ANNOTATIONS,
-        prompt_kind="box",
+        prompt_kind="example_box",
         existing_shapes=[existing_rectangle],
     )
 
@@ -380,11 +384,11 @@ def test_sweep_matches_existing_shape_after_greedy_suppression(
     assert proposal.matching_existing_shapes[0] is existing_rectangle
 
 
-def test_sweep_still_applies_greedy_suppression_among_new_detections() -> None:
+def test_example_box_still_applies_greedy_suppression_among_new_detections() -> None:
     proposal = _propose(
         AiAssistSession(output_format="rectangle"),
         annotations=_DUPLICATE_ANNOTATIONS,
-        prompt_kind="box",
+        prompt_kind="example_box",
         existing_shapes=None,
     )
 
@@ -394,3 +398,43 @@ def test_sweep_still_applies_greedy_suppression_among_new_detections() -> None:
         [[0, 0], [10, 10]],
     )
     assert proposal.matching_existing_shapes == []
+
+
+def test_box_keeps_the_candidate_that_fills_the_box() -> None:
+    session = AiAssistSession(model_name="sam3:latest", output_format="rectangle")
+
+    proposal = session.propose_shapes(
+        annotations=[
+            _annotation(score=0.8, bbox=(10, 10, 30, 30), mask=None),
+            _annotation(score=0.9, bbox=(60, 60, 80, 80), mask=None),
+        ],
+        prompt_kind="box",
+        points=np.array([[10.0, 10.0], [30.0, 30.0]]),
+        point_labels=np.array([2, 3]),
+        existing_shapes=[],
+        score_threshold=0.0,
+        iou_threshold=0.5,
+    )
+
+    assert len(proposal.new_shapes) == 1
+    np.testing.assert_array_equal(proposal.new_shapes[0].points, [[10, 10], [30, 30]])
+
+
+def test_example_box_covered_candidate_does_not_hide_a_new_one(
+    *,
+    existing_rectangle: Shape,
+) -> None:
+    # The candidate on the existing Shape overlaps the one beside it; once
+    # covered it must not suppress that one.
+    proposal = _propose(
+        AiAssistSession(output_format="rectangle"),
+        annotations=[
+            _annotation(score=0.9, bbox=(2, 0, 12, 10), mask=None),
+            _annotation(score=0.8, bbox=(5, 0, 15, 10), mask=None),
+        ],
+        prompt_kind="example_box",
+        existing_shapes=[existing_rectangle],
+    )
+
+    (shape,) = proposal.new_shapes
+    np.testing.assert_array_equal(shape.points, [[5, 0], [15, 10]])
