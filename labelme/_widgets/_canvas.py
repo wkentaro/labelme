@@ -649,9 +649,13 @@ class Canvas(QtWidgets.QWidget):
         self._update_status(extra_messages=None)
 
     def _refuses_example_box(self) -> bool:
-        # Prompt Compatibility: refuse before any download or inference.
-        if self.create_mode != "ai_detect" or _ai_models.accepts_example_boxes(
-            model_name=self.get_ai_detect_model_name()
+        # Prompt Compatibility: refuse before any download or inference. With
+        # no model chosen, the readiness check opens the Models window.
+        model_name = self.get_ai_detect_model_name()
+        if (
+            self.create_mode != "ai_detect"
+            or not model_name
+            or _ai_models.accepts_example_boxes(model_name=model_name)
         ):
             return False
         self.example_box_unsupported.emit()
