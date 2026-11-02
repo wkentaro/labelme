@@ -754,10 +754,6 @@
         <translation>Công cụ hình dạng khác</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s đã khởi động.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Thử lại</translation>
     </message>

@@ -754,10 +754,6 @@
         <translation>ابزارهای بیشتر برای شکل‌ها</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s راه‌اندازی شد.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>تلاش دوباره</translation>
     </message>

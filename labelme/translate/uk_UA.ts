@@ -726,10 +726,6 @@
         <translation>Інші інструменти фігур</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s розпочато.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Повторити</translation>
     </message>

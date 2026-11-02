@@ -754,10 +754,6 @@
         <translation>Meer vormgereedschappen</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s gestart.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Opnieuw proberen</translation>
     </message>

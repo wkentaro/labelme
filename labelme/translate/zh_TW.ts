@@ -754,10 +754,6 @@
         <translation>更多形狀工具</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s 已啟動。</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>重試</translation>
     </message>

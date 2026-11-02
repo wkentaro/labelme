@@ -764,10 +764,6 @@
         <translation>その他の図形ツール</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s を起動しました</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>再試行</translation>
     </message>

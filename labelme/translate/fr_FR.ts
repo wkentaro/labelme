@@ -754,10 +754,6 @@
         <translation>Autres outils de formes</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s démarré.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Réessayer</translation>
     </message>

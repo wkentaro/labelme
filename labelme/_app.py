@@ -1306,7 +1306,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._load_from_file_or_dir(file_or_dir=file_or_dir)
 
     def _setup_status_bar(self) -> _StatusBarWidgets:
-        message = QtWidgets.QLabel(self.tr("%s started.") % __appname__)
+        message = QtWidgets.QLabel()
         stats = StatusStats()
         self.statusBar().addWidget(message, 1)
         self.statusBar().addWidget(stats, 0)
