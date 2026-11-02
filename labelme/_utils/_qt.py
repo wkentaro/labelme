@@ -118,9 +118,7 @@ def new_icon(name: str, /) -> QtGui.QIcon:
     path = os.path.join(_ICONS_DIR, name)
     if path.endswith(".svg"):
         with open(path, "rb") as f:
-            svg = f.read()
-        if b"currentColor" in svg:
-            return QtGui.QIcon(_TintedSvgIconEngine(svg=svg))
+            return QtGui.QIcon(_TintedSvgIconEngine(svg=f.read()))
     return QtGui.QIcon(path)
 
 
