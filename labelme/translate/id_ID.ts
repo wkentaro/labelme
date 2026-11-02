@@ -8,10 +8,6 @@
         <translation>Detail poligon</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Sesuaikan detail poligon</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Lebih halus</translation>
     </message>
@@ -40,6 +36,10 @@
         <translation>Lingkaran</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Format keluaran: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Model anotasi berbantuan AI</translation>
     </message>
@@ -50,10 +50,6 @@
     <message>
         <source>Model</source>
         <translation>Model</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Format keluaran</translation>
     </message>
 </context>
 <context>
@@ -94,28 +90,16 @@
 <context>
     <name>AiToolGroup</name>
     <message>
+        <source>Options</source>
+        <translation>Opsi</translation>
+    </message>
+    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
-    </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>Bantuan AI</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>Temukan setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>Segmentasikan satu objek dari titik dan sebuah kotak</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>Pilih &apos;AI-Segment&apos; atau &apos;AI-Find All&apos; untuk mengaktifkan Bantuan AI</translation>
     </message>
 </context>
 <context>

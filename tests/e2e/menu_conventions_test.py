@@ -150,8 +150,9 @@ def test_dialog_actions_end_with_ellipsis(*, main_win: MainWinFactory) -> None:
 
 @pytest.mark.gui
 def test_checkable_menu_items_have_no_icon(*, main_win: MainWinFactory) -> None:
-    # Mode toggles that also sit on the toolbar keep their icon; other checkable
-    # items rely on the checkmark alone.
+    # Mode toggles that also sit on the toolbar keep their icon, and so do
+    # shape pickers, whose icon names the shape; other checkable items rely on
+    # the checkmark alone.
     toggles_with_icon = frozenset({"fit_window", "fit_selection"})
     win = _english_window(main_win)
     allowed = {
@@ -160,6 +161,7 @@ def test_checkable_menu_items_have_no_icon(*, main_win: MainWinFactory) -> None:
             *(getattr(win._actions, name) for name in toggles_with_icon),
             *(a for _, a in win._actions.draw),
             win._actions.edit_mode,
+            *win._ai_annotation._output_format_actions.values(),
         )
     }
     found = {

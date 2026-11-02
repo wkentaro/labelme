@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Final
 
 from PySide6 import QtCore
-from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
@@ -12,11 +12,14 @@ from ._model_picker import ModelPicker
 
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
     model_changed = QtCore.Signal(str)
+    thresholds_changed = QtCore.Signal(bool)  # True when off their defaults
     manage_models_requested = QtCore.Signal()
     download_requested = QtCore.Signal(str)
 
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
+    # The Return key's symbol says Enter runs the query.
+    _RUN_GLYPH: Final = "\u21b5"
 
     _text_input: QtWidgets.QLineEdit
     _model_combo: ModelPicker
@@ -45,23 +48,21 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         self._text_input = text_input
 
         self._run_button = run_button = QtWidgets.QToolButton(self)
-        run_button.setText(self.tr("Run"))
-        run_button.setFixedHeight(24)
+        run_button.setAutoRaise(True)
+        run_button.setAccessibleName(self.tr("Run"))
+        run_button.setToolTip(self.tr("Run"))
         run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         run_button.clicked.connect(lambda: on_submit())
-        # Fits "Finding…" too, so a run doesn't shift the row.
-        run_button.setMinimumWidth(
+        # Fixed to fit "Finding…" too, so a run doesn't shift the query text
+        # and the field can reserve exactly this width.
+        run_button.setFixedWidth(
             max(
                 run_button.fontMetrics().horizontalAdvance(text)
-                for text in (self.tr("Run"), self.tr("Finding…"))
+                for text in (self._RUN_GLYPH, self.tr("Finding…"))
             )
-            + 16
+            + 12
         )
-
-        self._thresholds = thresholds = QtWidgets.QWidget(self)
-        settings_layout = QtWidgets.QHBoxLayout(thresholds)
-        settings_layout.setContentsMargins(0, 0, 0, 0)
-        settings_layout.setSpacing(4)
+        self.set_detecting(False)  # noqa: FBT003 -- state flag
 
         self._model_combo = model_combo = ModelPicker(options=AI_TEXT_MODEL_OPTIONS)
         model_combo.setParent(self)
@@ -89,47 +90,31 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
             )
             .width()
         )
-        settings_layout.addStretch(1)
 
-        # Size and mute these via QFont and a palette role, never a stylesheet:
-        # a stylesheet switches the widget to QStyleSheetStyle, which pins its
-        # resolved colors at polish time and does not re-resolve them on a live
-        # color-scheme change, leaving the text faded after a mid-session theme
-        # switch.
-        small_font = self.font()
-        small_font.setPixelSize(10)
+        self._thresholds = thresholds = QtWidgets.QWidget(self)
+        thresholds_layout = QtWidgets.QFormLayout(thresholds)
+        thresholds_layout.setContentsMargins(0, 0, 0, 0)
 
-        def make_threshold_label(text: str) -> QtWidgets.QLabel:
-            label = QtWidgets.QLabel(text)
-            label.setFont(small_font)
-            label.setForegroundRole(QtGui.QPalette.ColorRole.PlaceholderText)
-            return label
+        def add_threshold(text: str, value: float) -> QtWidgets.QDoubleSpinBox:
+            spinbox = QtWidgets.QDoubleSpinBox()
+            spinbox.setRange(0, 1)
+            spinbox.setSingleStep(0.05)
+            spinbox.setValue(value)
+            spinbox.valueChanged.connect(
+                lambda: self.thresholds_changed.emit(self._thresholds_off_default())
+            )
+            # The label is the spinbox's buddy, which names it for screen readers.
+            thresholds_layout.addRow(text, spinbox)
+            return spinbox
 
-        score_label = make_threshold_label(self.tr("Score"))
-        self._score_spinbox = score_spinbox = QtWidgets.QDoubleSpinBox()
-        score_label.setBuddy(score_spinbox)
-        settings_layout.addWidget(score_label)
-        score_spinbox.setFont(small_font)
-        score_spinbox.setFixedWidth(50)
-        score_spinbox.setRange(0, 1)
-        score_spinbox.setSingleStep(0.05)
-        score_spinbox.setValue(self._default_score_threshold)
-        settings_layout.addWidget(score_spinbox)
-
-        iou_label = make_threshold_label(self.tr("IoU"))
-        self._iou_spinbox = iou_spinbox = QtWidgets.QDoubleSpinBox()
-        iou_label.setBuddy(iou_spinbox)
-        settings_layout.addWidget(iou_label)
-        iou_spinbox.setFont(small_font)
-        iou_spinbox.setFixedWidth(50)
-        iou_spinbox.setRange(0, 1)
-        iou_spinbox.setSingleStep(0.05)
-        iou_spinbox.setValue(self._default_iou_threshold)
-        settings_layout.addWidget(iou_spinbox)
+        self._score_spinbox = add_threshold(
+            self.tr("Score"), self._default_score_threshold
+        )
+        self._iou_spinbox = add_threshold(self.tr("IoU"), self._default_iou_threshold)
 
     def set_detecting(self, detecting: bool, /) -> None:  # noqa: FBT001 -- state flag
         # Run stays clickable: running again replaces the pending job.
-        self._run_button.setText(self.tr("Finding…") if detecting else self.tr("Run"))
+        self._run_button.setText(self.tr("Finding…") if detecting else self._RUN_GLYPH)
 
     def get_text_prompt(self) -> str:
         return self._text_input.text().strip()
@@ -167,3 +152,9 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     def get_iou_threshold(self) -> float:
         return self._iou_spinbox.value()
+
+    def _thresholds_off_default(self) -> bool:
+        return (
+            self._score_spinbox.value() != self._default_score_threshold
+            or self._iou_spinbox.value() != self._default_iou_threshold
+        )

@@ -8,10 +8,6 @@
         <translation>Polygondetails</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Polygondetails anpassen</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Glatter</translation>
     </message>
@@ -40,6 +36,10 @@
         <translation>Kreis</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Ausgabeformat: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Modell für AI-gestützte Annotation</translation>
     </message>
@@ -50,10 +50,6 @@
     <message>
         <source>Model</source>
         <translation>Modell</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Ausgabeformat</translation>
     </message>
 </context>
 <context>
@@ -94,28 +90,16 @@
 <context>
     <name>AiToolGroup</name>
     <message>
+        <source>Options</source>
+        <translation>Optionen</translation>
+    </message>
+    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
-    </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>KI-Assistent</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>Alle Objekte finden, die zum Textprompt oder zu einem Beispielrahmen passen</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>Ein Objekt aus Punkten und einem Rahmen segmentieren</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>Wählen Sie &apos;AI-Segment&apos; oder &apos;AI-Find All&apos;, um den KI-Assistenten zu aktivieren</translation>
     </message>
 </context>
 <context>

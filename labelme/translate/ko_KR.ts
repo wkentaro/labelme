@@ -8,10 +8,6 @@
         <translation>폴리곤 세부 수준</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>폴리곤 세부 수준 조정</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>더 부드럽게</translation>
     </message>
@@ -40,6 +36,10 @@
         <translation>원</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>출력 형식: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI 지원 주석 모델</translation>
     </message>
@@ -50,10 +50,6 @@
     <message>
         <source>Model</source>
         <translation>모델</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>출력 형식</translation>
     </message>
 </context>
 <context>
@@ -94,28 +90,16 @@
 <context>
     <name>AiToolGroup</name>
     <message>
+        <source>Options</source>
+        <translation>옵션</translation>
+    </message>
+    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
-    </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI 어시스트</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>텍스트 프롬프트나 예시 상자와 일치하는 모든 객체 찾기</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>점과 상자로 객체 하나를 분할</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>AI 어시스트를 활성화하려면 &apos;AI-Segment&apos; 또는 &apos;AI-Find All&apos;을 선택하세요</translation>
     </message>
 </context>
 <context>

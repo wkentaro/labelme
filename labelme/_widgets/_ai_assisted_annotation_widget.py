@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from PySide6 import QtCore
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .. import _ai_models
@@ -17,8 +18,10 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
     download_requested = QtCore.Signal(str)
 
     _model_combo: ModelPicker
-    _output_format_combo: QtWidgets.QComboBox
-    _polygon_detail_button: QtWidgets.QToolButton
+    _output_format_button: QtWidgets.QToolButton
+    _output_format_actions: dict[_automation.AiOutputFormat, QtGui.QAction]
+    _output_format_group: QtGui.QActionGroup
+    _polygon_detail_panel: QtWidgets.QWidget
 
     def __init__(
         self,
@@ -45,7 +48,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
 
     @property
     def output_format(self) -> _automation.AiOutputFormat:
-        return self._output_format_combo.currentData()
+        return self._output_format_group.checkedAction().data()
 
     def _init_ui(
         self,
@@ -57,18 +60,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         on_polygon_detail_changed: Callable[[int], None],
     ) -> None:
         # AiToolGroup lays these controls out; this widget owns their state.
-        self._polygon_detail_button = QtWidgets.QToolButton(self)
-        self._polygon_detail_button.setAutoRaise(True)
-        self._polygon_detail_button.setIcon(new_icon("phosphor/sliders-horizontal.svg"))
-        self._polygon_detail_button.setIconSize(QtCore.QSize(16, 16))
-        self._polygon_detail_button.setAccessibleName(self.tr("Polygon detail"))
-        self._polygon_detail_button.setToolTip(self.tr("Adjust polygon detail"))
-        self._polygon_detail_button.setPopupMode(
-            QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup
-        )
-        detail_menu = QtWidgets.QMenu(self._polygon_detail_button)
-        detail_panel = QtWidgets.QWidget()
+        self._polygon_detail_panel = detail_panel = QtWidgets.QWidget(self)
         detail_layout = QtWidgets.QVBoxLayout(detail_panel)
+        detail_layout.setContentsMargins(0, 0, 0, 0)
         detail_layout.addWidget(QtWidgets.QLabel(self.tr("Polygon detail")))
         self._polygon_detail_slider = IntegerSlider(
             minimum=0,
@@ -83,10 +77,6 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         endpoints.addStretch(1)
         endpoints.addWidget(QtWidgets.QLabel(self.tr("More detail")))
         detail_layout.addLayout(endpoints)
-        detail_action = QtWidgets.QWidgetAction(detail_menu)
-        detail_action.setDefaultWidget(detail_panel)
-        detail_menu.addAction(detail_action)
-        self._polygon_detail_button.setMenu(detail_menu)
 
         self._model_combo = ModelPicker(
             options=[
@@ -101,35 +91,68 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             self.tr("AI-assisted annotation model")
         )
 
-        self._output_format_combo = QtWidgets.QComboBox(self)
-        self._output_format_combo.setAccessibleName(self.tr("Output format"))
-        self._output_format_combo.setAccessibleDescription(
+        # Icon only when closed, like a design tool's shape picker; the open
+        # menu names each shape.
+        self._output_format_button = QtWidgets.QToolButton(self)
+        self._output_format_button.setAccessibleDescription(
             self.tr("AI-assisted annotation output format")
         )
-        self._output_format_combo.addItem(self.tr("Polygon"), "polygon")
-        self._output_format_combo.addItem(self.tr("Mask"), "mask")
-        self._output_format_combo.addItem(self.tr("Rectangle"), "rectangle")
-        self._output_format_combo.addItem(
-            self.tr("Oriented Rectangle"), "oriented_rectangle"
+        self._output_format_button.setIconSize(QtCore.QSize(16, 16))
+        self._output_format_button.setPopupMode(
+            QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup
         )
-        self._output_format_combo.addItem(self.tr("Circle"), "circle")
+        output_menu = QtWidgets.QMenu(self._output_format_button)
+        self._output_format_group = QtGui.QActionGroup(output_menu)
+        self._output_format_actions = {}
+        output_formats: list[tuple[_automation.AiOutputFormat, str, str]] = [
+            ("polygon", self.tr("Polygon"), "phosphor/polygon.svg"),
+            ("mask", self.tr("Mask"), "mask.svg"),
+            ("rectangle", self.tr("Rectangle"), "phosphor/rectangle.svg"),
+            (
+                "oriented_rectangle",
+                self.tr("Oriented Rectangle"),
+                "oriented_rectangle.svg",
+            ),
+            ("circle", self.tr("Circle"), "phosphor/circle.svg"),
+        ]
+        for output_format, text, icon in output_formats:
+            action = output_menu.addAction(new_icon(icon), text)
+            action.setCheckable(True)
+            action.setData(output_format)
+            self._output_format_group.addAction(action)
+            self._output_format_actions[output_format] = action
+        self._output_format_button.setMenu(output_menu)
 
         self.set_current_model(model_display=default_model)
         self._model_combo.model_changed.connect(on_model_changed)
         self._model_combo.manage_requested.connect(self.manage_models_requested)
         self._model_combo.download_requested.connect(self.download_requested)
 
-        self._output_format_combo.setCurrentIndex(0)
+        self._show_output_format("polygon")
 
-        def handle_output_format_changed(index: int) -> None:
-            output_format = self._output_format_combo.itemData(index)
-            self._polygon_detail_button.setVisible(output_format == "polygon")
+        # toggled, unlike triggered, stays quiet when the current shape is
+        # picked again.
+        def handle_output_format_toggled(checked: bool) -> None:  # noqa: FBT001 -- Qt signal payload is positional
+            if not checked:
+                return
+            output_format = self.output_format
+            self._show_output_format(output_format)
             on_output_format_changed(output_format)
 
-        self._output_format_combo.currentIndexChanged.connect(
-            handle_output_format_changed
-        )
+        for action in self._output_format_actions.values():
+            action.toggled.connect(handle_output_format_toggled)
         self._polygon_detail_slider.value_changed.connect(on_polygon_detail_changed)
+
+    def _show_output_format(self, output_format: _automation.AiOutputFormat, /) -> None:
+        action = self._output_format_actions[output_format]
+        action.setChecked(True)
+        self._output_format_button.setIcon(action.icon())
+        self._output_format_button.setToolTip(action.text())
+        # A tool button has no value, so its name carries the current shape.
+        self._output_format_button.setAccessibleName(
+            self.tr("Output format: {format}").format(format=action.text())
+        )
+        self._polygon_detail_panel.setVisible(output_format == "polygon")
 
     def set_current_model(self, *, model_display: str) -> None:
         model_name = next(

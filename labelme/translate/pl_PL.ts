@@ -8,10 +8,6 @@
         <translation>Szczegółowość wielokąta</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Dostosuj szczegółowość wielokąta</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Gładszy</translation>
     </message>
@@ -40,6 +36,10 @@
         <translation>Okrąg</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Format wyjściowy: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Model adnotacji wspomaganej przez AI</translation>
     </message>
@@ -50,10 +50,6 @@
     <message>
         <source>Model</source>
         <translation>Model</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Format wyjściowy</translation>
     </message>
 </context>
 <context>
@@ -94,28 +90,16 @@
 <context>
     <name>AiToolGroup</name>
     <message>
+        <source>Options</source>
+        <translation>Opcje</translation>
+    </message>
+    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
-    </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>Asystent AI</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>Znajdź każdy obiekt pasujący do monitu tekstowego lub ramki przykładu</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>Segmentuj jeden obiekt na podstawie punktów i ramki</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>Wybierz &apos;AI-Segment&apos; lub &apos;AI-Find All&apos;, aby włączyć Asystenta AI</translation>
     </message>
 </context>
 <context>

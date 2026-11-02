@@ -67,18 +67,16 @@ def test_model_and_output_controls_expose_accessible_purpose(
     )
 
     model = QtGui.QAccessible.queryAccessibleInterface(widget._model_combo)
-    output = QtGui.QAccessible.queryAccessibleInterface(widget._output_format_combo)
+    output = QtGui.QAccessible.queryAccessibleInterface(widget._output_format_button)
     model_name = (
         widget.tr("Model") if sys.platform == "win32" else "EfficientSam (speed)"
     )
-    output_name = widget.tr("Output format") if sys.platform == "win32" else "Polygon"
     assert model.text(QtGui.QAccessible.Text.Name) == model_name
     assert model.text(QtGui.QAccessible.Text.Value) == "EfficientSam (speed)"
     assert model.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-assisted annotation model"
     )
-    assert output.text(QtGui.QAccessible.Text.Name) == output_name
-    assert output.text(QtGui.QAccessible.Text.Value) == "Polygon"
+    assert output.text(QtGui.QAccessible.Text.Name) == "Output format: Polygon"
     assert output.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-assisted annotation output format"
     )
@@ -134,16 +132,20 @@ def test_selecting_another_output_format_fires_callback(
         default_model="EfficientSam (speed)",
         details=None,
     )
-    widget._output_format_combo.setCurrentIndex(
-        widget._output_format_combo.findData("mask")
-    )
+    widget._output_format_actions["mask"].trigger()
     assert formats == ["mask"]
-    assert not widget._polygon_detail_button.isVisibleTo(widget)
+    assert widget.output_format == "mask"
+    assert widget._output_format_button.toolTip() == "Mask"
+    assert not widget._polygon_detail_panel.isVisibleTo(widget)
 
-    widget._output_format_combo.setCurrentIndex(
-        widget._output_format_combo.findData("polygon")
-    )
-    assert widget._polygon_detail_button.isVisibleTo(widget)
+    widget._output_format_actions["mask"].trigger()
+    assert formats == ["mask"]  # Picking the current shape again is a no-op.
+
+    widget._output_format_actions["polygon"].trigger()
+    assert formats == ["mask", "polygon"]
+    assert widget._output_format_actions["polygon"].isChecked()
+    assert not widget._output_format_actions["mask"].isChecked()
+    assert widget._polygon_detail_panel.isVisibleTo(widget)
 
 
 def test_polygon_detail_control_fires_callback_and_exposes_value(
@@ -162,7 +164,7 @@ def test_polygon_detail_control_fires_callback_and_exposes_value(
 
     assert details == [60]
     assert widget._polygon_detail_slider.value == 60
-    assert widget._polygon_detail_button.accessibleName() == "Polygon detail"
+    assert widget._polygon_detail_slider.accessibleName() == "Polygon detail"
 
 
 def test_setting_polygon_detail_from_config_does_not_fire_callback(

@@ -8,10 +8,6 @@
         <translation>جزئیات چندضلعی</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>تنظیم جزئیات چندضلعی</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>هموارتر</translation>
     </message>
@@ -40,6 +36,10 @@
         <translation>دایره</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>قالب خروجی: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>مدل حاشیه‌نویسی به کمک AI</translation>
     </message>
@@ -50,10 +50,6 @@
     <message>
         <source>Model</source>
         <translation>مدل</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>قالب خروجی</translation>
     </message>
 </context>
 <context>
@@ -94,28 +90,16 @@
 <context>
     <name>AiToolGroup</name>
     <message>
+        <source>Options</source>
+        <translation>گزینه‌ها</translation>
+    </message>
+    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
-    </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>دستیار هوش مصنوعی</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>پیدا کردن همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>بخش‌بندی یک شیء از روی نقاط و یک کادر</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>برای فعال‌سازی دستیار هوش مصنوعی، &apos;AI-Segment&apos; یا &apos;AI-Find All&apos; را انتخاب کنید</translation>
     </message>
 </context>
 <context>

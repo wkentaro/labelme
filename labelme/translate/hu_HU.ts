@@ -8,10 +8,6 @@
         <translation>Poligon részletessége</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Poligon részletességének beállítása</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Simább</translation>
     </message>
@@ -40,6 +36,10 @@
         <translation>Kör</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Kimeneti formátum: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI-támogatott annotációs modell</translation>
     </message>
@@ -50,10 +50,6 @@
     <message>
         <source>Model</source>
         <translation>Modell</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Kimeneti formátum</translation>
     </message>
 </context>
 <context>
@@ -94,28 +90,16 @@
 <context>
     <name>AiToolGroup</name>
     <message>
+        <source>Options</source>
+        <translation>Beállítások</translation>
+    </message>
+    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
-    </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>MI-segéd</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum megkeresése</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>Egy objektum szegmentálása pontokból és egy keretből</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>Válassza az &apos;AI-Segment&apos; vagy az &apos;AI-Find All&apos; eszközt az MI-segéd engedélyezéséhez</translation>
     </message>
 </context>
 <context>

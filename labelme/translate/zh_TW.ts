@@ -8,10 +8,6 @@
         <translation>多邊形細節</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>調整多邊形細節</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>更平滑</translation>
     </message>
@@ -40,6 +36,10 @@
         <translation>圓形</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>輸出格式：{format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI 輔助標註模型</translation>
     </message>
@@ -50,10 +50,6 @@
     <message>
         <source>Model</source>
         <translation>模型</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>輸出格式</translation>
     </message>
 </context>
 <context>
@@ -94,28 +90,16 @@
 <context>
     <name>AiToolGroup</name>
     <message>
+        <source>Options</source>
+        <translation>選項</translation>
+    </message>
+    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
-    </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI 輔助</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>尋找與文字提示或範例框相符的所有物件</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>根據點和一個框分割一個物件</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>選擇 &apos;AI-Segment&apos; 或 &apos;AI-Find All&apos; 以啟用 AI 輔助</translation>
     </message>
 </context>
 <context>

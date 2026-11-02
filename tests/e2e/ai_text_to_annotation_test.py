@@ -143,9 +143,9 @@ def _install_mock_session(
 def _set_output_like_tool(*, win: MainWindow, create_mode: str) -> None:
     # Run detects with the shared AI Output; match it to a Rectangle or
     # Polygon tool so YOLO-World (boxes only) can answer.
-    output_combo = win._ai_annotation._output_format_combo
-    if (index := output_combo.findData(create_mode)) >= 0:
-        output_combo.setCurrentIndex(index)
+    for output_format in ("rectangle", "polygon"):
+        if create_mode == output_format:
+            win._ai_annotation._output_format_actions[output_format].trigger()
 
 
 def _run_text_prompt(
@@ -238,8 +238,7 @@ def test_text_prompt_creates_shapes(
     assert len(canvas.shapes) == 0
 
     if create_mode == "ai_segment":
-        output_combo = win._ai_annotation._output_format_combo
-        output_combo.setCurrentIndex(output_combo.findData(expected_shape_type))
+        win._ai_annotation._output_format_actions[expected_shape_type].trigger()
 
     _install_mock_session(monkeypatch=monkeypatch, response_fn=response_fn)
     _run_text_prompt(
@@ -297,8 +296,7 @@ def test_box_only_model_is_rejected_before_inference(
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     if output_format is not None:
-        output_combo = win._ai_annotation._output_format_combo
-        output_combo.setCurrentIndex(output_combo.findData(output_format))
+        win._ai_annotation._output_format_actions[output_format].trigger()
     win._switch_canvas_mode(edit=False, create_mode=create_mode)
     win._ai_text._text_input.setText("person")
 
@@ -336,8 +334,7 @@ def test_box_only_model_is_rejected_before_inference(
     # makes a box-only model usable again.
     win._switch_canvas_mode(edit=False, create_mode="rectangle")
     assert not model.flags(model.index(yolo_index, 0)) & Qt.ItemFlag.ItemIsEnabled
-    output_combo = win._ai_annotation._output_format_combo
-    output_combo.setCurrentIndex(output_combo.findData("rectangle"))
+    win._ai_annotation._output_format_actions["rectangle"].trigger()
     assert model.flags(model.index(yolo_index, 0)) & Qt.ItemFlag.ItemIsEnabled
     assert settings_model.flags(settings_index) & Qt.ItemFlag.ItemIsEnabled
 
@@ -503,7 +500,7 @@ def test_run_reads_detecting_under_any_tool(
     assert run_button.text() == "Finding…"
     worker._pending.clear()
     worker._set_active(None)
-    assert run_button.text() == "Run"
+    assert run_button.text() == win._ai_text._RUN_GLYPH
 
 
 @pytest.mark.gui
@@ -1286,7 +1283,7 @@ def test_run_with_an_example_box_draft_refines_it(
     assert request.image is not None
     worker._set_active(None)
     worker.finished.emit(job, _osam_worker._run(session, request, request.image))
-    assert run_button.text() == "Run"
+    assert run_button.text() == win._ai_text._RUN_GLYPH
     assert len(canvas._ai_find_all_draft) == 2
 
 

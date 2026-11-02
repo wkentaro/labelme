@@ -8,10 +8,6 @@
         <translation>ポリゴンの詳細度</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>ポリゴンの詳細度を調整</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>より滑らか</translation>
     </message>
@@ -40,6 +36,10 @@
         <translation>円</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>出力形式: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>AI支援アノテーションモデル</translation>
     </message>
@@ -50,10 +50,6 @@
     <message>
         <source>Model</source>
         <translation>モデル</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>出力形式</translation>
     </message>
 </context>
 <context>
@@ -94,28 +90,16 @@
 <context>
     <name>AiToolGroup</name>
     <message>
+        <source>Options</source>
+        <translation>オプション</translation>
+    </message>
+    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
-    </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI アシスト</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>テキストプロンプトや例のボックスに一致する物体をすべて探す</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>点とボックスから物体を1つセグメント化</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>&apos;AI-Segment&apos; または &apos;AI-Find All&apos; を選択すると AI アシストが有効になります</translation>
     </message>
 </context>
 <context>

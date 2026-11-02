@@ -8,10 +8,6 @@
         <translation>Детализация полигона</translation>
     </message>
     <message>
-        <source>Adjust polygon detail</source>
-        <translation>Настроить детализацию полигона</translation>
-    </message>
-    <message>
         <source>Smoother</source>
         <translation>Более гладко</translation>
     </message>
@@ -40,6 +36,10 @@
         <translation>Окружность</translation>
     </message>
     <message>
+        <source>Output format: {format}</source>
+        <translation>Формат вывода: {format}</translation>
+    </message>
+    <message>
         <source>AI-assisted annotation model</source>
         <translation>Модель разметки с помощью AI</translation>
     </message>
@@ -50,10 +50,6 @@
     <message>
         <source>Model</source>
         <translation>Модель</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Формат вывода</translation>
     </message>
 </context>
 <context>
@@ -94,28 +90,16 @@
 <context>
     <name>AiToolGroup</name>
     <message>
+        <source>Options</source>
+        <translation>Параметры</translation>
+    </message>
+    <message>
         <source>AI-Segment</source>
         <translation>AI-Segment</translation>
     </message>
     <message>
         <source>AI-Find All</source>
         <translation>AI-Find All</translation>
-    </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>ИИ-помощник</translation>
-    </message>
-    <message>
-        <source>Find every object that matches the text prompt or an example box</source>
-        <translation>Найти все объекты, соответствующие текстовому запросу или рамке-примеру</translation>
-    </message>
-    <message>
-        <source>Segment one object from points and a box</source>
-        <translation>Сегментировать один объект по точкам и рамке</translation>
-    </message>
-    <message>
-        <source>Select &apos;AI-Segment&apos; or &apos;AI-Find All&apos; to enable AI Assist</source>
-        <translation>Выберите &apos;AI-Segment&apos; или &apos;AI-Find All&apos;, чтобы включить ИИ-помощника</translation>
     </message>
 </context>
 <context>

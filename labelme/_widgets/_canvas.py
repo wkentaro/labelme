@@ -797,7 +797,7 @@ class Canvas(QtWidgets.QWidget):
         thresholds = (
             self.get_ai_find_all_thresholds()
             if job.prompt_kind == "example_box"
-            # AI-Segment has no Score or IoU control.
+            # AI-Segment proposals ignore the AI-Find All thresholds.
             else (0.0, 0.5)
         )
         return functools.partial(
