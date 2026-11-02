@@ -1463,6 +1463,8 @@ class MainWindow(QtWidgets.QMainWindow):
         file_search_error.setWordWrap(True)
         file_search_error.hide()
         file_list = QtWidgets.QListWidget()
+        file_list.setTextElideMode(Qt.TextElideMode.ElideMiddle)
+        file_list.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         file_list.currentItemChanged.connect(self._load_selected_image)
         file_list_layout = QtWidgets.QVBoxLayout()
         file_list_layout.setContentsMargins(0, 0, 0, 0)

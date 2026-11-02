@@ -206,3 +206,16 @@ def test_file_list_tooltip_is_absolute_for_relative_input(
     assert item is not None
     assert item.text() == "2011_000003.jpg"
     assert item.toolTip() == str(data_path / "raw/2011_000003.jpg")
+
+
+@pytest.mark.gui
+def test_file_list_elides_long_names_in_the_middle(
+    *, main_win: MainWinFactory, data_path: Path
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw"))
+    file_list = win._docks.file_list
+
+    assert file_list.textElideMode() == Qt.TextElideMode.ElideMiddle
+    assert (
+        file_list.horizontalScrollBarPolicy() == Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+    )
