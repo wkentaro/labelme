@@ -1635,6 +1635,18 @@ Expected location: {path}</source>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>سریع‌ترین</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>متعادل</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>دقیق‌ترین</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>فقط کادرها</translation>
     </message>

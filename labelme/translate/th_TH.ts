@@ -1636,6 +1636,18 @@ Expected location: {path}</source>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>เร็วที่สุด</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>สมดุล</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>แม่นยำที่สุด</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>กรอบเท่านั้น</translation>
     </message>

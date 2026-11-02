@@ -1635,6 +1635,18 @@ Erwarteter Speicherort: {path}</translation>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Am schnellsten</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Ausgewogen</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Am genauesten</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Nur Rahmen</translation>
     </message>

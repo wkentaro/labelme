@@ -1635,6 +1635,18 @@ Várt hely: {path}</translation>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Leggyorsabb</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Kiegyensúlyozott</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Legpontosabb</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Csak keretek</translation>
     </message>

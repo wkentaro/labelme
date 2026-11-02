@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import dataclasses
 from typing import Final
+from typing import cast
+
+from PySide6.QtCore import QT_TRANSLATE_NOOP
 
 
 @dataclasses.dataclass(frozen=True)
@@ -48,10 +51,20 @@ AI_ASSIST_MODEL_OPTIONS: Final[tuple[_AiAssistModelOption, ...]] = (
         display_name="SAM 3",
     ),
 )
-# Listed under "More models…": the original SAM is slower than SAM 2 at every
-# size.
+# The menu leads each tool with its fastest, balanced and most accurate model.
+# Per new image on an Apple M-series CPU: EfficientSAM Tiny 0.3 s, SAM 2 Base+
+# 0.6 s, SAM 3 3.7 s; for text, YOLO-World 0.2 s and SAM 3 4.3 s.
+AI_MODEL_TIERS: Final[dict[str, str]] = {
+    "efficientsam:10m": cast(str, QT_TRANSLATE_NOOP("_ModelMenuButton", "Fastest")),
+    "sam2:latest": cast(str, QT_TRANSLATE_NOOP("_ModelMenuButton", "Balanced")),
+    "sam3:latest": cast(str, QT_TRANSLATE_NOOP("_ModelMenuButton", "Most accurate")),
+    "yoloworld:latest": cast(str, QT_TRANSLATE_NOOP("_ModelMenuButton", "Fastest")),
+}
+# The rest go under "More models…".
 AI_ASSIST_FOLDED_MODELS: Final[frozenset[str]] = frozenset(
-    {"sam:100m", "sam:300m", "sam:latest"}
+    option.model_name
+    for option in AI_ASSIST_MODEL_OPTIONS
+    if option.model_name not in AI_MODEL_TIERS
 )
 
 

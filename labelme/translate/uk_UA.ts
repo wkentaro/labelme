@@ -1635,6 +1635,18 @@ Expected location: {path}</source>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Найшвидша</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Збалансована</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Найточніша</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Лише рамки</translation>
     </message>

@@ -1635,6 +1635,18 @@ Posizione prevista: {path}</translation>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Più veloce</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Bilanciato</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Più preciso</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Solo riquadri</translation>
     </message>

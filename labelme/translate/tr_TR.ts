@@ -1635,6 +1635,18 @@ Beklenen konum: {path}</translation>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>En hızlı</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Dengeli</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>En doğru</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Yalnızca kutular</translation>
     </message>

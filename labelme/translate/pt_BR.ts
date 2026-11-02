@@ -1635,6 +1635,18 @@ Local esperado: {path}</translation>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Mais rápido</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Equilibrado</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Mais preciso</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Somente caixas</translation>
     </message>

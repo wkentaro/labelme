@@ -1645,6 +1645,18 @@ Expected location: {path}</source>
         <translation>{tool}：{model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>最速</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>バランス</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>最高精度</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>ボックスのみ</translation>
     </message>

@@ -1635,6 +1635,18 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>{tool}: {model}</translation>
     </message>
     <message>
+        <source>Fastest</source>
+        <translation>Tercepat</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Seimbang</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Paling akurat</translation>
+    </message>
+    <message>
         <source>Boxes only</source>
         <translation>Hanya kotak</translation>
     </message>
