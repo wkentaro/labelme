@@ -10,9 +10,12 @@ from unittest import mock
 
 import osam
 import pytest
+from PySide6.QtCore import QEvent
 from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
 from PySide6.QtCore import QTimer
+from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QComboBox
 from pytestqt.qtbot import QtBot
 
@@ -113,20 +116,20 @@ def ai_model_combo(*, raw_win: MainWindow) -> QComboBox:
 
 @pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
-def test_ai_points_mode_keeps_sam3_selected(
+def test_ai_segment_mode_keeps_sam3_selected(
     *,
     raw_win: MainWindow,
     ai_model_combo: QComboBox,
     qtbot: QtBot,
     pause: bool,
 ) -> None:
-    raw_win._actions.create_ai_box_to_shape_mode.trigger()
+    raw_win._actions.create_ai_segment_mode.trigger()
     sam3_index = ai_model_combo.findData("sam3:latest")
     ai_model_combo.setCurrentIndex(sam3_index)
 
-    raw_win._actions.create_ai_points_to_shape_mode.trigger()
+    raw_win._actions.create_ai_segment_mode.trigger()
 
-    assert raw_win._canvas_widgets.canvas.create_mode == "ai_points_to_shape"
+    assert raw_win._canvas_widgets.canvas.create_mode == "ai_segment"
     assert ai_model_combo.currentData() == "sam3:latest"
     model = ai_model_combo.model()
     assert model.flags(model.index(sam3_index, 0)) & Qt.ItemFlag.ItemIsEnabled
@@ -204,103 +207,103 @@ def test_ai_points_mode_keeps_sam3_selected(
             id="linestrip",
         ),
         pytest.param(
-            "ai_points_to_shape",
+            "ai_segment",
             [],
             (0.5, 0.5),
             Qt.KeyboardModifier.ControlModifier,
             None,
             "polygon",
-            id="ai_points-polygon",
+            id="ai_segment_points-polygon",
             marks=pytest.mark.network,
         ),
         pytest.param(
-            "ai_points_to_shape",
+            "ai_segment",
             [],
             (0.5, 0.5),
             Qt.KeyboardModifier.ControlModifier,
             2,
             "mask",
-            id="ai_points-mask",
+            id="ai_segment_points-mask",
             marks=pytest.mark.network,
         ),
         pytest.param(
-            "ai_points_to_shape",
+            "ai_segment",
             [],
             (0.5, 0.5),
             Qt.KeyboardModifier.ControlModifier,
             2,
             "rectangle",
-            id="ai_points-rectangle",
+            id="ai_segment_points-rectangle",
             marks=pytest.mark.network,
         ),
         pytest.param(
-            "ai_points_to_shape",
+            "ai_segment",
             [],
             (0.5, 0.5),
             Qt.KeyboardModifier.ControlModifier,
             2,
             "circle",
-            id="ai_points-circle",
+            id="ai_segment_points-circle",
             marks=pytest.mark.network,
         ),
         pytest.param(
-            "ai_points_to_shape",
+            "ai_segment",
             [],
             (0.5, 0.5),
             Qt.KeyboardModifier.ControlModifier,
             4,
             "oriented_rectangle",
-            id="ai_points-oriented_rectangle",
+            id="ai_segment_points-oriented_rectangle",
             marks=pytest.mark.network,
         ),
         pytest.param(
-            "ai_box_to_shape",
+            "ai_segment",
             [(0.3, 0.3)],
             (0.7, 0.7),
             Qt.KeyboardModifier.NoModifier,
             None,
             "polygon",
-            id="ai_box-polygon",
+            id="ai_segment_box-polygon",
             marks=pytest.mark.network,
         ),
         pytest.param(
-            "ai_box_to_shape",
+            "ai_segment",
             [(0.3, 0.3)],
             (0.7, 0.7),
             Qt.KeyboardModifier.NoModifier,
             2,
             "mask",
-            id="ai_box-mask",
+            id="ai_segment_box-mask",
             marks=pytest.mark.network,
         ),
         pytest.param(
-            "ai_box_to_shape",
+            "ai_segment",
             [(0.3, 0.3)],
             (0.7, 0.7),
             Qt.KeyboardModifier.NoModifier,
             2,
             "rectangle",
-            id="ai_box-rectangle",
+            id="ai_segment_box-rectangle",
             marks=pytest.mark.network,
         ),
         pytest.param(
-            "ai_box_to_shape",
+            "ai_segment",
             [(0.3, 0.3)],
             (0.7, 0.7),
             Qt.KeyboardModifier.NoModifier,
             2,
             "circle",
-            id="ai_box-circle",
+            id="ai_segment_box-circle",
             marks=pytest.mark.network,
         ),
         pytest.param(
-            "ai_box_to_shape",
+            "ai_segment",
             [(0.3, 0.3)],
             (0.7, 0.7),
             Qt.KeyboardModifier.NoModifier,
             4,
             "oriented_rectangle",
-            id="ai_box-oriented_rectangle",
+            id="ai_segment_box-oriented_rectangle",
             marks=pytest.mark.network,
         ),
     ],
@@ -369,7 +372,9 @@ def test_annotate_shape_types(
         qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, modifier, pos=pos)
         qtbot.wait(50)
 
-    for xy in setup_clicks:
+    # AI-Segment draws its box by dragging, then Enter finishes.
+    drag_box = create_mode == "ai_segment" and bool(setup_clicks)
+    for xy in [] if drag_box else setup_clicks:
         click(xy=xy)
 
     def enter_label_when_visible() -> None:
@@ -384,7 +389,23 @@ def test_annotate_shape_types(
     label_timer.timeout.connect(enter_label_when_visible)
     label_timer.start(50)
     try:
-        click(xy=finalize_click, modifier=finalize_modifier)
+        if drag_box:
+            start, end = to_pos(setup_clicks[0]), to_pos(finalize_click)
+            qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=start)
+            canvas.mouseMoveEvent(
+                QMouseEvent(
+                    QEvent.Type.MouseMove,
+                    QPointF(end),
+                    QPointF(end),
+                    Qt.MouseButton.NoButton,
+                    Qt.MouseButton.LeftButton,
+                    Qt.KeyboardModifier.NoModifier,
+                )
+            )
+            qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=end)
+            qtbot.keyClick(canvas, Qt.Key.Key_Return)
+        else:
+            click(xy=finalize_click, modifier=finalize_modifier)
         # AI inference finishes after the click, then opens the label dialog.
         qtbot.waitUntil(lambda: not canvas.is_ai_finalizing, timeout=120_000)
     finally:

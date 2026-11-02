@@ -27,7 +27,9 @@ dependencies = [
   "natsort>=7.1.0",
   "numpy>=1.24",
   "onnxruntime>=1.23.2,<1.29",
-  "osam[webgpu]>=0.9.6",
+  "osam>=0.10.1",
+  # WebGPU's runtime needs Apple Silicon and macOS 14 (Darwin 23) on Macs.
+  "osam[webgpu]; sys_platform != 'darwin' or (platform_machine == 'arm64' and platform_release >= '23.0.0')",
   "pillow>=2.8",
   "pyside6>=6.8",
   "scipy>=1.8",
@@ -69,6 +71,13 @@ dev = [
 
 [project.scripts]
 labelme = "labelme.__main__:main"
+
+[tool.uv]
+# The last Intel/macOS 13 runtime wheels cover Python 3.12 and 3.13.
+required-environments = [
+  "sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version < '3.14'",
+  "sys_platform == 'darwin' and platform_machine == 'arm64' and platform_release == '22.0.0' and python_version < '3.14'",
+]
 
 [tool.towncrier]
 directory = "changelog.d"

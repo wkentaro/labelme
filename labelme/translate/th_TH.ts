@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>รายละเอียดโพลีกอน</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>ปรับรายละเอียดโพลีกอน</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -44,8 +36,8 @@
         <translation>วงกลม</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>เลือกโหมด &apos;AI-Points&apos; หรือ &apos;AI-Box&apos; เพื่อเปิดใช้งานผู้ช่วย AI</translation>
+        <source>Output format: {format}</source>
+        <translation>รูปแบบผลลัพธ์: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,28 +51,12 @@
         <source>Model</source>
         <translation>โมเดล</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>ผู้ช่วย AI</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>รูปแบบผลลัพธ์</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>เช่น สุนัข, แมว, นก</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>รัน</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>โมเดลพรอมต์ข้อความ AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +67,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI สร้างแอนโนเทชันจากข้อความที่ป้อน</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>พรอมต์ข้อความ AI</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>เลือกโหมด &apos;Polygon&apos;, &apos;Rectangle&apos; หรือ &apos;AI-Points&apos; เพื่อเปิดใช้งาน</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>โมเดล</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>สิ่งที่จะค้นหา</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>พรอมต์</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>กำลังค้นหา…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>โมเดล AI-Find All</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>ตัวเลือก</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -188,8 +179,20 @@
         <translation>แก้ไขรูปร่าง</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>คลิกจุดเพื่อรวม หรือกด %s ค้างไว้แล้วคลิกเพื่อยกเว้น กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>คลิกจุดเพื่อรวม กด %s ค้างไว้แล้วคลิกเพื่อยกเว้น หรือลากกรอบ กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>พิมพ์สิ่งที่ต้องการค้นหาใน AI-Find All หรือคลิกมุมแรกของกรอบรอบตัวอย่างหนึ่งชิ้น</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>คลิกมุมตรงข้ามเพื่อยกเว้นวัตถุที่คล้ายกับสิ่งนี้</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>คลิกมุมตรงข้ามเพื่อค้นหาวัตถุทุกชิ้นที่เหมือนชิ้นนี้</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -224,12 +227,8 @@
         <translation>คลิกเพื่อเพิ่มจุด</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>คลิกมุมแรกของ bbox สำหรับ AI segmentation</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>คลิกมุมตรงข้ามเพื่อแบ่งส่วนวัตถุ</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter เพิ่มผลลัพธ์ Esc ทิ้งผลลัพธ์ กด %s ค้างไว้แล้ววาดกรอบเพื่อยกเว้นวัตถุที่คล้ายกัน</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -442,10 +441,6 @@
         <translation>คลิกเพื่อวางจุดของเส้นหักมุม กด %s ค้างไว้แล้วคลิกเพื่อวางจุดสุดท้าย</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>คลิกจุดเพื่อแบ่งส่วนวัตถุ กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
-    </message>
-    <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
         <translation>เปิดรูปถัดไป (กด %s ค้างไว้เพื่อคัดลอกรูปร่างปัจจุบัน)</translation>
     </message>
@@ -598,6 +593,22 @@
         <translation>แก้ไข</translation>
     </message>
     <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>คลิกจุดหรือลากกรอบเพื่อแบ่งส่วนวัตถุหนึ่งชิ้น กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>ค้นหาวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
+    </message>
+    <message>
         <source>Next</source>
         <comment>toolbar</comment>
         <translation>ถัดไป</translation>
@@ -744,10 +755,6 @@
         <translation>เครื่องมือรูปทรงเพิ่มเติม</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s เริ่มทำงานแล้ว</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>ลองใหม่</translation>
     </message>
@@ -768,8 +775,32 @@
         <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>พิมพ์สิ่งที่ต้องการค้นหา</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>กำลังค้นหารายการที่ตรงกันบน CPU…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>กำลังค้นหารายการที่ตรงกัน…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างรูปร่าง &apos;%s&apos; ได้
+
+เปลี่ยนโมเดล AI-Find All เป็น &apos;SAM 3&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>ไฟล์คำอธิบายประกอบนี้เป็นของรูปอื่น: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s ใช้กรอบตัวอย่างไม่ได้ เลือก SAM 3</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -946,18 +977,6 @@
         <translation>เส้นต่อเนื่อง</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>วาดกรอบสี่เหลี่ยมเพื่อแบ่งส่วนวัตถุ</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>ใช้ค่าเริ่มต้นต่อไป</translation>
     </message>
@@ -966,12 +985,12 @@
         <translation>สำรองข้อมูลและรีเซ็ต</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos;…</source>
-        <translation>กำลังตรวจหา &apos;{query}&apos;…</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>กำลังค้นหา &apos;{query}&apos; ทั้งหมด…</translation>
     </message>
     <message>
-        <source>Detecting &apos;{query}&apos; on CPU…</source>
-        <translation>กำลังตรวจหา &apos;{query}&apos; บน CPU…</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>กำลังค้นหา &apos;{query}&apos; ทั้งหมดบน CPU…</translation>
     </message>
     <message>
         <source>Segmenting on CPU…</source>
@@ -980,14 +999,6 @@
     <message>
         <source>Segmenting…</source>
         <translation>กำลังแบ่งส่วน…</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างรูปร่าง &apos;%s&apos; ได้
-
-เปลี่ยนโมเดลพรอมต์ข้อความ AI เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
     </message>
     <message>
         <source>Found {count} new &apos;{query}&apos;</source>
@@ -1126,6 +1137,10 @@ Expected location: {path}</source>
         <translation>ข้อผิดพลาดการตั้งค่า</translation>
     </message>
     <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>ตรวจจับได้เฉพาะกรอบ เปลี่ยนเป็นสี่เหลี่ยมเพื่อใช้โมเดลนี้</translation>
+    </message>
+    <message>
         <source>Convert to</source>
         <translation>แปลงเป็น</translation>
     </message>
@@ -1167,6 +1182,10 @@ Expected location: {path}</source>
     <message>
         <source>Unavailable: {model}</source>
         <translation>ไม่พร้อมใช้งาน: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>โมเดลเพิ่มเติม…</translation>
     </message>
 </context>
 <context>
@@ -1414,6 +1433,10 @@ Expected location: {path}</source>
         <translation>หนึ่งชื่อแฟล็กต่อบรรทัด รูปแบบ: ^car$ ตรงกับ car เท่านั้น, car ตรงกับคำนำหน้า, .* ตรงกับทุกป้ายกำกับ</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>โมเดล AI-Find All</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>รายละเอียดโพลีกอน</translation>
     </message>
@@ -1484,46 +1507,6 @@ Expected location: {path}</source>
     <message>
         <source>Default model</source>
         <translation>โมเดลเริ่มต้น</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (ความเร็ว)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (ความแม่นยำ)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (ความเร็ว)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (สมดุล)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (ความแม่นยำ)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (ความเร็ว)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (สมดุล)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (ความแม่นยำ)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>โมเดลพรอมต์ข้อความ</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1656,6 +1639,65 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>แถว {row}: {error} ยังไม่ได้นำการเปลี่ยนแปลงไปใช้</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>โมเดล</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>เร็วที่สุด</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>สมดุล</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>แม่นยำที่สุด</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM รุ่นแรก SAM 2 เร็วกว่าในทุกขนาด</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>เร็วที่สุด เส้นขอบหยาบ ทำงานได้ดีบนทุกคอมพิวเตอร์</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>เส้นขอบคมกว่า Tiny แต่ช้ากว่า SAM 2 Base+</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>ขนาดดาวน์โหลดเล็กกว่า Base+ แม่นยำน้อยกว่าเล็กน้อย</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>สมดุลระหว่างความเร็วและความแม่นยำ ทำงานได้ดีบน CPU</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>แม่นยำกว่า Base+ แต่ช้ากว่า</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>แม่นยำที่สุด แต่ช้ากว่า SAM 2 Base+ เหมาะกับ GPU</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>เร็วที่สุด ค้นหากรอบโดยไม่มีมาสก์</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>กรอบเท่านั้น</translation>
     </message>
 </context>
 <context>

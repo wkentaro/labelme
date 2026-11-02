@@ -102,6 +102,23 @@ def test_MainWindow_config(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("old_key", ["ai_points_to_shape", "ai_box_to_shape"])
+def test_inline_config_migrates_legacy_ai_crosshair(
+    *,
+    main_win: MainWinFactory,
+    recovery_messages: list[str],
+    old_key: str,
+) -> None:
+    overrides = {"canvas": {"crosshair": {old_key: False}}, "auto_save": False}
+    win = main_win(config_overrides=overrides)
+
+    assert recovery_messages == []
+    assert win._config["canvas"]["crosshair"]["ai_segment"] is False
+    assert win._config["auto_save"] is False
+    assert win._config_overrides == overrides
+
+
+@pytest.mark.gui
 @pytest.mark.parametrize(
     "original",
     [b"labels: [cat]\nauto_save: false\nunknown: true\n", b"labels: [unclosed\n"],
