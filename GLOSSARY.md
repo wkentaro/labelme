@@ -47,12 +47,16 @@ Deriving one or more Polygon Shapes from a Mask, either while creating an AI Ass
 _Avoid_: mask-to-points conversion, contour conversion
 
 **AI Assist**:
-Interactive, prompt-driven Shape proposal on the canvas: the user places positive / negative points or draws a box on the Image and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A point prompt contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A box prompt contributes one candidate Shape with every model; finding every object like the boxed one is AI-Find All. Candidates become new Shapes unless Existing Shape Suppression is enabled.
+Interactive, prompt-driven Shape proposal on the canvas: in AI-Segment the user places positive / negative points and draws a box on the Image, and a vision model (SAM, SAM2, EfficientSAM, SAM3) returns candidate Shapes. A prompt with points, with or without a box, contributes one candidate Shape, chosen by how well it satisfies the points and then by model confidence. A box-only prompt contributes the candidate that best fills the box; finding every object like the boxed one is AI-Find All. Candidates become new Shapes unless Existing Shape Suppression is enabled.
 _Avoid_: AI annotation (too vague — covers AI-Find All too), auto-annotation, automation.
 
 **Existing Shape Suppression**:
 An optional AI Assist Setting for point prompts and box prompts. A candidate that matches an existing Shape highlights that Shape instead of creating a new Shape; unmatched candidates remain new Shapes. The Setting is disabled by default.
 _Avoid_: duplicate suppression, overlap suppression.
+
+**AI-Segment**:
+The AI Assist tool that makes one Shape from positive points (click), negative points (Shift-click), and at most one box (drag), combined in any order. A new box replaces the previous one. Enter or a Ctrl-click makes the Shape. A model that can't take points with a box refuses that prompt before inference and keeps the model Setting.
+_Avoid_: AI-Points, AI-Box (former tools it replaces), AI-Polygon, AI-Mask (older names of AI-Points).
 
 **AI-Find All**:
 Bulk Shape proposal for every matching instance in the Image. The user types one concept as the query, or draws a box around one example, and an open-vocabulary detector returns many candidate Shapes from one user action. The query is a prompt, not the label: one label entry, from the label dialog prefilled with the query, labels the whole batch, so "black dog" can be saved as "dog", and cancelling it discards the batch. Every batch, from a query or from example boxes, skips detections that overlap an existing Shape of the same Output with the label the batch takes, and reports how many it added. YOLO-World answers only text; SAM3 answers text and example boxes. Its candidates use the same Output as AI Assist. Example boxes build up: each new example, or counter-example drawn with Shift, re-runs the detection and replaces a draft of candidates. Enter asks for the batch's label and adds the draft as one undo step; Esc discards it.
