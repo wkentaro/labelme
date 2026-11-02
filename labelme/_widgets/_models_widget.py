@@ -207,10 +207,16 @@ class ModelsWidget(QtWidgets.QWidget):
         if not filename:
             return self.tr("Downloading…")
         locale = self.locale()
+        # MB and GB, like the model menu's download sizes.
+        traditional = QtCore.QLocale.DataSizeFormat.DataSizeTraditionalFormat
         return self.tr("Downloading {filename} · {done} / {total}").format(
             filename=filename,
-            done=locale.formattedDataSize(done, 1),
-            total=locale.formattedDataSize(total, 1) if total is not None else "?",
+            done=locale.formattedDataSize(done, 1, traditional),
+            total=(
+                locale.formattedDataSize(total, 1, traditional)
+                if total is not None
+                else "?"
+            ),
         )
 
     def _download_or_cancel(self, model_name: str, /) -> None:
