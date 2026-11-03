@@ -432,6 +432,11 @@
         <translation>도형의 마지막 추가 및 편집 실행 취소</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>선택</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>클릭하여 꺾은선의 점을 배치하고, %s 키를 누른 채 클릭하여 마지막 점을 배치합니다.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>실행 취소</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>편집</translation>
     </message>
     <message>
         <source>AI-Segment</source>

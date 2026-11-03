@@ -433,6 +433,11 @@
         <translation>ยกเลิกการเพิ่มและแก้ไขรูปร่างล่าสุด</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>เลือก</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>คลิกเพื่อวางจุดของเส้นหักมุม กด %s ค้างไว้แล้วคลิกเพื่อวางจุดสุดท้าย</translation>
     </message>
@@ -582,11 +587,6 @@
     <message>
         <source>Undo</source>
         <translation>ยกเลิก</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>แก้ไข</translation>
     </message>
     <message>
         <source>AI-Segment</source>

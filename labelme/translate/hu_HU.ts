@@ -436,6 +436,11 @@
         <translation>Alakzat utolsó hozzáadásának és szerkesztésének visszavonása</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Kijelölés</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Kattintson a töröttvonal pontjainak elhelyezéséhez; tartsa lenyomva a(z) %s billentyűt, és kattintson az utolsóhoz.</translation>
     </message>
@@ -597,11 +602,6 @@
     <message>
         <source>Undo</source>
         <translation>Visszavonás</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Szerkesztés</translation>
     </message>
     <message>
         <source>AI-Segment</source>

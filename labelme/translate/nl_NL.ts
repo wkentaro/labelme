@@ -432,6 +432,11 @@
         <translation>Laatste toevoeging en bewerking van vorm ongedaan maken</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Selecteren</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Klik om punten van de polylijn te plaatsen; houd %s ingedrukt en klik om het laatste te plaatsen.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>Ongedaan maken</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Bewerken</translation>
     </message>
     <message>
         <source>AI-Segment</source>

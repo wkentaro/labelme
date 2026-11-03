@@ -680,10 +680,10 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         edit_mode = mode_action(
             text=self.tr("Edit Shapes"),
-            toolbar_text=self.tr("Edit", "toolbar"),
+            toolbar_text=self.tr("Select", "toolbar"),
             slot=lambda: self._switch_canvas_mode(edit=True, create_mode=None),
             shortcut=shortcuts["edit_shape"],
-            icon="phosphor/note-pencil.svg",
+            icon="phosphor/cursor.svg",
             tip=self.tr("Move and edit the selected shapes"),
             checked=True,
         )
@@ -1184,7 +1184,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     self._actions.save,
                     self._actions.delete_file,
                     separator(),
-                    self._actions.edit_mode,
                     self._actions.duplicate,
                     self._actions.delete,
                     self._actions.undo,
@@ -1204,6 +1203,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 title=self.tr("Shape Tools"),
                 overflow_label=self.tr("More shape tools"),
                 actions=[
+                    self._actions.edit_mode,
+                    separator(),
                     *[
                         a
                         for mode, a in self._actions.draw

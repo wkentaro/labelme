@@ -432,6 +432,11 @@
         <translation>Отменить последнее добавление и редактирование фигуры</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Выбрать</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Щёлкайте, чтобы ставить точки ломаной; удерживайте %s и щёлкните, чтобы поставить последнюю.</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>Отменить</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Изменить</translation>
     </message>
     <message>
         <source>AI-Segment</source>

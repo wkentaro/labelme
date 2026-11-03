@@ -436,6 +436,11 @@
         <translation>Letztes Hinzufügen und Bearbeiten der Form rückgängig machen</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Auswählen</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Klicken, um Punkte der Linienfolge zu setzen; %s gedrückt halten und klicken, um den letzten zu setzen.</translation>
     </message>
@@ -597,11 +602,6 @@
     <message>
         <source>Undo</source>
         <translation>Rückgängig</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Bearbeiten</translation>
     </message>
     <message>
         <source>AI-Segment</source>

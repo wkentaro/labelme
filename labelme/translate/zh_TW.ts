@@ -432,6 +432,11 @@
         <translation>復原上一次新增或編輯形狀的操作</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>選取</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>按一下放置折線的點；按住 %s 並按一下以放置最後一個點。</translation>
     </message>
@@ -581,11 +586,6 @@
     <message>
         <source>Undo</source>
         <translation>復原</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>編輯</translation>
     </message>
     <message>
         <source>AI-Segment</source>

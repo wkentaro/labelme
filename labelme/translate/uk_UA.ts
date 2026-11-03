@@ -384,6 +384,11 @@
         <translation>Редагувати фігури</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Вибрати</translation>
+    </message>
+    <message>
         <source>Move and edit the selected shapes</source>
         <translation>Перемістити і відредагувати вибрані фігури</translation>
     </message>
@@ -609,11 +614,6 @@
     <message>
         <source>Delete the selected point from the polygon or LineStrip</source>
         <translation>Видаляє вибрану точку з багатокутника або ламаної</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Змінити</translation>
     </message>
     <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
