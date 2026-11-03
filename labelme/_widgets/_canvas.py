@@ -290,6 +290,8 @@ class Canvas(QtWidgets.QWidget):
     _ai_find_all_points: np.ndarray
     _ai_find_all_point_labels: np.ndarray
     _ai_find_all_draft: list[Shape]
+    # A batch waiting for its label, drawn like a draft under the dialog.
+    _ai_find_all_pending: list[Shape]
     _ai_find_all_query: str
     # Proposes the draft's run again, with the settings it was shown with.
     _ai_find_all_run: (
@@ -354,6 +356,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_progress_timer.setInterval(16)
         self._ai_progress_timer.timeout.connect(self._advance_ai_progress)
         self._clear_ai_find_all_draft()
+        self._ai_find_all_pending = []
         self.ensure_ai_model_ready = lambda _model_name: False
         self._ai_inference_failed = False
         self._ai_suppress_existing_shape_matches = False
@@ -644,6 +647,10 @@ class Canvas(QtWidgets.QWidget):
             shapes=shapes, existing_shapes=self.shapes
         )
         return shapes
+
+    def set_ai_find_all_pending(self, shapes: list[Shape], /) -> None:
+        self._ai_find_all_pending = shapes
+        self.update()
 
     def _discard_ai_find_all_draft(self) -> None:
         if not self.has_ai_find_all_draft:
@@ -2224,13 +2231,16 @@ class Canvas(QtWidgets.QWidget):
             render_shape(painter=painter, shape=preview, context=context)
 
     def _draw_ai_find_all_layer(self, painter: QtGui.QPainter, /) -> None:
-        if not self.has_ai_find_all_draft:
+        if not (self._ai_find_all_pending or self.has_ai_find_all_draft):
             return
         context = self._draft_render_context(
             selected=False, fill=True, highlight=None, rotation_highlight=None
         )
-        for shape in self._ai_find_all_draft:
+        # An example-box batch is also its draft, so it is drawn once.
+        for shape in self._ai_find_all_pending or self._ai_find_all_draft:
             render_shape(painter=painter, shape=shape, context=context)
+        if not self.has_ai_find_all_draft:
+            return
         corners = self._ai_find_all_points.reshape(-1, 2, 2)
         labels = self._ai_find_all_point_labels.reshape(-1, 2)[:, 0]
         for (p1, p2), label in zip(corners, labels, strict=True):
