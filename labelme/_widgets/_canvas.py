@@ -1652,6 +1652,19 @@ class Canvas(QtWidgets.QWidget):
             return
         self.update()
 
+    def _release_ai_find_all(self, *, event: QtGui.QMouseEvent) -> None:
+        current = self._current
+        if current is None:
+            return
+        pos = self.transform_widget_point_to_image(event.position())
+        # The release can land past the last move event.
+        self._track_drawing_cursor(pos=pos, event=event)
+        # Measure the pointer, not the corner clamped into the image.
+        dragged = (pos - current.points[0]) * self.scale
+        if dragged.manhattanLength() < QtWidgets.QApplication.startDragDistance():
+            return  # A click: the next click places the opposite corner.
+        self._extend_current_shape(current=current, event=event)
+
     def _is_final_open_path_click(self, *, event: QtGui.QMouseEvent) -> bool:
         # A polygon ends by returning to its first vertex; the modes with no
         # natural end let Ctrl mark the last click instead.
@@ -1768,8 +1781,11 @@ class Canvas(QtWidgets.QWidget):
             self._release_right(event=event)
             return
         if button == Qt.MouseButton.LeftButton:
-            if self.mode == _CanvasMode.CREATE and self.create_mode == "ai_segment":
-                self._release_ai_segment(event=event)
+            if self.mode == _CanvasMode.CREATE:
+                if self.create_mode == "ai_segment":
+                    self._release_ai_segment(event=event)
+                elif self.create_mode == "ai_find_all":
+                    self._release_ai_find_all(event=event)
             self._release_left()
             return
         if button == Qt.MouseButton.MiddleButton:

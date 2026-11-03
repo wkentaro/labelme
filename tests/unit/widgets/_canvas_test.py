@@ -2504,8 +2504,9 @@ def _drag(
     start: QtCore.QPoint,
     end: QtCore.QPoint,
     release: QtCore.QPoint | None = None,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
 ) -> None:
-    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=start)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, modifier, pos=start)
     canvas.mouseMoveEvent(
         QtGui.QMouseEvent(
             QtCore.QEvent.Type.MouseMove,
@@ -2513,10 +2514,10 @@ def _drag(
             QPointF(end),
             Qt.MouseButton.NoButton,
             Qt.MouseButton.LeftButton,
-            Qt.KeyboardModifier.NoModifier,
+            modifier,
         )
     )
-    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=release or end)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, modifier, pos=release or end)
 
 
 @pytest.mark.gui
@@ -3498,6 +3499,67 @@ def test_ai_find_all_counter_example_reruns_with_every_box(*, canvas: Canvas) ->
     assert request.points.tolist() == [[5, 5], [15, 20], [40, 5], [50, 20]]
     assert canvas.shapes == []
     assert len(canvas._ai_find_all_draft) == 2  # The latest run replaced the first.
+
+
+@pytest.mark.gui
+def test_ai_find_all_takes_dragged_boxes(*, canvas: Canvas, qtbot: QtBot) -> None:
+    _ai_find_all_canvas(canvas)
+
+    # The release lands past the last move and sets the opposite corner.
+    _drag(
+        qtbot=qtbot,
+        canvas=canvas,
+        start=QtCore.QPoint(5, 5),
+        end=QtCore.QPoint(12, 15),
+        release=QtCore.QPoint(15, 20),
+    )
+    _drag(
+        qtbot=qtbot,
+        canvas=canvas,
+        start=QtCore.QPoint(40, 5),
+        end=QtCore.QPoint(50, 20),
+        modifier=Qt.KeyboardModifier.ShiftModifier,
+    )
+
+    request = _worker(canvas).requests[-1]
+    assert request.points is not None
+    assert request.point_labels is not None
+    assert request.point_labels.tolist() == [2, 3, 4, 5]
+    assert request.points.tolist() == [[5, 5], [15, 20], [40, 5], [50, 20]]
+    assert canvas._current is None
+
+
+@pytest.mark.gui
+def test_ai_find_all_drag_past_the_image_edge_finishes_the_box(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _ai_find_all_canvas(canvas)
+
+    # The corner stops at the edge, but the pointer moved past the drag distance.
+    _drag(
+        qtbot=qtbot,
+        canvas=canvas,
+        start=QtCore.QPoint(_WIDTH - 2, 5),
+        end=QtCore.QPoint(_WIDTH + 50, 40),
+    )
+
+    assert canvas._current is None
+    assert _worker(canvas).requests
+
+
+@pytest.mark.gui
+def test_ai_find_all_click_waits_for_the_second_corner(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _ai_find_all_canvas(canvas)
+
+    # A press that moves less than the drag distance is a click.
+    _drag(
+        qtbot=qtbot, canvas=canvas, start=QtCore.QPoint(5, 5), end=QtCore.QPoint(6, 5)
+    )
+
+    assert canvas._current is not None
+    assert _worker(canvas).requests == []
 
 
 @pytest.mark.gui
