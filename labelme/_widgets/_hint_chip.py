@@ -21,8 +21,6 @@ _TEXT: Final = QtGui.QColor(255, 255, 255, 235)
 _SECONDARY_TEXT: Final = QtGui.QColor(255, 255, 255, 170)
 
 _PADDING: Final = 9.0
-_FIRST_ROW_HEIGHT: Final = 30.0
-_ROW_HEIGHT: Final = 22.0
 _ITEM_GAP: Final = 12.0
 _MARK_WIDTH: Final = 14.0
 _GAP: Final = 5.0
@@ -65,26 +63,43 @@ def _row_width(row: list[HintItem], font: QtGui.QFont, /) -> float:
     return width
 
 
+def _wrap(
+    row: list[HintItem], font: QtGui.QFont, width: float, /
+) -> list[list[HintItem]]:
+    lines: list[list[HintItem]] = [[]]
+    for item in row:
+        if lines[-1] and _row_width([*lines[-1], item], font) > width:
+            lines.append([])
+        lines[-1].append(item)
+    return lines
+
+
+def _line_height(row_index: int, /) -> float:
+    FIRST_ROW_HEIGHT: Final = 30.0
+    ROW_HEIGHT: Final = 22.0
+    return FIRST_ROW_HEIGHT if row_index == 0 else ROW_HEIGHT
+
+
 def place_hint_chip(
     *,
     rows: list[list[HintItem]],
     font: QtGui.QFont,
     anchor: QRectF,
     bounds: QRectF,
-) -> tuple[QRectF, list[list[HintItem]]]:
+) -> tuple[QRectF, list[list[list[HintItem]]]]:
     # Centered under the anchor, above it without room, else inside bounds,
-    # with a margin from both. The refine rows go first when the chip is
-    # wider than bounds, as in a narrow window or a long translation.
+    # with a margin from both. A row wraps between its items when the chip
+    # would be wider than bounds, as in a narrow window or a long translation.
     MARGIN: Final = 8.0
     fonts = _fonts(font)
-    while True:
-        width = 2 * _PADDING + max(
-            _row_width(row, fonts[min(i, 1)]) for i, row in enumerate(rows)
-        )
-        if len(rows) == 1 or width <= bounds.width() - 2 * MARGIN:
-            break
-        rows = rows[:-1]
-    height = _FIRST_ROW_HEIGHT + _ROW_HEIGHT * (len(rows) - 1)
+    room = bounds.width() - 2 * (MARGIN + _PADDING)
+    wrapped = [_wrap(row, fonts[min(i, 1)], room) for i, row in enumerate(rows)]
+    width = 2 * _PADDING + max(
+        _row_width(line, fonts[min(i, 1)])
+        for i, lines in enumerate(wrapped)
+        for line in lines
+    )
+    height = sum(_line_height(i) * len(lines) for i, lines in enumerate(wrapped))
     x = anchor.center().x() - width / 2
     x = max(bounds.left() + MARGIN, min(x, bounds.right() - MARGIN - width))
     y = anchor.bottom() + MARGIN
@@ -94,14 +109,14 @@ def place_hint_chip(
         y = bounds.bottom() - MARGIN - height
     # A suggestion scrolled out of view still gets its hint.
     y = max(bounds.top() + MARGIN, min(y, bounds.bottom() - MARGIN - height))
-    return QRectF(x, y, width, height), rows
+    return QRectF(x, y, width, height), wrapped
 
 
 def paint_hint_chip(
     painter: QtGui.QPainter,
     /,
     *,
-    rows: list[list[HintItem]],
+    lines: list[list[list[HintItem]]],
     font: QtGui.QFont,
     rect: QRectF,
 ) -> None:
@@ -111,24 +126,23 @@ def paint_hint_chip(
     painter.setBrush(_BACKGROUND)
     painter.drawRoundedRect(rect.adjusted(0.5, 0.5, -0.5, -0.5), RADIUS, RADIUS)
     fonts = _fonts(font)
-    for i, row in enumerate(rows):
-        if i == 0:
-            center_y = rect.top() + _FIRST_ROW_HEIGHT / 2
-        else:
-            # Rows after the first say how to refine; a hairline sets them off.
-            top = rect.top() + _FIRST_ROW_HEIGHT + _ROW_HEIGHT * (i - 1)
+    top = rect.top()
+    for i, row_lines in enumerate(lines):
+        if i > 0:
+            # Rows after the first are secondary; a hairline sets them off.
             painter.setPen(QtGui.QPen(_HAIRLINE, 1.0))
             painter.drawLine(
                 QPointF(rect.left() + 1, top), QPointF(rect.right() - 1, top)
             )
-            center_y = top + _ROW_HEIGHT / 2
-        _paint_row(
-            painter,
-            row=row,
-            font=fonts[min(i, 1)],
-            color=_TEXT if i == 0 else _SECONDARY_TEXT,
-            origin=QPointF(rect.left() + _PADDING, center_y),
-        )
+        for line in row_lines:
+            _paint_row(
+                painter,
+                row=line,
+                font=fonts[min(i, 1)],
+                color=_TEXT if i == 0 else _SECONDARY_TEXT,
+                origin=QPointF(rect.left() + _PADDING, top + _line_height(i) / 2),
+            )
+            top += _line_height(i)
     painter.restore()
 
 

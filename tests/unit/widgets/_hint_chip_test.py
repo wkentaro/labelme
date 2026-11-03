@@ -53,20 +53,22 @@ def test_place_hint_chip_stays_inside_the_side_edges() -> None:
 
 @pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
-def test_place_hint_chip_drops_the_refine_rows_when_too_wide() -> None:
-    rows = [*_ROWS, [HintItem("Click to include " * 4)]]
+def test_place_hint_chip_wraps_a_row_that_is_too_wide() -> None:
+    # Either item fits alone, but not both on one line.
+    rows = [
+        *_ROWS,
+        [HintItem("Click to include " * 3), HintItem("Click to exclude " * 3)],
+    ]
+    anchor = QRectF(0, 0, 10, 10)
 
-    wide, kept = place_hint_chip(
-        rows=rows,
-        font=QtGui.QFont(),
-        anchor=QRectF(0, 0, 10, 10),
-        bounds=QRectF(0, 0, 10_000, 300),
+    wide, wrapped = place_hint_chip(
+        rows=rows, font=QtGui.QFont(), anchor=anchor, bounds=QRectF(0, 0, 10_000, 300)
     )
-    assert kept == rows
+    assert wrapped == [[row] for row in rows]
     narrow = QRectF(0, 0, wide.width() - 1, 300)
-    rect, kept = place_hint_chip(
-        rows=rows, font=QtGui.QFont(), anchor=QRectF(0, 0, 10, 10), bounds=narrow
+    rect, wrapped = place_hint_chip(
+        rows=rows, font=QtGui.QFont(), anchor=anchor, bounds=narrow
     )
 
-    assert kept == _ROWS
+    assert wrapped == [[_ROWS[0]], [[item] for item in rows[1]]]
     assert narrow.contains(rect)

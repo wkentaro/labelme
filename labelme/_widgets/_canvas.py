@@ -2208,7 +2208,7 @@ class Canvas(QtWidgets.QWidget):
             self.transform_image_point_to_widget(bottom_right),
         )
         font = self.font()
-        rect, rows = place_hint_chip(
+        rect, lines = place_hint_chip(
             rows=rows,
             font=font,
             anchor=anchor,
@@ -2218,7 +2218,7 @@ class Canvas(QtWidgets.QWidget):
             return  # A ring frame elsewhere.
         painter.save()
         painter.resetTransform()
-        paint_hint_chip(painter, rows=rows, font=font, rect=rect)
+        paint_hint_chip(painter, lines=lines, font=font, rect=rect)
         painter.restore()
 
     def moveEvent(self, event: QtGui.QMoveEvent, /) -> None:
