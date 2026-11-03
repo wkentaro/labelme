@@ -223,6 +223,30 @@
         <translation>クリックで頂点を追加</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>破棄</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>クリックで含める</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>クリックで除外</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d 件を追加</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>ドラッグで除外</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>もう一方の角を指定してください。Shiftを押しながら操作すると正方形になります。</translation>
     </message>

@@ -223,6 +223,30 @@
         <translation>Nhấn để thêm điểm</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Hủy bỏ</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Thêm</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Nhấp để bao gồm</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Nhấp để loại trừ</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Thêm %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Kéo để loại trừ</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Chọn góc còn lại. Giữ Shift để vẽ hình vuông.</translation>
     </message>

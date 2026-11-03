@@ -223,6 +223,30 @@
         <translation>점 추가를 위해 클릭</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>폐기</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>추가</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>클릭하여 포함</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>클릭하여 제외</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d개 추가</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>드래그하여 제외</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>다른 모서리를 선택하세요. 정사각형을 그리려면 Shift를 누른 상태로 조작하세요.</translation>
     </message>

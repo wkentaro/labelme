@@ -223,6 +223,30 @@
         <translation>单击以添加顶点</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>丢弃</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>单击以包含</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>单击以排除</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>添加 %d 个</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>拖动以排除</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>选择另一个角。按住Shift可绘制正方形。</translation>
     </message>

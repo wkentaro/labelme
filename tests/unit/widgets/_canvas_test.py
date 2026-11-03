@@ -12,6 +12,7 @@ import osam
 import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
+from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
@@ -1292,6 +1293,8 @@ def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
     *, canvas: Canvas
 ) -> None:
     canvas.set_editing(value=False, create_mode="ai_find_all")
+    # Its chip would cover the probes.
+    canvas._ai_suggestion_hint = lambda: None  # ty: ignore[invalid-assignment]
     canvas._ai_find_all_draft = [
         Shape(shape_type="rectangle", points=np.array([[10.0, 10.0], [40.0, 40.0]]))
     ]
@@ -3754,3 +3757,117 @@ def test_ai_find_all_clearing_the_draft_drops_a_pending_box(*, canvas: Canvas) -
     assert not canvas.has_ai_find_all_draft
     assert not canvas.is_ai_finalizing
     assert not canvas.is_drawing
+
+
+def _hint_texts(canvas: Canvas, /) -> list[list[str]] | None:
+    hint = canvas._ai_suggestion_hint()
+    if hint is None:
+        return None
+    return [[item.text for item in row] for row in hint[1]]
+
+
+@pytest.mark.gui
+def test_ai_segment_hint_shows_while_a_suggestion_waits(*, canvas: Canvas) -> None:
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(20, 20),), point_labels=(1,)
+    )
+    assert _hint_texts(canvas) is None  # The first preview has not landed.
+
+    canvas._ai_segment_preview = [
+        Shape(
+            shape_type="polygon",
+            points=np.array([[10, 10], [30, 10], [30, 30]], dtype=np.float64),
+            closed=True,
+        )
+    ]
+    assert _hint_texts(canvas) == [
+        ["Add", "Discard"],
+        ["Click to include", "Click to exclude"],
+    ]
+
+    canvas._ai_segment_dragging = True
+    assert _hint_texts(canvas) is None
+    canvas._ai_segment_dragging = False
+
+    canvas.set_editing(value=False, create_mode="polygon")
+    assert _hint_texts(canvas) is None
+
+
+@pytest.mark.gui
+def test_ai_find_all_hint_counts_the_results(*, canvas: Canvas) -> None:
+    _ai_find_all_canvas(canvas)
+    assert _hint_texts(canvas) is None
+
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+
+    assert _hint_texts(canvas) == [["Add 2", "Discard"], ["Drag to exclude"]]
+    canvas._current = _DraftShape(
+        shape_type="rectangle", points=(QPointF(40, 5),), point_labels=(1,)
+    )
+    assert _hint_texts(canvas) is None  # A box being drawn.
+    canvas._current = None
+    canvas.set_ai_find_all_pending(canvas._ai_find_all_draft)
+    assert _hint_texts(canvas) is None  # The label dialog is open.
+
+
+@pytest.mark.gui
+def test_ai_hint_stays_in_the_visible_part_of_a_zoomed_canvas(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    rects: list[QtCore.QRectF] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, rect, **_: rects.append(rect),
+    )
+    scroll = QtWidgets.QScrollArea()
+    qtbot.addWidget(scroll)
+    scroll.setWidget(canvas)
+    scroll.resize(300, 200)
+    canvas.scale = 10.0  # The 100x50 image is 1000x500 on screen.
+    canvas.adjustSize()
+    scroll.show()
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(5, 5),), point_labels=(1,)
+    )
+    # The suggestion's bottom edge sits at the bottom of the visible part.
+    canvas._ai_segment_preview = [
+        Shape(
+            shape_type="polygon",
+            points=np.array([[2, 2], [10, 2], [10, 18]], dtype=np.float64),
+            closed=True,
+        )
+    ]
+
+    qtbot.waitExposed(scroll)
+    canvas.grab()
+
+    visible = QtCore.QRectF(canvas.visibleRegion().boundingRect())
+    assert visible.height() < canvas.height()
+    assert rects
+    assert visible.contains(rects[-1])
+    scroll.takeWidget()  # The fixture owns the canvas.
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", ["ai_segment", "ai_find_all"])
+def test_ai_hint_anchors_under_the_drawn_circle(*, canvas: Canvas, mode: str) -> None:
+    canvas.set_editing(value=False, create_mode=mode)
+    # Center (50, 20), rim (60, 20): the circle reaches down to y=30.
+    circle = Shape(shape_type="circle", points=np.array([[50.0, 20.0], [60.0, 20.0]]))
+    if mode == "ai_segment":
+        canvas._current = _DraftShape(
+            shape_type="points", points=(QPointF(50, 20),), point_labels=(1,)
+        )
+        canvas._ai_segment_preview = [circle]
+    else:
+        canvas._ai_find_all_draft = [circle]
+        canvas._ai_find_all_points = np.array([[45.0, 15.0], [55.0, 25.0]])
+        canvas._ai_find_all_point_labels = np.array([2, 3])
+
+    hint = canvas._ai_suggestion_hint()
+
+    assert hint is not None
+    (_, top), (_, bottom) = ((p.x(), p.y()) for p in hint[0])
+    assert (top, bottom) == pytest.approx((10.0, 30.0))

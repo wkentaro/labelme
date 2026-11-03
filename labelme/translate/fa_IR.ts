@@ -223,6 +223,30 @@
         <translation>کلیک برای افزودن نقطه</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>دور انداختن</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>افزودن</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>کلیک برای افزودن</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>کلیک برای حذف</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>افزودن %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>کشیدن برای حذف</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>گوشهٔ دیگر را انتخاب کنید. برای مربع، Shift را نگه دارید.</translation>
     </message>

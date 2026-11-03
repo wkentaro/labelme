@@ -223,6 +223,30 @@
         <translation>Klik om punt toe te voegen</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Verwijder</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Voeg toe</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Klik om op te nemen</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Klik om uit te sluiten</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Voeg %d toe</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Sleep om uit te sluiten</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Kies de andere hoek. Houd Shift ingedrukt voor een vierkant.</translation>
     </message>

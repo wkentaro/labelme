@@ -191,6 +191,30 @@
         <translation>Tartsa lenyomva a(z) %s billentyűt, és kattintson egy pont hozzáadásához az élen</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Elvetés</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Kattintás: belefoglalás</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Kattintás: kizárás</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d hozzáadása</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Húzás: kizárás</translation>
+    </message>
+    <message>
         <source>Click center point for circle</source>
         <translation>Kattintson a kör középpontjára</translation>
     </message>

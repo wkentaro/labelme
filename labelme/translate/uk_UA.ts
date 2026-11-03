@@ -191,6 +191,30 @@
         <translation>Утримуйте %s і клацніть, щоб додати точку на ребрі</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Відхилити</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Додати</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Клацніть, щоб включити</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Клацніть, щоб виключити</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Додати %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Перетягніть, щоб виключити</translation>
+    </message>
+    <message>
         <source>Click center point for circle</source>
         <translation>Натисніть центральну точку для кола</translation>
     </message>

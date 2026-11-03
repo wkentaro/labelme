@@ -223,6 +223,30 @@
         <translation>Klik untuk menambahkan titik</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Buang</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Tambah</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Klik untuk menyertakan</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Klik untuk mengecualikan</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Tambah %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Seret untuk mengecualikan</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Pilih sudut lainnya. Tahan Shift untuk membuat persegi.</translation>
     </message>

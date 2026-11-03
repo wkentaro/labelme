@@ -191,6 +191,30 @@
         <translation>%s gedrückt halten und klicken, um einen Punkt auf der Kante hinzuzufügen</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Verwerfen</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hinzufügen</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Klicken zum Einschließen</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Klicken zum Ausschließen</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d hinzufügen</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Ziehen zum Ausschließen</translation>
+    </message>
+    <message>
         <source>Click center point for circle</source>
         <translation>Mittelpunkt des Kreises anklicken</translation>
     </message>
