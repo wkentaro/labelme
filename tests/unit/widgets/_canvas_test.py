@@ -1266,6 +1266,27 @@ def test_slow_ai_segment_preview_rings_last_placed_point(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize(
+    "leave", [{"value": False, "create_mode": "polygon"}, {"value": True}]
+)
+def test_slow_ai_segment_preview_ring_ends_on_leaving_ai_segment(
+    *, canvas: Canvas, qtbot: QtBot, leave: dict[str, object]
+) -> None:
+    _worker(canvas).paused = True
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(30, 20),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    qtbot.waitUntil(lambda: canvas._ai_progress_rect() is not None, timeout=1000)
+
+    canvas.set_editing(**leave)  # ty: ignore[invalid-argument-type]
+
+    assert canvas._ai_progress_rect() is None
+    qtbot.waitUntil(lambda: not canvas._ai_progress_timer.isActive(), timeout=1000)
+
+
+@pytest.mark.gui
 def test_points_preview_hides_failed_and_empty_predictions(
     *,
     canvas: Canvas,

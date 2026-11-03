@@ -779,12 +779,20 @@ class Canvas(QtWidgets.QWidget):
         )
 
     def _ai_pending_job(self) -> _AiJob | None:
-        # The run the user is waiting on: a finalize, else a preview whose
-        # inputs are still the current ones (Esc or a mode change drops them).
+        # The run the user is waiting on: a finalize, else a preview that is
+        # still on screen. Its key alone is not enough: the key only refreshes
+        # while AI-Segment paints, so a tool switch would leave it current.
         if self.is_ai_finalizing:
             return self._ai_finalize_job
         job = self._ai_preview_job
-        return job if job is not None and self._is_current_preview(job) else None
+        if (
+            job is None
+            or self.mode != _CanvasMode.CREATE
+            or self.create_mode != "ai_segment"
+            or not self._is_current_preview(job)
+        ):
+            return None
+        return job
 
     def _is_current_preview(self, job: _AiJob, /) -> bool:
         return job.preview_key == self._ai_segment_preview_key
