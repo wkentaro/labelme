@@ -12,6 +12,7 @@ import osam
 import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
+from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
@@ -3808,3 +3809,42 @@ def test_ai_find_all_hint_counts_the_results(*, canvas: Canvas) -> None:
     canvas._current = None
     canvas.set_ai_find_all_pending(canvas._ai_find_all_draft)
     assert _hint_texts(canvas) is None  # The label dialog is open.
+
+
+@pytest.mark.gui
+def test_ai_hint_stays_in_the_visible_part_of_a_zoomed_canvas(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    rects: list[QtCore.QRectF] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, rect, **_: rects.append(rect),
+    )
+    scroll = QtWidgets.QScrollArea()
+    qtbot.addWidget(scroll)
+    scroll.setWidget(canvas)
+    scroll.resize(300, 200)
+    canvas.scale = 10.0  # The 100x50 image is 1000x500 on screen.
+    canvas.adjustSize()
+    scroll.show()
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(5, 5),), point_labels=(1,)
+    )
+    # The suggestion's bottom edge sits at the bottom of the visible part.
+    canvas._ai_segment_preview = [
+        Shape(
+            shape_type="polygon",
+            points=np.array([[2, 2], [10, 2], [10, 18]], dtype=np.float64),
+            closed=True,
+        )
+    ]
+
+    qtbot.waitExposed(scroll)
+    canvas.grab()
+
+    visible = QtCore.QRectF(canvas.visibleRegion().boundingRect())
+    assert visible.height() < canvas.height()
+    assert rects
+    assert visible.contains(rects[-1])
+    scroll.takeWidget()  # The fixture owns the canvas.

@@ -2205,7 +2205,7 @@ class Canvas(QtWidgets.QWidget):
             rows=rows,
             font=font,
             anchor=anchor,
-            bounds=QRectF(self.rect()),
+            bounds=QRectF(self.visibleRegion().boundingRect() or self.rect()),
         )
         if not rect.toAlignedRect().intersects(self._dirty_rect):
             return  # A ring frame elsewhere.
@@ -2213,6 +2213,13 @@ class Canvas(QtWidgets.QWidget):
         painter.resetTransform()
         paint_hint_chip(painter, rows=rows, font=font, rect=rect)
         painter.restore()
+
+    def moveEvent(self, event: QtGui.QMoveEvent, /) -> None:
+        # Scrolling moves the canvas and repaints only the exposed strip, but
+        # the hint is placed within the visible part, so it moves too.
+        super().moveEvent(event)
+        if self._ai_suggestion_hint() is not None:
+            self.update()
 
     def _ai_suggestion_hint(
         self,
