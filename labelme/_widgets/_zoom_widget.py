@@ -52,7 +52,8 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         value = super().valueFromText(text)
         # Stateless on purpose: tracking which text the user typed broke on
         # undo, revert and same-value refits.
-        if self.textFromValue(value) == self.textFromValue(self.value()):
+        shown = super().valueFromText(self.textFromValue(self.value()))
+        if value == shown:
             return self.value()
         return value
 

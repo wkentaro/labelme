@@ -160,3 +160,14 @@ def test_value_set_after_typing_ends_the_edit(
     widget.setValue(188.4)
     qtbot.keyClick(widget, Qt.Key.Key_Return)
     assert widget.value() == 188.4
+
+
+@pytest.mark.parametrize(("start", "typed"), [(100, "100.4"), (188.4, "188.3")])
+def test_typed_value_beyond_the_display_precision_applies(
+    *, qtbot: QtBot, widget: ZoomWidget, start: float, typed: str
+) -> None:
+    widget.setValue(start)
+    widget.lineEdit().selectAll()
+    qtbot.keyClicks(widget, typed)
+    qtbot.keyClick(widget, Qt.Key.Key_Return)
+    assert widget.value() == float(typed)
