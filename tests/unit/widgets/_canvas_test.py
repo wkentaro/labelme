@@ -3848,3 +3848,26 @@ def test_ai_hint_stays_in_the_visible_part_of_a_zoomed_canvas(
     assert rects
     assert visible.contains(rects[-1])
     scroll.takeWidget()  # The fixture owns the canvas.
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", ["ai_segment", "ai_find_all"])
+def test_ai_hint_anchors_under_the_drawn_circle(*, canvas: Canvas, mode: str) -> None:
+    canvas.set_editing(value=False, create_mode=mode)
+    # Center (50, 20), rim (60, 20): the circle reaches down to y=30.
+    circle = Shape(shape_type="circle", points=np.array([[50.0, 20.0], [60.0, 20.0]]))
+    if mode == "ai_segment":
+        canvas._current = _DraftShape(
+            shape_type="points", points=(QPointF(50, 20),), point_labels=(1,)
+        )
+        canvas._ai_segment_preview = [circle]
+    else:
+        canvas._ai_find_all_draft = [circle]
+        canvas._ai_find_all_points = np.array([[45.0, 15.0], [55.0, 25.0]])
+        canvas._ai_find_all_point_labels = np.array([2, 3])
+
+    hint = canvas._ai_suggestion_hint()
+
+    assert hint is not None
+    (_, top), (_, bottom) = ((p.x(), p.y()) for p in hint[0])
+    assert (top, bottom) == pytest.approx((10.0, 30.0))

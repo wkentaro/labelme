@@ -55,6 +55,13 @@ _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
 _NEGATIVE_PALETTE: Final[Palette] = Palette.from_rgb(NEGATIVE_RGB)
 
 
+def _drawn_corners(shape: Shape, /) -> np.ndarray:
+    # Where the shape is drawn, not its raw points: a circle's points are its
+    # center and a point on its rim.
+    rect = _shape_bounds(shape=shape)
+    return np.array([[rect.left(), rect.top()], [rect.right(), rect.bottom()]])
+
+
 def _bounding_corners(points: list[np.ndarray], /) -> tuple[QPointF, QPointF]:
     stacked = np.concatenate(points)
     return QPointF(*stacked.min(axis=0)), QPointF(*stacked.max(axis=0))
@@ -2238,7 +2245,7 @@ class Canvas(QtWidgets.QWidget):
                 or (self._ai_segment_dragging)
             ):
                 return None
-            points = [s.points for s in self._ai_segment_preview]
+            points = [_drawn_corners(s) for s in self._ai_segment_preview]
             points.append(np.array([[p.x(), p.y()] for p in current.points]))
             return _bounding_corners(points), [
                 [HintItem(self.tr("Add"), key=RETURN_GLYPH), discard],
@@ -2263,7 +2270,8 @@ class Canvas(QtWidgets.QWidget):
             if draft:
                 add = self.tr("Add %d") % len(draft)
                 first.insert(0, HintItem(add, key=RETURN_GLYPH))
-            points = [s.points for s in draft] + [self._ai_find_all_points]
+            points = [_drawn_corners(s) for s in draft]
+            points.append(self._ai_find_all_points)
             return _bounding_corners(points), [
                 first,
                 [
