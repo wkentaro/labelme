@@ -2571,8 +2571,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._set_zoom(value=100, pos=None)
 
     def _add_zoom(self, *, increment: float, pos: QtCore.QPointF | None) -> None:
-        # Multiplicative stepping on a float widget; the QDoubleSpinBox rounds to
-        # its decimal precision, so no integer ceil/floor clamping is needed.
         zoom_value = self._canvas_widgets.zoom_widget.value() * increment
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=zoom_value, pos=pos)
