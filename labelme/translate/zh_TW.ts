@@ -223,6 +223,14 @@
         <translation>點擊以添加點</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>拖曳畫框</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>拖曳框住一個範例</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>丟棄</translation>
     </message>

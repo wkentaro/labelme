@@ -223,6 +223,14 @@
         <translation>کلیک برای افزودن نقطه</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>کشیدن یک کادر</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>کشیدن کادر دور یک نمونه</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>دور انداختن</translation>
     </message>

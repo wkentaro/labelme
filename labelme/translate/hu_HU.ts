@@ -191,6 +191,14 @@
         <translation>Tartsa lenyomva a(z) %s billentyűt, és kattintson egy pont hozzáadásához az élen</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Húzás: keret</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Húzzon keretet egy minta köré</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Elvetés</translation>
     </message>

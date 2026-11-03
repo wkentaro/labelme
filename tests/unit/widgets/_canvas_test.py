@@ -4,6 +4,7 @@ import dataclasses
 import math
 import weakref
 from collections.abc import Callable
+from pathlib import Path
 from typing import Final
 from unittest.mock import Mock
 
@@ -18,6 +19,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+import labelme
 from labelme._automation import InferenceRequest
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._shape import Shape
@@ -977,6 +979,7 @@ def ai_existing_shape_highlight_harness(
     canvas.set_ai_existing_shape_suppression(enabled=True)
     canvas.create_mode = "ai_segment"
     canvas.set_editing(value=False)
+    canvas._ai_prompt_hint_due = False  # The prompts below skip the press.
     canvas._current = _DraftShape(
         shape_type="points",
         points=(QPointF(0, 0), QPointF(10, 10)),
@@ -1293,8 +1296,9 @@ def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
     *, canvas: Canvas
 ) -> None:
     canvas.set_editing(value=False, create_mode="ai_find_all")
-    # Its chip would cover the probes.
+    # The chips would cover the probes.
     canvas._ai_suggestion_hint = lambda: None  # ty: ignore[invalid-assignment]
+    canvas._ai_prompt_hint = lambda: None  # ty: ignore[invalid-assignment]
     canvas._ai_find_all_draft = [
         Shape(shape_type="rectangle", points=np.array([[10.0, 10.0], [40.0, 40.0]]))
     ]
@@ -3871,3 +3875,134 @@ def test_ai_hint_anchors_under_the_drawn_circle(*, canvas: Canvas, mode: str) ->
     assert hint is not None
     (_, top), (_, bottom) = ((p.x(), p.y()) for p in hint[0])
     assert (top, bottom) == pytest.approx((10.0, 30.0))
+
+
+def _painted_hint_texts(
+    canvas: Canvas, monkeypatch: pytest.MonkeyPatch, /
+) -> list[list[str]] | None:
+    painted: list[list[list[str]]] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, lines, **_: painted.append(
+            [[item.text for line in row for item in line] for row in lines]
+        ),
+    )
+    canvas.grab()
+    return painted[-1] if painted else None
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("mode", "texts"),
+    [
+        ("ai_segment", [["Click to include", "Click to exclude", "Drag a box"]]),
+        ("ai_find_all", [["Drag around one example"]]),
+    ],
+)
+def test_ai_prompt_hint_shows_until_the_first_prompt(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    mode: str,
+    texts: list[list[str]],
+) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.resize(640, 400)  # Wide enough for one line in any font.
+    canvas.show()
+    canvas.set_editing(value=False, create_mode=mode)
+    assert _painted_hint_texts(canvas, monkeypatch) == texts
+
+    pos = canvas.transform_image_point_to_widget(QPointF(20, 20)).toPoint()
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=pos)
+    assert _painted_hint_texts(canvas, monkeypatch) is None
+
+    canvas.set_editing(value=False, create_mode="polygon")
+    assert _painted_hint_texts(canvas, monkeypatch) is None
+    canvas.set_editing(value=False, create_mode=mode)
+    assert _painted_hint_texts(canvas, monkeypatch) == texts
+
+
+@pytest.mark.gui
+def test_ai_prompt_hint_yields_to_a_waiting_suggestion(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(20, 20),), point_labels=(1,)
+    )
+    canvas._ai_segment_preview = [
+        Shape(
+            shape_type="polygon",
+            points=np.array([[10, 10], [30, 10], [30, 30]], dtype=np.float64),
+            closed=True,
+        )
+    ]
+
+    hint = _painted_hint_texts(canvas, monkeypatch)
+    assert hint is not None
+    assert hint[0] == ["Add", "Discard"]
+
+
+@pytest.mark.gui
+def test_ai_prompt_hint_wraps_inside_a_narrow_view(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    rects: list[QtCore.QRectF] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, rect, **_: rects.append(rect),
+    )
+    canvas.resize(240, 240)  # Narrow, but tall enough for the wrapped lines.
+    canvas.set_editing(value=False, create_mode="ai_segment")
+
+    canvas.grab()
+
+    assert rects
+    assert QtCore.QRectF(canvas.rect()).contains(rects[-1])
+
+
+@pytest.mark.gui
+def test_ai_prompt_hint_repaints_when_the_tool_is_picked_again(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.show()
+    qtbot.waitExposed(canvas)
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    QtWidgets.QApplication.processEvents()
+    painted: list[QtGui.QPaintEvent] = []
+    monkeypatch.setattr(canvas, "paintEvent", painted.append)
+
+    canvas.set_editing(value=False, create_mode="ai_segment")
+
+    qtbot.waitUntil(lambda: bool(painted))
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", ["ai_segment", "ai_find_all"])
+def test_ai_prompt_hint_fits_a_narrow_view_in_a_long_translation(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch, mode: str
+) -> None:
+    translator = QtCore.QTranslator()
+    assert translator.load(
+        str(Path(labelme.__file__).parent / "translate" / "pl_PL.qm")
+    )
+    QtCore.QCoreApplication.installTranslator(translator)
+    rects: list[QtCore.QRectF] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, rect, **_: rects.append(rect),
+    )
+    canvas.resize(240, 240)  # Narrow, but tall enough for the wrapped lines.
+    canvas.set_editing(value=False, create_mode=mode)
+
+    try:
+        canvas.grab()
+    finally:
+        QtCore.QCoreApplication.removeTranslator(translator)
+
+    assert rects
+    assert QtCore.QRectF(canvas.rect()).contains(rects[-1])

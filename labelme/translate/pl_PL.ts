@@ -223,6 +223,14 @@
         <translation>Kliknij, aby dodać punkt</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Przeciągnij ramkę</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Przeciągnij ramkę wokół jednego przykładu</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Odrzuć</translation>
     </message>

@@ -223,6 +223,14 @@
         <translation>점 추가를 위해 클릭</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>드래그하여 상자 그리기</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>예시 하나를 드래그하여 감싸기</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>폐기</translation>
     </message>

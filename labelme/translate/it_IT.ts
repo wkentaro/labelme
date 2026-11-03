@@ -223,6 +223,14 @@
         <translation>Clicca per aggiungere un punto</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Trascina un riquadro</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Trascina attorno a un esempio</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Elimina</translation>
     </message>

@@ -191,6 +191,14 @@
         <translation>Κρατήστε πατημένο το %s και κάντε κλικ για προσθήκη σημείου στην ακμή</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Σύρετε ένα πλαίσιο</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Σύρετε γύρω από ένα παράδειγμα</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Απόρριψη</translation>
     </message>
