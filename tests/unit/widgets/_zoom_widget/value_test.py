@@ -97,3 +97,23 @@ def test_size_hint_fits_the_widest_text(*, widget: ZoomWidget) -> None:
     text_width = widget.fontMetrics().horizontalAdvance(widget.text())
     assert widget.sizeHint().width() > text_width
     assert widget.minimumSizeHint() == widget.sizeHint()
+
+
+@pytest.mark.parametrize(
+    ("start", "typed", "key", "expected"),
+    [(1000, "125", Qt.Key.Key_Up, 137.5), (1, "110", Qt.Key.Key_Down, 100)],
+)
+def test_step_from_typed_text_at_the_range_ends(
+    *,
+    qtbot: QtBot,
+    widget: ZoomWidget,
+    start: float,
+    typed: str,
+    key: Qt.Key,
+    expected: float,
+) -> None:
+    widget.setValue(start)
+    widget.lineEdit().selectAll()
+    qtbot.keyClicks(widget, typed)
+    qtbot.keyClick(widget, key)
+    assert widget.value() == pytest.approx(expected)

@@ -80,10 +80,12 @@ class ZoomWidget(QtWidgets.QAbstractSpinBox):
         return self.sizeHint()
 
     def stepEnabled(self) -> QtWidgets.QAbstractSpinBox.StepEnabledFlag:
+        # Typed text not yet confirmed counts, so a step can start from it.
+        value = min(max(self._pending_value(), _MIN_PERCENT), _MAX_PERCENT)
         flags = QtWidgets.QAbstractSpinBox.StepEnabledFlag.StepNone
-        if self._value < _MAX_PERCENT:
+        if value < _MAX_PERCENT:
             flags |= QtWidgets.QAbstractSpinBox.StepEnabledFlag.StepUpEnabled
-        if self._value > _MIN_PERCENT:
+        if value > _MIN_PERCENT:
             flags |= QtWidgets.QAbstractSpinBox.StepEnabledFlag.StepDownEnabled
         return flags
 
@@ -96,10 +98,13 @@ class ZoomWidget(QtWidgets.QAbstractSpinBox):
         return QtGui.QValidator.State.Invalid, text, pos
 
     def _commit_text(self) -> None:
+        self.setValue(self._pending_value())
+
+    def _pending_value(self) -> float:
         text = self.lineEdit().text()
         # Unedited text would round the exact value, and invalid text restores it.
         parsed = None if text == self._format(self._value) else self._parse(text)
-        self.setValue(self._value if parsed is None else parsed)
+        return self._value if parsed is None else parsed
 
     def _format(self, value: float, /) -> str:
         # Three significant digits: 1.23%, 12.3%, 188%.
