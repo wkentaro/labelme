@@ -13,6 +13,10 @@ from .._utils import modifier_text
 # fit at this zoom.
 MIN_ZOOM: Final = 1.0
 
+# One zoom step, in or out. Multiplicative, so a step changes the view by the
+# same share at every zoom.
+ZOOM_STEP_FACTOR: Final = 1.1
+
 
 class ZoomWidget(QtWidgets.QDoubleSpinBox):
     """Zoom percent, kept exact and shown to three significant digits.
@@ -63,10 +67,9 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         return value
 
     def stepBy(self, steps: int, /) -> None:
-        # Typed text not yet confirmed is the starting point. Multiplicative, so
-        # a step changes the view by the same share at every zoom.
+        # Typed text not yet confirmed is the starting point.
         self.interpretText()
-        self.setValue(self.value() * 1.1**steps)
+        self.setValue(self.value() * ZOOM_STEP_FACTOR**steps)
 
     def stepEnabled(self) -> QtWidgets.QAbstractSpinBox.StepEnabledFlag:
         if self.valueFromText(self.cleanText()) == self.value():

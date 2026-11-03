@@ -21,11 +21,13 @@ from ._status import StatusStats
 from ._tool_bar import ToolBar
 from ._unique_label_qlist_widget import UniqueLabelQListWidget
 from ._zoom_widget import MIN_ZOOM
+from ._zoom_widget import ZOOM_STEP_FACTOR
 from ._zoom_widget import ZoomWidget
 
 __all__ = [
     "LABEL_COLOR_ROLE",
     "MIN_ZOOM",
+    "ZOOM_STEP_FACTOR",
     "AiAssistedAnnotationWidget",
     "AiTextToAnnotationWidget",
     "AiToolGroup",

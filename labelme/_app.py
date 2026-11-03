@@ -66,6 +66,7 @@ from ._utils import ImageDecodeRequirement
 from ._utils import get_image_decode_requirement
 from ._widgets import LABEL_COLOR_ROLE
 from ._widgets import MIN_ZOOM
+from ._widgets import ZOOM_STEP_FACTOR
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import AiToolGroup
@@ -804,14 +805,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoom_in = image_action(
             text=self.tr("Zoom &In"),
-            slot=lambda _: self._add_zoom(increment=1.1, pos=None),
+            slot=lambda _: self._add_zoom(steps=1, pos=None),
             shortcut=shortcuts["zoom_in"],
             icon="phosphor/magnifying-glass-plus.svg",
             tip=self.tr("Make the image appear larger"),
         )
         zoom_out = image_action(
             text=self.tr("&Zoom Out"),
-            slot=lambda _: self._add_zoom(increment=0.9, pos=None),
+            slot=lambda _: self._add_zoom(steps=-1, pos=None),
             shortcut=shortcuts["zoom_out"],
             icon="phosphor/magnifying-glass-minus.svg",
             tip=self.tr("Make the image appear smaller"),
@@ -2571,13 +2572,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=100, pos=None)
 
-    def _add_zoom(self, *, increment: float, pos: QtCore.QPointF | None) -> None:
-        zoom_value = self._canvas_widgets.zoom_widget.value() * increment
+    def _add_zoom(self, *, steps: float, pos: QtCore.QPointF | None) -> None:
+        # Steps in and out cancel, so zooming in then out returns to the start.
+        zoom_value = self._canvas_widgets.zoom_widget.value() * ZOOM_STEP_FACTOR**steps
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=zoom_value, pos=pos)
 
     def _zoom_requested(self, delta: int, pos: QtCore.QPointF, /) -> None:
-        self._add_zoom(increment=1.1 if delta > 0 else 0.9, pos=pos)
+        # 120 is one mouse wheel notch. Trackpads send many smaller deltas,
+        # so they zoom in finer steps instead of a full step per event.
+        self._add_zoom(steps=delta / 120, pos=pos)
 
     def set_fit_window_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
         target = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM

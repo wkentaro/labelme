@@ -175,7 +175,7 @@ def test_huge_image_fits_and_zooms_out_below_one_percent(
     assert fit < 1
 
     for _ in range(20):
-        win._add_zoom(increment=0.9, pos=None)
+        win._add_zoom(steps=-1, pos=None)
     assert zoom_widget.value() == pytest.approx(fit / 2)
 
     scroll_area = win._canvas_widgets.scroll_area
@@ -186,7 +186,7 @@ def test_huge_image_fits_and_zooms_out_below_one_percent(
         half_fit = win._fit_window_scale() * 100 / 2
         assert zoom_widget.minimum() == pytest.approx(half_fit)
         before = zoom_widget.value()
-        win._add_zoom(increment=0.9, pos=None)
+        win._add_zoom(steps=-1, pos=None)
         assert zoom_widget.value() <= before
 
 
@@ -236,11 +236,31 @@ def test_zoom_step_keeps_fractional_precision(
     pause: bool,
 ) -> None:
     _win._canvas_widgets.zoom_widget.setValue(105)
-    _win._add_zoom(increment=1.1, pos=None)
+    _win._add_zoom(steps=1, pos=None)
     # 105 * 1.1 = 115.5; the old integer widget clamped this up to 116.
     assert _win._canvas_widgets.zoom_widget.value() == pytest.approx(115.5)
 
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_zoom_in_then_out_returns_to_the_start(*, _win: MainWindow) -> None:
+    _win._canvas_widgets.zoom_widget.setValue(105)
+    _win._add_zoom(steps=1, pos=None)
+    _win._add_zoom(steps=-1, pos=None)
+    assert _win._canvas_widgets.zoom_widget.value() == pytest.approx(105)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("delta", "factor"), [(120, 1.1), (-120, 1 / 1.1), (30, 1.1**0.25)]
+)
+def test_wheel_zoom_scales_with_the_scroll_delta(
+    *, _win: MainWindow, delta: int, factor: float
+) -> None:
+    _win._canvas_widgets.zoom_widget.setValue(100)
+    _win._zoom_requested(delta, QPointF())
+    assert _win._canvas_widgets.zoom_widget.value() == pytest.approx(100 * factor)
 
 
 def _set_scroll_bars_to_fraction(
@@ -482,7 +502,7 @@ def test_navigation_restores_viewport_after_layout_settles(
     qtbot.waitUntil(lambda: v_bar.maximum() > 0)
     v_bar.setValue(v_bar.maximum() * 2 // 3)
     with qtbot.waitSignal(v_bar.rangeChanged):
-        win._add_zoom(increment=0.9, pos=None)
+        win._add_zoom(steps=-1, pos=None)
 
     first_image_path = win._image_path
     assert first_image_path is not None
@@ -989,7 +1009,7 @@ def test_manual_zoom_leaves_fit_selection(*, _win: MainWindow) -> None:
     _win.set_fit_selection_mode(True)
     canvas.select_shapes(shapes=[canvas.shapes[0]])
 
-    _win._add_zoom(increment=1.1, pos=None)
+    _win._add_zoom(steps=1, pos=None)
     scale = canvas.scale
     canvas.select_shapes(shapes=[canvas.shapes[1]])
 
@@ -1054,6 +1074,6 @@ def test_zoom_control_names_mode_and_shows_fit_buttons(*, _win: MainWindow) -> N
     assert caption.text() == "Fit to Selection"
     assert selection_button.isChecked() and not window_button.isChecked()
 
-    _win._add_zoom(increment=1.1, pos=None)
+    _win._add_zoom(steps=1, pos=None)
     assert caption.text() == "Zoom"
     assert not window_button.isChecked() and not selection_button.isChecked()
