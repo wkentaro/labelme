@@ -11,6 +11,22 @@ from .._ai_models import AI_TEXT_MODEL_OPTIONS
 from ._model_picker import ModelPicker
 
 
+def _keycap_outline(palette: QtGui.QPalette, /) -> QtGui.QColor:
+    # Mid matches the field's background in dark themes, so mix the outline
+    # from the field's own colors: 30% of the way from background to text.
+    base = palette.color(QtGui.QPalette.ColorRole.Base)
+    text = palette.color(QtGui.QPalette.ColorRole.Text)
+
+    def mix(b: float, t: float) -> float:
+        return b + (t - b) * 0.3
+
+    return QtGui.QColor.fromRgbF(
+        mix(base.redF(), text.redF()),
+        mix(base.greenF(), text.greenF()),
+        mix(base.blueF(), text.blueF()),
+    )
+
+
 class _RunButton(QtWidgets.QToolButton):
     """Outlines its label like a keycap.
 
@@ -26,7 +42,7 @@ class _RunButton(QtWidgets.QToolButton):
         super().paintEvent(arg__1)
         painter = QtGui.QPainter(self)
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
-        painter.setPen(self.palette().color(QtGui.QPalette.ColorRole.Mid))
+        painter.setPen(_keycap_outline(self.palette()))
         painter.drawRoundedRect(
             QtCore.QRectF(self.rect()).adjusted(1.5, 1.5, -1.5, -1.5), 4, 4
         )
