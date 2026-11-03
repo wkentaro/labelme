@@ -8,6 +8,7 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
+from ._hint_chip import RETURN_GLYPH
 from ._model_picker import ModelPicker
 
 
@@ -57,7 +58,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
     # The Return key's symbol says Enter runs the query.
-    _RUN_GLYPH: Final = "\u21b5"
+    _RUN_GLYPH: Final = RETURN_GLYPH
 
     _text_input: QtWidgets.QLineEdit
     _model_combo: ModelPicker

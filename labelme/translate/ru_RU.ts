@@ -223,6 +223,30 @@
         <translation>Нажмите, чтобы добавить точку</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Отменить</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Щелчок — включить</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Щелчок — исключить</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Добавить %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Перетащите, чтобы исключить</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Выберите другой угол. Удерживайте Shift, чтобы нарисовать квадрат.</translation>
     </message>

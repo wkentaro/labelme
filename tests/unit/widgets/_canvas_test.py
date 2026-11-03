@@ -1292,6 +1292,8 @@ def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
     *, canvas: Canvas
 ) -> None:
     canvas.set_editing(value=False, create_mode="ai_find_all")
+    # Its chip would cover the probes.
+    canvas._ai_suggestion_hint = lambda: None  # ty: ignore[invalid-assignment]
     canvas._ai_find_all_draft = [
         Shape(shape_type="rectangle", points=np.array([[10.0, 10.0], [40.0, 40.0]]))
     ]
@@ -3754,3 +3756,55 @@ def test_ai_find_all_clearing_the_draft_drops_a_pending_box(*, canvas: Canvas) -
     assert not canvas.has_ai_find_all_draft
     assert not canvas.is_ai_finalizing
     assert not canvas.is_drawing
+
+
+def _hint_texts(canvas: Canvas, /) -> list[list[str]] | None:
+    hint = canvas._ai_suggestion_hint()
+    if hint is None:
+        return None
+    return [[item.text for item in row] for row in hint[1]]
+
+
+@pytest.mark.gui
+def test_ai_segment_hint_shows_while_a_suggestion_waits(*, canvas: Canvas) -> None:
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(20, 20),), point_labels=(1,)
+    )
+    assert _hint_texts(canvas) is None  # The first preview has not landed.
+
+    canvas._ai_segment_preview = [
+        Shape(
+            shape_type="polygon",
+            points=np.array([[10, 10], [30, 10], [30, 30]], dtype=np.float64),
+            closed=True,
+        )
+    ]
+    assert _hint_texts(canvas) == [
+        ["Add", "Discard"],
+        ["Click to include", "Click to exclude"],
+    ]
+
+    canvas._ai_segment_dragging = True
+    assert _hint_texts(canvas) is None
+    canvas._ai_segment_dragging = False
+
+    canvas.set_editing(value=False, create_mode="polygon")
+    assert _hint_texts(canvas) is None
+
+
+@pytest.mark.gui
+def test_ai_find_all_hint_counts_the_results(*, canvas: Canvas) -> None:
+    _ai_find_all_canvas(canvas)
+    assert _hint_texts(canvas) is None
+
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+
+    assert _hint_texts(canvas) == [["Add 2", "Discard"], ["Drag to exclude"]]
+    canvas._current = _DraftShape(
+        shape_type="rectangle", points=(QPointF(40, 5),), point_labels=(1,)
+    )
+    assert _hint_texts(canvas) is None  # A box being drawn.
+    canvas._current = None
+    canvas.set_ai_find_all_pending(canvas._ai_find_all_draft)
+    assert _hint_texts(canvas) is None  # The label dialog is open.

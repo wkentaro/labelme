@@ -38,6 +38,10 @@ from .._shape import ShapeType
 from . import _canvas_interaction
 from ._canvas_interaction import CursorRole
 from ._canvas_interaction import HitKind
+from ._hint_chip import RETURN_GLYPH
+from ._hint_chip import HintItem
+from ._hint_chip import paint_hint_chip
+from ._hint_chip import place_hint_chip
 from ._shape_render import NEGATIVE_RGB
 from ._shape_render import Palette
 from ._shape_render import ShapeRenderContext
@@ -49,6 +53,20 @@ from ._shape_render import render_shape
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
 _NEGATIVE_PALETTE: Final[Palette] = Palette.from_rgb(NEGATIVE_RGB)
+
+
+def _bounding_corners(points: list[np.ndarray], /) -> tuple[QPointF, QPointF]:
+    stacked = np.concatenate(points)
+    return QPointF(*stacked.min(axis=0)), QPointF(*stacked.max(axis=0))
+
+
+def _paint_counter_box_mark(painter: QtGui.QPainter, center: QPointF, /) -> None:
+    # A small counter-example box, red and dashed like the one on the canvas.
+    pen = QtGui.QPen(_NEGATIVE_PALETTE.line, 1.5)
+    pen.setDashPattern([2.0, 1.5])
+    painter.setPen(pen)
+    painter.setBrush(Qt.BrushStyle.NoBrush)
+    painter.drawRect(QRectF(center.x() - 6.5, center.y() - 5.0, 13.0, 10.0))
 
 
 @dataclasses.dataclass
@@ -2147,6 +2165,7 @@ class Canvas(QtWidgets.QWidget):
             self._draw_ai_find_all_layer,
             self._draw_ai_existing_match_layer,
             self._draw_ai_progress_layer,
+            self._draw_ai_hint_layer,
         )
 
     def _draw_ai_progress_layer(self, painter: QtGui.QPainter, /) -> None:
@@ -2172,6 +2191,100 @@ class Canvas(QtWidgets.QWidget):
             90 * 16,
         )
         painter.restore()
+
+    def _draw_ai_hint_layer(self, painter: QtGui.QPainter, /) -> None:
+        if (hint := self._ai_suggestion_hint()) is None:
+            return
+        (top_left, bottom_right), rows = hint
+        anchor = QRectF(
+            self.transform_image_point_to_widget(top_left),
+            self.transform_image_point_to_widget(bottom_right),
+        )
+        font = self.font()
+        rect = place_hint_chip(
+            rows=rows,
+            font=font,
+            anchor=anchor,
+            bounds=QRectF(self.rect()),
+        )
+        if not rect.toAlignedRect().intersects(self._dirty_rect):
+            return  # A ring frame elsewhere.
+        painter.save()
+        painter.resetTransform()
+        paint_hint_chip(painter, rows=rows, font=font, rect=rect)
+        painter.restore()
+
+    def _ai_suggestion_hint(
+        self,
+    ) -> tuple[tuple[QPointF, QPointF], list[list[HintItem]]] | None:
+        # A suggestion waiting for Enter or Esc: the image corners of the box
+        # around it and its prompts, and the chip rows that name the keys.
+        if self.mode != _CanvasMode.CREATE or self.is_ai_finalizing:
+            return None
+        shift = _utils.modifier_text(Qt.KeyboardModifier.ShiftModifier)
+        discard = HintItem(self.tr("Discard"), key="Esc")
+        if self.create_mode == "ai_segment":
+            current = self._current
+            if (
+                current is None
+                or not self._ai_segment_preview
+                or (self._ai_segment_dragging)
+            ):
+                return None
+            points = [s.points for s in self._ai_segment_preview]
+            points.append(np.array([[p.x(), p.y()] for p in current.points]))
+            return _bounding_corners(points), [
+                [HintItem(self.tr("Add"), key=RETURN_GLYPH), discard],
+                [
+                    HintItem(self.tr("Click to include"), mark=self._paint_point_mark),
+                    HintItem(
+                        self.tr("Click to exclude"),
+                        key=shift,
+                        mark=functools.partial(self._paint_point_mark, label=0),
+                    ),
+                ],
+            ]
+        if self.create_mode == "ai_find_all":
+            if (
+                not self.has_ai_find_all_draft
+                or self._current is not None
+                or self._ai_find_all_pending  # The label dialog is open.
+            ):
+                return None
+            draft = self._ai_find_all_draft
+            first = [discard]
+            if draft:
+                add = self.tr("Add %d") % len(draft)
+                first.insert(0, HintItem(add, key=RETURN_GLYPH))
+            points = [s.points for s in draft] + [self._ai_find_all_points]
+            return _bounding_corners(points), [
+                first,
+                [
+                    HintItem(
+                        self.tr("Drag to exclude"),
+                        key=shift,
+                        mark=_paint_counter_box_mark,
+                    )
+                ],
+            ]
+        return None
+
+    def _paint_point_mark(
+        self, painter: QtGui.QPainter, center: QPointF, /, *, label: int = 1
+    ) -> None:
+        # The prompt point itself, as the canvas draws it at any zoom.
+        point = Shape(
+            shape_type="points",
+            points=np.array([[center.x(), center.y()]]),
+            point_labels=np.array([label]),
+        )
+        context = dataclasses.replace(
+            self._draft_render_context(
+                selected=False, fill=False, highlight=None, rotation_highlight=None
+            ),
+            scale=1.0,
+        )
+        render_shape(painter=painter, shape=point, context=context)
 
     def _draw_pixmap_layer(self, painter: QtGui.QPainter, /) -> None:
         target = QtCore.QRectF(

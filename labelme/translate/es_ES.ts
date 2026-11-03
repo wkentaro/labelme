@@ -223,6 +223,30 @@
         <translation>Haz clic para añadir un punto</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Descartar</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Añadir</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Clic para incluir</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Clic para excluir</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Añadir %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Arrastrar para excluir</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Elige la otra esquina. Mantén pulsado Shift para un cuadrado.</translation>
     </message>

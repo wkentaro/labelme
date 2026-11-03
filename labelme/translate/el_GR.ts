@@ -191,6 +191,30 @@
         <translation>Κρατήστε πατημένο το %s και κάντε κλικ για προσθήκη σημείου στην ακμή</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Απόρριψη</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Προσθήκη</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Κλικ για συμπερίληψη</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Κλικ για εξαίρεση</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Προσθήκη %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Σύρετε για εξαίρεση</translation>
+    </message>
+    <message>
         <source>Click center point for circle</source>
         <translation>Κάντε κλικ στο κεντρικό σημείο για τον κύκλο</translation>
     </message>

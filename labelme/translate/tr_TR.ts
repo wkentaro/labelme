@@ -223,6 +223,30 @@
         <translation>Nokta eklemek için tıklayın</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Ekle</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Dahil etmek için tıklayın</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Hariç tutmak için tıklayın</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d öğe ekle</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Hariç tutmak için sürükleyin</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Diğer köşeyi seçin. Kare çizmek için Shift tuşunu basılı tutun.</translation>
     </message>

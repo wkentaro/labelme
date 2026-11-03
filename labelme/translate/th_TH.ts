@@ -227,6 +227,30 @@
         <translation>คลิกเพื่อเพิ่มจุด</translation>
     </message>
     <message>
+        <source>Discard</source>
+        <translation>ละทิ้ง</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>เพิ่ม</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>คลิกเพื่อรวม</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>คลิกเพื่อยกเว้น</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>เพิ่ม %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>ลากเพื่อยกเว้น</translation>
+    </message>
+    <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
         <translation>Enter เพิ่มผลลัพธ์ Esc ทิ้งผลลัพธ์ กด %s ค้างไว้แล้ววาดกรอบเพื่อยกเว้นวัตถุที่คล้ายกัน</translation>
     </message>
