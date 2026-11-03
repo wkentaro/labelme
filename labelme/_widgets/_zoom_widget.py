@@ -56,8 +56,28 @@ class ZoomWidget(QtWidgets.QAbstractSpinBox):
 
     def stepBy(self, steps: int, /) -> None:
         # Multiplicative, so a step changes the view by the same share at
-        # every zoom.
+        # every zoom. Typed text not yet confirmed is the starting point.
+        self._commit_text()
         self.setValue(self._value * 1.1**steps)
+
+    def sizeHint(self) -> QtCore.QSize:
+        # QAbstractSpinBox doesn't know the widest text, so size for it here.
+        self.ensurePolished()
+        width = max(
+            self.fontMetrics().horizontalAdvance(self._format(value))
+            for value in (8.88, 88.8, _MAX_PERCENT)
+        )
+        option = QtWidgets.QStyleOptionSpinBox()
+        self.initStyleOption(option)
+        # One digit of slack keeps the text off the frame, as QDoubleSpinBox did.
+        width += self.fontMetrics().horizontalAdvance("0")
+        content = QtCore.QSize(width, self.lineEdit().sizeHint().height())
+        return self.style().sizeFromContents(
+            QtWidgets.QStyle.ContentsType.CT_SpinBox, option, content, self
+        )
+
+    def minimumSizeHint(self) -> QtCore.QSize:
+        return self.sizeHint()
 
     def stepEnabled(self) -> QtWidgets.QAbstractSpinBox.StepEnabledFlag:
         flags = QtWidgets.QAbstractSpinBox.StepEnabledFlag.StepNone

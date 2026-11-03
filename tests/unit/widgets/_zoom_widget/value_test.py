@@ -83,3 +83,17 @@ def test_steps_are_multiplicative(*, qtbot: QtBot, widget: ZoomWidget) -> None:
     assert widget.value() == pytest.approx(11)
     qtbot.keyClick(widget, Qt.Key.Key_Down)
     assert widget.value() == pytest.approx(10)
+
+
+def test_step_starts_from_typed_text(*, qtbot: QtBot, widget: ZoomWidget) -> None:
+    widget.lineEdit().selectAll()
+    qtbot.keyClicks(widget, "125")
+    qtbot.keyClick(widget, Qt.Key.Key_Up)
+    assert widget.value() == pytest.approx(137.5)
+
+
+def test_size_hint_fits_the_widest_text(*, widget: ZoomWidget) -> None:
+    widget.setValue(1000)
+    text_width = widget.fontMetrics().horizontalAdvance(widget.text())
+    assert widget.sizeHint().width() > text_width
+    assert widget.minimumSizeHint() == widget.sizeHint()
