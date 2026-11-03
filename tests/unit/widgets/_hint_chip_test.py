@@ -72,3 +72,50 @@ def test_place_hint_chip_wraps_a_row_that_is_too_wide() -> None:
 
     assert wrapped == [[_ROWS[0]], [[item] for item in rows[1]]]
     assert narrow.contains(rect)
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Drag around one example to find the rest",
+        "例を1つドラッグで囲んで残りを探す",
+    ],
+)
+def test_place_hint_chip_wraps_inside_an_item_that_is_too_wide(*, text: str) -> None:
+    rows = [[HintItem(text, key="Shift")]]
+    anchor = QRectF(0, 0, 10, 10)
+    wide, _ = place_hint_chip(
+        rows=rows, font=QtGui.QFont(), anchor=anchor, bounds=QRectF(0, 0, 10_000, 300)
+    )
+    narrow = QRectF(0, 0, wide.width() / 2 + 16, 300)
+
+    rect, lines = place_hint_chip(
+        rows=rows, font=QtGui.QFont(), anchor=anchor, bounds=narrow
+    )
+
+    assert narrow.contains(rect)
+    (row_lines,) = lines
+    assert len(row_lines) > 1
+    assert row_lines[0][0].key == "Shift"
+    pieces = [item.text for line in row_lines for item in line]
+    assert " ".join(pieces).replace(" ", "") == text.replace(" ", "")
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+def test_place_hint_chip_drops_secondary_rows_when_too_short() -> None:
+    rows = [*_ROWS, [HintItem("Click to include")], [HintItem("Click to exclude")]]
+    anchor = QRectF(0, 0, 10, 10)
+    tall, _ = place_hint_chip(
+        rows=rows, font=QtGui.QFont(), anchor=anchor, bounds=QRectF(0, 0, 400, 1000)
+    )
+    short = QRectF(0, 0, 400, tall.height() + 15)
+
+    rect, lines = place_hint_chip(
+        rows=rows, font=QtGui.QFont(), anchor=anchor, bounds=short
+    )
+
+    assert lines == [[row] for row in rows[:2]]
+    assert short.contains(rect)

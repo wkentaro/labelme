@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from dataclasses import replace
 from typing import Final
 
 from PySide6 import QtGui
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import QRectF
 from PySide6.QtCore import Qt
+from PySide6.QtCore import QTextBoundaryFinder
 
 # The Return key's symbol, on the chip and on the AI-Find All Run button.
 RETURN_GLYPH: Final = "\u21b5"
@@ -68,16 +70,42 @@ def _wrap(
 ) -> list[list[HintItem]]:
     lines: list[list[HintItem]] = [[]]
     for item in row:
-        if lines[-1] and _row_width([*lines[-1], item], font) > width:
-            lines.append([])
-        lines[-1].append(item)
+        for piece in _split(item, font, width):
+            if lines[-1] and _row_width([*lines[-1], piece], font) > width:
+                lines.append([])
+            lines[-1].append(piece)
     return lines
+
+
+def _split(item: HintItem, font: QtGui.QFont, width: float, /) -> list[HintItem]:
+    # An item wider than a line breaks where the script allows a line break.
+    # The mark and key stay on the first piece.
+    if _row_width([item], font) <= width:
+        return [item]
+    finder = QTextBoundaryFinder(QTextBoundaryFinder.BoundaryType.Line, item.text)
+    pieces = [replace(item, text="")]
+    start = 0
+    while (end := finder.toNextBoundary()) != -1:
+        token = item.text[start:end]
+        start = end
+        last = pieces[-1]
+        grown = replace(last, text=last.text + token)
+        if last.text and _row_width([grown], font) > width:
+            pieces[-1] = replace(last, text=last.text.rstrip())
+            pieces.append(HintItem(token))
+        else:
+            pieces[-1] = grown
+    return pieces
 
 
 def _line_height(row_index: int, /) -> float:
     FIRST_ROW_HEIGHT: Final = 30.0
     ROW_HEIGHT: Final = 22.0
     return FIRST_ROW_HEIGHT if row_index == 0 else ROW_HEIGHT
+
+
+def _height(lines: list[list[list[HintItem]]], /) -> float:
+    return sum(_line_height(i) * len(row_lines) for i, row_lines in enumerate(lines))
 
 
 def place_hint_chip(
@@ -88,18 +116,23 @@ def place_hint_chip(
     bounds: QRectF,
 ) -> tuple[QRectF, list[list[list[HintItem]]]]:
     # Centered under the anchor, above it without room, else inside bounds,
-    # with a margin from both. A row wraps between its items when the chip
-    # would be wider than bounds, as in a narrow window or a long translation.
+    # with a margin from both. A row wraps where it allows a line break when
+    # the chip would be wider than bounds, as in a narrow window or a long
+    # translation.
     MARGIN: Final = 8.0
     fonts = _fonts(font)
     room = bounds.width() - 2 * (MARGIN + _PADDING)
     wrapped = [_wrap(row, fonts[min(i, 1)], room) for i, row in enumerate(rows)]
+    # A view too short for every line keeps the first row and drops the
+    # secondary ones from the end.
+    while len(wrapped) > 1 and _height(wrapped) > bounds.height() - 2 * MARGIN:
+        wrapped.pop()
     width = 2 * _PADDING + max(
         _row_width(line, fonts[min(i, 1)])
         for i, lines in enumerate(wrapped)
         for line in lines
     )
-    height = sum(_line_height(i) * len(lines) for i, lines in enumerate(wrapped))
+    height = _height(wrapped)
     x = anchor.center().x() - width / 2
     x = max(bounds.left() + MARGIN, min(x, bounds.right() - MARGIN - width))
     y = anchor.bottom() + MARGIN
