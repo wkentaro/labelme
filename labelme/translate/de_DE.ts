@@ -147,10 +147,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>%r wird erstellt</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC zum Abbrechen</translation>
     </message>

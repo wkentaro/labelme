@@ -163,10 +163,6 @@
         <translation>클릭하고 드래그하여 도형 이동</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>%r 생성 중</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC 키를 눌러 취소</translation>
     </message>

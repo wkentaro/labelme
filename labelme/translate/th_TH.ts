@@ -163,10 +163,6 @@
         <translation>คลิกและลากเพื่อย้ายรูปร่าง</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>กำลังสร้าง %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>กด ESC เพื่อยกเลิก</translation>
     </message>

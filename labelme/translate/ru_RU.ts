@@ -163,10 +163,6 @@
         <translation>Нажмите и перетащите, чтобы переместить фигуру</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Создание %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC — отмена</translation>
     </message>

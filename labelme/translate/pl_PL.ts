@@ -163,10 +163,6 @@
         <translation>Kliknij i przeciągnij, aby przesunąć kształt</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Tworzenie %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC — anuluj</translation>
     </message>

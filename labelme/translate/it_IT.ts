@@ -163,10 +163,6 @@
         <translation>Clicca e trascina per spostare la forma</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Creazione di %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC per annullare</translation>
     </message>

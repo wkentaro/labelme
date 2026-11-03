@@ -147,10 +147,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>Створення %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC для скасування</translation>
     </message>

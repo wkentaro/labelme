@@ -163,10 +163,6 @@
         <translation>Klik en sleep om vorm te verplaatsen</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Maken van %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC om te annuleren</translation>
     </message>
