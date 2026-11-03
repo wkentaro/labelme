@@ -16,6 +16,10 @@
         <translation>Більше деталей</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Виведення</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Багатокутник</translation>
     </message>

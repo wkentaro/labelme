@@ -16,6 +16,10 @@
         <translation>รายละเอียดมากขึ้น</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>ผลลัพธ์</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>หลายเหลี่ยม</translation>
     </message>

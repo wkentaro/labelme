@@ -16,6 +16,10 @@
         <translation>Lebih detail</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Keluaran</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Poligon</translation>
     </message>

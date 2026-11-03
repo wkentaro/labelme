@@ -16,6 +16,10 @@
         <translation>Περισσότερη λεπτομέρεια</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Έξοδος</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Πολύγωνο</translation>
     </message>

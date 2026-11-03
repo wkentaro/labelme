@@ -16,6 +16,10 @@
         <translation>より詳細</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>出力</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>ポリゴン</translation>
     </message>

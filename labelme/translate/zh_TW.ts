@@ -16,6 +16,10 @@
         <translation>更多細節</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>輸出</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>多邊形</translation>
     </message>

@@ -16,6 +16,10 @@
         <translation>Daha fazla ayrıntı</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Çıktı</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Çokgen</translation>
     </message>

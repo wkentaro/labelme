@@ -16,6 +16,10 @@
         <translation>Részletesebb</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Kimenet</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Sokszög</translation>
     </message>
