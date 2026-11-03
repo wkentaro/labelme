@@ -1400,7 +1400,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.selection_changed.connect(self._on_shape_selection_changed)
         canvas.shape_moved.connect(self._cancel_deferred_fit_selection)
         canvas.shape_double_clicked.connect(self._edit_label)
-        canvas.drawing_polygon.connect(self._on_drawing_polygon_changed)
+        canvas.drawing_polygon.connect(self._sync_edit_actions)
 
         empty_state = EmptyStateWidget()
         surface = QtWidgets.QStackedWidget()
@@ -1617,7 +1617,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def mark_dirty(self) -> None:
         self._save_revision += 1
-        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
+        self._sync_edit_actions()
         self._is_changed = True
         self._actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
@@ -1678,10 +1678,7 @@ class MainWindow(QtWidgets.QMainWindow):
             dialog.deleteLater()
 
     def mark_clean(self) -> None:
-        canvas = self._canvas_widgets.canvas
-        self._actions.undo.setEnabled(
-            not canvas.is_drawing and canvas.can_restore_shape
-        )
+        self._sync_edit_actions()
         self._is_changed = False
         self._actions.save.setEnabled(False)
         self.setWindowTitle(self._get_window_title(dirty=False))
@@ -1948,17 +1945,20 @@ class MainWindow(QtWidgets.QMainWindow):
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
 
-    def _on_drawing_polygon_changed(self, drawing: bool, /) -> None:  # noqa: FBT001 -- Canvas.drawing_polygon slot
-        self._actions.edit_mode.setEnabled(not drawing)
-        self._actions.undo_last_point.setEnabled(drawing)
-        self._actions.undo.setEnabled(
-            not drawing and self._canvas_widgets.canvas.can_restore_shape
+    def _sync_edit_actions(self, *_: object) -> None:
+        # Derived from the canvas alone, so a caller that runs at the wrong
+        # moment cannot leave an action stuck.
+        canvas = self._canvas_widgets.canvas
+        busy = canvas.is_busy
+        selected = canvas.selected_shapes
+        self._actions.edit_mode.setEnabled(not busy)
+        self._actions.undo_last_point.setEnabled(canvas.is_drawing)
+        self._actions.undo.setEnabled(not busy and canvas.can_restore_shape)
+        # Locked shapes stay selectable, but only unlocked ones can be deleted.
+        self._actions.delete.setEnabled(
+            not busy and any(not shape.locked for shape in selected)
         )
-        self._actions.delete.setEnabled(not drawing)
-        self._actions.merge.setEnabled(
-            not drawing
-            and can_merge_shapes(self._canvas_widgets.canvas.selected_shapes)
-        )
+        self._actions.merge.setEnabled(not busy and can_merge_shapes(selected))
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
@@ -1967,9 +1967,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for draw_mode, draw_action in self._actions.draw:
             draw_action.setChecked(not edit and create_mode == draw_mode)
         self._actions.edit_mode.setChecked(edit)
-        # Keep edit_mode disabled while a partial shape is alive so the user
-        # can't abandon it mid-draw.
-        self._actions.edit_mode.setEnabled(not self._canvas_widgets.canvas.is_drawing)
+        self._sync_edit_actions()
         self._on_ai_activity_changed()
         self._refresh_text_model_choices()
 
@@ -2082,7 +2080,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 text=format_shape_label(shape=shape),
                 color=fill_rgb,
             )
-            self.mark_dirty()
             if self._docks.unique_label_list.find_label_item(label=shape.label) is None:
                 self._docks.unique_label_list.add_label_item(
                     label=shape.label,
@@ -2092,6 +2089,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     ),
                 )
         self._canvas_widgets.canvas.backup_shapes()
+        self.mark_dirty()
 
     def _on_file_search_changed(self) -> None:
         try:
@@ -2135,9 +2133,8 @@ class MainWindow(QtWidgets.QMainWindow):
         n_selected = len(selected_shapes) > 0
         # Locked shapes stay selectable, but only unlocked ones can be altered.
         n_unlocked = any(not shape.locked for shape in selected_shapes)
-        self._actions.delete.setEnabled(n_unlocked)
+        self._sync_edit_actions()
         self._actions.duplicate.setEnabled(n_selected)
-        self._actions.merge.setEnabled(can_merge_shapes(selected_shapes))
         self._actions.copy.setEnabled(n_selected)
         self._actions.edit.setEnabled(n_unlocked)
         self._actions.lock.setEnabled(n_selected)
@@ -2408,7 +2405,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
 
         self._canvas_widgets.canvas.backup_shapes()
-        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
+        self._sync_edit_actions()
 
     def _on_label_order_changed(self) -> None:
         self._commit_shapes(
@@ -2441,9 +2438,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # next change.
         self._canvas_widgets.canvas.shape_backups.pop()
         self._canvas_widgets.canvas.backup_shapes()
-        self._actions.edit_mode.setEnabled(True)
-        self._actions.undo_last_point.setEnabled(False)
-        self._actions.undo.setEnabled(True)
         self.mark_dirty()
 
     def _ask_new_shape_entry(self, *, query: str) -> LabelDialogEntry | None:
@@ -3329,7 +3323,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # stack with the empty state, keeping "top mirrors current" intact.
         self._canvas_widgets.canvas.shape_backups.clear()
         self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
-        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
         self.mark_clean()
         self._actions.delete_file.setEnabled(self.has_label_file())
 

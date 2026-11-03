@@ -5,10 +5,13 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFileDialog
 from pytestqt.qtbot import QtBot
 
+from labelme._app import MainWindow
 from labelme._shape import Shape
+from labelme._widgets import LabelDialogEntry
 
 from .conftest import MainWinFactory
 from .conftest import click_canvas_fraction
@@ -74,6 +77,94 @@ def test_canceling_a_point_label_restores_select_and_undo(
     assert win._actions.edit_mode.isEnabled()
     assert not win._actions.undo.isEnabled()
     assert not win._is_changed
+
+
+def _open_annotated(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> MainWindow:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.jpg"),
+        config_overrides={"auto_save": False},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    return win
+
+
+def _start_polygon(*, win: MainWindow, qtbot: QtBot) -> None:
+    win._actions.create_mode.trigger()
+    click_canvas_fraction(qtbot=qtbot, canvas=win._canvas_widgets.canvas, xy=(0.3, 0.3))
+    assert win._canvas_widgets.canvas.is_drawing
+    assert not win._actions.edit_mode.isEnabled()
+
+
+@pytest.mark.gui
+def test_switching_image_mid_draw_restores_select(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win = _open_annotated(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    _start_polygon(win=win, qtbot=qtbot)
+
+    assert win._load_file(
+        image_or_label_path=str(data_path / "annotated/2011_000006.jpg")
+    )
+
+    assert win._actions.edit_mode.isEnabled()
+    assert not win._actions.undo_last_point.isEnabled()
+
+
+@pytest.mark.gui
+def test_canceling_a_draft_keeps_delete_disabled_without_selection(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win = _open_annotated(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    _start_polygon(win=win, qtbot=qtbot)
+
+    qtbot.keyClick(win._canvas_widgets.canvas, Qt.Key.Key_Escape)
+
+    assert not win._canvas_widgets.canvas.selected_shapes
+    assert not win._actions.delete.isEnabled()
+
+
+@pytest.mark.gui
+def test_editing_a_label_enables_undo(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = _open_annotated(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    assert not win._actions.undo.isEnabled()
+    canvas = win._canvas_widgets.canvas
+    canvas.select_shapes(shapes=[canvas.shapes[0]])
+    monkeypatch.setattr(
+        win._label_dialog,
+        "popup",
+        lambda *_a, **_k: LabelDialogEntry(
+            label="renamed", flags={}, group_id=None, description=""
+        ),
+    )
+
+    # The edit leaves unsaved changes; skip the prompt when the window closes.
+    monkeypatch.setattr(win, "_can_continue", lambda: True)
+
+    win._edit_label()
+
+    assert canvas.shapes[0].label == "renamed"
+    assert win._actions.undo.isEnabled()
+
+
+@pytest.mark.gui
+def test_hiding_a_shape_mid_draw_keeps_undo_disabled(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win = _open_annotated(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    _start_polygon(win=win, qtbot=qtbot)
+
+    win._docks.label_list[0].setCheckState(Qt.CheckState.Unchecked)
+
+    assert not win._actions.undo.isEnabled()
+    assert not win._actions.edit_mode.isEnabled()
 
 
 @pytest.mark.gui

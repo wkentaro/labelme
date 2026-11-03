@@ -244,6 +244,8 @@ class Canvas(QtWidgets.QWidget):
     selection_changed = QtCore.Signal(list)
     shape_double_clicked = QtCore.Signal()
     shape_moved = QtCore.Signal()
+    # Emitted when is_busy may have changed; listeners read is_busy and
+    # is_drawing rather than the payload.
     drawing_polygon = QtCore.Signal(bool)
     vertex_selected = QtCore.Signal(bool)
     edge_selected = QtCore.Signal(bool)
@@ -505,6 +507,12 @@ class Canvas(QtWidgets.QWidget):
         return self._current is not None
 
     @property
+    def is_busy(self) -> bool:
+        # A draft or a pending AI result, either of which Undo, Select or
+        # Delete would abandon or rewrite.
+        return self.is_drawing or self.is_ai_finalizing
+
+    @property
     def is_interacting(self) -> bool:
         # From press to release, a pointer edit holds a selection, a vertex and
         # an Undo snapshot that a Shape change would reset or split. An
@@ -741,6 +749,9 @@ class Canvas(QtWidgets.QWidget):
             self._ai_finalize_job = job
             self._ai_finalize_clock.start()
             self._ai_progress_timer.start()
+            # A pending result blocks edit actions in the app; a failure
+            # inside submit below emits False after this.
+            self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
         self._osam_worker.submit(
             channel=channel,
             job=job,
@@ -2401,9 +2412,6 @@ class Canvas(QtWidgets.QWidget):
                 )
                 return
             assert self.create_mode == "ai_segment"
-            # The app disables Undo while the result is pending, which would
-            # otherwise drop the draft.
-            self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
             self._submit_ai_job(
                 channel="finalize", **_ai_segment_prompt(draft), draft=draft
             )
@@ -2423,8 +2431,6 @@ class Canvas(QtWidgets.QWidget):
         draft: _DraftShape | None,
     ) -> None:
         # Every example so far goes with the new box, so the draft reflects all.
-        # The app disables Undo while the run is pending.
-        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
         self._submit_ai_job(
             channel="finalize",
             prompt_kind="example_box",
@@ -2720,7 +2726,10 @@ class Canvas(QtWidgets.QWidget):
 
     def _reset_interaction_state(self) -> None:
         self._drag_anchor = None
+        was_drawing = self.is_drawing
         self._current = None
+        if was_drawing:
+            self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
         self.hovered_shape = None
         self._hovered_vertex = None
         self._hovered_edge = None
@@ -2800,6 +2809,8 @@ class Canvas(QtWidgets.QWidget):
         self._hovered_edge = None
         self._last_hovered_edge = None
         self._hovered_rotation = None
+        # The draft and any pending AI job are gone with the old image.
+        self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
         self.update()
 
 
