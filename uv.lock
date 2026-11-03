@@ -1,15 +1,16 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
-    "(python_full_version >= '3.14' and platform_machine == 'arm64' and platform_release >= '23') or (python_full_version >= '3.14' and sys_platform != 'darwin')",
-    "(python_full_version == '3.13.*' and platform_machine == 'arm64' and platform_release >= '23') or (python_full_version == '3.13.*' and sys_platform != 'darwin')",
-    "(python_full_version < '3.13' and platform_machine == 'arm64' and platform_release >= '23') or (python_full_version < '3.13' and sys_platform != 'darwin')",
-    "(platform_machine != 'arm64' and sys_platform == 'darwin') or (platform_release < '23' and sys_platform == 'darwin')",
+    "(python_full_version >= '3.14' and platform_machine == 'arm64' and platform_release >= '23.0.0') or (python_full_version >= '3.14' and sys_platform != 'darwin')",
+    "(python_full_version == '3.13.*' and platform_machine == 'arm64' and platform_release >= '23.0.0') or (python_full_version == '3.13.*' and sys_platform != 'darwin')",
+    "(python_full_version < '3.13' and platform_machine == 'arm64' and platform_release >= '23.0.0') or (python_full_version < '3.13' and sys_platform != 'darwin')",
+    "(python_full_version >= '3.14' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and platform_release < '23.0.0' and sys_platform == 'darwin')",
+    "python_full_version < '3.14' and platform_machine == 'x86_64' and sys_platform == 'darwin'",
 ]
 required-markers = [
     "python_full_version < '3.14' and platform_machine == 'x86_64' and sys_platform == 'darwin'",
-    "python_full_version < '3.14' and platform_machine == 'arm64' and platform_release == '22' and sys_platform == 'darwin'",
+    "python_full_version < '3.14' and platform_machine == 'arm64' and platform_release == '22.0.0' and sys_platform == 'darwin'",
 ]
 
 [[package]]
@@ -666,10 +667,10 @@ dependencies = [
     { name = "matplotlib" },
     { name = "natsort" },
     { name = "numpy" },
-    { name = "onnxruntime", version = "1.23.2", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine != 'arm64' and sys_platform == 'darwin') or (platform_release < '23' and sys_platform == 'darwin')" },
-    { name = "onnxruntime", version = "1.28.0", source = { registry = "https://pypi.org/simple" }, marker = "(platform_machine == 'arm64' and platform_release >= '23') or sys_platform != 'darwin'" },
+    { name = "onnxruntime", version = "1.23.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.14' and platform_machine == 'x86_64' and sys_platform == 'darwin'" },
+    { name = "onnxruntime", version = "1.28.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.14' or platform_machine != 'x86_64' or sys_platform != 'darwin'" },
     { name = "osam" },
-    { name = "osam", extra = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23') or sys_platform != 'darwin'" },
+    { name = "osam", extra = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23.0.0') or sys_platform != 'darwin'" },
     { name = "pillow" },
     { name = "pyside6" },
     { name = "ruamel-yaml" },
@@ -705,8 +706,8 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2,<1.29" },
-    { name = "osam", specifier = ">=0.10.1" },
-    { name = "osam", extras = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23') or sys_platform != 'darwin'" },
+    { name = "osam", specifier = ">=0.10.1,<0.11" },
+    { name = "osam", extras = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23.0.0') or sys_platform != 'darwin'" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
     { name = "ruamel-yaml", specifier = ">=0.18" },
@@ -1089,7 +1090,7 @@ name = "onnxruntime"
 version = "1.23.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "(platform_machine != 'arm64' and sys_platform == 'darwin') or (platform_release < '23' and sys_platform == 'darwin')",
+    "python_full_version < '3.14' and platform_machine == 'x86_64' and sys_platform == 'darwin'",
 ]
 dependencies = [
     { name = "coloredlogs" },
@@ -1100,9 +1101,7 @@ dependencies = [
     { name = "sympy" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1b/9e/f748cd64161213adeef83d0cb16cb8ace1e62fa501033acdd9f9341fff57/onnxruntime-1.23.2-cp312-cp312-macosx_13_0_arm64.whl", hash = "sha256:b8f029a6b98d3cf5be564d52802bb50a8489ab73409fa9db0bf583eabb7c2321", size = 17195929, upload-time = "2025-10-22T03:47:36.24Z" },
     { url = "https://files.pythonhosted.org/packages/91/9d/a81aafd899b900101988ead7fb14974c8a58695338ab6a0f3d6b0100f30b/onnxruntime-1.23.2-cp312-cp312-macosx_13_0_x86_64.whl", hash = "sha256:218295a8acae83905f6f1aed8cacb8e3eb3bd7513a13fe4ba3b2664a19fc4a6b", size = 19157705, upload-time = "2025-10-22T03:46:40.415Z" },
-    { url = "https://files.pythonhosted.org/packages/3d/41/fba0cabccecefe4a1b5fc8020c44febb334637f133acefc7ec492029dd2c/onnxruntime-1.23.2-cp313-cp313-macosx_13_0_arm64.whl", hash = "sha256:2ff531ad8496281b4297f32b83b01cdd719617e2351ffe0dba5684fb283afa1f", size = 17196337, upload-time = "2025-10-22T03:46:35.168Z" },
     { url = "https://files.pythonhosted.org/packages/fe/f9/2d49ca491c6a986acce9f1d1d5fc2099108958cc1710c28e89a032c9cfe9/onnxruntime-1.23.2-cp313-cp313-macosx_13_0_x86_64.whl", hash = "sha256:162f4ca894ec3de1a6fd53589e511e06ecdc3ff646849b62a9da7489dee9ce95", size = 19157691, upload-time = "2025-10-22T03:46:43.518Z" },
 ]
 
@@ -1111,9 +1110,10 @@ name = "onnxruntime"
 version = "1.28.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "(python_full_version >= '3.14' and platform_machine == 'arm64' and platform_release >= '23') or (python_full_version >= '3.14' and sys_platform != 'darwin')",
-    "(python_full_version == '3.13.*' and platform_machine == 'arm64' and platform_release >= '23') or (python_full_version == '3.13.*' and sys_platform != 'darwin')",
-    "(python_full_version < '3.13' and platform_machine == 'arm64' and platform_release >= '23') or (python_full_version < '3.13' and sys_platform != 'darwin')",
+    "(python_full_version >= '3.14' and platform_machine == 'arm64' and platform_release >= '23.0.0') or (python_full_version >= '3.14' and sys_platform != 'darwin')",
+    "(python_full_version == '3.13.*' and platform_machine == 'arm64' and platform_release >= '23.0.0') or (python_full_version == '3.13.*' and sys_platform != 'darwin')",
+    "(python_full_version < '3.13' and platform_machine == 'arm64' and platform_release >= '23.0.0') or (python_full_version < '3.13' and sys_platform != 'darwin')",
+    "(python_full_version >= '3.14' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and platform_release < '23.0.0' and sys_platform == 'darwin')",
 ]
 dependencies = [
     { name = "flatbuffers" },
