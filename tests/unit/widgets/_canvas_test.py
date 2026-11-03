@@ -3953,7 +3953,7 @@ def test_ai_prompt_hint_wraps_inside_a_narrow_view(
         "labelme._widgets._canvas.paint_hint_chip",
         lambda _painter, *, rect, **_: rects.append(rect),
     )
-    canvas.resize(240, 100)
+    canvas.resize(240, 240)  # Narrow, but tall enough for the wrapped lines.
     canvas.set_editing(value=False, create_mode="ai_segment")
 
     canvas.grab()
@@ -3996,7 +3996,7 @@ def test_ai_prompt_hint_fits_a_narrow_view_in_a_long_translation(
         "labelme._widgets._canvas.paint_hint_chip",
         lambda _painter, *, rect, **_: rects.append(rect),
     )
-    canvas.resize(240, 100)
+    canvas.resize(240, 240)  # Narrow, but tall enough for the wrapped lines.
     canvas.set_editing(value=False, create_mode=mode)
 
     try:
