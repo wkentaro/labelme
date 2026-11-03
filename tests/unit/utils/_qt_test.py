@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import pathlib
 import sys
 
 import pytest
@@ -10,6 +11,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
+from labelme._utils._qt import _ICONS_DIR
 from labelme._utils._qt import _TintedSvgIconEngine
 from labelme._utils._qt import _toolbar_label
 from labelme._utils._qt import direction_angle
@@ -188,17 +190,10 @@ def test_new_icon_tints_monochrome_icon_to_palette(
         qapp.setPalette(original)
 
 
-def test_new_icon_keeps_accent_icon_fixed(*, qapp: QtWidgets.QApplication) -> None:
-    original = qapp.palette()
-    try:
-        icon = new_icon("phosphor/floppy-disk.svg")  # baked accent color, not tinted
-        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
-        a = icon.pixmap(QtCore.QSize(24, 24)).toImage()
-        _set_window_text(qapp, color=QtGui.QColor(0, 255, 0))
-        b = icon.pixmap(QtCore.QSize(24, 24)).toImage()
-        assert a == b
-    finally:
-        qapp.setPalette(original)
+def test_bundled_svg_icons_are_authored_in_current_color() -> None:
+    svgs = sorted(pathlib.Path(_ICONS_DIR).rglob("*.svg"))
+    assert svgs
+    assert [p.name for p in svgs if b"currentColor" not in p.read_bytes()] == []
 
 
 # ---------------------------------------------------------------------------
