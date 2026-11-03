@@ -2237,9 +2237,12 @@ class Canvas(QtWidgets.QWidget):
         context = self._draft_render_context(
             selected=False, fill=True, highlight=None, rotation_highlight=None
         )
+        # Results waiting for Enter take the selected style, a white edge, as
+        # a filled AI-Segment preview does; the example boxes keep the line color.
         # An example-box batch is also its draft, so it is drawn once.
+        result_context = dataclasses.replace(context, selected=True)
         for shape in self._ai_find_all_pending or self._ai_find_all_draft:
-            render_shape(painter=painter, shape=shape, context=context)
+            render_shape(painter=painter, shape=shape, context=result_context)
         if not self.has_ai_find_all_draft:
             return
         corners = self._ai_find_all_points.reshape(-1, 2, 2)
