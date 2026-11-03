@@ -1400,7 +1400,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.selection_changed.connect(self._on_shape_selection_changed)
         canvas.shape_moved.connect(self._cancel_deferred_fit_selection)
         canvas.shape_double_clicked.connect(self._edit_label)
-        canvas.drawing_polygon.connect(self._sync_edit_actions)
+        canvas.busy_changed.connect(self._sync_edit_actions)
 
         empty_state = EmptyStateWidget()
         surface = QtWidgets.QStackedWidget()
@@ -1945,7 +1945,7 @@ class MainWindow(QtWidgets.QMainWindow):
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
 
-    def _sync_edit_actions(self, *_: object) -> None:
+    def _sync_edit_actions(self) -> None:
         # Derived from the canvas alone, so a caller that runs at the wrong
         # moment cannot leave an action stuck.
         canvas = self._canvas_widgets.canvas
@@ -2417,7 +2417,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_new_shape(self) -> None:
         entry = self._ask_new_shape_entry(query="")
         if entry is None:
-            # Drop the snapshot first so the drawing_polygon handler that
+            # Drop the snapshot first so the busy_changed handler that
             # undo_last_line triggers sees the Undo state without it.
             self._canvas_widgets.canvas.shape_backups.pop()
             self._canvas_widgets.canvas.undo_last_line()

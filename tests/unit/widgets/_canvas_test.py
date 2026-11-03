@@ -799,16 +799,16 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
         points=(QPointF(0, 0), QPointF(10, 10)),
         point_labels=(2, 3),
     )
-    drawing_polygon_emissions: list[bool] = []
+    busy_emissions: list[bool] = []
     inference_no_shapes_emissions: list[None] = []
-    canvas.drawing_polygon.connect(drawing_polygon_emissions.append)
+    canvas.busy_changed.connect(lambda: busy_emissions.append(canvas.is_busy))
     canvas.inference_produced_no_shapes.connect(
         lambda: inference_no_shapes_emissions.append(None)
     )
 
     canvas._finalize()
 
-    assert drawing_polygon_emissions[-1:] == [False]
+    assert busy_emissions[-1:] == [False]
     assert len(inference_no_shapes_emissions) == 1
     assert canvas._current is None
     assert canvas.shapes == []
@@ -1391,7 +1391,7 @@ def test_create_mode_switch_cancels_multi_point_partial_with_new_mode_observable
     *,
     canvas: Canvas,
 ) -> None:
-    # Multi-point partial cancels, and listeners on drawing_polygon must
+    # Multi-point partial cancels, and listeners on busy_changed must
     # observe the new create_mode synchronously.
     canvas.create_mode = "polygon"
     canvas._current = _DraftShape(
@@ -1402,11 +1402,11 @@ def test_create_mode_switch_cancels_multi_point_partial_with_new_mode_observable
     emissions: list[bool] = []
     observed_modes: list[str] = []
 
-    def listener(drawing: bool) -> None:  # noqa: FBT001 -- Canvas.drawing_polygon slot
-        emissions.append(drawing)
+    def listener() -> None:
+        emissions.append(canvas.is_busy)
         observed_modes.append(canvas.create_mode)
 
-    canvas.drawing_polygon.connect(listener)
+    canvas.busy_changed.connect(listener)
 
     canvas.create_mode = "rectangle"
 
@@ -1427,7 +1427,7 @@ def test_create_mode_switch_to_ai_target_cancels_one_point_partial(
         shape_type="rectangle", points=(QPointF(10, 10),), point_labels=(1,)
     )
     emissions: list[bool] = []
-    canvas.drawing_polygon.connect(emissions.append)
+    canvas.busy_changed.connect(lambda: emissions.append(canvas.is_busy))
 
     canvas.create_mode = "ai_segment"
 
@@ -1624,7 +1624,7 @@ def test_undo_last_line_on_point_reports_not_drawing(*, canvas: Canvas) -> None:
         Shape(shape_type="point", points=np.array([[10, 10]], dtype=np.float64))
     )
     emissions: list[bool] = []
-    canvas.drawing_polygon.connect(emissions.append)
+    canvas.busy_changed.connect(lambda: emissions.append(canvas.is_busy))
 
     canvas.undo_last_line()
 
@@ -3034,7 +3034,7 @@ def test_ai_finalize_reports_drawing_and_unblocks_when_its_draft_drops(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
     drawing: list[bool] = []
-    canvas.drawing_polygon.connect(drawing.append)
+    canvas.busy_changed.connect(lambda: drawing.append(canvas.is_busy))
     _start_ai_box_finalize(canvas)
     assert drawing == [True]  # the app disables Undo from here
 
