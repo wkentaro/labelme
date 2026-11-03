@@ -4,10 +4,32 @@ from collections.abc import Callable
 from typing import Final
 
 from PySide6 import QtCore
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
 from ._model_picker import ModelPicker
+
+
+class _RunButton(QtWidgets.QToolButton):
+    """Outlines its label like a keycap.
+
+    Unlike a search field, the query field runs nothing until asked, so Run
+    has to read as clickable before the pointer finds it.
+    """
+
+    def sizeHint(self) -> QtCore.QSize:
+        # Room between the outline and the label.
+        return super().sizeHint() + QtCore.QSize(4, 0)
+
+    def paintEvent(self, arg__1: QtGui.QPaintEvent, /) -> None:
+        super().paintEvent(arg__1)
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+        painter.setPen(self.palette().color(QtGui.QPalette.ColorRole.Mid))
+        painter.drawRoundedRect(
+            QtCore.QRectF(self.rect()).adjusted(1.5, 1.5, -1.5, -1.5), 4, 4
+        )
 
 
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
@@ -25,7 +47,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _model_combo: ModelPicker
     _score_spinbox: QtWidgets.QDoubleSpinBox
     _iou_spinbox: QtWidgets.QDoubleSpinBox
-    _run_button: QtWidgets.QToolButton
+    _run_button: _RunButton
     _run_reserved_width: int
     _thresholds: QtWidgets.QWidget
 
@@ -48,7 +70,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         text_input.returnPressed.connect(on_submit)
         self._text_input = text_input
 
-        self._run_button = run_button = QtWidgets.QToolButton(self)
+        self._run_button = run_button = _RunButton(self)
         run_button.setAutoRaise(True)
         run_button.setAccessibleName(self.tr("Run"))
         run_button.setToolTip(self.tr("Run"))
