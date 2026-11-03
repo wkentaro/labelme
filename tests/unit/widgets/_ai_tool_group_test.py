@@ -60,6 +60,22 @@ def test_run_sits_inside_the_query_field(*, group: AiToolGroup) -> None:
 
 
 @pytest.mark.gui
+def test_run_fits_its_label_inside_the_reserved_room(*, group: AiToolGroup) -> None:
+    text_input = group._detect._text_input
+    run_button = group._detect._run_button
+    margin = text_input.textMargins().right()
+
+    assert run_button.width() < margin // 2
+
+    group._detect.set_detecting(True)  # noqa: FBT003 -- state flag
+    QtWidgets.QApplication.processEvents()
+
+    assert run_button.width() > margin // 2
+    assert run_button.width() <= margin
+    assert text_input.textMargins().right() == margin
+
+
+@pytest.mark.gui
 def test_run_keeps_clear_of_right_to_left_text(*, qtbot: QtBot) -> None:
     QtWidgets.QApplication.setLayoutDirection(QtCore.Qt.LayoutDirection.RightToLeft)
     try:

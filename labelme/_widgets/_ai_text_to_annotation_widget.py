@@ -26,6 +26,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _score_spinbox: QtWidgets.QDoubleSpinBox
     _iou_spinbox: QtWidgets.QDoubleSpinBox
     _run_button: QtWidgets.QToolButton
+    _run_reserved_width: int
     _thresholds: QtWidgets.QWidget
 
     def __init__(
@@ -53,16 +54,15 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         run_button.setToolTip(self.tr("Run"))
         run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         run_button.clicked.connect(lambda: on_submit())
-        # Fixed to fit "Finding…" too, so a run doesn't shift the query text
-        # and the field can reserve exactly this width.
-        run_button.setFixedWidth(
-            max(
-                run_button.fontMetrics().horizontalAdvance(text)
-                for text in (self._RUN_GLYPH, self.tr("Finding…"))
-            )
-            + 12
-        )
-        self.set_detecting(False)  # noqa: FBT003 -- state flag
+        # The field reserves room for Run's widest label, so a run doesn't
+        # shift the query text; Run itself fits its label, so at rest it hugs
+        # the glyph.
+        widths = []
+        # False last, so Run ends at rest.
+        for detecting in (True, False):
+            self.set_detecting(detecting)
+            widths.append(run_button.sizeHint().width())
+        self._run_reserved_width = max(widths)
 
         self._model_combo = model_combo = ModelPicker(options=AI_TEXT_MODEL_OPTIONS)
         model_combo.setParent(self)
