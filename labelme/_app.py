@@ -3265,6 +3265,8 @@ class MainWindow(QtWidgets.QMainWindow):
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
         msg_box.setWindowTitle(self.tr("Delete Annotation File"))
+        # File names may contain "<b>" and would otherwise render as markup.
+        msg_box.setTextFormat(Qt.TextFormat.PlainText)
         msg_box.setText(message)
         delete_button = msg_box.addButton(
             self.tr("Delete"), QtWidgets.QMessageBox.ButtonRole.DestructiveRole
@@ -3277,9 +3279,15 @@ class MainWindow(QtWidgets.QMainWindow):
         return msg_box.clickedButton() is delete_button
 
     def delete_file(self) -> None:
-        msg = self.tr(
-            "Permanently delete this annotation file? This action cannot be undone."
-        )
+        # An in-flight first save may not have created the file yet; the
+        # deletion below resolves the path again after waiting for it.
+        label_path = self._own_label_file_path()
+        if label_path is None:
+            msg = self.tr("Delete the annotation file? You can't undo this.")
+        else:
+            msg = self.tr('Delete "{}"? You can\'t undo this.').format(
+                Path(label_path).name
+            )
         if not self._confirm_deletion(message=msg):
             return
 
@@ -3676,8 +3684,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._wait_for_save()
         if not self._is_changed:
             return True
-        prompt_text = self.tr('Keep the annotation changes for "{}"?').format(
-            self._image_path
+        assert self._image_path is not None
+        prompt_text = self.tr('Save annotation changes to "{}"?').format(
+            Path(self._image_path).name
         )
         user_choice = QtWidgets.QMessageBox.question(
             self,

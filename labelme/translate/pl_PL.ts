@@ -892,10 +892,6 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Anuluj</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Zachować zmiany w adnotacjach dla „{}”?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Niezapisane zmiany</translation>
     </message>
@@ -1016,8 +1012,20 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Folder adnotacji: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Usunąć plik adnotacji? Tej operacji nie można cofnąć.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Usunąć „{}”? Tej operacji nie można cofnąć.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Pobierz</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Zapisać zmiany w adnotacjach dla „{}”?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Usuń plik adnotacji</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Trwale usunąć ten plik adnotacji? Tej operacji nie można cofnąć.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

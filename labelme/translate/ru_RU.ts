@@ -892,10 +892,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Отмена</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Сохранить изменения аннотаций для «{}»?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Несохранённые изменения</translation>
     </message>
@@ -1000,8 +996,20 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Папка аннотаций: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Удалить файл аннотаций? Это действие нельзя отменить.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Удалить «{}»? Это действие нельзя отменить.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Скачать</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Сохранить изменения аннотаций для «{}»?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>Удалить файл аннотаций</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Безвозвратно удалить этот файл аннотаций? Это действие нельзя отменить.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

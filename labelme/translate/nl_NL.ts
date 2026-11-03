@@ -892,10 +892,6 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Annuleren</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>De annotatiewijzigingen voor ‘{}’ behouden?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Niet-opgeslagen wijzigingen</translation>
     </message>
@@ -1016,8 +1012,20 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Annotatiemap: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Het annotatiebestand verwijderen? Je kunt dit niet ongedaan maken.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>‘{}’ verwijderen? Je kunt dit niet ongedaan maken.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Downloaden</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Annotatiewijzigingen voor ‘{}’ opslaan?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Annotatiebestand verwijderen</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Dit annotatiebestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

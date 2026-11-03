@@ -892,10 +892,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>取消</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>要保留「{}」的標註變更嗎？</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>尚未儲存的變更</translation>
     </message>
@@ -1016,8 +1012,20 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>標註資料夾：%s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>要刪除標註檔案嗎？此操作無法還原。</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>要刪除「{}」嗎？此操作無法還原。</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>下載</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>要儲存「{}」的標註變更嗎？</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>刪除標註檔案</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>永久刪除此標註檔案？此操作無法復原。</translation>
     </message>
     <message>
         <source>Configuration Error</source>

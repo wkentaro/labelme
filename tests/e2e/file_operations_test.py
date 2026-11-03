@@ -107,10 +107,17 @@ def test_delete_label_file(
     assert item is not None
     assert item.checkState() == Qt.CheckState.Checked
 
-    monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
+    messages: list[str] = []
+
+    def _confirm(*, message: str) -> bool:
+        messages.append(message)
+        return True
+
+    monkeypatch.setattr(win, "_confirm_deletion", _confirm)
     win.delete_file()
     qtbot.wait(50)
 
+    assert messages == ['Delete "2011_000003.json"? You can\'t undo this.']
     assert not label_file.exists()
 
     item = win._docks.file_list.currentItem()

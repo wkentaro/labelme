@@ -892,10 +892,6 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
         <translation>Annulla</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Mantenere le modifiche alle annotazioni di «{}»?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Modifiche non salvate</translation>
     </message>
@@ -1016,8 +1012,20 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
         <translation>Cartella annotazioni: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Eliminare il file di annotazioni? Non potrai annullare questa azione.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Eliminare «{}»? Non potrai annullare questa azione.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Scarica</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Salvare le modifiche alle annotazioni di «{}»?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Posizione prevista: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Elimina file di annotazioni</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Eliminare definitivamente questo file di annotazioni? Questa azione non può essere annullata.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

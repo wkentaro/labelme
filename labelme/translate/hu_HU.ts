@@ -900,10 +900,6 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>Mégse</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Megtartja a(z) „{}” annotációinak módosításait?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Nem mentett módosítások</translation>
     </message>
@@ -1016,8 +1012,20 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>Annotációs mappa: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Törli az annotációs fájlt? Ez nem vonható vissza.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Törli a(z) „{}” fájlt? Ez nem vonható vissza.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Letöltés</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Menti a(z) „{}” annotációinak módosításait?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Várt hely: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Annotációs fájl törlése</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Véglegesen törli ezt az annotációs fájlt? Ez a művelet nem vonható vissza.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

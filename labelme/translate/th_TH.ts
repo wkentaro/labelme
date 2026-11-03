@@ -893,10 +893,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>ยกเลิก</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>เก็บการเปลี่ยนแปลงคำอธิบายประกอบของ &quot;{}&quot; ไว้หรือไม่?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>การเปลี่ยนแปลงที่ยังไม่ได้บันทึก</translation>
     </message>
@@ -1017,8 +1013,20 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>โฟลเดอร์แอนโนเทชัน: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>ลบไฟล์คำอธิบายประกอบหรือไม่ คุณไม่สามารถเลิกทำการกระทำนี้ได้</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>ลบ &quot;{}&quot; หรือไม่ คุณไม่สามารถเลิกทำการกระทำนี้ได้</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>ดาวน์โหลด</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>บันทึกการเปลี่ยนแปลงคำอธิบายประกอบของ &quot;{}&quot; หรือไม่</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1123,10 +1131,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>ลบไฟล์คำอธิบายประกอบ</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>ลบไฟล์คำอธิบายประกอบนี้อย่างถาวรหรือไม่ การกระทำนี้ไม่สามารถเลิกทำได้</translation>
     </message>
     <message>
         <source>Configuration Error</source>

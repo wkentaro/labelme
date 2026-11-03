@@ -892,10 +892,6 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>İptal</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>&quot;{}&quot; için açıklama değişiklikleri korunsun mu?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Kaydedilmemiş değişiklikler</translation>
     </message>
@@ -1016,8 +1012,20 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Açıklama Klasörü: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Açıklama dosyası silinsin mi? Bu işlemi geri alamazsınız.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>&quot;{}&quot; silinsin mi? Bu işlemi geri alamazsınız.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>İndir</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>&quot;{}&quot; için açıklama değişiklikleri kaydedilsin mi?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Açıklama Dosyasını Sil</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Bu açıklama dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

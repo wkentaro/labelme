@@ -858,10 +858,6 @@
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Να διατηρηθούν οι αλλαγές επισημειώσεων για το «{}»;</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Μη αποθηκευμένες αλλαγές</translation>
     </message>
@@ -1032,12 +1028,24 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Διαγραφή αρχείου επισημειώσεων</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Διαγραφή του αρχείου επισημειώσεων; Δεν μπορείτε να αναιρέσετε αυτήν την ενέργεια.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Διαγραφή του «{}»; Δεν μπορείτε να αναιρέσετε αυτήν την ενέργεια.</translation>
+    </message>
+    <message>
         <source>Error Deleting Annotation File</source>
         <translation>Σφάλμα διαγραφής αρχείου επισημειώσεων</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Λήψη</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Αποθήκευση των αλλαγών επισημειώσεων στο «{}»;</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Expected location: {path}</source>
     <message>
         <source>Annotation files (*%s)</source>
         <translation>Αρχεία επισημειώσεων (*%s)</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Οριστική διαγραφή αυτού του αρχείου επισημειώσεων; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

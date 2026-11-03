@@ -892,10 +892,6 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Hủy</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Giữ lại các thay đổi chú thích cho &quot;{}&quot;?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Thay đổi chưa lưu</translation>
     </message>
@@ -1016,8 +1012,20 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Thư mục chú thích: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Xóa tệp chú thích? Bạn không thể hoàn tác thao tác này.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Xóa &quot;{}&quot;? Bạn không thể hoàn tác thao tác này.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Tải xuống</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Lưu các thay đổi chú thích cho &quot;{}&quot;?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Xóa tệp chú thích</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Xóa vĩnh viễn tệp chú thích này? Hành động này không thể hoàn tác.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

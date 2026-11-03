@@ -892,10 +892,6 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>취소</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>&quot;{}&quot;의 주석 변경 사항을 유지하시겠습니까?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>저장하지 않은 변경 사항</translation>
     </message>
@@ -1016,8 +1012,20 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>주석 폴더: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>주석 파일을 삭제하시겠습니까? 이 작업은 실행 취소할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>&quot;{}&quot;을(를) 삭제하시겠습니까? 이 작업은 실행 취소할 수 없습니다.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>다운로드</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>&quot;{}&quot;의 주석 변경 사항을 저장하시겠습니까?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1122,10 +1130,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>주석 파일 삭제</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>이 주석 파일을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

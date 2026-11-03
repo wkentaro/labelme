@@ -902,10 +902,6 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>キャンセル</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>「{}」のアノテーションの変更を保持しますか？</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>未保存の変更</translation>
     </message>
@@ -1026,8 +1022,20 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>アノテーションフォルダー: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>アノテーションファイルを削除しますか？この操作は取り消せません。</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>「{}」を削除しますか？この操作は取り消せません。</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>ダウンロード</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>「{}」のアノテーションの変更を保存しますか？</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1132,10 +1140,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>アノテーションファイルを削除</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>このアノテーションファイルを完全に削除しますか？この操作は元に戻せません。</translation>
     </message>
     <message>
         <source>Configuration Error</source>
