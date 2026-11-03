@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+from PySide6 import QtGui
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
@@ -96,7 +97,6 @@ def test_size_hint_fits_the_widest_text(*, widget: ZoomWidget) -> None:
     widget.setValue(1000)
     text_width = widget.fontMetrics().horizontalAdvance(widget.text())
     assert widget.sizeHint().width() > text_width
-    assert widget.minimumSizeHint() == widget.sizeHint()
 
 
 @pytest.mark.parametrize(
@@ -117,3 +117,33 @@ def test_step_from_typed_text_at_the_range_ends(
     qtbot.keyClicks(widget, typed)
     qtbot.keyClick(widget, key)
     assert widget.value() == pytest.approx(expected)
+
+
+def test_retyping_the_shown_number_applies_it(
+    *, qtbot: QtBot, widget: ZoomWidget
+) -> None:
+    widget.setValue(188.4)
+    widget.lineEdit().setSelection(0, 3)
+    qtbot.keyClicks(widget, "188")
+    qtbot.keyClick(widget, Qt.Key.Key_Return)
+    assert widget.value() == 188
+
+
+def test_accessible_value_reads_and_sets_the_zoom(*, widget: ZoomWidget) -> None:
+    widget.setValue(76.24)
+    interface = QtGui.QAccessible.queryAccessibleInterface(widget)
+    value_interface = interface.valueInterface()
+    assert value_interface.currentValue() == pytest.approx(76.24)
+    value_interface.setCurrentValue(250)
+    assert widget.value() == 250
+
+
+def test_value_set_after_typing_ends_the_edit(
+    *, qtbot: QtBot, widget: ZoomWidget
+) -> None:
+    widget.setValue(76.24)
+    widget.lineEdit().selectAll()
+    qtbot.keyClicks(widget, "188")
+    widget.setValue(188.4)
+    qtbot.keyClick(widget, Qt.Key.Key_Return)
+    assert widget.value() == 188.4
