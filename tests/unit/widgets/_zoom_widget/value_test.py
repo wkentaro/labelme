@@ -119,14 +119,27 @@ def test_step_from_typed_text_at_the_range_ends(
     assert widget.value() == pytest.approx(expected)
 
 
-def test_retyping_the_shown_number_applies_it(
+def test_retyping_the_shown_number_keeps_the_exact_value(
     *, qtbot: QtBot, widget: ZoomWidget
 ) -> None:
     widget.setValue(188.4)
     widget.lineEdit().setSelection(0, 3)
     qtbot.keyClicks(widget, "188")
-    qtbot.keyClick(widget, Qt.Key.Key_Return)
-    assert widget.value() == 188
+    with qtbot.assertNotEmitted(widget.valueChanged):
+        qtbot.keyClick(widget, Qt.Key.Key_Return)
+    assert widget.value() == 188.4
+
+
+def test_undo_then_enter_keeps_the_exact_value(
+    *, qtbot: QtBot, widget: ZoomWidget
+) -> None:
+    widget.setValue(188.4)
+    widget.lineEdit().setSelection(0, 3)
+    qtbot.keyClicks(widget, "188")
+    widget.lineEdit().undo()
+    with qtbot.assertNotEmitted(widget.valueChanged):
+        qtbot.keyClick(widget, Qt.Key.Key_Return)
+    assert widget.value() == 188.4
 
 
 def test_accessible_value_reads_and_sets_the_zoom(*, widget: ZoomWidget) -> None:

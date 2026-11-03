@@ -12,8 +12,8 @@ from .._utils import modifier_text
 class ZoomWidget(QtWidgets.QDoubleSpinBox):
     """Zoom percent, kept exact and shown to three significant digits.
 
-    The text is read back as a value only when the user edited it, so showing
-    188.4 as "188%" never rounds the zoom.
+    Text that shows the current zoom means the current zoom, so showing 188.4
+    as "188%" never rounds it.
     """
 
     def __init__(self) -> None:
@@ -25,12 +25,6 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         self.setValue(100)
         # Apply typed text on Enter, not on every keystroke.
         self.setKeyboardTracking(False)
-        # The last text the user typed. Qt's own resets replace the text without
-        # textEdited, so a mismatch means the edit is gone.
-        self._edited_text: str | None = None
-        self.lineEdit().textEdited.connect(self._remember_edited_text)
-        # A new value, typed or set by a fit mode, ends the edit.
-        self.valueChanged.connect(lambda: self._remember_edited_text(None))
         self.setAccessibleName(self.tr("Zoom"))
         self.setToolTip(
             self.tr("Hold %s and scroll to zoom the canvas")
@@ -55,12 +49,12 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         return text
 
     def valueFromText(self, text: str, /) -> float:
-        if self.lineEdit().text() != self._edited_text:
+        value = super().valueFromText(text)
+        # Stateless on purpose: tracking which text the user typed broke on
+        # undo, revert and same-value refits.
+        if self.textFromValue(value) == self.textFromValue(self.value()):
             return self.value()
-        return super().valueFromText(text)
-
-    def _remember_edited_text(self, text: str | None, /) -> None:
-        self._edited_text = text
+        return value
 
     def stepBy(self, steps: int, /) -> None:
         # Typed text not yet confirmed is the starting point. Multiplicative, so
@@ -69,7 +63,7 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         self.setValue(self.value() * 1.1**steps)
 
     def stepEnabled(self) -> QtWidgets.QAbstractSpinBox.StepEnabledFlag:
-        if self.lineEdit().text() != self._edited_text:
+        if self.valueFromText(self.cleanText()) == self.value():
             return super().stepEnabled()
         # stepBy starts from the typed text, so allow it even at a range end.
         flag = QtWidgets.QAbstractSpinBox.StepEnabledFlag
