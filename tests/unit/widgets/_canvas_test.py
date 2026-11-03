@@ -4,6 +4,7 @@ import dataclasses
 import math
 import weakref
 from collections.abc import Callable
+from pathlib import Path
 from typing import Final
 from unittest.mock import Mock
 
@@ -18,6 +19,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+import labelme
 from labelme._automation import InferenceRequest
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._shape import Shape
@@ -1294,8 +1296,9 @@ def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
     *, canvas: Canvas
 ) -> None:
     canvas.set_editing(value=False, create_mode="ai_find_all")
-    # Its chip would cover the probes.
+    # The chips would cover the probes.
     canvas._ai_suggestion_hint = lambda: None  # ty: ignore[invalid-assignment]
+    canvas._ai_prompt_hint = lambda: None  # ty: ignore[invalid-assignment]
     canvas._ai_find_all_draft = [
         Shape(shape_type="rectangle", points=np.array([[10.0, 10.0], [40.0, 40.0]]))
     ]
@@ -3905,6 +3908,7 @@ def test_ai_prompt_hint_shows_until_the_first_prompt(
     texts: list[list[str]],
 ) -> None:
     canvas.ensure_ai_model_ready = lambda _: True
+    canvas.resize(640, 400)  # Wide enough for one line in any font.
     canvas.show()
     canvas.set_editing(value=False, create_mode=mode)
     assert _painted_hint_texts(canvas, monkeypatch) == texts
@@ -3975,3 +3979,30 @@ def test_ai_prompt_hint_repaints_when_the_tool_is_picked_again(
     canvas.set_editing(value=False, create_mode="ai_segment")
 
     qtbot.waitUntil(lambda: bool(painted))
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", ["ai_segment", "ai_find_all"])
+def test_ai_prompt_hint_fits_a_narrow_view_in_a_long_translation(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch, mode: str
+) -> None:
+    translator = QtCore.QTranslator()
+    assert translator.load(
+        str(Path(labelme.__file__).parent / "translate" / "pl_PL.qm")
+    )
+    QtCore.QCoreApplication.installTranslator(translator)
+    rects: list[QtCore.QRectF] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, rect, **_: rects.append(rect),
+    )
+    canvas.resize(240, 100)
+    canvas.set_editing(value=False, create_mode=mode)
+
+    try:
+        canvas.grab()
+    finally:
+        QtCore.QCoreApplication.removeTranslator(translator)
+
+    assert rects
+    assert QtCore.QRectF(canvas.rect()).contains(rects[-1])
