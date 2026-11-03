@@ -36,6 +36,7 @@ from labelme._widgets._canvas import _reproject_oriented_rectangle_corners
 from labelme._widgets._canvas import _shape_to_draft
 from labelme._widgets._canvas import _should_reselect_on_right_press
 from labelme._widgets._canvas import _snap_cursor_pos_for_square
+from labelme._widgets._shape_render import ShapeRenderContext
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -1303,6 +1304,95 @@ def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
     assert min(result_edge.red(), result_edge.green(), result_edge.blue()) > 200
     example_edge = image.pixelColor(75, 9)
     assert example_edge.green() > 200 > example_edge.red()
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("create_mode", "draft", "color"),
+    [
+        (
+            "ai_segment",
+            _DraftShape(
+                shape_type="points",
+                points=(QPointF(10, 10), QPointF(40, 40)),
+                point_labels=(2, 3),
+            ),
+            (0, 255, 0),
+        ),
+        (
+            "ai_find_all",
+            _DraftShape(
+                shape_type="rectangle",
+                points=(QPointF(10, 10), QPointF(40, 40)),
+                point_labels=(1, 1),
+            ),
+            (0, 255, 0),
+        ),
+        (
+            "ai_find_all",
+            _DraftShape(
+                shape_type="rectangle",
+                points=(QPointF(10, 10), QPointF(40, 40)),
+                point_labels=(0, 0),
+            ),
+            (255, 0, 0),
+        ),
+    ],
+)
+def test_prompt_box_being_drawn_is_a_dashed_guide(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    create_mode: str,
+    draft: _DraftShape,
+    color: tuple[int, int, int],
+) -> None:
+    drawn: list[tuple[str, Qt.PenStyle, tuple[int, int, int]]] = []
+
+    def record(*, shape: Shape, context: ShapeRenderContext, **_: object) -> None:
+        line = context.palette.line
+        drawn.append(
+            (
+                shape.shape_type,
+                context.line_style,
+                (line.red(), line.green(), line.blue()),
+            )
+        )
+
+    monkeypatch.setattr("labelme._widgets._canvas.render_shape", record)
+    canvas.set_editing(value=False, create_mode=create_mode)
+    canvas._current = draft
+
+    canvas.grab()
+
+    assert ("rectangle", Qt.PenStyle.DashLine, color) in drawn
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(("label", "color"), [(2, (0, 255, 0)), (4, (255, 0, 0))])
+def test_ai_find_all_example_boxes_are_dashed_and_counter_ones_red(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    label: int,
+    color: tuple[int, int, int],
+) -> None:
+    drawn: list[tuple[Qt.PenStyle, tuple[int, int, int]]] = []
+
+    def record(*, context: ShapeRenderContext, **_: object) -> None:
+        line = context.palette.line
+        if not context.fill:
+            drawn.append((context.line_style, (line.red(), line.green(), line.blue())))
+
+    monkeypatch.setattr("labelme._widgets._canvas.render_shape", record)
+    canvas.set_editing(value=False, create_mode="ai_find_all")
+    canvas._ai_find_all_draft = []
+    canvas._ai_find_all_points = np.array([[60.0, 10.0], [90.0, 40.0]])
+    canvas._ai_find_all_point_labels = np.array([label, label + 1])
+
+    canvas.grab()
+
+    assert drawn == [(Qt.PenStyle.DashLine, color)]
 
 
 @pytest.mark.gui

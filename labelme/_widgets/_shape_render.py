@@ -85,6 +85,10 @@ class ShapeRenderContext:
 # pixels at every zoom level.
 _OUTLINE_WIDTH: Final[float] = 2.0
 
+# Red marks an excluding prompt, a negative point or a counter-example box; a
+# "−" goes with it, since red and green are the pair color-blind users confuse.
+NEGATIVE_RGB: Final[tuple[int, int, int]] = (255, 0, 0)
+
 
 def render_shape(
     *, painter: QtGui.QPainter, shape: Shape, context: ShapeRenderContext
@@ -269,11 +273,22 @@ def _paint_shape_points(
         painter.drawPath(paths.orientation_arrow)
 
     if paths.negative_vertices:
-        neg_color = QtGui.QColor(255, 0, 0, 255)
+        neg_color = QtGui.QColor(*NEGATIVE_RGB)
         painter.setPen(QtGui.QPen(neg_color, _OUTLINE_WIDTH))
         _paint_filled_vertices(
             painter=painter, vertices=paths.negative_vertices, fill=neg_color
         )
+        _paint_minus_marks(painter=painter, vertices=paths.negative_vertices)
+
+
+def _paint_minus_marks(*, painter: QtGui.QPainter, vertices: list[_Vertex]) -> None:
+    pen = QtGui.QPen(QtGui.QColor(255, 255, 255), 2.0)
+    pen.setCapStyle(QtCore.Qt.PenCapStyle.FlatCap)
+    painter.setPen(pen)
+    for rect, _ in vertices:
+        center = rect.center()
+        half = QtCore.QPointF(rect.width() * 0.35, 0.0)
+        painter.drawLine(center - half, center + half)
 
 
 def _paint_filled_vertices(

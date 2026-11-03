@@ -648,3 +648,26 @@ def _assert_intersects_every_painted_pixel(
         assert not hits(_SIZE + 50, _SIZE + 50)
     finally:
         painter.end()
+
+
+@pytest.mark.gui
+def test_negative_point_carries_a_minus_mark() -> None:
+    # Red alone tells a negative point from a positive one only to readers
+    # who can see red; the white "−" does not depend on it.
+    shape = Shape(
+        shape_type="points",
+        points=np.array([[100.0, 100.0]]),
+        point_labels=np.array([0]),
+    )
+    image = _render(
+        shape=shape,
+        show_label=False,
+        scale=1.0,
+        highlight=None,
+        rotation_highlight=None,
+    )
+
+    center = image.pixelColor(100, 100)
+    assert min(center.red(), center.green(), center.blue()) > 200
+    above = image.pixelColor(100, 97)
+    assert above.red() > 200 > above.green()

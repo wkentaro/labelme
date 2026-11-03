@@ -38,6 +38,7 @@ from .._shape import ShapeType
 from . import _canvas_interaction
 from ._canvas_interaction import CursorRole
 from ._canvas_interaction import HitKind
+from ._shape_render import NEGATIVE_RGB
 from ._shape_render import Palette
 from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
@@ -47,6 +48,7 @@ from ._shape_render import render_shape
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
+_NEGATIVE_PALETTE: Final[Palette] = Palette.from_rgb(NEGATIVE_RGB)
 
 
 @dataclasses.dataclass
@@ -2262,7 +2264,8 @@ class Canvas(QtWidgets.QWidget):
             selected=False, fill=True, highlight=None, rotation_highlight=None
         )
         # Results waiting for Enter take the selected style, a white edge, as
-        # a filled AI-Segment preview does; the example boxes keep the line color.
+        # a filled AI-Segment preview does. The example boxes are prompts, so
+        # they stay dashed guides, red for a counter-example.
         # An example-box batch is also its draft, so it is drawn once.
         result_context = dataclasses.replace(context, selected=True)
         for shape in self._ai_find_all_pending or self._ai_find_all_draft:
@@ -2274,21 +2277,21 @@ class Canvas(QtWidgets.QWidget):
         for (p1, p2), label in zip(corners, labels, strict=True):
             is_counter = label == 4  # noqa: PLR2004 -- SAM negative box corner
             example = Shape(shape_type="rectangle", points=np.array([p1, p2]))
+            palette = _NEGATIVE_PALETTE if is_counter else context.palette
             render_shape(
                 painter=painter,
                 shape=example,
                 context=dataclasses.replace(
                     context,
+                    palette=palette,
                     fill=False,
-                    line_style=(
-                        Qt.PenStyle.DashLine if is_counter else Qt.PenStyle.SolidLine
-                    ),
+                    line_style=Qt.PenStyle.DashLine,
                 ),
             )
             if is_counter:
                 # A "−" inside the top-left corner marks a counter-example.
                 x, y = p1 * self.scale + 10.0
-                painter.setPen(QtGui.QPen(context.palette.line, 3.0))
+                painter.setPen(QtGui.QPen(palette.line, 3.0))
                 painter.drawLine(QPointF(x, y), QPointF(x + 12.0, y))
 
     def _draw_ai_existing_match_layer(self, painter: QtGui.QPainter, /) -> None:
@@ -2324,9 +2327,11 @@ class Canvas(QtWidgets.QWidget):
             highlight=self._highlight if highlighted else None,
             rotation_highlight=self._rotation_highlight if highlighted else None,
         )
-        if self.create_mode == "ai_find_all" and draft.point_labels[:1] == (0,):
-            # A counter-example box is dashed, as committed ones are.
+        if self.create_mode in _AI_CREATE_MODES and draft.shape_type == "rectangle":
+            # A prompt box never becomes a shape, so it is a dashed guide.
             context = dataclasses.replace(context, line_style=Qt.PenStyle.DashLine)
+        if self.create_mode == "ai_find_all" and draft.point_labels[:1] == (0,):
+            context = dataclasses.replace(context, palette=_NEGATIVE_PALETTE)
         render_shape(painter=painter, shape=shape, context=context)
 
     def _build_preview_shapes(self) -> list[Shape]:
