@@ -149,6 +149,11 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
     def set_label(self, *, text: str, color: tuple[int, int, int]) -> None:
         self.setText(text)
+        # The row elides long labels; hovering shows the whole name. Escape it,
+        # or Qt renders a label like "<b>cat</b>" as markup.
+        self.setToolTip(
+            QtGui.Qt.convertFromPlainText(text, Qt.WhiteSpaceMode.WhiteSpacePre)
+        )
         self.setData(QtGui.QColor(*color), LABEL_COLOR_ROLE)
 
     def shape(self) -> Shape | None:
