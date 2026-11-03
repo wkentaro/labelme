@@ -1891,8 +1891,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if not candidates:
             self._report_ai_find_all_result(candidates, name=query)
             return []
-        # One entry labels the whole batch.
-        entry = self._ask_new_shape_entry(query=query)
+        # One entry labels the whole batch, shown on the canvas meanwhile.
+        canvas = self._canvas_widgets.canvas
+        canvas.set_ai_find_all_pending(candidates)
+        try:
+            entry = self._ask_new_shape_entry(query=query)
+        finally:
+            canvas.set_ai_find_all_pending([])
         if entry is None:
             return []  # Cancelled: the batch is never added.
         # "black dog" saved as "dog": skip what "dog" Shapes cover.

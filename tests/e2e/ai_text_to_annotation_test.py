@@ -969,9 +969,13 @@ def test_one_dialog_labels_the_whole_batch(
         ),
     )
     texts: list[str | None] = []
+    canvas = win._canvas_widgets.canvas
+    shown: list[int] = []
 
     def popup(*, text: str | None = None, **_: object) -> LabelDialogEntry | None:
         texts.append(text)
+        # The batch is drawn on the canvas while its label is asked.
+        shown.append(len(canvas._ai_find_all_pending))
         if chosen is None:
             return None  # Cancel
         return LabelDialogEntry(label=chosen, flags={}, group_id=None, description="")
@@ -988,6 +992,8 @@ def test_one_dialog_labels_the_whole_batch(
     )
 
     assert texts == ["black dog"]
+    assert shown == [2]
+    assert not canvas._ai_find_all_pending
     assert [s.label for s in win._canvas_widgets.canvas.shapes] == labels
     assert [s.label for i in win._docks.label_list if (s := i.shape())] == labels
     if chosen is None:
