@@ -1618,6 +1618,21 @@ def test_extend_polygon_on_first_vertex_closes_it(*, canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
+def test_undo_last_line_on_point_reports_not_drawing(*, canvas: Canvas) -> None:
+    canvas.create_mode = "point"
+    canvas.shapes.append(
+        Shape(shape_type="point", points=np.array([[10, 10]], dtype=np.float64))
+    )
+    emissions: list[bool] = []
+    canvas.drawing_polygon.connect(emissions.append)
+
+    canvas.undo_last_line()
+
+    assert not canvas.shapes
+    assert emissions == [False]
+
+
+@pytest.mark.gui
 def test_undo_last_line_then_click_without_moving_recloses_polygon(
     *, canvas: Canvas
 ) -> None:

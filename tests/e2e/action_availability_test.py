@@ -11,6 +11,8 @@ from pytestqt.qtbot import QtBot
 from labelme._shape import Shape
 
 from .conftest import MainWinFactory
+from .conftest import click_canvas_fraction
+from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
@@ -48,6 +50,30 @@ def test_actions_follow_image_and_shapes(
     assert not win._canvas_widgets.zoom_widget.isEnabled()
     assert not win._actions.brightness_contrast.isEnabled()
     assert all(not action.isEnabled() for action in visibility_actions)
+
+
+@pytest.mark.gui
+def test_canceling_a_point_label_restores_select_and_undo(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        config_overrides={"auto_save": False},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    monkeypatch.setattr(win._label_dialog, "popup", lambda *_a, **_k: None)
+
+    win._actions.create_point_mode.trigger()
+    click_canvas_fraction(qtbot=qtbot, canvas=win._canvas_widgets.canvas, xy=(0.5, 0.5))
+
+    assert not win._canvas_widgets.canvas.shapes
+    assert win._actions.edit_mode.isEnabled()
+    assert not win._actions.undo.isEnabled()
+    assert not win._is_changed
 
 
 @pytest.mark.gui
