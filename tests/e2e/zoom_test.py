@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Final
 
 import numpy as np
+import PIL.Image
 import pytest
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -157,6 +158,25 @@ def test_zoom_fit_window(
     assert _win._zoom_mode == _ZoomMode.FIT_WINDOW
 
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_huge_image_fits_and_zooms_out_below_one_percent(
+    *, main_win: MainWinFactory, qtbot: QtBot, tmp_path: Path
+) -> None:
+    path = tmp_path / "huge.png"
+    PIL.Image.new("L", (200_000, 8)).save(path)
+    win = main_win(file_or_dir=str(path))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    zoom_widget = win._canvas_widgets.zoom_widget
+
+    _wait_for_fitted_image(qtbot=qtbot, win=win)
+    fit = zoom_widget.value()
+    assert fit < 1
+
+    for _ in range(20):
+        win._add_zoom(increment=0.9, pos=None)
+    assert zoom_widget.value() == pytest.approx(fit / 2)
 
 
 @pytest.mark.gui

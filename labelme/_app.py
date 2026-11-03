@@ -65,6 +65,7 @@ from ._shape_color import resolve_shape_color
 from ._utils import ImageDecodeRequirement
 from ._utils import get_image_decode_requirement
 from ._widgets import LABEL_COLOR_ROLE
+from ._widgets import MIN_ZOOM
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import AiToolGroup
@@ -2534,6 +2535,9 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         canvas = self._canvas_widgets.canvas
+        # Let an image too big for 1% still zoom out to half of Fit to Window.
+        half_fit_percent = self._fit_window_scale() * 100 / 2
+        self._canvas_widgets.zoom_widget.setMinimum(min(MIN_ZOOM, half_fit_percent))
         if self._zoom_mode != _ZoomMode.MANUAL_ZOOM:
             canvas.reset_view_offset()
             self._sync_zoom_mode_actions()

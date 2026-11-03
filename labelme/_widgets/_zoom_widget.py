@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import math
+from typing import Final
 
 from PySide6 import QtCore
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 
 from .._utils import modifier_text
+
+# The usual zoom floor, in percent. MainWindow lowers it for images too big to
+# fit at this zoom.
+MIN_ZOOM: Final = 1.0
 
 
 class ZoomWidget(QtWidgets.QDoubleSpinBox):
@@ -20,7 +25,7 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         super().__init__()
         # Enough decimals that fit modes and 1% zooms don't snap.
         self.setDecimals(6)
-        self.setRange(1, 1000)
+        self.setRange(MIN_ZOOM, 1000)
         self.setSuffix("%")
         self.setValue(100)
         # Apply typed text on Enter, not on every keystroke.
