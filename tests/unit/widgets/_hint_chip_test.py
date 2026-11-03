@@ -57,7 +57,10 @@ def test_place_hint_chip_drops_the_refine_rows_when_too_wide() -> None:
     rows = [*_ROWS, [HintItem("Click to include " * 4)]]
 
     wide, kept = place_hint_chip(
-        rows=rows, font=QtGui.QFont(), anchor=QRectF(0, 0, 10, 10), bounds=_BOUNDS
+        rows=rows,
+        font=QtGui.QFont(),
+        anchor=QRectF(0, 0, 10, 10),
+        bounds=QRectF(0, 0, 10_000, 300),
     )
     assert kept == rows
     narrow = QRectF(0, 0, wide.width() - 1, 300)
