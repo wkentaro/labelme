@@ -74,6 +74,7 @@ from ._widgets import AnnotationFolderFooter
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
 from ._widgets import EmptyStateWidget
+from ._widgets import ImageListDelegate
 from ._widgets import LabelDialog
 from ._widgets import LabelDialogEntry
 from ._widgets import LabelDialogField
@@ -155,6 +156,7 @@ class _DockWidgets(NamedTuple):
     file_search: QtWidgets.QLineEdit
     file_search_error: QtWidgets.QLabel
     file_list: QtWidgets.QListWidget
+    file_list_delegate: ImageListDelegate
 
 
 class _Actions(NamedTuple):
@@ -1465,6 +1467,8 @@ class MainWindow(QtWidgets.QMainWindow):
         file_search_error.setWordWrap(True)
         file_search_error.hide()
         file_list = QtWidgets.QListWidget()
+        file_list_delegate = ImageListDelegate(parent=file_list)
+        file_list.setItemDelegate(file_list_delegate)
         file_list.currentItemChanged.connect(self._load_selected_image)
         file_list_layout = QtWidgets.QVBoxLayout()
         file_list_layout.setContentsMargins(0, 0, 0, 0)
@@ -1517,6 +1521,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file_search=file_search,
             file_search_error=file_search_error,
             file_list=file_list,
+            file_list_delegate=file_list_delegate,
         )
 
     def _load_config(
@@ -3969,6 +3974,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._hidden_annotated_paths.add(path)
 
         file_list = self._docks.file_list
+        # Decided from every loaded Image, so headings don't come and go while
+        # a search narrows the list.
+        self._docks.file_list_delegate.set_labels(
+            [self._file_list_label(path) for path in self._loaded_image_paths]
+        )
         with QtCore.QSignalBlocker(file_list):
             file_list.clear()
             for image_path in image_paths:
@@ -4038,6 +4048,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _file_list_label(self, image_path: str, /) -> str:
         # Paths under the opened folder are shown relative to it so the
         # Image List stays readable; the full path stays in the tooltip.
+        # ImageListDelegate groups rows by this path's folder.
         relative = _relative_to_root(image_path, self._file_list_root_prefix)
         return image_path if relative is None else relative
 
