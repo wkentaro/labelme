@@ -2110,15 +2110,16 @@ class Canvas(QtWidgets.QWidget):
     def _draw_ai_progress_layer(self, painter: QtGui.QPainter, /) -> None:
         if (center := self._ai_progress_center()) is None:
             return
-        # A white track under an accent arc reads on light and dark images
-        # alike; one calm linear turn a second, like a native spinner.
+        # A white arc on a dark translucent track reads on light and dark
+        # images alike, whatever the system accent color; one calm linear
+        # turn a second, like a native spinner.
         radius = _AI_PROGRESS_RADIUS
         painter.save()
         painter.resetTransform()
         painter.setBrush(Qt.BrushStyle.NoBrush)
-        painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 220), 5))
+        painter.setPen(QtGui.QPen(QtGui.QColor(0, 0, 0, 140), 5))
         painter.drawEllipse(center, radius, radius)
-        arc = QtGui.QPen(self.palette().color(QtGui.QPalette.ColorRole.Highlight), 2.5)
+        arc = QtGui.QPen(QtGui.QColor(255, 255, 255), 3)
         arc.setCapStyle(Qt.PenCapStyle.RoundCap)
         painter.setPen(arc)
         TURN_MS: Final = 1000
