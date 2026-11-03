@@ -244,9 +244,8 @@ class Canvas(QtWidgets.QWidget):
     selection_changed = QtCore.Signal(list)
     shape_double_clicked = QtCore.Signal()
     shape_moved = QtCore.Signal()
-    # Emitted when is_busy may have changed; listeners read is_busy and
-    # is_drawing rather than the payload.
-    drawing_polygon = QtCore.Signal(bool)
+    # Emitted when is_busy or is_drawing may have changed.
+    busy_changed = QtCore.Signal()
     vertex_selected = QtCore.Signal(bool)
     edge_selected = QtCore.Signal(bool)
     mouse_moved = QtCore.Signal(QPointF)
@@ -599,7 +598,7 @@ class Canvas(QtWidgets.QWidget):
             self._ai_finalize_job = None
             if self._current is job.draft:
                 self._current = None
-            self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
+            self.busy_changed.emit()
         self._ai_find_all_points = np.zeros((0, 2))
         self._ai_find_all_point_labels = np.zeros((0,), dtype=np.int_)
         self._ai_find_all_draft = []
@@ -750,8 +749,8 @@ class Canvas(QtWidgets.QWidget):
             self._ai_finalize_clock.start()
             self._ai_progress_timer.start()
             # A pending result blocks edit actions in the app; a failure
-            # inside submit below emits False after this.
-            self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
+            # inside submit below emits again after this.
+            self.busy_changed.emit()
         self._osam_worker.submit(
             channel=channel,
             job=job,
@@ -1614,7 +1613,7 @@ class Canvas(QtWidgets.QWidget):
             self.update()
             return
         self._current = draft
-        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
+        self.busy_changed.emit()
         if press[2] & Qt.KeyboardModifier.ControlModifier:
             self._finalize()
             return
@@ -1673,7 +1672,7 @@ class Canvas(QtWidgets.QWidget):
                 (0, 0) if mode == "ai_find_all" and is_shift_pressed else (1, 1)
             ),
         )
-        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
+        self.busy_changed.emit()
         self.update()
 
     def _press_left_while_editing(
@@ -2507,7 +2506,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_segment_dragging = False
         self._ai_finalize_job = None
         self._set_ai_existing_shape_highlights(shapes=[])
-        self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
+        self.busy_changed.emit()
         self.update()
 
     def _set_ai_existing_shape_highlights(self, *, shapes: list[Shape]) -> None:
@@ -2688,8 +2687,7 @@ class Canvas(QtWidgets.QWidget):
             self._current = None
         else:
             assert self.create_mode == "oriented_rectangle"
-        # A point has no partial draft to reopen, so it leaves nothing drawing.
-        self.drawing_polygon.emit(self.is_drawing)
+        self.busy_changed.emit()
 
     def undo_last_point(self) -> None:
         current = self._current
@@ -2729,7 +2727,7 @@ class Canvas(QtWidgets.QWidget):
         was_drawing = self.is_drawing
         self._current = None
         if was_drawing:
-            self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
+            self.busy_changed.emit()
         self.hovered_shape = None
         self._hovered_vertex = None
         self._hovered_edge = None
@@ -2810,7 +2808,7 @@ class Canvas(QtWidgets.QWidget):
         self._last_hovered_edge = None
         self._hovered_rotation = None
         # The draft and any pending AI job are gone with the old image.
-        self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
+        self.busy_changed.emit()
         self.update()
 
 
