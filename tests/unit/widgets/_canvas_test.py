@@ -1287,6 +1287,25 @@ def test_slow_ai_segment_preview_ring_ends_on_leaving_ai_segment(
 
 
 @pytest.mark.gui
+def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
+    *, canvas: Canvas
+) -> None:
+    canvas.set_editing(value=False, create_mode="ai_find_all")
+    canvas._ai_find_all_draft = [
+        Shape(shape_type="rectangle", points=np.array([[10.0, 10.0], [40.0, 40.0]]))
+    ]
+    canvas._ai_find_all_points = np.array([[60.0, 10.0], [90.0, 40.0]])
+    canvas._ai_find_all_point_labels = np.array([2, 3])
+
+    image = canvas.grab().toImage()
+
+    result_edge = image.pixelColor(25, 9)  # outside the fill
+    assert min(result_edge.red(), result_edge.green(), result_edge.blue()) > 200
+    example_edge = image.pixelColor(75, 9)
+    assert example_edge.green() > 200 > example_edge.red()
+
+
+@pytest.mark.gui
 def test_points_preview_hides_failed_and_empty_predictions(
     *,
     canvas: Canvas,
