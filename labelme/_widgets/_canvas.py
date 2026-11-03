@@ -1015,15 +1015,12 @@ class Canvas(QtWidgets.QWidget):
         new_mode = _CanvasMode.EDIT if value else _CanvasMode.CREATE
         # Any tool pick re-arms it, so re-clicking the active tool shows it again.
         self._ai_prompt_hint_due = not value
+        self.update()  # Also clears the crosshair on leaving CREATE.
         if new_mode is not self.mode:
             self._clear_ai_existing_shape_highlights()
             self._clear_ai_find_all_draft()
         self.mode = new_mode
-        if self.mode == _CanvasMode.EDIT:
-            # CREATE -> EDIT
-            self.update()  # clear crosshair
-        else:
-            # EDIT -> CREATE
+        if self.mode == _CanvasMode.CREATE:
             self._set_highlight(
                 hovered_shape=None,
                 hovered_edge=None,

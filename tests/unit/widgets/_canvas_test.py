@@ -3880,8 +3880,8 @@ def _painted_hint_texts(
     painted: list[list[list[str]]] = []
     monkeypatch.setattr(
         "labelme._widgets._canvas.paint_hint_chip",
-        lambda _painter, *, rows, **_: painted.append(
-            [[item.text for item in row] for row in rows]
+        lambda _painter, *, lines, **_: painted.append(
+            [[item.text for line in row for item in line] for row in lines]
         ),
     )
     canvas.grab()
@@ -3909,7 +3909,8 @@ def test_ai_prompt_hint_shows_until_the_first_prompt(
     canvas.set_editing(value=False, create_mode=mode)
     assert _painted_hint_texts(canvas, monkeypatch) == texts
 
-    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    pos = canvas.transform_image_point_to_widget(QPointF(20, 20)).toPoint()
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=pos)
     assert _painted_hint_texts(canvas, monkeypatch) is None
 
     canvas.set_editing(value=False, create_mode="polygon")
@@ -3937,3 +3938,40 @@ def test_ai_prompt_hint_yields_to_a_waiting_suggestion(
     hint = _painted_hint_texts(canvas, monkeypatch)
     assert hint is not None
     assert hint[0] == ["Add", "Discard"]
+
+
+@pytest.mark.gui
+def test_ai_prompt_hint_wraps_inside_a_narrow_view(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    rects: list[QtCore.QRectF] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, rect, **_: rects.append(rect),
+    )
+    canvas.resize(240, 100)
+    canvas.set_editing(value=False, create_mode="ai_segment")
+
+    canvas.grab()
+
+    assert rects
+    assert QtCore.QRectF(canvas.rect()).contains(rects[-1])
+
+
+@pytest.mark.gui
+def test_ai_prompt_hint_repaints_when_the_tool_is_picked_again(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.show()
+    qtbot.waitExposed(canvas)
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    QtWidgets.QApplication.processEvents()
+    painted: list[QtGui.QPaintEvent] = []
+    monkeypatch.setattr(canvas, "paintEvent", painted.append)
+
+    canvas.set_editing(value=False, create_mode="ai_segment")
+
+    qtbot.waitUntil(lambda: bool(painted))
