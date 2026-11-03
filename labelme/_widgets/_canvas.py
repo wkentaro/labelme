@@ -2201,7 +2201,7 @@ class Canvas(QtWidgets.QWidget):
             self.transform_image_point_to_widget(bottom_right),
         )
         font = self.font()
-        rect = place_hint_chip(
+        rect, rows = place_hint_chip(
             rows=rows,
             font=font,
             anchor=anchor,

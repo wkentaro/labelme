@@ -71,14 +71,19 @@ def place_hint_chip(
     font: QtGui.QFont,
     anchor: QRectF,
     bounds: QRectF,
-) -> QRectF:
+) -> tuple[QRectF, list[list[HintItem]]]:
     # Centered under the anchor, above it without room, else inside bounds,
-    # with a margin from both.
+    # with a margin from both. The refine rows go first when the chip is
+    # wider than bounds, as in a narrow window or a long translation.
     MARGIN: Final = 8.0
     fonts = _fonts(font)
-    width = 2 * _PADDING + max(
-        _row_width(row, fonts[min(i, 1)]) for i, row in enumerate(rows)
-    )
+    while True:
+        width = 2 * _PADDING + max(
+            _row_width(row, fonts[min(i, 1)]) for i, row in enumerate(rows)
+        )
+        if len(rows) == 1 or width <= bounds.width() - 2 * MARGIN:
+            break
+        rows = rows[:-1]
     height = _FIRST_ROW_HEIGHT + _ROW_HEIGHT * (len(rows) - 1)
     x = anchor.center().x() - width / 2
     x = max(bounds.left() + MARGIN, min(x, bounds.right() - MARGIN - width))
@@ -89,7 +94,7 @@ def place_hint_chip(
         y = bounds.bottom() - MARGIN - height
     # A suggestion scrolled out of view still gets its hint.
     y = max(bounds.top() + MARGIN, min(y, bounds.bottom() - MARGIN - height))
-    return QRectF(x, y, width, height)
+    return QRectF(x, y, width, height), rows
 
 
 def paint_hint_chip(
