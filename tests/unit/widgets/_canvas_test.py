@@ -1217,6 +1217,55 @@ def test_slow_finalize_rings_last_point_and_esc_drops_its_result(
 
 
 @pytest.mark.gui
+def test_slow_ai_segment_preview_rings_last_placed_point(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    worker = _worker(canvas)
+    worker.paused = True
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(30, 20),), point_labels=(1,)
+    )
+
+    canvas._refresh_ai_segment_preview()
+
+    assert canvas._ai_progress_rect() is None  # a fast answer shows no ring
+    qtbot.waitUntil(lambda: canvas._ai_progress_rect() is not None, timeout=1000)
+    # A preview for the moved cursor replaces the slow one and keeps its ring.
+    canvas._line = _DraftShape(
+        shape_type="points", points=(QPointF(5, 5),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    rect = canvas._ai_progress_rect()
+    assert rect is not None
+    assert rect.contains(
+        canvas.transform_image_point_to_widget(QPointF(30, 20)).toPoint()
+    )
+
+    worker.resume()
+
+    assert canvas._ai_progress_rect() is None
+
+    # Esc leaves a stale preview in flight; the next click still rings.
+    worker.paused = True
+    canvas._line = _DraftShape(
+        shape_type="points", points=(QPointF(6, 6),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    assert canvas._ai_preview_job is not None
+    canvas._current = None
+    canvas._refresh_ai_segment_preview()
+    qtbot.waitUntil(lambda: not canvas._ai_progress_timer.isActive(), timeout=1000)
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(40, 10),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    assert canvas._ai_progress_timer.isActive()
+    assert canvas._ai_progress_rect() is None  # the delay starts over
+    qtbot.waitUntil(lambda: canvas._ai_progress_rect() is not None, timeout=1000)
+
+
+@pytest.mark.gui
 def test_points_preview_hides_failed_and_empty_predictions(
     *,
     canvas: Canvas,

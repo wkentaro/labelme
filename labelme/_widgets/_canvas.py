@@ -351,7 +351,7 @@ class Canvas(QtWidgets.QWidget):
         self._osam_worker: _automation.OsamWorker | None = None
         self._ai_preview_job: _AiJob | None = None
         self._ai_finalize_job: _AiJob | None = None
-        self._ai_finalize_clock = QtCore.QElapsedTimer()
+        self._ai_progress_clock = QtCore.QElapsedTimer()
         self._ai_progress_timer = QtCore.QTimer(self)
         self._ai_progress_timer.setInterval(16)
         self._ai_progress_timer.timeout.connect(self._advance_ai_progress)
@@ -748,13 +748,16 @@ class Canvas(QtWidgets.QWidget):
             preview_key=preview_key,
             query=self.get_ai_find_all_query() if prompt_kind == "example_box" else "",
         )
+        # A preview that replaces one still running keeps the ring's clock,
+        # so a slow model rings even while the cursor keeps moving.
+        if channel == "finalize" or not self._ai_progress_timer.isActive():
+            self._ai_progress_clock.start()
+            self._ai_progress_timer.start()
         # Recorded first: the worker may fail the job before submit returns.
         if channel == "preview":
             self._ai_preview_job = job
         else:
             self._ai_finalize_job = job
-            self._ai_finalize_clock.start()
-            self._ai_progress_timer.start()
             # A pending result blocks edit actions in the app; a failure
             # inside submit below emits again after this.
             self.busy_changed.emit()
@@ -775,17 +778,30 @@ class Canvas(QtWidgets.QWidget):
             ),
         )
 
+    def _ai_pending_job(self) -> _AiJob | None:
+        # The run the user is waiting on: a finalize, else a preview whose
+        # inputs are still the current ones (Esc or a mode change drops them).
+        if self.is_ai_finalizing:
+            return self._ai_finalize_job
+        job = self._ai_preview_job
+        return job if job is not None and self._is_current_preview(job) else None
+
+    def _is_current_preview(self, job: _AiJob, /) -> bool:
+        return job.preview_key == self._ai_segment_preview_key
+
     def _ai_progress_center(self) -> QPointF | None:
-        # Where the ring for a finalize still running past the delay sits, in
-        # widget pixels, at the last point placed: a box's release corner.
-        # A prompt that answers sooner shows no ring, so fast runs never
-        # flicker one on and off.
+        # Where the ring for a run still going past the delay sits, in widget
+        # pixels, at the last point placed: a box's release corner. A prompt
+        # that answers sooner shows no ring, so fast runs never flicker one on
+        # and off.
         DELAY_MS: Final = 400
-        if not self.is_ai_finalizing or self._ai_finalize_clock.elapsed() < DELAY_MS:
+        job = self._ai_pending_job()
+        if job is None or self._ai_progress_clock.elapsed() < DELAY_MS:
             return None
-        if self._current is None:  # An AI-Find All draft rerun: its last example.
-            assert self._ai_finalize_job is not None
-            point = QPointF(*self._ai_finalize_job.points[-1])
+        if self._current is None or not self._current.points:
+            # An AI-Find All draft rerun, or a box still being dragged: the
+            # job's last point.
+            point = QPointF(*job.points[-1])
         else:
             point = self._current.points[-1]
         return self.transform_image_point_to_widget(point)
@@ -801,7 +817,7 @@ class Canvas(QtWidgets.QWidget):
         )
 
     def _advance_ai_progress(self) -> None:
-        if not self.is_ai_finalizing:
+        if self._ai_pending_job() is None:
             self._ai_progress_timer.stop()
             return
         if (rect := self._ai_progress_rect()) is not None:
@@ -852,7 +868,7 @@ class Canvas(QtWidgets.QWidget):
             return None
         if job is self._ai_preview_job:
             self._ai_preview_job = None
-            if job.preview_key == self._ai_segment_preview_key:
+            if self._is_current_preview(job):
                 return job
         elif job is self._ai_finalize_job:
             self._ai_finalize_job = None
@@ -2123,7 +2139,7 @@ class Canvas(QtWidgets.QWidget):
         arc.setCapStyle(Qt.PenCapStyle.RoundCap)
         painter.setPen(arc)
         TURN_MS: Final = 1000
-        turn = self._ai_finalize_clock.elapsed() % TURN_MS
+        turn = self._ai_progress_clock.elapsed() % TURN_MS
         painter.drawArc(
             QRectF(center, center).adjusted(-radius, -radius, radius, radius),
             -turn * 360 * 16 // TURN_MS,
