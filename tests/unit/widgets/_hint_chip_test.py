@@ -21,6 +21,7 @@ _BOUNDS: Final = QRectF(0, 0, 400, 300)
         (QRectF(150, 50, 100, 100), "below"),
         (QRectF(150, 180, 100, 100), "above"),
         (QRectF(150, 10, 100, 280), "inside"),
+        (QRectF(150, 700, 100, 100), "inside"),
     ],
 )
 def test_place_hint_chip_prefers_below_then_above_then_inside(
@@ -38,7 +39,6 @@ def test_place_hint_chip_prefers_below_then_above_then_inside(
         assert rect.bottom() < anchor.top()
     else:
         assert rect.bottom() < _BOUNDS.bottom()
-        assert anchor.intersects(rect)
 
 
 @pytest.mark.gui

@@ -87,6 +87,8 @@ def place_hint_chip(
         y = anchor.top() - MARGIN - height
     if y < bounds.top() + MARGIN:
         y = bounds.bottom() - MARGIN - height
+    # A suggestion scrolled out of view still gets its hint.
+    y = max(bounds.top() + MARGIN, min(y, bounds.bottom() - MARGIN - height))
     return QRectF(x, y, width, height)
 
 
