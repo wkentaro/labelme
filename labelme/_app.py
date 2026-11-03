@@ -2535,9 +2535,6 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         canvas = self._canvas_widgets.canvas
-        # Let an image too big for 1% still zoom out to half of Fit to Window.
-        half_fit_percent = self._fit_window_scale() * 100 / 2
-        self._canvas_widgets.zoom_widget.setMinimum(min(MIN_ZOOM, half_fit_percent))
         if self._zoom_mode != _ZoomMode.MANUAL_ZOOM:
             canvas.reset_view_offset()
             self._sync_zoom_mode_actions()
@@ -2904,6 +2901,7 @@ class MainWindow(QtWidgets.QMainWindow):
         target_viewport = self._viewport_states.get(self._image_path)
         if self._config["keep_prev_scale"] and self._prev_image_path is not None:
             target_viewport = self._viewport_states.get(self._prev_image_path)
+        self._update_zoom_floor()
         # set zoom values
         is_initial_load = not self._viewport_states
         if target_viewport is not None:
@@ -2968,12 +2966,18 @@ class MainWindow(QtWidgets.QMainWindow):
             watched is self._canvas_widgets.scroll_area
             and event.type() == QtCore.QEvent.Type.Resize
             and not self._image.isNull()
-            and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
         ):
             # The outer window resizes before its nested layout settles. Observe
             # the scroll area, whose size is also independent of scrollbar changes.
-            self._adjust_scale()
+            self._update_zoom_floor()
+            if self._zoom_mode != _ZoomMode.MANUAL_ZOOM:
+                self._adjust_scale()
         return super().eventFilter(watched, event)
+
+    def _update_zoom_floor(self) -> None:
+        # Let an image too big for 1% still zoom out to half of Fit to Window.
+        half_fit_percent = self._fit_window_scale() * 100 / 2
+        self._canvas_widgets.zoom_widget.setMinimum(min(MIN_ZOOM, half_fit_percent))
 
     def _apply_zoom_to_canvas(self) -> None:
         if self._image.isNull():

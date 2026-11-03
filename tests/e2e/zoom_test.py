@@ -178,6 +178,17 @@ def test_huge_image_fits_and_zooms_out_below_one_percent(
         win._add_zoom(increment=0.9, pos=None)
     assert zoom_widget.value() == pytest.approx(fit / 2)
 
+    scroll_area = win._canvas_widgets.scroll_area
+    for grow in (300, -300):
+        old_size = scroll_area.size()
+        win.resize(win.width() + grow, win.height())
+        qtbot.waitUntil(lambda old_size=old_size: scroll_area.size() != old_size)
+        half_fit = win._fit_window_scale() * 100 / 2
+        assert zoom_widget.minimum() == pytest.approx(half_fit)
+        before = zoom_widget.value()
+        win._add_zoom(increment=0.9, pos=None)
+        assert zoom_widget.value() <= before
+
 
 @pytest.mark.gui
 def test_manual_zoom_only_scrolls_the_overflowing_axis(
