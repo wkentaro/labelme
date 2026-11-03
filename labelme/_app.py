@@ -1938,8 +1938,14 @@ class MainWindow(QtWidgets.QMainWindow):
     # Callbacks
 
     def undo_shape_edit(self) -> None:
-        self._canvas_widgets.canvas.restore_last_shape()
-        self._commit_shapes(self._canvas_widgets.canvas.shapes)
+        canvas = self._canvas_widgets.canvas
+        before = canvas.shapes
+        canvas.restore_last_shape()
+        # Undoing a step that saves nothing, such as hiding a shape, leaves
+        # the file as it was.
+        self._commit_shapes(
+            canvas.shapes, changed=not _saved_shapes_equal(before, canvas.shapes)
+        )
 
     def tutorial(self) -> None:
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
@@ -2235,13 +2241,16 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._canvas_widgets.canvas.load_shapes(shapes=shapes, replace=replace)
 
-    def _commit_shapes(self, shapes: list[Shape], /) -> None:
+    def _commit_shapes(self, shapes: list[Shape], /, *, changed: bool = True) -> None:
         # Canvas loading pushes the one undo snapshot, so callers must not
         # back up again. Edits the canvas makes itself (delete, point removal,
         # drag) already snapshot there and only need the dirty mark.
         self._docks.label_list.clear()
         self._load_shapes(shapes, replace=True)
-        self.mark_dirty()
+        if changed:
+            self.mark_dirty()
+        else:
+            self._sync_edit_actions()
 
     def _load_flags(
         self,
@@ -4330,6 +4339,23 @@ def _has_label_file(
 
 def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:
     return item.data(Qt.ItemDataRole.UserRole)
+
+
+def _saved_shapes_equal(a: list[Shape], b: list[Shape], /) -> bool:
+    # Compares what a save writes, so view state such as visibility is ignored.
+    if len(a) != len(b):
+        return False
+    for shape_a, shape_b in zip(a, b, strict=True):
+        dict_a, dict_b = _shape_to_dict(shape_a), _shape_to_dict(shape_b)
+        mask_a, mask_b = dict_a["mask"], dict_b["mask"]
+        if {**dict_a, "mask": None} != {**dict_b, "mask": None}:
+            return False
+        if mask_a is None or mask_b is None:
+            if mask_a is not mask_b:
+                return False
+        elif not np.array_equal(mask_a, mask_b):
+            return False
+    return True
 
 
 def _shape_to_dict(shape: Shape, /) -> ShapeDict:
