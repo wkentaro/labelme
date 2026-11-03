@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pytest
@@ -206,3 +207,37 @@ def test_file_list_tooltip_is_absolute_for_relative_input(
     assert item is not None
     assert item.text() == "2011_000003.jpg"
     assert item.toolTip() == str(data_path / "raw/2011_000003.jpg")
+
+
+@pytest.mark.gui
+def test_file_list_shows_each_folder_once_as_a_heading(
+    *, main_win: MainWinFactory, qtbot: QtBot, tmp_path: Path, data_path: Path
+) -> None:
+    image = (data_path / "raw/2011_000003.jpg").read_bytes()
+    root = tmp_path / "images"
+    for folder in ("site_kyoto", "site_osaka"):
+        (root / folder).mkdir(parents=True)
+        for name in ("img_0001.jpg", "img_0002.jpg"):
+            (root / folder / name).write_bytes(image)
+    win = main_win(file_or_dir=str(root))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    file_list = win._docks.file_list
+
+    def headings() -> list[str | None]:
+        return [
+            win._docks.file_list_delegate.heading(file_list.model().index(row, 0))
+            for row in range(file_list.count())
+        ]
+
+    assert file_list.count() == 4
+    assert headings() == ["site_kyoto" + os.sep, None, "site_osaka" + os.sep, None]
+
+    # Rows still map one to one to Images, so Next Image crosses folders.
+    file_list.setCurrentRow(1)
+    win._open_next_image()
+    assert win._image_path == str(root / "site_osaka/img_0001.jpg")
+
+    # A search keeps the folder above its first match.
+    win._docks.file_search.setText("0002")
+    qtbot.waitUntil(lambda: file_list.count() == 2)
+    assert headings() == ["site_kyoto" + os.sep, "site_osaka" + os.sep]

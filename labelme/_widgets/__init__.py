@@ -5,6 +5,7 @@ from ._annotation_folder_footer import AnnotationFolderFooter
 from ._brightness_contrast_dialog import BrightnessContrastDialog
 from ._canvas import Canvas
 from ._empty_state import EmptyStateWidget
+from ._image_list_delegate import ImageListDelegate
 from ._label_dialog import LabelDialog
 from ._label_dialog import LabelDialogEntry
 from ._label_dialog import LabelDialogField
@@ -35,6 +36,7 @@ __all__ = [
     "BrightnessContrastDialog",
     "Canvas",
     "EmptyStateWidget",
+    "ImageListDelegate",
     "LabelDialog",
     "LabelDialogEntry",
     "LabelDialogField",
