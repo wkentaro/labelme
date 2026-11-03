@@ -16,6 +16,10 @@
         <translation>더 자세하게</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>출력</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>다각형</translation>
     </message>

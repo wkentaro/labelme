@@ -16,6 +16,10 @@
         <translation>Chi tiết hơn</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Đầu ra</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Đa giác</translation>
     </message>

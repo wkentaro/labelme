@@ -16,6 +16,10 @@
         <translation>جزئیات بیشتر</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>خروجی</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>چندضلعی</translation>
     </message>

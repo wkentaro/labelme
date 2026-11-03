@@ -202,10 +202,12 @@ def test_menu_commands_have_icon(*, main_win: MainWinFactory) -> None:
     # fails, so the set only shrinks.
     allowed = frozenset[str]()
     win = _english_window(main_win)
+    # A menu's gray heading names its items; it is not a command.
+    headings = {id(win._ai_annotation._output_format_button.menu().actions()[0])}
     found = {
         _plain(a.text())
         for a in _menu_actions(win)
-        if not a.isCheckable() and a.icon().isNull()
+        if not a.isCheckable() and a.icon().isNull() and id(a) not in headings
     }
     assert found == allowed
 
