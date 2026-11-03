@@ -2682,7 +2682,8 @@ class Canvas(QtWidgets.QWidget):
             self._current = None
         else:
             assert self.create_mode == "oriented_rectangle"
-        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
+        # A point has no partial draft to reopen, so it leaves nothing drawing.
+        self.drawing_polygon.emit(self.is_drawing)
 
     def undo_last_point(self) -> None:
         current = self._current
