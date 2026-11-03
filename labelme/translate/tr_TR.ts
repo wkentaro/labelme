@@ -223,6 +223,14 @@
         <translation>Nokta eklemek için tıklayın</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Kutu çizmek için sürükleyin</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Bir örneğin çevresine sürükleyin</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Vazgeç</translation>
     </message>

@@ -223,6 +223,14 @@
         <translation>Нажмите, чтобы добавить точку</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Перетащите рамку</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Обведите рамкой один пример</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Отменить</translation>
     </message>

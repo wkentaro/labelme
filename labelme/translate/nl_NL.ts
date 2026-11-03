@@ -223,6 +223,14 @@
         <translation>Klik om punt toe te voegen</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Sleep een kader</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Sleep een kader om één voorbeeld</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Verwijder</translation>
     </message>

@@ -223,6 +223,14 @@
         <translation>单击以添加顶点</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>拖动画框</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>拖动框住一个示例</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>丢弃</translation>
     </message>

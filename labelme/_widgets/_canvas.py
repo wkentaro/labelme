@@ -67,9 +67,11 @@ def _bounding_corners(points: list[np.ndarray], /) -> tuple[QPointF, QPointF]:
     return QPointF(*stacked.min(axis=0)), QPointF(*stacked.max(axis=0))
 
 
-def _paint_counter_box_mark(painter: QtGui.QPainter, center: QPointF, /) -> None:
-    # A small counter-example box, red and dashed like the one on the canvas.
-    pen = QtGui.QPen(_NEGATIVE_PALETTE.line, 1.5)
+def _paint_box_mark(
+    painter: QtGui.QPainter, center: QPointF, /, *, color: QtGui.QColor
+) -> None:
+    # A small prompt box, dashed like the ones on the canvas.
+    pen = QtGui.QPen(color, 1.5)
     pen.setDashPattern([2.0, 1.5])
     painter.setPen(pen)
     painter.setBrush(Qt.BrushStyle.NoBrush)
@@ -281,6 +283,10 @@ class Canvas(QtWidgets.QWidget):
     mode: _CanvasMode = _CanvasMode.EDIT
 
     _create_mode: _CreateMode = "polygon"
+
+    # Until the first prompt after switching to a tool, an AI tool says how
+    # to give one.
+    _ai_prompt_hint_due = False
 
     _fill_drawing = False
 
@@ -1007,6 +1013,8 @@ class Canvas(QtWidgets.QWidget):
         if create_mode is not None:
             self._set_create_mode(value=create_mode)
         new_mode = _CanvasMode.EDIT if value else _CanvasMode.CREATE
+        # Any tool pick re-arms it, so re-clicking the active tool shows it again.
+        self._ai_prompt_hint_due = not value
         if new_mode is not self.mode:
             self._clear_ai_existing_shape_highlights()
             self._clear_ai_find_all_draft()
@@ -1594,6 +1602,7 @@ class Canvas(QtWidgets.QWidget):
     ) -> None:
         if self._current is None and self._should_constrain_to_pixmap(pos):
             return
+        self._ai_prompt_hint_due = False
         if self.create_mode == "ai_segment":
             self._press_ai_segment(pos=pos, event=event)
             return
@@ -2200,19 +2209,24 @@ class Canvas(QtWidgets.QWidget):
         painter.restore()
 
     def _draw_ai_hint_layer(self, painter: QtGui.QPainter, /) -> None:
-        if (hint := self._ai_suggestion_hint()) is None:
+        if (hint := self._ai_suggestion_hint()) is not None:
+            (top_left, bottom_right), rows = hint
+            anchor = QRectF(
+                self.transform_image_point_to_widget(top_left),
+                self.transform_image_point_to_widget(bottom_right),
+            )
+        elif (prompt_rows := self._ai_prompt_hint()) is not None:
+            rows, anchor = prompt_rows, None
+        else:
             return
-        (top_left, bottom_right), rows = hint
-        anchor = QRectF(
-            self.transform_image_point_to_widget(top_left),
-            self.transform_image_point_to_widget(bottom_right),
-        )
+        bounds = QRectF(self.visibleRegion().boundingRect() or self.rect())
+        if anchor is None:
+            # No prompt to sit by yet: an empty anchor on the view's bottom
+            # edge, so the chip flips above it to the bottom center.
+            anchor = QRectF(bounds.center().x(), bounds.bottom(), 0, 0)
         font = self.font()
         rect, lines = place_hint_chip(
-            rows=rows,
-            font=font,
-            anchor=anchor,
-            bounds=QRectF(self.visibleRegion().boundingRect() or self.rect()),
+            rows=rows, font=font, anchor=anchor, bounds=bounds
         )
         if not rect.toAlignedRect().intersects(self._dirty_rect):
             return  # A ring frame elsewhere.
@@ -2225,8 +2239,20 @@ class Canvas(QtWidgets.QWidget):
         # Scrolling moves the canvas and repaints only the exposed strip, but
         # the hint is placed within the visible part, so it moves too.
         super().moveEvent(event)
-        if self._ai_suggestion_hint() is not None:
+        if self._ai_suggestion_hint() or self._ai_prompt_hint():
             self.update()
+
+    def _ai_prompt_hint(self) -> list[list[HintItem]] | None:
+        if not self._ai_prompt_hint_due or self.mode != _CanvasMode.CREATE:
+            return None
+        box = functools.partial(_paint_box_mark, color=self._draft_palette.line)
+        if self.create_mode == "ai_segment":
+            return [
+                [*self._ai_click_items(), HintItem(self.tr("Drag a box"), mark=box)]
+            ]
+        if self.create_mode == "ai_find_all":
+            return [[HintItem(self.tr("Drag around one example"), mark=box)]]
+        return None
 
     def _ai_suggestion_hint(
         self,
@@ -2235,7 +2261,6 @@ class Canvas(QtWidgets.QWidget):
         # around it and its prompts, and the chip rows that name the keys.
         if self.mode != _CanvasMode.CREATE or self.is_ai_finalizing:
             return None
-        shift = _utils.modifier_text(Qt.KeyboardModifier.ShiftModifier)
         discard = HintItem(self.tr("Discard"), key="Esc")
         if self.create_mode == "ai_segment":
             current = self._current
@@ -2249,14 +2274,7 @@ class Canvas(QtWidgets.QWidget):
             points.append(np.array([[p.x(), p.y()] for p in current.points]))
             return _bounding_corners(points), [
                 [HintItem(self.tr("Add"), key=RETURN_GLYPH), discard],
-                [
-                    HintItem(self.tr("Click to include"), mark=self._paint_point_mark),
-                    HintItem(
-                        self.tr("Click to exclude"),
-                        key=shift,
-                        mark=functools.partial(self._paint_point_mark, label=0),
-                    ),
-                ],
+                self._ai_click_items(),
             ]
         if self.create_mode == "ai_find_all":
             if (
@@ -2277,12 +2295,24 @@ class Canvas(QtWidgets.QWidget):
                 [
                     HintItem(
                         self.tr("Drag to exclude"),
-                        key=shift,
-                        mark=_paint_counter_box_mark,
+                        key=_utils.modifier_text(Qt.KeyboardModifier.ShiftModifier),
+                        mark=functools.partial(
+                            _paint_box_mark, color=_NEGATIVE_PALETTE.line
+                        ),
                     )
                 ],
             ]
         return None
+
+    def _ai_click_items(self) -> list[HintItem]:
+        return [
+            HintItem(self.tr("Click to include"), mark=self._paint_point_mark),
+            HintItem(
+                self.tr("Click to exclude"),
+                key=_utils.modifier_text(Qt.KeyboardModifier.ShiftModifier),
+                mark=functools.partial(self._paint_point_mark, label=0),
+            ),
+        ]
 
     def _paint_point_mark(
         self, painter: QtGui.QPainter, center: QPointF, /, *, label: int = 1

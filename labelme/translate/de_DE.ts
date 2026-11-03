@@ -191,6 +191,14 @@
         <translation>%s gedrückt halten und klicken, um einen Punkt auf der Kante hinzuzufügen</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Rahmen ziehen</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Rahmen um ein Beispiel ziehen</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Verwerfen</translation>
     </message>

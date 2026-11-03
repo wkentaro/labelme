@@ -223,6 +223,14 @@
         <translation>Klik untuk menambahkan titik</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Seret kotak</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Seret mengelilingi satu contoh</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Buang</translation>
     </message>

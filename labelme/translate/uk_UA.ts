@@ -191,6 +191,14 @@
         <translation>Утримуйте %s і клацніть, щоб додати точку на ребрі</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Перетягніть рамку</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Обведіть рамкою один приклад</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Відхилити</translation>
     </message>

@@ -223,6 +223,14 @@
         <translation>クリックで頂点を追加</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>ドラッグで囲む</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>例を1つドラッグで囲む</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>破棄</translation>
     </message>

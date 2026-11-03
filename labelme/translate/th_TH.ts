@@ -227,6 +227,14 @@
         <translation>คลิกเพื่อเพิ่มจุด</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>ลากกรอบ</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>ลากกรอบรอบตัวอย่างหนึ่งรายการ</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>ละทิ้ง</translation>
     </message>

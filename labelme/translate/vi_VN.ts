@@ -223,6 +223,14 @@
         <translation>Nhấn để thêm điểm</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Kéo một khung</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Kéo quanh một ví dụ</translation>
+    </message>
+    <message>
         <source>Discard</source>
         <translation>Hủy bỏ</translation>
     </message>
