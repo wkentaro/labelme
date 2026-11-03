@@ -1277,7 +1277,7 @@ def test_run_with_an_example_box_draft_refines_it(
         self._set_active(MagicMock(job=job, device=None))
 
     monkeypatch.setattr(OsamWorker, "submit", hold)
-    monkeypatch.setattr(canvas, "_ai_finalize_clock", MagicMock(elapsed=lambda: 1000))
+    monkeypatch.setattr(canvas, "_ai_progress_clock", MagicMock(elapsed=lambda: 1000))
     run_button = win._ai_text._run_button
     qtbot.mouseClick(run_button, Qt.MouseButton.LeftButton)
     assert run_button.text() == "Finding…"
