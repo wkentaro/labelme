@@ -750,9 +750,9 @@ def test_percentage_entry_preserves_mode_and_updates_canvas(
     )
 
     qtbot.keyClicks(widget, "125.5")
-    assert scales == pytest.approx([0.01, 0.12, 1.25, 1.255])
+    assert scales == []
     qtbot.keyClick(widget, Qt.Key.Key_Return)
-    assert scales == pytest.approx([0.01, 0.12, 1.25, 1.255, 1.255])
+    assert scales == pytest.approx([1.255])
     assert _win._zoom_mode == mode
 
 
