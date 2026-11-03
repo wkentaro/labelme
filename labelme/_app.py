@@ -2420,8 +2420,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_new_shape(self) -> None:
         entry = self._ask_new_shape_entry(query="")
         if entry is None:
-            self._canvas_widgets.canvas.undo_last_line()
+            # Drop the snapshot first so the drawing_polygon handler that
+            # undo_last_line triggers sees the Undo state without it.
             self._canvas_widgets.canvas.shape_backups.pop()
+            self._canvas_widgets.canvas.undo_last_line()
             return
 
         self._docks.label_list.clearSelection()
