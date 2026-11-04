@@ -1471,6 +1471,9 @@ class MainWindow(QtWidgets.QMainWindow):
         file_list_delegate = ImageListDelegate(parent=file_list)
         file_list.setItemDelegate(file_list_delegate)
         file_list.currentItemChanged.connect(self._load_selected_image)
+        # File > Close keeps the row current, so picking it again changes nothing.
+        file_list.itemClicked.connect(self._reopen_closed_image)
+        file_list.itemActivated.connect(self._reopen_closed_image)
         file_list_layout = QtWidgets.QVBoxLayout()
         file_list_layout.setContentsMargins(0, 0, 0, 0)
         file_list_layout.setSpacing(0)
@@ -2127,6 +2130,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self._restore_file_list_state(item=previous_item)
             return False
         return True
+
+    def _reopen_closed_image(self, item: QtWidgets.QListWidgetItem, /) -> None:
+        if self._image_path is None and item is self._docks.file_list.currentItem():
+            self._load_selected_image(item, item)
 
     def _on_shape_selection_changed(self, selected_shapes: list[Shape], /) -> None:
         self._docks.label_list.item_selection_changed.disconnect(
