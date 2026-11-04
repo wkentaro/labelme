@@ -87,6 +87,44 @@ def test_close_file(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("gesture", ["click", "double_click", "activate"])
+def test_reopen_closed_image_from_current_row(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    gesture: str,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "annotated"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert win._annotation is not None
+    n_shapes = len(win._annotation.shapes)
+    assert n_shapes > 0
+    file_list = win._docks.file_list
+    item = file_list.currentItem()
+    assert item is not None
+
+    win.close_file()
+    assert win._annotation is None
+    assert file_list.currentItem() is item
+
+    viewport = file_list.viewport()
+    pos = file_list.visualItemRect(item).center()
+    if gesture == "click":
+        qtbot.mouseClick(viewport, Qt.MouseButton.LeftButton, pos=pos)
+    elif gesture == "double_click":
+        qtbot.mouseClick(viewport, Qt.MouseButton.LeftButton, pos=pos)
+        qtbot.mouseDClick(viewport, Qt.MouseButton.LeftButton, pos=pos)
+    else:
+        # Enter activates the row on Windows and Linux; macOS uses Cmd+O.
+        file_list.itemActivated.emit(item)
+
+    qtbot.waitUntil(lambda: win._annotation is not None)
+    assert win._canvas_widgets.canvas.isEnabled()
+    assert len(win._annotation.shapes) == n_shapes
+
+
+@pytest.mark.gui
 def test_delete_label_file(
     *,
     main_win: MainWinFactory,
