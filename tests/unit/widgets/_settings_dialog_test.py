@@ -964,7 +964,7 @@ def test_escape_closes_with_empty_search(
 
 
 @pytest.mark.parametrize("query", ["", "autosave"])
-def test_enter_in_editor_reaches_default_button(
+def test_enter_in_editor_keeps_dialog_open(
     *, qtbot: QtBot, dialog: SettingsDialog, applied: Applied, query: str
 ) -> None:
     with qtbot.waitExposed(dialog):
@@ -980,8 +980,25 @@ def test_enter_in_editor_reaches_default_button(
     assert editor.hasFocus()
     qtbot.keyClick(editor, QtCore.Qt.Key.Key_Return)
     assert not page._navigation.hasFocus()
-    assert not dialog.isVisible()
+    assert dialog.isVisible()
+    assert editor.hasFocus()
     assert applied == []
+
+
+def test_enter_on_focused_close_button_closes(
+    *, qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    last_editor = dialog._editors[SETTINGS[-1].key_path]
+    last_editor.setFocus()
+    for _ in range(2):
+        qtbot.keyClick(dialog.focusWidget(), QtCore.Qt.Key.Key_Tab)
+    close_button = dialog.focusWidget()
+    assert isinstance(close_button, QtWidgets.QPushButton)
+    assert close_button.text() == "Close"
+    qtbot.keyClick(close_button, QtCore.Qt.Key.Key_Return)
+    assert not dialog.isVisible()
 
 
 @pytest.mark.parametrize("saved_rules", [None, {"^car$": ["occluded"]}])
