@@ -89,6 +89,11 @@ class ShapeRenderContext:
     rotation_highlight: VertexHighlight | None
     show_label: bool = False
     line_style: QtCore.Qt.PenStyle = QtCore.Qt.PenStyle.SolidLine
+    # A mask is filled even when fill is off, as every unselected mask Shape
+    # is; False draws its contour alone.
+    fill_mask: bool = True
+    # False drops the edge; a mask then draws its fill alone.
+    outline: bool = True
 
 
 # Shapes are stroked in widget space, so the outline keeps this many screen
@@ -108,7 +113,11 @@ def render_shape(
 
     palette = context.palette
     color = palette.select_line if context.selected else palette.line
-    painter.setPen(QtGui.QPen(color, _OUTLINE_WIDTH, context.line_style))
+    painter.setPen(
+        QtGui.QPen(color, _OUTLINE_WIDTH, context.line_style)
+        if context.outline
+        else QtCore.Qt.PenStyle.NoPen
+    )
 
     if shape.shape_type == "mask" and shape.mask is not None:
         _paint_mask(painter=painter, shape=shape, context=context)
@@ -203,27 +212,29 @@ def _paint_mask(
 ) -> None:
     assert shape.mask is not None
     origin = shape.points[0]
-    fill_color = (
-        context.palette.select_fill if context.selected else context.palette.fill
-    )
-
-    rgba = np.zeros(shape.mask.shape + (4,), dtype=np.uint8)
-    rgba[shape.mask] = fill_color.getRgb()
-    height, width = shape.mask.shape
-    # Wraps rgba without a copy; it stays alive until drawImage returns.
-    bitmap = QtGui.QImage(
-        rgba.data, width, height, 4 * width, QtGui.QImage.Format.Format_RGBA8888
-    )
-    top_left = origin * context.scale
-    painter.drawImage(
-        QtCore.QRectF(
-            top_left[0],
-            top_left[1],
-            bitmap.width() * context.scale,
-            bitmap.height() * context.scale,
-        ),
-        bitmap,
-    )
+    if context.fill_mask:
+        fill_color = (
+            context.palette.select_fill if context.selected else context.palette.fill
+        )
+        rgba = np.zeros(shape.mask.shape + (4,), dtype=np.uint8)
+        rgba[shape.mask] = fill_color.getRgb()
+        height, width = shape.mask.shape
+        # Wraps rgba without a copy; it stays alive until drawImage returns.
+        bitmap = QtGui.QImage(
+            rgba.data, width, height, 4 * width, QtGui.QImage.Format.Format_RGBA8888
+        )
+        top_left = origin * context.scale
+        painter.drawImage(
+            QtCore.QRectF(
+                top_left[0],
+                top_left[1],
+                bitmap.width() * context.scale,
+                bitmap.height() * context.scale,
+            ),
+            bitmap,
+        )
+    if not context.outline:
+        return
 
     # Pad the mask so a True region touching its border still has a false
     # ring to close a contour against; the pad offset is subtracted back out.
