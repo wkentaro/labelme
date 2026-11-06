@@ -1356,14 +1356,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=self._config["ai"]["suppress_existing_shape_matches"]
         )
         canvas.set_draft_palette(
-            palette=Palette(
-                line=QtGui.QColor(*self._config["shape"]["line_color"]),
-                fill=QtGui.QColor(*self._config["shape"]["fill_color"]),
-                select_line=QtGui.QColor(*self._config["shape"]["select_line_color"]),
-                select_fill=QtGui.QColor(*self._config["shape"]["select_fill_color"]),
-                vertex_fill=QtGui.QColor(*self._config["shape"]["vertex_fill_color"]),
-                hvertex_fill=QtGui.QColor(*self._config["shape"]["hvertex_fill_color"]),
-            )
+            palette=Palette.from_shape_config(self._config["shape"])
         )
         canvas.set_color_resolver(
             resolver=lambda label: self._get_rgb_by_label(

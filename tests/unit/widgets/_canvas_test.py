@@ -39,6 +39,7 @@ from labelme._widgets._canvas import _reproject_oriented_rectangle_corners
 from labelme._widgets._canvas import _shape_to_draft
 from labelme._widgets._canvas import _should_reselect_on_right_press
 from labelme._widgets._canvas import _snap_cursor_pos_for_square
+from labelme._widgets._shape_render import Palette
 from labelme._widgets._shape_render import ShapeRenderContext
 
 _WIDTH: Final[int] = 100
@@ -1310,7 +1311,8 @@ def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
     result_edge = image.pixelColor(25, 9)  # outside the fill
     assert min(result_edge.red(), result_edge.green(), result_edge.blue()) > 200
     example_edge = image.pixelColor(75, 9)
-    assert example_edge.green() > 200 > example_edge.red()
+    # The shipped line colour is half-transparent green.
+    assert example_edge.green() > 100 > example_edge.red()
 
 
 @pytest.mark.gui
@@ -4006,3 +4008,9 @@ def test_ai_prompt_hint_fits_a_narrow_view_in_a_long_translation(
 
     assert rects
     assert QtCore.QRectF(canvas.rect()).contains(rects[-1])
+
+
+def test_draft_palette_defaults_to_the_shipped_config(*, canvas: Canvas) -> None:
+    shape = labelme._config.load_config(config_file=None, config_overrides={})["shape"]
+
+    assert canvas._draft_palette == Palette.from_shape_config(shape)
