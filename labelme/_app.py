@@ -1321,7 +1321,6 @@ class MainWindow(QtWidgets.QMainWindow):
         message = QtWidgets.QLabel()
         stats = StatusStats()
         self.statusBar().addWidget(message, 1)
-        self.statusBar().addWidget(stats, 0)
         save = QtWidgets.QLabel()
         save.setTextFormat(Qt.TextFormat.PlainText)
         retry = QtWidgets.QToolButton()
@@ -1332,6 +1331,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().addPermanentWidget(ai)
         self.statusBar().addPermanentWidget(save)
         self.statusBar().addPermanentWidget(retry)
+        # Last, so the AI and save states that come and go never move it.
+        self.statusBar().addPermanentWidget(stats)
         self.statusBar().show()
         return _StatusBarWidgets(
             message=message, stats=stats, save=save, retry=retry, ai=ai
@@ -4111,9 +4112,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return bool(self._file_search_pattern.search(self._file_list_label(image_path)))
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
-        self._status_bar.stats.setText(
-            f"x {round(mouse_pos.x()):>4}   y {round(mouse_pos.y()):>4}"
-        )
+        self._status_bar.stats.set_position(mouse_pos.x(), mouse_pos.y())
 
 
 def _shapes_from_dicts(
