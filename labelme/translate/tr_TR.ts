@@ -1028,6 +1028,26 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Bölütleniyor…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Yapay zekâ başlatılıyor…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} yükleniyor…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Görüntü CPU üzerinde hazırlanıyor…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Görüntü hazırlanıyor…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} sn</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>{count} yeni &apos;{query}&apos; bulundu</translation>
     </message>

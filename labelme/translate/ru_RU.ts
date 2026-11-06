@@ -1132,6 +1132,26 @@ Expected location: {path}</source>
         <translation>Создать копию и сбросить</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Запуск ИИ…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Загрузка {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Подготовка изображения на CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Подготовка изображения…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} с</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Неверная метка</translation>
     </message>

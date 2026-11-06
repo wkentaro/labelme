@@ -1028,6 +1028,26 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>در حال قطعه‌بندی…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>در حال راه‌اندازی هوش مصنوعی…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>در حال بارگذاری {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>در حال آماده‌سازی تصویر روی CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>در حال آماده‌سازی تصویر…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} ثانیه</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>{count} «{query}» جدید پیدا شد</translation>
     </message>
