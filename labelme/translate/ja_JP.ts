@@ -1038,6 +1038,26 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>セグメンテーション中…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>AIを起動中…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model}を読み込み中…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>CPUで画像を準備中…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>画像を準備中…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds}秒</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>新しい「{query}」が {count} 件見つかりました</translation>
     </message>

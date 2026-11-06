@@ -1028,6 +1028,26 @@ Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saíd
         <translation>Segmentando…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Iniciando IA…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Carregando {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Preparando imagem na CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Preparando imagem…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} s</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>{count} novos &quot;{query}&quot; encontrados</translation>
     </message>

@@ -396,7 +396,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.set_device(self._config["ai"]["device"])
         self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
         self._ai_text_job: _AiTextJob | None = None
-        self._announced_ai_job: object = None
+        self._announced_ai_activity: tuple[object, str] | None = None
+        self._ai_status_timer = QtCore.QTimer(self)
+        self._ai_status_timer.setInterval(1000)
+        self._ai_status_timer.timeout.connect(self._on_ai_activity_changed)
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
@@ -1776,9 +1779,8 @@ class MainWindow(QtWidgets.QMainWindow):
             and (self._ai_text_job is not None or canvas.ai_find_all_job is not None)
         )
         on_cpu = worker.device == "cpu"
-        detecting = True
         if job is None:
-            text, detecting = "", False
+            text = ""
         elif isinstance(job, _AiTextJob):
             text = (
                 self.tr("Finding all '{query}' on CPU…")
@@ -1801,12 +1803,44 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
         else:
             text = self.tr("Segmenting on CPU…") if on_cpu else self.tr("Segmenting…")
-            detecting = False
-        self._status_bar.ai.setText(text)
-        # A detection is announced once as it starts, from text or a box.
-        if detecting and job is not self._announced_ai_job:
-            self._announced_ai_job = job
+        if job is None:
+            self._ai_status_timer.stop()
+        else:
+            if worker.stage == "starting":
+                text = self.tr("Starting AI…")
+            elif worker.stage == "loading":
+                model_name = worker.model_name or ""
+                option = _ai_models.find_ai_assist_model_option(model_name=model_name)
+                model_label = (
+                    option.display_name
+                    if option is not None
+                    else dict(_ai_models.AI_TEXT_MODEL_OPTIONS).get(
+                        model_name, model_name
+                    )
+                )
+                text = self.tr("Loading {model}…").format(model=model_label)
+            elif worker.stage == "encoding":
+                text = (
+                    self.tr("Preparing image on CPU…")
+                    if on_cpu
+                    else self.tr("Preparing image…")
+                )
+            if not self._ai_status_timer.isActive():
+                self._ai_status_timer.start()
+        # Announce actual stage changes, never the elapsed-time ticks.
+        previous = self._announced_ai_activity
+        if job is None:
+            self._announced_ai_activity = None
+        elif previous is None or job is not previous[0] or text != previous[1]:
+            self._announced_ai_activity = (job, text)
             self._announce(text)
+        elapsed = worker.elapsed_s
+        ELAPSED_DELAY_S: Final = 3
+        if job is not None and elapsed >= ELAPSED_DELAY_S:
+            text = self.tr("{status} · {seconds} s").format(
+                status=text, seconds=int(elapsed)
+            )
+        self._status_bar.ai.setText(text)
 
     def _announce(self, message: str, /) -> None:
         if not QtGui.QAccessible.isActive():

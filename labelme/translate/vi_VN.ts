@@ -1028,6 +1028,26 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Đang phân đoạn…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Đang khởi động AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Đang tải {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Đang chuẩn bị ảnh trên CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Đang chuẩn bị ảnh…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} giây</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>Đã tìm thấy {count} &apos;{query}&apos; mới</translation>
     </message>

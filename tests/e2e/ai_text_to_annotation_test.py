@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import time
 from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -131,6 +132,7 @@ def _install_mock_session(
                 _osam_session.get_osam_session(model_name=request.model_name),
                 request,
                 request.image,
+                progress=None,
             )
         except Exception as e:
             self.failed.emit(job, f"{type(e).__name__}: {e}")
@@ -482,10 +484,14 @@ def test_run_reads_detecting_under_any_tool(
     monkeypatch.setattr(win, "_ensure_ai_model_ready", lambda _: True)
     win._switch_canvas_mode(edit=False, create_mode="polygon")
     if case == "queued":  # Another AI tool's request is still running.
-        worker._set_active(MagicMock())
+        worker._set_active(MagicMock(stage="generating", started_at=time.monotonic()))
     else:
         monkeypatch.setattr(
-            OsamWorker, "submit", lambda self, **_: self._set_active(MagicMock())
+            OsamWorker,
+            "submit",
+            lambda self, **_: self._set_active(
+                MagicMock(stage="generating", started_at=time.monotonic())
+            ),
         )
     if case == "drawing":  # Submitting keeps the tool of a Shape mid-drawing.
         click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.5, 0.5))
@@ -641,6 +647,7 @@ def _hold_text_results(
                     _osam_session.get_osam_session(model_name=request.model_name),
                     request,
                     request.image,
+                    progress=None,
                 ),
             )
         )
@@ -1173,7 +1180,9 @@ def test_example_box_batch_skips_and_reports_like_a_query(
     ) -> None:
         del channel
         assert request.image is not None
-        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+        self.finished.emit(
+            job, _osam_worker._run(session, request, request.image, progress=None)
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
@@ -1237,7 +1246,9 @@ def test_run_with_an_example_box_draft_refines_it(
     ) -> None:
         del channel
         assert request.image is not None
-        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+        self.finished.emit(
+            job, _osam_worker._run(session, request, request.image, progress=None)
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
@@ -1274,7 +1285,11 @@ def test_run_with_an_example_box_draft_refines_it(
     ) -> None:
         del channel
         held.append((job, request))
-        self._set_active(MagicMock(job=job, device=None))
+        self._set_active(
+            MagicMock(
+                job=job, device=None, stage="generating", started_at=time.monotonic()
+            )
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", hold)
     monkeypatch.setattr(canvas, "_ai_progress_clock", MagicMock(elapsed=lambda: 1000))
@@ -1288,7 +1303,9 @@ def test_run_with_an_example_box_draft_refines_it(
     (job, request), worker = held[0], win._osam_worker
     assert request.image is not None
     worker._set_active(None)
-    worker.finished.emit(job, _osam_worker._run(session, request, request.image))
+    worker.finished.emit(
+        job, _osam_worker._run(session, request, request.image, progress=None)
+    )
     assert run_button.text() == win._ai_text._RUN_GLYPH
     assert len(canvas._ai_find_all_draft) == 2
 
@@ -1321,7 +1338,9 @@ def test_enter_asks_once_for_the_draft_label(
     ) -> None:
         del channel
         assert request.image is not None
-        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+        self.finished.emit(
+            job, _osam_worker._run(session, request, request.image, progress=None)
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))

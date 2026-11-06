@@ -814,6 +814,26 @@
         <translation>Sie können vorerst die Standardeinstellungen verwenden. Vor dem Zurücksetzen wird eine Sicherung Ihrer Konfigurationsdatei gespeichert.</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>KI wird gestartet…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} wird geladen…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Bild wird auf der CPU vorbereitet…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Bild wird vorbereitet…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} s</translation>
+    </message>
+    <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Erkennt nur Rahmen. Wechseln Sie zu „Rechteck“, um dieses Modell zu verwenden.</translation>
     </message>

@@ -3,6 +3,7 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
+from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
 from labelme._app import _AiTextJob
@@ -63,10 +64,14 @@ def test_status_bar_names_the_running_ai_task(
         "Finding all 'dog'…",
         "",
     ]
-    # Each detection, from text or an example box, is announced once.
+    # Each distinct task/device status is announced, never a timer tick.
     assert announced == [
+        "Segmenting…",
+        "Segmenting on CPU…",
         "Finding all 'sticky notes, pens'…",
+        "Finding all 'sticky notes, pens' on CPU…",
         "Finding matches…",
+        "Finding matches on CPU…",
         "Finding all 'dog'…",
     ]
 
@@ -79,3 +84,48 @@ def test_compute_device_setting_reaches_the_worker(*, main_win: MainWinFactory) 
     win._apply_setting_change(("ai", "device"), "auto")
 
     assert win._osam_worker._device == "auto"
+
+
+@pytest.mark.gui
+def test_stage_text_and_elapsed_time_without_repeated_announcements(
+    *, main_win: MainWinFactory, monkeypatch: pytest.MonkeyPatch, qtbot: QtBot
+) -> None:
+    win = main_win()
+    state: dict[str, object] = {
+        "job": object(),
+        "stage": "starting",
+        "model_name": "sam3:latest",
+        "device": None,
+        "elapsed_s": 0.0,
+    }
+    for name in state:
+        monkeypatch.setattr(OsamWorker, name, property(lambda _, key=name: state[key]))
+    announced: list[str] = []
+    monkeypatch.setattr(win, "_announce", announced.append)
+    worker = win._osam_worker
+    label = win._status_bar.ai
+
+    worker.activity_changed.emit()
+    assert label.text() == "Starting AI…"
+    state["stage"] = "loading"
+    worker.activity_changed.emit()
+    assert label.text() == "Loading SAM 3…"
+
+    state.update(stage="encoding", device="cpu", elapsed_s=2.0)
+    worker.activity_changed.emit()
+    assert label.text() == "Preparing image on CPU…"
+    state["elapsed_s"] = 4.0
+    qtbot.waitUntil(
+        lambda: label.text() == "Preparing image on CPU… · 4 s", timeout=2000
+    )
+    assert announced == ["Starting AI…", "Loading SAM 3…", "Preparing image on CPU…"]
+
+    state["stage"] = "generating"
+    worker.activity_changed.emit()
+    assert label.text() == "Segmenting on CPU… · 4 s"
+    assert announced[-1] == "Segmenting on CPU…"
+
+    state.update(job=None, stage=None, device=None, elapsed_s=0.0)
+    worker.activity_changed.emit()
+    assert label.text() == ""
+    assert not win._ai_status_timer.isActive()

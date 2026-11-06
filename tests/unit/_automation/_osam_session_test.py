@@ -10,6 +10,7 @@ from loguru import logger
 from numpy.typing import NDArray
 
 from labelme._automation._osam_session import OsamSession
+from labelme._automation._osam_session import ProgressCallback
 from labelme._automation._osam_session import get_osam_session
 
 _IMAGE: Final[NDArray[np.uint8]] = np.zeros((2, 3, 3), dtype=np.uint8)
@@ -35,6 +36,7 @@ class _FakeModel:
     requests: list[osam.types.GenerateRequest]
 
     name = "fake-model"
+    device = "cpu"
 
     def __init__(self, *, registry: _FakeModelRegistry) -> None:
         self._registry = registry
@@ -76,12 +78,19 @@ def install_fake_model(
     return _install
 
 
-def _run_point(session: OsamSession, /, *, image_id: str) -> None:
+def _run_point(
+    session: OsamSession,
+    /,
+    *,
+    image_id: str,
+    progress: ProgressCallback | None = None,
+) -> None:
     session.run(
         image=_IMAGE,
         image_id=image_id,
         points=_POINTS,
         point_labels=_POINT_LABELS,
+        progress=progress,
     )
 
 
@@ -184,6 +193,46 @@ def test_embedding_is_reused_for_a_repeated_image_id(
 
     assert registry.model.encode_calls == 1
     assert len(registry.model.requests) == 2
+
+
+def test_progress_skips_loading_and_encoding_for_cached_work(
+    *, install_fake_model: Callable[..., _FakeModelRegistry]
+) -> None:
+    install_fake_model()
+    session = OsamSession(model_name="x")
+    stages: list[tuple[str, str | None]] = []
+
+    def report(stage: str, device: str | None) -> None:
+        stages.append((stage, device))
+
+    _run_point(session, image_id="a", progress=report)
+    assert stages == [("loading", None), ("encoding", "cpu"), ("generating", "cpu")]
+
+    stages.clear()
+    _run_point(session, image_id="a", progress=report)
+    assert stages == [("generating", "cpu")]
+
+    stages.clear()
+    _run_point(session, image_id="b", progress=report)
+    assert stages == [("encoding", "cpu"), ("generating", "cpu")]
+
+
+def test_progress_skips_preparation_for_a_model_without_an_encoder(
+    *,
+    install_fake_model: Callable[..., _FakeModelRegistry],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    install_fake_model()
+    monkeypatch.setattr(_FakeModel, "encode_image", osam.types.Model.encode_image)
+    stages: list[str] = []
+
+    _run_point(
+        OsamSession(model_name="x"),
+        image_id="a",
+        progress=lambda stage, _device: stages.append(stage),
+    )
+
+    assert stages == ["loading", "generating"]
 
 
 def test_embedding_cache_evicts_by_insertion_order_not_recency(

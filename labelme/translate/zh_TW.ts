@@ -1028,6 +1028,26 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>正在分割…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>正在啟動 AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>正在載入 {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>正在 CPU 上準備影像…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>正在準備影像…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} 秒</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>找到 {count} 個新的「{query}」</translation>
     </message>

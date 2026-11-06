@@ -24,7 +24,9 @@ from PySide6 import QtWidgets
 if TYPE_CHECKING:
     import osam
 
+    from ._osam_session import InferenceStage
     from ._osam_session import OsamSession
+    from ._osam_session import ProgressCallback
 
 # ponytail: one deadline covers spawning, loading and running, so a first run
 # that compiles a model counts as slow, not hung. Split it per stage if a
@@ -44,7 +46,12 @@ class InferenceRequest:
 
 
 def _run(
-    session: OsamSession, request: InferenceRequest, image: NDArray[np.uint8], /
+    session: OsamSession,
+    request: InferenceRequest,
+    image: NDArray[np.uint8],
+    /,
+    *,
+    progress: ProgressCallback | None,
 ) -> list[osam.types.Annotation]:
     if request.texts is None or request.points is not None:
         # SAM3 finds every match for a box with text and one object without.
@@ -54,6 +61,7 @@ def _run(
             points=request.points,
             point_labels=request.point_labels,
             texts=request.texts,
+            progress=progress,
         ).annotations
     # ponytail: SAM3 reads only the first text of a prompt, so it runs once per
     # text, reusing the cached image embedding. Drop this once osam's SAM3 takes
@@ -67,7 +75,7 @@ def _run(
         annotation
         for texts in batches
         for annotation in session.run(
-            image=image, image_id=request.image_id, texts=texts
+            image=image, image_id=request.image_id, texts=texts, progress=progress
         ).annotations
     ]
 
@@ -75,9 +83,8 @@ def _run(
 def serve(
     requests: Connection, responses: Connection, providers: str | None, /
 ) -> None:
-    # Answers each ("run", id, request) with ("device", id, device), once the
-    # model loads, then ("done", id, annotations), or ("error" | "fault", id,
-    # message), where a fault comes from ONNX Runtime and may be the device's.
+    # Stage updates carry the request id and device (once known), followed by
+    # annotations or an error. An ONNX Runtime fault may be the device's.
     from ._osam_session import get_osam_session  # noqa: PLC0415 -- child only
 
     if providers is not None:
@@ -90,21 +97,37 @@ def serve(
         except EOFError:
             return
         _, request_id, request = message
+        last_stage: tuple[InferenceStage, str | None] | None = None
+        stage_started_at = time.perf_counter()
+
+        def report_timing() -> None:
+            if last_stage is not None:
+                elapsed_ms = (time.perf_counter() - stage_started_at) * 1000
+                responses.send(("timing", request_id, (*last_stage, elapsed_ms)))
+
+        def report_progress(stage: InferenceStage, device: str | None) -> None:
+            nonlocal last_stage, stage_started_at
+            report_timing()
+            last_stage = (stage, device)
+            stage_started_at = time.perf_counter()
+            responses.send(("stage", request_id, (stage, device)))
+
         try:
             if request.image is not None:
                 image, image_id = request.image, request.image_id
             if image is None or image_id != request.image_id:
                 raise RuntimeError(f"image {request.image_id!r} was never sent")
             session = get_osam_session(model_name=request.model_name)
-            responses.send(("device", request_id, session.device))
-            annotations = _run(session, request, image)
+            annotations = _run(session, request, image, progress=report_progress)
         except Exception as error:
+            report_timing()
             logger.opt(exception=error).error("AI inference failed")
             kind = (
                 "fault" if type(error).__module__.startswith("onnxruntime") else "error"
             )
             responses.send((kind, request_id, f"{type(error).__name__}: {error}"))
         else:
+            report_timing()
             responses.send(("done", request_id, annotations))
 
 
@@ -137,6 +160,8 @@ class _Active:
     request: InferenceRequest  # with its image, to retry on a new worker
     deadline: float
     device: str | None = None  # None until the model loads
+    stage: InferenceStage | Literal["starting"] = "starting"
+    started_at: float = dataclasses.field(default_factory=time.monotonic)
 
 
 class OsamWorker(QtCore.QObject):
@@ -154,7 +179,7 @@ class OsamWorker(QtCore.QObject):
 
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
-    activity_changed = QtCore.Signal()  # job, queued or device changed
+    activity_changed = QtCore.Signal()  # job, queued, stage or device changed
 
     def __init__(
         self,
@@ -200,6 +225,20 @@ class OsamWorker(QtCore.QObject):
     def device(self) -> str | None:
         # Where the running job's model loaded; None while idle or loading.
         return None if self._active is None else self._active.device
+
+    @property
+    def stage(self) -> str | None:
+        return None if self._active is None else self._active.stage
+
+    @property
+    def model_name(self) -> str | None:
+        return None if self._active is None else self._active.request.model_name
+
+    @property
+    def elapsed_s(self) -> float:
+        return (
+            0.0 if self._active is None else time.monotonic() - self._active.started_at
+        )
 
     def set_device(self, device: Literal["auto", "cpu"], /) -> None:
         # The running job finishes where it is; the next one starts a worker
@@ -360,8 +399,19 @@ class OsamWorker(QtCore.QObject):
             kind, request_id, payload = self._inbox.get_nowait()
             if request_id != active.request_id:
                 continue
-            if kind == "device":
-                active.device = payload
+            if kind == "timing":
+                stage, device, elapsed_ms = payload
+                logger.info(
+                    "AI {!r} stage {} on {} took {:.0f} ms",
+                    active.request.model_name,
+                    stage,
+                    device or "an unknown device",
+                    elapsed_ms,
+                )
+            elif kind == "stage":
+                active.stage, device = payload
+                if device is not None:
+                    active.device = device
                 self.activity_changed.emit()
             else:
                 return kind, payload
