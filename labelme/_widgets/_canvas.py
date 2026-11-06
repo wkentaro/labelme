@@ -322,8 +322,9 @@ class Canvas(QtWidgets.QWidget):
     # What Enter adds: the result of the placed prompts, edged in white.
     _ai_segment_result: list[Shape]
     _ai_segment_result_key: tuple[object, ...] | None
-    # What a click at the cursor would give, filled with no edge.
-    _ai_segment_preview: list[Shape]
+    # What a click at the cursor would give, filled with no edge; None while
+    # there is no cursor input, where an empty list is an empty prediction.
+    _ai_segment_preview: list[Shape] | None
     _ai_segment_preview_key: tuple[object, ...] | None
     # The AI-Segment press until its release, as (image pos, widget pos,
     # modifiers); moving past the drag distance draws a box, not a point.
@@ -2546,11 +2547,11 @@ class Canvas(QtWidgets.QWidget):
         # The guess at the cursor is what a click there gives, including the
         # area it would drop, so it is a bare fill.
         guess_context = dataclasses.replace(selected, outline=False)
-        for shape in self._ai_segment_preview:
+        for shape in self._ai_segment_preview or []:
             render_shape(painter=painter, shape=shape, context=guess_context)
         # What Enter adds has a white edge and its vertices, as AI-Find All
         # results waiting for Enter do. It fills only while there is no guess.
-        fill = not self._ai_segment_preview
+        fill = self._ai_segment_preview is None
         context = dataclasses.replace(selected, fill=fill, fill_mask=fill)
         for shape in self._ai_segment_result:
             render_shape(painter=painter, shape=shape, context=context)
@@ -2580,7 +2581,7 @@ class Canvas(QtWidgets.QWidget):
         ):
             self._ai_segment_result = []
             self._ai_segment_result_key = None
-            self._ai_segment_preview = []
+            self._ai_segment_preview = None
             self._ai_segment_preview_key = None
             return
         settings = (
@@ -2618,7 +2619,7 @@ class Canvas(QtWidgets.QWidget):
                 assert self._osam_worker is not None
                 self._osam_worker.cancel("preview")
                 self._ai_preview_job = None
-            self._ai_segment_preview = []
+            self._ai_segment_preview = None
             self.update()
             return
         self._submit_ai_job(
@@ -3067,7 +3068,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_finalize_job = None
         self._ai_segment_result = []
         self._ai_segment_result_key = None
-        self._ai_segment_preview = []
+        self._ai_segment_preview = None
         self._ai_segment_preview_key = None
         self._ai_segment_press = None
         self._ai_segment_dragging = False

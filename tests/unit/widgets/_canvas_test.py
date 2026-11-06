@@ -1508,7 +1508,7 @@ def test_ai_segment_fills_the_guess_and_edges_the_result(
     assert image.pixelColor(24, 16) == QtGui.QColor(Qt.GlobalColor.black)
 
     # With no guess, the result fills.
-    canvas._ai_segment_preview = []
+    canvas._ai_segment_preview = None
     fill = draw().pixelColor(24, 16)
     assert fill.green() > fill.red() and fill.green() > fill.blue()
 
@@ -1532,7 +1532,7 @@ def test_ai_segment_mask_result_fills_only_without_a_guess(*, canvas: Canvas) ->
         mask=np.ones((20, 20), dtype=bool),
     )
 
-    def draw(*, guesses: list[Shape]) -> QtGui.QImage:
+    def draw(*, guesses: list[Shape] | None) -> QtGui.QImage:
         canvas._ai_segment_preview = guesses
         image = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_ARGB32)
         image.fill(Qt.GlobalColor.black)
@@ -1544,7 +1544,9 @@ def test_ai_segment_mask_result_fills_only_without_a_guess(*, canvas: Canvas) ->
     image = draw(guesses=[guess])
     assert image.pixelColor(20, 20) == QtGui.QColor(Qt.GlobalColor.black)
     assert image.pixelColor(70, 20).green() > 0  # the guess, in the draft colour
-    assert draw(guesses=[]).pixelColor(20, 20).green() > 0
+    assert draw(guesses=None).pixelColor(20, 20).green() > 0
+    # An empty guess is a click there giving nothing, so it still hides the fill.
+    assert draw(guesses=[]).pixelColor(20, 20) == QtGui.QColor(Qt.GlobalColor.black)
 
 
 @pytest.mark.gui
@@ -2782,7 +2784,7 @@ def test_ai_preview_follows_input_without_inference_during_paint(
     qtbot.waitUntil(lambda: len(prompts) == 1)
     assert prompts[-1] == [[10, 10]]
     assert canvas._ai_segment_result == proposal.new_shapes
-    assert canvas._ai_segment_preview == []  # no cursor input since the click
+    assert canvas._ai_segment_preview is None  # no cursor input since the click
 
     for _ in range(3):
         canvas.grab()
@@ -2814,7 +2816,7 @@ def test_ai_preview_follows_input_without_inference_during_paint(
     canvas.grab()
     # The paint's deferred refresh clears what the draft showed.
     qtbot.waitUntil(
-        lambda: canvas._ai_segment_result == [] and canvas._ai_segment_preview == []
+        lambda: canvas._ai_segment_result == [] and canvas._ai_segment_preview is None
     )
     QtCore.QCoreApplication.processEvents()
     assert len(prompts) == 4
@@ -2944,7 +2946,7 @@ def test_ai_preview_clears_when_replacement_is_unavailable(
         return
     canvas.grab()  # A draw refreshes the proposals for the cleared draft.
     qtbot.waitUntil(lambda: not canvas._ai_segment_result)
-    assert canvas._ai_segment_preview == []
+    assert canvas._ai_segment_preview is None
 
 
 @pytest.mark.gui
