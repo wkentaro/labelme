@@ -79,3 +79,58 @@ def test_compute_device_setting_reaches_the_worker(*, main_win: MainWinFactory) 
     win._apply_setting_change(("ai", "device"), "auto")
 
     assert win._osam_worker._device == "auto"
+
+
+@pytest.mark.gui
+def test_status_bar_names_the_stage_and_time_of_a_slow_prompt(
+    *, main_win: MainWinFactory, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    win: MainWindow = main_win()
+    text_job = _AiTextJob(
+        pixmap_key=0,
+        texts=["dog"],
+        shape_type="rectangle",
+        iou_threshold=0.5,
+        score_threshold=0.1,
+        image_size=None,
+    )
+    win._ai_text_job = text_job
+    state: dict[str, object] = {}
+    for name in ["job", "stage", "device", "model_name"]:
+        monkeypatch.setattr(
+            OsamWorker, name, property(lambda _, name=name: state.get(name))
+        )
+    monkeypatch.setattr(Canvas, "ai_find_all_job", property(lambda _: None))
+    announced: list[str] = []
+    monkeypatch.setattr(win, "_announce", announced.append)
+    label = win._status_bar.ai
+
+    def show(**changes: object) -> str:
+        state.update(changes)
+        win._osam_worker.activity_changed.emit()
+        return label.text()
+
+    segment = object()
+    assert show(job=segment, stage="starting") == "Starting AI…"
+    assert show(stage="loading", model_name="sam2:latest") == "Loading SAM 2 Base+…"
+    assert show(stage="encoding", device="cpu") == "Preparing image on CPU…"
+    assert show(stage="generating") == "Segmenting on CPU…"
+    # A warm Segment, such as each preview while the cursor moves, is silent.
+    for _ in range(3):
+        assert show(job=object(), stage=None) == "Segmenting on CPU…"
+    assert announced == [
+        "Starting AI…",
+        "Loading SAM 2 Base+…",
+        "Preparing image on CPU…",
+    ]
+
+    announced.clear()
+    assert show(job=text_job, stage="encoding", device=None) == "Preparing image…"
+    win._ai_status_started_at -= 4  # as if 4 seconds have passed
+    assert show(stage="generating") == "Finding all 'dog'… · 4 s"
+    assert show() == "Finding all 'dog'… · 4 s"  # a tick
+    # A retry on CPU keeps the job's clock.
+    assert show(job=None, stage=None) == ""
+    assert not win._ai_status_timer.isActive()
+    assert show(job=text_job, stage="starting") == "Starting AI… · 4 s"
+    assert announced == ["Preparing image…", "Finding all 'dog'…", "Starting AI…"]

@@ -131,6 +131,7 @@ def _install_mock_session(
                 _osam_session.get_osam_session(model_name=request.model_name),
                 request,
                 request.image,
+                progress=None,
             )
         except Exception as e:
             self.failed.emit(job, f"{type(e).__name__}: {e}")
@@ -641,6 +642,7 @@ def _hold_text_results(
                     _osam_session.get_osam_session(model_name=request.model_name),
                     request,
                     request.image,
+                    progress=None,
                 ),
             )
         )
@@ -1173,7 +1175,9 @@ def test_example_box_batch_skips_and_reports_like_a_query(
     ) -> None:
         del channel
         assert request.image is not None
-        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+        self.finished.emit(
+            job, _osam_worker._run(session, request, request.image, progress=None)
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
@@ -1237,7 +1241,9 @@ def test_run_with_an_example_box_draft_refines_it(
     ) -> None:
         del channel
         assert request.image is not None
-        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+        self.finished.emit(
+            job, _osam_worker._run(session, request, request.image, progress=None)
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
@@ -1288,7 +1294,9 @@ def test_run_with_an_example_box_draft_refines_it(
     (job, request), worker = held[0], win._osam_worker
     assert request.image is not None
     worker._set_active(None)
-    worker.finished.emit(job, _osam_worker._run(session, request, request.image))
+    worker.finished.emit(
+        job, _osam_worker._run(session, request, request.image, progress=None)
+    )
     assert run_button.text() == win._ai_text._RUN_GLYPH
     assert len(canvas._ai_find_all_draft) == 2
 
@@ -1321,7 +1329,9 @@ def test_enter_asks_once_for_the_draft_label(
     ) -> None:
         del channel
         assert request.image is not None
-        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+        self.finished.emit(
+            job, _osam_worker._run(session, request, request.image, progress=None)
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))

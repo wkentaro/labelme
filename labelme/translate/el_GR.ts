@@ -1032,6 +1032,26 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
 Αλλάξτε το μοντέλο AI-Find All σε &apos;SAM 3&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Εκκίνηση AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Φόρτωση {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Προετοιμασία εικόνας στη CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Προετοιμασία εικόνας…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} δευτ.</translation>
+    </message>
+    <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Δεν βρέθηκαν νέα «{query}»</translation>
     </message>

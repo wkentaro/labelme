@@ -396,7 +396,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.set_device(self._config["ai"]["device"])
         self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
         self._ai_text_job: _AiTextJob | None = None
-        self._announced_ai_job: object = None
+        # (job, "task" or a slow stage) last announced.
+        self._announced_ai_status: tuple[object, str] = (None, "")
+        # Kept while idle, so a job retried on CPU counts its total time.
+        self._ai_status_job: object = None
+        self._ai_status_started_at = 0.0
+        self._ai_status_timer = QtCore.QTimer(self)
+        self._ai_status_timer.setInterval(1000)
+        self._ai_status_timer.timeout.connect(self._on_ai_activity_changed)
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
@@ -1802,11 +1809,46 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = self.tr("Segmenting on CPU…") if on_cpu else self.tr("Segmenting…")
             detecting = False
-        self._status_bar.ai.setText(text)
-        # A detection is announced once as it starts, from text or a box.
-        if detecting and job is not self._announced_ai_job:
-            self._announced_ai_job = job
+        stage = worker.stage
+        if stage == "starting":
+            text = self.tr("Starting AI…")
+        elif stage == "loading":
+            model_name = worker.model_name or ""
+            # Model names are product names, so they stay untranslated.
+            text = self.tr("Loading {model}…").format(
+                model=self._model_manager.models.get(model_name, model_name)
+            )
+        elif stage == "encoding":
+            text = (
+                self.tr("Preparing image on CPU…")
+                if on_cpu
+                else self.tr("Preparing image…")
+            )
+        # A detection is announced once as it starts, from text or a box, and
+        # a slow stage once for any prompt; a fast Segment, never.
+        kind = stage if stage in ("starting", "loading", "encoding") else "task"
+        announced_job, announced_kind = self._announced_ai_status
+        if (
+            job is not None
+            and (detecting or kind != "task")
+            and (job is not announced_job or kind != announced_kind)
+        ):
+            self._announced_ai_status = (job, kind)
             self._announce(text)
+        if job is None:
+            self._ai_status_timer.stop()
+        else:
+            if job is not self._ai_status_job:
+                self._ai_status_job = job
+                self._ai_status_started_at = time.monotonic()
+            self._ai_status_timer.start()  # restarts, so a tick follows a second
+            seconds = int(time.monotonic() - self._ai_status_started_at)
+            ELAPSED_SHOWN_AFTER_S: Final = 3
+            if seconds >= ELAPSED_SHOWN_AFTER_S:
+                text = self.tr("{status} · {seconds} s").format(
+                    status=text, seconds=seconds
+                )
+        self._status_bar.ai.setText(text)
 
     def _announce(self, message: str, /) -> None:
         if not QtGui.QAccessible.isActive():

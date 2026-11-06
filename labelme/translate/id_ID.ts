@@ -1036,6 +1036,26 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Cadangkan dan reset</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Memulai AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Memuat {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Menyiapkan gambar di CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Menyiapkan gambar…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} dtk</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Label tidak valid</translation>
     </message>

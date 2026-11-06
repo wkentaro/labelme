@@ -1032,6 +1032,26 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
 Перемкніть модель AI-Find All на &apos;SAM 3&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Запуск ШІ…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Завантаження {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Підготовка зображення на CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Підготовка зображення…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} с</translation>
+    </message>
+    <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Нових «{query}» не знайдено</translation>
     </message>

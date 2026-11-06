@@ -1029,6 +1029,26 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>กำลังแบ่งส่วน…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>กำลังเริ่ม AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>กำลังโหลด {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>กำลังเตรียมภาพบน CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>กำลังเตรียมภาพ…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} วินาที</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>พบ &apos;{query}&apos; ใหม่ {count} รายการ</translation>
     </message>
