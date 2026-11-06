@@ -408,6 +408,36 @@ def test_mask_draws_fill_and_edge_as_asked(*, fill_mask: bool, outline: bool) ->
 
 @pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
+@pytest.mark.parametrize("outline", [True, False])
+def test_polygon_without_outline_draws_its_fill_alone(*, outline: bool) -> None:
+    image = QtGui.QImage(_SIZE, _SIZE, QtGui.QImage.Format.Format_ARGB32)
+    image.fill(QtGui.QColor(255, 255, 255))
+    painter = QtGui.QPainter(image)
+    render_shape(
+        painter=painter,
+        shape=_polygon(label=None),
+        context=ShapeRenderContext(
+            scale=1.0,
+            palette=Palette.from_rgb((255, 0, 0)),
+            point_size=8,
+            point_type="round",
+            selected=False,
+            fill=True,
+            highlight=None,
+            rotation_highlight=None,
+            outline=outline,
+        ),
+    )
+    painter.end()
+
+    white = QtGui.QColor(255, 255, 255)
+    assert image.pixelColor(100, 100) != white  # the fill
+    # Outside the polygon, beside its top-left vertex marker.
+    assert (image.pixelColor(47, 47) != white) is outline
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
 def test_label_anchor_tracks_scale() -> None:
     shape = _polygon(label="car")
     # At scale 0.5 the shape top moves from y=50 to y=25, so the label follows

@@ -92,7 +92,7 @@ class ShapeRenderContext:
     # A mask is filled even when fill is off, as every unselected mask Shape
     # is; False draws its contour alone.
     fill_mask: bool = True
-    # False drops the edge; a mask then draws its fill alone.
+    # False draws the fill alone, with no edge or vertex markers.
     outline: bool = True
 
 
@@ -273,26 +273,29 @@ def _paint_shape_points(
     palette = context.palette
     paths = _build_shape_points_paths(shape=shape, context=context)
 
-    painter.drawPath(paths.line)
-    _paint_filled_vertices(
-        painter=painter,
-        vertices=paths.vertices,
-        fill=palette.hvertex_fill
-        if context.highlight is not None
-        else palette.vertex_fill,
-    )
-    _paint_filled_vertices(
-        painter=painter,
-        vertices=paths.rotation_vertices,
-        fill=(
-            palette.hvertex_fill
-            if context.rotation_highlight is not None
-            else palette.vertex_fill
-        ),
-    )
+    if context.outline:
+        painter.drawPath(paths.line)
+        _paint_filled_vertices(
+            painter=painter,
+            vertices=paths.vertices,
+            fill=palette.hvertex_fill
+            if context.highlight is not None
+            else palette.vertex_fill,
+        )
+        _paint_filled_vertices(
+            painter=painter,
+            vertices=paths.rotation_vertices,
+            fill=(
+                palette.hvertex_fill
+                if context.rotation_highlight is not None
+                else palette.vertex_fill
+            ),
+        )
     if context.fill and shape.shape_type not in ["line", "linestrip", "points", "mask"]:
         fill = palette.select_fill if context.selected else palette.fill
         painter.fillPath(paths.line, fill)
+    if not context.outline:
+        return
     if paths.orientation_arrow.length() > 0:
         painter.setPen(QtGui.QPen(palette.vertex_fill, _OUTLINE_WIDTH))
         painter.drawPath(paths.orientation_arrow)
