@@ -66,6 +66,17 @@ class Palette:
             hvertex_fill=QtGui.QColor(255, 255, 255),
         )
 
+    @classmethod
+    def from_shape_config(cls, shape: dict, /) -> Palette:
+        return cls(
+            line=QtGui.QColor(*shape["line_color"]),
+            fill=QtGui.QColor(*shape["fill_color"]),
+            select_line=QtGui.QColor(*shape["select_line_color"]),
+            select_fill=QtGui.QColor(*shape["select_fill_color"]),
+            vertex_fill=QtGui.QColor(*shape["vertex_fill_color"]),
+            hvertex_fill=QtGui.QColor(*shape["hvertex_fill_color"]),
+        )
+
 
 @dataclasses.dataclass(frozen=True)
 class ShapeRenderContext:
