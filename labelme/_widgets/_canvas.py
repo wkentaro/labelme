@@ -25,6 +25,7 @@ from PySide6.QtCore import Qt
 
 from .. import _ai_models
 from .. import _automation
+from .. import _config
 from .. import _shape
 from .. import _utils
 from .._shape import CIRCLE_POINT_COUNT
@@ -52,6 +53,11 @@ from ._shape_render import render_shape
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
+# The shipped config's draft colours, so a canvas the app hasn't configured
+# (as in tests) draws drafts the way users see them.
+_DEFAULT_DRAFT_PALETTE: Final[Palette] = Palette.from_shape_config(
+    _config.load_config(config_file=None, config_overrides={})["shape"]
+)
 _NEGATIVE_PALETTE: Final[Palette] = Palette.from_rgb(NEGATIVE_RGB)
 
 
@@ -402,7 +408,7 @@ class Canvas(QtWidgets.QWidget):
         self._color_resolver: Callable[[str], tuple[int, int, int]] | None = None
         self._point_size: int = 8
         self._point_type: Literal["square", "round"] = "round"
-        self._draft_palette = _DEFAULT_PALETTE
+        self._draft_palette = _DEFAULT_DRAFT_PALETTE
         self._palette_cache = {}
         self.context_menu = QtWidgets.QMenu()
         self.context_menu_origin = None
