@@ -70,6 +70,35 @@ def test_status_shows_rounded_pointer_coordinates_across_transition(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
+@pytest.mark.gui
+def test_pointer_coordinates_stay_put_as_other_status_changes(
+    *,
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    pause: bool,
+) -> None:
+    raw_win.show()
+    status_bar = raw_win._status_bar
+    status_bar.stats.set_position(422, 616)
+
+    def stats_right_edge() -> int:
+        qtbot.wait(50)  # the status bar lays out its widgets on the next pass
+        return status_bar.stats.geometry().right()
+
+    edge = stats_right_edge()
+    assert edge >= raw_win.statusBar().width() - 40  # at the right end
+    for ai, save in [
+        ("Loading SAM 2 Base+… · 12 s", ""),
+        ("Segmenting on CPU…", "Saving…"),
+        ("", "Unsaved changes"),
+    ]:
+        status_bar.ai.setText(ai)
+        status_bar.save.setText(save)
+        assert stats_right_edge() == edge
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
 def _wait_for_status_message_containing(
     *,
     qtbot: QtBot,
