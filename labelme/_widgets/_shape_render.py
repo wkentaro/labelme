@@ -11,7 +11,6 @@ import skimage.measure
 from PySide6 import QtCore
 from PySide6 import QtGui
 
-from .. import _utils
 from .._shape import CIRCLE_POINT_COUNT
 from .._shape import LINE_POINT_COUNT
 from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
@@ -210,7 +209,11 @@ def _paint_mask(
 
     rgba = np.zeros(shape.mask.shape + (4,), dtype=np.uint8)
     rgba[shape.mask] = fill_color.getRgb()
-    bitmap = QtGui.QImage.fromData(_utils.img_arr_to_data(rgba))
+    height, width = shape.mask.shape
+    # Wraps rgba without a copy; it stays alive until drawImage returns.
+    bitmap = QtGui.QImage(
+        rgba.data, width, height, 4 * width, QtGui.QImage.Format.Format_RGBA8888
+    )
     top_left = origin * context.scale
     painter.drawImage(
         QtCore.QRectF(
