@@ -228,6 +228,11 @@ class OsamWorker(QtCore.QObject):
         if channel in self._pending:
             self.activity_changed.emit()  # queued behind the running job
 
+    def cancel(self, channel: object, /) -> None:
+        # Drops the channel's request that has not started; a running one
+        # still finishes.
+        self._pending.pop(channel, None)
+
     @property
     def job(self) -> object:
         # The running job; None while idle.
