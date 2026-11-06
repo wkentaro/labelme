@@ -124,13 +124,17 @@ def test_status_bar_names_the_stage_and_time_of_a_slow_prompt(
         "Preparing image on CPU…",
     ]
 
+    # A detection on a warm worker announces its task once, around a stage.
     announced.clear()
-    assert show(job=text_job, stage="encoding", device=None) == "Preparing image…"
+    assert show(job=text_job, stage=None, device=None) == "Finding all 'dog'…"
+    assert show(stage="encoding") == "Preparing image…"
     win._ai_status_started_at -= 4  # as if 4 seconds have passed
     assert show(stage="generating") == "Finding all 'dog'… · 4 s"
     assert show() == "Finding all 'dog'… · 4 s"  # a tick
-    # A retry on CPU keeps the job's clock.
+    # A retry on CPU keeps the job's clock and repeats no announcement.
     assert show(job=None, stage=None) == ""
     assert not win._ai_status_timer.isActive()
     assert show(job=text_job, stage="starting") == "Starting AI… · 4 s"
-    assert announced == ["Preparing image…", "Finding all 'dog'…", "Starting AI…"]
+    assert show(stage="encoding", device="cpu") == "Preparing image on CPU… · 4 s"
+    assert show(stage="generating") == "Finding all 'dog' on CPU… · 4 s"
+    assert announced == ["Finding all 'dog'…", "Preparing image…", "Starting AI…"]

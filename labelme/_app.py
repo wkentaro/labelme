@@ -396,11 +396,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.set_device(self._config["ai"]["device"])
         self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
         self._ai_text_job: _AiTextJob | None = None
-        # (job, "task" or a slow stage) last announced.
-        self._announced_ai_status: tuple[object, str] = (None, "")
-        # Kept while idle, so a job retried on CPU counts its total time.
+        # Kept while idle, so a job retried on CPU keeps its clock and what
+        # was announced for it.
         self._ai_status_job: object = None
         self._ai_status_started_at = 0.0
+        self._ai_status_announced: set[str] = set()  # "task" and slow stages
         self._ai_status_timer = QtCore.QTimer(self)
         self._ai_status_timer.setInterval(1000)
         self._ai_status_timer.timeout.connect(self._on_ai_activity_changed)
@@ -1824,23 +1824,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 if on_cpu
                 else self.tr("Preparing image…")
             )
-        # A detection is announced once as it starts, from text or a box, and
-        # a slow stage once for any prompt; a fast Segment, never.
-        kind = stage if stage in ("starting", "loading", "encoding") else "task"
-        announced_job, announced_kind = self._announced_ai_status
-        if (
-            job is not None
-            and (detecting or kind != "task")
-            and (job is not announced_job or kind != announced_kind)
-        ):
-            self._announced_ai_status = (job, kind)
-            self._announce(text)
         if job is None:
             self._ai_status_timer.stop()
         else:
             if job is not self._ai_status_job:
                 self._ai_status_job = job
                 self._ai_status_started_at = time.monotonic()
+                self._ai_status_announced = set()
+            # A detection is announced once as it starts, from text or a box,
+            # and a slow stage once for any prompt; a fast Segment, never.
+            kind = stage if stage in ("starting", "loading", "encoding") else "task"
+            if (detecting or kind != "task") and kind not in self._ai_status_announced:
+                self._ai_status_announced.add(kind)
+                self._announce(text)
             self._ai_status_timer.start()  # restarts, so a tick follows a second
             seconds = int(time.monotonic() - self._ai_status_started_at)
             ELAPSED_SHOWN_AFTER_S: Final = 3
