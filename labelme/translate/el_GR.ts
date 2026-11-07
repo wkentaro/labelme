@@ -16,6 +16,10 @@
         <translation>Περισσότερη λεπτομέρεια</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Έξοδος</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Πολύγωνο</translation>
     </message>
@@ -147,10 +151,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>Δημιουργία %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>(Esc για ακύρωση)</translation>
     </message>
@@ -189,6 +189,38 @@
     <message>
         <source>Hold %s and click to add a point on the edge</source>
         <translation>Κρατήστε πατημένο το %s και κάντε κλικ για προσθήκη σημείου στην ακμή</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Σύρετε ένα πλαίσιο</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Σύρετε γύρω από ένα παράδειγμα</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Απόρριψη</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Προσθήκη</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Κλικ για συμπερίληψη</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Κλικ για εξαίρεση</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Προσθήκη %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Σύρετε για εξαίρεση</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -386,6 +418,11 @@
     <message>
         <source>Edit Shapes</source>
         <translation>Επεξεργασία σχημάτων</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Επιλογή</translation>
     </message>
     <message>
         <source>Move and edit the selected shapes</source>
@@ -613,11 +650,6 @@
     <message>
         <source>Delete the selected point from the polygon or LineStrip</source>
         <translation>Διαγράφει το επιλεγμένο σημείο από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Επεξεργασία</translation>
     </message>
     <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
@@ -862,10 +894,6 @@
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Να διατηρηθούν οι αλλαγές επισημειώσεων για το «{}»;</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Μη αποθηκευμένες αλλαγές</translation>
     </message>
@@ -1004,6 +1032,26 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
 Αλλάξτε το μοντέλο AI-Find All σε &apos;SAM 3&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Εκκίνηση AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Φόρτωση {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Προετοιμασία εικόνας στη CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Προετοιμασία εικόνας…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} δευτ.</translation>
+    </message>
+    <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Δεν βρέθηκαν νέα «{query}»</translation>
     </message>
@@ -1036,12 +1084,24 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Διαγραφή αρχείου επισημειώσεων</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Διαγραφή του αρχείου επισημειώσεων; Δεν μπορείτε να αναιρέσετε αυτήν την ενέργεια.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Διαγραφή του «{}»; Δεν μπορείτε να αναιρέσετε αυτήν την ενέργεια.</translation>
+    </message>
+    <message>
         <source>Error Deleting Annotation File</source>
         <translation>Σφάλμα διαγραφής αρχείου επισημειώσεων</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Λήψη</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Αποθήκευση των αλλαγών επισημειώσεων στο «{}»;</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1186,6 @@ Expected location: {path}</source>
     <message>
         <source>Annotation files (*%s)</source>
         <translation>Αρχεία επισημειώσεων (*%s)</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Οριστική διαγραφή αυτού του αρχείου επισημειώσεων; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

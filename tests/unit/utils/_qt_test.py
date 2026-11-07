@@ -1,15 +1,18 @@
 from __future__ import annotations
 
 import math
+import pathlib
 import sys
 
 import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
+from PySide6 import QtSvg
 from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
+from labelme._utils._qt import _ICONS_DIR
 from labelme._utils._qt import _TintedSvgIconEngine
 from labelme._utils._qt import _toolbar_label
 from labelme._utils._qt import direction_angle
@@ -118,11 +121,15 @@ def test_new_icon_with_path_that_includes_subdir() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _set_window_text(app: QtWidgets.QApplication, /, *, color: QtGui.QColor) -> None:
+def _set_window_text(
+    app: QtWidgets.QApplication,
+    /,
+    *,
+    color: QtGui.QColor,
+    group: QtGui.QPalette.ColorGroup = QtGui.QPalette.ColorGroup.Normal,
+) -> None:
     palette = app.palette()
-    palette.setColor(
-        QtGui.QPalette.ColorGroup.Normal, QtGui.QPalette.ColorRole.WindowText, color
-    )
+    palette.setColor(group, QtGui.QPalette.ColorRole.WindowText, color)
     app.setPalette(palette)
 
 
@@ -172,6 +179,35 @@ def test_tinted_svg_engine_renders_highlighted_text_color_when_selected(
         qapp.setPalette(original)
 
 
+def test_tinted_svg_engine_dims_disabled_icon_by_palette_alpha(
+    *,
+    qapp: QtWidgets.QApplication,
+) -> None:
+    original = qapp.palette()
+    try:
+        # macOS palettes: Normal WindowText #d8000000, Disabled #3f000000.
+        _set_window_text(qapp, color=QtGui.QColor("#d8000000"))
+        _set_window_text(
+            qapp,
+            color=QtGui.QColor("#3f000000"),
+            group=QtGui.QPalette.ColorGroup.Disabled,
+        )
+        svg = (
+            b'<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4">'
+            b'<rect width="4" height="4" fill="currentColor"/></svg>'
+        )
+        engine = _TintedSvgIconEngine(svg=svg)
+        size = QtCore.QSize(4, 4)
+        off = QtGui.QIcon.State.Off
+        normal = engine.pixmap(size, QtGui.QIcon.Mode.Normal, off)
+        disabled = engine.pixmap(size, QtGui.QIcon.Mode.Disabled, off)
+        normal_alpha = normal.toImage().pixelColor(2, 2).alpha()
+        disabled_alpha = disabled.toImage().pixelColor(2, 2).alpha()
+        assert disabled_alpha < normal_alpha
+    finally:
+        qapp.setPalette(original)
+
+
 def test_new_icon_tints_monochrome_icon_to_palette(
     *,
     qapp: QtWidgets.QApplication,
@@ -188,17 +224,10 @@ def test_new_icon_tints_monochrome_icon_to_palette(
         qapp.setPalette(original)
 
 
-def test_new_icon_keeps_accent_icon_fixed(*, qapp: QtWidgets.QApplication) -> None:
-    original = qapp.palette()
-    try:
-        icon = new_icon("phosphor/floppy-disk.svg")  # baked accent color, not tinted
-        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
-        a = icon.pixmap(QtCore.QSize(24, 24)).toImage()
-        _set_window_text(qapp, color=QtGui.QColor(0, 255, 0))
-        b = icon.pixmap(QtCore.QSize(24, 24)).toImage()
-        assert a == b
-    finally:
-        qapp.setPalette(original)
+def test_bundled_svg_icons_are_authored_in_current_color() -> None:
+    svgs = sorted(pathlib.Path(_ICONS_DIR).rglob("*.svg"))
+    assert svgs
+    assert [p.name for p in svgs if b"currentColor" not in p.read_bytes()] == []
 
 
 # ---------------------------------------------------------------------------
@@ -376,7 +405,7 @@ def test_modifier_text_follows_platform(
 def test_new_action_keeps_translated_line_break_out_of_menu(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="図形を\n編集", icon="phosphor/note-pencil.svg")
+    action = new_action(parent, text="図形を\n編集", icon="phosphor/cursor.svg")
     assert action.text() == "図形を編集"
     assert action.iconText() == "図形を\n編集"
 
@@ -429,3 +458,10 @@ def test_toolbar_label_wraps_to_two_balanced_lines(*, text: str, label: str) -> 
 )
 def test_toolbar_label_stays_on_one_line_without_wrap(*, text: str, label: str) -> None:
     assert _toolbar_label(text, wrap=False) == label
+
+
+@pytest.mark.parametrize(
+    "path", sorted(pathlib.Path(_ICONS_DIR).rglob("*.svg")), ids=lambda p: p.name
+)
+def test_bundled_svg_icon_parses(*, path: pathlib.Path) -> None:
+    assert QtSvg.QSvgRenderer(str(path)).isValid()

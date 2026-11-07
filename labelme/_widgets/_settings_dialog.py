@@ -676,8 +676,7 @@ class _SettingsPage(QtWidgets.QWidget):
         ):
             self._scroll_area.ensureWidgetVisible(watched)
         # Editors that ignore Return propagate it up through the content widget,
-        # so key handling is limited to the sidebar to keep the default button
-        # and editor focus intact.
+        # so key handling is limited to the sidebar to keep editor focus intact.
         if (
             watched in (self._search, self._navigation)
             and isinstance(event, QtGui.QKeyEvent)
@@ -720,7 +719,6 @@ class _SettingsPage(QtWidgets.QWidget):
                 item = self._navigation.currentItem()
                 if item is not None and (watched is self._navigation or searching):
                     self._activate_item(item)
-                # Consumed either way so Enter never reaches the default button.
                 return True
         return super().eventFilter(watched, event)
 
@@ -825,8 +823,9 @@ class SettingsDialog(QtWidgets.QDialog):
         )
         open_button.clicked.connect(open_as_text)
         open_button.setEnabled(settings_editable)
+        # No default button: Settings apply immediately, so Enter on a Setting
+        # Control must not close the dialog. A focused button still takes Enter.
         close_button = QtWidgets.QPushButton(self.tr("Close"))
-        close_button.setDefault(True)
         close_button.clicked.connect(self.accept)
 
         button_layout = QtWidgets.QHBoxLayout()

@@ -5,7 +5,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 
 from ._label_list_widget import LABEL_COLOR_ROLE
-from ._label_list_widget import TrailingColorDotDelegate
+from ._label_list_widget import ColorSwatchDelegate
 
 
 class _EscapableQListWidget(QtWidgets.QListWidget):
@@ -18,7 +18,7 @@ class _EscapableQListWidget(QtWidgets.QListWidget):
 class UniqueLabelQListWidget(_EscapableQListWidget):
     def __init__(self, *, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent=parent)
-        self.setItemDelegate(TrailingColorDotDelegate(parent=self))
+        self.setItemDelegate(ColorSwatchDelegate(parent=self))
 
     def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent, /) -> None:
         super().mousePressEvent(mouseEvent)

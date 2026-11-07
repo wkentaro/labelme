@@ -19,6 +19,7 @@ from pytestqt.qtbot import QtBot
 
 from labelme._automation import _osam_worker
 from labelme._automation._osam_session import OsamSession
+from labelme._automation._osam_session import ProgressCallback
 from labelme._automation._osam_worker import InferenceRequest
 from labelme._automation._osam_worker import OsamWorker
 
@@ -38,7 +39,13 @@ def _scripted_serve(
         except EOFError:
             return
         on_gpu = request.model_name.startswith("gpu-") and not cpu_only
-        responses.send(("device", request_id, "webgpu" if on_gpu else "cpu"))
+        if request.model_name == "stages":
+            responses.send(("stage", request_id + 1, ("encoding", "stale")))
+            responses.send(("stage", request_id, ("loading", None)))
+            responses.send(("stage", request_id, ("encoding", "cpu")))
+        responses.send(
+            ("stage", request_id, ("generating", "webgpu" if on_gpu else "cpu"))
+        )
         if on_gpu and request.model_name == "gpu-crash":
             os._exit(3)
         if on_gpu and request.model_name == "gpu-fault":
@@ -300,13 +307,35 @@ def test_reports_activity_and_the_device_it_runs_on(
     _wait_for(qtbot, worker, count=2)
 
     assert seen == [
-        (True, None),
+        (True, None),  # starting the worker
         (True, "webgpu"),
         (False, None),
         (True, "cpu"),  # known before loading on a CPU worker
         (True, "cpu"),
         (False, None),
     ]
+
+
+def test_reports_the_stages_of_its_own_request(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    seen: list[tuple[str | None, str | None]] = []
+    worker.activity_changed.connect(lambda: seen.append((worker.stage, worker.device)))
+    worker.submit(channel="x", job="job", request=_request(model_name="stages"))
+    assert worker.model_name == "stages"
+    _wait_for(qtbot, worker, count=1)
+    worker.submit(channel="x", job="warm", request=_request(model_name="stages"))
+    _wait_for(qtbot, worker, count=2)
+
+    run = [
+        ("loading", None),
+        ("encoding", "cpu"),
+        ("generating", "cpu"),
+        (None, None),
+    ]
+    # Only a job that spawns the worker starts it; another request's is ignored.
+    assert seen == [("starting", None), *run, (None, None), *run]
+    assert worker.model_name is None
 
 
 def test_reports_a_job_queued_behind_the_running_one(*, worker: OsamWorker) -> None:
@@ -369,7 +398,9 @@ def test_run_sends_sam3_one_text_at_a_time(
         model_name=model_name, image_id="img", image=None, texts=["dog", "cat"]
     )
 
-    annotations = _osam_worker._run(cast(OsamSession, session), request, _IMAGE)
+    annotations = _osam_worker._run(
+        cast(OsamSession, session), request, _IMAGE, progress=None
+    )
 
     assert [a.text for a in annotations] == ["dog", "cat"]
     assert [call["texts"] for call in session.calls] == expected_batches
@@ -389,7 +420,11 @@ class _FailingSession:
     def __init__(self, error: Exception, /) -> None:
         self._error = error
 
-    def run(self, **_: object) -> osam.types.GenerateResponse:
+    def run(
+        self, *, progress: ProgressCallback | None = None, **_: object
+    ) -> osam.types.GenerateResponse:
+        assert progress is not None
+        progress("generating", self.device)
         raise self._error
 
 
@@ -412,5 +447,5 @@ def test_serve_reports_onnx_runtime_errors_as_faults(
 
     _osam_worker.serve(requests, responses, None)
 
-    assert from_serve.recv() == ("device", 7, "webgpu")
+    assert from_serve.recv() == ("stage", 7, ("generating", "webgpu"))
     assert from_serve.recv()[:2] == (kind, 7)

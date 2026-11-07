@@ -32,8 +32,9 @@ def _intercept_question(
 ) -> list[bool]:
     prompt_shown = [False]
 
-    def _fake(*_args: object, **_kwargs: object) -> QMessageBox.StandardButton:
+    def _fake(*args: object, **_kwargs: object) -> QMessageBox.StandardButton:
         prompt_shown[0] = True
+        assert args[2] == 'Save annotation changes to "2011_000003.jpg"?'
         return response
 
     monkeypatch.setattr(QMessageBox, "question", _fake)

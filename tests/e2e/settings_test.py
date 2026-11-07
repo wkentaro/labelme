@@ -503,7 +503,7 @@ def test_setting_controls_revert_when_write_fails(
     ai_editor = dialog._editors[("ai", "default")]
     assert isinstance(ai_editor, QtWidgets.QComboBox)
     ai_dock = win._ai_annotation._model_combo
-    assert ai_dock.currentText() == "SAM 3"
+    assert ai_dock.currentText() == "SAM 2 Base+"
 
     # Refuse the save at the boundary a read-only config directory would;
     # injecting the failure keeps it reachable on Windows and as root, where
@@ -520,12 +520,12 @@ def test_setting_controls_revert_when_write_fails(
     assert checkbox.isChecked()  # editor reverted to the last-saved value
     assert win._actions.save_auto.isChecked()
     assert auto_save_editor.isChecked()
-    assert ai_dock.currentText() == "SAM 3"
-    assert ai_editor.currentData() == "sam3:latest"
-    assert win._canvas_widgets.canvas.get_ai_model_name() == "sam3:latest"
+    assert ai_dock.currentText() == "SAM 2 Base+"
+    assert ai_editor.currentData() == "sam2:latest"
+    assert win._canvas_widgets.canvas.get_ai_model_name() == "sam2:latest"
     assert win._config["display_label_popup"] is True
     assert win._config["auto_save"] is True
-    assert win._config["ai"]["default"] == "sam3:latest"
+    assert win._config["ai"]["default"] == "sam2:latest"
     assert safe_load(config_file.read_text()) == {"display_label_popup": True}
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -769,9 +769,9 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
-    assert win._config["ai"]["default"] == "sam3:latest"
+    assert win._config["ai"]["default"] == "sam2:latest"
     dock_combo = win._ai_annotation._model_combo
-    assert dock_combo.currentText() == "SAM 3"
+    assert dock_combo.currentText() == "SAM 2 Base+"
 
     dialog = _open_settings_dialog(win=win)
     combo = dialog._editors[("ai", "default")]

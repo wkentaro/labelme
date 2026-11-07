@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
@@ -13,6 +14,7 @@ from labelme._widgets._canvas import Canvas
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
+from .conftest import click_canvas_fraction
 from .conftest import show_window_and_wait_for_imagedata
 
 
@@ -31,6 +33,27 @@ def open_window(
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     return win, win._canvas_widgets.canvas
+
+
+@pytest.mark.gui
+def test_selecting_shape_mid_draw_keeps_conversion_disabled(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win, canvas = open_window(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    rectangle = canvas.shapes[1]
+    win._actions.create_mode.trigger()
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.3, 0.3))
+    assert canvas.is_busy
+
+    canvas.select_shapes(shapes=[rectangle])
+
+    assert not win._actions.convert_menu.isEnabled()
+    assert not win._actions.context_convert_menu.isEnabled()
+    assert not win._actions.convert_to_polygon.isEnabled()
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    canvas.select_shapes(shapes=[rectangle])
+    assert win._actions.convert_to_polygon.isEnabled()
 
 
 @pytest.mark.gui
