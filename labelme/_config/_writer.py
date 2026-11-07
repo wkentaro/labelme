@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import tempfile
+import time
 from collections.abc import Sequence
 from io import StringIO
 from pathlib import Path
@@ -64,7 +65,22 @@ def _prune(*, doc: CommentedMap, key_path: Sequence[str]) -> None:
         del doc[head]
 
 
+def _sweep_stale_temp_files(*, config_file: Path) -> None:
+    STALE_TEMP_FILE_AGE_SECONDS: Final[float] = 300.0
+    now = time.time()
+    try:
+        for tmp_file in config_file.parent.glob(f"{config_file.name}.*.tmp"):
+            try:
+                if now - tmp_file.stat().st_mtime > STALE_TEMP_FILE_AGE_SECONDS:
+                    tmp_file.unlink(missing_ok=True)
+            except OSError:
+                pass
+    except OSError:
+        pass
+
+
 def _atomic_write(*, config_file: Path, content: str) -> None:
+    _sweep_stale_temp_files(config_file=config_file)
     fd, tmp = tempfile.mkstemp(
         dir=config_file.parent, prefix=f"{config_file.name}.", suffix=".tmp"
     )

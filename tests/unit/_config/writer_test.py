@@ -381,3 +381,21 @@ def test_reset_config_backup_failure_keeps_original_file(
     with pytest.raises(OSError, match="disk unavailable"):
         _config.reset_config(config_file=config_file)
     assert config_file.read_bytes() == original
+
+
+def test_atomic_write_sweeps_stale_temp_files(*, tmp_path: Path) -> None:
+    config_file = tmp_path / "labelmerc"
+    stale_tmp = tmp_path / f"{config_file.name}.stale123.tmp"
+    stale_tmp.write_text("abandoned content", encoding="utf-8")
+    # Mark as 1 hour old
+    stale_mtime = 1000.0
+    os.utime(stale_tmp, (stale_mtime, stale_mtime))
+
+    recent_tmp = tmp_path / f"{config_file.name}.recent456.tmp"
+    recent_tmp.write_text("active worker content", encoding="utf-8")
+
+    _config._writer._atomic_write(config_file=config_file, content="auto_save: true\n")
+
+    assert not stale_tmp.exists()
+    assert recent_tmp.exists()
+    assert config_file.read_text(encoding="utf-8") == "auto_save: true\n"
