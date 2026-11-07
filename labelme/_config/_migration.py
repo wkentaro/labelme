@@ -79,6 +79,16 @@ def migrate_config(*, config_from_yaml: dict) -> None:
         "Sam2 (balanced)": "sam2:latest",
         "Sam2 (accuracy)": "sam2:large",
         "Sam3": "sam3:latest",
+        # Display names written by the earlier canonical-name release.
+        "EfficientSAM (speed)": "efficientsam:10m",
+        "EfficientSAM (accuracy)": "efficientsam:latest",
+        "SAM (speed)": "sam:100m",
+        "SAM (balanced)": "sam:300m",
+        "SAM (accuracy)": "sam:latest",
+        "SAM2 (speed)": "sam2:small",
+        "SAM2 (balanced)": "sam2:latest",
+        "SAM2 (accuracy)": "sam2:large",
+        "SAM3": "sam3:latest",
     }
     if (
         isinstance(ai, dict)
