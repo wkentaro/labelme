@@ -12,6 +12,7 @@ from labelme._widgets._canvas_interaction import HitKind
 from labelme._widgets._canvas_interaction import HitTarget
 from labelme._widgets._canvas_interaction import cursor_shape_for
 from labelme._widgets._canvas_interaction import find_hover_target
+from labelme._widgets._canvas_interaction import find_shape_at
 from labelme._widgets._canvas_interaction import is_within_pick_threshold
 
 # Shared test constants
@@ -362,6 +363,107 @@ def test_reverse_paint_order_topmost_body_wins() -> None:
     assert result.kind == HitKind.BODY
     # shape_b is last in list, so first in reverse order — it should match first.
     assert result.shape is shape_b
+
+
+# ---------------------------------------------------------------------------
+# find_hover_target — hover picks the shape a click selects
+# ---------------------------------------------------------------------------
+
+
+def _box() -> Shape:
+    return _polygon([(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
+
+
+def _keypoint(x: float, y: float, /) -> Shape:
+    return Shape(shape_type="point", points=np.array([(x, y)], dtype=np.float64))
+
+
+def _hover(
+    *, shapes: list[Shape], at: tuple[float, float], priority: Shape | None
+) -> HitTarget | None:
+    return find_hover_target(
+        shapes=shapes,
+        point=_point(*at),
+        scale=_SCALE,
+        epsilon=_EPSILON,
+        point_size=_POINT_SIZE,
+        priority_shape=priority,
+    )
+
+
+def _assert_hit(
+    *, result: HitTarget | None, kind: HitKind, shape: Shape, index: int | None
+) -> None:
+    assert result is not None
+    assert result.kind == kind
+    assert result.shape is shape
+    assert result.index == index
+
+
+@pytest.mark.parametrize(
+    ("keypoint_at", "cursor_at"),
+    [
+        pytest.param((50, 50), (50, 50), id="inside_box"),
+        pytest.param((50, 3), (50, 3), id="within_edge_tolerance"),
+        pytest.param((50, 50), (52, 51), id="off_center_on_dot"),
+    ],
+)
+def test_point_dot_beats_hovered_box(
+    *, keypoint_at: tuple[float, float], cursor_at: tuple[float, float]
+) -> None:
+    box = _box()
+    keypoint = _keypoint(*keypoint_at)
+    result = _hover(shapes=[box, keypoint], at=cursor_at, priority=box)
+    _assert_hit(result=result, kind=HitKind.BODY, shape=keypoint, index=None)
+
+
+def test_box_edge_wins_outside_point_dot() -> None:
+    # 6 px from the edge is within its tolerance but outside the 4 px dot.
+    box = _box()
+    result = _hover(shapes=[box, _keypoint(50, 0)], at=(50, 6), priority=box)
+    assert result is not None
+    assert result.kind == HitKind.EDGE
+    assert result.shape is box
+
+
+def test_hovered_box_vertex_beats_point_on_corner() -> None:
+    box = _box()
+    result = _hover(shapes=[box, _keypoint(0, 0)], at=(0, 0), priority=box)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=box, index=0)
+
+
+def test_vertex_of_shape_under_later_box_stays_grabbable() -> None:
+    small = _polygon([(20, 20), (40, 20), (40, 40), (20, 40)], visible=True)
+    result = _hover(shapes=[small, _box()], at=(20, 20), priority=None)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=small, index=0)
+
+
+def test_body_follows_paint_order_over_priority() -> None:
+    lower = _box()
+    upper = _box()
+    result = _hover(shapes=[lower, upper], at=(50, 50), priority=lower)
+    _assert_hit(result=result, kind=HitKind.BODY, shape=upper, index=None)
+
+
+def test_find_shape_at_prefers_point_under_later_box() -> None:
+    keypoint = _keypoint(50, 50)
+    box = _box()
+    assert (
+        find_shape_at(
+            shapes=[keypoint, box],
+            point=_point(50.0, 50.0),
+            scale=_SCALE,
+            point_size=_POINT_SIZE,
+            epsilon=_EPSILON,
+        )
+        is keypoint
+    )
+    _assert_hit(
+        result=_hover(shapes=[keypoint, box], at=(50, 50), priority=box),
+        kind=HitKind.BODY,
+        shape=keypoint,
+        index=None,
+    )
 
 
 # ---------------------------------------------------------------------------

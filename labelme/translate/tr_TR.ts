@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI, &apos;AI-Noktalar&apos; ve &apos;AI-Kutu&apos; modlarında açıklama önerir</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Poligon ayrıntısı</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Poligon ayrıntısını ayarla</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -22,6 +14,10 @@
     <message>
         <source>More detail</source>
         <translation>Daha fazla ayrıntı</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>Çıktı</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -44,8 +40,8 @@
         <translation>Daire</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>AI Yardımını etkinleştirmek için &apos;AI-Points&apos; veya &apos;AI-Box&apos; modunu seçin</translation>
+        <source>Output format: {format}</source>
+        <translation>Çıktı biçimi: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,28 +55,12 @@
         <source>Model</source>
         <translation>Model</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI Yardımı</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Çıktı biçimi</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>ör. köpek,kedi,kuş</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Çalıştır</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI Metin İstemi modeli</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI, metin isteminden açıklamalar oluşturur</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>AI Metin İstemi</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Etkinleştirmek için &apos;Çokgen&apos;, &apos;Dikdörtgen&apos; veya &apos;AI-Noktalar&apos; modunu seçin</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Model</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>Ne bulunacak</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>İstem</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>Aranıyor…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All modeli</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Seçenekler</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -172,10 +167,6 @@
         <translation>Şekli taşımak için tıklayın &amp; sürükleyin</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>%r oluşturuluyor</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>İptal etmek için ESC</translation>
     </message>
@@ -188,8 +179,20 @@
         <translation>Şekiller düzenleniyor</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Dahil etmek için noktalara tıklayın veya hariç tutmak için %s tuşunu basılı tutup tıklayın. Bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Dahil etmek için noktalara tıklayın, hariç tutmak için %s tuşunu basılı tutup tıklayın veya bir kutu sürükleyin. Bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>AI-Find All&apos;a neyi bulmak istediğinizi yazın veya bir örneği çevreleyen kutunun ilk köşesine tıklayın</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Bunun gibi nesneleri hariç tutmak için karşı köşeye tıklayın</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Buna benzeyen tüm nesneleri bulmak için karşı köşeye tıklayın</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -220,16 +223,44 @@
         <translation>Nokta eklemek için tıklayın</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Kutu çizmek için sürükleyin</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Bir örneğin çevresine sürükleyin</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Ekle</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Dahil etmek için tıklayın</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Hariç tutmak için tıklayın</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d öğe ekle</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Hariç tutmak için sürükleyin</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Diğer köşeyi seçin. Kare çizmek için Shift tuşunu basılı tutun.</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Yapay zeka bölütlemesi için sınır kutusunun ilk köşesine tıklayın</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Nesneyi bölütlemek için karşı köşeye tıklayın</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter sonuçları ekler, Esc atar. Benzer nesneleri hariç tutmak için %s tuşunu basılı tutup bir kutu çizin.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -437,12 +468,13 @@
         <translation>Son şekil ekleme veya düzenleme işlemini geri al</translation>
     </message>
     <message>
-        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
-        <translation>Çoklu çizgi noktalarını yerleştirmek için tıklayın; sonuncuyu yerleştirmek için %s tuşunu basılı tutup tıklayın.</translation>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Seç</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Nesneyi bölütlemek için noktalara tıklayın; bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Çoklu çizgi noktalarını yerleştirmek için tıklayın; sonuncuyu yerleştirmek için %s tuşunu basılı tutup tıklayın.</translation>
     </message>
     <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
@@ -592,9 +624,20 @@
         <translation>Geri Al</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Düzenle</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Tek bir nesneyi bölütlemek için noktalara tıklayın veya bir kutu sürükleyin; bitirmek için %s tuşunu basılı tutup tıklayın.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Metin istemiyle ya da bir örnek kutusuyla eşleşen tüm nesneleri bul</translation>
     </message>
     <message>
         <source>Next</source>
@@ -743,10 +786,6 @@
         <translation>Diğer şekil araçları</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s başlatıldı.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Yeniden dene</translation>
     </message>
@@ -767,8 +806,32 @@
         <translation>Şimdilik varsayılan ayarları kullanabilirsiniz. Sıfırlamadan önce yapılandırma dosyanızın bir yedeği kaydedilecek.</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>Neyi bulmak istediğinizi yazın</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>CPU&apos;da eşleşmeler aranıyor…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Eşleşmeler aranıyor…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; şekilleri oluşturamaz.
+
+AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Açıklama dosyası başka bir görüntüye ait: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s örnek kutusu kullanamaz. SAM 3 seçin.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -865,14 +928,6 @@
         <translation>İptal</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Bu model nokta istemlerini desteklemediği için AI-Points modunda kullanılamaz.</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>&quot;{}&quot; için açıklama değişiklikleri korunsun mu?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Kaydedilmemiş değişiklikler</translation>
     </message>
@@ -949,18 +1004,6 @@
         <translation>Çizgi Şeridi</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Nesneyi bölütlemek için bir sınır kutusu çizin.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Varsayılanlarla devam et</translation>
     </message>
@@ -969,12 +1012,48 @@
         <translation>Yedekle ve sıfırla</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s yalnızca sınırlayıcı kutuları algılar ve &apos;%s&apos; şekilleri oluşturamaz.
-
-AI Metin İstemi modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çıktı biçimini &apos;Rectangle&apos; olarak ayarlayın.</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Tüm &apos;{query}&apos; aranıyor…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>CPU&apos;da tüm &apos;{query}&apos; aranıyor…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>CPU&apos;da bölütleniyor…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Bölütleniyor…</translation>
+    </message>
+    <message>
+        <source>Starting AI…</source>
+        <translation>Yapay zekâ başlatılıyor…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} yükleniyor…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Görüntü CPU üzerinde hazırlanıyor…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Görüntü hazırlanıyor…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} sn</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} yeni &apos;{query}&apos; bulundu</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Yeni &apos;{query}&apos; bulunamadı</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -985,22 +1064,24 @@ AI Metin İstemi modelini &apos;SAM3 (smart)&apos; olarak değiştirin veya çı
         <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points Kullanılamıyor</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s nokta istemlerini desteklemiyor.
-Lütfen farklı bir model seçin veya AI-Box modunu kullanın.</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Açıklama Klasörü: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Açıklama dosyası silinsin mi? Bu işlemi geri alamazsınız.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>&quot;{}&quot; silinsin mi? Bu işlemi geri alamazsınız.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>İndir</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>&quot;{}&quot; için açıklama değişiklikleri kaydedilsin mi?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1107,12 +1188,12 @@ Beklenen konum: {path}</translation>
         <translation>Açıklama Dosyasını Sil</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Bu açıklama dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Yapılandırma Hatası</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Yalnızca kutuları algılar. Bu modeli kullanmak için Dikdörtgen&apos;e geçin.</translation>
     </message>
 </context>
 <context>
@@ -1136,6 +1217,10 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Unavailable: {model}</source>
         <translation>Kullanılamıyor: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Diğer modeller…</translation>
     </message>
 </context>
 <context>
@@ -1383,6 +1468,10 @@ Beklenen konum: {path}</translation>
         <translation>Her satıra bir bayrak adı. Desenler: ^car$ tam olarak car ile, car bir önekle, .* her etiketle eşleşir.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All modeli</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Poligon ayrıntısı</translation>
     </message>
@@ -1397,6 +1486,22 @@ Beklenen konum: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>yinelenen kopya tekrarları önle tekrarları kaldır</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Hesaplama aygıtı</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Otomatik, GPU&apos;yu kullanır ve GPU başarısız olursa CPU&apos;ya geçer.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda işlemci yavaş çökme</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1437,46 +1542,6 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Default model</source>
         <translation>Varsayılan model</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (hız)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (doğruluk)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (hız)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (dengeli)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (doğruluk)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (hız)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (dengeli)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (doğruluk)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Metin istemi modeli</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1609,6 +1674,65 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Satır {row}: {error} Değişiklikler uygulanmadı.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>En hızlı</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Dengeli</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>En doğru</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Orijinal SAM. SAM 2 her boyutta daha hızlı.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>En hızlı, kaba ana hatlarla. Her bilgisayarda iyi çalışır.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Tiny&apos;den daha net ana hatlar, ancak SAM 2 Base+&apos;tan daha yavaş.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Base+&apos;tan daha küçük indirme, biraz daha az doğru.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Hız ve doğruluk dengesi. CPU&apos;da iyi çalışır.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Base+&apos;tan daha doğru, ancak daha yavaş.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>En doğru, ancak SAM 2 Base+&apos;tan daha yavaş. GPU ile en iyisi.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>En hızlı. Maske olmadan kutular bulur.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Yalnızca kutular</translation>
     </message>
 </context>
 <context>

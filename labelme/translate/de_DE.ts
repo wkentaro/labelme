@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI schlägt Annotationen in den Modi &apos;AI-Points&apos; und &apos;AI-Box&apos; vor</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Polygondetails</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Polygondetails anpassen</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -22,6 +14,10 @@
     <message>
         <source>More detail</source>
         <translation>Mehr Details</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>Ausgabe</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -44,8 +40,8 @@
         <translation>Kreis</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Wählen Sie den Modus &apos;AI-Points&apos; oder &apos;AI-Box&apos;, um den KI-Assistenten zu aktivieren</translation>
+        <source>Output format: {format}</source>
+        <translation>Ausgabeformat: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,28 +55,12 @@
         <source>Model</source>
         <translation>Modell</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>KI-Assistent</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Ausgabeformat</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>z.B. Hund,Katze,Vogel</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Ausführen</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Modell für KI-Textprompt</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>KI erstellt Annotationen aus dem Textprompt</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>KI-Textprompt</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>&apos;Polygon&apos;-, &apos;Rectangle&apos;- oder &apos;AI-Points&apos;-Modus auswählen zum Aktivieren</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>Wonach suchen</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>Wird gesucht…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All-Modell</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Optionen</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -156,10 +151,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>%r wird erstellt</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC zum Abbrechen</translation>
     </message>
@@ -172,8 +163,16 @@
         <translation>Formen bearbeiten</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Punkte zum Einschließen anklicken oder %s gedrückt halten und klicken, um auszuschließen. %s gedrückt halten und klicken, um abzuschließen.</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Geben Sie in AI-Find All ein, was gefunden werden soll, oder klicken Sie auf die erste Ecke eines Rahmens um ein Beispiel</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Klicken Sie auf die gegenüberliegende Ecke, um Objekte wie dieses auszuschließen</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Klicken Sie auf die gegenüberliegende Ecke, um alle Objekte wie dieses zu finden</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -192,8 +191,44 @@
         <translation>%s gedrückt halten und klicken, um einen Punkt auf der Kante hinzuzufügen</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Rahmen ziehen</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Rahmen um ein Beispiel ziehen</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Verwerfen</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hinzufügen</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Klicken zum Einschließen</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Klicken zum Ausschließen</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d hinzufügen</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Ziehen zum Ausschließen</translation>
+    </message>
+    <message>
         <source>Click center point for circle</source>
         <translation>Mittelpunkt des Kreises anklicken</translation>
+    </message>
+    <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Punkte zum Einschließen anklicken, %s gedrückt halten und klicken, um auszuschließen, oder einen Rahmen ziehen. %s gedrückt halten und klicken, um abzuschließen.</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>
@@ -224,12 +259,8 @@
         <translation>Wähle die andere Ecke. Halte Shift für ein Quadrat gedrückt.</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Erste Ecke der bbox für AI-Segmentierung anklicken</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Gegenüberliegende Ecke anklicken, um Objekt zu segmentieren</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Eingabetaste fügt die Ergebnisse hinzu, Esc verwirft sie. Halten Sie %s gedrückt und zeichnen Sie einen Rahmen, um ähnliche Objekte auszuschließen.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -441,12 +472,13 @@
         <translation>Letztes Hinzufügen und Bearbeiten der Form rückgängig machen</translation>
     </message>
     <message>
-        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
-        <translation>Klicken, um Punkte der Linienfolge zu setzen; %s gedrückt halten und klicken, um den letzten zu setzen.</translation>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Auswählen</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Punkte anklicken, um das Objekt zu segmentieren; %s gedrückt halten und klicken, um abzuschließen.</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Klicken, um Punkte der Linienfolge zu setzen; %s gedrückt halten und klicken, um den letzten zu setzen.</translation>
     </message>
     <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
@@ -608,9 +640,20 @@
         <translation>Rückgängig</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Bearbeiten</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Punkte anklicken oder einen Rahmen ziehen, um ein Objekt zu segmentieren; %s gedrückt halten und klicken, um abzuschließen.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Alle Objekte finden, die zum Textprompt oder zu einem Beispielrahmen passen</translation>
     </message>
     <message>
         <source>Next</source>
@@ -751,10 +794,6 @@
         <translation>Weitere Formwerkzeuge</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s gestartet.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Erneut versuchen</translation>
     </message>
@@ -775,8 +814,56 @@
         <translation>Sie können vorerst die Standardeinstellungen verwenden. Vor dem Zurücksetzen wird eine Sicherung Ihrer Konfigurationsdatei gespeichert.</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>KI wird gestartet…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} wird geladen…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Bild wird auf der CPU vorbereitet…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Bild wird vorbereitet…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} s</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Erkennt nur Rahmen. Wechseln Sie zu „Rechteck“, um dieses Modell zu verwenden.</translation>
+    </message>
+    <message>
+        <source>Type what to find</source>
+        <translation>Geben Sie ein, was gefunden werden soll</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>Treffer werden auf der CPU gesucht…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Treffer werden gesucht…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s erkennt nur Begrenzungsrahmen und kann keine &apos;%s&apos;-Formen erstellen.
+
+Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Die Annotationsdatei gehört zu einem anderen Bild: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s kann keinen Beispielrahmen verwenden. Wählen Sie SAM 3.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -873,14 +960,6 @@
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Im AI-Points-Modus nicht verfügbar, da dieses Modell keine Punkt-Prompts unterstützt.</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Annotationsänderungen für „{}“ behalten?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Ungespeicherte Änderungen</translation>
     </message>
@@ -949,18 +1028,6 @@
         <translation>Linienfolge</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Einen Begrenzungsrahmen zeichnen, um Objekt zu segmentieren.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Mit Standardwerten fortfahren</translation>
     </message>
@@ -969,12 +1036,28 @@
         <translation>Sichern und zurücksetzen</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s erkennt nur Begrenzungsrahmen und kann keine &apos;%s&apos;-Formen erstellen.
-
-Wechseln Sie das Modell für den KI-Textprompt zu &apos;SAM3 (smart)&apos; oder stellen Sie das Ausgabeformat auf &apos;Rectangle&apos; ein.</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Alle „{query}“ werden gesucht…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Alle „{query}“ werden auf der CPU gesucht…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Segmentierung auf der CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Segmentierung…</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} neue „{query}“ gefunden</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Keine neuen „{query}“ gefunden</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -985,22 +1068,24 @@ Wechseln Sie das Modell für den KI-Textprompt zu &apos;SAM3 (smart)&apos; oder 
         <translation>Fehler beim Speichern der Annotationsdatei</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points nicht verfügbar</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s unterstützt keine Punkt-Eingaben.
-Bitte wählen Sie ein anderes Modell oder verwenden Sie den AI-Box-Modus.</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotationsordner: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Annotationsdatei löschen? Dies kann nicht widerrufen werden.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>„{}“ löschen? Dies kann nicht widerrufen werden.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Annotationsänderungen an „{}“ speichern?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1107,10 +1192,6 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Annotationsdatei löschen</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Diese Annotationsdatei endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Konfigurationsfehler</translation>
     </message>
@@ -1136,6 +1217,10 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Unavailable: {model}</source>
         <translation>Nicht verfügbar: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Weitere Modelle…</translation>
     </message>
 </context>
 <context>
@@ -1383,6 +1468,10 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Ein Flag-Name pro Zeile. Muster: ^car$ passt genau auf car, car auf ein Präfix, .* auf jedes Label.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All-Modell</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Polygondetails</translation>
     </message>
@@ -1397,6 +1486,22 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>Duplikat Duplikate vermeiden entfernen</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Rechengerät</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>„Automatisch“ verwendet die GPU und wechselt zur CPU, wenn die GPU ausfällt.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda prozessor langsam absturz</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1437,46 +1542,6 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Default model</source>
         <translation>Standardmodell</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (Geschwindigkeit)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (Genauigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (Geschwindigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (Ausgewogen)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (Genauigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (Geschwindigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (Ausgewogen)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (Genauigkeit)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Modell für Textprompt</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1609,6 +1674,65 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Zeile {row}: {error} Änderungen wurden nicht angewendet.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>Am schnellsten</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Ausgewogen</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Am genauesten</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Das ursprüngliche SAM. SAM 2 ist in jeder Größe schneller.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Am schnellsten, mit groben Umrissen. Läuft auf jedem Computer gut.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Schärfere Umrisse als Tiny, aber langsamer als SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Kleinerer Download als Base+, etwas weniger genau.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Ausgewogen zwischen Geschwindigkeit und Genauigkeit. Läuft gut auf einer CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Genauer als Base+, aber langsamer.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Am genauesten, aber langsamer als SAM 2 Base+. Am besten mit einer GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Am schnellsten. Findet Rahmen, ohne Masken.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Nur Rahmen</translation>
     </message>
 </context>
 <context>

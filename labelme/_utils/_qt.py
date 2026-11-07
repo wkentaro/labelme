@@ -53,7 +53,11 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
     def _tinted_pixmap(
         self, *, size: QtCore.QSize, color: QtGui.QColor
     ) -> QtGui.QPixmap:
-        key = (size.width(), size.height(), color.name())
+        key = (
+            size.width(),
+            size.height(),
+            color.name(QtGui.QColor.NameFormat.HexArgb),
+        )
         cached = self._pixmaps.get(key)
         if cached is not None:
             return cached
@@ -62,6 +66,8 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         image = QtGui.QImage(size, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
         image.fill(QtCore.Qt.GlobalColor.transparent)
         painter = QtGui.QPainter(image)
+        # macOS palettes dim disabled text with alpha, which color.name() drops.
+        painter.setOpacity(color.alphaF())
         renderer.render(painter, QtCore.QRectF(0, 0, size.width(), size.height()))
         painter.end()
         pixmap = QtGui.QPixmap.fromImage(image)
@@ -118,13 +124,15 @@ def new_icon(name: str, /) -> QtGui.QIcon:
     path = os.path.join(_ICONS_DIR, name)
     if path.endswith(".svg"):
         with open(path, "rb") as f:
-            svg = f.read()
-        if b"currentColor" in svg:
-            return QtGui.QIcon(_TintedSvgIconEngine(svg=svg))
+            return QtGui.QIcon(_TintedSvgIconEngine(svg=f.read()))
     return QtGui.QIcon(path)
 
 
-def _toolbar_label(text: str, /) -> str:
+# The toolbar label on one line, for a column of buttons where it may fit.
+ONE_LINE_ICON_TEXT: Final = "one_line_icon_text"
+
+
+def _toolbar_label(text: str, /, *, wrap: bool = True) -> str:
     # Two lines at most, so no language's label grows the toolbar taller.
     # Toolbar labels name the command, so they drop the menu's ellipsis, and
     # toolbar buttons don't use mnemonics, so the "(&O)" form that CJK
@@ -132,6 +140,8 @@ def _toolbar_label(text: str, /) -> str:
     # marks its own break with "\n"; otherwise the break goes where the two
     # lines come out closest in length, or at a slash.
     label = re.sub(r"\s*\(&\w\)", "", text).removesuffix("…")
+    if not wrap:
+        return label.replace("\n", "")
     if "\n" in label:
         return label
     if "/" in label:  # "Brightness/Contrast": each half names one thing
@@ -176,17 +186,17 @@ def new_action(
         # A long menu name can pass a shorter one for the toolbar, where every
         # language's labels have to fit across one row.
         action.setIconText(_toolbar_label(toolbar_text or text))
+        action.setProperty(
+            ONE_LINE_ICON_TEXT, _toolbar_label(toolbar_text or text, wrap=False)
+        )
     if slot:
         action.triggered.connect(slot)
     return action
 
 
 def modifier_text(modifiers: QtCore.Qt.KeyboardModifier, /) -> str:
-    """Spell modifier keys the way the platform does, e.g. ⇧⌘ or Ctrl+Shift.
-
-    Qt maps Ctrl to Command on macOS, so a hint written as "Ctrl" is wrong
-    there.
-    """
+    # Qt maps Ctrl to Command on macOS, so a hint written as "Ctrl" is wrong
+    # there. Spell the keys the platform's way, e.g. ⇧⌘ or Ctrl+Shift.
     combination = QtCore.QKeyCombination(modifiers, QtCore.Qt.Key.Key_A)
     text = QtGui.QKeySequence(combination).toString(
         QtGui.QKeySequence.SequenceFormat.NativeText

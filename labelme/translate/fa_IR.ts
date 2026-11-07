@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI در حالت‌های &apos;AI-Points&apos; و &apos;AI-Box&apos; حاشیه‌نویسی پیشنهاد می‌دهد</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>جزئیات چندضلعی</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>تنظیم جزئیات چندضلعی</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -22,6 +14,10 @@
     <message>
         <source>More detail</source>
         <translation>جزئیات بیشتر</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>خروجی</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -44,8 +40,8 @@
         <translation>دایره</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>حالت &apos;AI-Points&apos; یا &apos;AI-Box&apos; را برای فعال‌سازی دستیار هوش مصنوعی انتخاب کنید</translation>
+        <source>Output format: {format}</source>
+        <translation>قالب خروجی: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,28 +55,12 @@
         <source>Model</source>
         <translation>مدل</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>دستیار هوش مصنوعی</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>قالب خروجی</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>مثال: سگ، گربه، پرنده</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>اجرا</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>مدل پرامپت متنی هوش مصنوعی</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>هوش مصنوعی حاشیه‌نویسی‌ها را از متن ایجاد می‌کند</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>پرامپت متنی هوش مصنوعی</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>حالت &apos;Polygon&apos;، &apos;Rectangle&apos; یا &apos;AI-Points&apos; را برای فعال‌سازی انتخاب کنید</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>مدل</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>چه چیزی پیدا شود</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>دستور</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>در حال جست‌وجو…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>مدل AI-Find All</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>گزینه‌ها</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -172,10 +167,6 @@
         <translation>کلیک و کشیدن برای جابجایی شکل</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>در حال ایجاد %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC برای لغو</translation>
     </message>
@@ -188,8 +179,20 @@
         <translation>ویرایش اشکال</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>برای افزودن روی نقاط کلیک کنید، یا %s را نگه دارید و کلیک کنید تا حذف شوند. %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>برای افزودن روی نقاط کلیک کنید، %s را نگه دارید و کلیک کنید تا حذف شوند، یا یک کادر بکشید. %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>در AI-Find All بنویسید چه چیزی پیدا شود، یا روی گوشهٔ اول کادری دور یک نمونه کلیک کنید</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>برای کنار گذاشتن اشیای مشابه این، روی گوشهٔ مقابل کلیک کنید</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>روی گوشهٔ مقابل کلیک کنید تا همهٔ اشیای مشابه این یکی پیدا شوند</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -220,16 +223,44 @@
         <translation>کلیک برای افزودن نقطه</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>کشیدن یک کادر</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>کشیدن کادر دور یک نمونه</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>دور انداختن</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>افزودن</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>کلیک برای افزودن</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>کلیک برای حذف</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>افزودن %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>کشیدن برای حذف</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>گوشهٔ دیگر را انتخاب کنید. برای مربع، Shift را نگه دارید.</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>برای قطعه‌بندی AI روی اولین گوشه bbox کلیک کنید</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>روی گوشه مقابل برای قطعه‌بندی شیء کلیک کنید</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter نتایج را اضافه می‌کند و Esc آن‌ها را کنار می‌گذارد. %s را نگه دارید و کادری بکشید تا اشیای مشابه کنار گذاشته شوند.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -437,12 +468,13 @@
         <translation>بازگشت آخرین افزودن و ویرایش شکل</translation>
     </message>
     <message>
-        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
-        <translation>برای قرار دادن نقاط خط شکسته کلیک کنید؛ %s را نگه دارید و کلیک کنید تا آخرین نقطه قرار گیرد.</translation>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>انتخاب</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>روی نقاط کلیک کنید تا شیء بخش‌بندی شود؛ %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>برای قرار دادن نقاط خط شکسته کلیک کنید؛ %s را نگه دارید و کلیک کنید تا آخرین نقطه قرار گیرد.</translation>
     </message>
     <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
@@ -592,9 +624,20 @@
         <translation>بازگشت</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>ویرایش</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>روی نقاط کلیک کنید یا یک کادر بکشید تا یک شیء بخش‌بندی شود؛ %s را نگه دارید و کلیک کنید تا تمام شود.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>پیدا کردن همهٔ اشیایی که با پرامپت متنی یا یک کادر نمونه مطابقت دارند</translation>
     </message>
     <message>
         <source>Next</source>
@@ -743,10 +786,6 @@
         <translation>ابزارهای بیشتر برای شکل‌ها</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s راه‌اندازی شد.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>تلاش دوباره</translation>
     </message>
@@ -767,8 +806,32 @@
         <translation>فعلاً می‌توانید از تنظیمات پیش‌فرض استفاده کنید. پیش از بازنشانی، یک نسخهٔ پشتیبان از فایل پیکربندی شما ذخیره می‌شود.</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>بنویسید چه چیزی پیدا شود</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>در حال جست‌وجوی موارد مطابق روی CPU…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>در حال جست‌وجوی موارد مطابق…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s فقط کادرهای محصورکننده را تشخیص می‌دهد و نمی‌تواند شکل‌های &apos;%s&apos; ایجاد کند.
+
+مدل AI-Find All را به &apos;SAM 3&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>فایل حاشیه‌نویسی متعلق به تصویر دیگری است: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s نمی‌تواند از کادر نمونه استفاده کند. SAM 3 را انتخاب کنید.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -865,14 +928,6 @@
         <translation>لغو</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>در حالت AI-Points در دسترس نیست، زیرا این مدل از دستورات نقطه‌ای پشتیبانی نمی‌کند.</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>تغییرات حاشیه‌نویسی برای «{}» نگه داشته شوند؟</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>تغییرات ذخیره‌نشده</translation>
     </message>
@@ -949,18 +1004,6 @@
         <translation>خط چندتکه‌ای</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>یک کادر محصورکننده برای قطعه‌بندی شیء رسم کنید.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>ادامه با پیش‌فرض‌ها</translation>
     </message>
@@ -969,12 +1012,48 @@
         <translation>پشتیبان‌گیری و بازنشانی</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s فقط کادرهای محصورکننده را تشخیص می‌دهد و نمی‌تواند شکل‌های &apos;%s&apos; ایجاد کند.
-
-مدل پرامپت متنی هوش مصنوعی را به &apos;SAM3 (smart)&apos; تغییر دهید یا قالب خروجی را روی &apos;Rectangle&apos; تنظیم کنید.</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>در حال پیدا کردن همهٔ «{query}»…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>در حال پیدا کردن همهٔ «{query}» روی CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>در حال قطعه‌بندی روی CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>در حال قطعه‌بندی…</translation>
+    </message>
+    <message>
+        <source>Starting AI…</source>
+        <translation>در حال راه‌اندازی هوش مصنوعی…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>در حال بارگذاری {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>در حال آماده‌سازی تصویر روی CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>در حال آماده‌سازی تصویر…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} ثانیه</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} «{query}» جدید پیدا شد</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>«{query}» جدیدی پیدا نشد</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -985,22 +1064,24 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points در دسترس نیست</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s از دستورات نقطه‌ای پشتیبانی نمی‌کند.
-لطفاً مدل دیگری انتخاب کنید یا از حالت AI-Box استفاده کنید.</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>پوشهٔ حاشیه‌نویسی: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>فایل حاشیه‌نویسی حذف شود؟ این کار قابل بازگشت نیست.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>«{}» حذف شود؟ این کار قابل بازگشت نیست.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>بارگیری</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>تغییرات حاشیه‌نویسی «{}» ذخیره شوند؟</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1107,12 +1188,12 @@ Expected location: {path}</source>
         <translation>حذف فایل حاشیه‌نویسی</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>این فایل حاشیه‌نویسی برای همیشه حذف شود؟ این عمل قابل بازگشت نیست.</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>خطای پیکربندی</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>فقط کادرها را تشخیص می‌دهد. برای استفاده از این مدل به «مستطیل» بروید.</translation>
     </message>
 </context>
 <context>
@@ -1136,6 +1217,10 @@ Expected location: {path}</source>
     <message>
         <source>Unavailable: {model}</source>
         <translation>در دسترس نیست: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>مدل‌های بیشتر…</translation>
     </message>
 </context>
 <context>
@@ -1383,6 +1468,10 @@ Expected location: {path}</source>
         <translation>هر نام پرچم در یک خط. الگوها: ^car$ دقیقاً با car، car با پیشوند و .* با هر برچسب مطابقت دارد.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>مدل AI-Find All</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>جزئیات چندضلعی</translation>
     </message>
@@ -1397,6 +1486,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>تکراری جلوگیری از تکرار حذف تکراری‌ها</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>دستگاه پردازش</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>حالت خودکار از GPU استفاده می‌کند و اگر GPU از کار بیفتد به CPU می‌رود.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda پردازنده کند خرابی</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1437,46 +1542,6 @@ Expected location: {path}</source>
     <message>
         <source>Default model</source>
         <translation>مدل پیش‌فرض</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (سرعت)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (دقت)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (سرعت)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (متعادل)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (دقت)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (سرعت)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (متعادل)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (دقت)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>مدل پرامپت متنی</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1609,6 +1674,65 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>ردیف {row}: {error} تغییرات اعمال نشده‌اند.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>مدل</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>سریع‌ترین</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>متعادل</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>دقیق‌ترین</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM اصلی. SAM 2 در همهٔ اندازه‌ها سریع‌تر است.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>سریع‌ترین، با خطوط تقریبی. روی هر رایانه‌ای خوب اجرا می‌شود.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>خطوطی دقیق‌تر از Tiny، ولی کندتر از SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>حجم دانلود کمتر از Base+، کمی کم‌دقت‌تر.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>تعادل سرعت و دقت. روی CPU خوب اجرا می‌شود.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>دقیق‌تر از Base+، ولی کندتر.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>دقیق‌ترین، ولی کندتر از SAM 2 Base+. با GPU بهترین است.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>سریع‌ترین. کادرها را بدون ماسک پیدا می‌کند.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>فقط کادرها</translation>
     </message>
 </context>
 <context>

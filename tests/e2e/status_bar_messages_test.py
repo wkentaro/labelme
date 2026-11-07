@@ -35,10 +35,8 @@ def test_shape_mode_actions_update_status_without_pointer_movement(
         assert canvas.mode == _CanvasMode.CREATE
         assert canvas.create_mode == create_mode
         assert len(status_messages) == 1
-        assert raw_win._status_bar.message.text().startswith(
-            f"Creating {create_mode!r}"
-        )
-        assert raw_win._status_bar.stats.text() == "mode=CREATE"
+        assert raw_win._status_bar.message.text().startswith(f"{action.text()} • ")
+        assert raw_win._status_bar.stats.text() == ""
 
         status_messages.clear()
         raw_win._actions.edit_mode.trigger()
@@ -46,13 +44,13 @@ def test_shape_mode_actions_update_status_without_pointer_movement(
         assert canvas.mode == _CanvasMode.EDIT
         assert status_messages == ["Editing shapes"]
         assert raw_win._status_bar.message.text() == "Editing shapes"
-        assert raw_win._status_bar.stats.text() == "mode=EDIT"
+        assert raw_win._status_bar.stats.text() == ""
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
 @pytest.mark.gui
-def test_mode_status_preserves_pointer_coordinates_across_transition(
+def test_status_shows_rounded_pointer_coordinates_across_transition(
     *,
     raw_win: MainWindow,
     qtbot: QtBot,
@@ -61,13 +59,42 @@ def test_mode_status_preserves_pointer_coordinates_across_transition(
     canvas = raw_win._canvas_widgets.canvas
     raw_win._actions.create_rectangle_mode.trigger()
 
-    canvas.mouse_moved.emit(QPointF(12, 34))
+    canvas.mouse_moved.emit(QPointF(422.3, 615.9))
 
-    assert raw_win._status_bar.stats.text() == ("mode=CREATE | x=  12.0, y=  34.0")
+    assert raw_win._status_bar.stats.text() == "x  422   y  616"
 
     raw_win._actions.edit_mode.trigger()
 
-    assert raw_win._status_bar.stats.text() == "mode=EDIT | x=  12.0, y=  34.0"
+    assert raw_win._status_bar.stats.text() == "x  422   y  616"
+
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_pointer_coordinates_stay_put_as_other_status_changes(
+    *,
+    raw_win: MainWindow,
+    qtbot: QtBot,
+    pause: bool,
+) -> None:
+    raw_win.show()
+    status_bar = raw_win._status_bar
+    status_bar.stats.set_position(422, 616)
+
+    def stats_right_edge() -> int:
+        qtbot.wait(50)  # the status bar lays out its widgets on the next pass
+        return status_bar.stats.geometry().right()
+
+    edge = stats_right_edge()
+    assert edge >= raw_win.statusBar().width() - 40  # at the right end
+    for ai, save in [
+        ("Loading SAM 2 Base+… · 12 s", ""),
+        ("Segmenting on CPU…", "Saving…"),
+        ("", "Unsaved changes"),
+    ]:
+        status_bar.ai.setText(ai)
+        status_bar.save.setText(save)
+        assert stats_right_edge() == edge
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 

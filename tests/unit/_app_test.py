@@ -16,40 +16,8 @@ from PySide6 import QtGui
 
 from labelme import __appname__
 from labelme import _app
-from labelme import _automation
-from labelme._label_file import ShapeDict
 from labelme._shape import Shape
-
-
-@pytest.mark.parametrize(
-    "create_mode, ai_output_format, expected",
-    [
-        ("ai_points_to_shape", "mask", "mask"),
-        ("ai_box_to_shape", "polygon", "polygon"),
-        ("polygon", "mask", "polygon"),
-        ("rectangle", "mask", "rectangle"),
-        ("edit", "polygon", None),
-    ],
-    ids=[
-        "ai-points-passthrough",
-        "ai-box-passthrough",
-        "text-polygon",
-        "text-rectangle",
-        "unrelated-mode",
-    ],
-)
-def test_resolve_text_annotation_shape_type(
-    *,
-    create_mode: str,
-    ai_output_format: _automation.AiOutputFormat,
-    expected: _automation.AiOutputFormat | None,
-) -> None:
-    assert (
-        _app._resolve_text_annotation_shape_type(
-            create_mode=create_mode, ai_output_format=ai_output_format
-        )
-        == expected
-    )
+from labelme._shape import ShapeDict
 
 
 @pytest.mark.parametrize(
@@ -692,3 +660,30 @@ def test_resolve_stored_image_path_falls_back_across_windows_unc_shares(
         _app._resolve_stored_image_path(image_path=image_path, label_dir=label_dir)
         == image_path
     )
+
+
+def test_saved_shapes_equal_ignores_visibility_but_not_saved_fields() -> None:
+    def make(
+        *, mask: np.ndarray | None, visible: bool = True, locked: bool = False
+    ) -> Shape:
+        return Shape(
+            label="cat",
+            shape_type="mask",
+            points=np.array([[0, 0], [2, 2]], dtype=np.float64),
+            mask=mask,
+            visible=visible,
+            locked=locked,
+        )
+
+    mask = np.array([[True, False]])
+    assert _app._saved_shapes_equal(
+        [make(mask=mask)], [make(mask=mask.copy(), visible=False)]
+    )
+    assert not _app._saved_shapes_equal(
+        [make(mask=mask)], [make(mask=np.array([[False, False]]))]
+    )
+    assert not _app._saved_shapes_equal([make(mask=mask)], [make(mask=None)])
+    assert not _app._saved_shapes_equal(
+        [make(mask=mask)], [make(mask=mask, locked=True)]
+    )
+    assert not _app._saved_shapes_equal([make(mask=mask)], [])

@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Λεπτομέρεια πολυγώνου</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Προσαρμογή λεπτομέρειας πολυγώνου</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -22,6 +14,10 @@
     <message>
         <source>More detail</source>
         <translation>Περισσότερη λεπτομέρεια</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>Έξοδος</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -44,8 +40,8 @@
         <translation>Κύκλος</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos; ή &apos;AI-Box&apos; για να ενεργοποιήσετε τη Βοήθεια AI</translation>
+        <source>Output format: {format}</source>
+        <translation>Μορφή εξόδου: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,32 +55,12 @@
         <source>Model</source>
         <translation>Μοντέλο</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>Βοήθεια AI</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Μορφή εξόδου</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>Η τεχνητή νοημοσύνη δημιουργεί σχολιασμούς από την προτροπή κειμένου</translation>
-    </message>
-    <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>π.χ. σκύλος,γάτα,πουλί</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Μοντέλο κειμένου προτροπής AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -95,20 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;Polygon&apos;, &apos;Rectangle&apos; ή &apos;AI-Points&apos; για ενεργοποίηση</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Μοντέλο</translation>
     </message>
     <message>
-        <source>AI Text Prompt</source>
-        <translation>Κείμενο προτροπής AI</translation>
+        <source>What to find</source>
+        <translation>Τι να βρεθεί</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Προτροπή</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>Αναζήτηση…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>Μοντέλο AI-Find All</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Επιλογές</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -156,10 +151,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>Δημιουργία %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>(Esc για ακύρωση)</translation>
     </message>
@@ -172,8 +163,16 @@
         <translation>Επεξεργασία σχημάτων</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή κρατήστε πατημένο το %s και κάντε κλικ για εξαίρεση. Κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Πληκτρολογήστε τι θέλετε να βρείτε στο AI-Find All ή κάντε κλικ στην πρώτη γωνία ενός πλαισίου γύρω από ένα παράδειγμα</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Κάντε κλικ στην απέναντι γωνία για να εξαιρέσετε αντικείμενα σαν αυτό</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Κάντε κλικ στην απέναντι γωνία για να βρείτε κάθε αντικείμενο σαν αυτό</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -192,8 +191,48 @@
         <translation>Κρατήστε πατημένο το %s και κάντε κλικ για προσθήκη σημείου στην ακμή</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Σύρετε ένα πλαίσιο</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Σύρετε γύρω από ένα παράδειγμα</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Απόρριψη</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Προσθήκη</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Κλικ για συμπερίληψη</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Κλικ για εξαίρεση</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Προσθήκη %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Σύρετε για εξαίρεση</translation>
+    </message>
+    <message>
         <source>Click center point for circle</source>
         <translation>Κάντε κλικ στο κεντρικό σημείο για τον κύκλο</translation>
+    </message>
+    <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Κάντε κλικ σε σημεία για συμπερίληψη, κρατήστε πατημένο το %s και κάντε κλικ για εξαίρεση ή σύρετε ένα πλαίσιο. Κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Το Enter προσθέτει τα αποτελέσματα, το Esc τα απορρίπτει. Κρατήστε πατημένο το %s και σχεδιάστε ένα πλαίσιο για να εξαιρέσετε παρόμοια αντικείμενα.</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>
@@ -222,14 +261,6 @@
     <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Κάντε κλικ και σύρετε για να μετακινήσετε το σχήμα</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Κάντε κλικ στην πρώτη γωνία του bbox για τμηματοποίηση AI</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Κάντε κλικ στην απέναντι γωνία για τμηματοποίηση αντικειμένου</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -389,6 +420,11 @@
         <translation>Επεξεργασία σχημάτων</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Επιλογή</translation>
+    </message>
+    <message>
         <source>Move and edit the selected shapes</source>
         <translation>Μετακίνηση και επεξεργασία των επιλεγμένων σχημάτων</translation>
     </message>
@@ -407,6 +443,14 @@
     <message>
         <source>Start drawing points</source>
         <translation>Έναρξη σχεδίασης σημείων</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Κάντε κλικ σε σημεία ή σύρετε ένα πλαίσιο για να τμηματοποιήσετε ένα αντικείμενο· κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
     </message>
     <message>
         <source>&amp;Next Image</source>
@@ -608,17 +652,16 @@
         <translation>Διαγράφει το επιλεγμένο σημείο από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Επεξεργασία</translation>
-    </message>
-    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Κάντε κλικ για να τοποθετήσετε σημεία της τεθλασμένης γραμμής· κρατήστε πατημένο το %s και κάντε κλικ για το τελευταίο.</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Κάντε κλικ σε σημεία για να τμηματοποιήσετε το αντικείμενο· κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Εύρεση κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
     </message>
     <message>
         <source>Next</source>
@@ -715,10 +758,6 @@
         <translation>Περισσότερα εργαλεία σχημάτων</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s ξεκίνησε.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Επανάληψη</translation>
     </message>
@@ -763,16 +802,20 @@
         <translation>Αποθήκευση…</translation>
     </message>
     <message>
-        <source>Mask Output Unavailable</source>
-        <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
+        <source>Type what to find</source>
+        <translation>Πληκτρολογήστε τι θέλετε να βρείτε</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχήματα &apos;%s&apos;.
-
-Αλλάξτε το μοντέλο κειμένου προτροπής AI σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+        <source>Finding matches on CPU…</source>
+        <translation>Αναζήτηση αντιστοιχιών στη CPU…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Αναζήτηση αντιστοιχιών…</translation>
+    </message>
+    <message>
+        <source>Mask Output Unavailable</source>
+        <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
     </message>
     <message>
         <source>The Annotation File belongs to another Image: %s</source>
@@ -851,14 +894,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Μη διαθέσιμο στη λειτουργία AI-Points, επειδή αυτό το μοντέλο δεν υποστηρίζει εντολές σημείων.</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Να διατηρηθούν οι αλλαγές επισημειώσεων για το «{}»;</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Μη αποθηκευμένες αλλαγές</translation>
     </message>
@@ -919,18 +954,6 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Σχεδιάστε ένα πλαίσιο οριοθέτησης για τμηματοποίηση αντικειμένου.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
         <translation>Π&amp;ροσαρμογή παραθύρου</translation>
     </message>
@@ -981,18 +1004,64 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>Το αντίγραφο ασφαλείας των ρυθμίσεων αποθηκεύτηκε στο %s</translation>
     </message>
     <message>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Εύρεση όλων των «{query}»…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Εύρεση όλων των «{query}» στη CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Τμηματοποίηση στη CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Τμηματοποίηση…</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Βρέθηκαν {count} νέα «{query}»</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχήματα &apos;%s&apos;.
+
+Αλλάξτε το μοντέλο AI-Find All σε &apos;SAM 3&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Starting AI…</source>
+        <translation>Εκκίνηση AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Φόρτωση {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Προετοιμασία εικόνας στη CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Προετοιμασία εικόνας…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} δευτ.</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Δεν βρέθηκαν νέα «{query}»</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points μη διαθέσιμο</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s δεν υποστηρίζει εντολές σημείων.
-Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>Το %s δεν μπορεί να χρησιμοποιήσει πλαίσιο παραδείγματος. Επιλέξτε SAM 3.</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1015,12 +1084,24 @@ Please select a different model or use AI-Box mode.</source>
         <translation>Διαγραφή αρχείου επισημειώσεων</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Διαγραφή του αρχείου επισημειώσεων; Δεν μπορείτε να αναιρέσετε αυτήν την ενέργεια.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Διαγραφή του «{}»; Δεν μπορείτε να αναιρέσετε αυτήν την ενέργεια.</translation>
+    </message>
+    <message>
         <source>Error Deleting Annotation File</source>
         <translation>Σφάλμα διαγραφής αρχείου επισημειώσεων</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Λήψη</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Αποθήκευση των αλλαγών επισημειώσεων στο «{}»;</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1107,12 +1188,12 @@ Expected location: {path}</source>
         <translation>Αρχεία επισημειώσεων (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Οριστική διαγραφή αυτού του αρχείου επισημειώσεων; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Σφάλμα διαμόρφωσης</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Εντοπίζει μόνο πλαίσια. Επιλέξτε «Ορθογώνιο» για να χρησιμοποιήσετε αυτό το μοντέλο.</translation>
     </message>
 </context>
 <context>
@@ -1136,6 +1217,10 @@ Expected location: {path}</source>
     <message>
         <source>Unavailable: {model}</source>
         <translation>Μη διαθέσιμο: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Περισσότερα μοντέλα…</translation>
     </message>
 </context>
 <context>
@@ -1383,6 +1468,10 @@ Expected location: {path}</source>
         <translation>Ένα όνομα σημαίας ανά γραμμή. Μοτίβα: ^car$ αντιστοιχεί ακριβώς στο car, car σε πρόθεμα, .* σε κάθε ετικέτα.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>Μοντέλο AI-Find All</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Λεπτομέρεια πολυγώνου</translation>
     </message>
@@ -1397,6 +1486,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>διπλότυπο διπλότυπα αποφυγή αφαίρεση διπλοτύπων</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Συσκευή υπολογισμού</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Η αυτόματη επιλογή χρησιμοποιεί τη GPU και μεταβαίνει στη CPU αν η GPU αποτύχει.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda επεξεργαστής αργό κατάρρευση</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1437,46 +1542,6 @@ Expected location: {path}</source>
     <message>
         <source>Default model</source>
         <translation>Προεπιλεγμένο μοντέλο</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (ταχύτητα)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (ακρίβεια)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (ταχύτητα)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (ισορροπημένο)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (ακρίβεια)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (ταχύτητα)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (ισορροπημένο)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (ακρίβεια)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Μοντέλο κειμένου προτροπής</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1609,6 +1674,65 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Γραμμή {row}: {error} Οι αλλαγές δεν εφαρμόστηκαν.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Μοντέλο</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>Ταχύτερο</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Ισορροπημένο</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Ακριβέστερο</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Το αρχικό SAM. Το SAM 2 είναι ταχύτερο σε κάθε μέγεθος.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Ταχύτερο, με πρόχειρα περιγράμματα. Λειτουργεί καλά σε κάθε υπολογιστή.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Πιο καθαρά περιγράμματα από το Tiny, αλλά πιο αργό από το SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Μικρότερη λήψη από το Base+, λίγο λιγότερο ακριβές.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Ισορροπία ταχύτητας και ακρίβειας. Λειτουργεί καλά σε CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Ακριβέστερο από το Base+, αλλά πιο αργό.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Ακριβέστερο, αλλά πιο αργό από το SAM 2 Base+. Ιδανικό με GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Ταχύτερο. Βρίσκει πλαίσια, χωρίς μάσκες.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Μόνο πλαίσια</translation>
     </message>
 </context>
 <context>

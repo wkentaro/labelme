@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI gợi ý chú thích trong các chế độ &apos;AI-Points&apos; và &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Độ chi tiết đa giác</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Điều chỉnh độ chi tiết đa giác</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -22,6 +14,10 @@
     <message>
         <source>More detail</source>
         <translation>Chi tiết hơn</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>Đầu ra</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -44,8 +40,8 @@
         <translation>Hình tròn</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Chọn chế độ &apos;AI-Points&apos; hoặc &apos;AI-Box&apos; để bật Hỗ trợ AI</translation>
+        <source>Output format: {format}</source>
+        <translation>Định dạng đầu ra: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,28 +55,12 @@
         <source>Model</source>
         <translation>Mô hình</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>Hỗ trợ AI</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Định dạng đầu ra</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>ví dụ: chó,mèo,chim</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Chạy</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Mô hình lời nhắc văn bản AI</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI tạo chú thích dựa trên nội dung lời nhắc văn bản</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>Lời nhắc văn bản AI</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Chọn chế độ &apos;Polygon&apos;, &apos;Rectangle&apos; hoặc &apos;AI-Points&apos; để bật</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Mô hình</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>Nội dung cần tìm</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Lời nhắc</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>Đang tìm…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>Mô hình AI-Find All</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Tùy chọn</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -172,10 +167,6 @@
         <translation>Nhấn và kéo để di chuyển hình dạng</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Đang tạo %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>Nhấn ESC để hủy</translation>
     </message>
@@ -188,8 +179,20 @@
         <translation>Chỉnh sửa hình dạng</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Nhấp các điểm để bao gồm, hoặc giữ %s và nhấp để loại trừ. Giữ %s và nhấp để hoàn tất.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Nhấp các điểm để bao gồm, giữ %s và nhấp để loại trừ, hoặc kéo một khung. Giữ %s và nhấp để hoàn tất.</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Nhập nội dung cần tìm vào AI-Find All, hoặc nhấp vào góc đầu tiên của khung bao quanh một mẫu</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Nhấp vào góc đối diện để loại trừ các đối tượng giống như thế này</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Nhấp vào góc đối diện để tìm mọi đối tượng giống mẫu này</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -220,16 +223,44 @@
         <translation>Nhấn để thêm điểm</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Kéo một khung</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Kéo quanh một ví dụ</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Hủy bỏ</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Thêm</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Nhấp để bao gồm</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Nhấp để loại trừ</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Thêm %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Kéo để loại trừ</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Chọn góc còn lại. Giữ Shift để vẽ hình vuông.</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Nhấp vào góc đầu tiên của bbox để phân đoạn AI</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Nhấp vào góc đối diện để phân đoạn đối tượng</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter thêm kết quả, Esc bỏ kết quả. Giữ %s và vẽ khung để loại trừ các đối tượng tương tự.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -437,12 +468,13 @@
         <translation>Hoàn tác lần thêm và chỉnh sửa hình dạng cuối cùng</translation>
     </message>
     <message>
-        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
-        <translation>Nhấp để đặt các điểm của đường gấp khúc; giữ %s và nhấp để đặt điểm cuối cùng.</translation>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Chọn</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Nhấp các điểm để phân đoạn đối tượng; giữ %s và nhấp để hoàn tất.</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Nhấp để đặt các điểm của đường gấp khúc; giữ %s và nhấp để đặt điểm cuối cùng.</translation>
     </message>
     <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
@@ -592,9 +624,20 @@
         <translation>Hoàn tác</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Chỉnh sửa</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Nhấp các điểm hoặc kéo một khung để phân đoạn một đối tượng; giữ %s và nhấp để hoàn tất.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Tìm mọi đối tượng khớp với lời nhắc văn bản hoặc một khung mẫu</translation>
     </message>
     <message>
         <source>Next</source>
@@ -743,10 +786,6 @@
         <translation>Công cụ hình dạng khác</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s đã khởi động.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Thử lại</translation>
     </message>
@@ -767,8 +806,32 @@
         <translation>Bạn có thể dùng cài đặt mặc định lúc này. Trước khi đặt lại, một bản sao lưu của tệp cấu hình sẽ được lưu.</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>Nhập nội dung cần tìm</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>Đang tìm kết quả khớp trên CPU…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Đang tìm kết quả khớp…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s chỉ phát hiện khung giới hạn và không thể tạo hình dạng &apos;%s&apos;.
+
+Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Tệp chú thích thuộc về một hình ảnh khác: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s không thể dùng khung mẫu. Hãy chọn SAM 3.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -865,14 +928,6 @@
         <translation>Hủy</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Không khả dụng trong chế độ AI-Points vì mô hình này không hỗ trợ lời nhắc điểm.</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Giữ lại các thay đổi chú thích cho &quot;{}&quot;?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Thay đổi chưa lưu</translation>
     </message>
@@ -949,18 +1004,6 @@
         <translation>Đường gấp khúc</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Vẽ một hộp giới hạn để phân đoạn đối tượng.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Tiếp tục với mặc định</translation>
     </message>
@@ -969,12 +1012,48 @@
         <translation>Sao lưu và đặt lại</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s chỉ phát hiện khung giới hạn và không thể tạo hình dạng &apos;%s&apos;.
-
-Chuyển mô hình lời nhắc văn bản AI sang &apos;SAM3 (smart)&apos;, hoặc đặt định dạng đầu ra thành &apos;Rectangle&apos;.</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Đang tìm tất cả &apos;{query}&apos;…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Đang tìm tất cả &apos;{query}&apos; trên CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Đang phân đoạn trên CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Đang phân đoạn…</translation>
+    </message>
+    <message>
+        <source>Starting AI…</source>
+        <translation>Đang khởi động AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Đang tải {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Đang chuẩn bị ảnh trên CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Đang chuẩn bị ảnh…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} giây</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Đã tìm thấy {count} &apos;{query}&apos; mới</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Không tìm thấy &apos;{query}&apos; mới</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -985,22 +1064,24 @@ Chuyển mô hình lời nhắc văn bản AI sang &apos;SAM3 (smart)&apos;, ho�
         <translation>Lỗi khi lưu tệp chú thích</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points không khả dụng</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s không hỗ trợ gợi ý điểm.
-Vui lòng chọn mô hình khác hoặc sử dụng chế độ AI-Box.</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Thư mục chú thích: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Xóa tệp chú thích? Bạn không thể hoàn tác thao tác này.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Xóa &quot;{}&quot;? Bạn không thể hoàn tác thao tác này.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Tải xuống</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Lưu các thay đổi chú thích cho &quot;{}&quot;?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1107,12 +1188,12 @@ Vị trí dự kiến: {path}</translation>
         <translation>Xóa tệp chú thích</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Xóa vĩnh viễn tệp chú thích này? Hành động này không thể hoàn tác.</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Lỗi Cấu hình</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Chỉ phát hiện khung. Chuyển sang Hình chữ nhật để dùng mô hình này.</translation>
     </message>
 </context>
 <context>
@@ -1136,6 +1217,10 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Unavailable: {model}</source>
         <translation>Không khả dụng: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Mô hình khác…</translation>
     </message>
 </context>
 <context>
@@ -1383,6 +1468,10 @@ Vị trí dự kiến: {path}</translation>
         <translation>Mỗi dòng một tên cờ. Mẫu: ^car$ khớp chính xác với car, car khớp tiền tố, .* khớp mọi nhãn.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>Mô hình AI-Find All</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Độ chi tiết đa giác</translation>
     </message>
@@ -1397,6 +1486,22 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>trùng lặp tránh trùng lặp loại bỏ trùng lặp</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Thiết bị tính toán</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Tự động dùng GPU và chuyển sang CPU nếu GPU gặp lỗi.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda bộ xử lý chậm lỗi</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1437,46 +1542,6 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Default model</source>
         <translation>Mô hình mặc định</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (tốc độ)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (độ chính xác)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (tốc độ)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (cân bằng)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (độ chính xác)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (tốc độ)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (cân bằng)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (độ chính xác)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Mô hình lời nhắc văn bản</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1609,6 +1674,65 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Dòng {row}: {error} Các thay đổi chưa được áp dụng.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Mô hình</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>Nhanh nhất</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Cân bằng</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Chính xác nhất</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM gốc. SAM 2 nhanh hơn ở mọi kích thước.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Nhanh nhất, đường viền thô. Chạy tốt trên mọi máy tính.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Đường viền sắc nét hơn Tiny, nhưng chậm hơn SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Dung lượng tải xuống nhỏ hơn Base+, kém chính xác hơn một chút.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Cân bằng tốc độ và độ chính xác. Chạy tốt trên CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Chính xác hơn Base+, nhưng chậm hơn.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Chính xác nhất, nhưng chậm hơn SAM 2 Base+. Tốt nhất khi có GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Nhanh nhất. Tìm hộp, không có mặt nạ.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Chỉ khung</translation>
     </message>
 </context>
 <context>

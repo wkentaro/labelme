@@ -371,7 +371,7 @@ def test_right_menu_failure_restores_origin(
 @pytest.mark.parametrize(
     ("create_mode", "points", "expected"),
     [
-        ("ai_points_to_shape", (), True),
+        ("ai_segment", (), True),
         ("linestrip", (QPointF(),), False),
         ("linestrip", (QPointF(), QPointF(1, 1)), True),
         ("polygon", (QPointF(), QPointF(1, 0)), False),

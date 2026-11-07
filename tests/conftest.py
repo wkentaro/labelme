@@ -23,6 +23,7 @@ from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
 import labelme._utils
+from labelme._automation import _osam_session
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
@@ -53,6 +54,9 @@ def pytest_addoption(parser: pytest.Parser) -> None:  # noqa: GR005 -- pluggy ca
 def pytest_configure(config: pytest.Config) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
     if not config.getoption("--headed"):
         os.environ["QT_QPA_PLATFORM"] = "offscreen"
+        # A desktop theme such as gtk3 changes fonts and key handling, so
+        # offscreen runs would differ from CI.
+        os.environ.pop("QT_QPA_PLATFORMTHEME", None)
 
 
 @pytest.fixture()
@@ -209,3 +213,8 @@ def download_server(
     server.shutdown()
     server.server_close()
     thread.join()
+
+
+@pytest.fixture(autouse=True)
+def _isolate_osam_sessions(*, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(_osam_session, "_SESSIONS", {})

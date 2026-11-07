@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI在&apos;AI-Points&apos;和&apos;AI-Box&apos;模式下建議標註</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>多邊形細節</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>調整多邊形細節</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -22,6 +14,10 @@
     <message>
         <source>More detail</source>
         <translation>更多細節</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>輸出</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -44,8 +40,8 @@
         <translation>圓形</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>選擇 &apos;AI-Points&apos; 或 &apos;AI-Box&apos; 模式以啟用 AI 輔助</translation>
+        <source>Output format: {format}</source>
+        <translation>輸出格式：{format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,28 +55,12 @@
         <source>Model</source>
         <translation>模型</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI 輔助</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>輸出格式</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>例如：狗,貓,鳥</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>執行</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI 文字提示模型</translation>
     </message>
     <message>
         <source>Score</source>
@@ -91,24 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI根據文字提示創建標註</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>AI 文字提示</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>選擇&apos;Polygon&apos;、&apos;Rectangle&apos;或&apos;AI-Points&apos;模式以啟用</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>模型</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>要尋找的內容</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>提示詞</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>正在尋找…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 模型</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>選項</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -172,10 +167,6 @@
         <translation>點擊並拖拽以移動形狀</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>正在創建 %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>按 ESC 取消</translation>
     </message>
@@ -188,8 +179,20 @@
         <translation>編輯形狀</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>按一下各點以包含，或按住 %s 並按一下以排除。按住 %s 並按一下以完成。</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>按一下各點以包含，按住 %s 並按一下以排除，或拖曳出一個框。按住 %s 並按一下以完成。</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>在 AI-Find All 中輸入要尋找的內容，或按一下框選一個範例的第一個角</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>按一下對角，排除與此相似的物件</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>按一下對角，尋找所有與此相似的物件</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -220,16 +223,44 @@
         <translation>點擊以添加點</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>拖曳畫框</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>拖曳框住一個範例</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>丟棄</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>加入</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>按一下以包含</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>按一下以排除</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>加入 %d 個</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>拖曳以排除</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>選擇另一個角。按住Shift可繪製正方形。</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>點擊bbox的第一個角進行AI分割</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>點擊對角以分割物件</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>按 Enter 鍵加入結果，按 Esc 鍵捨棄。按住 %s 框選以排除相似的物件。</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -437,12 +468,13 @@
         <translation>復原上一次新增或編輯形狀的操作</translation>
     </message>
     <message>
-        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
-        <translation>按一下放置折線的點；按住 %s 並按一下以放置最後一個點。</translation>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>選取</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>按一下各點以分割物件；按住 %s 並按一下以完成。</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>按一下放置折線的點；按住 %s 並按一下以放置最後一個點。</translation>
     </message>
     <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
@@ -592,9 +624,20 @@
         <translation>復原</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>編輯</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>按一下各點或拖曳出一個框以分割一個物件；按住 %s 並按一下以完成。</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>尋找與文字提示或範例框相符的所有物件</translation>
     </message>
     <message>
         <source>Next</source>
@@ -743,10 +786,6 @@
         <translation>更多形狀工具</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s 已啟動。</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>重試</translation>
     </message>
@@ -767,8 +806,32 @@
         <translation>你可以暫時使用預設值。重設前會先儲存設定檔的備份。</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>輸入要尋找的內容</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>正在 CPU 上尋找相符項目…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>正在尋找相符項目…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 形狀。
+
+請將 AI-Find All 模型切換為 &apos;SAM 3&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>此標註檔案屬於另一張影像：%s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s 無法使用範例框。請選擇 SAM 3。</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -865,14 +928,6 @@
         <translation>取消</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>此模型不支援點提示，因此無法在 AI-Points 模式中使用。</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>要保留「{}」的標註變更嗎？</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>尚未儲存的變更</translation>
     </message>
@@ -949,18 +1004,6 @@
         <translation>折線</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>繪製邊界框以分割物件。</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>使用預設值繼續</translation>
     </message>
@@ -969,12 +1012,48 @@
         <translation>備份並重設</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s 僅偵測邊界框，無法建立 &apos;%s&apos; 形狀。
-
-請將 AI 文字提示模型切換為 &apos;SAM3 (smart)&apos;，或將輸出格式設定為 &apos;Rectangle&apos;。</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>正在尋找所有「{query}」…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>正在 CPU 上尋找所有「{query}」…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>正在 CPU 上分割…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>正在分割…</translation>
+    </message>
+    <message>
+        <source>Starting AI…</source>
+        <translation>正在啟動 AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>正在載入 {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>正在 CPU 上準備影像…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>正在準備影像…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} 秒</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>找到 {count} 個新的「{query}」</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>找不到新的「{query}」</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -985,22 +1064,24 @@ Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output f
         <translation>儲存標註檔案時發生錯誤</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points 無法使用</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s 不支援點提示。
-請選擇其他模型或使用 AI-Box 模式。</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>標註資料夾：%s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>要刪除標註檔案嗎？此操作無法還原。</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>要刪除「{}」嗎？此操作無法還原。</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>下載</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>要儲存「{}」的標註變更嗎？</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1107,12 +1188,12 @@ Expected location: {path}</source>
         <translation>刪除標註檔案</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>永久刪除此標註檔案？此操作無法復原。</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>設定錯誤</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>僅偵測邊界框。切換至「矩形」即可使用此模型。</translation>
     </message>
 </context>
 <context>
@@ -1136,6 +1217,10 @@ Expected location: {path}</source>
     <message>
         <source>Unavailable: {model}</source>
         <translation>無法使用：{model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>更多模型…</translation>
     </message>
 </context>
 <context>
@@ -1383,6 +1468,10 @@ Expected location: {path}</source>
         <translation>每行一個旗標名稱。模式：^car$ 精確符合 car，car 符合前綴，.* 符合所有標籤。</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All 模型</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>多邊形細節</translation>
     </message>
@@ -1397,6 +1486,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>重複 避免重複 去除重複</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>運算裝置</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>「自動」會使用 GPU，GPU 發生錯誤時切換至 CPU。</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>GPU CUDA 處理器 慢 當機</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1437,46 +1542,6 @@ Expected location: {path}</source>
     <message>
         <source>Default model</source>
         <translation>預設模型</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (速度)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (準確度)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (速度)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (平衡)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (準確度)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (速度)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (平衡)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (準確度)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>文字提示模型</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1609,6 +1674,65 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>第 {row} 行：{error} 變更尚未套用。</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>模型</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}：{model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>最快</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>平衡</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>最準確</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>初代 SAM。各種大小下 SAM 2 都更快。</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>最快，輪廓較粗略。在任何電腦上都能順暢執行。</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>輪廓比 Tiny 更清晰，但比 SAM 2 Base+ 慢。</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>下載大小比 Base+ 小，準確度略低。</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>兼顧速度與準確度。在 CPU 上也能順暢執行。</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>比 Base+ 更準確，但更慢。</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>最準確，但比 SAM 2 Base+ 慢。最好使用 GPU。</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>最快。只尋找框，不產生遮罩。</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>僅邊界框</translation>
     </message>
 </context>
 <context>

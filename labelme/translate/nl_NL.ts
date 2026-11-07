@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI stelt annotaties voor in de modi &apos;AI-Points&apos; en &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Polygoondetail</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Polygoondetail aanpassen</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -22,6 +14,10 @@
     <message>
         <source>More detail</source>
         <translation>Meer detail</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>Uitvoer</translation>
     </message>
     <message>
         <source>Polygon</source>
@@ -44,8 +40,8 @@
         <translation>Cirkel</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Selecteer de modus &apos;AI-Points&apos; of &apos;AI-Box&apos; om de AI-assistent in te schakelen</translation>
+        <source>Output format: {format}</source>
+        <translation>Uitvoerformaat: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -59,32 +55,12 @@
         <source>Model</source>
         <translation>Model</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI-assistent</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Uitvoerformaat</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI genereert annotaties op basis van de tekstprompt</translation>
-    </message>
-    <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>bijv. hond, kat, vogel</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Uitvoeren</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>Model voor AI-tekstprompt</translation>
     </message>
     <message>
         <source>Score</source>
@@ -95,20 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Selecteer &apos;Polygon&apos;, &apos;Rectangle&apos; of &apos;AI-Points&apos;-modus om in te schakelen</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Model</translation>
     </message>
     <message>
-        <source>AI Text Prompt</source>
-        <translation>AI-tekstprompt</translation>
+        <source>What to find</source>
+        <translation>Wat zoeken</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>Zoeken…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All-model</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Opties</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -172,10 +167,6 @@
         <translation>Klik en sleep om vorm te verplaatsen</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Maken van %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC om te annuleren</translation>
     </message>
@@ -188,8 +179,20 @@
         <translation>Vormen bewerken</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Klik op punten om op te nemen, of houd %s ingedrukt en klik om uit te sluiten. Houd %s ingedrukt en klik om te voltooien.</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Klik op punten om op te nemen, houd %s ingedrukt en klik om uit te sluiten, of sleep een kader. Houd %s ingedrukt en klik om te voltooien.</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Typ in AI-Find All wat je wilt zoeken, of klik op de eerste hoek van een kader rond één voorbeeld</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Klik op de tegenoverliggende hoek om objecten zoals dit uit te sluiten</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Klik op de tegenoverliggende hoek om elk object zoals dit te zoeken</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -220,16 +223,44 @@
         <translation>Klik om punt toe te voegen</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Sleep een kader</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Sleep een kader om één voorbeeld</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Verwijder</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Voeg toe</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Klik om op te nemen</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Klik om uit te sluiten</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Voeg %d toe</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Sleep om uit te sluiten</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Kies de andere hoek. Houd Shift ingedrukt voor een vierkant.</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Klik op de eerste hoek van de bbox voor AI-segmentatie</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Klik op de tegenoverliggende hoek om het object te segmenteren</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter voegt de resultaten toe, Esc verwerpt ze. Houd %s ingedrukt en teken een kader om vergelijkbare objecten uit te sluiten.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -437,12 +468,13 @@
         <translation>Laatste toevoeging en bewerking van vorm ongedaan maken</translation>
     </message>
     <message>
-        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
-        <translation>Klik om punten van de polylijn te plaatsen; houd %s ingedrukt en klik om het laatste te plaatsen.</translation>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Selecteren</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Klik op punten om het object te segmenteren; houd %s ingedrukt en klik om te voltooien.</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Klik om punten van de polylijn te plaatsen; houd %s ingedrukt en klik om het laatste te plaatsen.</translation>
     </message>
     <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
@@ -592,9 +624,20 @@
         <translation>Ongedaan maken</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Bewerken</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Klik op punten of sleep een kader om één object te segmenteren; houd %s ingedrukt en klik om te voltooien.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Elk object zoeken dat overeenkomt met de tekstprompt of een voorbeeldkader</translation>
     </message>
     <message>
         <source>Next</source>
@@ -743,10 +786,6 @@
         <translation>Meer vormgereedschappen</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s gestart.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Opnieuw proberen</translation>
     </message>
@@ -767,8 +806,32 @@
         <translation>U kunt voorlopig de standaardinstellingen gebruiken. Voordat de instellingen worden gereset, wordt een back-up van uw configuratiebestand opgeslagen.</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>Typ wat je wilt zoeken</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>Overeenkomsten zoeken op de CPU…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Overeenkomsten zoeken…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-vormen maken.
+
+Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
         <source>The Annotation File belongs to another Image: %s</source>
         <translation>Het annotatiebestand hoort bij een andere afbeelding: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s kan geen voorbeeldkader gebruiken. Kies SAM 3.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -865,14 +928,6 @@
         <translation>Annuleren</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Niet beschikbaar in de modus AI-Points, omdat dit model geen puntprompts ondersteunt.</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>De annotatiewijzigingen voor ‘{}’ behouden?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Niet-opgeslagen wijzigingen</translation>
     </message>
@@ -949,18 +1004,6 @@
         <translation>Lijnstrip</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Teken een begrenzingskader om een object te segmenteren.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Doorgaan met standaardinstellingen</translation>
     </message>
@@ -969,12 +1012,48 @@
         <translation>Back-up maken en resetten</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s detecteert alleen selectiekaders en kan geen &apos;%s&apos;-vormen maken.
-
-Wijzig het model voor de AI-tekstprompt naar &apos;SAM3 (smart)&apos; of stel het uitvoerformaat in op &apos;Rectangle&apos;.</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Alle &apos;{query}&apos; zoeken…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Alle &apos;{query}&apos; zoeken op de CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Segmenteren op de CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Segmenteren…</translation>
+    </message>
+    <message>
+        <source>Starting AI…</source>
+        <translation>AI starten…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} laden…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Afbeelding voorbereiden op CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Afbeelding voorbereiden…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} s</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} nieuwe &apos;{query}&apos; gevonden</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Geen nieuwe &apos;{query}&apos; gevonden</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -985,22 +1064,24 @@ Wijzig het model voor de AI-tekstprompt naar &apos;SAM3 (smart)&apos; of stel he
         <translation>Fout bij opslaan van annotatiebestand</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points niet beschikbaar</translation>
-    </message>
-    <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s ondersteunt geen puntinvoer.
-Selecteer een ander model of gebruik de AI-Box-modus.</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotatiemap: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Het annotatiebestand verwijderen? Je kunt dit niet ongedaan maken.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>‘{}’ verwijderen? Je kunt dit niet ongedaan maken.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Downloaden</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Annotatiewijzigingen voor ‘{}’ opslaan?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1107,12 +1188,12 @@ Verwachte locatie: {path}</translation>
         <translation>Annotatiebestand verwijderen</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Dit annotatiebestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Configuratiefout</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Detecteert alleen kaders. Schakel over naar Rechthoek om dit model te gebruiken.</translation>
     </message>
 </context>
 <context>
@@ -1136,6 +1217,10 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Unavailable: {model}</source>
         <translation>Niet beschikbaar: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Meer modellen…</translation>
     </message>
 </context>
 <context>
@@ -1383,6 +1468,10 @@ Verwachte locatie: {path}</translation>
         <translation>Eén vlagnaam per regel. Patronen: ^car$ komt exact overeen met car, car met een voorvoegsel, .* met elk label.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All-model</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Polygoondetail</translation>
     </message>
@@ -1397,6 +1486,22 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>duplicaat duplicaten voorkomen verwijderen</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Rekenapparaat</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Automatisch gebruikt de GPU en schakelt over naar de CPU als de GPU faalt.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda processor traag crash</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1437,46 +1542,6 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Default model</source>
         <translation>Standaardmodel</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (snelheid)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (nauwkeurigheid)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (snelheid)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (gebalanceerd)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (nauwkeurigheid)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (snelheid)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (gebalanceerd)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (nauwkeurigheid)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Model voor tekstprompt</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1609,6 +1674,65 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>Rij {row}: {error} Wijzigingen zijn niet toegepast.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>Snelst</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Gebalanceerd</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Nauwkeurigst</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>De oorspronkelijke SAM. SAM 2 is bij elke grootte sneller.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Snelst, met ruwe omtrekken. Werkt goed op elke computer.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Scherpere omtrekken dan Tiny, maar trager dan SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Kleinere download dan Base+, iets minder nauwkeurig.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Evenwicht tussen snelheid en nauwkeurigheid. Werkt goed op een CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Nauwkeuriger dan Base+, maar trager.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Nauwkeurigst, maar trager dan SAM 2 Base+. Het best met een GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Snelst. Vindt kaders, zonder maskers.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Alleen kaders</translation>
     </message>
 </context>
 <context>
