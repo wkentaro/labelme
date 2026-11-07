@@ -1195,6 +1195,26 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Розпізнає лише рамки. Перейдіть на «Прямокутник», щоб використати цю модель.</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Перетворити на</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Перетворити вибрані фігури на полігони</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Прямокутник (обмежувальна рамка)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Перетворити вибрані фігури на обмежувальні прямокутники</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Перетворити вибрані фігури на ламані лінії</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

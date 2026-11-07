@@ -1195,6 +1195,26 @@ Vị trí dự kiến: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Chỉ phát hiện khung. Chuyển sang Hình chữ nhật để dùng mô hình này.</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Chuyển đổi thành</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Chuyển đổi các hình đã chọn thành đa giác</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Hình chữ nhật (hộp bao)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Chuyển đổi các hình đã chọn thành hình chữ nhật hộp bao</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Chuyển đổi các hình đã chọn thành đường đa đoạn</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

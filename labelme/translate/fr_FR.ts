@@ -1195,6 +1195,26 @@ Emplacement attendu : {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Détecte uniquement des cadres. Passez à « Rectangle » pour utiliser ce modèle.</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Convertir en</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Convertir les formes sélectionnées en polygones</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Rectangle (boîte englobante)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Convertir les formes sélectionnées en rectangles de boîte englobante</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Convertir les formes sélectionnées en bandes de lignes</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

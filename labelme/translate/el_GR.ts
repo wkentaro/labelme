@@ -1195,6 +1195,26 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Εντοπίζει μόνο πλαίσια. Επιλέξτε «Ορθογώνιο» για να χρησιμοποιήσετε αυτό το μοντέλο.</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Μετατροπή σε</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Μετατροπή επιλεγμένων σχημάτων σε πολύγωνα</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Ορθογώνιο (πλαίσιο οριοθέτησης)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Μετατροπή επιλεγμένων σχημάτων σε ορθογώνια πλαισίου οριοθέτησης</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Μετατροπή επιλεγμένων σχημάτων σε γραμμοσειρές</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1205,6 +1205,26 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>バウンディングボックスのみを検出します。このモデルを使うには「矩形」に切り替えてください。</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>変換</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>選択した形状をポリゴンに変換</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>矩形 (バウンディングボックス)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>選択した形状をバウンディングボックス矩形に変換</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>選択した形状をラインストリップに変換</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

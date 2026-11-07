@@ -1,3 +1,6 @@
+from ._conversion import convert_shape_geometry
+from ._conversion import get_intersection_conversion_targets
+from ._conversion import get_valid_conversion_targets
 from ._hit_testing import nearest_edge_index
 from ._hit_testing import nearest_rotation_point_index
 from ._hit_testing import nearest_vertex_index
@@ -30,7 +33,10 @@ __all__ = [
     "ShapeDict",
     "ShapeType",
     "can_merge_shapes",
+    "convert_shape_geometry",
+    "get_intersection_conversion_targets",
     "get_rotation_handle",
+    "get_valid_conversion_targets",
     "merge_masks",
     "nearest_edge_index",
     "nearest_rotation_point_index",

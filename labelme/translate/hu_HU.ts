@@ -1195,6 +1195,26 @@ Várt hely: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Csak kereteket ismer fel. A modell használatához váltson a Téglalap módra.</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Átalakítás erre</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Kijelölt alakzatok átalakítása sokszöggé</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Téglalap (befoglaló keret)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Kijelölt alakzatok átalakítása befoglaló téglalappá</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Kijelölt alakzatok átalakítása vonallánccá</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -59,6 +59,8 @@ from ._shape import Shape
 from ._shape import ShapeDict
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
+from ._shape import convert_shape_geometry
+from ._shape import get_intersection_conversion_targets
 from ._shape import merge_masks
 from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
@@ -177,6 +179,11 @@ class _Actions(NamedTuple):
     paste: QtGui.QAction
     duplicate: QtGui.QAction
     merge: QtGui.QAction
+    convert_to_polygon: QtGui.QAction
+    convert_to_rectangle: QtGui.QAction
+    convert_to_linestrip: QtGui.QAction
+    convert_menu: QtWidgets.QMenu
+    context_convert_menu: QtWidgets.QMenu
     lock: QtGui.QAction
     undo_last_point: QtGui.QAction
     undo: QtGui.QAction
@@ -210,8 +217,13 @@ class _Actions(NamedTuple):
     zoom_widget_action: QtWidgets.QWidgetAction
     draw: list[tuple[str, QtGui.QAction]]
     image: QtGui.QActionGroup
-    context_menu: tuple[QtGui.QAction, ...]
+    shape_context_menu: tuple[QtGui.QAction, ...]
+    canvas_context_menu: tuple[QtGui.QAction, ...]
     edit_menu: tuple[QtGui.QAction, ...]
+
+    @property
+    def context_menu(self) -> tuple[QtGui.QAction, ...]:
+        return self.shape_context_menu
 
 
 class _Menus(NamedTuple):
@@ -639,6 +651,46 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
         )
+        edit_convert_menu = QtWidgets.QMenu(self.tr("Convert to"), self)
+        context_convert_menu = QtWidgets.QMenu(self.tr("Convert to"), self)
+        convert_to_polygon = action(
+            text=self.tr("Polygon"),
+            slot=functools.partial(
+                self._convert_selected_shapes, target_type="polygon"
+            ),
+            icon="phosphor/polygon.svg",
+            tip=self.tr("Convert selected shapes to polygons"),
+            enabled=False,
+        )
+        convert_to_rectangle = action(
+            text=self.tr("Rectangle Bounding Box"),
+            slot=functools.partial(
+                self._convert_selected_shapes, target_type="rectangle"
+            ),
+            icon="rectangle-bounds.svg",
+            tip=self.tr("Convert selected shapes to bounding box rectangles"),
+            enabled=False,
+        )
+        convert_to_linestrip = action(
+            text=self.tr("LineStrip"),
+            slot=functools.partial(
+                self._convert_selected_shapes, target_type="linestrip"
+            ),
+            icon="linestrip.svg",
+            tip=self.tr("Convert selected shapes to linestrips"),
+            enabled=False,
+        )
+        conversion_actions = (
+            convert_to_polygon,
+            convert_to_rectangle,
+            convert_to_linestrip,
+        )
+        edit_convert_menu.addActions(conversion_actions)
+        context_convert_menu.addActions(conversion_actions)
+        edit_convert_menu.setEnabled(False)
+        context_convert_menu.setEnabled(False)
+        for act in conversion_actions:
+            act.setVisible(False)
         lock = action(
             text=self.tr("Lock Shapes"),
             slot=self._toggle_selected_shapes_lock,
@@ -963,24 +1015,29 @@ class MainWindow(QtWidgets.QMainWindow):
             ("ai_segment", create_ai_segment_mode),
             ("ai_find_all", create_ai_find_all_mode),
         ]
-        # Both menus follow the platform Edit-menu convention: history first,
+        # The Edit menu follows the platform Edit-menu convention: history first,
         # then the clipboard group, then the actions that alter a shape.
         history = (undo, undo_last_point)
         clipboard = (copy, paste, duplicate)
-        context_menu = (
+        shape_context_menu = (
+            edit,
+            duplicate,
+            copy,
+            delete,
+            merge,
+            context_convert_menu.menuAction(),
+            lock,
+            separator(),
+            add_point_to_edge,
+            remove_point,
+        )
+        canvas_context_menu = (
             *[draw_action for _, draw_action in draw],
             edit_mode,
             separator(),
-            *history,
+            undo,
             separator(),
-            *clipboard,
-            separator(),
-            edit,
-            delete,
-            merge,
-            lock,
-            add_point_to_edge,
-            remove_point,
+            paste,
         )
         edit_menu = (
             separator(),
@@ -991,6 +1048,7 @@ class MainWindow(QtWidgets.QMainWindow):
             edit,
             delete,
             merge,
+            edit_convert_menu.menuAction(),
             lock,
             remove_point,
             separator(),
@@ -1016,6 +1074,11 @@ class MainWindow(QtWidgets.QMainWindow):
             paste=paste,
             duplicate=duplicate,
             merge=merge,
+            convert_to_polygon=convert_to_polygon,
+            convert_to_rectangle=convert_to_rectangle,
+            convert_to_linestrip=convert_to_linestrip,
+            convert_menu=edit_convert_menu,
+            context_convert_menu=context_convert_menu,
             lock=lock,
             undo_last_point=undo_last_point,
             undo=undo,
@@ -1049,7 +1112,8 @@ class MainWindow(QtWidgets.QMainWindow):
             zoom_widget_action=zoom_widget_action,
             draw=draw,
             image=image_actions,
-            context_menu=context_menu,
+            shape_context_menu=shape_context_menu,
+            canvas_context_menu=canvas_context_menu,
             edit_menu=edit_menu,
         )
 
@@ -1162,7 +1226,12 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         )
 
-        self._canvas_widgets.canvas.context_menu.addActions(self._actions.context_menu)
+        self._canvas_widgets.canvas.shape_context_menu.addActions(
+            self._actions.shape_context_menu
+        )
+        self._canvas_widgets.canvas.canvas_context_menu.addActions(
+            self._actions.canvas_context_menu
+        )
 
         return _Menus(
             file=file_menu,
@@ -1599,9 +1668,21 @@ class MainWindow(QtWidgets.QMainWindow):
         return not len(self._docks.label_list)
 
     def populate_mode_actions(self) -> None:
-        self._canvas_widgets.canvas.context_menu.clear()
-        self._canvas_widgets.canvas.context_menu.addActions(self._actions.context_menu)
-        self._menus.edit.clear()
+        # QMenu.clear() can delete its submenu actions, which are reused below.
+        # Remove membership without destroying the actions or their submenus.
+        for menu in (
+            self._canvas_widgets.canvas.shape_context_menu,
+            self._canvas_widgets.canvas.canvas_context_menu,
+            self._menus.edit,
+        ):
+            for menu_action in menu.actions():
+                menu.removeAction(menu_action)
+        self._canvas_widgets.canvas.shape_context_menu.addActions(
+            self._actions.shape_context_menu
+        )
+        self._canvas_widgets.canvas.canvas_context_menu.addActions(
+            self._actions.canvas_context_menu
+        )
         actions = (
             *[draw_action for _, draw_action in self._actions.draw],
             self._actions.edit_mode,
@@ -2005,6 +2086,7 @@ class MainWindow(QtWidgets.QMainWindow):
             not busy and any(not shape.locked for shape in selected)
         )
         self._actions.merge.setEnabled(not busy and can_merge_shapes(selected))
+        self._update_shape_conversion_menu(drawing=busy)
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
@@ -2412,6 +2494,42 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
         self._commit_shapes(shapes)
         canvas.select_shapes(shapes=[merged])
+
+    def _convert_selected_shapes(self, *, target_type: ShapeType) -> None:
+        canvas = self._canvas_widgets.canvas
+        selected = list(canvas.selected_shapes)
+        valid_targets = get_intersection_conversion_targets(selected)
+        if target_type not in valid_targets:
+            return
+
+        converted_map = {
+            s: convert_shape_geometry(shape=s, target_type=target_type)
+            for s in selected
+        }
+        shapes = [converted_map.get(s, s) for s in canvas.shapes]
+        new_selected = [converted_map[s] for s in selected]
+
+        self._commit_shapes(shapes)
+        canvas.select_shapes(shapes=new_selected)
+
+    def _update_shape_conversion_menu(self, *, drawing: bool) -> None:
+        if drawing:
+            valid_targets: set[ShapeType] = set()
+        else:
+            valid_targets = get_intersection_conversion_targets(
+                self._canvas_widgets.canvas.selected_shapes
+            )
+        has_targets = len(valid_targets) > 0
+        self._actions.convert_to_polygon.setEnabled("polygon" in valid_targets)
+        self._actions.convert_to_polygon.setVisible("polygon" in valid_targets)
+        self._actions.convert_to_rectangle.setEnabled("rectangle" in valid_targets)
+        self._actions.convert_to_rectangle.setVisible("rectangle" in valid_targets)
+        self._actions.convert_to_linestrip.setEnabled("linestrip" in valid_targets)
+        self._actions.convert_to_linestrip.setVisible("linestrip" in valid_targets)
+        self._actions.convert_menu.setEnabled(has_targets)
+        self._actions.context_convert_menu.setEnabled(has_targets)
+        self._actions.convert_menu.menuAction().setEnabled(has_targets)
+        self._actions.context_convert_menu.menuAction().setEnabled(has_targets)
 
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []

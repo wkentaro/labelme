@@ -1195,6 +1195,26 @@ Posizione prevista: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Rileva solo riquadri. Passa a Rettangolo per usare questo modello.</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Converti in</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Converti le forme selezionate in poligoni</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Rettangolo (casella di delimitazione)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Converti le forme selezionate in rettangoli di casella di delimitazione</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Converti le forme selezionate in strisce di linee</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

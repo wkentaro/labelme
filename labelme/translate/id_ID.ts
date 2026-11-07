@@ -1195,6 +1195,26 @@ Lokasi yang diharapkan: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Hanya mendeteksi kotak. Beralih ke Persegi Panjang untuk menggunakan model ini.</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Konversi ke</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Konversi bentuk terpilih ke poligon</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Persegi Panjang (kotak pembatas)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Konversi bentuk terpilih ke persegi panjang kotak pembatas</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Konversi bentuk terpilih ke garis setrip</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1195,6 +1195,26 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>仅检测边界框。切换到“矩形”即可使用此模型。</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>转换为</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>将选中的形状转换为多边形</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>矩形 (边界框)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>将选中的形状转换为边界框矩形</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>将选中的形状转换为折线</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

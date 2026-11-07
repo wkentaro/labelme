@@ -1195,6 +1195,26 @@ Verwachte locatie: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Detecteert alleen kaders. Schakel over naar Rechthoek om dit model te gebruiken.</translation>
     </message>
+    <message>
+        <source>Convert to</source>
+        <translation>Converteren naar</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to polygons</source>
+        <translation>Geselecteerde vormen converteren naar polygonen</translation>
+    </message>
+    <message>
+        <source>Rectangle Bounding Box</source>
+        <translation>Rechthoek (begrenzingsvak)</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to bounding box rectangles</source>
+        <translation>Geselecteerde vormen converteren naar begrenzingsrechthoeken</translation>
+    </message>
+    <message>
+        <source>Convert selected shapes to linestrips</source>
+        <translation>Geselecteerde vormen converteren naar lijnstroken</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
