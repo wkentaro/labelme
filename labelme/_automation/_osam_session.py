@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import collections
 import time
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 from typing import Final
+from typing import Literal
 
 import numpy as np
 from loguru import logger
@@ -11,6 +13,10 @@ from numpy.typing import NDArray
 
 if TYPE_CHECKING:
     import osam
+
+InferenceStage = Literal["loading", "encoding", "generating"]
+# Called as each stage starts, with the model's device once it has loaded.
+ProgressCallback = Callable[[InferenceStage, str | None], None]
 
 
 def _elapsed_ms(*, t_start: float) -> float:
@@ -42,13 +48,14 @@ class OsamSession:
         points: NDArray[np.floating] | None = None,
         point_labels: NDArray[np.intp] | None = None,
         texts: list[str] | None = None,
+        progress: ProgressCallback | None = None,
     ) -> osam.types.GenerateResponse:
         import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
         image_embedding: osam.types.ImageEmbedding | None
         try:
             image_embedding = self._get_or_compute_embedding(
-                image=image, image_id=image_id
+                image=image, image_id=image_id, progress=progress
             )
         except NotImplementedError:
             image_embedding = None
@@ -71,7 +78,9 @@ class OsamSession:
             prompt.score_threshold = 0.01
             prompt.max_annotations = 1000
 
-        model: osam.types.Model = self._get_or_load_model()
+        model: osam.types.Model = self._get_or_load_model(progress=progress)
+        if progress is not None:
+            progress("generating", model.device)
         t_start = time.perf_counter()
         response: osam.types.GenerateResponse = model.generate(
             request=osam.types.GenerateRequest(
@@ -90,13 +99,24 @@ class OsamSession:
         return response
 
     def _get_or_compute_embedding(
-        self, *, image: NDArray[np.uint8], image_id: str
+        self,
+        *,
+        image: NDArray[np.uint8],
+        image_id: str,
+        progress: ProgressCallback | None,
     ) -> osam.types.ImageEmbedding:
+        import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
         for key, embedding in self._embedding_cache:
             if key == image_id:
                 return embedding
 
-        model: osam.types.Model = self._get_or_load_model()
+        model: osam.types.Model = self._get_or_load_model(progress=progress)
+        # A model without an encoder skips preparing, rather than reporting it.
+        if type(model).encode_image is osam.types.Model.encode_image:
+            raise NotImplementedError
+        if progress is not None:
+            progress("encoding", model.device)
         t_start = time.perf_counter()
         embedding: osam.types.ImageEmbedding = model.encode_image(image=image)
         self._embedding_cache.append((image_id, embedding))
@@ -109,14 +129,14 @@ class OsamSession:
         )
         return embedding
 
-    @property
-    def device(self) -> str:
-        return self._get_or_load_model().device
-
-    def _get_or_load_model(self) -> osam.types.Model:
+    def _get_or_load_model(
+        self, *, progress: ProgressCallback | None
+    ) -> osam.types.Model:
         if self._model is None:
             import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
+            if progress is not None:
+                progress("loading", None)
             t_start = time.perf_counter()
             self._model = osam.apis.get_model_type_by_name(self._model_name)()
             logger.info(

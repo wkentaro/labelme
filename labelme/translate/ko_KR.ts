@@ -16,6 +16,10 @@
         <translation>더 자세하게</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>출력</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>다각형</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>클릭하고 드래그하여 도형 이동</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>%r 생성 중</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC 키를 눌러 취소</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>점 추가를 위해 클릭</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>드래그하여 상자 그리기</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>예시 하나를 드래그하여 감싸기</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>폐기</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>추가</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>클릭하여 포함</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>클릭하여 제외</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d개 추가</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>드래그하여 제외</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -436,6 +468,11 @@
         <translation>도형의 마지막 추가 및 편집 실행 취소</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>선택</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>클릭하여 꺾은선의 점을 배치하고, %s 키를 누른 채 클릭하여 마지막 점을 배치합니다.</translation>
     </message>
@@ -585,11 +622,6 @@
     <message>
         <source>Undo</source>
         <translation>실행 취소</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>편집</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -896,10 +928,6 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>취소</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>&quot;{}&quot;의 주석 변경 사항을 유지하시겠습니까?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>저장하지 않은 변경 사항</translation>
     </message>
@@ -1000,6 +1028,26 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>분할 중…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>AI 시작 중…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} 불러오는 중…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>CPU에서 이미지 준비 중…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>이미지 준비 중…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds}초</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>새 &apos;{query}&apos; {count}개를 찾았습니다</translation>
     </message>
@@ -1020,8 +1068,20 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>주석 폴더: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>주석 파일을 삭제하시겠습니까? 이 작업은 실행 취소할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>&quot;{}&quot;을(를) 삭제하시겠습니까? 이 작업은 실행 취소할 수 없습니다.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>다운로드</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>&quot;{}&quot;의 주석 변경 사항을 저장하시겠습니까?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1186,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>주석 파일 삭제</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>이 주석 파일을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

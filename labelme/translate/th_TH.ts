@@ -16,6 +16,10 @@
         <translation>รายละเอียดมากขึ้น</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>ผลลัพธ์</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>หลายเหลี่ยม</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>คลิกและลากเพื่อย้ายรูปร่าง</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>กำลังสร้าง %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>กด ESC เพื่อยกเลิก</translation>
     </message>
@@ -225,6 +225,38 @@
     <message>
         <source>Click to add point</source>
         <translation>คลิกเพื่อเพิ่มจุด</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>ลากกรอบ</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>ลากกรอบรอบตัวอย่างหนึ่งรายการ</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>ละทิ้ง</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>เพิ่ม</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>คลิกเพื่อรวม</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>คลิกเพื่อยกเว้น</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>เพิ่ม %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>ลากเพื่อยกเว้น</translation>
     </message>
     <message>
         <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
@@ -437,6 +469,11 @@
         <translation>ยกเลิกการเพิ่มและแก้ไขรูปร่างล่าสุด</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>เลือก</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>คลิกเพื่อวางจุดของเส้นหักมุม กด %s ค้างไว้แล้วคลิกเพื่อวางจุดสุดท้าย</translation>
     </message>
@@ -586,11 +623,6 @@
     <message>
         <source>Undo</source>
         <translation>ยกเลิก</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>แก้ไข</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -897,10 +929,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>ยกเลิก</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>เก็บการเปลี่ยนแปลงคำอธิบายประกอบของ &quot;{}&quot; ไว้หรือไม่?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>การเปลี่ยนแปลงที่ยังไม่ได้บันทึก</translation>
     </message>
@@ -1001,6 +1029,26 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>กำลังแบ่งส่วน…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>กำลังเริ่ม AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>กำลังโหลด {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>กำลังเตรียมภาพบน CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>กำลังเตรียมภาพ…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} วินาที</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>พบ &apos;{query}&apos; ใหม่ {count} รายการ</translation>
     </message>
@@ -1021,8 +1069,20 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>โฟลเดอร์แอนโนเทชัน: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>ลบไฟล์คำอธิบายประกอบหรือไม่ คุณไม่สามารถเลิกทำการกระทำนี้ได้</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>ลบ &quot;{}&quot; หรือไม่ คุณไม่สามารถเลิกทำการกระทำนี้ได้</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>ดาวน์โหลด</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>บันทึกการเปลี่ยนแปลงคำอธิบายประกอบของ &quot;{}&quot; หรือไม่</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1127,10 +1187,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>ลบไฟล์คำอธิบายประกอบ</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>ลบไฟล์คำอธิบายประกอบนี้อย่างถาวรหรือไม่ การกระทำนี้ไม่สามารถเลิกทำได้</translation>
     </message>
     <message>
         <source>Configuration Error</source>

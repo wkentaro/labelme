@@ -131,6 +131,7 @@ def _install_mock_session(
                 _osam_session.get_osam_session(model_name=request.model_name),
                 request,
                 request.image,
+                progress=None,
             )
         except Exception as e:
             self.failed.emit(job, f"{type(e).__name__}: {e}")
@@ -641,6 +642,7 @@ def _hold_text_results(
                     _osam_session.get_osam_session(model_name=request.model_name),
                     request,
                     request.image,
+                    progress=None,
                 ),
             )
         )
@@ -969,9 +971,13 @@ def test_one_dialog_labels_the_whole_batch(
         ),
     )
     texts: list[str | None] = []
+    canvas = win._canvas_widgets.canvas
+    shown: list[int] = []
 
     def popup(*, text: str | None = None, **_: object) -> LabelDialogEntry | None:
         texts.append(text)
+        # The batch is drawn on the canvas while its label is asked.
+        shown.append(len(canvas._ai_find_all_pending))
         if chosen is None:
             return None  # Cancel
         return LabelDialogEntry(label=chosen, flags={}, group_id=None, description="")
@@ -988,6 +994,8 @@ def test_one_dialog_labels_the_whole_batch(
     )
 
     assert texts == ["black dog"]
+    assert shown == [2]
+    assert not canvas._ai_find_all_pending
     assert [s.label for s in win._canvas_widgets.canvas.shapes] == labels
     assert [s.label for i in win._docks.label_list if (s := i.shape())] == labels
     if chosen is None:
@@ -1167,7 +1175,9 @@ def test_example_box_batch_skips_and_reports_like_a_query(
     ) -> None:
         del channel
         assert request.image is not None
-        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+        self.finished.emit(
+            job, _osam_worker._run(session, request, request.image, progress=None)
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
@@ -1231,7 +1241,9 @@ def test_run_with_an_example_box_draft_refines_it(
     ) -> None:
         del channel
         assert request.image is not None
-        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+        self.finished.emit(
+            job, _osam_worker._run(session, request, request.image, progress=None)
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
@@ -1271,7 +1283,7 @@ def test_run_with_an_example_box_draft_refines_it(
         self._set_active(MagicMock(job=job, device=None))
 
     monkeypatch.setattr(OsamWorker, "submit", hold)
-    monkeypatch.setattr(canvas, "_ai_finalize_clock", MagicMock(elapsed=lambda: 1000))
+    monkeypatch.setattr(canvas, "_ai_progress_clock", MagicMock(elapsed=lambda: 1000))
     run_button = win._ai_text._run_button
     qtbot.mouseClick(run_button, Qt.MouseButton.LeftButton)
     assert run_button.text() == "Finding…"
@@ -1282,7 +1294,9 @@ def test_run_with_an_example_box_draft_refines_it(
     (job, request), worker = held[0], win._osam_worker
     assert request.image is not None
     worker._set_active(None)
-    worker.finished.emit(job, _osam_worker._run(session, request, request.image))
+    worker.finished.emit(
+        job, _osam_worker._run(session, request, request.image, progress=None)
+    )
     assert run_button.text() == win._ai_text._RUN_GLYPH
     assert len(canvas._ai_find_all_draft) == 2
 
@@ -1315,7 +1329,9 @@ def test_enter_asks_once_for_the_draft_label(
     ) -> None:
         del channel
         assert request.image is not None
-        self.finished.emit(job, _osam_worker._run(session, request, request.image))
+        self.finished.emit(
+            job, _osam_worker._run(session, request, request.image, progress=None)
+        )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))

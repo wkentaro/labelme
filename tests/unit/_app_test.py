@@ -623,3 +623,30 @@ def test_default_window_geometry(
         _app._default_window_geometry(available, toolbar_width=toolbar_width)
         == expected
     )
+
+
+def test_saved_shapes_equal_ignores_visibility_but_not_saved_fields() -> None:
+    def make(
+        *, mask: np.ndarray | None, visible: bool = True, locked: bool = False
+    ) -> Shape:
+        return Shape(
+            label="cat",
+            shape_type="mask",
+            points=np.array([[0, 0], [2, 2]], dtype=np.float64),
+            mask=mask,
+            visible=visible,
+            locked=locked,
+        )
+
+    mask = np.array([[True, False]])
+    assert _app._saved_shapes_equal(
+        [make(mask=mask)], [make(mask=mask.copy(), visible=False)]
+    )
+    assert not _app._saved_shapes_equal(
+        [make(mask=mask)], [make(mask=np.array([[False, False]]))]
+    )
+    assert not _app._saved_shapes_equal([make(mask=mask)], [make(mask=None)])
+    assert not _app._saved_shapes_equal(
+        [make(mask=mask)], [make(mask=mask, locked=True)]
+    )
+    assert not _app._saved_shapes_equal([make(mask=mask)], [])

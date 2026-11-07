@@ -705,7 +705,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2,<1.29" },
-    { name = "osam", specifier = ">=0.10.1" },
+    { name = "osam", specifier = ">=0.10.2,<0.11" },
     { name = "osam", extras = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23') or sys_platform != 'darwin'" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
@@ -1157,7 +1157,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.10.1"
+version = "0.10.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1167,9 +1167,9 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5a/e9/e579917630163a4901fe492a47e2e0ebc038e3e6702ba6a6edb888f6b0b8/osam-0.10.1.tar.gz", hash = "sha256:a4f914715eba6a7b73bb8d3e4af9c98c1f8baa62b12ce2eee88016eadce15e51", size = 27556330, upload-time = "2026-11-02T03:25:26.139Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/42/ad/778de534a41fee807623d9838497608a65878a0679bf9cf9de3e25a818c0/osam-0.10.2.tar.gz", hash = "sha256:8f5d476a74d9d130b0039582dd71d64430456b280d59949781435e1591489cef", size = 27559175, upload-time = "2026-11-06T02:24:03.793Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4a/ba/62e47de35cde0d1efce96c692b80e1513cf6ac4478cd0c061d9a21bbebf0/osam-0.10.1-py3-none-any.whl", hash = "sha256:09dfaae09e0f2659cea38e4afec0a02d61fad29ddcafad41fc97fd0b597a07df", size = 1438480, upload-time = "2026-11-02T03:25:22.979Z" },
+    { url = "https://files.pythonhosted.org/packages/13/2f/9c33fe039bfaf847e71b71b39e6c0e41809286393ab3b81a7e38cedae023/osam-0.10.2-py3-none-any.whl", hash = "sha256:4adb6d41d8ed75695e3c3d6856fdff23c07a29390b5d5087320976cbdab56f42", size = 1439995, upload-time = "2026-11-06T02:24:01.181Z" },
 ]
 
 [package.optional-dependencies]

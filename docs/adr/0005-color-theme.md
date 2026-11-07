@@ -13,12 +13,11 @@ Qt swaps the palette, but cached `QIcon` pixmaps do not follow it. The monochrom
 toolbar icons are therefore authored as `fill="currentColor"` and tinted to the
 active palette's `WindowText` color by a `QIconEngine` that reads the palette at
 paint time, so they re-tint live when `colorSchemeChanged` fires (the single
-re-theme hook for both user changes and OS flips). Selection is by content, not an
-allowlist: `new_icon` tints any SVG containing the `currentColor` token, so a new
-monochrome icon authored with `fill="currentColor"` is theme-aware automatically.
-The semantic accent icons (blue `floppy-disk`/`floppy-disk-back`/`file-image`/
-`folders`/`folder-open`, red `trash`/`file-x`) keep their fixed colors, since their
-color carries meaning and is legible on both backgrounds; the rest are tinted.
+re-theme hook for both user changes and OS flips). `new_icon` renders every SVG
+through this engine, which replaces the `currentColor` token, so a new icon
+authored with `fill="currentColor"` is theme-aware automatically. Every bundled
+icon is authored this way, the file and save icons included, so the toolbar
+reads as one monochrome set in both themes.
 
 Theming is scoped to *chrome*, not annotation *data*. Chrome colors must follow
 the palette: the toolbar icons, the AI-button highlight (previously a hardcoded

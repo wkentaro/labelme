@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from PySide6.QtCore import QPoint
 from PySide6.QtCore import Qt
@@ -8,6 +10,8 @@ from pytestqt.qtbot import QtBot
 from labelme._app import MainWindow
 
 from ..conftest import close_or_pause
+from .conftest import MainWinFactory
+from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
@@ -133,6 +137,31 @@ def test_undo_recovers_accidental_hide(
         assert label_list[i].checkState() == Qt.CheckState.Checked
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_undoing_a_hide_leaves_the_file_unmodified(
+    *,
+    qtbot: QtBot,
+    main_win: MainWinFactory,
+    data_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.json"),
+        config_overrides={"auto_save": False},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    # A failure leaves unsaved changes; skip the prompt when the window closes.
+    monkeypatch.setattr(win, "_can_continue", lambda: True)
+
+    win._docks.label_list[1].setCheckState(Qt.CheckState.Unchecked)
+    win._actions.undo.trigger()
+
+    assert win._canvas_widgets.canvas.shapes[1].visible
+    # Visibility is not saved, so undoing a hide changes nothing on disk.
+    assert not win._is_changed
+    assert not win._actions.save.isEnabled()
 
 
 @pytest.mark.gui
