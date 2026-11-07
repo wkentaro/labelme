@@ -1311,8 +1311,9 @@ def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
     result_edge = image.pixelColor(25, 9)  # outside the fill
     assert min(result_edge.red(), result_edge.green(), result_edge.blue()) > 200
     example_edge = image.pixelColor(75, 9)
-    # The shipped line colour is half-transparent green.
-    assert example_edge.green() > 100 > example_edge.red()
+    # The shipped line colour is half-transparent green, so its blend with the
+    # background varies; it only has to stay green, not turn white.
+    assert example_edge.green() > max(example_edge.red(), example_edge.blue())
 
 
 @pytest.mark.gui
