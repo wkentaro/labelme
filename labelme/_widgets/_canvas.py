@@ -202,7 +202,8 @@ class _AiJob:
     points: np.ndarray
     point_labels: np.ndarray
     image_size: tuple[int, int] | None
-    # The draft a finalize commits, or the inputs a preview shows.
+    channel: Literal["preview", "result", "finalize"]
+    # The draft a finalize commits, or the inputs a preview or result shows.
     draft: _DraftShape | None = None
     preview_key: object = None
     # The AI-Find All query sent with an example box; it labels the results.
@@ -318,7 +319,12 @@ class Canvas(QtWidgets.QWidget):
     _ai_assist_session: _automation.AiAssistSession
     _ai_suppress_existing_shape_matches: bool
     _ai_existing_shape_highlights: list[Shape]
-    _ai_segment_preview: list[Shape]
+    # What Enter adds: the result of the placed prompts, edged in white.
+    _ai_segment_result: list[Shape]
+    _ai_segment_result_key: tuple[object, ...] | None
+    # What a click at the cursor would give, filled with no edge; None while
+    # there is no cursor input, where an empty list is an empty prediction.
+    _ai_segment_preview: list[Shape] | None
     _ai_segment_preview_key: tuple[object, ...] | None
     # The AI-Segment press until its release, as (image pos, widget pos,
     # modifiers); moving past the drag distance draws a box, not a point.
@@ -389,6 +395,7 @@ class Canvas(QtWidgets.QWidget):
         self.get_ai_find_all_query = lambda: ""
         self._osam_worker: _automation.OsamWorker | None = None
         self._ai_preview_job: _AiJob | None = None
+        self._ai_result_job: _AiJob | None = None
         self._ai_finalize_job: _AiJob | None = None
         self._ai_progress_clock = QtCore.QElapsedTimer()
         self._ai_progress_timer = QtCore.QTimer(self)
@@ -764,7 +771,7 @@ class Canvas(QtWidgets.QWidget):
     def _submit_ai_job(
         self,
         *,
-        channel: Literal["preview", "finalize"],
+        channel: Literal["preview", "result", "finalize"],
         prompt_kind: _automation.AiPromptKind,
         points: Sequence[QPointF],
         point_labels: Sequence[int],
@@ -774,6 +781,7 @@ class Canvas(QtWidgets.QWidget):
         assert self._osam_worker is not None
         image, image_id = self.ai_image()
         job = _AiJob(
+            channel=channel,
             pixmap_key=self.pixmap.cacheKey(),
             prompt_kind=prompt_kind,
             points=np.array([[p.x(), p.y()] for p in points]),
@@ -787,14 +795,19 @@ class Canvas(QtWidgets.QWidget):
             preview_key=preview_key,
             query=self.get_ai_find_all_query() if prompt_kind == "example_box" else "",
         )
-        # A preview that replaces one still running keeps the ring's clock,
-        # so a slow model rings even while the cursor keeps moving.
-        if channel == "finalize" or not self._ai_progress_timer.isActive():
+        # Only placed prompts ring: a preview is a guess that the next one
+        # replaces. A result that replaces one still running keeps the clock,
+        # so quick clicks on a slow model keep ringing.
+        if channel == "finalize" or (
+            channel == "result" and not self._ai_progress_timer.isActive()
+        ):
             self._ai_progress_clock.start()
             self._ai_progress_timer.start()
         # Recorded first: the worker may fail the job before submit returns.
         if channel == "preview":
             self._ai_preview_job = job
+        elif channel == "result":
+            self._ai_result_job = job
         else:
             self._ai_finalize_job = job
             # A pending result blocks edit actions in the app; a failure
@@ -818,27 +831,32 @@ class Canvas(QtWidgets.QWidget):
         )
 
     def _ai_pending_job(self) -> _AiJob | None:
-        # The run the user is waiting on: a finalize, else a preview that is
-        # still on screen. Its key alone is not enough: the key only refreshes
+        # The run the user is waiting on: a finalize, else the result of the
+        # placed prompts. Its key alone is not enough: the key only refreshes
         # while AI-Segment paints, so a tool switch would leave it current.
         if self.is_ai_finalizing:
             return self._ai_finalize_job
-        job = self._ai_preview_job
+        job = self._ai_result_job
         if (
             job is None
             or self.mode != _CanvasMode.CREATE
             or self.create_mode != "ai_segment"
-            or not self._is_current_preview(job)
+            or not self._is_current_ai_segment_job(job)
         ):
             return None
         return job
 
-    def _is_current_preview(self, job: _AiJob, /) -> bool:
-        return job.preview_key == self._ai_segment_preview_key
+    def _is_current_ai_segment_job(self, job: _AiJob, /) -> bool:
+        key = (
+            self._ai_segment_result_key
+            if job.channel == "result"
+            else self._ai_segment_preview_key
+        )
+        return job.preview_key == key
 
     def _ai_progress_center(self) -> QPointF | None:
         # Where the ring for a run still going past the delay sits, in widget
-        # pixels, at the last point placed: a box's release corner. A prompt
+        # pixels, at the last prompt placed: a box's release corner. A prompt
         # that answers sooner shows no ring, so fast runs never flicker one on
         # and off.
         DELAY_MS: Final = 400
@@ -846,8 +864,7 @@ class Canvas(QtWidgets.QWidget):
         if job is None or self._ai_progress_clock.elapsed() < DELAY_MS:
             return None
         if self._current is None or not self._current.points:
-            # An AI-Find All draft rerun, or a box still being dragged: the
-            # job's last point.
+            # An AI-Find All draft rerun: the job's last point.
             point = QPointF(*job.points[-1])
         else:
             point = self._current.points[-1]
@@ -915,8 +932,8 @@ class Canvas(QtWidgets.QWidget):
             return None
         if job is self._ai_preview_job:
             self._ai_preview_job = None
-            if self._is_current_preview(job):
-                return job
+        elif job is self._ai_result_job:
+            self._ai_result_job = None
         elif job is self._ai_finalize_job:
             self._ai_finalize_job = None
             if self._current is not job.draft:
@@ -926,7 +943,10 @@ class Canvas(QtWidgets.QWidget):
             # The pixmap changed under the draft, as a brightness change does;
             # the draft stays sent and blocks the next click, so drop it.
             self._cancel_current_shape()
-        return None
+            return None
+        else:
+            return None
+        return job if self._is_current_ai_segment_job(job) else None
 
     def _on_ai_job_finished(self, job: object, annotations: object, /) -> None:
         ai_job = self._take_ai_job(job)
@@ -963,10 +983,10 @@ class Canvas(QtWidgets.QWidget):
         proposal: _automation.AiAssistProposal | None,
         error: str | None,
     ) -> None:
-        if job.preview_key is None:
+        if job.channel == "finalize":
             self._finish_ai_finalize(job=job, proposal=proposal, error=error)
         else:
-            self._show_ai_segment_preview(proposal=proposal, error=error)
+            self._show_ai_segment_proposal(job=job, proposal=proposal, error=error)
 
     def _report_inference_failure(self, *, error: str) -> None:
         self._ai_inference_failed = True
@@ -2269,11 +2289,11 @@ class Canvas(QtWidgets.QWidget):
             current = self._current
             if (
                 current is None
-                or not self._ai_segment_preview
+                or not self._ai_segment_result
                 or (self._ai_segment_dragging)
             ):
                 return None
-            points = [_drawn_corners(s) for s in self._ai_segment_preview]
+            points = [_drawn_corners(s) for s in self._ai_segment_result]
             points.append(np.array([[p.x(), p.y()] for p in current.points]))
             return _bounding_corners(points), [
                 [HintItem(self.tr("Add"), key=RETURN_GLYPH), discard],
@@ -2422,6 +2442,9 @@ class Canvas(QtWidgets.QWidget):
                 self._render_draft(painter=painter, draft=draft, highlighted=False)
 
     def _draw_preview_overlay_layer(self, painter: QtGui.QPainter, /) -> None:
+        if self.create_mode == "ai_segment":
+            self._draw_ai_segment_proposals(painter)
+            return
         previews = self._build_preview_shapes()
         if not previews:
             return
@@ -2441,7 +2464,7 @@ class Canvas(QtWidgets.QWidget):
             selected=False, fill=True, highlight=None, rotation_highlight=None
         )
         # Results waiting for Enter take the selected style, a white edge, as
-        # a filled AI-Segment preview does. The example boxes are prompts, so
+        # an AI-Segment result does. The example boxes are prompts, so
         # they stay dashed guides, red for a counter-example.
         # An example-box batch is also its draft, so it is drawn once.
         result_context = dataclasses.replace(context, selected=True)
@@ -2511,13 +2534,29 @@ class Canvas(QtWidgets.QWidget):
             context = dataclasses.replace(context, palette=_NEGATIVE_PALETTE)
         render_shape(painter=painter, shape=shape, context=context)
 
+    def _draw_ai_segment_proposals(self, painter: QtGui.QPainter, /) -> None:
+        # Defer inference until painting ends; unchanged inputs stop the loop.
+        self._ai_preview_timer.start(0)
+        if self._current is None and not self._ai_segment_dragging:
+            return
+        # Both layers take the selected style: its fill is the draft's colour,
+        # where the plain draft fill is a dark tint.
+        selected = self._draft_render_context(
+            selected=True, fill=True, highlight=None, rotation_highlight=None
+        )
+        # The guess at the cursor is what a click there gives, including the
+        # area it would drop, so it is a bare fill.
+        guess_context = dataclasses.replace(selected, outline=False)
+        for shape in self._ai_segment_preview or []:
+            render_shape(painter=painter, shape=shape, context=guess_context)
+        # What Enter adds has a white edge and its vertices, as AI-Find All
+        # results waiting for Enter do. It fills only while there is no guess.
+        fill = self._ai_segment_preview is None
+        context = dataclasses.replace(selected, fill=fill, fill_mask=fill)
+        for shape in self._ai_segment_result:
+            render_shape(painter=painter, shape=shape, context=context)
+
     def _build_preview_shapes(self) -> list[Shape]:
-        if self.create_mode == "ai_segment":
-            # Defer inference until painting ends; unchanged inputs stop the loop.
-            self._ai_preview_timer.start(0)
-            if self._current is None and not self._ai_segment_dragging:
-                return []
-            return self._ai_segment_preview
         if self._current is None:
             return []
         if self.create_mode == "polygon":
@@ -2540,12 +2579,12 @@ class Canvas(QtWidgets.QWidget):
         if self.create_mode != "ai_segment" or (
             current is None and not self._ai_segment_dragging
         ):
-            self._ai_segment_preview = []
+            self._ai_segment_result = []
+            self._ai_segment_result_key = None
+            self._ai_segment_preview = None
             self._ai_segment_preview_key = None
             return
-        key = (
-            current,
-            self._line,
+        settings = (
             self._ai_assist_session.model_name,
             self._ai_assist_session.output_format,
             self._ai_assist_session.polygon_detail,
@@ -2554,15 +2593,33 @@ class Canvas(QtWidgets.QWidget):
             self.pixmap.cacheKey(),
             tuple(self.shapes),
         )
+        result_key = (current, *settings)
+        if result_key != self._ai_segment_result_key:
+            self._ai_segment_result_key = result_key
+            if current is None or not current.points:
+                self._ai_segment_result = []
+                self._set_ai_existing_shape_highlights(shapes=[])
+                self.update()
+            else:
+                self._submit_ai_job(
+                    channel="result",
+                    **_ai_segment_prompt(current),
+                    preview_key=result_key,
+                )
+        key = (current, self._line, *settings)
         if key == self._ai_segment_preview_key:
             return
         self._ai_segment_preview_key = key
         base = current or _DraftShape(shape_type="points")
         preview = _with_ai_segment_input(base, self._line)
-        if preview is None:
-            preview = base  # What a release would keep.
-        if not preview.points:
-            self._ai_segment_preview = []
+        # No input at the cursor, or a box with no area: nothing to guess.
+        if preview is None or preview == base:
+            if self._ai_preview_job is not None:
+                # A guess still queued would delay the result of a new click.
+                assert self._osam_worker is not None
+                self._osam_worker.cancel("preview")
+                self._ai_preview_job = None
+            self._ai_segment_preview = None
             self.update()
             return
         self._submit_ai_job(
@@ -2571,22 +2628,29 @@ class Canvas(QtWidgets.QWidget):
             preview_key=key,
         )
 
-    def _show_ai_segment_preview(
-        self, *, proposal: _automation.AiAssistProposal | None, error: str | None
+    def _show_ai_segment_proposal(
+        self,
+        *,
+        job: _AiJob,
+        proposal: _automation.AiAssistProposal | None,
+        error: str | None,
     ) -> None:
+        shapes = [] if proposal is None else proposal.new_shapes
+        if job.channel == "result":
+            self._ai_segment_result = shapes
+            # Enter adds the result, so its matches are the ones to flag.
+            self._set_ai_existing_shape_highlights(
+                shapes=[] if proposal is None else proposal.matching_existing_shapes
+            )
+        else:
+            self._ai_segment_preview = shapes
         if proposal is None:
-            self._ai_segment_preview = []
-            self._set_ai_existing_shape_highlights(shapes=[])
             # Repeated failed prompts report once; a success re-arms the report.
             if not self._ai_inference_failed:
                 assert error is not None
                 self._report_inference_failure(error=error)
         else:
             self._ai_inference_failed = False
-            self._ai_segment_preview = proposal.new_shapes
-            self._set_ai_existing_shape_highlights(
-                shapes=proposal.matching_existing_shapes
-            )
         self.update()
 
     def transform_widget_point_to_image(self, point: QPointF, /) -> QPointF:
@@ -3000,8 +3064,11 @@ class Canvas(QtWidgets.QWidget):
     def reset_state(self) -> None:
         self._ai_preview_timer.stop()
         self._ai_preview_job = None
+        self._ai_result_job = None
         self._ai_finalize_job = None
-        self._ai_segment_preview = []
+        self._ai_segment_result = []
+        self._ai_segment_result_key = None
+        self._ai_segment_preview = None
         self._ai_segment_preview_key = None
         self._ai_segment_press = None
         self._ai_segment_dragging = False
