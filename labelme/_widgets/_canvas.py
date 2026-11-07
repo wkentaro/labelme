@@ -322,8 +322,9 @@ class Canvas(QtWidgets.QWidget):
     # What Enter adds: the result of the placed prompts, edged in white.
     _ai_segment_result: list[Shape]
     _ai_segment_result_key: tuple[object, ...] | None
-    # What a click at the cursor would give, filled with no edge; None while
-    # there is no cursor input, where an empty list is an empty prediction.
+    # What a click at the cursor would give: a mask, filled with no edge;
+    # None while there is no cursor input, where an empty list is an empty
+    # prediction.
     _ai_segment_preview: list[Shape] | None
     _ai_segment_preview_key: tuple[object, ...] | None
     # The AI-Segment press until its release, as (image pos, widget pos,
@@ -897,8 +898,13 @@ class Canvas(QtWidgets.QWidget):
             # AI-Segment proposals ignore the AI-Find All thresholds.
             else (0.0, 0.5)
         )
+        session = copy.copy(self._ai_assist_session)
+        if job.channel == "preview":
+            # The guess only shows which object a click picks, so it skips
+            # polygonizing; the result shows the shape Enter adds.
+            session.output_format = "mask"
         return functools.partial(
-            copy.copy(self._ai_assist_session).propose_shapes,
+            session.propose_shapes,
             score_threshold=thresholds[0],
             iou_threshold=thresholds[1],
             annotations=annotations,
@@ -2545,7 +2551,7 @@ class Canvas(QtWidgets.QWidget):
             selected=True, fill=True, highlight=None, rotation_highlight=None
         )
         # The guess at the cursor is what a click there gives, including the
-        # area it would drop, so it is a bare fill.
+        # area it would drop, so it is a bare mask fill.
         guess_context = dataclasses.replace(selected, outline=False)
         for shape in self._ai_segment_preview or []:
             render_shape(painter=painter, shape=shape, context=guess_context)
@@ -2586,14 +2592,19 @@ class Canvas(QtWidgets.QWidget):
             return
         settings = (
             self._ai_assist_session.model_name,
-            self._ai_assist_session.output_format,
-            self._ai_assist_session.polygon_detail,
             self._ai_suppress_existing_shape_matches,
             self._allow_out_of_bounds_points,
             self.pixmap.cacheKey(),
             tuple(self.shapes),
         )
-        result_key = (current, *settings)
+        # The guess is always a mask (see _ai_proposer), so only the result
+        # depends on the output format and polygon detail.
+        result_key = (
+            current,
+            self._ai_assist_session.output_format,
+            self._ai_assist_session.polygon_detail,
+            *settings,
+        )
         if result_key != self._ai_segment_result_key:
             self._ai_segment_result_key = result_key
             if current is None or not current.points:

@@ -22,6 +22,7 @@ from pytestqt.qtbot import QtBot
 import labelme
 from labelme._automation import InferenceRequest
 from labelme._automation._ai_assist import AiAssistProposal
+from labelme._automation._ai_assist import AiAssistSession
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._widgets._canvas import _CREATE_MODE_TO_SHAPE_TYPE
@@ -1547,6 +1548,33 @@ def test_ai_segment_mask_result_fills_only_without_a_guess(*, canvas: Canvas) ->
     assert draw(guesses=None).pixelColor(20, 20).green() > 0
     # An empty guess is a click there giving nothing, so it still hides the fill.
     assert draw(guesses=[]).pixelColor(20, 20) == QtGui.QColor(Qt.GlobalColor.black)
+
+
+@pytest.mark.gui
+def test_ai_segment_guess_skips_polygons_and_polygon_detail(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    formats: list[str] = []
+
+    def propose_shapes(self: AiAssistSession, **_: object) -> AiAssistProposal:
+        formats.append(self.output_format)
+        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+
+    monkeypatch.setattr(AiAssistSession, "propose_shapes", propose_shapes)
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(5, 5),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(
+        shape_type="points", points=(QPointF(6, 6),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    assert sorted(formats) == ["mask", "polygon"]
+
+    formats.clear()
+    canvas.set_ai_polygon_detail(detail=10)
+    canvas._refresh_ai_segment_preview()
+    assert formats == ["polygon"]
 
 
 @pytest.mark.gui
