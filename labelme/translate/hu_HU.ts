@@ -1195,6 +1195,10 @@ Várt hely: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Csak kereteket ismer fel. A modell használatához váltson a Téglalap módra.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Kép keresése…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

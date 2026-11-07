@@ -1195,6 +1195,10 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Распознаёт только рамки. Переключитесь на «Прямоугольник», чтобы использовать эту модель.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Найти изображение…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

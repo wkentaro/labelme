@@ -1196,6 +1196,10 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>ตรวจจับได้เฉพาะกรอบ เปลี่ยนเป็นสี่เหลี่ยมเพื่อใช้โมเดลนี้</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>ค้นหารูปภาพ…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

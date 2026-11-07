@@ -1195,6 +1195,10 @@ Ubicación esperada: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Solo detecta recuadros. Cambia a «Rectángulo» para usar este modelo.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Ubicar imagen…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1205,6 +1205,10 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>バウンディングボックスのみを検出します。このモデルを使うには「矩形」に切り替えてください。</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>画像を検索…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

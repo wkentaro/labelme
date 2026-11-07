@@ -1195,6 +1195,10 @@ Vị trí dự kiến: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Chỉ phát hiện khung. Chuyển sang Hình chữ nhật để dùng mô hình này.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Tìm hình ảnh…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

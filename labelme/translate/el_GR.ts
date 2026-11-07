@@ -1195,6 +1195,10 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Εντοπίζει μόνο πλαίσια. Επιλέξτε «Ορθογώνιο» για να χρησιμοποιήσετε αυτό το μοντέλο.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Εντοπισμός εικόνας…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

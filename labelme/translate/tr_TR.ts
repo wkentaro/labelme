@@ -1195,6 +1195,10 @@ Beklenen konum: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Yalnızca kutuları algılar. Bu modeli kullanmak için Dikdörtgen&apos;e geçin.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Resmi Bul…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

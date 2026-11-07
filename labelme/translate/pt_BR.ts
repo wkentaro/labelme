@@ -1195,6 +1195,10 @@ Local esperado: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Detecta apenas caixas. Mude para Retângulo para usar este modelo.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Localizar imagem…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

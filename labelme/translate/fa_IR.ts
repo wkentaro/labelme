@@ -1195,6 +1195,10 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>فقط کادرها را تشخیص می‌دهد. برای استفاده از این مدل به «مستطیل» بروید.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>یافتن تصویر…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1195,6 +1195,10 @@ Emplacement attendu : {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Détecte uniquement des cadres. Passez à « Rectangle » pour utiliser ce modèle.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Localiser l’image…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

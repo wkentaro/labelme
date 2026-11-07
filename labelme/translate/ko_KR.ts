@@ -1195,6 +1195,10 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>상자만 감지합니다. 이 모델을 사용하려면 사각형으로 전환하세요.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>이미지 찾기…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

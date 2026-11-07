@@ -1195,6 +1195,10 @@ Posizione prevista: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Rileva solo riquadri. Passa a Rettangolo per usare questo modello.</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Trova immagine…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

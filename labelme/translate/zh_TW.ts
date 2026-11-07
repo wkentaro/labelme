@@ -1195,6 +1195,10 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>僅偵測邊界框。切換至「矩形」即可使用此模型。</translation>
     </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>定位圖像…</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
