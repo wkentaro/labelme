@@ -1195,6 +1195,30 @@ Lokasi yang diharapkan: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Hanya mendeteksi kotak. Beralih ke Persegi Panjang untuk menggunakan model ini.</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Hapus dari Daftar Label</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Tidak dapat menghapus label yang sedang digunakan oleh bentuk di kanvas</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Bersihkan Label yang Tidak Digunakan</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Tidak ada label yang tidak digunakan untuk dibersihkan</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Tidak Dapat Menghapus Label</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Label &apos;{label}&apos; sedang digunakan oleh bentuk di kanvas.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

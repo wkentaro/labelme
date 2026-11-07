@@ -1195,6 +1195,30 @@ Local esperado: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Detecta apenas caixas. Mude para Retângulo para usar este modelo.</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Remover da lista de rótulos</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Não é possível remover o rótulo em uso por formas na tela</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Limpar rótulos não utilizados</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Nenhum rótulo não utilizado para limpar</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Não é possível remover o rótulo</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>O rótulo &apos;{label}&apos; está em uso por formas na tela.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1195,6 +1195,30 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>상자만 감지합니다. 이 모델을 사용하려면 사각형으로 전환하세요.</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>라벨 목록에서 제거</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>캔버스의 도형에서 사용 중인 라벨은 제거할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>사용되지 않는 라벨 지우기</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>지울 사용되지 않는 라벨이 없습니다</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>라벨을 제거할 수 없음</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>라벨 &apos;{label}&apos;은(는) 캔버스의 도형에서 사용 중입니다。</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

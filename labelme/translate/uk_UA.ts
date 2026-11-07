@@ -1195,6 +1195,30 @@ Expected location: {path}</source>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Розпізнає лише рамки. Перейдіть на «Прямокутник», щоб використати цю модель.</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Видалити зі списку міток</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Неможливо видалити мітку, яка використовується фігурами на полотні</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Очистити невикористані мітки</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Немає невикористаних міток для очищення</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Неможливо видалити мітку</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Мітка &apos;{label}&apos; використовується фігурами на полотні.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

@@ -1195,6 +1195,30 @@ Verwachte locatie: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Detecteert alleen kaders. Schakel over naar Rechthoek om dit model te gebruiken.</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Verwijderen uit labellijst</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Kan label dat in gebruik is door vormen op het canvas niet verwijderen</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Ongebruikte labels wissen</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Geen ongebruikte labels om te wissen</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Kan label niet verwijderen</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Het label &apos;{label}&apos; is in gebruik door vormen op het canvas.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>

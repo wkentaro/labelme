@@ -94,3 +94,60 @@ def test_lookup_matches_literal_case_sensitive_labels(
         assert widget.find_label_item(label=label) is widget.item(index)
     assert widget.find_label_item(label="CAT") is None
     assert widget.find_label_item(label="cat?") is None
+
+
+def test_remove_label_item_removes_existing_item(
+    *, widget: UniqueLabelQListWidget
+) -> None:
+    widget.add_label_item(label="cat", color=(255, 0, 0))
+    widget.add_label_item(label="dog", color=(0, 255, 0))
+    assert widget.count() == 2
+
+    widget.remove_label_item(label="cat")
+
+    assert widget.count() == 1
+    assert widget.find_label_item(label="cat") is None
+    assert widget.find_label_item(label="dog") is not None
+
+
+def test_remove_label_item_raises_for_missing_label(
+    *, widget: UniqueLabelQListWidget
+) -> None:
+    widget.add_label_item(label="cat", color=(255, 0, 0))
+
+    with pytest.raises(ValueError, match="not found"):
+        widget.remove_label_item(label="dog")
+
+
+def test_labels_property_returns_all_labels(*, widget: UniqueLabelQListWidget) -> None:
+    assert widget.labels == []
+    widget.add_label_item(label="cat", color=(255, 0, 0))
+    widget.add_label_item(label="dog", color=(0, 255, 0))
+    assert widget.labels == ["cat", "dog"]
+    widget.remove_label_item(label="cat")
+    assert widget.labels == ["dog"]
+
+
+def test_delete_key_emits_label_remove_requested(
+    *, qtbot: QtBot, selected_widget: UniqueLabelQListWidget
+) -> None:
+    with qtbot.waitSignal(selected_widget.label_remove_requested) as blocker:
+        qtbot.keyClick(selected_widget, Qt.Key.Key_Delete)
+    assert blocker.args == ["cat"]
+
+
+def test_backspace_key_emits_label_remove_requested(
+    *, qtbot: QtBot, selected_widget: UniqueLabelQListWidget
+) -> None:
+    with qtbot.waitSignal(selected_widget.label_remove_requested) as blocker:
+        qtbot.keyClick(selected_widget, Qt.Key.Key_Backspace)
+    assert blocker.args == ["cat"]
+
+
+def test_delete_key_without_selection_does_not_emit(
+    *, qtbot: QtBot, widget: UniqueLabelQListWidget
+) -> None:
+    emitted: list[str] = []
+    widget.label_remove_requested.connect(emitted.append)
+    qtbot.keyClick(widget, Qt.Key.Key_Delete)
+    assert emitted == []

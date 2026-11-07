@@ -1195,6 +1195,30 @@ Oczekiwana lokalizacja: {path}</translation>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Wykrywa tylko ramki. Przełącz na Prostokąt, aby użyć tego modelu.</translation>
     </message>
+    <message>
+        <source>Remove from Label List</source>
+        <translation>Usuń z listy etykiet</translation>
+    </message>
+    <message>
+        <source>Cannot remove label currently in use by shapes on canvas</source>
+        <translation>Nie można usunąć etykiety aktualnie używanej przez kształty na płótnie</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Wyczyść nieużywane etykiety</translation>
+    </message>
+    <message>
+        <source>No unused labels to clear</source>
+        <translation>Brak nieużywanych etykiet do wyczyszczenia</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Nie można usunąć etykiety</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Etykieta &apos;{label}&apos; jest używana przez kształty na płótnie.</translation>
+    </message>
 </context>
 <context>
     <name>ModelPicker</name>
