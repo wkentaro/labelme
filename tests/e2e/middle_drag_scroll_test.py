@@ -118,7 +118,7 @@ def test_middle_drag_recenters_fitting_image_after_focal_zoom(
     for _ in range(12):
         old_scale = canvas.scale
         annotated_win._add_zoom(
-            increment=0.9,
+            steps=-1,
             pos=QPointF(canvas.mapFrom(viewport, cursor)),
         )
         qtbot.waitUntil(

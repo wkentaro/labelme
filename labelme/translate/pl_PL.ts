@@ -16,6 +16,10 @@
         <translation>Więcej szczegółów</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Wyjście</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Wielokąt</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>Kliknij i przeciągnij, aby przesunąć kształt</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Tworzenie %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC — anuluj</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>Kliknij, aby dodać punkt</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Przeciągnij ramkę</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Przeciągnij ramkę wokół jednego przykładu</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Odrzuć</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Dodaj</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Kliknij, aby uwzględnić</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Kliknij, aby wykluczyć</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Dodaj %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Przeciągnij, aby wykluczyć</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -448,6 +480,11 @@
         <translation>Cofnij ostatnie dodanie i edycję kształtu</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Zaznacz</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Kliknij, aby umieścić punkty łamanej; przytrzymaj %s i kliknij, aby umieścić ostatni.</translation>
     </message>
@@ -597,11 +634,6 @@
     <message>
         <source>Undo</source>
         <translation>Cofnij</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Edytuj</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -908,10 +940,6 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Anuluj</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Zachować zmiany w adnotacjach dla „{}”?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Niezapisane zmiany</translation>
     </message>
@@ -1012,6 +1040,26 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Segmentowanie…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Uruchamianie AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Wczytywanie {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Przygotowywanie obrazu na CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Przygotowywanie obrazu…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} s</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>Znaleziono nowe „{query}”: {count}</translation>
     </message>
@@ -1032,8 +1080,20 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Folder adnotacji: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Usunąć plik adnotacji? Tej operacji nie można cofnąć.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Usunąć „{}”? Tej operacji nie można cofnąć.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Pobierz</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Zapisać zmiany w adnotacjach dla „{}”?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1138,10 +1198,6 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Usuń plik adnotacji</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Trwale usunąć ten plik adnotacji? Tej operacji nie można cofnąć.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

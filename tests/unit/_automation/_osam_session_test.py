@@ -10,6 +10,7 @@ from loguru import logger
 from numpy.typing import NDArray
 
 from labelme._automation._osam_session import OsamSession
+from labelme._automation._osam_session import ProgressCallback
 from labelme._automation._osam_session import get_osam_session
 
 _IMAGE: Final[NDArray[np.uint8]] = np.zeros((2, 3, 3), dtype=np.uint8)
@@ -35,6 +36,7 @@ class _FakeModel:
     requests: list[osam.types.GenerateRequest]
 
     name = "fake-model"
+    device = "cpu"
 
     def __init__(self, *, registry: _FakeModelRegistry) -> None:
         self._registry = registry
@@ -76,12 +78,19 @@ def install_fake_model(
     return _install
 
 
-def _run_point(session: OsamSession, /, *, image_id: str) -> None:
+def _run_point(
+    session: OsamSession,
+    /,
+    *,
+    image_id: str,
+    progress: ProgressCallback | None = None,
+) -> None:
     session.run(
         image=_IMAGE,
         image_id=image_id,
         points=_POINTS,
         point_labels=_POINT_LABELS,
+        progress=progress,
     )
 
 
@@ -226,6 +235,47 @@ def test_unencodable_model_falls_back_to_no_embedding(
 
     (request,) = registry.model.requests
     assert request.image_embedding is None
+
+
+def test_progress_reports_only_the_work_a_run_does(
+    *, install_fake_model: Callable[..., _FakeModelRegistry]
+) -> None:
+    install_fake_model()
+    session = OsamSession(model_name="x")
+    stages: list[tuple[str, str | None]] = []
+
+    def report(stage: str, device: str | None) -> None:
+        stages.append((stage, device))
+
+    for image_id in ["a", "a", "b"]:
+        _run_point(session, image_id=image_id, progress=report)
+
+    assert stages == [
+        ("loading", None),
+        ("encoding", "cpu"),
+        ("generating", "cpu"),
+        ("generating", "cpu"),  # the model and embedding are cached
+        ("encoding", "cpu"),
+        ("generating", "cpu"),
+    ]
+
+
+def test_progress_skips_encoding_for_a_model_without_an_encoder(
+    *,
+    install_fake_model: Callable[..., _FakeModelRegistry],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    install_fake_model()
+    monkeypatch.setattr(_FakeModel, "encode_image", osam.types.Model.encode_image)
+    stages: list[str] = []
+
+    _run_point(
+        OsamSession(model_name="x"),
+        image_id="a",
+        progress=lambda stage, _: stages.append(stage),
+    )
+
+    assert stages == ["loading", "generating"]
 
 
 def test_run_logs_timings(

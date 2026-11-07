@@ -65,6 +65,8 @@ from ._shape_color import resolve_shape_color
 from ._utils import ImageDecodeRequirement
 from ._utils import get_image_decode_requirement
 from ._widgets import LABEL_COLOR_ROLE
+from ._widgets import MIN_ZOOM
+from ._widgets import ZOOM_STEP_FACTOR
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import AiToolGroup
@@ -72,6 +74,7 @@ from ._widgets import AnnotationFolderFooter
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
 from ._widgets import EmptyStateWidget
+from ._widgets import ImageListDelegate
 from ._widgets import LabelDialog
 from ._widgets import LabelDialogEntry
 from ._widgets import LabelDialogField
@@ -153,6 +156,7 @@ class _DockWidgets(NamedTuple):
     file_search: QtWidgets.QLineEdit
     file_search_error: QtWidgets.QLabel
     file_list: QtWidgets.QListWidget
+    file_list_delegate: ImageListDelegate
 
 
 class _Actions(NamedTuple):
@@ -393,7 +397,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.set_device(self._config["ai"]["device"])
         self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
         self._ai_text_job: _AiTextJob | None = None
-        self._announced_ai_job: object = None
+        # Kept while idle, so a job retried on CPU keeps its clock and what
+        # was announced for it.
+        self._ai_status_job: object = None
+        self._ai_status_started_at = 0.0
+        self._ai_status_announced: set[str] = set()  # "task" and slow stages
+        self._ai_status_timer = QtCore.QTimer(self)
+        self._ai_status_timer.setInterval(1000)
+        self._ai_status_timer.timeout.connect(self._on_ai_activity_changed)
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
@@ -677,10 +688,10 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         edit_mode = mode_action(
             text=self.tr("Edit Shapes"),
-            toolbar_text=self.tr("Edit", "toolbar"),
+            toolbar_text=self.tr("Select", "toolbar"),
             slot=lambda: self._switch_canvas_mode(edit=True, create_mode=None),
             shortcut=shortcuts["edit_shape"],
-            icon="phosphor/note-pencil.svg",
+            icon="phosphor/cursor.svg",
             tip=self.tr("Move and edit the selected shapes"),
             checked=True,
         )
@@ -811,14 +822,14 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         zoom_in = image_action(
             text=self.tr("Zoom &In"),
-            slot=lambda _: self._add_zoom(increment=1.1, pos=None),
+            slot=lambda _: self._add_zoom(steps=1, pos=None),
             shortcut=shortcuts["zoom_in"],
             icon="phosphor/magnifying-glass-plus.svg",
             tip=self.tr("Make the image appear larger"),
         )
         zoom_out = image_action(
             text=self.tr("&Zoom Out"),
-            slot=lambda _: self._add_zoom(increment=0.9, pos=None),
+            slot=lambda _: self._add_zoom(steps=-1, pos=None),
             shortcut=shortcuts["zoom_out"],
             icon="phosphor/magnifying-glass-minus.svg",
             tip=self.tr("Make the image appear smaller"),
@@ -1190,10 +1201,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     self._actions.save,
                     self._actions.delete_file,
                     separator(),
-                    self._actions.edit_mode,
+                    self._actions.undo,
                     self._actions.duplicate,
                     self._actions.delete,
-                    self._actions.undo,
                     self._actions.brightness_contrast,
                     separator(),
                     self._actions.zoom_widget_action,
@@ -1210,6 +1220,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 title=self.tr("Shape Tools"),
                 overflow_label=self.tr("More shape tools"),
                 actions=[
+                    self._actions.edit_mode,
+                    separator(),
                     *[
                         a
                         for mode, a in self._actions.draw
@@ -1319,7 +1331,6 @@ class MainWindow(QtWidgets.QMainWindow):
         message = QtWidgets.QLabel()
         stats = StatusStats()
         self.statusBar().addWidget(message, 1)
-        self.statusBar().addWidget(stats, 0)
         save = QtWidgets.QLabel()
         save.setTextFormat(Qt.TextFormat.PlainText)
         retry = QtWidgets.QToolButton()
@@ -1330,6 +1341,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().addPermanentWidget(ai)
         self.statusBar().addPermanentWidget(save)
         self.statusBar().addPermanentWidget(retry)
+        # Last, so the AI and save states that come and go never move it.
+        self.statusBar().addPermanentWidget(stats)
         self.statusBar().show()
         return _StatusBarWidgets(
             message=message, stats=stats, save=save, retry=retry, ai=ai
@@ -1353,14 +1366,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=self._config["ai"]["suppress_existing_shape_matches"]
         )
         canvas.set_draft_palette(
-            palette=Palette(
-                line=QtGui.QColor(*self._config["shape"]["line_color"]),
-                fill=QtGui.QColor(*self._config["shape"]["fill_color"]),
-                select_line=QtGui.QColor(*self._config["shape"]["select_line_color"]),
-                select_fill=QtGui.QColor(*self._config["shape"]["select_fill_color"]),
-                vertex_fill=QtGui.QColor(*self._config["shape"]["vertex_fill_color"]),
-                hvertex_fill=QtGui.QColor(*self._config["shape"]["hvertex_fill_color"]),
-            )
+            palette=Palette.from_shape_config(self._config["shape"])
         )
         canvas.set_color_resolver(
             resolver=lambda label: self._get_rgb_by_label(
@@ -1405,7 +1411,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.selection_changed.connect(self._on_shape_selection_changed)
         canvas.shape_moved.connect(self._cancel_deferred_fit_selection)
         canvas.shape_double_clicked.connect(self._edit_label)
-        canvas.drawing_polygon.connect(self._on_drawing_polygon_changed)
+        canvas.busy_changed.connect(self._sync_edit_actions)
 
         empty_state = EmptyStateWidget()
         surface = QtWidgets.QStackedWidget()
@@ -1473,7 +1479,12 @@ class MainWindow(QtWidgets.QMainWindow):
         file_search_error.setWordWrap(True)
         file_search_error.hide()
         file_list = QtWidgets.QListWidget()
+        file_list_delegate = ImageListDelegate(parent=file_list)
+        file_list.setItemDelegate(file_list_delegate)
         file_list.currentItemChanged.connect(self._load_selected_image)
+        # File > Close keeps the row current, so picking it again changes nothing.
+        file_list.itemClicked.connect(self._reopen_closed_image)
+        file_list.itemActivated.connect(self._reopen_closed_image)
         file_list_layout = QtWidgets.QVBoxLayout()
         file_list_layout.setContentsMargins(0, 0, 0, 0)
         file_list_layout.setSpacing(0)
@@ -1525,6 +1536,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file_search=file_search,
             file_search_error=file_search_error,
             file_list=file_list,
+            file_list_delegate=file_list_delegate,
         )
 
     def _load_config(
@@ -1619,7 +1631,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def mark_dirty(self) -> None:
         self._save_revision += 1
-        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
+        self._sync_edit_actions()
         self._is_changed = True
         self._actions.save.setEnabled(True)
         self.setWindowTitle(self._get_window_title(dirty=True))
@@ -1680,10 +1692,7 @@ class MainWindow(QtWidgets.QMainWindow):
             dialog.deleteLater()
 
     def mark_clean(self) -> None:
-        canvas = self._canvas_widgets.canvas
-        self._actions.undo.setEnabled(
-            not canvas.is_drawing and canvas.can_restore_shape
-        )
+        self._sync_edit_actions()
         self._is_changed = False
         self._actions.save.setEnabled(False)
         self.setWindowTitle(self._get_window_title(dirty=False))
@@ -1804,11 +1813,42 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             text = self.tr("Segmenting on CPU…") if on_cpu else self.tr("Segmenting…")
             detecting = False
+        stage = worker.stage
+        if stage == "starting":
+            text = self.tr("Starting AI…")
+        elif stage == "loading":
+            model_name = worker.model_name or ""
+            # Model names are product names, so they stay untranslated.
+            text = self.tr("Loading {model}…").format(
+                model=self._model_manager.models.get(model_name, model_name)
+            )
+        elif stage == "encoding":
+            text = (
+                self.tr("Preparing image on CPU…")
+                if on_cpu
+                else self.tr("Preparing image…")
+            )
+        if job is None:
+            self._ai_status_timer.stop()
+        else:
+            if job is not self._ai_status_job:
+                self._ai_status_job = job
+                self._ai_status_started_at = time.monotonic()
+                self._ai_status_announced = set()
+            # A detection is announced once as it starts, from text or a box,
+            # and a slow stage once for any prompt; a fast Segment, never.
+            kind = stage if stage in ("starting", "loading", "encoding") else "task"
+            if (detecting or kind != "task") and kind not in self._ai_status_announced:
+                self._ai_status_announced.add(kind)
+                self._announce(text)
+            self._ai_status_timer.start()  # restarts, so a tick follows a second
+            seconds = int(time.monotonic() - self._ai_status_started_at)
+            ELAPSED_SHOWN_AFTER_S: Final = 3
+            if seconds >= ELAPSED_SHOWN_AFTER_S:
+                text = self.tr("{status} · {seconds} s").format(
+                    status=text, seconds=seconds
+                )
         self._status_bar.ai.setText(text)
-        # A detection is announced once as it starts, from text or a box.
-        if detecting and job is not self._announced_ai_job:
-            self._announced_ai_job = job
-            self._announce(text)
 
     def _announce(self, message: str, /) -> None:
         if not QtGui.QAccessible.isActive():
@@ -1896,8 +1936,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if not candidates:
             self._report_ai_find_all_result(candidates, name=query)
             return []
-        # One entry labels the whole batch.
-        entry = self._ask_new_shape_entry(query=query)
+        # One entry labels the whole batch, shown on the canvas meanwhile.
+        canvas = self._canvas_widgets.canvas
+        canvas.set_ai_find_all_pending(candidates)
+        try:
+            entry = self._ask_new_shape_entry(query=query)
+        finally:
+            canvas.set_ai_find_all_pending([])
         if entry is None:
             return []  # Cancelled: the batch is never added.
         # "black dog" saved as "dog": skip what "dog" Shapes cover.
@@ -1943,24 +1988,33 @@ class MainWindow(QtWidgets.QMainWindow):
     # Callbacks
 
     def undo_shape_edit(self) -> None:
-        self._canvas_widgets.canvas.restore_last_shape()
-        self._commit_shapes(self._canvas_widgets.canvas.shapes)
+        canvas = self._canvas_widgets.canvas
+        before = canvas.shapes
+        canvas.restore_last_shape()
+        # Undoing a step that saves nothing, such as hiding a shape, leaves
+        # the file as it was.
+        self._commit_shapes(
+            canvas.shapes, changed=not _saved_shapes_equal(before, canvas.shapes)
+        )
 
     def tutorial(self) -> None:
         url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
 
-    def _on_drawing_polygon_changed(self, drawing: bool, /) -> None:  # noqa: FBT001 -- Canvas.drawing_polygon slot
-        self._actions.edit_mode.setEnabled(not drawing)
-        self._actions.undo_last_point.setEnabled(drawing)
-        self._actions.undo.setEnabled(
-            not drawing and self._canvas_widgets.canvas.can_restore_shape
+    def _sync_edit_actions(self) -> None:
+        # Derived from the canvas alone, so a caller that runs at the wrong
+        # moment cannot leave an action stuck.
+        canvas = self._canvas_widgets.canvas
+        busy = canvas.is_busy
+        selected = canvas.selected_shapes
+        self._actions.edit_mode.setEnabled(not busy)
+        self._actions.undo_last_point.setEnabled(canvas.is_drawing)
+        self._actions.undo.setEnabled(not busy and canvas.can_restore_shape)
+        # Locked shapes stay selectable, but only unlocked ones can be deleted.
+        self._actions.delete.setEnabled(
+            not busy and any(not shape.locked for shape in selected)
         )
-        self._actions.delete.setEnabled(not drawing)
-        self._actions.merge.setEnabled(
-            not drawing
-            and can_merge_shapes(self._canvas_widgets.canvas.selected_shapes)
-        )
+        self._actions.merge.setEnabled(not busy and can_merge_shapes(selected))
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
@@ -1969,9 +2023,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for draw_mode, draw_action in self._actions.draw:
             draw_action.setChecked(not edit and create_mode == draw_mode)
         self._actions.edit_mode.setChecked(edit)
-        # Keep edit_mode disabled while a partial shape is alive so the user
-        # can't abandon it mid-draw.
-        self._actions.edit_mode.setEnabled(not self._canvas_widgets.canvas.is_drawing)
+        self._sync_edit_actions()
         self._on_ai_activity_changed()
         self._refresh_text_model_choices()
 
@@ -2084,7 +2136,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 text=format_shape_label(shape=shape),
                 color=fill_rgb,
             )
-            self.mark_dirty()
             if self._docks.unique_label_list.find_label_item(label=shape.label) is None:
                 self._docks.unique_label_list.add_label_item(
                     label=shape.label,
@@ -2094,6 +2145,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     ),
                 )
         self._canvas_widgets.canvas.backup_shapes()
+        self.mark_dirty()
 
     def _on_file_search_changed(self) -> None:
         try:
@@ -2121,6 +2173,10 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
         return True
 
+    def _reopen_closed_image(self, item: QtWidgets.QListWidgetItem, /) -> None:
+        if self._image_path is None and item is self._docks.file_list.currentItem():
+            self._load_selected_image(item, item)
+
     def _on_shape_selection_changed(self, selected_shapes: list[Shape], /) -> None:
         self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
@@ -2137,9 +2193,8 @@ class MainWindow(QtWidgets.QMainWindow):
         n_selected = len(selected_shapes) > 0
         # Locked shapes stay selectable, but only unlocked ones can be altered.
         n_unlocked = any(not shape.locked for shape in selected_shapes)
-        self._actions.delete.setEnabled(n_unlocked)
+        self._sync_edit_actions()
         self._actions.duplicate.setEnabled(n_selected)
-        self._actions.merge.setEnabled(can_merge_shapes(selected_shapes))
         self._actions.copy.setEnabled(n_selected)
         self._actions.edit.setEnabled(n_unlocked)
         self._actions.lock.setEnabled(n_selected)
@@ -2240,13 +2295,16 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._canvas_widgets.canvas.load_shapes(shapes=shapes, replace=replace)
 
-    def _commit_shapes(self, shapes: list[Shape], /) -> None:
+    def _commit_shapes(self, shapes: list[Shape], /, *, changed: bool = True) -> None:
         # Canvas loading pushes the one undo snapshot, so callers must not
         # back up again. Edits the canvas makes itself (delete, point removal,
         # drag) already snapshot there and only need the dirty mark.
         self._docks.label_list.clear()
         self._load_shapes(shapes, replace=True)
-        self.mark_dirty()
+        if changed:
+            self.mark_dirty()
+        else:
+            self._sync_edit_actions()
 
     def _load_flags(
         self,
@@ -2410,7 +2468,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
 
         self._canvas_widgets.canvas.backup_shapes()
-        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
+        self._sync_edit_actions()
 
     def _on_label_order_changed(self) -> None:
         self._commit_shapes(
@@ -2422,8 +2480,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_new_shape(self) -> None:
         entry = self._ask_new_shape_entry(query="")
         if entry is None:
-            self._canvas_widgets.canvas.undo_last_line()
+            # Drop the snapshot first so the busy_changed handler that
+            # undo_last_line triggers sees the Undo state without it.
             self._canvas_widgets.canvas.shape_backups.pop()
+            self._canvas_widgets.canvas.undo_last_line()
             return
 
         self._docks.label_list.clearSelection()
@@ -2441,9 +2501,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # next change.
         self._canvas_widgets.canvas.shape_backups.pop()
         self._canvas_widgets.canvas.backup_shapes()
-        self._actions.edit_mode.setEnabled(True)
-        self._actions.undo_last_point.setEnabled(False)
-        self._actions.undo.setEnabled(True)
         self.mark_dirty()
 
     def _ask_new_shape_entry(self, *, query: str) -> LabelDialogEntry | None:
@@ -2580,15 +2637,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=100, pos=None)
 
-    def _add_zoom(self, *, increment: float, pos: QtCore.QPointF | None) -> None:
-        # Multiplicative stepping on a float widget; the QDoubleSpinBox rounds to
-        # its decimal precision, so no integer ceil/floor clamping is needed.
-        zoom_value = self._canvas_widgets.zoom_widget.value() * increment
+    def _add_zoom(self, *, steps: float, pos: QtCore.QPointF | None) -> None:
+        # Steps in and out cancel, so zooming in then out returns to the start.
+        zoom_value = self._canvas_widgets.zoom_widget.value() * ZOOM_STEP_FACTOR**steps
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=zoom_value, pos=pos)
 
     def _zoom_requested(self, delta: int, pos: QtCore.QPointF, /) -> None:
-        self._add_zoom(increment=1.1 if delta > 0 else 0.9, pos=pos)
+        # 120 is one mouse wheel notch. Trackpads send many smaller deltas,
+        # so they zoom in finer steps instead of a full step per event.
+        self._add_zoom(steps=delta / 120, pos=pos)
 
     def set_fit_window_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
         target = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
@@ -2912,6 +2970,7 @@ class MainWindow(QtWidgets.QMainWindow):
         target_viewport = self._viewport_states.get(self._image_path)
         if self._config["keep_prev_scale"] and self._prev_image_path is not None:
             target_viewport = self._viewport_states.get(self._prev_image_path)
+        self._update_zoom_floor()
         # set zoom values
         is_initial_load = not self._viewport_states
         if target_viewport is not None:
@@ -2976,12 +3035,18 @@ class MainWindow(QtWidgets.QMainWindow):
             watched is self._canvas_widgets.scroll_area
             and event.type() == QtCore.QEvent.Type.Resize
             and not self._image.isNull()
-            and self._zoom_mode != _ZoomMode.MANUAL_ZOOM
         ):
             # The outer window resizes before its nested layout settles. Observe
             # the scroll area, whose size is also independent of scrollbar changes.
-            self._adjust_scale()
+            self._update_zoom_floor()
+            if self._zoom_mode != _ZoomMode.MANUAL_ZOOM:
+                self._adjust_scale()
         return super().eventFilter(watched, event)
+
+    def _update_zoom_floor(self) -> None:
+        # Let an image too big for 1% still zoom out to half of Fit to Window.
+        half_fit_percent = self._fit_window_scale() * 100 / 2
+        self._canvas_widgets.zoom_widget.setMinimum(min(MIN_ZOOM, half_fit_percent))
 
     def _apply_zoom_to_canvas(self) -> None:
         if self._image.isNull():
@@ -3265,6 +3330,8 @@ class MainWindow(QtWidgets.QMainWindow):
         msg_box = QtWidgets.QMessageBox(self)
         msg_box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
         msg_box.setWindowTitle(self.tr("Delete Annotation File"))
+        # File names may contain "<b>" and would otherwise render as markup.
+        msg_box.setTextFormat(Qt.TextFormat.PlainText)
         msg_box.setText(message)
         delete_button = msg_box.addButton(
             self.tr("Delete"), QtWidgets.QMessageBox.ButtonRole.DestructiveRole
@@ -3277,9 +3344,15 @@ class MainWindow(QtWidgets.QMainWindow):
         return msg_box.clickedButton() is delete_button
 
     def delete_file(self) -> None:
-        msg = self.tr(
-            "Permanently delete this annotation file? This action cannot be undone."
-        )
+        # An in-flight first save may not have created the file yet; the
+        # deletion below resolves the path again after waiting for it.
+        label_path = self._own_label_file_path()
+        if label_path is None:
+            msg = self.tr("Delete the annotation file? You can't undo this.")
+        else:
+            msg = self.tr('Delete "{}"? You can\'t undo this.').format(
+                Path(label_path).name
+            )
         if not self._confirm_deletion(message=msg):
             return
 
@@ -3313,7 +3386,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # stack with the empty state, keeping "top mirrors current" intact.
         self._canvas_widgets.canvas.shape_backups.clear()
         self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
-        self._actions.undo.setEnabled(self._canvas_widgets.canvas.can_restore_shape)
         self.mark_clean()
         self._actions.delete_file.setEnabled(self.has_label_file())
 
@@ -3676,8 +3748,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._wait_for_save()
         if not self._is_changed:
             return True
-        prompt_text = self.tr('Keep the annotation changes for "{}"?').format(
-            self._image_path
+        assert self._image_path is not None
+        prompt_text = self.tr('Save annotation changes to "{}"?').format(
+            Path(self._image_path).name
         )
         user_choice = QtWidgets.QMessageBox.question(
             self,
@@ -3960,6 +4033,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._hidden_annotated_paths.add(path)
 
         file_list = self._docks.file_list
+        # Decided from every loaded Image, so headings don't come and go while
+        # a search narrows the list.
+        self._docks.file_list_delegate.set_labels(
+            [self._file_list_label(path) for path in self._loaded_image_paths]
+        )
         with QtCore.QSignalBlocker(file_list):
             file_list.clear()
             for image_path in image_paths:
@@ -4029,6 +4107,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _file_list_label(self, image_path: str, /) -> str:
         # Paths under the opened folder are shown relative to it so the
         # Image List stays readable; the full path stays in the tooltip.
+        # ImageListDelegate groups rows by this path's folder.
         relative = _relative_to_root(image_path, self._file_list_root_prefix)
         return image_path if relative is None else relative
 
@@ -4036,9 +4115,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return bool(self._file_search_pattern.search(self._file_list_label(image_path)))
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
-        self._status_bar.stats.setText(
-            f"x {round(mouse_pos.x()):>4}   y {round(mouse_pos.y()):>4}"
-        )
+        self._status_bar.stats.set_position(mouse_pos.x(), mouse_pos.y())
 
 
 def _shapes_from_dicts(
@@ -4314,6 +4391,23 @@ def _has_label_file(
 
 def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:
     return item.data(Qt.ItemDataRole.UserRole)
+
+
+def _saved_shapes_equal(a: list[Shape], b: list[Shape], /) -> bool:
+    # Compares what a save writes, so view state such as visibility is ignored.
+    if len(a) != len(b):
+        return False
+    for shape_a, shape_b in zip(a, b, strict=True):
+        dict_a, dict_b = _shape_to_dict(shape_a), _shape_to_dict(shape_b)
+        mask_a, mask_b = dict_a["mask"], dict_b["mask"]
+        if {**dict_a, "mask": None} != {**dict_b, "mask": None}:
+            return False
+        if mask_a is None or mask_b is None:
+            if mask_a is not mask_b:
+                return False
+        elif not np.array_equal(mask_a, mask_b):
+            return False
+    return True
 
 
 def _shape_to_dict(shape: Shape, /) -> ShapeDict:

@@ -168,7 +168,7 @@ class AiToolGroup(QtWidgets.QWidget):
         field_layout.addStretch(1)
         field_layout.addWidget(detect._run_button)
         # Layouts mirror for right-to-left languages; text margins don't.
-        run_width = detect._run_button.width()
+        run_width = detect._run_reserved_width
         if text_input.isRightToLeft():
             text_input.setTextMargins(run_width, 0, 0, 0)
         else:

@@ -4,6 +4,7 @@ import dataclasses
 import math
 import weakref
 from collections.abc import Callable
+from pathlib import Path
 from typing import Final
 from unittest.mock import Mock
 
@@ -12,13 +13,16 @@ import osam
 import pytest
 from PySide6 import QtCore
 from PySide6 import QtGui
+from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+import labelme
 from labelme._automation import InferenceRequest
 from labelme._automation._ai_assist import AiAssistProposal
+from labelme._automation._ai_assist import AiAssistSession
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._widgets._canvas import _CREATE_MODE_TO_SHAPE_TYPE
@@ -36,6 +40,8 @@ from labelme._widgets._canvas import _reproject_oriented_rectangle_corners
 from labelme._widgets._canvas import _shape_to_draft
 from labelme._widgets._canvas import _should_reselect_on_right_press
 from labelme._widgets._canvas import _snap_cursor_pos_for_square
+from labelme._widgets._shape_render import Palette
+from labelme._widgets._shape_render import ShapeRenderContext
 
 _WIDTH: Final[int] = 100
 _HEIGHT: Final[int] = 50
@@ -54,23 +60,25 @@ class _InlineOsamWorker(QtCore.QObject):
         self.requests: list[InferenceRequest] = []
         self.annotations: list[osam.types.Annotation] = []
         self.paused = False
-        self._held: list[object] = []
+        self._held: list[tuple[object, object]] = []
 
     def submit(
         self, *, channel: object, job: object, request: InferenceRequest
     ) -> None:
-        del channel
         self.requests.append(request)
         if self.paused:
-            self._held.append(job)
+            self._held.append((channel, job))
         else:
             self.finished.emit(job, self.annotations)
 
     def resume(self) -> None:
         self.paused = False
         held, self._held = self._held, []
-        for job in held:
+        for _, job in held:
             self.finished.emit(job, self.annotations)
+
+    def cancel(self, channel: object, /) -> None:
+        self._held = [(c, j) for c, j in self._held if c != channel]
 
 
 @pytest.fixture()
@@ -799,16 +807,16 @@ def test_finalize_with_empty_inference_resets_state_and_notifies(
         points=(QPointF(0, 0), QPointF(10, 10)),
         point_labels=(2, 3),
     )
-    drawing_polygon_emissions: list[bool] = []
+    busy_emissions: list[bool] = []
     inference_no_shapes_emissions: list[None] = []
-    canvas.drawing_polygon.connect(drawing_polygon_emissions.append)
+    canvas.busy_changed.connect(lambda: busy_emissions.append(canvas.is_busy))
     canvas.inference_produced_no_shapes.connect(
         lambda: inference_no_shapes_emissions.append(None)
     )
 
     canvas._finalize()
 
-    assert drawing_polygon_emissions[-1:] == [False]
+    assert busy_emissions[-1:] == [False]
     assert len(inference_no_shapes_emissions) == 1
     assert canvas._current is None
     assert canvas.shapes == []
@@ -975,6 +983,7 @@ def ai_existing_shape_highlight_harness(
     canvas.set_ai_existing_shape_suppression(enabled=True)
     canvas.create_mode = "ai_segment"
     canvas.set_editing(value=False)
+    canvas._ai_prompt_hint_due = False  # The prompts below skip the press.
     canvas._current = _DraftShape(
         shape_type="points",
         points=(QPointF(0, 0), QPointF(10, 10)),
@@ -1217,6 +1226,198 @@ def test_slow_finalize_rings_last_point_and_esc_drops_its_result(
 
 
 @pytest.mark.gui
+def test_slow_ai_segment_result_rings_last_placed_point(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    worker = _worker(canvas)
+    worker.paused = True
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(30, 20),), point_labels=(1,)
+    )
+
+    canvas._refresh_ai_segment_preview()
+
+    assert canvas._ai_progress_rect() is None  # a fast answer shows no ring
+    qtbot.waitUntil(lambda: canvas._ai_progress_rect() is not None, timeout=1000)
+    # A guess for the moved cursor leaves the ring on the click it waits for.
+    canvas._line = _DraftShape(
+        shape_type="points", points=(QPointF(5, 5),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    rect = canvas._ai_progress_rect()
+    assert rect is not None
+    assert rect.contains(
+        canvas.transform_image_point_to_widget(QPointF(30, 20)).toPoint()
+    )
+
+    worker.resume()
+
+    assert canvas._ai_progress_rect() is None
+
+    # A slow guess alone never rings: the next one replaces it.
+    worker.paused = True
+    canvas._line = _DraftShape(
+        shape_type="points", points=(QPointF(6, 6),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    assert canvas._ai_preview_job is not None
+    qtbot.wait(500)
+    assert canvas._ai_progress_rect() is None
+
+    # Esc leaves a stale result in flight; the next click still rings.
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(35, 20),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    assert canvas._ai_result_job is not None
+    canvas._current = None
+    canvas._refresh_ai_segment_preview()
+    qtbot.waitUntil(lambda: not canvas._ai_progress_timer.isActive(), timeout=1000)
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(40, 10),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    assert canvas._ai_progress_timer.isActive()
+    assert canvas._ai_progress_rect() is None  # the delay starts over
+    qtbot.waitUntil(lambda: canvas._ai_progress_rect() is not None, timeout=1000)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    "leave", [{"value": False, "create_mode": "polygon"}, {"value": True}]
+)
+def test_slow_ai_segment_preview_ring_ends_on_leaving_ai_segment(
+    *, canvas: Canvas, qtbot: QtBot, leave: dict[str, object]
+) -> None:
+    _worker(canvas).paused = True
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(30, 20),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    qtbot.waitUntil(lambda: canvas._ai_progress_rect() is not None, timeout=1000)
+
+    canvas.set_editing(**leave)  # ty: ignore[invalid-argument-type]
+
+    assert canvas._ai_progress_rect() is None
+    qtbot.waitUntil(lambda: not canvas._ai_progress_timer.isActive(), timeout=1000)
+
+
+@pytest.mark.gui
+def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
+    *, canvas: Canvas
+) -> None:
+    canvas.set_editing(value=False, create_mode="ai_find_all")
+    # The chips would cover the probes.
+    canvas._ai_suggestion_hint = lambda: None  # ty: ignore[invalid-assignment]
+    canvas._ai_prompt_hint = lambda: None  # ty: ignore[invalid-assignment]
+    canvas._ai_find_all_draft = [
+        Shape(shape_type="rectangle", points=np.array([[10.0, 10.0], [40.0, 40.0]]))
+    ]
+    canvas._ai_find_all_points = np.array([[60.0, 10.0], [90.0, 40.0]])
+    canvas._ai_find_all_point_labels = np.array([2, 3])
+
+    image = canvas.grab().toImage()
+
+    result_edge = image.pixelColor(25, 9)  # outside the fill
+    assert min(result_edge.red(), result_edge.green(), result_edge.blue()) > 200
+    example_edge = image.pixelColor(75, 9)
+    # The shipped line colour is half-transparent green, so its blend with the
+    # background varies; it only has to stay green, not turn white.
+    assert example_edge.green() > max(example_edge.red(), example_edge.blue())
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("create_mode", "draft", "color"),
+    [
+        (
+            "ai_segment",
+            _DraftShape(
+                shape_type="points",
+                points=(QPointF(10, 10), QPointF(40, 40)),
+                point_labels=(2, 3),
+            ),
+            (0, 255, 0),
+        ),
+        (
+            "ai_find_all",
+            _DraftShape(
+                shape_type="rectangle",
+                points=(QPointF(10, 10), QPointF(40, 40)),
+                point_labels=(1, 1),
+            ),
+            (0, 255, 0),
+        ),
+        (
+            "ai_find_all",
+            _DraftShape(
+                shape_type="rectangle",
+                points=(QPointF(10, 10), QPointF(40, 40)),
+                point_labels=(0, 0),
+            ),
+            (255, 0, 0),
+        ),
+    ],
+)
+def test_prompt_box_being_drawn_is_a_dashed_guide(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    create_mode: str,
+    draft: _DraftShape,
+    color: tuple[int, int, int],
+) -> None:
+    drawn: list[tuple[str, Qt.PenStyle, tuple[int, int, int]]] = []
+
+    def record(*, shape: Shape, context: ShapeRenderContext, **_: object) -> None:
+        line = context.palette.line
+        drawn.append(
+            (
+                shape.shape_type,
+                context.line_style,
+                (line.red(), line.green(), line.blue()),
+            )
+        )
+
+    monkeypatch.setattr("labelme._widgets._canvas.render_shape", record)
+    canvas.set_editing(value=False, create_mode=create_mode)
+    canvas._current = draft
+
+    canvas.grab()
+
+    assert ("rectangle", Qt.PenStyle.DashLine, color) in drawn
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(("label", "color"), [(2, (0, 255, 0)), (4, (255, 0, 0))])
+def test_ai_find_all_example_boxes_are_dashed_and_counter_ones_red(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    label: int,
+    color: tuple[int, int, int],
+) -> None:
+    drawn: list[tuple[Qt.PenStyle, tuple[int, int, int]]] = []
+
+    def record(*, context: ShapeRenderContext, **_: object) -> None:
+        line = context.palette.line
+        if not context.fill:
+            drawn.append((context.line_style, (line.red(), line.green(), line.blue())))
+
+    monkeypatch.setattr("labelme._widgets._canvas.render_shape", record)
+    canvas.set_editing(value=False, create_mode="ai_find_all")
+    canvas._ai_find_all_draft = []
+    canvas._ai_find_all_points = np.array([[60.0, 10.0], [90.0, 40.0]])
+    canvas._ai_find_all_point_labels = np.array([label, label + 1])
+
+    canvas.grab()
+
+    assert drawn == [(Qt.PenStyle.DashLine, color)]
+
+
+@pytest.mark.gui
 def test_points_preview_hides_failed_and_empty_predictions(
     *,
     canvas: Canvas,
@@ -1242,45 +1443,42 @@ def test_points_preview_hides_failed_and_empty_predictions(
     canvas.inference_failed.connect(failed.append)
 
     canvas._refresh_ai_segment_preview()
-    assert canvas._build_preview_shapes() == []
+    assert canvas._ai_segment_preview == []
     canvas._line = dataclasses.replace(canvas._line, points=(QPointF(5, 6),))
     canvas._refresh_ai_segment_preview()
-    assert canvas._build_preview_shapes() == []
+    assert canvas._ai_segment_preview == []
     assert failed == ["RuntimeError: boom"]
 
     behavior["fail"] = False
     canvas._line = dataclasses.replace(canvas._line, points=(QPointF(6, 6),))
     canvas._refresh_ai_segment_preview()
-    assert canvas._build_preview_shapes() == []
+    assert canvas._ai_segment_preview == []
     behavior["fail"] = True
     canvas._line = dataclasses.replace(canvas._line, points=(QPointF(7, 7),))
     canvas._refresh_ai_segment_preview()
-    assert canvas._build_preview_shapes() == []
+    assert canvas._ai_segment_preview == []
     assert failed == ["RuntimeError: boom", "RuntimeError: boom"]
 
 
 @pytest.mark.gui
-def test_ai_segment_preview_renders_every_proposed_shape(
+def test_ai_segment_fills_the_guess_and_edges_the_result(
     *,
     canvas: Canvas,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    previews = [
-        Shape(
+    def triangle(x: int) -> Shape:
+        return Shape(
             shape_type="polygon",
-            points=np.array(points, dtype=np.float64),
+            points=np.array([(x, 10), (x + 20, 10), (x + 20, 30)], dtype=np.float64),
             closed=True,
         )
-        for points in (
-            [(10, 10), (20, 10), (20, 20)],
-            [(60, 10), (70, 10), (70, 20)],
-        )
-    ]
+
+    # The clicks' result on the left, the cursor's guess on the right.
     monkeypatch.setattr(
         canvas,
         "_propose_ai_shapes",
-        lambda **_: AiAssistProposal(
-            new_shapes=previews,
+        lambda *, job, **_: AiAssistProposal(
+            new_shapes=[triangle(10 if job.channel == "result" else 60)],
             matching_existing_shapes=[],
         ),
     )
@@ -1292,17 +1490,136 @@ def test_ai_segment_preview_renders_every_proposed_shape(
         shape_type="points", points=(QPointF(6, 6),), point_labels=(1,)
     )
     canvas._refresh_ai_segment_preview()
-    image = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_ARGB32)
-    image.fill(Qt.GlobalColor.black)
-    painter = QtGui.QPainter(image)
 
-    canvas._draw_preview_overlay_layer(painter)
-    painter.end()
+    def draw() -> QtGui.QImage:
+        image = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_ARGB32)
+        image.fill(Qt.GlobalColor.black)
+        painter = QtGui.QPainter(image)
+        canvas._draw_preview_overlay_layer(painter)
+        painter.end()
+        return image
 
-    for x in (15, 65):
-        color = image.pixelColor(x, 10)
-        assert color.green() > color.red()
-        assert color.green() > color.blue()
+    image = draw()
+    guess_fill = image.pixelColor(74, 16)
+    assert guess_fill.green() > guess_fill.red() and guess_fill.green() > 0
+    assert image.pixelColor(65, 9) == QtGui.QColor(Qt.GlobalColor.black)  # no edge
+    result_edge = image.pixelColor(15, 9)
+    assert min(result_edge.red(), result_edge.green(), result_edge.blue()) > 200
+    assert image.pixelColor(30, 30) != QtGui.QColor(Qt.GlobalColor.black)  # vertex
+    assert image.pixelColor(24, 16) == QtGui.QColor(Qt.GlobalColor.black)
+
+    # With no guess, the result fills.
+    canvas._ai_segment_preview = None
+    fill = draw().pixelColor(24, 16)
+    assert fill.green() > fill.red() and fill.green() > fill.blue()
+
+
+@pytest.mark.gui
+def test_ai_segment_mask_result_fills_only_without_a_guess(*, canvas: Canvas) -> None:
+    canvas.create_mode = "ai_segment"
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(5, 5),), point_labels=(1,)
+    )
+    canvas._ai_segment_result = [
+        Shape(
+            shape_type="mask",
+            points=np.array([(10, 10), (29, 29)], dtype=np.float64),
+            mask=np.ones((20, 20), dtype=bool),
+        )
+    ]
+    guess = Shape(
+        shape_type="mask",
+        points=np.array([(60, 10), (79, 29)], dtype=np.float64),
+        mask=np.ones((20, 20), dtype=bool),
+    )
+
+    def draw(*, guesses: list[Shape] | None) -> QtGui.QImage:
+        canvas._ai_segment_preview = guesses
+        image = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_ARGB32)
+        image.fill(Qt.GlobalColor.black)
+        painter = QtGui.QPainter(image)
+        canvas._draw_ai_segment_proposals(painter)
+        painter.end()
+        return image
+
+    image = draw(guesses=[guess])
+    assert image.pixelColor(20, 20) == QtGui.QColor(Qt.GlobalColor.black)
+    assert image.pixelColor(70, 20).green() > 0  # the guess, in the draft colour
+    assert draw(guesses=None).pixelColor(20, 20).green() > 0
+    # An empty guess is a click there giving nothing, so it still hides the fill.
+    assert draw(guesses=[]).pixelColor(20, 20) == QtGui.QColor(Qt.GlobalColor.black)
+
+
+@pytest.mark.gui
+def test_ai_segment_guess_skips_polygons_and_polygon_detail(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    formats: list[str] = []
+
+    def propose_shapes(self: AiAssistSession, **_: object) -> AiAssistProposal:
+        formats.append(self.output_format)
+        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+
+    monkeypatch.setattr(AiAssistSession, "propose_shapes", propose_shapes)
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(5, 5),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(
+        shape_type="points", points=(QPointF(6, 6),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    assert sorted(formats) == ["mask", "polygon"]
+
+    formats.clear()
+    canvas.set_ai_polygon_detail(detail=10)
+    canvas._refresh_ai_segment_preview()
+    assert formats == ["polygon"]
+
+
+@pytest.mark.gui
+def test_ai_segment_enter_adds_the_filled_result_not_the_guess(
+    *, canvas: Canvas
+) -> None:
+    worker = _worker(canvas)
+    worker.paused = True
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(30, 20),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(
+        shape_type="points", points=(QPointF(80, 40),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    canvas._finalize()
+
+    result, guess, enter = (np.asarray(r.points).tolist() for r in worker.requests)
+    assert result == [[30, 20]]
+    assert guess == [[30, 20], [80, 40]]
+    assert enter == result
+
+
+@pytest.mark.gui
+def test_ai_segment_click_withdraws_a_queued_guess(*, canvas: Canvas) -> None:
+    worker = _worker(canvas)
+    worker.paused = True
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(30, 20),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(
+        shape_type="points", points=(QPointF(80, 40),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+    assert [channel for channel, _ in worker._held] == ["result", "preview"]
+
+    # A click places the cursor's point and clears the cursor input.
+    canvas._current = canvas._current.add_point(QPointF(80, 40), label=1)
+    canvas._line = _DraftShape(shape_type="points")
+    canvas._refresh_ai_segment_preview()
+
+    assert [channel for channel, _ in worker._held] == ["result", "result"]
+    assert canvas._ai_preview_job is None
 
 
 @pytest.mark.gui
@@ -1391,7 +1708,7 @@ def test_create_mode_switch_cancels_multi_point_partial_with_new_mode_observable
     *,
     canvas: Canvas,
 ) -> None:
-    # Multi-point partial cancels, and listeners on drawing_polygon must
+    # Multi-point partial cancels, and listeners on busy_changed must
     # observe the new create_mode synchronously.
     canvas.create_mode = "polygon"
     canvas._current = _DraftShape(
@@ -1402,11 +1719,11 @@ def test_create_mode_switch_cancels_multi_point_partial_with_new_mode_observable
     emissions: list[bool] = []
     observed_modes: list[str] = []
 
-    def listener(drawing: bool) -> None:  # noqa: FBT001 -- Canvas.drawing_polygon slot
-        emissions.append(drawing)
+    def listener() -> None:
+        emissions.append(canvas.is_busy)
         observed_modes.append(canvas.create_mode)
 
-    canvas.drawing_polygon.connect(listener)
+    canvas.busy_changed.connect(listener)
 
     canvas.create_mode = "rectangle"
 
@@ -1427,7 +1744,7 @@ def test_create_mode_switch_to_ai_target_cancels_one_point_partial(
         shape_type="rectangle", points=(QPointF(10, 10),), point_labels=(1,)
     )
     emissions: list[bool] = []
-    canvas.drawing_polygon.connect(emissions.append)
+    canvas.busy_changed.connect(lambda: emissions.append(canvas.is_busy))
 
     canvas.create_mode = "ai_segment"
 
@@ -1615,6 +1932,21 @@ def test_extend_polygon_on_first_vertex_closes_it(*, canvas: Canvas) -> None:
     np.testing.assert_array_equal(
         canvas.shapes[0].points, [[10, 10], [50, 30], [30, 60]]
     )
+
+
+@pytest.mark.gui
+def test_undo_last_line_on_point_reports_not_drawing(*, canvas: Canvas) -> None:
+    canvas.create_mode = "point"
+    canvas.shapes.append(
+        Shape(shape_type="point", points=np.array([[10, 10]], dtype=np.float64))
+    )
+    emissions: list[bool] = []
+    canvas.busy_changed.connect(lambda: emissions.append(canvas.is_busy))
+
+    canvas.undo_last_line()
+
+    assert not canvas.shapes
+    assert emissions == [False]
 
 
 @pytest.mark.gui
@@ -2310,8 +2642,9 @@ def _drag(
     start: QtCore.QPoint,
     end: QtCore.QPoint,
     release: QtCore.QPoint | None = None,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
 ) -> None:
-    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=start)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, modifier, pos=start)
     canvas.mouseMoveEvent(
         QtGui.QMouseEvent(
             QtCore.QEvent.Type.MouseMove,
@@ -2319,10 +2652,10 @@ def _drag(
             QPointF(end),
             Qt.MouseButton.NoButton,
             Qt.MouseButton.LeftButton,
-            Qt.KeyboardModifier.NoModifier,
+            modifier,
         )
     )
-    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=release or end)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, modifier, pos=release or end)
 
 
 @pytest.mark.gui
@@ -2467,7 +2800,7 @@ def test_ai_preview_follows_input_without_inference_during_paint(
 
     def propose_shapes(*, points: np.ndarray, **_: object) -> AiAssistProposal:
         assert not canvas._painter.isActive()
-        pending_previews.append(canvas._build_preview_shapes())
+        pending_previews.append(canvas._ai_segment_result)
         prompts.append(points.tolist())
         return proposal
 
@@ -2478,7 +2811,8 @@ def test_ai_preview_follows_input_without_inference_during_paint(
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
     qtbot.waitUntil(lambda: len(prompts) == 1)
     assert prompts[-1] == [[10, 10]]
-    assert canvas._build_preview_shapes() == proposal.new_shapes
+    assert canvas._ai_segment_result == proposal.new_shapes
+    assert canvas._ai_segment_preview is None  # no cursor input since the click
 
     for _ in range(3):
         canvas.grab()
@@ -2492,7 +2826,9 @@ def test_ai_preview_follows_input_without_inference_during_paint(
     qtbot.mouseMove(canvas, QtCore.QPoint(40, 40))
     qtbot.waitUntil(lambda: len(prompts) == 2)
     assert prompts[-1] == [[10, 10], [20, 20]]
+    # The cursor's guess runs while the clicks' result stays on screen.
     assert pending_previews[-1] == proposal.new_shapes
+    assert canvas._ai_segment_preview == proposal.new_shapes
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
     qtbot.waitUntil(lambda: len(prompts) == 3)
@@ -2506,8 +2842,12 @@ def test_ai_preview_follows_input_without_inference_during_paint(
     qtbot.keyClick(canvas, Qt.Key.Key_Escape)
     QtCore.QCoreApplication.processEvents()
     canvas.grab()
+    # The paint's deferred refresh clears what the draft showed.
+    qtbot.waitUntil(
+        lambda: canvas._ai_segment_result == [] and canvas._ai_segment_preview is None
+    )
+    QtCore.QCoreApplication.processEvents()
     assert len(prompts) == 4
-    assert canvas._build_preview_shapes() == []
 
 
 @pytest.mark.gui
@@ -2601,28 +2941,40 @@ def test_ai_preview_clears_when_replacement_is_unavailable(
     canvas.set_editing(value=False, create_mode="ai_segment")
     canvas.show()
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
-    qtbot.waitUntil(lambda: bool(canvas._build_preview_shapes()))
 
-    assert canvas._build_preview_shapes() == proposal.new_shapes
+    def hover(pos: QPointF) -> None:
+        canvas.mouseMoveEvent(
+            QtGui.QMouseEvent(
+                QtCore.QEvent.Type.MouseMove,
+                pos,
+                pos,
+                Qt.MouseButton.NoButton,
+                Qt.MouseButton.NoButton,
+                Qt.KeyboardModifier.NoModifier,
+            )
+        )
+
+    hover(QPointF(15, 15))
+    qtbot.waitUntil(lambda: bool(canvas._ai_segment_preview))
+
+    assert canvas._ai_segment_result == proposal.new_shapes
+    assert canvas._ai_segment_preview == proposal.new_shapes
     if outcome == "cancel":
         qtbot.keyClick(canvas, Qt.Key.Key_Escape)
     elif outcome == "reset":
         canvas.reset_state()
     else:
         fail = outcome == "error"
+        proposal_before = proposal
         proposal = AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
-        canvas.mouseMoveEvent(
-            QtGui.QMouseEvent(
-                QtCore.QEvent.Type.MouseMove,
-                QPointF(20, 20),
-                QPointF(20, 20),
-                Qt.MouseButton.NoButton,
-                Qt.MouseButton.NoButton,
-                Qt.KeyboardModifier.NoModifier,
-            )
-        )
-        qtbot.waitUntil(lambda: not canvas._build_preview_shapes())
-    assert canvas._build_preview_shapes() == []
+        hover(QPointF(20, 20))
+        qtbot.waitUntil(lambda: not canvas._ai_segment_preview)
+        # The clicks did not change, so their result stays.
+        assert canvas._ai_segment_result == proposal_before.new_shapes
+        return
+    canvas.grab()  # A draw refreshes the proposals for the cleared draft.
+    qtbot.waitUntil(lambda: not canvas._ai_segment_result)
+    assert canvas._ai_segment_preview is None
 
 
 @pytest.mark.gui
@@ -3153,7 +3505,7 @@ def test_ai_finalize_reports_drawing_and_unblocks_when_its_draft_drops(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
     drawing: list[bool] = []
-    canvas.drawing_polygon.connect(drawing.append)
+    canvas.busy_changed.connect(lambda: drawing.append(canvas.is_busy))
     _start_ai_box_finalize(canvas)
     assert drawing == [True]  # the app disables Undo from here
 
@@ -3206,7 +3558,8 @@ def test_ai_preview_drops_a_result_for_old_inputs(
 
     _worker(canvas).resume()
 
-    assert shown == [canvas._ai_segment_preview_key]
+    # The clicks' result is sent once; only the newest guess is shown.
+    assert shown == [canvas._ai_segment_result_key, canvas._ai_segment_preview_key]
 
 
 @pytest.mark.gui
@@ -3441,6 +3794,67 @@ def test_ai_find_all_counter_example_reruns_with_every_box(*, canvas: Canvas) ->
 
 
 @pytest.mark.gui
+def test_ai_find_all_takes_dragged_boxes(*, canvas: Canvas, qtbot: QtBot) -> None:
+    _ai_find_all_canvas(canvas)
+
+    # The release lands past the last move and sets the opposite corner.
+    _drag(
+        qtbot=qtbot,
+        canvas=canvas,
+        start=QtCore.QPoint(5, 5),
+        end=QtCore.QPoint(12, 15),
+        release=QtCore.QPoint(15, 20),
+    )
+    _drag(
+        qtbot=qtbot,
+        canvas=canvas,
+        start=QtCore.QPoint(40, 5),
+        end=QtCore.QPoint(50, 20),
+        modifier=Qt.KeyboardModifier.ShiftModifier,
+    )
+
+    request = _worker(canvas).requests[-1]
+    assert request.points is not None
+    assert request.point_labels is not None
+    assert request.point_labels.tolist() == [2, 3, 4, 5]
+    assert request.points.tolist() == [[5, 5], [15, 20], [40, 5], [50, 20]]
+    assert canvas._current is None
+
+
+@pytest.mark.gui
+def test_ai_find_all_drag_past_the_image_edge_finishes_the_box(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _ai_find_all_canvas(canvas)
+
+    # The corner stops at the edge, but the pointer moved past the drag distance.
+    _drag(
+        qtbot=qtbot,
+        canvas=canvas,
+        start=QtCore.QPoint(_WIDTH - 2, 5),
+        end=QtCore.QPoint(_WIDTH + 50, 40),
+    )
+
+    assert canvas._current is None
+    assert _worker(canvas).requests
+
+
+@pytest.mark.gui
+def test_ai_find_all_click_waits_for_the_second_corner(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    _ai_find_all_canvas(canvas)
+
+    # A press that moves less than the drag distance is a click.
+    _drag(
+        qtbot=qtbot, canvas=canvas, start=QtCore.QPoint(5, 5), end=QtCore.QPoint(6, 5)
+    )
+
+    assert canvas._current is not None
+    assert _worker(canvas).requests == []
+
+
+@pytest.mark.gui
 def test_ai_find_all_enter_commits_the_draft_as_one_step(
     *, canvas: Canvas, qtbot: QtBot
 ) -> None:
@@ -3632,3 +4046,254 @@ def test_ai_find_all_clearing_the_draft_drops_a_pending_box(*, canvas: Canvas) -
     assert not canvas.has_ai_find_all_draft
     assert not canvas.is_ai_finalizing
     assert not canvas.is_drawing
+
+
+def _hint_texts(canvas: Canvas, /) -> list[list[str]] | None:
+    hint = canvas._ai_suggestion_hint()
+    if hint is None:
+        return None
+    return [[item.text for item in row] for row in hint[1]]
+
+
+@pytest.mark.gui
+def test_ai_segment_hint_shows_while_a_suggestion_waits(*, canvas: Canvas) -> None:
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(20, 20),), point_labels=(1,)
+    )
+    assert _hint_texts(canvas) is None  # The first preview has not landed.
+
+    canvas._ai_segment_result = [
+        Shape(
+            shape_type="polygon",
+            points=np.array([[10, 10], [30, 10], [30, 30]], dtype=np.float64),
+            closed=True,
+        )
+    ]
+    assert _hint_texts(canvas) == [
+        ["Add", "Discard"],
+        ["Click to include", "Click to exclude"],
+    ]
+
+    canvas._ai_segment_dragging = True
+    assert _hint_texts(canvas) is None
+    canvas._ai_segment_dragging = False
+
+    canvas.set_editing(value=False, create_mode="polygon")
+    assert _hint_texts(canvas) is None
+
+
+@pytest.mark.gui
+def test_ai_find_all_hint_counts_the_results(*, canvas: Canvas) -> None:
+    _ai_find_all_canvas(canvas)
+    assert _hint_texts(canvas) is None
+
+    _draw_box(canvas, corners=((5, 5), (15, 20)))
+
+    assert _hint_texts(canvas) == [["Add 2", "Discard"], ["Drag to exclude"]]
+    canvas._current = _DraftShape(
+        shape_type="rectangle", points=(QPointF(40, 5),), point_labels=(1,)
+    )
+    assert _hint_texts(canvas) is None  # A box being drawn.
+    canvas._current = None
+    canvas.set_ai_find_all_pending(canvas._ai_find_all_draft)
+    assert _hint_texts(canvas) is None  # The label dialog is open.
+
+
+@pytest.mark.gui
+def test_ai_hint_stays_in_the_visible_part_of_a_zoomed_canvas(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    rects: list[QtCore.QRectF] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, rect, **_: rects.append(rect),
+    )
+    scroll = QtWidgets.QScrollArea()
+    qtbot.addWidget(scroll)
+    scroll.setWidget(canvas)
+    scroll.resize(300, 200)
+    canvas.scale = 10.0  # The 100x50 image is 1000x500 on screen.
+    canvas.adjustSize()
+    scroll.show()
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(5, 5),), point_labels=(1,)
+    )
+    # The suggestion's bottom edge sits at the bottom of the visible part.
+    canvas._ai_segment_result = [
+        Shape(
+            shape_type="polygon",
+            points=np.array([[2, 2], [10, 2], [10, 18]], dtype=np.float64),
+            closed=True,
+        )
+    ]
+
+    qtbot.waitExposed(scroll)
+    canvas.grab()
+
+    visible = QtCore.QRectF(canvas.visibleRegion().boundingRect())
+    assert visible.height() < canvas.height()
+    assert rects
+    assert visible.contains(rects[-1])
+    scroll.takeWidget()  # The fixture owns the canvas.
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", ["ai_segment", "ai_find_all"])
+def test_ai_hint_anchors_under_the_drawn_circle(*, canvas: Canvas, mode: str) -> None:
+    canvas.set_editing(value=False, create_mode=mode)
+    # Center (50, 20), rim (60, 20): the circle reaches down to y=30.
+    circle = Shape(shape_type="circle", points=np.array([[50.0, 20.0], [60.0, 20.0]]))
+    if mode == "ai_segment":
+        canvas._current = _DraftShape(
+            shape_type="points", points=(QPointF(50, 20),), point_labels=(1,)
+        )
+        canvas._ai_segment_result = [circle]
+    else:
+        canvas._ai_find_all_draft = [circle]
+        canvas._ai_find_all_points = np.array([[45.0, 15.0], [55.0, 25.0]])
+        canvas._ai_find_all_point_labels = np.array([2, 3])
+
+    hint = canvas._ai_suggestion_hint()
+
+    assert hint is not None
+    (_, top), (_, bottom) = ((p.x(), p.y()) for p in hint[0])
+    assert (top, bottom) == pytest.approx((10.0, 30.0))
+
+
+def _painted_hint_texts(
+    canvas: Canvas, monkeypatch: pytest.MonkeyPatch, /
+) -> list[list[str]] | None:
+    painted: list[list[list[str]]] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, lines, **_: painted.append(
+            [[item.text for line in row for item in line] for row in lines]
+        ),
+    )
+    canvas.grab()
+    return painted[-1] if painted else None
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("mode", "texts"),
+    [
+        ("ai_segment", [["Click to include", "Click to exclude", "Drag a box"]]),
+        ("ai_find_all", [["Drag around one example"]]),
+    ],
+)
+def test_ai_prompt_hint_shows_until_the_first_prompt(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    mode: str,
+    texts: list[list[str]],
+) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.resize(640, 400)  # Wide enough for one line in any font.
+    canvas.show()
+    canvas.set_editing(value=False, create_mode=mode)
+    assert _painted_hint_texts(canvas, monkeypatch) == texts
+
+    pos = canvas.transform_image_point_to_widget(QPointF(20, 20)).toPoint()
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=pos)
+    assert _painted_hint_texts(canvas, monkeypatch) is None
+
+    canvas.set_editing(value=False, create_mode="polygon")
+    assert _painted_hint_texts(canvas, monkeypatch) is None
+    canvas.set_editing(value=False, create_mode=mode)
+    assert _painted_hint_texts(canvas, monkeypatch) == texts
+
+
+@pytest.mark.gui
+def test_ai_prompt_hint_yields_to_a_waiting_suggestion(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(20, 20),), point_labels=(1,)
+    )
+    canvas._ai_segment_result = [
+        Shape(
+            shape_type="polygon",
+            points=np.array([[10, 10], [30, 10], [30, 30]], dtype=np.float64),
+            closed=True,
+        )
+    ]
+
+    hint = _painted_hint_texts(canvas, monkeypatch)
+    assert hint is not None
+    assert hint[0] == ["Add", "Discard"]
+
+
+@pytest.mark.gui
+def test_ai_prompt_hint_wraps_inside_a_narrow_view(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    rects: list[QtCore.QRectF] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, rect, **_: rects.append(rect),
+    )
+    canvas.resize(240, 240)  # Narrow, but tall enough for the wrapped lines.
+    canvas.set_editing(value=False, create_mode="ai_segment")
+
+    canvas.grab()
+
+    assert rects
+    assert QtCore.QRectF(canvas.rect()).contains(rects[-1])
+
+
+@pytest.mark.gui
+def test_ai_prompt_hint_repaints_when_the_tool_is_picked_again(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    canvas.ensure_ai_model_ready = lambda _: True
+    canvas.show()
+    qtbot.waitExposed(canvas)
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    QtWidgets.QApplication.processEvents()
+    painted: list[QtGui.QPaintEvent] = []
+    monkeypatch.setattr(canvas, "paintEvent", painted.append)
+
+    canvas.set_editing(value=False, create_mode="ai_segment")
+
+    qtbot.waitUntil(lambda: bool(painted))
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("mode", ["ai_segment", "ai_find_all"])
+def test_ai_prompt_hint_fits_a_narrow_view_in_a_long_translation(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch, mode: str
+) -> None:
+    translator = QtCore.QTranslator()
+    assert translator.load(
+        str(Path(labelme.__file__).parent / "translate" / "pl_PL.qm")
+    )
+    QtCore.QCoreApplication.installTranslator(translator)
+    rects: list[QtCore.QRectF] = []
+    monkeypatch.setattr(
+        "labelme._widgets._canvas.paint_hint_chip",
+        lambda _painter, *, rect, **_: rects.append(rect),
+    )
+    canvas.resize(240, 240)  # Narrow, but tall enough for the wrapped lines.
+    canvas.set_editing(value=False, create_mode=mode)
+
+    try:
+        canvas.grab()
+    finally:
+        QtCore.QCoreApplication.removeTranslator(translator)
+
+    assert rects
+    assert QtCore.QRectF(canvas.rect()).contains(rects[-1])
+
+
+def test_draft_palette_defaults_to_the_shipped_config(*, canvas: Canvas) -> None:
+    shape = labelme._config.load_config(config_file=None, config_overrides={})["shape"]
+
+    assert canvas._draft_palette == Palette.from_shape_config(shape)

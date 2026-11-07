@@ -7,6 +7,7 @@ from typing import Final
 
 import pytest
 from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
@@ -53,6 +54,27 @@ def test_confirm_deletion_defaults_to_cancel(
     win._confirm_deletion(message="delete?")
 
     assert default_role == [QtWidgets.QMessageBox.ButtonRole.RejectRole]
+
+
+@pytest.mark.gui
+def test_confirm_deletion_shows_message_as_plain_text(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win()
+
+    shown: list[tuple[str, Qt.TextFormat]] = []
+
+    def _capture(msg_box: QtWidgets.QMessageBox) -> int:
+        shown.append((msg_box.text(), msg_box.textFormat()))
+        return 0
+
+    monkeypatch.setattr(QtWidgets.QMessageBox, "exec", _capture)
+
+    win._confirm_deletion(message='Delete "report<b>final.json"?')
+
+    assert shown == [('Delete "report<b>final.json"?', Qt.TextFormat.PlainText)]
 
 
 @pytest.mark.gui

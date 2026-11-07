@@ -16,6 +16,10 @@
         <translation>Mais detalhes</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Saída</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Polígono</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>Clique e arraste para mover a forma</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Criando %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC para cancelar</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>Clique para adicionar um ponto</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Arraste uma caixa</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Arraste ao redor de um exemplo</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Descartar</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Adicionar</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Clique para incluir</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Clique para excluir</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Adicionar %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Arraste para excluir</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -448,6 +480,11 @@
         <translation>Desfazer última adição e edição de forma</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Selecionar</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Clique para posicionar pontos da polilinha; segure %s e clique para posicionar o último.</translation>
     </message>
@@ -597,11 +634,6 @@
     <message>
         <source>Undo</source>
         <translation>Desfazer</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Editar</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -908,10 +940,6 @@ Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saíd
         <translation>Cancelar</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Manter as alterações nas anotações de &quot;{}&quot;?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Alterações não salvas</translation>
     </message>
@@ -1012,6 +1040,26 @@ Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saíd
         <translation>Segmentando…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Iniciando IA…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Carregando {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Preparando imagem na CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Preparando imagem…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} s</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>{count} novos &quot;{query}&quot; encontrados</translation>
     </message>
@@ -1032,8 +1080,20 @@ Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saíd
         <translation>Pasta de anotações: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Apagar o arquivo de anotações? Não é possível desfazer esta ação.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Apagar &quot;{}&quot;? Não é possível desfazer esta ação.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Baixar</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Salvar as alterações nas anotações de &quot;{}&quot;?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1138,10 +1198,6 @@ Local esperado: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Excluir Arquivo de Anotações</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Excluir permanentemente este arquivo de anotações? Esta ação não pode ser desfeita.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

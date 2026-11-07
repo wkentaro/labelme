@@ -78,6 +78,9 @@ def test_model_and_output_controls_expose_accessible_purpose(
     assert output.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-assisted annotation output format"
     )
+    # The open menu names what it picks, above the shapes.
+    header = widget._output_format_button.menu().actions()[0]
+    assert (header.text(), header.isEnabled()) == ("Output", False)
 
 
 def test_first_listed_default_resolves(
@@ -133,7 +136,7 @@ def test_selecting_another_output_format_fires_callback(
     widget._output_format_actions["mask"].trigger()
     assert formats == ["mask"]
     assert widget.output_format == "mask"
-    assert widget._output_format_button.toolTip() == "Mask"
+    assert widget._output_format_button.toolTip() == "Output format: Mask"
     assert not widget._polygon_detail_panel.isVisibleTo(widget)
 
     widget._output_format_actions["mask"].trigger()
