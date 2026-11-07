@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Kattintson és húzza az alakzat elforgatásához</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Kattintson a kör kerületén lévő első pontra</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Kattintson a kör kerületén lévő második pontra</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Kattintson a kör kerületén lévő harmadik pontra a kör befejezéséhez</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1194,6 +1206,14 @@ Várt hely: {path}</translation>
     <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Csak kereteket ismer fel. A modell használatához váltson a Téglalap módra.</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>Kör (3 pont)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Körök rajzolásának megkezdése 3 ponttal</translation>
     </message>
 </context>
 <context>

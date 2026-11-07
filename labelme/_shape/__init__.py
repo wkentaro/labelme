@@ -1,3 +1,5 @@
+from ._circle import circle_from_three_points
+from ._circle import compute_circumcircle
 from ._hit_testing import nearest_edge_index
 from ._hit_testing import nearest_rotation_point_index
 from ._hit_testing import nearest_vertex_index
@@ -30,6 +32,8 @@ __all__ = [
     "ShapeDict",
     "ShapeType",
     "can_merge_shapes",
+    "circle_from_three_points",
+    "compute_circumcircle",
     "get_rotation_handle",
     "merge_masks",
     "nearest_edge_index",

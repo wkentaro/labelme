@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>คลิกและลากเพื่อหมุนรูปร่าง</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>คลิกจุดแรกบนเส้นรอบวงของวงกลม</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>คลิกจุดที่สองบนเส้นรอบวงของวงกลม</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>คลิกจุดที่สามบนเส้นรอบวงเพื่อเสร็จสิ้นวงกลม</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1195,6 +1207,14 @@ Expected location: {path}</source>
     <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>ตรวจจับได้เฉพาะกรอบ เปลี่ยนเป็นสี่เหลี่ยมเพื่อใช้โมเดลนี้</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>วงกลม (3 จุด)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>เริ่มวาดวงกลมด้วย 3 จุด</translation>
     </message>
 </context>
 <context>

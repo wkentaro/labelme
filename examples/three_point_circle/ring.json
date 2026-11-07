@@ -1,0 +1,46 @@
+{
+  "version": "7.8.2",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "outer_boundary",
+      "points": [
+        [
+          160.0,
+          160.0
+        ],
+        [
+          288.0,
+          160.0
+        ]
+      ],
+      "group_id": 1,
+      "description": "",
+      "shape_type": "circle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "inner_boundary",
+      "points": [
+        [
+          160.0,
+          160.0
+        ],
+        [
+          252.0,
+          160.0
+        ]
+      ],
+      "group_id": 1,
+      "description": "",
+      "shape_type": "circle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "ring.png",
+  "imageData": null,
+  "imageHeight": 320,
+  "imageWidth": 320
+}

@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>클릭하고 드래그하여 도형 회전</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>원의 둘레 위 첫 번째 점 클릭</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>원의 둘레 위 두 번째 점 클릭</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>원의 둘레 위 세 번째 점을 클릭하여 원 완성</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1194,6 +1206,14 @@ Expected location: {path}</source>
     <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>상자만 감지합니다. 이 모델을 사용하려면 사각형으로 전환하세요.</translation>
+    </message>
+    <message>
+        <source>Three-Point Circle</source>
+        <translation>원 (3점)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>3점으로 원 그리기 시작</translation>
     </message>
 </context>
 <context>
