@@ -183,7 +183,7 @@ def test_migrate_tolerates_empty_section(*, section: str) -> None:
 
 @pytest.mark.parametrize(
     ("section", "probe"),
-    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "sam3:latest"))],
+    [("shortcuts", ("save", "Ctrl+S")), ("ai", ("default", "sam2:latest"))],
     ids=["shortcuts", "ai"],
 )
 def test_load_config_empty_section_keeps_defaults(

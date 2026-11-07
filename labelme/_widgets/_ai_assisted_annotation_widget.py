@@ -102,6 +102,8 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup
         )
         output_menu = QtWidgets.QMenu(self._output_format_button)
+        # A disabled item, since macOS drops addSection's title.
+        output_menu.addAction(self.tr("Output")).setEnabled(False)
         self._output_format_group = QtGui.QActionGroup(output_menu)
         self._output_format_actions = {}
         output_formats: list[tuple[_automation.AiOutputFormat, str, str]] = [
@@ -147,11 +149,11 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         action = self._output_format_actions[output_format]
         action.setChecked(True)
         self._output_format_button.setIcon(action.icon())
-        self._output_format_button.setToolTip(action.text())
-        # A tool button has no value, so its name carries the current shape.
-        self._output_format_button.setAccessibleName(
-            self.tr("Output format: {format}").format(format=action.text())
-        )
+        # A tool button has no value, so its name carries the current shape;
+        # the tooltip says the same, so the icon doesn't read as a draw tool.
+        name = self.tr("Output format: {format}").format(format=action.text())
+        self._output_format_button.setToolTip(name)
+        self._output_format_button.setAccessibleName(name)
         self._polygon_detail_panel.setVisible(output_format == "polygon")
 
     def set_current_model(self, *, model_name: str) -> None:

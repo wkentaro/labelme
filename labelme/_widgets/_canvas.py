@@ -25,6 +25,7 @@ from PySide6.QtCore import Qt
 
 from .. import _ai_models
 from .. import _automation
+from .. import _config
 from .. import _shape
 from .. import _utils
 from .._shape import CIRCLE_POINT_COUNT
@@ -38,6 +39,11 @@ from .._shape import ShapeType
 from . import _canvas_interaction
 from ._canvas_interaction import CursorRole
 from ._canvas_interaction import HitKind
+from ._hint_chip import RETURN_GLYPH
+from ._hint_chip import HintItem
+from ._hint_chip import paint_hint_chip
+from ._hint_chip import place_hint_chip
+from ._shape_render import NEGATIVE_RGB
 from ._shape_render import Palette
 from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
@@ -47,6 +53,35 @@ from ._shape_render import render_shape
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
+# The shipped config's draft colours, so a canvas the app hasn't configured
+# (as in tests) draws drafts the way users see them.
+_DEFAULT_DRAFT_PALETTE: Final[Palette] = Palette.from_shape_config(
+    _config.load_config(config_file=None, config_overrides={})["shape"]
+)
+_NEGATIVE_PALETTE: Final[Palette] = Palette.from_rgb(NEGATIVE_RGB)
+
+
+def _drawn_corners(shape: Shape, /) -> np.ndarray:
+    # Where the shape is drawn, not its raw points: a circle's points are its
+    # center and a point on its rim.
+    rect = _shape_bounds(shape=shape)
+    return np.array([[rect.left(), rect.top()], [rect.right(), rect.bottom()]])
+
+
+def _bounding_corners(points: list[np.ndarray], /) -> tuple[QPointF, QPointF]:
+    stacked = np.concatenate(points)
+    return QPointF(*stacked.min(axis=0)), QPointF(*stacked.max(axis=0))
+
+
+def _paint_box_mark(
+    painter: QtGui.QPainter, center: QPointF, /, *, color: QtGui.QColor
+) -> None:
+    # A small prompt box, dashed like the ones on the canvas.
+    pen = QtGui.QPen(color, 1.5)
+    pen.setDashPattern([2.0, 1.5])
+    painter.setPen(pen)
+    painter.setBrush(Qt.BrushStyle.NoBrush)
+    painter.drawRect(QRectF(center.x() - 6.5, center.y() - 5.0, 13.0, 10.0))
 
 
 @dataclasses.dataclass
@@ -167,7 +202,8 @@ class _AiJob:
     points: np.ndarray
     point_labels: np.ndarray
     image_size: tuple[int, int] | None
-    # The draft a finalize commits, or the inputs a preview shows.
+    channel: Literal["preview", "result", "finalize"]
+    # The draft a finalize commits, or the inputs a preview or result shows.
     draft: _DraftShape | None = None
     preview_key: object = None
     # The AI-Find All query sent with an example box; it labels the results.
@@ -244,7 +280,8 @@ class Canvas(QtWidgets.QWidget):
     selection_changed = QtCore.Signal(list)
     shape_double_clicked = QtCore.Signal()
     shape_moved = QtCore.Signal()
-    drawing_polygon = QtCore.Signal(bool)
+    # Emitted when is_busy or is_drawing may have changed.
+    busy_changed = QtCore.Signal()
     vertex_selected = QtCore.Signal(bool)
     edge_selected = QtCore.Signal(bool)
     mouse_moved = QtCore.Signal(QPointF)
@@ -253,6 +290,10 @@ class Canvas(QtWidgets.QWidget):
     mode: _CanvasMode = _CanvasMode.EDIT
 
     _create_mode: _CreateMode = "polygon"
+
+    # Until the first prompt after switching to a tool, an AI tool says how
+    # to give one.
+    _ai_prompt_hint_due = False
 
     _fill_drawing = False
 
@@ -278,7 +319,13 @@ class Canvas(QtWidgets.QWidget):
     _ai_assist_session: _automation.AiAssistSession
     _ai_suppress_existing_shape_matches: bool
     _ai_existing_shape_highlights: list[Shape]
-    _ai_segment_preview: list[Shape]
+    # What Enter adds: the result of the placed prompts, edged in white.
+    _ai_segment_result: list[Shape]
+    _ai_segment_result_key: tuple[object, ...] | None
+    # What a click at the cursor would give: a mask, filled with no edge;
+    # None while there is no cursor input, where an empty list is an empty
+    # prediction.
+    _ai_segment_preview: list[Shape] | None
     _ai_segment_preview_key: tuple[object, ...] | None
     # The AI-Segment press until its release, as (image pos, widget pos,
     # modifiers); moving past the drag distance draws a box, not a point.
@@ -289,6 +336,8 @@ class Canvas(QtWidgets.QWidget):
     _ai_find_all_points: np.ndarray
     _ai_find_all_point_labels: np.ndarray
     _ai_find_all_draft: list[Shape]
+    # A batch waiting for its label, drawn like a draft under the dialog.
+    _ai_find_all_pending: list[Shape]
     _ai_find_all_query: str
     # Proposes the draft's run again, with the settings it was shown with.
     _ai_find_all_run: (
@@ -347,12 +396,14 @@ class Canvas(QtWidgets.QWidget):
         self.get_ai_find_all_query = lambda: ""
         self._osam_worker: _automation.OsamWorker | None = None
         self._ai_preview_job: _AiJob | None = None
+        self._ai_result_job: _AiJob | None = None
         self._ai_finalize_job: _AiJob | None = None
-        self._ai_finalize_clock = QtCore.QElapsedTimer()
+        self._ai_progress_clock = QtCore.QElapsedTimer()
         self._ai_progress_timer = QtCore.QTimer(self)
         self._ai_progress_timer.setInterval(16)
         self._ai_progress_timer.timeout.connect(self._advance_ai_progress)
         self._clear_ai_find_all_draft()
+        self._ai_find_all_pending = []
         self.ensure_ai_model_ready = lambda _model_name: False
         self._ai_inference_failed = False
         self._ai_suppress_existing_shape_matches = False
@@ -365,7 +416,7 @@ class Canvas(QtWidgets.QWidget):
         self._color_resolver: Callable[[str], tuple[int, int, int]] | None = None
         self._point_size: int = 8
         self._point_type: Literal["square", "round"] = "round"
-        self._draft_palette = _DEFAULT_PALETTE
+        self._draft_palette = _DEFAULT_DRAFT_PALETTE
         self._palette_cache = {}
         self.context_menu = QtWidgets.QMenu()
         self.context_menu_origin = None
@@ -505,6 +556,12 @@ class Canvas(QtWidgets.QWidget):
         return self._current is not None
 
     @property
+    def is_busy(self) -> bool:
+        # A draft or a pending AI result, either of which Undo, Select or
+        # Delete would abandon or rewrite.
+        return self.is_drawing or self.is_ai_finalizing
+
+    @property
     def is_interacting(self) -> bool:
         # From press to release, a pointer edit holds a selection, a vertex and
         # an Undo snapshot that a Shape change would reset or split. An
@@ -591,7 +648,7 @@ class Canvas(QtWidgets.QWidget):
             self._ai_finalize_job = None
             if self._current is job.draft:
                 self._current = None
-            self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
+            self.busy_changed.emit()
         self._ai_find_all_points = np.zeros((0, 2))
         self._ai_find_all_point_labels = np.zeros((0,), dtype=np.int_)
         self._ai_find_all_draft = []
@@ -637,6 +694,10 @@ class Canvas(QtWidgets.QWidget):
             shapes=shapes, existing_shapes=self.shapes
         )
         return shapes
+
+    def set_ai_find_all_pending(self, shapes: list[Shape], /) -> None:
+        self._ai_find_all_pending = shapes
+        self.update()
 
     def _discard_ai_find_all_draft(self) -> None:
         if not self.has_ai_find_all_draft:
@@ -711,7 +772,7 @@ class Canvas(QtWidgets.QWidget):
     def _submit_ai_job(
         self,
         *,
-        channel: Literal["preview", "finalize"],
+        channel: Literal["preview", "result", "finalize"],
         prompt_kind: _automation.AiPromptKind,
         points: Sequence[QPointF],
         point_labels: Sequence[int],
@@ -721,6 +782,7 @@ class Canvas(QtWidgets.QWidget):
         assert self._osam_worker is not None
         image, image_id = self.ai_image()
         job = _AiJob(
+            channel=channel,
             pixmap_key=self.pixmap.cacheKey(),
             prompt_kind=prompt_kind,
             points=np.array([[p.x(), p.y()] for p in points]),
@@ -734,13 +796,24 @@ class Canvas(QtWidgets.QWidget):
             preview_key=preview_key,
             query=self.get_ai_find_all_query() if prompt_kind == "example_box" else "",
         )
+        # Only placed prompts ring: a preview is a guess that the next one
+        # replaces. A result that replaces one still running keeps the clock,
+        # so quick clicks on a slow model keep ringing.
+        if channel == "finalize" or (
+            channel == "result" and not self._ai_progress_timer.isActive()
+        ):
+            self._ai_progress_clock.start()
+            self._ai_progress_timer.start()
         # Recorded first: the worker may fail the job before submit returns.
         if channel == "preview":
             self._ai_preview_job = job
+        elif channel == "result":
+            self._ai_result_job = job
         else:
             self._ai_finalize_job = job
-            self._ai_finalize_clock.start()
-            self._ai_progress_timer.start()
+            # A pending result blocks edit actions in the app; a failure
+            # inside submit below emits again after this.
+            self.busy_changed.emit()
         self._osam_worker.submit(
             channel=channel,
             job=job,
@@ -758,17 +831,42 @@ class Canvas(QtWidgets.QWidget):
             ),
         )
 
-    def _ai_progress_center(self) -> QPointF | None:
-        # Where the ring for a finalize still running past the delay sits, in
-        # widget pixels, at the last point placed: a box's release corner.
-        # A prompt that answers sooner shows no ring, so fast runs never
-        # flicker one on and off.
-        DELAY_MS: Final = 400
-        if not self.is_ai_finalizing or self._ai_finalize_clock.elapsed() < DELAY_MS:
+    def _ai_pending_job(self) -> _AiJob | None:
+        # The run the user is waiting on: a finalize, else the result of the
+        # placed prompts. Its key alone is not enough: the key only refreshes
+        # while AI-Segment paints, so a tool switch would leave it current.
+        if self.is_ai_finalizing:
+            return self._ai_finalize_job
+        job = self._ai_result_job
+        if (
+            job is None
+            or self.mode != _CanvasMode.CREATE
+            or self.create_mode != "ai_segment"
+            or not self._is_current_ai_segment_job(job)
+        ):
             return None
-        if self._current is None:  # An AI-Find All draft rerun: its last example.
-            assert self._ai_finalize_job is not None
-            point = QPointF(*self._ai_finalize_job.points[-1])
+        return job
+
+    def _is_current_ai_segment_job(self, job: _AiJob, /) -> bool:
+        key = (
+            self._ai_segment_result_key
+            if job.channel == "result"
+            else self._ai_segment_preview_key
+        )
+        return job.preview_key == key
+
+    def _ai_progress_center(self) -> QPointF | None:
+        # Where the ring for a run still going past the delay sits, in widget
+        # pixels, at the last prompt placed: a box's release corner. A prompt
+        # that answers sooner shows no ring, so fast runs never flicker one on
+        # and off.
+        DELAY_MS: Final = 400
+        job = self._ai_pending_job()
+        if job is None or self._ai_progress_clock.elapsed() < DELAY_MS:
+            return None
+        if self._current is None or not self._current.points:
+            # An AI-Find All draft rerun: the job's last point.
+            point = QPointF(*job.points[-1])
         else:
             point = self._current.points[-1]
         return self.transform_image_point_to_widget(point)
@@ -784,7 +882,7 @@ class Canvas(QtWidgets.QWidget):
         )
 
     def _advance_ai_progress(self) -> None:
-        if not self.is_ai_finalizing:
+        if self._ai_pending_job() is None:
             self._ai_progress_timer.stop()
             return
         if (rect := self._ai_progress_rect()) is not None:
@@ -800,8 +898,13 @@ class Canvas(QtWidgets.QWidget):
             # AI-Segment proposals ignore the AI-Find All thresholds.
             else (0.0, 0.5)
         )
+        session = copy.copy(self._ai_assist_session)
+        if job.channel == "preview":
+            # The guess only shows which object a click picks, so it skips
+            # polygonizing; the result shows the shape Enter adds.
+            session.output_format = "mask"
         return functools.partial(
-            copy.copy(self._ai_assist_session).propose_shapes,
+            session.propose_shapes,
             score_threshold=thresholds[0],
             iou_threshold=thresholds[1],
             annotations=annotations,
@@ -835,8 +938,8 @@ class Canvas(QtWidgets.QWidget):
             return None
         if job is self._ai_preview_job:
             self._ai_preview_job = None
-            if job.preview_key == self._ai_segment_preview_key:
-                return job
+        elif job is self._ai_result_job:
+            self._ai_result_job = None
         elif job is self._ai_finalize_job:
             self._ai_finalize_job = None
             if self._current is not job.draft:
@@ -846,7 +949,10 @@ class Canvas(QtWidgets.QWidget):
             # The pixmap changed under the draft, as a brightness change does;
             # the draft stays sent and blocks the next click, so drop it.
             self._cancel_current_shape()
-        return None
+            return None
+        else:
+            return None
+        return job if self._is_current_ai_segment_job(job) else None
 
     def _on_ai_job_finished(self, job: object, annotations: object, /) -> None:
         ai_job = self._take_ai_job(job)
@@ -883,10 +989,10 @@ class Canvas(QtWidgets.QWidget):
         proposal: _automation.AiAssistProposal | None,
         error: str | None,
     ) -> None:
-        if job.preview_key is None:
+        if job.channel == "finalize":
             self._finish_ai_finalize(job=job, proposal=proposal, error=error)
         else:
-            self._show_ai_segment_preview(proposal=proposal, error=error)
+            self._show_ai_segment_proposal(job=job, proposal=proposal, error=error)
 
     def _report_inference_failure(self, *, error: str) -> None:
         self._ai_inference_failed = True
@@ -939,15 +1045,14 @@ class Canvas(QtWidgets.QWidget):
         if create_mode is not None:
             self._set_create_mode(value=create_mode)
         new_mode = _CanvasMode.EDIT if value else _CanvasMode.CREATE
+        # Any tool pick re-arms it, so re-clicking the active tool shows it again.
+        self._ai_prompt_hint_due = not value
+        self.update()  # Also clears the crosshair on leaving CREATE.
         if new_mode is not self.mode:
             self._clear_ai_existing_shape_highlights()
             self._clear_ai_find_all_draft()
         self.mode = new_mode
-        if self.mode == _CanvasMode.EDIT:
-            # CREATE -> EDIT
-            self.update()  # clear crosshair
-        else:
-            # EDIT -> CREATE
+        if self.mode == _CanvasMode.CREATE:
             self._set_highlight(
                 hovered_shape=None,
                 hovered_edge=None,
@@ -997,7 +1102,7 @@ class Canvas(QtWidgets.QWidget):
     def _update_status(self, *, extra_messages: list[str] | None) -> None:
         messages: list[str] = []
         if self.mode == _CanvasMode.CREATE:
-            messages.append(self.tr("Creating %r") % self.create_mode)
+            messages.append(self._get_create_mode_name())
             messages.append(self._get_create_mode_message())
             if self._current is not None:
                 messages.append(self.tr("ESC to cancel"))
@@ -1009,6 +1114,29 @@ class Canvas(QtWidgets.QWidget):
         if extra_messages:
             messages.extend(extra_messages)
         self.status_updated.emit(" • ".join(messages))
+
+    def _get_create_mode_name(self) -> str:
+        # Reuse the draw actions' names and their translations from MainWindow.
+        translate = QtCore.QCoreApplication.translate
+        match self.create_mode:
+            case "polygon":
+                return translate("MainWindow", "Polygon")
+            case "rectangle":
+                return translate("MainWindow", "Rectangle")
+            case "oriented_rectangle":
+                return translate("MainWindow", "Oriented Rectangle")
+            case "circle":
+                return translate("MainWindow", "Circle")
+            case "line":
+                return translate("MainWindow", "Line")
+            case "point":
+                return translate("MainWindow", "Point")
+            case "linestrip":
+                return translate("MainWindow", "LineStrip")
+            case "ai_segment":
+                return translate("MainWindow", "AI-Segment")
+            case "ai_find_all":
+                return translate("MainWindow", "AI-Find All")
 
     def _get_create_mode_message(self) -> str:
         assert self.mode == _CanvasMode.CREATE
@@ -1503,6 +1631,7 @@ class Canvas(QtWidgets.QWidget):
     ) -> None:
         if self._current is None and self._should_constrain_to_pixmap(pos):
             return
+        self._ai_prompt_hint_due = False
         if self.create_mode == "ai_segment":
             self._press_ai_segment(pos=pos, event=event)
             return
@@ -1580,11 +1709,24 @@ class Canvas(QtWidgets.QWidget):
             self.update()
             return
         self._current = draft
-        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
+        self.busy_changed.emit()
         if press[2] & Qt.KeyboardModifier.ControlModifier:
             self._finalize()
             return
         self.update()
+
+    def _release_ai_find_all(self, *, event: QtGui.QMouseEvent) -> None:
+        current = self._current
+        if current is None:
+            return
+        pos = self.transform_widget_point_to_image(event.position())
+        # The release can land past the last move event.
+        self._track_drawing_cursor(pos=pos, event=event)
+        # Measure the pointer, not the corner clamped into the image.
+        dragged = (pos - current.points[0]) * self.scale
+        if dragged.manhattanLength() < QtWidgets.QApplication.startDragDistance():
+            return  # A click: the next click places the opposite corner.
+        self._extend_current_shape(current=current, event=event)
 
     def _is_final_open_path_click(self, *, event: QtGui.QMouseEvent) -> bool:
         # A polygon ends by returning to its first vertex; the modes with no
@@ -1639,7 +1781,7 @@ class Canvas(QtWidgets.QWidget):
                 (0, 0) if mode == "ai_find_all" and is_shift_pressed else (1, 1)
             ),
         )
-        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
+        self.busy_changed.emit()
         self.update()
 
     def _press_left_while_editing(
@@ -1702,8 +1844,11 @@ class Canvas(QtWidgets.QWidget):
             self._release_right(event=event)
             return
         if button == Qt.MouseButton.LeftButton:
-            if self.mode == _CanvasMode.CREATE and self.create_mode == "ai_segment":
-                self._release_ai_segment(event=event)
+            if self.mode == _CanvasMode.CREATE:
+                if self.create_mode == "ai_segment":
+                    self._release_ai_segment(event=event)
+                elif self.create_mode == "ai_find_all":
+                    self._release_ai_find_all(event=event)
             self._release_left()
             return
         if button == Qt.MouseButton.MiddleButton:
@@ -2065,30 +2210,155 @@ class Canvas(QtWidgets.QWidget):
             self._draw_ai_find_all_layer,
             self._draw_ai_existing_match_layer,
             self._draw_ai_progress_layer,
+            self._draw_ai_hint_layer,
         )
 
     def _draw_ai_progress_layer(self, painter: QtGui.QPainter, /) -> None:
         if (center := self._ai_progress_center()) is None:
             return
-        # A white track under an accent arc reads on light and dark images
-        # alike; one calm linear turn a second, like a native spinner.
+        # A white arc on a dark translucent track reads on light and dark
+        # images alike, whatever the system accent color; one calm linear
+        # turn a second, like a native spinner.
         radius = _AI_PROGRESS_RADIUS
         painter.save()
         painter.resetTransform()
         painter.setBrush(Qt.BrushStyle.NoBrush)
-        painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 220), 5))
+        painter.setPen(QtGui.QPen(QtGui.QColor(0, 0, 0, 140), 5))
         painter.drawEllipse(center, radius, radius)
-        arc = QtGui.QPen(self.palette().color(QtGui.QPalette.ColorRole.Highlight), 2.5)
+        arc = QtGui.QPen(QtGui.QColor(255, 255, 255), 3)
         arc.setCapStyle(Qt.PenCapStyle.RoundCap)
         painter.setPen(arc)
         TURN_MS: Final = 1000
-        turn = self._ai_finalize_clock.elapsed() % TURN_MS
+        turn = self._ai_progress_clock.elapsed() % TURN_MS
         painter.drawArc(
             QRectF(center, center).adjusted(-radius, -radius, radius, radius),
             -turn * 360 * 16 // TURN_MS,
             90 * 16,
         )
         painter.restore()
+
+    def _draw_ai_hint_layer(self, painter: QtGui.QPainter, /) -> None:
+        if (hint := self._ai_suggestion_hint()) is not None:
+            (top_left, bottom_right), rows = hint
+            anchor = QRectF(
+                self.transform_image_point_to_widget(top_left),
+                self.transform_image_point_to_widget(bottom_right),
+            )
+        elif (prompt_rows := self._ai_prompt_hint()) is not None:
+            rows, anchor = prompt_rows, None
+        else:
+            return
+        bounds = QRectF(self.visibleRegion().boundingRect() or self.rect())
+        if anchor is None:
+            # No prompt to sit by yet: an empty anchor on the view's bottom
+            # edge, so the chip flips above it to the bottom center.
+            anchor = QRectF(bounds.center().x(), bounds.bottom(), 0, 0)
+        font = self.font()
+        rect, lines = place_hint_chip(
+            rows=rows, font=font, anchor=anchor, bounds=bounds
+        )
+        if not rect.toAlignedRect().intersects(self._dirty_rect):
+            return  # A ring frame elsewhere.
+        painter.save()
+        painter.resetTransform()
+        paint_hint_chip(painter, lines=lines, font=font, rect=rect)
+        painter.restore()
+
+    def moveEvent(self, event: QtGui.QMoveEvent, /) -> None:
+        # Scrolling moves the canvas and repaints only the exposed strip, but
+        # the hint is placed within the visible part, so it moves too.
+        super().moveEvent(event)
+        if self._ai_suggestion_hint() or self._ai_prompt_hint():
+            self.update()
+
+    def _ai_prompt_hint(self) -> list[list[HintItem]] | None:
+        if not self._ai_prompt_hint_due or self.mode != _CanvasMode.CREATE:
+            return None
+        box = functools.partial(_paint_box_mark, color=self._draft_palette.line)
+        if self.create_mode == "ai_segment":
+            return [
+                [*self._ai_click_items(), HintItem(self.tr("Drag a box"), mark=box)]
+            ]
+        if self.create_mode == "ai_find_all":
+            return [[HintItem(self.tr("Drag around one example"), mark=box)]]
+        return None
+
+    def _ai_suggestion_hint(
+        self,
+    ) -> tuple[tuple[QPointF, QPointF], list[list[HintItem]]] | None:
+        # A suggestion waiting for Enter or Esc: the image corners of the box
+        # around it and its prompts, and the chip rows that name the keys.
+        if self.mode != _CanvasMode.CREATE or self.is_ai_finalizing:
+            return None
+        discard = HintItem(self.tr("Discard"), key="Esc")
+        if self.create_mode == "ai_segment":
+            current = self._current
+            if (
+                current is None
+                or not self._ai_segment_result
+                or (self._ai_segment_dragging)
+            ):
+                return None
+            points = [_drawn_corners(s) for s in self._ai_segment_result]
+            points.append(np.array([[p.x(), p.y()] for p in current.points]))
+            return _bounding_corners(points), [
+                [HintItem(self.tr("Add"), key=RETURN_GLYPH), discard],
+                self._ai_click_items(),
+            ]
+        if self.create_mode == "ai_find_all":
+            if (
+                not self.has_ai_find_all_draft
+                or self._current is not None
+                or self._ai_find_all_pending  # The label dialog is open.
+            ):
+                return None
+            draft = self._ai_find_all_draft
+            first = [discard]
+            if draft:
+                add = self.tr("Add %d") % len(draft)
+                first.insert(0, HintItem(add, key=RETURN_GLYPH))
+            points = [_drawn_corners(s) for s in draft]
+            points.append(self._ai_find_all_points)
+            return _bounding_corners(points), [
+                first,
+                [
+                    HintItem(
+                        self.tr("Drag to exclude"),
+                        key=_utils.modifier_text(Qt.KeyboardModifier.ShiftModifier),
+                        mark=functools.partial(
+                            _paint_box_mark, color=_NEGATIVE_PALETTE.line
+                        ),
+                    )
+                ],
+            ]
+        return None
+
+    def _ai_click_items(self) -> list[HintItem]:
+        return [
+            HintItem(self.tr("Click to include"), mark=self._paint_point_mark),
+            HintItem(
+                self.tr("Click to exclude"),
+                key=_utils.modifier_text(Qt.KeyboardModifier.ShiftModifier),
+                mark=functools.partial(self._paint_point_mark, label=0),
+            ),
+        ]
+
+    def _paint_point_mark(
+        self, painter: QtGui.QPainter, center: QPointF, /, *, label: int = 1
+    ) -> None:
+        # The prompt point itself, as the canvas draws it at any zoom.
+        point = Shape(
+            shape_type="points",
+            points=np.array([[center.x(), center.y()]]),
+            point_labels=np.array([label]),
+        )
+        context = dataclasses.replace(
+            self._draft_render_context(
+                selected=False, fill=False, highlight=None, rotation_highlight=None
+            ),
+            scale=1.0,
+        )
+        render_shape(painter=painter, shape=point, context=context)
 
     def _draw_pixmap_layer(self, painter: QtGui.QPainter, /) -> None:
         target = QtCore.QRectF(
@@ -2178,6 +2448,9 @@ class Canvas(QtWidgets.QWidget):
                 self._render_draft(painter=painter, draft=draft, highlighted=False)
 
     def _draw_preview_overlay_layer(self, painter: QtGui.QPainter, /) -> None:
+        if self.create_mode == "ai_segment":
+            self._draw_ai_segment_proposals(painter)
+            return
         previews = self._build_preview_shapes()
         if not previews:
             return
@@ -2191,33 +2464,40 @@ class Canvas(QtWidgets.QWidget):
             render_shape(painter=painter, shape=preview, context=context)
 
     def _draw_ai_find_all_layer(self, painter: QtGui.QPainter, /) -> None:
-        if not self.has_ai_find_all_draft:
+        if not (self._ai_find_all_pending or self.has_ai_find_all_draft):
             return
         context = self._draft_render_context(
             selected=False, fill=True, highlight=None, rotation_highlight=None
         )
-        for shape in self._ai_find_all_draft:
-            render_shape(painter=painter, shape=shape, context=context)
+        # Results waiting for Enter take the selected style, a white edge, as
+        # an AI-Segment result does. The example boxes are prompts, so
+        # they stay dashed guides, red for a counter-example.
+        # An example-box batch is also its draft, so it is drawn once.
+        result_context = dataclasses.replace(context, selected=True)
+        for shape in self._ai_find_all_pending or self._ai_find_all_draft:
+            render_shape(painter=painter, shape=shape, context=result_context)
+        if not self.has_ai_find_all_draft:
+            return
         corners = self._ai_find_all_points.reshape(-1, 2, 2)
         labels = self._ai_find_all_point_labels.reshape(-1, 2)[:, 0]
         for (p1, p2), label in zip(corners, labels, strict=True):
             is_counter = label == 4  # noqa: PLR2004 -- SAM negative box corner
             example = Shape(shape_type="rectangle", points=np.array([p1, p2]))
+            palette = _NEGATIVE_PALETTE if is_counter else context.palette
             render_shape(
                 painter=painter,
                 shape=example,
                 context=dataclasses.replace(
                     context,
+                    palette=palette,
                     fill=False,
-                    line_style=(
-                        Qt.PenStyle.DashLine if is_counter else Qt.PenStyle.SolidLine
-                    ),
+                    line_style=Qt.PenStyle.DashLine,
                 ),
             )
             if is_counter:
                 # A "−" inside the top-left corner marks a counter-example.
                 x, y = p1 * self.scale + 10.0
-                painter.setPen(QtGui.QPen(context.palette.line, 3.0))
+                painter.setPen(QtGui.QPen(palette.line, 3.0))
                 painter.drawLine(QPointF(x, y), QPointF(x + 12.0, y))
 
     def _draw_ai_existing_match_layer(self, painter: QtGui.QPainter, /) -> None:
@@ -2253,18 +2533,36 @@ class Canvas(QtWidgets.QWidget):
             highlight=self._highlight if highlighted else None,
             rotation_highlight=self._rotation_highlight if highlighted else None,
         )
-        if self.create_mode == "ai_find_all" and draft.point_labels[:1] == (0,):
-            # A counter-example box is dashed, as committed ones are.
+        if self.create_mode in _AI_CREATE_MODES and draft.shape_type == "rectangle":
+            # A prompt box never becomes a shape, so it is a dashed guide.
             context = dataclasses.replace(context, line_style=Qt.PenStyle.DashLine)
+        if self.create_mode == "ai_find_all" and draft.point_labels[:1] == (0,):
+            context = dataclasses.replace(context, palette=_NEGATIVE_PALETTE)
         render_shape(painter=painter, shape=shape, context=context)
 
+    def _draw_ai_segment_proposals(self, painter: QtGui.QPainter, /) -> None:
+        # Defer inference until painting ends; unchanged inputs stop the loop.
+        self._ai_preview_timer.start(0)
+        if self._current is None and not self._ai_segment_dragging:
+            return
+        # Both layers take the selected style: its fill is the draft's colour,
+        # where the plain draft fill is a dark tint.
+        selected = self._draft_render_context(
+            selected=True, fill=True, highlight=None, rotation_highlight=None
+        )
+        # The guess at the cursor is what a click there gives, including the
+        # area it would drop, so it is a bare mask fill.
+        guess_context = dataclasses.replace(selected, outline=False)
+        for shape in self._ai_segment_preview or []:
+            render_shape(painter=painter, shape=shape, context=guess_context)
+        # What Enter adds has a white edge and its vertices, as AI-Find All
+        # results waiting for Enter do. It fills only while there is no guess.
+        fill = self._ai_segment_preview is None
+        context = dataclasses.replace(selected, fill=fill, fill_mask=fill)
+        for shape in self._ai_segment_result:
+            render_shape(painter=painter, shape=shape, context=context)
+
     def _build_preview_shapes(self) -> list[Shape]:
-        if self.create_mode == "ai_segment":
-            # Defer inference until painting ends; unchanged inputs stop the loop.
-            self._ai_preview_timer.start(0)
-            if self._current is None and not self._ai_segment_dragging:
-                return []
-            return self._ai_segment_preview
         if self._current is None:
             return []
         if self.create_mode == "polygon":
@@ -2287,29 +2585,52 @@ class Canvas(QtWidgets.QWidget):
         if self.create_mode != "ai_segment" or (
             current is None and not self._ai_segment_dragging
         ):
-            self._ai_segment_preview = []
+            self._ai_segment_result = []
+            self._ai_segment_result_key = None
+            self._ai_segment_preview = None
             self._ai_segment_preview_key = None
             return
-        key = (
-            current,
-            self._line,
+        settings = (
             self._ai_assist_session.model_name,
-            self._ai_assist_session.output_format,
-            self._ai_assist_session.polygon_detail,
             self._ai_suppress_existing_shape_matches,
             self._allow_out_of_bounds_points,
             self.pixmap.cacheKey(),
             tuple(self.shapes),
         )
+        # The guess is always a mask (see _ai_proposer), so only the result
+        # depends on the output format and polygon detail.
+        result_key = (
+            current,
+            self._ai_assist_session.output_format,
+            self._ai_assist_session.polygon_detail,
+            *settings,
+        )
+        if result_key != self._ai_segment_result_key:
+            self._ai_segment_result_key = result_key
+            if current is None or not current.points:
+                self._ai_segment_result = []
+                self._set_ai_existing_shape_highlights(shapes=[])
+                self.update()
+            else:
+                self._submit_ai_job(
+                    channel="result",
+                    **_ai_segment_prompt(current),
+                    preview_key=result_key,
+                )
+        key = (current, self._line, *settings)
         if key == self._ai_segment_preview_key:
             return
         self._ai_segment_preview_key = key
         base = current or _DraftShape(shape_type="points")
         preview = _with_ai_segment_input(base, self._line)
-        if preview is None:
-            preview = base  # What a release would keep.
-        if not preview.points:
-            self._ai_segment_preview = []
+        # No input at the cursor, or a box with no area: nothing to guess.
+        if preview is None or preview == base:
+            if self._ai_preview_job is not None:
+                # A guess still queued would delay the result of a new click.
+                assert self._osam_worker is not None
+                self._osam_worker.cancel("preview")
+                self._ai_preview_job = None
+            self._ai_segment_preview = None
             self.update()
             return
         self._submit_ai_job(
@@ -2318,22 +2639,29 @@ class Canvas(QtWidgets.QWidget):
             preview_key=key,
         )
 
-    def _show_ai_segment_preview(
-        self, *, proposal: _automation.AiAssistProposal | None, error: str | None
+    def _show_ai_segment_proposal(
+        self,
+        *,
+        job: _AiJob,
+        proposal: _automation.AiAssistProposal | None,
+        error: str | None,
     ) -> None:
+        shapes = [] if proposal is None else proposal.new_shapes
+        if job.channel == "result":
+            self._ai_segment_result = shapes
+            # Enter adds the result, so its matches are the ones to flag.
+            self._set_ai_existing_shape_highlights(
+                shapes=[] if proposal is None else proposal.matching_existing_shapes
+            )
+        else:
+            self._ai_segment_preview = shapes
         if proposal is None:
-            self._ai_segment_preview = []
-            self._set_ai_existing_shape_highlights(shapes=[])
             # Repeated failed prompts report once; a success re-arms the report.
             if not self._ai_inference_failed:
                 assert error is not None
                 self._report_inference_failure(error=error)
         else:
             self._ai_inference_failed = False
-            self._ai_segment_preview = proposal.new_shapes
-            self._set_ai_existing_shape_highlights(
-                shapes=proposal.matching_existing_shapes
-            )
         self.update()
 
     def transform_widget_point_to_image(self, point: QPointF, /) -> QPointF:
@@ -2378,9 +2706,6 @@ class Canvas(QtWidgets.QWidget):
                 )
                 return
             assert self.create_mode == "ai_segment"
-            # The app disables Undo while the result is pending, which would
-            # otherwise drop the draft.
-            self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
             self._submit_ai_job(
                 channel="finalize", **_ai_segment_prompt(draft), draft=draft
             )
@@ -2400,8 +2725,6 @@ class Canvas(QtWidgets.QWidget):
         draft: _DraftShape | None,
     ) -> None:
         # Every example so far goes with the new box, so the draft reflects all.
-        # The app disables Undo while the run is pending.
-        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
         self._submit_ai_job(
             channel="finalize",
             prompt_kind="example_box",
@@ -2478,7 +2801,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_segment_dragging = False
         self._ai_finalize_job = None
         self._set_ai_existing_shape_highlights(shapes=[])
-        self.drawing_polygon.emit(False)  # noqa: FBT003 -- Qt signal payload is positional
+        self.busy_changed.emit()
         self.update()
 
     def _set_ai_existing_shape_highlights(self, *, shapes: list[Shape]) -> None:
@@ -2659,7 +2982,7 @@ class Canvas(QtWidgets.QWidget):
             self._current = None
         else:
             assert self.create_mode == "oriented_rectangle"
-        self.drawing_polygon.emit(True)  # noqa: FBT003 -- Qt signal payload is positional
+        self.busy_changed.emit()
 
     def undo_last_point(self) -> None:
         current = self._current
@@ -2696,7 +3019,10 @@ class Canvas(QtWidgets.QWidget):
 
     def _reset_interaction_state(self) -> None:
         self._drag_anchor = None
+        was_drawing = self.is_drawing
         self._current = None
+        if was_drawing:
+            self.busy_changed.emit()
         self.hovered_shape = None
         self._hovered_vertex = None
         self._hovered_edge = None
@@ -2749,8 +3075,11 @@ class Canvas(QtWidgets.QWidget):
     def reset_state(self) -> None:
         self._ai_preview_timer.stop()
         self._ai_preview_job = None
+        self._ai_result_job = None
         self._ai_finalize_job = None
-        self._ai_segment_preview = []
+        self._ai_segment_result = []
+        self._ai_segment_result_key = None
+        self._ai_segment_preview = None
         self._ai_segment_preview_key = None
         self._ai_segment_press = None
         self._ai_segment_dragging = False
@@ -2776,6 +3105,8 @@ class Canvas(QtWidgets.QWidget):
         self._hovered_edge = None
         self._last_hovered_edge = None
         self._hovered_rotation = None
+        # The draft and any pending AI job are gone with the old image.
+        self.busy_changed.emit()
         self.update()
 
 

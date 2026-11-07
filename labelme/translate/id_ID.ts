@@ -16,6 +16,10 @@
         <translation>Lebih detail</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Keluaran</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Poligon</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>Klik &amp; seret untuk memindahkan bentuk</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Membuat %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC untuk membatalkan</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>Klik untuk menambahkan titik</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Seret kotak</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Seret mengelilingi satu contoh</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Buang</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Tambah</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Klik untuk menyertakan</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Klik untuk mengecualikan</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Tambah %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Seret untuk mengecualikan</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -537,11 +569,6 @@
     <message>
         <source>Undo</source>
         <translation>Urungkan</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Edit</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -864,6 +891,11 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Menghapus titik terpilih dari poligon atau garis patah</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Pilih</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Klik untuk menempatkan titik garis patah; tahan %s lalu klik untuk menempatkan titik terakhir.</translation>
     </message>
@@ -930,10 +962,6 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
     <message>
         <source>Cancel</source>
         <translation>Batal</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Pertahankan perubahan anotasi untuk &quot;{}&quot;?</translation>
     </message>
     <message>
         <source>Unsaved changes</source>
@@ -1008,6 +1036,26 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Cadangkan dan reset</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Memulai AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Memuat {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Menyiapkan gambar di CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Menyiapkan gambar…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} dtk</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Label tidak valid</translation>
     </message>
@@ -1020,8 +1068,20 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Folder Anotasi: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Hapus berkas anotasi? Tindakan ini tidak dapat diurungkan.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Hapus &quot;{}&quot;? Tindakan ini tidak dapat diurungkan.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Unduh</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Simpan perubahan anotasi untuk &quot;{}&quot;?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1186,6 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Hapus Berkas Anotasi</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Hapus permanen berkas anotasi ini? Tindakan ini tidak dapat dibatalkan.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
