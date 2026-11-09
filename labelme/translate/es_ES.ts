@@ -790,6 +790,22 @@
         <translation>Reintentar</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Selecciona al menos dos formas para fusionarlas</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Solo se pueden fusionar formas de máscara</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Desbloquea todas las formas antes de fusionarlas</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>Todas las formas seleccionadas deben tener la misma etiqueta</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Elija una etiqueta para empezar a dibujar con ella. Pulse &apos;Esc&apos; para borrar la selección.</translation>
     </message>

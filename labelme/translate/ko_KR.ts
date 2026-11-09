@@ -790,6 +790,22 @@
         <translation>다시 시도</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>병합할 도형을 두 개 이상 선택하세요</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>마스크 도형만 병합할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>병합하기 전에 모든 도형의 잠금을 해제하세요</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>선택한 모든 도형의 레이블이 같아야 합니다</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>그리기를 시작할 라벨을 선택하세요. &apos;Esc&apos;를 눌러 선택을 해제합니다.</translation>
     </message>

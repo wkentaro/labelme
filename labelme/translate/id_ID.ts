@@ -737,6 +737,22 @@
         <translation>Coba lagi</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Pilih setidaknya dua bentuk untuk digabungkan</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Hanya bentuk mask yang dapat digabungkan</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Buka kunci semua bentuk sebelum menggabungkan</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>Semua bentuk yang dipilih harus memiliki label yang sama</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Pilih label untuk mulai menggambar dengannya. Tekan &apos;Esc&apos; untuk menghapus pilihan.</translation>
     </message>

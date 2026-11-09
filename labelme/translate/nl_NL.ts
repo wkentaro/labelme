@@ -790,6 +790,22 @@
         <translation>Opnieuw proberen</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Selecteer ten minste twee vormen om samen te voegen</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Alleen maskervormen kunnen worden samengevoegd</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Ontgrendel alle vormen voordat u ze samenvoegt</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>Alle geselecteerde vormen moeten hetzelfde label hebben</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Kies een label om ermee te tekenen. Druk op &apos;Esc&apos; om de selectie op te heffen.</translation>
     </message>

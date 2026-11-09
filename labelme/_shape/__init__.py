@@ -3,6 +3,7 @@ from ._hit_testing import nearest_rotation_point_index
 from ._hit_testing import nearest_vertex_index
 from ._merge import can_merge_shapes
 from ._merge import merge_masks
+from ._merge import merge_shapes_reason
 from ._model import CIRCLE_POINT_COUNT
 from ._model import LINE_POINT_COUNT
 from ._model import MIN_LINESTRIP_POINT_COUNT
@@ -32,6 +33,7 @@ __all__ = [
     "can_merge_shapes",
     "get_rotation_handle",
     "merge_masks",
+    "merge_shapes_reason",
     "nearest_edge_index",
     "nearest_rotation_point_index",
     "nearest_vertex_index",

@@ -762,6 +762,22 @@
         <translation>Повторити</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Виберіть щонайменше дві фігури для об’єднання</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Об’єднувати можна лише фігури-маски</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Розблокуйте всі фігури перед об’єднанням</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>Усі вибрані фігури повинні мати однакову мітку</translation>
+    </message>
+    <message>
         <source>Flags</source>
         <translation>Прапори</translation>
     </message>

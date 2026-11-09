@@ -60,6 +60,7 @@ from ._shape import ShapeDict
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
 from ._shape import merge_masks
+from ._shape import merge_shapes_reason
 from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
 from ._utils import ImageDecodeRequirement
@@ -286,6 +287,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _viewport_states: dict[str, _ViewportState]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
     _default_state: QtCore.QByteArray
+    _canvas_status_message: str = ""
+    _merge_shapes_reason: str | None = None
 
     def __init__(
         self,
@@ -1338,6 +1341,33 @@ class MainWindow(QtWidgets.QMainWindow):
             message=message, stats=stats, save=save, retry=retry, ai=ai
         )
 
+    def _on_canvas_status_updated(self, text: str, /) -> None:
+        self._canvas_status_message = text
+        self._refresh_canvas_status()
+
+    def _refresh_canvas_status(self) -> None:
+        if not hasattr(self, "_status_bar"):
+            return
+        messages = [self._canvas_status_message]
+        if self._merge_shapes_reason:
+            messages.append(self._merge_shapes_reason)
+        self._status_bar.message.setText(" • ".join(filter(None, messages)))
+
+    def _translate_merge_shapes_reason(self, reason: str | None, /) -> str | None:
+        match reason:
+            case "Select at least two shapes to merge":
+                return self.tr("Select at least two shapes to merge")
+            case "Only mask shapes can be merged":
+                return self.tr("Only mask shapes can be merged")
+            case "Unlock all shapes before merging":
+                return self.tr("Unlock all shapes before merging")
+            case "All selected shapes must have the same label":
+                return self.tr("All selected shapes must have the same label")
+            case None:
+                return None
+            case _:
+                raise AssertionError(f"Unexpected Merge Shapes reason: {reason}")
+
     def _setup_canvas(self) -> _CanvasWidgets:
         zoom_widget = ZoomWidget()
 
@@ -1365,9 +1395,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         canvas.zoom_request.connect(self._zoom_requested)
         canvas.mouse_moved.connect(self._update_status_stats)
-        canvas.status_updated.connect(
-            lambda text: self._status_bar.message.setText(text)
-        )
+        canvas.status_updated.connect(self._on_canvas_status_updated)
 
         scroll_area = QtWidgets.QScrollArea()
         scroll_area.setWidget(canvas)
@@ -2004,7 +2032,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete.setEnabled(
             not busy and any(not shape.locked for shape in selected)
         )
-        self._actions.merge.setEnabled(not busy and can_merge_shapes(selected))
+        reason = merge_shapes_reason(selected) if not busy else None
+        self._merge_shapes_reason = self._translate_merge_shapes_reason(reason)
+        merge_tip = self._merge_shapes_reason or self.tr(
+            "Merge the selected mask shapes into one"
+        )
+        self._actions.merge.setToolTip(merge_tip)
+        self._actions.merge.setStatusTip(merge_tip)
+        self._actions.merge.setEnabled(not busy and reason is None)
+        self._refresh_canvas_status()
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)

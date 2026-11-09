@@ -240,6 +240,47 @@ def test_merge_mask_shapes(
 
 
 @pytest.mark.gui
+def test_merge_action_explains_disabled_reason(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open_and_select_shape(
+        main_win=main_win,
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides=None,
+        output_dir=None,
+    )
+
+    assert not win._actions.merge.isEnabled()
+    assert win._actions.merge.toolTip() == "Select at least two shapes to merge"
+    assert win._status_bar.message.text().endswith(
+        "Select at least two shapes to merge"
+    )
+
+    canvas.select_shapes(shapes=canvas.shapes[:2])
+    qtbot.wait(50)
+
+    assert not win._actions.merge.isEnabled()
+    assert win._actions.merge.toolTip() == "Only mask shapes can be merged"
+    assert win._status_bar.message.text().endswith("Only mask shapes can be merged")
+
+    canvas.deselect_shape()
+    qtbot.wait(50)
+
+    assert not win._actions.merge.isEnabled()
+    assert win._actions.merge.toolTip() == "Select at least two shapes to merge"
+    assert win._status_bar.message.text().endswith(
+        "Select at least two shapes to merge"
+    )
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
 def test_delete_shape(
     *,
     main_win: MainWinFactory,

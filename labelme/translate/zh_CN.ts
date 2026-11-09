@@ -790,6 +790,22 @@
         <translation>重试</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>至少选择两个形状进行合并</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>只能合并掩码形状</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>合并前请解锁所有形状</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>所有选中的形状必须具有相同的标签</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>选择一个标签以开始用它绘制。按 &apos;Esc&apos; 清除选择。</translation>
     </message>

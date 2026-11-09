@@ -790,6 +790,22 @@
         <translation>تلاش دوباره</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>حداقل دو شکل را برای ادغام انتخاب کنید</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>فقط شکل‌های ماسک را می‌توان ادغام کرد</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>پیش از ادغام، قفل همه شکل‌ها را باز کنید</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>همه شکل‌های انتخاب‌شده باید برچسب یکسانی داشته باشند</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>یک برچسب را انتخاب کنید تا با آن شروع به ترسیم کنید. برای لغو انتخاب، &apos;Esc&apos; را فشار دهید.</translation>
     </message>

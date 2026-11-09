@@ -790,6 +790,22 @@
         <translation>Thử lại</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Chọn ít nhất hai hình để hợp nhất</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Chỉ có thể hợp nhất các hình mặt nạ</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Mở khóa tất cả các hình trước khi hợp nhất</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>Tất cả các hình đã chọn phải có cùng nhãn</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Chọn một nhãn để bắt đầu vẽ với nhãn đó. Nhấn &apos;Esc&apos; để xóa lựa chọn.</translation>
     </message>

@@ -800,6 +800,22 @@
         <translation>再試行</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>マージする図形を2つ以上選択してください</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>マスク図形のみマージできます</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>マージする前にすべての図形のロックを解除してください</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>選択したすべての図形に同じラベルが必要です</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>ラベルを選択して描画を開始します。&apos;Esc&apos;キーを押すと選択が解除されます。</translation>
     </message>

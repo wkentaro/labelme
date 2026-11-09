@@ -8,13 +8,20 @@ import numpy.typing as npt
 from ._model import Shape
 
 
+def merge_shapes_reason(shapes: list[Shape], /) -> str | None:
+    if len(shapes) <= 1:
+        return "Select at least two shapes to merge"
+    if not all(s.shape_type == "mask" and s.mask is not None for s in shapes):
+        return "Only mask shapes can be merged"
+    if any(s.locked for s in shapes):
+        return "Unlock all shapes before merging"
+    if len({s.label for s in shapes}) != 1:
+        return "All selected shapes must have the same label"
+    return None
+
+
 def can_merge_shapes(shapes: list[Shape], /) -> bool:
-    return (
-        len(shapes) > 1
-        and all(s.shape_type == "mask" and s.mask is not None for s in shapes)
-        and not any(s.locked for s in shapes)
-        and len({s.label for s in shapes}) == 1
-    )
+    return merge_shapes_reason(shapes) is None
 
 
 def _round_bbox_to_int(shape: Shape, /) -> tuple[int, int, int, int]:

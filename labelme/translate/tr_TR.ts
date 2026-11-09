@@ -790,6 +790,22 @@
         <translation>Yeniden dene</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Birleştirmek için en az iki şekil seçin</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Yalnızca maske şekilleri birleştirilebilir</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Birleştirmeden önce tüm şekillerin kilidini açın</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>Seçilen tüm şekiller aynı etikete sahip olmalıdır</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Çizime başlamak için bir etiket seçin. Seçimi temizlemek için &apos;Esc&apos; tuşuna basın.</translation>
     </message>

@@ -6,6 +6,7 @@ import pytest
 from labelme._shape import Shape
 from labelme._shape import can_merge_shapes
 from labelme._shape import merge_masks
+from labelme._shape import merge_shapes_reason
 
 
 def _full_mask(*, xmin: float, ymin: float, size: int, label: str) -> Shape:
@@ -123,3 +124,66 @@ def test_can_merge_shapes_accepts_two_masks_with_one_label() -> None:
         _full_mask(xmin=3, ymin=3, size=2, label="cat"),
     ]
     assert can_merge_shapes(shapes)
+
+
+@pytest.mark.parametrize(
+    ("shapes", "reason"),
+    [
+        ([], "Select at least two shapes to merge"),
+        (
+            [_full_mask(xmin=0, ymin=0, size=2, label="cat")],
+            "Select at least two shapes to merge",
+        ),
+        (
+            [
+                _full_mask(xmin=0, ymin=0, size=2, label="cat"),
+                Shape(
+                    label="cat",
+                    shape_type="rectangle",
+                    points=np.array([[0.0, 0.0], [2.0, 2.0]]),
+                ),
+            ],
+            "Only mask shapes can be merged",
+        ),
+        (
+            [
+                _full_mask(xmin=0, ymin=0, size=2, label="cat"),
+                _full_mask(xmin=3, ymin=3, size=2, label="cat"),
+            ],
+            "Unlock all shapes before merging",
+        ),
+        (
+            [
+                _full_mask(xmin=0, ymin=0, size=2, label="cat"),
+                _full_mask(xmin=3, ymin=3, size=2, label="dog"),
+            ],
+            "All selected shapes must have the same label",
+        ),
+    ],
+    ids=["empty", "single", "non-mask", "locked", "different-labels"],
+)
+def test_merge_shapes_reason(*, shapes: list[Shape], reason: str) -> None:
+    if reason == "Unlock all shapes before merging":
+        shapes[-1].locked = True
+    assert merge_shapes_reason(shapes) == reason
+
+
+def test_merge_shapes_reason_is_none_for_mergeable_shapes() -> None:
+    shapes = [
+        _full_mask(xmin=0, ymin=0, size=2, label="cat"),
+        _full_mask(xmin=3, ymin=3, size=2, label="cat"),
+    ]
+    assert merge_shapes_reason(shapes) is None
+
+
+def test_merge_shapes_reason_uses_condition_order() -> None:
+    shapes = [
+        _full_mask(xmin=0, ymin=0, size=2, label="cat"),
+        Shape(
+            label="dog",
+            shape_type="rectangle",
+            points=np.array([[0.0, 0.0], [2.0, 2.0]]),
+            locked=True,
+        ),
+    ]
+    assert merge_shapes_reason(shapes) == "Only mask shapes can be merged"

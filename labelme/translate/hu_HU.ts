@@ -798,6 +798,22 @@
         <translation>Újra</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Válasszon ki legalább két alakzatot az egyesítéshez</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Csak maszk alakzatok egyesíthetők</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Egyesítés előtt oldja fel az összes alakzat zárolását</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>Minden kiválasztott alakzatnak ugyanazzal a címkével kell rendelkeznie</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Válasszon egy címkét a rajzolás megkezdéséhez. Az &apos;Esc&apos; billentyűvel megszüntetheti a kijelölést.</translation>
     </message>

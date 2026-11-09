@@ -790,6 +790,22 @@
         <translation>Повторить</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Выберите как минимум две фигуры для объединения</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Объединять можно только маски</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Перед объединением разблокируйте все фигуры</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>У всех выбранных фигур должна быть одна и та же метка</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Выберите метку, чтобы начать рисовать ею. Нажмите &apos;Esc&apos;, чтобы снять выделение.</translation>
     </message>

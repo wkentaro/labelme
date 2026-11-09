@@ -790,6 +790,22 @@
         <translation>Ponów</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Wybierz co najmniej dwa kształty do scalenia</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Można scalać tylko kształty masek</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Odblokuj wszystkie kształty przed scaleniem</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>Wszystkie wybrane kształty muszą mieć tę samą etykietę</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>Wybierz etykietę, aby zacząć nią rysować. Naciśnij &apos;Esc&apos;, aby wyczyścić zaznaczenie.</translation>
     </message>

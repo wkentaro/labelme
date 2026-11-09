@@ -762,6 +762,22 @@
         <translation>Επανάληψη</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>Επιλέξτε τουλάχιστον δύο σχήματα για συγχώνευση</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Μπορούν να συγχωνευθούν μόνο σχήματα μάσκας</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>Ξεκλειδώστε όλα τα σχήματα πριν από τη συγχώνευση</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>Όλα τα επιλεγμένα σχήματα πρέπει να έχουν την ίδια ετικέτα</translation>
+    </message>
+    <message>
         <source>Flags</source>
         <translation>Σημάνσεις</translation>
     </message>

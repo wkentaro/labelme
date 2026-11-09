@@ -791,6 +791,22 @@
         <translation>ลองใหม่</translation>
     </message>
     <message>
+        <source>Select at least two shapes to merge</source>
+        <translation>เลือกอย่างน้อยสองรูปร่างเพื่อรวม</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>สามารถรวมได้เฉพาะรูปร่างมาสก์เท่านั้น</translation>
+    </message>
+    <message>
+        <source>Unlock all shapes before merging</source>
+        <translation>ปลดล็อกรูปร่างทั้งหมดก่อนรวม</translation>
+    </message>
+    <message>
+        <source>All selected shapes must have the same label</source>
+        <translation>รูปร่างที่เลือกทั้งหมดต้องมีป้ายกำกับเดียวกัน</translation>
+    </message>
+    <message>
         <source>Choose a label to start drawing with it. Press &apos;Esc&apos; to clear the selection.</source>
         <translation>เลือกป้ายกำกับเพื่อเริ่มวาดด้วยป้ายนั้น กด &apos;Esc&apos; เพื่อล้างการเลือก</translation>
     </message>
