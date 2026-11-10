@@ -33,7 +33,7 @@ def test_status_bar_names_the_running_ai_task(
     monkeypatch.setattr(OsamWorker, "device", property(lambda _: state["device"]))
     monkeypatch.setattr(Canvas, "ai_find_all_job", property(lambda _: box["job"]))
     announced: list[str] = []
-    monkeypatch.setattr(win, "_announce", announced.append)
+    monkeypatch.setattr(win, "_announce", lambda *, message: announced.append(message))
     label = win._status_bar.ai
 
     texts = []
@@ -102,7 +102,7 @@ def test_status_bar_names_the_stage_and_time_of_a_slow_prompt(
         )
     monkeypatch.setattr(Canvas, "ai_find_all_job", property(lambda _: None))
     announced: list[str] = []
-    monkeypatch.setattr(win, "_announce", announced.append)
+    monkeypatch.setattr(win, "_announce", lambda *, message: announced.append(message))
     label = win._status_bar.ai
 
     def show(**changes: object) -> str:

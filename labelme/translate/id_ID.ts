@@ -1056,12 +1056,44 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>{status} · {seconds} dtk</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Pilih minimal dua bentuk mask untuk digabungkan</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Hanya bentuk mask yang dapat digabungkan</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Buka kunci bentuk terpilih untuk menggabungkannya</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Hanya bentuk dengan label yang sama yang dapat digabungkan</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Label tidak valid</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Gagal menyimpan berkas anotasi</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Menemukan gambar akan memperbarui berkas anotasi agar merujuk ke gambar tersebut.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Cari Gambar…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Cari Gambar</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Gambar (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

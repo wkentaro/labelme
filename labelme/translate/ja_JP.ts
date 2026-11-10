@@ -1066,12 +1066,44 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>新しい「{query}」は見つかりませんでした</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>結合するマスク図形を2つ以上選択してください</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>結合できるのはマスク図形のみです</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>結合するには、選択した図形のロックを解除してください</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>結合できるのは同じラベルの図形のみです</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>無効なラベル</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>アノテーションファイルの保存エラー</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>画像の場所を指定すると、アノテーションファイルの参照先がその画像に更新されます。</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>画像の場所を指定…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>画像の場所を指定</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>画像 (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

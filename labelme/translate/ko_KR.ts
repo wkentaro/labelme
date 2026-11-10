@@ -1056,12 +1056,44 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>새 &apos;{query}&apos;을(를) 찾지 못했습니다</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>병합할 마스크 도형을 두 개 이상 선택하세요</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>마스크 도형만 병합할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>병합하려면 선택한 도형의 잠금을 해제하세요</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>레이블이 같은 도형만 병합할 수 있습니다</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>잘못된 레이블</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>주석 파일 저장 오류</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>이미지를 찾으면 주석 파일이 해당 이미지를 참조하도록 업데이트됩니다.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>이미지 찾기…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>이미지 찾기</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>이미지 (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

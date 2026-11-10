@@ -1057,12 +1057,44 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>ไม่พบ &apos;{query}&apos; ใหม่</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>เลือกรูปร่างมาสก์อย่างน้อยสองรูปเพื่อรวม</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>รวมได้เฉพาะรูปร่างมาสก์</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>ปลดล็อกรูปร่างที่เลือกเพื่อรวม</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>รวมได้เฉพาะรูปร่างที่มีเลเบลเดียวกัน</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>เลเบลไม่ถูกต้อง</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>เมื่อระบุตำแหน่งรูปภาพ ไฟล์คำอธิบายประกอบจะได้รับการอัปเดตให้อ้างอิงรูปภาพนั้น</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>ระบุตำแหน่งรูปภาพ…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>ระบุตำแหน่งรูปภาพ</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>รูปภาพ (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

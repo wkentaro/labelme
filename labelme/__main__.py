@@ -14,6 +14,7 @@ import warnings
 from pathlib import Path
 from typing import AnyStr
 from typing import Final
+from typing import override
 
 from loguru import logger
 from PySide6 import QtCore
@@ -40,6 +41,7 @@ _LOGGER_LEVELS: Final = (  # noqa: GR011 -- parametrized by tests
 
 
 class _LoggerIO(io.StringIO):
+    @override
     def write(self, s: AnyStr, /) -> int:
         assert isinstance(s, str)
         if stripped_s := s.strip():
@@ -224,7 +226,7 @@ class _DeprecatedAlias(argparse.Action):
         setattr(namespace, self.dest, self.const if self.nargs == 0 else values)
 
 
-def _parse_list_arg(value: str, /) -> list[str]:
+def _parse_list_arg(*, value: str) -> list[str]:
     if os.path.isfile(value):
         with open(value, encoding="utf-8") as f:
             return [line.strip() for line in f if line.strip()]
@@ -246,7 +248,7 @@ def _resolve_config_source(
             return None, {}
         return Path(default_config_file), {}
 
-    if isinstance(config_loaded := _yaml.safe_load(config_arg), dict):
+    if isinstance(config_loaded := _yaml.safe_load(stream=config_arg), dict):
         return None, config_loaded
 
     if not os.path.isfile(config_arg):
@@ -368,17 +370,17 @@ def main() -> None:
     sys.excepthook = _handle_exception
 
     if hasattr(args, "flags"):
-        args.flags = _parse_list_arg(args.flags)
+        args.flags = _parse_list_arg(value=args.flags)
 
     if hasattr(args, "labels"):
-        args.labels = _parse_list_arg(args.labels)
+        args.labels = _parse_list_arg(value=args.labels)
 
     if hasattr(args, "label_flags"):
         if os.path.isfile(args.label_flags):
             with open(args.label_flags, encoding="utf-8") as f:
-                args.label_flags = _yaml.safe_load(f)
+                args.label_flags = _yaml.safe_load(stream=f)
         else:
-            args.label_flags = _yaml.safe_load(args.label_flags)
+            args.label_flags = _yaml.safe_load(stream=args.label_flags)
 
     config_from_args = args.__dict__
     config_from_args.pop("version")
@@ -426,7 +428,7 @@ def main() -> None:
         color_theme = "system"
     # A stale or hand-edited language code with no bundled translation follows the
     # system locale, matching the Settings dialog.
-    if not _locale.is_valid_language(language):
+    if not _locale.is_valid_language(code=language):
         language = None
     locale_name = language or QtCore.QLocale.system().name()
     translator = QtCore.QTranslator()
@@ -445,7 +447,9 @@ def main() -> None:
     # On macOS the window icon replaces the Dock icon, which needs Apple's
     # padded rounded shape rather than the full-bleed square.
     app.setWindowIcon(
-        new_icon("icon-macos-512.png" if sys.platform == "darwin" else "icon-256.png")
+        new_icon(
+            name="icon-macos-512.png" if sys.platform == "darwin" else "icon-256.png"
+        )
     )
     app.installTranslator(qt_translator)
     app.installTranslator(translator)

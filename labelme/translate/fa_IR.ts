@@ -1056,12 +1056,44 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>«{query}» جدیدی پیدا نشد</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>برای ادغام، دست‌کم دو شکل ماسک انتخاب کنید</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>فقط شکل‌های ماسک ادغام می‌شوند</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>برای ادغام، قفل شکل‌های انتخاب شده را باز کنید</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>فقط شکل‌های دارای برچسب یکسان ادغام می‌شوند</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>برچسب نامعتبر</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>با پیدا کردن تصویر، فایل حاشیه‌نویسی به‌روزرسانی می‌شود تا به آن ارجاع دهد.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>پیدا کردن تصویر…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>پیدا کردن تصویر</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>تصاویر (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

@@ -1056,12 +1056,44 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>Nincs új „{query}”</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Az egyesítéshez jelöljön ki legalább két maszk alakzatot</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Csak maszk alakzatok egyesíthetők</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Az egyesítéshez oldja fel a kijelölt alakzatokat</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Csak azonos címkéjű alakzatok egyesíthetők</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Érvénytelen címke</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Hiba az annotációs fájl mentésekor</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>A kép megkeresése frissíti az annotációs fájlt, hogy arra hivatkozzon.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Kép megkeresése…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Kép megkeresése</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Képek (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

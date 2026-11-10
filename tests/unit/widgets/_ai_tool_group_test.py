@@ -67,7 +67,7 @@ def test_run_fits_its_label_inside_the_reserved_room(*, group: AiToolGroup) -> N
 
     assert run_button.width() < margin // 2
 
-    group._detect.set_detecting(True)  # noqa: FBT003 -- state flag
+    group._detect.set_detecting(detecting=True)  # noqa: FBT003 -- state flag
     QtWidgets.QApplication.processEvents()
 
     assert run_button.width() > margin // 2
@@ -90,14 +90,14 @@ def test_run_keeps_clear_of_right_to_left_text(*, qtbot: QtBot) -> None:
         QtWidgets.QApplication.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
 
 
-def _menu_texts(menu: QtWidgets.QMenu, /) -> list[str]:
+def _menu_texts(*, menu: QtWidgets.QMenu) -> list[str]:
     return [action.text() for action in menu.actions() if not action.isSeparator()]
 
 
 @pytest.mark.gui
 def test_model_menu_has_a_section_per_tool(*, group: AiToolGroup) -> None:
     menu = group._model_button._build_menu()
-    texts = _menu_texts(menu)
+    texts = _menu_texts(menu=menu)
 
     segment = texts.index("AI-Segment")
     find_all = texts.index("AI-Find All")
@@ -115,7 +115,7 @@ def test_model_menu_has_a_section_per_tool(*, group: AiToolGroup) -> None:
     ]
     more = next(a.menu() for a in menu.actions() if a.text() == "More models…")
     assert isinstance(more, QtWidgets.QMenu)
-    assert _menu_texts(more) == [
+    assert _menu_texts(menu=more) == [
         "EfficientSAM Small",
         "SAM Base",
         "SAM Large",
@@ -157,11 +157,11 @@ def test_choosing_from_the_model_menu_selects_that_tools_model(
 def test_run_reads_detecting_while_a_job_runs(*, group: AiToolGroup) -> None:
     detect = group._detect
 
-    detect.set_detecting(True)  # noqa: FBT003 -- state flag
+    detect.set_detecting(detecting=True)  # noqa: FBT003 -- state flag
 
     assert detect._run_button.text() == "Finding…"
 
-    detect.set_detecting(False)  # noqa: FBT003 -- state flag
+    detect.set_detecting(detecting=False)  # noqa: FBT003 -- state flag
 
     assert detect._run_button.text() == AiTextToAnnotationWidget._RUN_GLYPH
 
@@ -207,7 +207,7 @@ def test_model_button_opens_the_model_menu(*, group: AiToolGroup, qtbot: QtBot) 
     menu = QtWidgets.QApplication.activePopupWidget()
     assert isinstance(menu, QtWidgets.QMenu)
     qtbot.waitExposed(menu)
-    assert "AI-Find All" in _menu_texts(menu)
+    assert "AI-Find All" in _menu_texts(menu=menu)
 
     menu.hide()
 
@@ -224,20 +224,20 @@ def test_model_menu_shows_the_download_size_of_missing_models(
     )
 
     menu = group._model_button._build_menu()
-    texts = _menu_texts(menu)
+    texts = _menu_texts(menu=menu)
     more = next(a.menu() for a in menu.actions() if a.text() == "More models…")
     assert isinstance(more, QtWidgets.QMenu)
 
     assert "SAM 2 Base+\tBalanced" in texts
     assert "SAM 3\tMost accurate · 3.4 GB" in texts
     assert "YOLO-World\tFastest · Boxes only · 642 MB" in texts
-    assert "SAM 2 Large\t868 MB" in _menu_texts(more)
+    assert "SAM 2 Large\t868 MB" in _menu_texts(menu=more)
 
 
 @pytest.mark.gui
 def test_model_menu_explains_each_model_on_hover(*, group: AiToolGroup) -> None:
     group._detect._model_combo.set_unavailable_models(
-        {"yoloworld:latest": "Not for masks"}
+        unavailable={"yoloworld:latest": "Not for masks"}
     )
 
     tips = {a.text(): a.toolTip() for a in group._model_button._build_menu().actions()}

@@ -16,7 +16,7 @@ POLYGON_FAMILY_SHAPE_TYPES: typing.Final[tuple[ShapeType, ...]] = (
 )
 
 
-def get_valid_conversion_targets(shape: Shape, /) -> set[ShapeType]:
+def get_valid_conversion_targets(*, shape: Shape) -> set[ShapeType]:
     if shape.locked:
         return set()
 
@@ -39,19 +39,19 @@ def get_valid_conversion_targets(shape: Shape, /) -> set[ShapeType]:
 
 
 def get_intersection_conversion_targets(
-    shapes: typing.Iterable[Shape], /
+    *, shapes: typing.Iterable[Shape]
 ) -> set[ShapeType]:
     shape_list = list(shapes)
     if not shape_list:
         return set()
 
-    first_targets = get_valid_conversion_targets(shape_list[0])
+    first_targets = get_valid_conversion_targets(shape=shape_list[0])
     if not first_targets:
         return set()
 
     intersection = set(first_targets)
     for s in shape_list[1:]:
-        intersection &= get_valid_conversion_targets(s)
+        intersection &= get_valid_conversion_targets(shape=s)
         if not intersection:
             break
 
@@ -59,7 +59,7 @@ def get_intersection_conversion_targets(
 
 
 def convert_shape_geometry(*, shape: Shape, target_type: ShapeType) -> Shape:
-    valid_targets = get_valid_conversion_targets(shape)
+    valid_targets = get_valid_conversion_targets(shape=shape)
     if target_type not in valid_targets:
         raise ValueError(
             f"Cannot convert shape of type {shape.shape_type!r} with "

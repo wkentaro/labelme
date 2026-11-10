@@ -8,7 +8,7 @@ from loguru import logger
 RGB_CHANNEL_COUNT: Final = 3
 
 
-def _is_rgb(value: object, /) -> bool:
+def _is_rgb(*, value: object) -> bool:
     CHANNEL_VALUE_MAX: Final = 255
 
     return (
@@ -24,7 +24,7 @@ def _is_rgb(value: object, /) -> bool:
 
 
 def _validate_rgb(*, path: str, value: object) -> None:
-    if not _is_rgb(value):
+    if not _is_rgb(value=value):
         raise ValueError(f"{path} must be a list of three integers from 0 to 255")
 
 

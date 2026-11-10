@@ -21,6 +21,7 @@ from typing import Final
 from typing import Literal
 from typing import NamedTuple
 from typing import cast
+from typing import override
 
 import natsort
 import numpy as np
@@ -50,17 +51,20 @@ from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
 from ._label_file import read_label_file_image_path
+from ._label_file import relink_label_file
 from ._label_flags import apply_default_flags
 from ._model_manager import ModelManager
 from ._save_request import SaveRequest
 from ._save_request import write_save_request
 from ._save_writer import SaveWriter
+from ._shape import MergeBlocker
 from ._shape import Shape
 from ._shape import ShapeDict
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
 from ._shape import convert_shape_geometry
 from ._shape import get_intersection_conversion_targets
+from ._shape import merge_blocker
 from ._shape import merge_masks
 from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
@@ -235,7 +239,7 @@ class _Menus(NamedTuple):
 
 
 def _default_window_geometry(
-    available: QtCore.QRect, /, *, toolbar_width: int
+    *, available: QtCore.QRect, toolbar_width: int
 ) -> QtCore.QRect:
     # A first window wide enough for the whole labeled toolbar, shrunk to fit a
     # smaller screen and centered on it.
@@ -257,6 +261,22 @@ def _try_load_config(
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    _label_list_menu_origin: QtCore.QPoint | None
+    _save_revision: int
+    _auto_save_path: str | None
+    _chosen_save_path: str | None
+    _save_writer: SaveWriter
+    _image_prefetcher: ImagePrefetcher
+    _model_manager: ModelManager
+    _osam_worker: _automation.OsamWorker
+    _ai_text_job: _AiTextJob | None
+    _ai_status_job: object
+    _ai_status_started_at: float
+    _ai_status_announced: set[str]
+    _ai_status_timer: QtCore.QTimer
+    _hidden_annotated_paths: set[str]
+    _window_state: QtCore.QSettings
+
     _config_file: Path | None
     _config: dict
     _config_overrides: dict
@@ -321,7 +341,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_dialog = self._make_label_dialog(label_history=None)
 
         self._prev_opened_dir = None
-        self._label_list_menu_origin: QtCore.QPoint | None = None
+        self._label_list_menu_origin = None
         self._docks = self._setup_dock_widgets()
 
         self.setAcceptDrops(True)
@@ -360,7 +380,7 @@ class MainWindow(QtWidgets.QMainWindow):
             model_name=self._ai_annotation.current_model_id
         )
         self._canvas_widgets.canvas.set_ai_output_format(
-            self._ai_annotation.output_format
+            output_format=self._ai_annotation.output_format
         )
         self._canvas_widgets.canvas.set_ai_polygon_detail(
             detail=self._config["mask_polygonization"]["detail"]
@@ -370,7 +390,7 @@ class MainWindow(QtWidgets.QMainWindow):
             on_submit=self._submit_ai_prompt, parent=self
         )
         self._ai_text.set_model_name(model_name=self._config["ai"]["text_model"] or "")
-        self._ai_text.set_label_suggestions(self._docks.unique_label_list.model())
+        self._ai_text.set_label_suggestions(model=self._docks.unique_label_list.model())
         # The Setting, not the picker: the picker is empty until the model is
         # downloaded, and Prompt Compatibility is checked before that.
         self._canvas_widgets.canvas.get_ai_find_all_model_name = lambda: (
@@ -396,7 +416,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
-        self._auto_save_path: str | None = None
+        self._auto_save_path = None
+        self._chosen_save_path = None
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
         self._image_prefetcher = ImagePrefetcher()
@@ -405,14 +426,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.finished.connect(self._on_ai_text_finished)
         self._osam_worker.failed.connect(self._on_ai_text_failed)
         self._osam_worker.activity_changed.connect(self._on_ai_activity_changed)
-        self._osam_worker.set_device(self._config["ai"]["device"])
-        self._canvas_widgets.canvas.set_osam_worker(self._osam_worker)
-        self._ai_text_job: _AiTextJob | None = None
+        self._osam_worker.set_device(device=self._config["ai"]["device"])
+        self._canvas_widgets.canvas.set_osam_worker(worker=self._osam_worker)
+        self._ai_text_job = None
         # Kept while idle, so a job retried on CPU keeps its clock and what
         # was announced for it.
-        self._ai_status_job: object = None
+        self._ai_status_job = None
         self._ai_status_started_at = 0.0
-        self._ai_status_announced: set[str] = set()  # "task" and slow stages
+        self._ai_status_announced = set()  # "task" and slow stages
         self._ai_status_timer = QtCore.QTimer(self)
         self._ai_status_timer.setInterval(1000)
         self._ai_status_timer.timeout.connect(self._on_ai_activity_changed)
@@ -474,17 +495,18 @@ class MainWindow(QtWidgets.QMainWindow):
         image_actions = QtGui.QActionGroup(self)
         image_actions.setExclusive(False)
         image_actions.setEnabled(False)
-        image_action = functools.partial(_utils.new_action, image_actions)
+        image_action = functools.partial(_utils.new_action, parent=image_actions)
         # The active mode shows as checked, not disabled, so it reads as the
         # selected tool. An action joins only one QActionGroup and these are in
         # the image group, so _switch_canvas_mode keeps one checked by hand.
         mode_action = functools.partial(image_action, checkable=True)
-        action = functools.partial(_utils.new_action, self)
-        separator = functools.partial(_utils.new_separator, self)
+        action = functools.partial(_utils.new_action, parent=self)
+        separator = functools.partial(_utils.new_separator, parent=self)
         shortcuts = self._config["shortcuts"]
-        ctrl = _utils.modifier_text(Qt.KeyboardModifier.ControlModifier)
+        ctrl = _utils.modifier_text(modifiers=Qt.KeyboardModifier.ControlModifier)
         ctrl_shift = _utils.modifier_text(
-            Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier
+            modifiers=Qt.KeyboardModifier.ControlModifier
+            | Qt.KeyboardModifier.ShiftModifier
         )
 
         # lupdate does not see tr() inside f-strings, so the About text is
@@ -627,7 +649,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         paste = action(
             text=self.tr("Paste from Clipboard"),
-            slot=lambda: self._insert_shapes(self._shape_clipboard.paste()),
+            slot=lambda: self._insert_shapes(shapes=self._shape_clipboard.paste()),
             shortcut=shortcuts["paste_shape"],
             icon="phosphor/clipboard-text.svg",
             tip=self.tr("Insert the clipboard shapes into this image"),
@@ -637,7 +659,7 @@ class MainWindow(QtWidgets.QMainWindow):
             text=self.tr("Duplicate Shapes"),
             toolbar_text=self.tr("Duplicate", "toolbar"),
             slot=lambda: self._insert_shapes(
-                [s.copy() for s in self._canvas_widgets.canvas.selected_shapes]
+                shapes=[s.copy() for s in self._canvas_widgets.canvas.selected_shapes]
             ),
             shortcut=shortcuts["duplicate_shape"],
             icon="phosphor/copy.svg",
@@ -1118,8 +1140,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _setup_menus(self) -> _Menus:
-        action = functools.partial(_utils.new_action, self)
-        separator = functools.partial(_utils.new_separator, self)
+        action = functools.partial(_utils.new_action, parent=self)
+        separator = functools.partial(_utils.new_separator, parent=self)
         shortcuts = self._config["shortcuts"]
 
         quit_ = action(
@@ -1232,6 +1254,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.canvas_context_menu.addActions(
             self._actions.canvas_context_menu
         )
+        # Lets a disabled item say why it is disabled.
+        self._canvas_widgets.canvas.shape_context_menu.setToolTipsVisible(True)
+        self._canvas_widgets.canvas.canvas_context_menu.setToolTipsVisible(True)
+        edit_menu.setToolTipsVisible(True)
 
         return _Menus(
             file=file_menu,
@@ -1242,7 +1268,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _setup_toolbars(self) -> None:
-        separator = functools.partial(_utils.new_separator, self)
+        separator = functools.partial(_utils.new_separator, parent=self)
         ai_group_action = QtWidgets.QWidgetAction(self)
         ai_group_action.setDefaultWidget(self._ai_group)
 
@@ -1313,7 +1339,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Annotated images the search box hides, found when the list is
         # rebuilt and kept current by saves and deletions; the visible ones
         # are counted from their check marks.
-        self._hidden_annotated_paths: set[str] = set()
+        self._hidden_annotated_paths = set()
         self._file_list_root_prefix = None
         self._file_search_pattern = re.compile("")
         self._prev_image_path = None
@@ -1338,7 +1364,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #
         screen = QtGui.QGuiApplication.primaryScreen()
         default = _default_window_geometry(
-            screen.availableGeometry(),
+            available=screen.availableGeometry(),
             toolbar_width=max(
                 toolbar.sizeHint().width()
                 for toolbar in self.findChildren(ToolBar)
@@ -1425,7 +1451,7 @@ class MainWindow(QtWidgets.QMainWindow):
             enabled=self._config["ai"]["suppress_existing_shape_matches"]
         )
         canvas.set_draft_palette(
-            palette=Palette.from_shape_config(self._config["shape"])
+            palette=Palette.from_shape_config(shape=self._config["shape"])
         )
         canvas.set_color_resolver(
             resolver=lambda label: self._get_rgb_by_label(
@@ -1463,7 +1489,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         canvas.degenerate_shape_rejected.connect(
             lambda: self.show_status_message(
-                self.tr("Shape had no area; nothing created."), delay=5000
+                message=self.tr("Shape had no area; nothing created."), delay=5000
             )
         )
         canvas.shape_moved.connect(self.mark_dirty)
@@ -1700,7 +1726,38 @@ class MainWindow(QtWidgets.QMainWindow):
             dirty=dirty,
         )
 
+    def _save_destination(self) -> str:
+        # Where a save that asks nothing writes the open document. It never
+        # replaces an existing Annotation File other than the one loaded.
+        assert self._image_path is not None
+        if self._auto_save_path is not None:
+            return self._auto_save_path
+        # Chosen once per document: after its own first write the disk no
+        # longer tells a first copy from a file that was already there.
+        if self._chosen_save_path is None:
+            self._chosen_save_path = self._choose_save_destination()
+        return self._chosen_save_path
+
+    def _choose_save_destination(self) -> str:
+        assert self._image_path is not None
+        resolved = _resolve_label_path(
+            image_path=self._file_list_image_path or self._image_path,
+            output_dir=self._output_dir,
+            root_prefix=self._file_list_root_prefix,
+        )
+        if self._label_file_path is None:
+            return resolved
+        # The Annotation Folder takes the first copy of a file opened from
+        # elsewhere.
+        if self._output_dir is not None and not Path(resolved).exists():
+            return resolved
+        return self._label_file_path
+
     def mark_dirty(self) -> None:
+        # The Flags dock stays clickable with no Image open; nothing can be
+        # dirty then.
+        if self._image_path is None:
+            return
         self._save_revision += 1
         self._sync_edit_actions()
         self._is_changed = True
@@ -1708,14 +1765,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(self._get_window_title(dirty=True))
         if self._actions.save_auto.isChecked():
             assert self._image_path is not None
-            self._queue_auto_save(
-                label_path=self._auto_save_path
-                or _resolve_label_path(
-                    image_path=self._file_list_image_path or self._image_path,
-                    output_dir=self._output_dir,
-                    root_prefix=self._file_list_root_prefix,
-                )
-            )
+            self._queue_auto_save(label_path=self._save_destination())
         else:
             self._status_bar.save.setText(self.tr("Unsaved changes"))
             self._status_bar.retry.setVisible(self._failed_save_path is not None)
@@ -1768,7 +1818,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.save.setEnabled(False)
         self.setWindowTitle(self._get_window_title(dirty=False))
 
-    def show_status_message(self, message: str, /, *, delay: int = 500) -> None:
+    def show_status_message(self, *, message: str, delay: int = 500) -> None:
         self.statusBar().showMessage(message, delay)
 
     def _submit_ai_prompt(self) -> None:
@@ -1784,7 +1834,7 @@ class MainWindow(QtWidgets.QMainWindow):
             canvas.setFocus()
             return
         if not prompt:
-            self.show_status_message(self.tr("Type what to find"), delay=5000)
+            self.show_status_message(message=self.tr("Type what to find"), delay=5000)
             self._ai_text.focus_text_prompt()
             return
         # Switching cancels a draft, so a Shape mid-drawing keeps its tool.
@@ -1795,7 +1845,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Checked against the Setting, so a model that is not downloaded yet is
         # rejected before the Models window offers its download.
         requested_model: str = self._config["ai"]["text_model"] or ""
-        if requested_model in _text_models_unable_to_create(shape_type):
+        if requested_model in _text_models_unable_to_create(shape_type=shape_type):
             QtWidgets.QMessageBox.warning(
                 self,
                 self.tr("Mask Output Unavailable"),
@@ -1836,7 +1886,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
         )
 
-    def _take_ai_text_job(self, job: object, /) -> _AiTextJob | None:
+    def _take_ai_text_job(self, *, job: object) -> _AiTextJob | None:
         if job is not self._ai_text_job:
             return None
         self._ai_text_job = None
@@ -1854,7 +1904,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas = self._canvas_widgets.canvas
         # The worker also runs other AI tools, so Run follows only detection.
         self._ai_text.set_detecting(
-            job is not None
+            detecting=job is not None
             and (self._ai_text_job is not None or canvas.ai_find_all_job is not None)
         )
         on_cpu = worker.device == "cpu"
@@ -1911,7 +1961,7 @@ class MainWindow(QtWidgets.QMainWindow):
             kind = stage if stage in ("starting", "loading", "encoding") else "task"
             if (detecting or kind != "task") and kind not in self._ai_status_announced:
                 self._ai_status_announced.add(kind)
-                self._announce(text)
+                self._announce(message=text)
             self._ai_status_timer.start()  # restarts, so a tick follows a second
             seconds = int(time.monotonic() - self._ai_status_started_at)
             ELAPSED_SHOWN_AFTER_S: Final = 3
@@ -1921,7 +1971,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
         self._status_bar.ai.setText(text)
 
-    def _announce(self, message: str, /) -> None:
+    def _announce(self, *, message: str) -> None:
         if not QtGui.QAccessible.isActive():
             return
         event = QtGui.QAccessibleAnnouncementEvent(self._status_bar.ai, message)
@@ -1929,7 +1979,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QtGui.QAccessible.updateAccessibility(event)
 
     def _on_ai_text_failed(self, job: object, message: str, /) -> None:
-        if self._take_ai_text_job(job) is None:
+        if self._take_ai_text_job(job=job) is None:
             return
         logger.error("AI text inference failed: {}", message)
         self._on_inference_failed(message)
@@ -1949,7 +1999,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 functools.partial(self._on_ai_text_finished, job, annotations),
             )
             return
-        text_job = self._take_ai_text_job(job)
+        text_job = self._take_ai_text_job(job=job)
         if text_job is None:
             return
         propose = functools.partial(
@@ -1972,7 +2022,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._on_inference_failed(f"{type(e).__name__}: {e}")
             return
         self._commit_ai_find_all(
-            shapes,
+            candidates=shapes,
             propose_for_label=lambda label: propose(suppressed_by=label),
             query=text_job.query,
         )
@@ -1989,36 +2039,35 @@ class MainWindow(QtWidgets.QMainWindow):
         /,
     ) -> None:
         added = self._commit_ai_find_all(
-            shapes, propose_for_label=propose_for_label, query=query
+            candidates=shapes, propose_for_label=propose_for_label, query=query
         )
         # Select what the batch added, so it can be relabeled or deleted.
         self._canvas_widgets.canvas.select_shapes(shapes=added)
 
     def _commit_ai_find_all(
         self,
-        candidates: list[Shape],
-        /,
         *,
+        candidates: list[Shape],
         propose_for_label: Callable[[str], list[Shape]],
         query: str,
     ) -> list[Shape]:
         # Every AI-Find All batch lands here, from a query or an example box, so
         # labeling, skipping covered objects and the result message stay one.
         if not candidates:
-            self._report_ai_find_all_result(candidates, name=query)
+            self._report_ai_find_all_result(shapes=candidates, name=query)
             return []
         # One entry labels the whole batch, shown on the canvas meanwhile.
         canvas = self._canvas_widgets.canvas
-        canvas.set_ai_find_all_pending(candidates)
+        canvas.set_ai_find_all_pending(shapes=candidates)
         try:
             entry = self._ask_new_shape_entry(query=query)
         finally:
-            canvas.set_ai_find_all_pending([])
+            canvas.set_ai_find_all_pending(shapes=[])
         if entry is None:
             return []  # Cancelled: the batch is never added.
         # "black dog" saved as "dog": skip what "dog" Shapes cover.
         shapes = propose_for_label(entry.label)
-        self._report_ai_find_all_result(shapes, name=entry.label)
+        self._report_ai_find_all_result(shapes=shapes, name=entry.label)
         if not shapes:
             return []
         for shape in shapes:
@@ -2028,11 +2077,11 @@ class MainWindow(QtWidgets.QMainWindow):
             if entry.group_id is not None:
                 shape.group_id = entry.group_id
         apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
-        self._load_shapes(shapes, replace=False)
+        self._load_shapes(shapes=shapes, replace=False)
         self.mark_dirty()
         return shapes
 
-    def _report_ai_find_all_result(self, shapes: list[Shape], /, *, name: str) -> None:
+    def _report_ai_find_all_result(self, *, shapes: list[Shape], name: str) -> None:
         # Polygons from one mask's separate lands share a Group: one object.
         count = len({id(s) if s.group_id is None else s.group_id for s in shapes})
         message = (
@@ -2040,12 +2089,14 @@ class MainWindow(QtWidgets.QMainWindow):
             if count
             else self.tr("No new '{query}' found")
         ).format(count=count, query=name)
-        self.show_status_message(message, delay=5000)
-        self._announce(message)
+        self.show_status_message(message=message, delay=5000)
+        self._announce(message=message)
 
     def reset_state(self) -> None:
         self._auto_save_path = None
+        self._chosen_save_path = None
         self._docks.label_list.clear()
+        self._load_flags(flags={}, widget=self._docks.flag_list)
         self._annotation = None
         self._image = QtGui.QImage()
         self._image_path = None
@@ -2065,7 +2116,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Undoing a step that saves nothing, such as hiding a shape, leaves
         # the file as it was.
         self._commit_shapes(
-            canvas.shapes, changed=not _saved_shapes_equal(before, canvas.shapes)
+            shapes=canvas.shapes,
+            changed=not _saved_shapes_equal(a=before, b=canvas.shapes),
         )
 
     def tutorial(self) -> None:
@@ -2085,8 +2137,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete.setEnabled(
             not busy and any(not shape.locked for shape in selected)
         )
-        self._actions.merge.setEnabled(not busy and can_merge_shapes(selected))
+        blocker = merge_blocker(shapes=selected)
+        self._actions.merge.setEnabled(not busy and blocker is None)
+        # The tooltip is all a disabled menu item can show: Qt sends no status
+        # tip for one on macOS or Fusion.
+        self._actions.merge.setToolTip(self._merge_tip(blocker=blocker))
         self._update_shape_conversion_menu(drawing=busy)
+
+    def _merge_tip(self, *, blocker: MergeBlocker | None) -> str:
+        match blocker:
+            case None:
+                # The status tip keeps the description the action was built with.
+                return self._actions.merge.statusTip()
+            case "too_few":
+                return self.tr("Select at least two mask shapes to merge")
+            case "not_masks":
+                return self.tr("Only mask shapes can be merged")
+            case "locked":
+                return self.tr("Unlock the selected shapes to merge them")
+            case "mixed_labels":
+                return self.tr("Only shapes with the same label can be merged")
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
@@ -2102,7 +2172,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_ai_output_format_changed(
         self, output_format: _automation.AiOutputFormat, /
     ) -> None:
-        self._canvas_widgets.canvas.set_ai_output_format(output_format)
+        self._canvas_widgets.canvas.set_ai_output_format(output_format=output_format)
         self._refresh_text_model_choices()
 
     def _refresh_text_model_choices(self) -> None:
@@ -2111,8 +2181,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # already chosen.
         shape_type = self._ai_annotation.output_format
         reason = self.tr("Detects boxes only. Switch to Rectangle to use this model.")
-        unavailable = dict.fromkeys(_text_models_unable_to_create(shape_type), reason)
-        self._ai_text.set_unavailable_models(unavailable)
+        unavailable = dict.fromkeys(
+            _text_models_unable_to_create(shape_type=shape_type), reason
+        )
+        self._ai_text.set_unavailable_models(unavailable=unavailable)
         if self._settings_dialog is not None:
             self._settings_dialog.set_unavailable_choices(
                 key_path=("ai", "text_model"), unavailable=unavailable
@@ -2239,7 +2311,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Qt moves the selection before asking to save or staging the next
         # session, so retain the exact prior UI state for rollback.
         if not self._can_continue() or not self._load_file(
-            image_or_label_path=_file_list_item_path(current_item)
+            image_or_label_path=_file_list_item_path(item=current_item)
         ):
             self._restore_file_list_state(item=previous_item)
             return False
@@ -2300,7 +2372,7 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.locked = value
         # Reloading resets hover state, so no handle hovered before the lock
         # stays grabbable, and it rebuilds the Label List rows with their icon.
-        self._commit_shapes(canvas.shapes)
+        self._commit_shapes(shapes=canvas.shapes)
         canvas.select_shapes(shapes=shapes)
 
     def add_label(self, *, shape: Shape) -> None:
@@ -2354,7 +2426,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._docks.label_list.remove_item(item=item)
         self._docks.label_list.item_dropped.connect(self._on_label_order_changed)
 
-    def _load_shapes(self, shapes: list[Shape], /, *, replace: bool) -> None:
+    def _load_shapes(self, *, shapes: list[Shape], replace: bool) -> None:
         self._docks.label_list.item_selection_changed.disconnect(
             self._label_selection_changed
         )
@@ -2367,12 +2439,12 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._canvas_widgets.canvas.load_shapes(shapes=shapes, replace=replace)
 
-    def _commit_shapes(self, shapes: list[Shape], /, *, changed: bool = True) -> None:
+    def _commit_shapes(self, *, shapes: list[Shape], changed: bool = True) -> None:
         # Canvas loading pushes the one undo snapshot, so callers must not
         # back up again. Edits the canvas makes itself (delete, point removal,
         # drag) already snapshot there and only need the dirty mark.
         self._docks.label_list.clear()
-        self._load_shapes(shapes, replace=True)
+        self._load_shapes(shapes=shapes, replace=True)
         if changed:
             self.mark_dirty()
         else:
@@ -2420,7 +2492,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 ),
                 image_data=self._annotation.image_data,
                 shapes=[
-                    _shape_to_dict(shape)
+                    _shape_to_dict(shape=shape)
                     for item in self._docks.label_list
                     if (shape := item.shape()) is not None
                 ],
@@ -2458,7 +2530,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._wait_for_save()
         try:
             request = self._capture_save_request(label_path=label_path)
-            write_save_request(request)
+            write_save_request(request=request)
         except (LabelFileError, OSError, ValueError) as e:
             self._show_save_failure(label_path=label_path, error=e)
             self.show_error_message(
@@ -2469,22 +2541,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self._record_saved_annotation(label_path=request.filename)
         return True
 
-    def _insert_shapes(self, shapes: list[Shape], /) -> None:
+    def _insert_shapes(self, *, shapes: list[Shape]) -> None:
         if not shapes:
             return
         apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
         # A pasted or duplicated copy of a locked shape starts out editable.
         for shape in shapes:
             shape.locked = False
-        self._commit_shapes([*self._canvas_widgets.canvas.shapes, *shapes])
+        self._commit_shapes(shapes=[*self._canvas_widgets.canvas.shapes, *shapes])
         self._canvas_widgets.canvas.select_shapes(shapes=shapes)
 
     def _merge_selected_shapes(self) -> None:
         canvas = self._canvas_widgets.canvas
         selected = list(canvas.selected_shapes)
-        if not can_merge_shapes(selected):
+        if not can_merge_shapes(shapes=selected):
             return
-        merged = merge_masks(selected)
+        merged = merge_masks(shapes=selected)
         # The merged shape takes the first input's slot so the Label List
         # order is preserved; the other inputs are dropped.
         shapes = [
@@ -2492,13 +2564,13 @@ class MainWindow(QtWidgets.QMainWindow):
             for s in canvas.shapes
             if s is selected[0] or s not in selected
         ]
-        self._commit_shapes(shapes)
+        self._commit_shapes(shapes=shapes)
         canvas.select_shapes(shapes=[merged])
 
     def _convert_selected_shapes(self, *, target_type: ShapeType) -> None:
         canvas = self._canvas_widgets.canvas
         selected = list(canvas.selected_shapes)
-        valid_targets = get_intersection_conversion_targets(selected)
+        valid_targets = get_intersection_conversion_targets(shapes=selected)
         if target_type not in valid_targets:
             return
 
@@ -2509,7 +2581,7 @@ class MainWindow(QtWidgets.QMainWindow):
         shapes = [converted_map.get(s, s) for s in canvas.shapes]
         new_selected = [converted_map[s] for s in selected]
 
-        self._commit_shapes(shapes)
+        self._commit_shapes(shapes=shapes)
         canvas.select_shapes(shapes=new_selected)
 
     def _update_shape_conversion_menu(self, *, drawing: bool) -> None:
@@ -2517,7 +2589,7 @@ class MainWindow(QtWidgets.QMainWindow):
             valid_targets: set[ShapeType] = set()
         else:
             valid_targets = get_intersection_conversion_targets(
-                self._canvas_widgets.canvas.selected_shapes
+                shapes=self._canvas_widgets.canvas.selected_shapes
             )
         has_targets = len(valid_targets) > 0
         self._actions.convert_to_polygon.setEnabled("polygon" in valid_targets)
@@ -2580,7 +2652,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_label_order_changed(self) -> None:
         self._commit_shapes(
-            [s for item in self._docks.label_list if (s := item.shape()) is not None]
+            shapes=[
+                s for item in self._docks.label_list if (s := item.shape()) is not None
+            ]
         )
 
     # Callback functions:
@@ -2635,12 +2709,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_inference_produced_no_shapes(self) -> None:
         self.show_status_message(
-            self.tr("AI inference produced no new annotation."), delay=5000
+            message=self.tr("AI inference produced no new annotation."), delay=5000
         )
 
     def _on_example_box_unsupported(self) -> None:
         self.show_status_message(
-            self.tr("%s can't use an example box. Choose SAM 3.")
+            message=self.tr("%s can't use an example box. Choose SAM 3.")
             % self._model_manager.models[
                 self._canvas_widgets.canvas.get_ai_find_all_model_name()
             ],
@@ -2649,7 +2723,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_inference_failed(self, message: str, /) -> None:
         self.show_status_message(
-            self.tr("AI inference failed: %s") % message, delay=10000
+            message=self.tr("AI inference failed: %s") % message, delay=10000
         )
 
     def _on_scroll_request(self, delta: int, orientation: Qt.Orientation, /) -> None:
@@ -2718,7 +2792,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if pos is None:
             pos = QtCore.QPointF(canvas.visibleRegion().boundingRect().center())
         viewport = self._canvas_widgets.scroll_area.viewport()
-        image_pos = canvas.transform_widget_point_to_image(pos)
+        image_pos = canvas.transform_widget_point_to_image(point=pos)
         viewport_pos = canvas.mapTo(viewport, pos)
 
         self._sync_zoom_mode_actions()
@@ -2736,7 +2810,7 @@ class MainWindow(QtWidgets.QMainWindow):
         viewport = self._canvas_widgets.scroll_area.viewport()
         # Canvas geometry lags a scale change, so map against its size hint.
         target = canvas.transform_image_point_to_widget(
-            image_pos, area=canvas.sizeHint()
+            point=image_pos, area=canvas.sizeHint()
         )
         current = canvas.mapFrom(viewport, viewport_pos)
         self._move_canvas_view(step=current - target, constrain_to_center=False)
@@ -2758,11 +2832,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def set_fit_window_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
         target = _ZoomMode.FIT_WINDOW if value else _ZoomMode.MANUAL_ZOOM
-        self._switch_zoom_mode(target)
+        self._switch_zoom_mode(mode=target)
 
     def set_fit_selection_mode(self, value: bool = True, /) -> None:  # noqa: FBT001, FBT002 -- QAction.triggered slot
         target = _ZoomMode.FIT_SELECTION if value else _ZoomMode.MANUAL_ZOOM
-        self._switch_zoom_mode(target)
+        self._switch_zoom_mode(mode=target)
 
     def _end_canvas_pointer_activity(self) -> None:
         self._is_canvas_pointer_active = False
@@ -2782,7 +2856,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self._adjust_scale()
 
-    def _switch_zoom_mode(self, mode: _ZoomMode, /) -> None:
+    def _switch_zoom_mode(self, *, mode: _ZoomMode) -> None:
         self._zoom_mode = mode
         self._adjust_scale()
 
@@ -2829,7 +2903,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         assert self._annotation is not None
         dialog = BrightnessContrastDialog(
-            img=_utils.img_data_to_pil(self._annotation.image_data),
+            img=_utils.img_data_to_pil(img_data=self._annotation.image_data),
             callback=self._on_brightness_contrast_changed,
             parent=self,
         )
@@ -2863,14 +2937,92 @@ class MainWindow(QtWidgets.QMainWindow):
                 Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
             )
 
-    def _read_annotation_file(self, *, label_path: str) -> Annotation | None:
+    def _read_annotation_file(
+        self, *, label_path: str, image_path: str | None
+    ) -> tuple[Annotation, str | None] | None:
+        # The second value is a located Image path, which _load_file writes to
+        # the Annotation File once the load is certain to complete.
         try:
-            return read_label_file(filename=label_path, max_decode_mb=_max_decode_mb())
+            try:
+                return (
+                    read_label_file(
+                        filename=label_path, max_decode_mb=_max_decode_mb()
+                    ),
+                    None,
+                )
+            except ImageNotFoundError as e:
+                # An Annotation File found for an Image has only a stale
+                # recorded path, which the next save replaces. One opened
+                # directly needs the user to locate its Image.
+                located = image_path is None
+                if image_path is None:
+                    image_path = self._locate_missing_image(
+                        label_path=label_path, exc=e
+                    )
+                    if image_path is None:
+                        return None
+                stored_image_path = _resolve_stored_image_path(
+                    image_path=image_path, label_dir=Path(label_path).parent
+                )
+                return (
+                    read_label_file(
+                        filename=label_path,
+                        image_path_override=stored_image_path,
+                        max_decode_mb=_max_decode_mb(),
+                    ),
+                    stored_image_path if located else None,
+                )
         except LabelFileError as e:
             self._show_file_open_error(
                 path=label_path, file_kind="label", exc=e, extra=None
             )
             return None
+
+    def _locate_missing_image(
+        self, *, label_path: str, exc: ImageNotFoundError
+    ) -> str | None:
+        dialog = self._make_image_not_found_dialog(exc=exc)
+        dialog.setInformativeText(
+            self.tr("Locating the image updates the annotation file to refer to it.")
+        )
+        locate_button = dialog.addButton(
+            self.tr("Locate Image…"), QtWidgets.QMessageBox.ButtonRole.AcceptRole
+        )
+        dialog.addButton(QtWidgets.QMessageBox.StandardButton.Cancel)
+        dialog.setDefaultButton(locate_button)
+        dialog.exec()
+        located_path = ""
+        if dialog.clickedButton() is locate_button:
+            missing_dir = Path(exc.image_path).parent
+            located_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                self,
+                self.tr("Locate Image"),
+                str(missing_dir if missing_dir.is_dir() else Path(label_path).parent),
+                self.tr("Images (%s)")
+                % " ".join(f"*{ext}" for ext in _list_supported_image_extensions()),
+            )
+        if not located_path:
+            self.show_status_message(
+                message=self.tr("Failed to load: {path}").format(path=label_path)
+            )
+            return None
+        return located_path
+
+    def _make_image_not_found_dialog(
+        self, *, exc: ImageNotFoundError
+    ) -> QtWidgets.QMessageBox:
+        dialog = QtWidgets.QMessageBox(self)
+        dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+        dialog.setWindowTitle(self.tr("Image Not Found"))
+        dialog.setTextFormat(Qt.TextFormat.PlainText)
+        dialog.setText(
+            self.tr(
+                'This annotation refers to "{name}", but that image could not '
+                "be found.\n\nExpected location: {path}"
+            ).format(name=Path(exc.image_path).name, path=exc.image_path)
+        )
+        dialog.setDetailedText(str(exc.__cause__))
+        return dialog
 
     def _read_image_as_annotation(self, *, image_path: str) -> Annotation | None:
         try:
@@ -2958,7 +3110,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
         self.show_status_message(
-            self.tr("Loading %s...") % Path(image_or_label_path).name
+            message=self.tr("Loading %s...") % Path(image_or_label_path).name
         )
 
         t0_load_file = time.time()
@@ -2976,13 +3128,17 @@ class MainWindow(QtWidgets.QMainWindow):
             annotation = self._read_image_as_annotation(image_path=image_or_label_path)
             if annotation is None:
                 return False
+            located_image_path = None
             image_path = image_or_label_path
             label_file_path = None
             shapes = []
         else:
-            annotation = self._read_annotation_file(label_path=label_path)
-            if annotation is None:
+            read_result = self._read_annotation_file(
+                label_path=label_path, image_path=file_list_image_path
+            )
+            if read_result is None:
                 return False
+            annotation, located_image_path = read_result
             # The relative path stored in the Annotation File may carry "." or ".."
             # components, which would survive the join and break the
             # exact-string comparisons against the Image List.
@@ -3044,6 +3200,18 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return False
 
+        if located_image_path is not None:
+            assert label_path is not None
+            try:
+                # Choosing the Image was the confirmation, and nothing can
+                # cancel this load any more, so the repair is written now.
+                relink_label_file(filename=label_path, image_path=located_image_path)
+            except LabelFileError as e:
+                self._show_file_open_error(
+                    path=label_path, file_kind="label", exc=e, extra=None
+                )
+                return False
+
         # The replacement session is fully staged; only now replace the
         # current one.
         self._remember_current_viewport()
@@ -3065,7 +3233,9 @@ class MainWindow(QtWidgets.QMainWindow):
             # A lock approves a shape on its own image, not on the next one.
             for shape in prev_shapes:
                 shape.locked = False
-        self._load_shapes(prev_shapes if carry_prev_shapes else shapes, replace=True)
+        self._load_shapes(
+            shapes=prev_shapes if carry_prev_shapes else shapes, replace=True
+        )
         self._load_flags(flags=annotation.flags, widget=self._docks.flag_list)
         if carry_prev_shapes:
             self.mark_dirty()
@@ -3113,7 +3283,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # it; otherwise an arrow-key walk of the list ends after one keypress.
         if not self._docks.file_list.hasFocus():
             self._canvas_widgets.canvas.setFocus()
-        self.show_status_message(self.tr("Loaded %s") % Path(image_or_label_path).name)
+        self.show_status_message(
+            message=self.tr("Loaded %s") % Path(image_or_label_path).name
+        )
         logger.info(
             "Loaded file: {!r} in {:.0f}ms",
             image_or_label_path,
@@ -3121,6 +3293,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         return True
 
+    @override
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
         if watched is self._canvas_widgets.canvas:
             if event.type() in (
@@ -3211,6 +3384,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._window_state.remove(WINDOW_LAYOUT_KEY)
         self.restoreState(self._default_state)
 
+    @override
     def closeEvent(self, a0: QtGui.QCloseEvent, /) -> None:
         if not self._can_continue():
             a0.ignore()
@@ -3225,11 +3399,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._window_state.setValue(WINDOW_POSITION_KEY, self.pos())
         self._window_state.setValue(WINDOW_LAYOUT_KEY, self.saveState())
 
+    @override
     def dragEnterEvent(self, a0: QtGui.QDragEnterEvent, /) -> None:
         # Accepting only drags that carry a loadable image keeps the cursor
         # from promising a drop that would change nothing.
         a0.setAccepted(bool(_extract_dropped_image_paths(mime=a0.mimeData())))
 
+    @override
     def dropEvent(self, a0: QtGui.QDropEvent, /) -> None:
         if not self._can_continue():
             a0.ignore()
@@ -3245,7 +3421,7 @@ class MainWindow(QtWidgets.QMainWindow):
         current_path = self._file_list_image_path
         # Closing an Image retains its selected row as the navigation origin.
         if current_path is None and (item := self._docks.file_list.currentItem()):
-            current_path = _file_list_item_path(item)
+            current_path = _file_list_item_path(item=item)
         try:
             current = paths.index(current_path or "")
         except ValueError:
@@ -3255,7 +3431,11 @@ class MainWindow(QtWidgets.QMainWindow):
             range(current - 1, -1, -1) if step == -1 else range(current + 1, len(paths))
         )
         return next(
-            (paths[i] for i in indices if self._matches_file_search(paths[i])),
+            (
+                paths[i]
+                for i in indices
+                if self._matches_file_search(image_path=paths[i])
+            ),
             None,
         )
 
@@ -3330,9 +3510,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             return
 
-        if not self._switch_output_dir(Path(output_dir)):
+        if not self._switch_output_dir(output_dir=Path(output_dir)):
             return
-        self._docks.annotation_folder_footer.set_missing(None)
+        self._docks.annotation_folder_footer.set_missing(missing=None)
         assert self._file_list_root_prefix is not None
         self._remember_output_dir(opened_dir=self._file_list_root_prefix)
         self.statusBar().showMessage(
@@ -3341,13 +3521,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().show()
 
     def _clear_output_dir(self) -> None:
-        if not self._can_continue() or not self._switch_output_dir(None):
+        if not self._can_continue() or not self._switch_output_dir(output_dir=None):
             return
-        self._docks.annotation_folder_footer.set_missing(None)
+        self._docks.annotation_folder_footer.set_missing(missing=None)
         if self._file_list_root_prefix is not None:
             self._remember_output_dir(opened_dir=self._file_list_root_prefix)
 
-    def _switch_output_dir(self, output_dir: Path | None, /) -> bool:
+    def _switch_output_dir(self, *, output_dir: Path | None) -> bool:
         # Reload the current image against the candidate directory and keep
         # the previous directory when that reload fails, so a bad candidate
         # never becomes the autosave target.
@@ -3359,6 +3539,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._output_dir = previous_output_dir
             return False
         self._auto_save_path = None
+        self._chosen_save_path = None
         self._refresh_file_list()
         return True
 
@@ -3370,7 +3551,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _output_dir(self, value: Path | None, /) -> None:
         # The Annotation Folder footer mirrors every change, wherever it comes from.
         self._output_dir_value = value
-        self._docks.annotation_folder_footer.set_folder(value)
+        self._docks.annotation_folder_footer.set_folder(folder=value)
 
     def _save_label_file(self, *, save_as: bool) -> None:
         assert not self._image.isNull(), "cannot save empty image"
@@ -3378,7 +3559,11 @@ class MainWindow(QtWidgets.QMainWindow):
         label_path: str | None = None
         if not save_as:
             # A first auto-save already owns a destination, even before it finishes.
-            label_path = self._save_writer.get_latest_path() or self._label_file_path
+            label_path = (
+                self._save_writer.get_latest_path()
+                or self._auto_save_path
+                or self._label_file_path
+            )
         if label_path is None:
             label_path = self.prompt_save_file_path()
             if label_path:
@@ -3612,7 +3797,7 @@ class MainWindow(QtWidgets.QMainWindow):
             canvas.update()
         elif key_path == ("mask_polygonization", "detail"):
             detail = self._config["mask_polygonization"]["detail"]
-            self._ai_annotation.set_polygon_detail(detail)
+            self._ai_annotation.set_polygon_detail(detail=detail)
             self._canvas_widgets.canvas.set_ai_polygon_detail(detail=detail)
         elif key_path == ("canvas", "allow_out_of_bounds_points"):
             canvas = self._canvas_widgets.canvas
@@ -3680,7 +3865,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 model_name=self._config["ai"]["text_model"] or ""
             )
         elif key_path == ("ai", "device"):
-            self._osam_worker.set_device(self._config["ai"]["device"])
+            self._osam_worker.set_device(device=self._config["ai"]["device"])
         elif key_path == ("ai", "suppress_existing_shape_matches"):
             self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
                 enabled=self._config["ai"]["suppress_existing_shape_matches"]
@@ -3715,7 +3900,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return flags
 
     def _ensure_ai_model_ready(self, model_name: str, /) -> bool:
-        if model_name and self._model_manager.is_ready(model_name):
+        if model_name and self._model_manager.is_ready(model_name=model_name):
             return True
         self._open_models()
         return False
@@ -3724,7 +3909,7 @@ class MainWindow(QtWidgets.QMainWindow):
         available = {
             name
             for name in self._model_manager.models
-            if self._model_manager.is_ready(name)
+            if self._model_manager.is_ready(model_name=name)
         }
         downloading = set(self._model_manager.queue)
         if self._model_manager.active is not None:
@@ -3738,7 +3923,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _download_and_select(
         self, model_name: str, /, *, select: Callable[[str], None]
     ) -> None:
-        notice = license_notice(model_name)
+        notice = license_notice(model_name=model_name)
         if notice is not None:
             message = QtWidgets.QMessageBox(self)
             message.setWindowTitle(
@@ -3751,7 +3936,9 @@ class MainWindow(QtWidgets.QMainWindow):
             message.setTextInteractionFlags(
                 Qt.TextInteractionFlag.TextBrowserInteraction
             )
-            message.setText(f"{html.escape(notice)}<br><br>{license_link(model_name)}")
+            message.setText(
+                f"{html.escape(notice)}<br><br>{license_link(model_name=model_name)}"
+            )
             download = message.addButton(
                 self.tr("Download"), QtWidgets.QMessageBox.ButtonRole.AcceptRole
             )
@@ -3760,7 +3947,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if message.clickedButton() is not download:
                 return
         select(model_name)
-        self._model_manager.enqueue(model_name)
+        self._model_manager.enqueue(model_name=model_name)
 
     def _remove_ai_model(self, model_name: str, /) -> None:
         overrides = []
@@ -3782,7 +3969,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self._canvas_widgets.canvas.get_ai_model_name() == model_name:
             self._canvas_widgets.canvas.set_ai_model_name(model_name="")
 
-        self._model_manager.remove(model_name)
+        self._model_manager.remove(model_name=model_name)
 
     def _open_models(self) -> None:
         if self._models_dialog is None:
@@ -3888,20 +4075,9 @@ class MainWindow(QtWidgets.QMainWindow):
         extra: str | None,
     ) -> None:
         if isinstance(exc, ImageNotFoundError):
-            dialog = QtWidgets.QMessageBox(self)
-            dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-            dialog.setWindowTitle(self.tr("Image Not Found"))
-            dialog.setTextFormat(Qt.TextFormat.PlainText)
-            dialog.setText(
-                self.tr(
-                    'This annotation refers to "{name}", but that image could not '
-                    "be found.\n\nExpected location: {path}"
-                ).format(name=Path(exc.image_path).name, path=exc.image_path)
-            )
-            dialog.setDetailedText(str(exc.__cause__))
-            dialog.exec()
+            self._make_image_not_found_dialog(exc=exc).exec()
             self.show_status_message(
-                self.tr("Failed to load: {path}").format(path=path)
+                message=self.tr("Failed to load: {path}").format(path=path)
             )
             return
         if file_kind == "label":
@@ -3923,7 +4099,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if extra:
             message = f"{message}\n\n{extra}"
         QtWidgets.QMessageBox.critical(self, self.tr("Error Opening File"), message)
-        self.show_status_message(self.tr("Failed to load: {path}").format(path=path))
+        self.show_status_message(
+            message=self.tr("Failed to load: {path}").format(path=path)
+        )
 
     def current_path(self) -> str:
         return str(Path(self._image_path).parent) if self._image_path else "."
@@ -3957,7 +4135,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._loaded_image_paths = []
             self._file_list_root_prefix = None
             self._refresh_file_list()
-            self._docks.annotation_folder_footer.set_missing(None)
+            self._docks.annotation_folder_footer.set_missing(missing=None)
             self._docks.file_dock.setEnabled(False)
             self._docks.file_dock.setToolTip(
                 self.tr("Image List is disabled when an annotation file is opened")
@@ -4021,7 +4199,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Set only once the open succeeded, so a rolled-back open keeps the
         # previous session's warning.
-        self._docks.annotation_folder_footer.set_missing(missing_output_dir)
+        self._docks.annotation_folder_footer.set_missing(missing=missing_output_dir)
         # Shown last so the loading messages do not replace it.
         if missing_output_dir is not None:
             self.statusBar().showMessage(
@@ -4081,7 +4259,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for i in range(self._docks.file_list.count()):
             item = self._docks.file_list.item(i)
             assert item
-            lst.append(_file_list_item_path(item))
+            lst.append(_file_list_item_path(item=item))
         return lst
 
     def import_dropped_image_files(self, *, image_files: list[str]) -> None:
@@ -4131,7 +4309,7 @@ class MainWindow(QtWidgets.QMainWindow):
         image_paths = []
         self._hidden_annotated_paths = set()
         for path in self._loaded_image_paths:
-            if self._matches_file_search(path):
+            if self._matches_file_search(image_path=path):
                 image_paths.append(path)
             elif _has_label_file(
                 image_path=path,
@@ -4144,7 +4322,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # Decided from every loaded Image, so headings don't come and go while
         # a search narrows the list.
         self._docks.file_list_delegate.set_labels(
-            [self._file_list_label(path) for path in self._loaded_image_paths]
+            labels=[
+                self._file_list_label(image_path=path)
+                for path in self._loaded_image_paths
+            ]
         )
         with QtCore.QSignalBlocker(file_list):
             file_list.clear()
@@ -4152,7 +4333,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 file_list.addItem(
                     _make_image_list_item(
                         image_path=image_path,
-                        label=self._file_list_label(image_path),
+                        label=self._file_list_label(image_path=image_path),
                         output_dir=self._output_dir,
                         root_prefix=self._file_list_root_prefix,
                     )
@@ -4172,14 +4353,17 @@ class MainWindow(QtWidgets.QMainWindow):
         # list is rebuilt. Drop the filter if that matters.
         # An extension-qualified x.png.json belongs to an Image with stem x
         # (see _label_path_candidates).
-        stems = {_comparable_stem(label_path), _comparable_stem(Path(label_path).stem)}
+        stems = {
+            _comparable_stem(path=label_path),
+            _comparable_stem(path=Path(label_path).stem),
+        }
         file_list = self._docks.file_list
         for row in range(file_list.count()):
             item = file_list.item(row)
             assert item
-            if _comparable_stem(_file_list_item_path(item)) in stems:
+            if _comparable_stem(path=_file_list_item_path(item=item)) in stems:
                 _set_annotated_check_state(
-                    item,
+                    item=item,
                     output_dir=self._output_dir,
                     root_prefix=self._file_list_root_prefix,
                 )
@@ -4187,9 +4371,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Images hidden by the search box have no item, so keep the count's
         # record of them by the same rule.
         for image_path in self._loaded_image_paths:
-            if _comparable_stem(image_path) not in stems or self._matches_file_search(
-                image_path
-            ):
+            if _comparable_stem(
+                path=image_path
+            ) not in stems or self._matches_file_search(image_path=image_path):
                 continue
             if _has_label_file(
                 image_path=image_path,
@@ -4212,18 +4396,24 @@ class MainWindow(QtWidgets.QMainWindow):
             total=len(self._loaded_image_paths),
         )
 
-    def _file_list_label(self, image_path: str, /) -> str:
+    def _file_list_label(self, *, image_path: str) -> str:
         # Paths under the opened folder are shown relative to it so the
         # Image List stays readable; the full path stays in the tooltip.
         # ImageListDelegate groups rows by this path's folder.
-        relative = _relative_to_root(image_path, self._file_list_root_prefix)
+        relative = _relative_to_root(
+            path=image_path, root_prefix=self._file_list_root_prefix
+        )
         return image_path if relative is None else relative
 
-    def _matches_file_search(self, image_path: str, /) -> bool:
-        return bool(self._file_search_pattern.search(self._file_list_label(image_path)))
+    def _matches_file_search(self, *, image_path: str) -> bool:
+        return bool(
+            self._file_search_pattern.search(
+                self._file_list_label(image_path=image_path)
+            )
+        )
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
-        self._status_bar.stats.set_position(mouse_pos.x(), mouse_pos.y())
+        self._status_bar.stats.set_position(x=mouse_pos.x(), y=mouse_pos.y())
 
 
 def _shapes_from_dicts(
@@ -4253,7 +4443,7 @@ def _shapes_from_dicts(
 
 
 def _text_models_unable_to_create(
-    shape_type: _automation.AiOutputFormat | None, /
+    *, shape_type: _automation.AiOutputFormat | None
 ) -> frozenset[str]:
     if shape_type in _automation.MASK_REQUIRED_SHAPE_TYPES:
         return _ai_models.AI_TEXT_BOX_ONLY_MODELS
@@ -4337,9 +4527,9 @@ def _label_path_candidates(
     else:
         # Mirror the opened folder's subfolders, so Images sharing a name in
         # different subfolders keep separate Annotation Files.
-        relative = _relative_to_root(image_path, root_prefix)
+        relative = _relative_to_root(path=image_path, root_prefix=root_prefix)
         parent = output_dir if relative is None else output_dir / Path(relative).parent
-    return _label_names_in(parent, image)
+    return _label_names_in(parent=parent, image=image)
 
 
 def _legacy_label_path_candidates(
@@ -4347,13 +4537,13 @@ def _legacy_label_path_candidates(
 ) -> list[Path]:
     # Annotation Folders written before mirroring are flat. Their files are
     # still read, but new ones go to the mirrored subfolder.
-    relative = _relative_to_root(image_path, root_prefix)
+    relative = _relative_to_root(path=image_path, root_prefix=root_prefix)
     if output_dir is None or relative is None or Path(relative).parent == Path():
         return []
-    return _label_names_in(output_dir, Path(image_path))
+    return _label_names_in(parent=output_dir, image=Path(image_path))
 
 
-def _label_names_in(parent: Path, image: Path, /) -> list[Path]:
+def _label_names_in(*, parent: Path, image: Path) -> list[Path]:
     # _refresh_image_list_checkmarks maps both names back to the stem.
     # The stem name is the convention other tools read. Images sharing a stem in
     # one folder (x.jpg, x.png) cannot both have it, so the next one keeps its
@@ -4364,7 +4554,7 @@ def _label_names_in(parent: Path, image: Path, /) -> list[Path]:
     ]
 
 
-def _relative_to_root(path: str, root_prefix: str | None, /) -> str | None:
+def _relative_to_root(*, path: str, root_prefix: str | None) -> str | None:
     if root_prefix is None:
         return None
     try:
@@ -4388,9 +4578,11 @@ def _label_file_belongs_to_image(
     except OSError:
         return False
     stored = (
-        _read_stored_image_path_cached(str(label_path), stat.st_mtime_ns, stat.st_size)
+        _read_stored_image_path_cached(
+            label_path=str(label_path), _mtime_ns=stat.st_mtime_ns, _size=stat.st_size
+        )
         if cached
-        else _read_stored_image_path(str(label_path))
+        else _read_stored_image_path(label_path=str(label_path))
     )
     if stored is None:
         # Unreadable: claim it, so opening the Image reports the error instead
@@ -4420,12 +4612,12 @@ def _label_file_belongs_to_image(
 # data; stop reading at imagePath if first builds of such folders are slow.
 @functools.lru_cache(maxsize=65536)
 def _read_stored_image_path_cached(
-    label_path: str, _mtime_ns: int, _size: int, /
+    *, label_path: str, _mtime_ns: int, _size: int
 ) -> str | None:
-    return _read_stored_image_path(label_path)
+    return _read_stored_image_path(label_path=label_path)
 
 
-def _read_stored_image_path(label_path: str, /) -> str | None:
+def _read_stored_image_path(*, label_path: str) -> str | None:
     try:
         image_path = read_label_file_image_path(filename=label_path)
     except LabelFileReadError:
@@ -4446,8 +4638,8 @@ def _resolve_stored_image_path(*, image_path: str, label_dir: Path) -> str:
             )
         return relative_path
     except ValueError:
-        # Windows drives have no relative path between them; an absolute path
-        # costs portability but beats failing the save.
+        # Windows drives and UNC shares have no relative path between them; an
+        # absolute path costs portability but beats failing the save.
         return os.path.abspath(image_path)
 
 
@@ -4458,25 +4650,26 @@ def _make_image_list_item(
     item.setData(Qt.ItemDataRole.UserRole, image_path)
     item.setToolTip(os.path.abspath(image_path))
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-    _set_annotated_check_state(item, output_dir=output_dir, root_prefix=root_prefix)
+    _set_annotated_check_state(
+        item=item, output_dir=output_dir, root_prefix=root_prefix
+    )
     return item
 
 
-def _comparable_stem(path: str, /) -> str:
+def _comparable_stem(*, path: str) -> str:
     # Over-matching only re-checks extra items, so fold the case and Unicode
     # forms a filesystem may treat as the same name.
     return unicodedata.normalize("NFC", Path(path).stem).casefold()
 
 
 def _set_annotated_check_state(
-    item: QtWidgets.QListWidgetItem,
-    /,
     *,
+    item: QtWidgets.QListWidgetItem,
     output_dir: Path | None,
     root_prefix: str | None,
 ) -> None:
     has_label = _has_label_file(
-        image_path=_file_list_item_path(item),
+        image_path=_file_list_item_path(item=item),
         output_dir=output_dir,
         root_prefix=root_prefix,
     )
@@ -4497,16 +4690,16 @@ def _has_label_file(
     )
 
 
-def _file_list_item_path(item: QtWidgets.QListWidgetItem, /) -> str:
+def _file_list_item_path(*, item: QtWidgets.QListWidgetItem) -> str:
     return item.data(Qt.ItemDataRole.UserRole)
 
 
-def _saved_shapes_equal(a: list[Shape], b: list[Shape], /) -> bool:
+def _saved_shapes_equal(*, a: list[Shape], b: list[Shape]) -> bool:
     # Compares what a save writes, so view state such as visibility is ignored.
     if len(a) != len(b):
         return False
     for shape_a, shape_b in zip(a, b, strict=True):
-        dict_a, dict_b = _shape_to_dict(shape_a), _shape_to_dict(shape_b)
+        dict_a, dict_b = _shape_to_dict(shape=shape_a), _shape_to_dict(shape=shape_b)
         mask_a, mask_b = dict_a["mask"], dict_b["mask"]
         if {**dict_a, "mask": None} != {**dict_b, "mask": None}:
             return False
@@ -4518,7 +4711,7 @@ def _saved_shapes_equal(a: list[Shape], b: list[Shape], /) -> bool:
     return True
 
 
-def _shape_to_dict(shape: Shape, /) -> ShapeDict:
+def _shape_to_dict(*, shape: Shape) -> ShapeDict:
     assert shape.label is not None
     return ShapeDict(
         label=shape.label,

@@ -834,6 +834,22 @@
         <translation>{status} · {seconds} s</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Mindestens zwei Maskenformen zum Zusammenführen auswählen</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Nur Maskenformen lassen sich zusammenführen</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Ausgewählte Formen zum Zusammenführen entsperren</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Nur Formen mit demselben Label lassen sich zusammenführen</translation>
+    </message>
+    <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Erkennt nur Rahmen. Wechseln Sie zu „Rechteck“, um dieses Modell zu verwenden.</translation>
     </message>
@@ -1066,6 +1082,22 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fehler beim Speichern der Annotationsdatei</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Beim Auswählen des Bildes wird der Verweis in der Annotationsdatei aktualisiert.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Bild suchen…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Bild suchen</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Bilder (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

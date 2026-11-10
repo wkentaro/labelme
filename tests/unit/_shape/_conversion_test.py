@@ -90,7 +90,7 @@ def test_linestrip_to_polygon_requires_at_least_three_points() -> None:
     two_point_line = make_test_shape(
         shape_type="linestrip", points=[[0.0, 0.0], [10.0, 10.0]]
     )
-    assert get_valid_conversion_targets(two_point_line) == set()
+    assert get_valid_conversion_targets(shape=two_point_line) == set()
     with pytest.raises(ValueError, match="Cannot convert"):
         convert_shape_geometry(shape=two_point_line, target_type="polygon")
 
@@ -98,7 +98,7 @@ def test_linestrip_to_polygon_requires_at_least_three_points() -> None:
         shape_type="linestrip",
         points=[[0.0, 0.0], [10.0, 10.0], [20.0, 0.0]],
     )
-    assert get_valid_conversion_targets(three_point_line) == {"polygon"}
+    assert get_valid_conversion_targets(shape=three_point_line) == {"polygon"}
     poly = convert_shape_geometry(shape=three_point_line, target_type="polygon")
     assert poly.shape_type == "polygon"
     assert poly.closed is True
@@ -111,13 +111,13 @@ def test_locked_shape_has_no_conversion_targets() -> None:
         points=[[0.0, 0.0], [10.0, 10.0], [20.0, 0.0]],
         locked=True,
     )
-    assert get_valid_conversion_targets(locked_poly) == set()
+    assert get_valid_conversion_targets(shape=locked_poly) == set()
 
 
 def test_non_polygon_family_shapes_have_no_conversion_targets() -> None:
     for st in ("circle", "line", "point", "mask", "oriented_rectangle"):
         s = make_test_shape(shape_type=st, points=[[0.0, 0.0], [1.0, 1.0]])
-        assert get_valid_conversion_targets(s) == set()
+        assert get_valid_conversion_targets(shape=s) == set()
 
 
 def test_get_intersection_conversion_targets() -> None:
@@ -133,19 +133,19 @@ def test_get_intersection_conversion_targets() -> None:
     )
 
     # Empty
-    assert get_intersection_conversion_targets([]) == set()
+    assert get_intersection_conversion_targets(shapes=[]) == set()
 
     # All polygons
-    assert get_intersection_conversion_targets([poly1, poly2]) == {
+    assert get_intersection_conversion_targets(shapes=[poly1, poly2]) == {
         "rectangle",
         "linestrip",
     }
 
     # All rectangles
-    assert get_intersection_conversion_targets([rect1]) == {"polygon"}
+    assert get_intersection_conversion_targets(shapes=[rect1]) == {"polygon"}
 
     # Mixed rectangle and linestrip (3 points) -> both can convert to polygon
-    assert get_intersection_conversion_targets([rect1, line_3pts]) == {"polygon"}
+    assert get_intersection_conversion_targets(shapes=[rect1, line_3pts]) == {"polygon"}
 
     # Mixed polygon and rectangle -> intersection is empty
-    assert get_intersection_conversion_targets([poly1, rect1]) == set()
+    assert get_intersection_conversion_targets(shapes=[poly1, rect1]) == set()

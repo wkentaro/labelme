@@ -36,7 +36,7 @@ class HintItem:
     mark: Callable[[QtGui.QPainter, QPointF], None] | None = None
 
 
-def _fonts(base: QtGui.QFont, /) -> tuple[QtGui.QFont, QtGui.QFont]:
+def _fonts(*, base: QtGui.QFont) -> tuple[QtGui.QFont, QtGui.QFont]:
     first = QtGui.QFont(base)
     first.setPixelSize(12)
     first.setWeight(QtGui.QFont.Weight.Medium)
@@ -45,42 +45,42 @@ def _fonts(base: QtGui.QFont, /) -> tuple[QtGui.QFont, QtGui.QFont]:
     return first, rest
 
 
-def _keycap_height(metrics: QtGui.QFontMetricsF, /) -> float:
+def _keycap_height(*, metrics: QtGui.QFontMetricsF) -> float:
     return metrics.height() + 4
 
 
-def _keycap_width(metrics: QtGui.QFontMetricsF, key: str, /) -> float:
-    return max(_keycap_height(metrics), metrics.horizontalAdvance(key) + 10)
+def _keycap_width(*, metrics: QtGui.QFontMetricsF, key: str) -> float:
+    return max(_keycap_height(metrics=metrics), metrics.horizontalAdvance(key) + 10)
 
 
-def _row_width(row: list[HintItem], font: QtGui.QFont, /) -> float:
+def _row_width(*, row: list[HintItem], font: QtGui.QFont) -> float:
     metrics = QtGui.QFontMetricsF(font)
     width = _ITEM_GAP * (len(row) - 1)
     for item in row:
         if item.mark is not None:
             width += _MARK_WIDTH + _GAP
         if item.key is not None:
-            width += _keycap_width(metrics, item.key) + _GAP
+            width += _keycap_width(metrics=metrics, key=item.key) + _GAP
         width += metrics.horizontalAdvance(item.text)
     return width
 
 
 def _wrap(
-    row: list[HintItem], font: QtGui.QFont, width: float, /
+    *, row: list[HintItem], font: QtGui.QFont, width: float
 ) -> list[list[HintItem]]:
     lines: list[list[HintItem]] = [[]]
     for item in row:
-        for piece in _split(item, font, width):
-            if lines[-1] and _row_width([*lines[-1], piece], font) > width:
+        for piece in _split(item=item, font=font, width=width):
+            if lines[-1] and _row_width(row=[*lines[-1], piece], font=font) > width:
                 lines.append([])
             lines[-1].append(piece)
     return lines
 
 
-def _split(item: HintItem, font: QtGui.QFont, width: float, /) -> list[HintItem]:
+def _split(*, item: HintItem, font: QtGui.QFont, width: float) -> list[HintItem]:
     # An item wider than a line breaks where the script allows a line break.
     # The mark and key stay on the first piece.
-    if _row_width([item], font) <= width:
+    if _row_width(row=[item], font=font) <= width:
         return [item]
     finder = QTextBoundaryFinder(QTextBoundaryFinder.BoundaryType.Line, item.text)
     pieces = [replace(item, text="")]
@@ -90,7 +90,7 @@ def _split(item: HintItem, font: QtGui.QFont, width: float, /) -> list[HintItem]
         start = end
         last = pieces[-1]
         grown = replace(last, text=last.text + token)
-        if last.text and _row_width([grown], font) > width:
+        if last.text and _row_width(row=[grown], font=font) > width:
             pieces[-1] = replace(last, text=last.text.rstrip())
             pieces.append(HintItem(token))
         else:
@@ -98,14 +98,16 @@ def _split(item: HintItem, font: QtGui.QFont, width: float, /) -> list[HintItem]
     return pieces
 
 
-def _line_height(row_index: int, /) -> float:
+def _line_height(*, row_index: int) -> float:
     FIRST_ROW_HEIGHT: Final = 30.0
     ROW_HEIGHT: Final = 22.0
     return FIRST_ROW_HEIGHT if row_index == 0 else ROW_HEIGHT
 
 
-def _height(lines: list[list[list[HintItem]]], /) -> float:
-    return sum(_line_height(i) * len(row_lines) for i, row_lines in enumerate(lines))
+def _height(*, lines: list[list[list[HintItem]]]) -> float:
+    return sum(
+        _line_height(row_index=i) * len(row_lines) for i, row_lines in enumerate(lines)
+    )
 
 
 def place_hint_chip(
@@ -120,19 +122,21 @@ def place_hint_chip(
     # the chip would be wider than bounds, as in a narrow window or a long
     # translation.
     MARGIN: Final = 8.0
-    fonts = _fonts(font)
+    fonts = _fonts(base=font)
     room = bounds.width() - 2 * (MARGIN + _PADDING)
-    wrapped = [_wrap(row, fonts[min(i, 1)], room) for i, row in enumerate(rows)]
+    wrapped = [
+        _wrap(row=row, font=fonts[min(i, 1)], width=room) for i, row in enumerate(rows)
+    ]
     # A view too short for every line keeps the first row and drops the
     # secondary ones from the end.
-    while len(wrapped) > 1 and _height(wrapped) > bounds.height() - 2 * MARGIN:
+    while len(wrapped) > 1 and _height(lines=wrapped) > bounds.height() - 2 * MARGIN:
         wrapped.pop()
     width = 2 * _PADDING + max(
-        _row_width(line, fonts[min(i, 1)])
+        _row_width(row=line, font=fonts[min(i, 1)])
         for i, lines in enumerate(wrapped)
         for line in lines
     )
-    height = _height(wrapped)
+    height = _height(lines=wrapped)
     x = anchor.center().x() - width / 2
     x = max(bounds.left() + MARGIN, min(x, bounds.right() - MARGIN - width))
     y = anchor.bottom() + MARGIN
@@ -146,9 +150,8 @@ def place_hint_chip(
 
 
 def paint_hint_chip(
-    painter: QtGui.QPainter,
-    /,
     *,
+    painter: QtGui.QPainter,
     lines: list[list[list[HintItem]]],
     font: QtGui.QFont,
     rect: QRectF,
@@ -158,7 +161,7 @@ def paint_hint_chip(
     painter.setPen(QtGui.QPen(_HAIRLINE, 1.0))
     painter.setBrush(_BACKGROUND)
     painter.drawRoundedRect(rect.adjusted(0.5, 0.5, -0.5, -0.5), RADIUS, RADIUS)
-    fonts = _fonts(font)
+    fonts = _fonts(base=font)
     top = rect.top()
     for i, row_lines in enumerate(lines):
         if i > 0:
@@ -169,20 +172,21 @@ def paint_hint_chip(
             )
         for line in row_lines:
             _paint_row(
-                painter,
+                painter=painter,
                 row=line,
                 font=fonts[min(i, 1)],
                 color=_TEXT if i == 0 else _SECONDARY_TEXT,
-                origin=QPointF(rect.left() + _PADDING, top + _line_height(i) / 2),
+                origin=QPointF(
+                    rect.left() + _PADDING, top + _line_height(row_index=i) / 2
+                ),
             )
-            top += _line_height(i)
+            top += _line_height(row_index=i)
     painter.restore()
 
 
 def _paint_row(
-    painter: QtGui.QPainter,
-    /,
     *,
+    painter: QtGui.QPainter,
     row: list[HintItem],
     font: QtGui.QFont,
     color: QtGui.QColor,
@@ -196,8 +200,8 @@ def _paint_row(
             item.mark(painter, QPointF(x + _MARK_WIDTH / 2, y))
             x += _MARK_WIDTH + _GAP
         if item.key is not None:
-            width = _keycap_width(metrics, item.key)
-            height = _keycap_height(metrics)
+            width = _keycap_width(metrics=metrics, key=item.key)
+            height = _keycap_height(metrics=metrics)
             keycap = QRectF(x, y - height / 2, width, height)
             painter.setPen(QtGui.QPen(_KEYCAP, 1.0))
             painter.setBrush(Qt.BrushStyle.NoBrush)

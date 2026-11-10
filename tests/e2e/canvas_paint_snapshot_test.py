@@ -76,7 +76,7 @@ def _render_canvas_offscreen(*, canvas: Canvas) -> QImage:
     return image
 
 
-def _qimage_to_numpy(image: QImage, /) -> np.ndarray:
+def _qimage_to_numpy(*, image: QImage) -> np.ndarray:
     assert image.format() == QImage.Format.Format_ARGB32
     width = image.width()
     height = image.height()
@@ -101,12 +101,12 @@ def _assert_matches_snapshot(*, actual: QImage, snapshot_path: Path) -> None:
             f"Snapshot not found: {snapshot_path}\n"
             "Run with --update-snapshots to generate it."
         )
-    actual_arr = _qimage_to_numpy(actual)
+    actual_arr = _qimage_to_numpy(image=actual)
     snapshot_qimage = QImage(str(snapshot_path)).convertToFormat(
         QImage.Format.Format_ARGB32
     )
     assert not snapshot_qimage.isNull(), f"Failed to load snapshot PNG: {snapshot_path}"
-    snapshot_arr = _qimage_to_numpy(snapshot_qimage)
+    snapshot_arr = _qimage_to_numpy(image=snapshot_qimage)
     assert actual_arr.shape == snapshot_arr.shape, (
         f"Canvas size changed: actual={actual_arr.shape}, snapshot={snapshot_arr.shape}"
     )

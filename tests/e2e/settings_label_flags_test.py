@@ -92,7 +92,7 @@ def test_shape_flag_settings_apply_without_changing_existing_annotation(
     flags.setPlainText("occluded\ndamaged, minor")
     settings.accept()
     expected_rules = {"^car$": ["occluded", "damaged, minor"]}
-    assert safe_load(config_file.read_text())["label_flags"] == expected_rules
+    assert safe_load(stream=config_file.read_text())["label_flags"] == expected_rules
     assert "# Keep this comment" in config_file.read_text()
     assert not win._is_changed
     canvas = win._canvas_widgets.canvas
@@ -147,7 +147,7 @@ def test_shape_flag_settings_apply_without_changing_existing_annotation(
 
     win._open_settings()
     remove.click()
-    assert "label_flags" not in safe_load(config_file.read_text())
+    assert "label_flags" not in safe_load(stream=config_file.read_text())
     assert canvas.shapes[0].flags == {"occluded": True, "damaged, minor": False}
     settings.accept()
     win.close()
@@ -251,7 +251,7 @@ def test_invalid_shape_flag_rules_leave_last_valid_config_active(
     settings.accept()
     expected = {"^car$": ["occluded"], ".*": ["damaged, minor", "truncated"]}
     assert win._config["label_flags"] == expected
-    assert safe_load(config_file.read_text())["label_flags"] == expected
+    assert safe_load(stream=config_file.read_text())["label_flags"] == expected
     win.close()
     reopened = main_win(config_file=config_file)
     reopened._open_settings()

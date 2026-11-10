@@ -1056,12 +1056,44 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Không tìm thấy &apos;{query}&apos; mới</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Chọn ít nhất hai hình dạng mask để gộp</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Chỉ gộp được các hình dạng mask</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Mở khóa các hình dạng đã chọn để gộp</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Chỉ gộp được các hình dạng có cùng nhãn</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Nhãn không hợp lệ</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Lỗi khi lưu tệp chú thích</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Khi bạn định vị ảnh, tệp chú thích sẽ được cập nhật để tham chiếu đến ảnh đó.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Định vị ảnh…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Định vị ảnh</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Hình ảnh (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

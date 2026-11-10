@@ -338,18 +338,18 @@ def test_annotate_shape_types(
     canvas = win._canvas_widgets.canvas
     if ai_output_format is not None:
         manager = win._model_manager
-        manager.enqueue(_AI_MODEL)
+        manager.enqueue(model_name=_AI_MODEL)
         # Ensure the app recognizes the copied cache before selecting the model.
         qtbot.waitUntil(
-            lambda: manager.get_state(_AI_MODEL) in {"downloaded", "failed"},
+            lambda: manager.get_state(model_name=_AI_MODEL) in {"downloaded", "failed"},
             timeout=120_000,
         )
-        assert manager.get_state(_AI_MODEL) == "downloaded", manager.errors.get(
-            _AI_MODEL
+        assert manager.get_state(model_name=_AI_MODEL) == "downloaded", (
+            manager.errors.get(_AI_MODEL)
         )
         picker = win._ai_annotation._model_combo
         picker.setCurrentIndex(picker.findData(_AI_MODEL))
-        canvas.set_ai_output_format(ai_output_format)
+        canvas.set_ai_output_format(output_format=ai_output_format)
 
     canvas_size = canvas.size()
 

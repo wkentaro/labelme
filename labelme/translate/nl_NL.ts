@@ -1056,12 +1056,44 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Geen nieuwe &apos;{query}&apos; gevonden</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Selecteer minstens twee maskervormen om samen te voegen</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Alleen maskervormen kunnen worden samengevoegd</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Ontgrendel de geselecteerde vormen om ze samen te voegen</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Alleen vormen met hetzelfde label kunnen worden samengevoegd</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Ongeldig label</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fout bij opslaan van annotatiebestand</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Bij het zoeken van de afbeelding wordt het annotatiebestand bijgewerkt zodat het ernaar verwijst.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Afbeelding zoeken…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Afbeelding zoeken</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Afbeeldingen (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import Final
+from typing import override
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -12,7 +13,7 @@ from ._hint_chip import RETURN_GLYPH
 from ._model_picker import ModelPicker
 
 
-def _keycap_outline(palette: QtGui.QPalette, /) -> QtGui.QColor:
+def _keycap_outline(*, palette: QtGui.QPalette) -> QtGui.QColor:
     # Mid matches the field's background in dark themes, so mix the outline
     # from the field's own colors: 30% of the way from background to text.
     base = palette.color(QtGui.QPalette.ColorRole.Base)
@@ -39,11 +40,12 @@ class _RunButton(QtWidgets.QToolButton):
         # Room between the outline and the label.
         return super().sizeHint() + QtCore.QSize(4, 0)
 
+    @override
     def paintEvent(self, arg__1: QtGui.QPaintEvent, /) -> None:
         super().paintEvent(arg__1)
         painter = QtGui.QPainter(self)
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
-        painter.setPen(_keycap_outline(self.palette()))
+        painter.setPen(_keycap_outline(palette=self.palette()))
         painter.drawRoundedRect(
             QtCore.QRectF(self.rect()).adjusted(1.5, 1.5, -1.5, -1.5), 4, 4
         )
@@ -99,7 +101,7 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         widths = []
         # False last, so Run ends at rest.
         for detecting in (True, False):
-            self.set_detecting(detecting)
+            self.set_detecting(detecting=detecting)
             widths.append(run_button.sizeHint().width())
         self._run_reserved_width = max(widths)
 
@@ -133,14 +135,14 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         )
         self._iou_spinbox = add_threshold(self.tr("IoU"), self._default_iou_threshold)
 
-    def set_detecting(self, detecting: bool, /) -> None:  # noqa: FBT001 -- state flag
+    def set_detecting(self, *, detecting: bool) -> None:
         # Run stays clickable: running again replaces the pending job.
         self._run_button.setText(self.tr("Finding…") if detecting else self._RUN_GLYPH)
 
     def get_text_prompt(self) -> str:
         return self._text_input.text().strip()
 
-    def set_label_suggestions(self, model: QtCore.QAbstractItemModel, /) -> None:
+    def set_label_suggestions(self, *, model: QtCore.QAbstractItemModel) -> None:
         completer = QtWidgets.QCompleter(model, self._text_input)
         completer.setCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive)
         completer.setFilterMode(QtCore.Qt.MatchFlag.MatchContains)
@@ -162,11 +164,11 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
             available=available, downloading=downloading
         )
 
-    def select_model(self, model_name: str, /) -> None:
-        self._model_combo.select_model(model_name)
+    def select_model(self, model_name: str, /) -> None:  # noqa: GR013 -- _download_and_select calls it as Callable[[str], None]
+        self._model_combo.select_model(model_name=model_name)
 
-    def set_unavailable_models(self, unavailable: dict[str, str], /) -> None:
-        self._model_combo.set_unavailable_models(unavailable)
+    def set_unavailable_models(self, *, unavailable: dict[str, str]) -> None:
+        self._model_combo.set_unavailable_models(unavailable=unavailable)
 
     def get_score_threshold(self) -> float:
         return self._score_spinbox.value()
