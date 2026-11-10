@@ -278,6 +278,25 @@ class ImageTooLargeError(OSError):
         self.max_side = max_side
 
 
+class ImageDecodeLimitError(OSError):
+    # The image fits Qt's per-side limit but needs more memory than the
+    # decode limit allows. The caller may ask the user and read again
+    # without a limit.
+
+    width: int
+    height: int
+    required_mb: int
+
+    def __init__(self, *, width: int, height: int, required_mb: int) -> None:
+        super().__init__(
+            f"image is {width}x{height} pixels and needs about {required_mb} MB "
+            "to decode, above the decode limit"
+        )
+        self.width = width
+        self.height = height
+        self.required_mb = required_mb
+
+
 class LabelFileWriteError(LabelFileError):
     """Wraps an underlying I/O failure during save."""
 
@@ -552,14 +571,23 @@ def _sweep_stale_temporary_files(*, directory: Path) -> None:
 def _check_decodable(*, width: int, height: int, max_decode_mb: int | None) -> None:
     QT_MIN_BYTES_PER_PIXEL: Final = 4
 
-    # Qt refuses to decode past its allocation limit and cannot raise it for an
-    # image over the per-side limit, so decoding such an image is wasted work.
-    # Qt counts at least 4 bytes per pixel for every image, so this never
-    # rejects an image Qt would accept.
-    if max_decode_mb is None or max(width, height) <= RASTER_MAX_SIDE:
+    # Qt counts at least 4 bytes per pixel for every image, so neither check
+    # below rejects or asks about an image Qt would have decoded silently.
+    # Past the per-side limit Qt refuses to decode and cannot be told to
+    # raise it, so such an image is rejected when it also exceeds the byte
+    # budget. Within the side limit the caller may ask the user and read
+    # again without a limit.
+    if max_decode_mb is None:
         return
-    if width * height * QT_MIN_BYTES_PER_PIXEL > max_decode_mb * 2**20:
-        raise ImageTooLargeError(width=width, height=height, max_side=RASTER_MAX_SIDE)
+    if max(width, height) > RASTER_MAX_SIDE:
+        if width * height * QT_MIN_BYTES_PER_PIXEL > max_decode_mb * 2**20:
+            raise ImageTooLargeError(
+                width=width, height=height, max_side=RASTER_MAX_SIDE
+            )
+        return
+    required_mb = math.ceil(width * height * QT_MIN_BYTES_PER_PIXEL / 2**20)
+    if required_mb > max_decode_mb:
+        raise ImageDecodeLimitError(width=width, height=height, required_mb=required_mb)
 
 
 def _imread(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
@@ -576,7 +604,7 @@ def _imread(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
                 height=height,
                 max_decode_mb=max_decode_mb,
             )
-        except ImageTooLargeError:
+        except (ImageTooLargeError, ImageDecodeLimitError):
             image_pil.close()
             raise
         # Only TIFFs have another reader to fall back to. Qt decodes the other

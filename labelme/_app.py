@@ -49,6 +49,7 @@ from . import _utils
 from . import _widgets
 from ._image_prefetcher import ImagePrefetcher
 from ._label_file import Annotation
+from ._label_file import ImageDecodeLimitError
 from ._label_file import ImageNotFoundError
 from ._label_file import ImageTooLargeError
 from ._label_file import LabelFileError
@@ -238,6 +239,7 @@ def _try_load_config(
 
 class MainWindow(QtWidgets.QMainWindow):
     _label_list_menu_origin: QtCore.QPoint | None
+    _large_image_confirmed: bool
     _save_revision: int
     _auto_save_path: str | None
     _chosen_save_path: str | None
@@ -312,6 +314,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Qt's own default is 256 MB, about 8192x8192 pixels.
         QtGui.QImageReader.setAllocationLimit(self._config["image_decode_limit_mb"])
         self._config_overrides = config_overrides or {}
+        self._large_image_confirmed = False
         self._shape_color_preview = None
 
         self._shape_clipboard = ShapeClipboard(parent=self)
@@ -2823,12 +2826,12 @@ class MainWindow(QtWidgets.QMainWindow):
         # the Annotation File once the load is certain to complete.
         try:
             try:
-                return (
-                    _label_file.read_label_file(
-                        filename=label_path, max_decode_mb=_max_decode_mb()
-                    ),
-                    None,
+                annotation = self._read_confirming_large_image(
+                    read=lambda *, max_decode_mb: _label_file.read_label_file(
+                        filename=label_path, max_decode_mb=max_decode_mb
+                    )
                 )
+                return None if annotation is None else (annotation, None)
             except ImageNotFoundError as e:
                 # An Annotation File found for an Image has only a stale
                 # recorded path, which the next save replaces. One opened
@@ -2843,14 +2846,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 stored_image_path = _label_path.resolve_stored_image_path(
                     image_path=image_path, label_dir=Path(label_path).parent
                 )
-                return (
-                    _label_file.read_label_file(
+                annotation = self._read_confirming_large_image(
+                    read=lambda *, max_decode_mb: _label_file.read_label_file(
                         filename=label_path,
                         image_path_override=stored_image_path,
-                        max_decode_mb=_max_decode_mb(),
-                    ),
-                    stored_image_path if located else None,
+                        max_decode_mb=max_decode_mb,
+                    )
                 )
+                if annotation is None:
+                    return None
+                return annotation, stored_image_path if located else None
         except LabelFileError as e:
             self._show_file_open_error(
                 path=label_path, file_kind="label", exc=e, extra=None
@@ -2905,13 +2910,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _read_image_as_annotation(self, *, image_path: str) -> Annotation | None:
         try:
-            image_data = _label_file.read_image_file(
-                filename=image_path, max_decode_mb=_max_decode_mb()
+            image_data = self._read_confirming_large_image(
+                read=lambda *, max_decode_mb: _label_file.read_image_file(
+                    filename=image_path, max_decode_mb=max_decode_mb
+                )
             )
         except OSError as e:
             self._show_file_open_error(
                 path=image_path, file_kind="image", exc=e, extra=None
             )
+            return None
+        if image_data is None:
             return None
         return Annotation(
             image_path=os.path.basename(image_path),
@@ -2920,6 +2929,26 @@ class MainWindow(QtWidgets.QMainWindow):
             flags={},
             other_data={},
         )
+
+    def _read_confirming_large_image[T](self, *, read: Callable[..., T]) -> T | None:
+        # None means the user declined to open an image past the decode limit.
+        try:
+            return read(max_decode_mb=_max_decode_mb())
+        except (OSError, LabelFileReadError) as e:
+            limit_error = e.__cause__ if isinstance(e, LabelFileReadError) else e
+            if not isinstance(limit_error, ImageDecodeLimitError):
+                raise
+        if not self._confirm_large_image_open(
+            requirement=ImageDecodeRequirement(
+                width=limit_error.width,
+                height=limit_error.height,
+                required_mb=limit_error.required_mb,
+            ),
+            limit_mb=QtGui.QImageReader.allocationLimit(),
+        ):
+            return None
+        self._large_image_confirmed = True
+        return read(max_decode_mb=None)
 
     def _confirm_large_image_open(
         self, *, requirement: ImageDecodeRequirement, limit_mb: int
@@ -2969,6 +2998,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # path would neither select its Image List row nor receive the saved
         # checkmark, which both compare exact strings.
         image_or_label_path = os.path.normpath(image_or_label_path)
+        self._large_image_confirmed = False
         file_list_image_path = (
             None
             if _label_file.is_label_file_path(filename=image_or_label_path)
@@ -3056,8 +3086,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 <= _label_file.RASTER_MAX_SIDE
                 and 0 < original_limit < requirement.required_mb
             ):
-                if not self._confirm_large_image_open(
-                    requirement=requirement, limit_mb=original_limit
+                if (
+                    not self._large_image_confirmed
+                    and not self._confirm_large_image_open(
+                        requirement=requirement, limit_mb=original_limit
+                    )
                 ):
                     return False
                 try:
