@@ -56,6 +56,11 @@ replacement = '](https://github.com/wkentaro/labelme/blob/main/\1)'
 [tool.hatch.version]
 source = "vcs"
 
+# Generated datasets and README images make up most of examples/; the
+# scripts and their annotated inputs stay, since tests/unit/examples runs them.
+[tool.hatch.build.targets.sdist]
+exclude = ["examples/*/data_dataset_*", "examples/*/.readme"]
+
 [dependency-groups]
 dev = [
   "ipython",
