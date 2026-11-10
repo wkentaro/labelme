@@ -972,17 +972,6 @@ def test_changing_polygon_detail_requests_preview_repaint(
 
 
 @pytest.mark.gui
-def test_delete_shape_clears_highlights(*, canvas: Canvas) -> None:
-    existing = _make_rectangle(label="existing")
-    canvas.load_shapes(shapes=[existing])
-    canvas._set_ai_existing_shape_highlights(shapes=[existing])
-
-    canvas.delete_shape(shape=existing)
-
-    assert canvas._ai_existing_shape_highlights == []
-
-
-@pytest.mark.gui
 def test_delete_selected_clears_highlights(*, canvas: Canvas) -> None:
     existing = _make_rectangle(label="existing")
     canvas.load_shapes(shapes=[existing])
@@ -1009,17 +998,6 @@ def _assert_no_hover(*, canvas: Canvas) -> None:
     assert canvas._last_hovered_shape is None
     assert canvas._last_hovered_vertex is None
     assert canvas._last_hovered_edge is None
-
-
-@pytest.mark.gui
-def test_delete_shape_forgets_its_hover(*, canvas: Canvas) -> None:
-    shape = _make_rectangle(label="a")
-    canvas.load_shapes(shapes=[shape])
-    _hover_first_vertex(canvas=canvas, shape=shape)
-
-    canvas.delete_shape(shape=shape)
-
-    _assert_no_hover(canvas=canvas)
 
 
 @pytest.mark.gui
@@ -1076,8 +1054,9 @@ def test_deleting_another_shape_keeps_the_hover(*, canvas: Canvas) -> None:
     other = _make_rectangle(label="b")
     canvas.load_shapes(shapes=[hovered, other])
     _hover_first_vertex(canvas=canvas, shape=hovered)
+    canvas.selected_shapes = [other]
 
-    canvas.delete_shape(shape=other)
+    canvas.delete_selected()
 
     assert canvas.hovered_shape is hovered
     assert canvas._hovered_vertex == 0

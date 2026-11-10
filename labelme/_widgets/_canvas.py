@@ -2231,15 +2231,6 @@ class Canvas(QtWidgets.QWidget):
         self.update()
         return removed
 
-    def delete_shape(self, *, shape: Shape) -> None:
-        if shape in self.selected_shapes:
-            self.selected_shapes.remove(shape)
-        self.shapes = [s for s in self.shapes if s is not shape]
-        self._forget_hover(shapes=[shape])
-        self.backup_shapes()
-        self._set_ai_existing_shape_highlights(shapes=[])
-        self.update()
-
     @override
     def paintEvent(self, a0: QtGui.QPaintEvent, /) -> None:
         if self.pixmap.isNull():

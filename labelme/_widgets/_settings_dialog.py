@@ -571,25 +571,6 @@ class _SettingsPage(QtWidgets.QWidget):
                     )
                 )
                 self._navigation.addItem(item)
-            for index, group in enumerate(self._groups):
-                if any(group.isAncestorOf(editor) for editor in self._editors.values()):
-                    continue
-                text = " ".join(
-                    [
-                        group.title(),
-                        *(
-                            label.text()
-                            for label in group.findChildren(QtWidgets.QLabel)
-                        ),
-                    ]
-                ).casefold()
-                if all(term in text for term in self._search.text().casefold().split()):
-                    item = QtWidgets.QListWidgetItem(group.title())
-                    item.setData(QtCore.Qt.ItemDataRole.UserRole, index)
-                    item.setData(
-                        QtCore.Qt.ItemDataRole.AccessibleTextRole, group.title()
-                    )
-                    self._navigation.addItem(item)
         message = (
             self.tr("{count} matching settings").format(count=self._navigation.count())
             if self._navigation.count()
@@ -626,13 +607,7 @@ class _SettingsPage(QtWidgets.QWidget):
         if not self._search.text().strip():
             self._scroll_to_group(self._navigation.row(item))
             return
-        destination = item.data(QtCore.Qt.ItemDataRole.UserRole)
-        if isinstance(destination, int):
-            self.clear_search()
-            self._scroll_to_group(destination)
-            self._navigation.setFocus(QtCore.Qt.FocusReason.OtherFocusReason)
-            return
-        key_path = tuple(destination)
+        key_path = tuple(item.data(QtCore.Qt.ItemDataRole.UserRole))
         editor = self._editors[key_path]
         row = editor.parentWidget()
         assert row is not None

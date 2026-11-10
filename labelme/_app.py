@@ -174,15 +174,10 @@ class _Actions(NamedTuple):
     undo_last_point: QtGui.QAction
     undo: QtGui.QAction
     add_point_to_edge: QtGui.QAction
-    remove_point: QtGui.QAction
     create_mode: QtGui.QAction
     edit_mode: QtGui.QAction
     create_rectangle_mode: QtGui.QAction
-    create_oriented_rectangle_mode: QtGui.QAction
-    create_circle_mode: QtGui.QAction
-    create_line_mode: QtGui.QAction
     create_point_mode: QtGui.QAction
-    create_line_strip_mode: QtGui.QAction
     create_ai_segment_mode: QtGui.QAction
     create_ai_find_all_mode: QtGui.QAction
     open_next_img: QtGui.QAction
@@ -421,7 +416,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
-        self._ai_text.manage_models_requested.connect(self._open_models)
         for widget in (self._ai_annotation, self._ai_text):
             widget.download_requested.connect(
                 functools.partial(self._download_and_select, select=widget.select_model)
@@ -1034,16 +1028,11 @@ class MainWindow(QtWidgets.QMainWindow):
             lock=lock,
             undo_last_point=undo_last_point,
             undo=undo,
-            remove_point=remove_point,
             add_point_to_edge=add_point_to_edge,
             create_mode=create_mode,
             edit_mode=edit_mode,
             create_rectangle_mode=create_rectangle_mode,
-            create_oriented_rectangle_mode=create_oriented_rectangle_mode,
-            create_circle_mode=create_circle_mode,
-            create_line_mode=create_line_mode,
             create_point_mode=create_point_mode,
-            create_line_strip_mode=create_line_strip_mode,
             create_ai_segment_mode=create_ai_segment_mode,
             create_ai_find_all_mode=create_ai_find_all_mode,
             open_next_img=open_next_img,

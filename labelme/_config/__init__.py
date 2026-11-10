@@ -123,9 +123,9 @@ def _validate_config_item(*, key_path: tuple[str, ...], value: object) -> None:
         raise ValueError(f"Duplicates are detected for config key 'labels': {value}")
 
 
-def get_user_config_file(*, create_if_missing: bool = True) -> str:
+def get_user_config_file() -> str:
     user_config_path = Path("~/.labelmerc").expanduser()
-    if not user_config_path.exists() and create_if_missing:
+    if not user_config_path.exists():
         try:
             user_config_path.touch()
         except Exception:

@@ -86,7 +86,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert not requests
     assert win._config["ai"]["text_model"] == name
 
-    text.setCurrentIndex(text.findData("manage"))
+    assist.setCurrentIndex(assist.findData("manage"))
     dialog = win._models_dialog
     assert dialog is not None
     models = dialog.findChild(ModelsWidget)
