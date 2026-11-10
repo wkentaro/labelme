@@ -3729,29 +3729,7 @@ class MainWindow(QtWidgets.QMainWindow):
         elif key_path[0] == "shape_color":
             self._refresh_shape_colors()
         elif key_path[0] == "labels":
-            # Update predefined labels in place so session history (labels learned
-            # from loaded/created shapes via add_label_history) is preserved, while
-            # a removed predefined label drops from suggestions unless it was used
-            # this session.
-            self._label_dialog.set_predefined_labels(
-                labels=self._config["labels"] or []
-            )
-            # The Label List dock is append-only (a shape's label stays after the
-            # shape is deleted), so add new predefined labels and leave removed
-            # ones until restart.
-            for label in self._config["labels"] or []:
-                if (
-                    self._docks.unique_label_list.find_label_item(label=label)
-                    is not None
-                ):
-                    continue
-                self._docks.unique_label_list.add_label_item(
-                    label=label,
-                    color=self._get_rgb_by_label(
-                        label=label,
-                        unique_label_list=self._docks.unique_label_list,
-                    ),
-                )
+            self._apply_predefined_labels()
         elif key_path == ("label_flags",):
             self._label_dialog.set_flag_rules(flags=self._config["label_flags"])
         elif key_path[0] == "flags":
@@ -3768,12 +3746,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("show_label_text_field",),
             ("label_completion",),
         ):
-            # LabelDialog reads these values only during construction.
-            old_label_dialog = self._label_dialog
-            self._label_dialog = self._make_label_dialog(
-                label_history=old_label_dialog.label_history
-            )
-            old_label_dialog.deleteLater()
+            self._recreate_label_dialog()
         elif key_path == ("ai", "default"):
             self._ai_annotation.set_current_model(
                 model_name=self._config["ai"]["default"] or ""
@@ -3791,6 +3764,35 @@ class MainWindow(QtWidgets.QMainWindow):
             self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
                 enabled=self._config["ai"]["suppress_existing_shape_matches"]
             )
+
+    def _apply_predefined_labels(self) -> None:
+        # Update predefined labels in place so session history (labels learned
+        # from loaded/created shapes via add_label_history) is preserved, while
+        # a removed predefined label drops from suggestions unless it was used
+        # this session.
+        self._label_dialog.set_predefined_labels(labels=self._config["labels"] or [])
+        # The Label List dock is append-only (a shape's label stays after the
+        # shape is deleted), so add new predefined labels and leave removed
+        # ones until restart.
+        for label in self._config["labels"] or []:
+            if self._docks.unique_label_list.find_label_item(label=label) is not None:
+                continue
+            self._docks.unique_label_list.add_label_item(
+                label=label,
+                color=self._get_rgb_by_label(
+                    label=label,
+                    unique_label_list=self._docks.unique_label_list,
+                ),
+            )
+
+    def _recreate_label_dialog(self) -> None:
+        # LabelDialog reads sort_labels, show_label_text_field and
+        # label_completion only during construction.
+        old_label_dialog = self._label_dialog
+        self._label_dialog = self._make_label_dialog(
+            label_history=old_label_dialog.label_history
+        )
+        old_label_dialog.deleteLater()
 
     def _refresh_shape_colors(self) -> None:
         unique_labels = self._docks.unique_label_list
