@@ -1080,6 +1080,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>با پیدا کردن تصویر، فایل حاشیه‌نویسی به‌روزرسانی می‌شود تا به آن ارجاع دهد.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>پیدا کردن تصویر…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>پیدا کردن تصویر</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>تصاویر (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>پوشهٔ حاشیه‌نویسی: %s</translation>
     </message>

@@ -1080,6 +1080,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Το %s δεν μπορεί να χρησιμοποιήσει πλαίσιο παραδείγματος. Επιλέξτε SAM 3.</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Ο εντοπισμός της εικόνας ενημερώνει το αρχείο επισημειώσεων ώστε να παραπέμπει σε αυτήν.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Εντοπισμός εικόνας…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Εντοπισμός εικόνας</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Εικόνες (%s)</translation>
+    </message>
+    <message>
         <source>Large Image</source>
         <translation>Μεγάλη εικόνα</translation>
     </message>

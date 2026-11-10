@@ -1080,6 +1080,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>%s не може використати рамку-приклад. Виберіть SAM 3.</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Після вибору зображення файл анотацій оновлюється й посилається на нього.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Знайти зображення…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Знайти зображення</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Зображення (%s)</translation>
+    </message>
+    <message>
         <source>Large Image</source>
         <translation>Велике зображення</translation>
     </message>

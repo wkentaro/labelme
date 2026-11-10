@@ -1080,6 +1080,22 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>Hiba az annotációs fájl mentésekor</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>A kép megkeresése frissíti az annotációs fájlt, hogy arra hivatkozzon.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Kép megkeresése…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Kép megkeresése</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Képek (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotációs mappa: %s</translation>
     </message>

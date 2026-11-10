@@ -1080,6 +1080,22 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Gagal menyimpan berkas anotasi</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Menemukan gambar akan memperbarui berkas anotasi agar merujuk ke gambar tersebut.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Cari Gambar…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Cari Gambar</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Gambar (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Folder Anotasi: %s</translation>
     </message>

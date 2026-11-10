@@ -1176,6 +1176,22 @@ Expected location: {path}</source>
         <translation>Ошибка сохранения файла аннотаций</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>При выборе изображения файл аннотаций обновляется и начинает ссылаться на него.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Найти изображение…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Найти изображение</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Изображения (%s)</translation>
+    </message>
+    <message>
         <source>Large Image</source>
         <translation>Большое изображение</translation>
     </message>

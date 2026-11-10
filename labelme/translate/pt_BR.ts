@@ -1080,6 +1080,22 @@ Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saíd
         <translation>Erro ao salvar o arquivo de anotações</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Ao localizar a imagem, o arquivo de anotações é atualizado para fazer referência a ela.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Localizar imagem…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Localizar imagem</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Imagens (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Pasta de anotações: %s</translation>
     </message>

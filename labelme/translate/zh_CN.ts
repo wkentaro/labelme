@@ -1080,6 +1080,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>保存标注文件时出错</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>定位图像后，标注文件将更新为引用该图像。</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>定位图像…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>定位图像</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>图像 (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>标注文件夹：%s</translation>
     </message>

@@ -1080,6 +1080,22 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Fout bij opslaan van annotatiebestand</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Bij het zoeken van de afbeelding wordt het annotatiebestand bijgewerkt zodat het ernaar verwijst.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Afbeelding zoeken…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Afbeelding zoeken</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Afbeeldingen (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotatiemap: %s</translation>
     </message>

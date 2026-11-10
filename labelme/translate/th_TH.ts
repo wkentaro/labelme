@@ -1081,6 +1081,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>เมื่อระบุตำแหน่งรูปภาพ ไฟล์คำอธิบายประกอบจะได้รับการอัปเดตให้อ้างอิงรูปภาพนั้น</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>ระบุตำแหน่งรูปภาพ…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>ระบุตำแหน่งรูปภาพ</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>รูปภาพ (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>โฟลเดอร์แอนโนเทชัน: %s</translation>
     </message>

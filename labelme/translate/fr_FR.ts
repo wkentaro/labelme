@@ -1080,6 +1080,22 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
         <translation>Erreur lors de l’enregistrement du fichier d’annotations</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Localiser l’image met à jour le fichier d’annotations pour qu’il y fasse référence.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Localiser l’image…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Localiser l’image</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Images (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Dossier d’annotations : %s</translation>
     </message>

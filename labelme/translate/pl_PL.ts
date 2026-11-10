@@ -1080,6 +1080,22 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Błąd zapisu pliku adnotacji</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Wskazanie obrazu aktualizuje plik adnotacji, aby się do niego odwoływał.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Wskaż obraz…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Wskaż obraz</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Obrazy (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Folder adnotacji: %s</translation>
     </message>
