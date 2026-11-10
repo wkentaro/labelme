@@ -6,7 +6,7 @@ runs:
   steps:
     - name: Install system Qt dependencies
       if: runner.os == 'Linux'
-      uses: awalsh128/cache-apt-pkgs-action@v1
+      uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9  # v1
       with:
         packages: libegl1 libxkbcommon0 libxcb-cursor0 libgl1
         version: 1.0
