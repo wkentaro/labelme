@@ -39,6 +39,7 @@ from . import _ai_models
 from . import _automation
 from . import _config
 from . import _image_codec
+from . import _label_path
 from . import _utils
 from ._image_prefetcher import ImagePrefetcher
 from ._label_file import LABEL_FILE_SUFFIX
@@ -53,13 +54,6 @@ from ._label_file import read_image_file
 from ._label_file import read_label_file
 from ._label_file import relink_label_file
 from ._label_flags import apply_default_flags
-from ._label_path import comparable_stem
-from ._label_path import find_label_path
-from ._label_path import has_label_file
-from ._label_path import label_file_belongs_to_image
-from ._label_path import relative_to_root
-from ._label_path import resolve_label_path
-from ._label_path import resolve_stored_image_path
 from ._model_manager import ModelManager
 from ._save_request import SaveRequest
 from ._save_request import write_save_request
@@ -1665,7 +1659,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _choose_save_destination(self) -> str:
         assert self._image_path is not None
-        resolved = resolve_label_path(
+        resolved = _label_path.resolve_label_path(
             image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
             root_prefix=self._file_list_root_prefix,
@@ -2400,7 +2394,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if (
             label_path != self._auto_save_path
             and Path(label_path).exists()
-            and not label_file_belongs_to_image(
+            and not _label_path.label_file_belongs_to_image(
                 label_path=Path(label_path), image_path=image_path, cached=False
             )
         ):
@@ -2410,7 +2404,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return SaveRequest(
             filename=label_path,
             annotation=Annotation(
-                image_path=resolve_stored_image_path(
+                image_path=_label_path.resolve_stored_image_path(
                     image_path=image_path,
                     label_dir=Path(label_path).parent,
                 ),
@@ -2849,7 +2843,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     )
                     if image_path is None:
                         return None
-                stored_image_path = resolve_stored_image_path(
+                stored_image_path = _label_path.resolve_stored_image_path(
                     image_path=image_path, label_dir=Path(label_path).parent
                 )
                 return (
@@ -3005,7 +2999,7 @@ class MainWindow(QtWidgets.QMainWindow):
         label_path = (
             image_or_label_path
             if file_list_image_path is None
-            else find_label_path(
+            else _label_path.find_label_path(
                 image_path=image_or_label_path,
                 output_dir=self._output_dir,
                 root_prefix=self._file_list_root_prefix,
@@ -3464,7 +3458,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
-        default_path = resolve_label_path(
+        default_path = _label_path.resolve_label_path(
             image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
             root_prefix=self._file_list_root_prefix,
@@ -3498,7 +3492,7 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         if self._label_file_path is not None:
             return self._label_file_path
-        return resolve_label_path(
+        return _label_path.resolve_label_path(
             image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
             root_prefix=self._file_list_root_prefix,
@@ -3922,7 +3916,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Unlike current_label_file_path, never a destination that may hold
         # another Image's Annotation File.
         assert self._image_path is not None
-        return self._label_file_path or find_label_path(
+        return self._label_file_path or _label_path.find_label_path(
             image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
             root_prefix=self._file_list_root_prefix,
@@ -4201,7 +4195,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for path in self._loaded_image_paths:
             if self._matches_file_search(image_path=path):
                 image_paths.append(path)
-            elif has_label_file(
+            elif _label_path.has_label_file(
                 image_path=path,
                 output_dir=self._output_dir,
                 root_prefix=self._file_list_root_prefix,
@@ -4242,16 +4236,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # Annotation File symlinked under another name stays stale until the
         # list is rebuilt. Drop the filter if that matters.
         # An extension-qualified x.png.json belongs to an Image with stem x
-        # (see _label_path_candidates).
+        # (see _label_path._label_path_candidates).
         stems = {
-            comparable_stem(path=label_path),
-            comparable_stem(path=Path(label_path).stem),
+            _label_path.comparable_stem(path=label_path),
+            _label_path.comparable_stem(path=Path(label_path).stem),
         }
         file_list = self._docks.file_list
         for row in range(file_list.count()):
             item = file_list.item(row)
             assert item
-            if comparable_stem(path=_file_list_item_path(item=item)) in stems:
+            if (
+                _label_path.comparable_stem(path=_file_list_item_path(item=item))
+                in stems
+            ):
                 _set_annotated_check_state(
                     item=item,
                     output_dir=self._output_dir,
@@ -4261,11 +4258,11 @@ class MainWindow(QtWidgets.QMainWindow):
         # Images hidden by the search box have no item, so keep the count's
         # record of them by the same rule.
         for image_path in self._loaded_image_paths:
-            if comparable_stem(
+            if _label_path.comparable_stem(
                 path=image_path
             ) not in stems or self._matches_file_search(image_path=image_path):
                 continue
-            if has_label_file(
+            if _label_path.has_label_file(
                 image_path=image_path,
                 output_dir=self._output_dir,
                 root_prefix=self._file_list_root_prefix,
@@ -4290,7 +4287,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Paths under the opened folder are shown relative to it so the
         # Image List stays readable; the full path stays in the tooltip.
         # ImageListDelegate groups rows by this path's folder.
-        relative = relative_to_root(
+        relative = _label_path.relative_to_root(
             path=image_path, root_prefix=self._file_list_root_prefix
         )
         return image_path if relative is None else relative
@@ -4386,7 +4383,7 @@ def _set_annotated_check_state(
     output_dir: Path | None,
     root_prefix: str | None,
 ) -> None:
-    has_label = has_label_file(
+    has_label = _label_path.has_label_file(
         image_path=_file_list_item_path(item=item),
         output_dir=output_dir,
         root_prefix=root_prefix,
