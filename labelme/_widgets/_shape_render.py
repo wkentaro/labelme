@@ -17,6 +17,7 @@ from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
 from .._shape import RECTANGLE_POINT_COUNT
 from .._shape import Shape
 from .._shape import get_rotation_handle
+from .._shape import image_extent
 from .._shape import nearest_edge_index
 from .._shape import oriented_rectangle_arrow_points
 
@@ -144,24 +145,8 @@ def intersects_rect(
     points = shape.points
     if len(points) == 0:
         return True
-    anchor = lo = points.min(axis=0)
-    hi = points.max(axis=0)
-    if shape.shape_type == "circle" and len(points) == CIRCLE_POINT_COUNT:
-        radius = float(np.linalg.norm(points[1] - points[0]))
-        lo = np.minimum(lo, points[0] - radius)
-        hi = np.maximum(hi, points[0] + radius)
-    elif (
-        shape.shape_type == "oriented_rectangle"
-        and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
-    ):
-        arrow = oriented_rectangle_arrow_points(shape=shape)
-        lo = np.minimum(lo, arrow.min(axis=0))
-        hi = np.maximum(hi, arrow.max(axis=0))
-    if shape.mask is not None:
-        # _paint_mask traces the contour between pixel centers, half a pixel
-        # outside the mask's first row and column.
-        lo = np.minimum(lo, points[0] - 0.5)
-        hi = np.maximum(hi, points[0] + shape.mask.shape[::-1])
+    anchor = points.min(axis=0)
+    lo, hi = image_extent(shape=shape)
     largest_marker = context.point_size * _LARGEST_HIGHLIGHT.size_factor
     pad = largest_marker / 2 + _OUTLINE_WIDTH
     left, top = lo * context.scale - pad

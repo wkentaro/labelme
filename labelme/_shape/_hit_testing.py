@@ -3,9 +3,11 @@ from __future__ import annotations
 import numpy as np
 import numpy.typing as npt
 
+from ._model import CIRCLE_POINT_COUNT
 from ._model import Shape
 from ._oriented_rectangle import get_rotation_handles
 from ._oriented_rectangle import is_full_oriented_rectangle
+from ._oriented_rectangle import oriented_rectangle_arrow_points
 
 
 def _find_closest_index_within(
@@ -72,3 +74,28 @@ def nearest_rotation_point_index(
         get_rotation_handles(points=shape.points) - point, axis=1
     )
     return _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+
+
+def image_extent(
+    *, shape: Shape
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+    # The corners of a box, in image space, that holds everything the shape
+    # draws and everything a pointer can hit: its points, a circle's rim, an
+    # oriented rectangle's arrow and a mask's pixels. The shape has points.
+    points = shape.points
+    lo = points.min(axis=0)
+    hi = points.max(axis=0)
+    if shape.shape_type == "circle" and len(points) == CIRCLE_POINT_COUNT:
+        radius = float(np.linalg.norm(points[1] - points[0]))
+        lo = np.minimum(lo, points[0] - radius)
+        hi = np.maximum(hi, points[0] + radius)
+    elif is_full_oriented_rectangle(shape=shape):
+        arrow = oriented_rectangle_arrow_points(shape=shape)
+        lo = np.minimum(lo, arrow.min(axis=0))
+        hi = np.maximum(hi, arrow.max(axis=0))
+    if shape.mask is not None:
+        # The contour is traced between pixel centers, half a pixel outside
+        # the mask's first row and column.
+        lo = np.minimum(lo, points[0] - 0.5)
+        hi = np.maximum(hi, points[0] + shape.mask.shape[::-1])
+    return lo, hi
