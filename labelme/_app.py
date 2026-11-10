@@ -3017,11 +3017,25 @@ class MainWindow(QtWidgets.QMainWindow):
             else image_or_label_path
         )
 
+        # Keep Previous carries Shapes onto another Image. Reloading the open
+        # one, as a change of Annotation Folder does, would copy its Shapes
+        # into the new destination, discarded edits included.
+        is_reload = image_or_label_path in (
+            self._file_list_image_path,
+            self._image_path,
+            self._label_file_path,
+        )
         prev_shapes: list[Shape] = (
             self._canvas_widgets.canvas.shapes
-            if self._config["keep_prev"]
-            or QtWidgets.QApplication.keyboardModifiers()
-            == (Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier)
+            if not is_reload
+            and (
+                self._config["keep_prev"]
+                or QtWidgets.QApplication.keyboardModifiers()
+                == (
+                    Qt.KeyboardModifier.ControlModifier
+                    | Qt.KeyboardModifier.ShiftModifier
+                )
+            )
             else []
         )
         if not QtCore.QFile.exists(image_or_label_path):
