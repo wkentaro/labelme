@@ -13,13 +13,13 @@ from PySide6.QtGui import QDropEvent
 from pytestqt.qtbot import QtBot
 
 from labelme import _image_codec
-from labelme import _utils
 from labelme._app import MainWindow
 from labelme._label_file import read_label_file
 from labelme._widgets._canvas import Canvas
 
 from ..conftest import assert_labelfile_sanity
 from ..conftest import close_or_pause
+from ..mask_utils import shapes_to_label
 from .conftest import MainWinFactory
 from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
@@ -213,7 +213,7 @@ def test_merge_mask_shapes(
     saved = read_label_file(
         filename=str(tmp_path / raw_image_path.with_suffix(".json").name)
     )
-    exported, _ = _utils.shapes_to_label(
+    exported, _ = shapes_to_label(
         img_shape=(338, 500), shapes=saved.shapes, label_name_to_value={"cat": 1}
     )
     origin = round(100 + coordinate_offset)

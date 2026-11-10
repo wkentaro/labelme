@@ -2,8 +2,6 @@ from ._image import ImageDecodeRequirement
 from ._image import get_image_decode_requirement
 from ._image import get_reader_decode_requirement
 from ._image import img_qt_to_rgb_arr
-from ._mask import shape_to_mask
-from ._mask import shapes_to_label
 from ._qt import ONE_LINE_ICON_TEXT
 from ._qt import apply_color_theme
 from ._qt import direction_angle
@@ -28,6 +26,4 @@ __all__ = [
     "new_separator",
     "project_point_on_line",
     "project_point_on_perpendicular_line",
-    "shape_to_mask",
-    "shapes_to_label",
 ]

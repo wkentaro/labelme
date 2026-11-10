@@ -11,12 +11,12 @@ import PIL.Image
 import PIL.ImageDraw
 from numpy.typing import NDArray
 
-from .._shape import CIRCLE_POINT_COUNT
-from .._shape import LINE_POINT_COUNT
-from .._shape import MIN_POLYGON_POINT_COUNT
-from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
-from .._shape import RECTANGLE_POINT_COUNT
-from .._shape import ShapeDict
+from labelme._shape import CIRCLE_POINT_COUNT
+from labelme._shape import LINE_POINT_COUNT
+from labelme._shape import MIN_POLYGON_POINT_COUNT
+from labelme._shape import ORIENTED_RECTANGLE_POINT_COUNT
+from labelme._shape import RECTANGLE_POINT_COUNT
+from labelme._shape import ShapeDict
 
 
 def shape_to_mask(
