@@ -2394,6 +2394,11 @@ class MainWindow(QtWidgets.QMainWindow):
             raise LabelFileError(
                 self.tr("The Annotation File belongs to another Image: %s") % label_path
             )
+        # An Annotation File can hold the only copy of its Image; dropping the
+        # embedded data then loses the Image and the file no longer opens.
+        has_image_file = Path(image_path).is_file() and image_path.lower().endswith(
+            _list_supported_image_extensions()
+        )
         return SaveRequest(
             filename=label_path,
             annotation=Annotation(
@@ -2412,7 +2417,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
             image_height=self._image.height(),
             image_width=self._image.width(),
-            save_image_data=self._config["with_image_data"],
+            save_image_data=self._config["with_image_data"] or not has_image_file,
         )
 
     def _record_saved_annotation(self, *, label_path: str) -> None:
