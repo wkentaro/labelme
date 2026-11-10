@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import dataclasses
 import xml.etree.ElementTree as ET
+from collections import Counter
 from pathlib import Path
 from typing import Final
 
@@ -50,17 +51,27 @@ class UntranslatableTrCall:
         )
 
 
-# These dynamic calls draw from strings registered in their owning contexts.
-_ALLOWED_NON_LITERAL_TR_CALLS: Final[frozenset[tuple[str, str]]] = frozenset(
-    {
-        ("_widgets/_settings_dialog.py", "group"),
-        ("_widgets/_settings_dialog.py", "setting.label"),
-        ("_widgets/_settings_dialog.py", "setting.note"),
-        ("_widgets/_settings_dialog.py", "label"),
-        ("_widgets/_ai_tool_group.py", "tier"),
-        ("_widgets/_ai_tool_group.py", "tip"),
-    }
-)
+type _TrCallSite = tuple[str, str, str]
+
+# File, qualified method, and argument identify each reviewed exception.
+_ALLOWED_NON_LITERAL_TR_CALLS: Final[dict[_TrCallSite, int]] = {
+    ("_widgets/_settings_dialog.py", "SettingsDialog.__init__", "group"): 2,
+    ("_widgets/_settings_dialog.py", "SettingsDialog._build_group", "setting.label"): 1,
+    ("_widgets/_settings_dialog.py", "SettingsDialog._build_group", "setting.note"): 1,
+    (
+        "_widgets/_settings_dialog.py",
+        "SettingsDialog._build_label_cell",
+        "setting.label",
+    ): 1,
+    (
+        "_widgets/_settings_dialog.py",
+        "SettingsDialog._build_label_cell",
+        "setting.note",
+    ): 1,
+    ("_widgets/_settings_dialog.py", "SettingsDialog._create_combo", "label"): 1,
+    ("_widgets/_ai_tool_group.py", "_ModelMenuButton._build_menu", "tier"): 1,
+    ("_widgets/_ai_tool_group.py", "_ModelMenuButton._build_menu", "tip"): 1,
+}
 
 
 def _is_tr_call(*, node: ast.Call) -> bool:
@@ -73,15 +84,10 @@ def find_untranslatable_tr_calls(
     *,
     source: str,
     file_path: str,
-    allowlist: frozenset[tuple[str, str]] = _ALLOWED_NON_LITERAL_TR_CALLS,
-) -> tuple[list[UntranslatableTrCall], set[tuple[str, str]]]:
-    contexts = {
-        "_widgets/_settings_dialog.py": "SettingsDialog",
-        "_widgets/_ai_tool_group.py": "_ModelMenuButton",
-    }
+) -> tuple[list[UntranslatableTrCall], Counter[_TrCallSite]]:
     tree = ast.parse(source, filename=file_path)
     violations: list[UntranslatableTrCall] = []
-    allowlisted_hits: set[tuple[str, str]] = set()
+    allowlisted_hits: Counter[_TrCallSite] = Counter()
     parents = {
         child: parent
         for parent in ast.walk(tree)
@@ -103,28 +109,32 @@ def find_untranslatable_tr_calls(
         if is_literal:
             continue
 
-        key = (file_path, arg_expr)
-        owner: ast.AST = node
-        while owner in parents and not isinstance(owner, ast.ClassDef):
-            owner = parents[owner]
-        matches_context = (
-            isinstance(owner, ast.ClassDef)
-            and owner.name == contexts.get(file_path)
+        method: ast.AST = node
+        while method in parents and not isinstance(
+            method, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef | ast.Lambda
+        ):
+            method = parents[method]
+        owner = parents.get(method)
+        if (
+            isinstance(method, ast.FunctionDef)
+            and isinstance(owner, ast.ClassDef)
+            and isinstance(parents.get(owner), ast.Module)
             and isinstance(node.func, ast.Attribute)
             and isinstance(node.func.value, ast.Name)
             and node.func.value.id == "self"
-        )
-        if key in allowlist and matches_context:
-            allowlisted_hits.add(key)
-        else:
-            violations.append(
-                UntranslatableTrCall(
-                    file_path=file_path,
-                    line_number=node.lineno,
-                    expression=ast.unparse(node),
-                    argument_expr=arg_expr,
-                )
+        ):
+            key = (file_path, f"{owner.name}.{method.name}", arg_expr)
+            if allowlisted_hits[key] < _ALLOWED_NON_LITERAL_TR_CALLS.get(key, 0):
+                allowlisted_hits[key] += 1
+                continue
+        violations.append(
+            UntranslatableTrCall(
+                file_path=file_path,
+                line_number=node.lineno,
+                expression=ast.unparse(node),
+                argument_expr=arg_expr,
             )
+        )
 
     return violations, allowlisted_hits
 
@@ -208,21 +218,20 @@ def setup_ui(self):
 def test_find_untranslatable_tr_calls_allows_settings_dialog_allowlist() -> None:
     source = """
 class SettingsDialog:
-    def build(self, group, setting, label):
-        a = self.tr(group)
-        b = self.tr(setting.label)
-        c = self.tr(setting.note)
-        d = self.tr(label)
+    def __init__(self, group):
+        self.tr(group)
+        self.tr(group)
+
+    def _create_combo(self, label):
+        self.tr(label)
 """
     violations, hits = find_untranslatable_tr_calls(
         source=source, file_path="_widgets/_settings_dialog.py"
     )
     assert violations == []
     assert hits == {
-        ("_widgets/_settings_dialog.py", "group"),
-        ("_widgets/_settings_dialog.py", "setting.label"),
-        ("_widgets/_settings_dialog.py", "setting.note"),
-        ("_widgets/_settings_dialog.py", "label"),
+        ("_widgets/_settings_dialog.py", "SettingsDialog.__init__", "group"): 2,
+        ("_widgets/_settings_dialog.py", "SettingsDialog._create_combo", "label"): 1,
     }
 
 
@@ -238,10 +247,32 @@ def build(self, group):
     assert violations[0].argument_expr == "group"
 
 
+@pytest.mark.parametrize(
+    "method, calls",
+    [
+        ("new_method", "self.tr(label)"),
+        ("_create_combo", "self.tr(label); self.tr(label)"),
+    ],
+)
+def test_find_untranslatable_tr_calls_rejects_additional_settings_call(
+    *, method: str, calls: str
+) -> None:
+    source = f"""
+class SettingsDialog:
+    def {method}(self, label):
+        {calls}
+"""
+    violations, _ = find_untranslatable_tr_calls(
+        source=source, file_path="_widgets/_settings_dialog.py"
+    )
+    assert len(violations) == 1
+    assert violations[0].argument_expr == "label"
+
+
 def test_tr_calls_repo_wide_use_literals_or_allowlist() -> None:
     labelme_dir = Path(labelme.__file__).resolve().parent
     all_violations: list[UntranslatableTrCall] = []
-    matched_allowlist: set[tuple[str, str]] = set()
+    matched_allowlist: Counter[_TrCallSite] = Counter()
 
     for py_path in sorted(labelme_dir.rglob("*.py")):
         rel_path = py_path.relative_to(labelme_dir).as_posix()
@@ -259,8 +290,8 @@ def test_tr_calls_repo_wide_use_literals_or_allowlist() -> None:
             f"tr() call(s):\n{details}"
         )
 
-    unused = _ALLOWED_NON_LITERAL_TR_CALLS - matched_allowlist
-    assert not unused, f"Unused allowlist entries: {unused}"
+    missing = Counter(_ALLOWED_NON_LITERAL_TR_CALLS) - matched_allowlist
+    assert not missing, f"Missing allowlisted tr() calls: {dict(missing)}"
 
 
 def test_qt_translate_noop_calls_use_expected_context_and_literals() -> None:
@@ -384,14 +415,14 @@ def test_find_untranslatable_tr_calls_allows_literal_formatting(
 def test_find_untranslatable_tr_calls_rejects_wrong_translation_context() -> None:
     source = """
 class OtherDialog:
-    def build(self, label):
+    def _create_combo(self, label):
         return self.tr(label)
 """
     violations, hits = find_untranslatable_tr_calls(
         source=source, file_path="_widgets/_settings_dialog.py"
     )
     assert len(violations) == 1
-    assert hits == set()
+    assert not hits
 
 
 def _is_named_call(*, node: ast.AST, name: str) -> bool:
@@ -479,10 +510,15 @@ def find_unregistered_setting_strings(*, source: str) -> list[str]:
                             f"line {entry.lineno}: {name} must use "
                             "QT_TRANSLATE_NOOP('SettingsDialog', literal)"
                         )
-        if not (
-            isinstance(node, ast.AnnAssign)
-            and isinstance(node.target, ast.Name)
-            and node.target.id == "_TRANSLATABLE_GROUPS"
+        if isinstance(node, ast.Assign):
+            targets = node.targets
+        elif isinstance(node, ast.AnnAssign):
+            targets = [node.target]
+        else:
+            continue
+        if not any(
+            isinstance(target, ast.Name) and target.id == "_TRANSLATABLE_GROUPS"
+            for target in targets
         ):
             continue
         if not isinstance(node.value, ast.Tuple) or not all(
@@ -542,10 +578,11 @@ Setting(label=QT_TRANSLATE_NOOP("SettingsDialog", "Label"),
 @pytest.mark.parametrize(
     "group", ['"Unregistered"', 'QT_TRANSLATE_NOOP("OtherDialog", "Group")']
 )
+@pytest.mark.parametrize("annotation", ["", ": Final"])
 def test_settings_schema_guard_rejects_unregistered_group_heading(
-    *, group: str
+    *, group: str, annotation: str
 ) -> None:
-    source = f"_TRANSLATABLE_GROUPS: Final = ({group},)"
+    source = f"_TRANSLATABLE_GROUPS{annotation} = ({group},)"
     assert len(find_unregistered_setting_strings(source=source)) == 1
 
 
