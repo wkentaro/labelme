@@ -1480,7 +1480,12 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_original_points = self.hovered_shape.points.copy()
 
     def _movable_selected_shapes(self) -> list[Shape]:
-        return [shape for shape in self.selected_shapes if not shape.locked]
+        # A hidden Shape has to be shown before it can be moved or deleted.
+        return [
+            shape
+            for shape in self.selected_shapes
+            if shape.visible and not shape.locked
+        ]
 
     def _drag_selected_shapes(self, *, pos: QPointF) -> None:
         shapes = self._movable_selected_shapes()
@@ -2203,7 +2208,7 @@ class Canvas(QtWidgets.QWidget):
         self.shapes = [s for s in self.shapes if s not in removed]
         self._forget_hover(shapes=removed)
         self.backup_shapes()
-        self.selected_shapes = [s for s in self.selected_shapes if s.locked]
+        self.selected_shapes = [s for s in self.selected_shapes if s not in removed]
         self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
         return removed
@@ -2978,7 +2983,9 @@ class Canvas(QtWidgets.QWidget):
             if direction is not None:
                 self._move_by_keyboard(offset=direction * MOVE_SPEED)
             elif a0.matches(QtGui.QKeySequence.StandardKey.SelectAll):
-                self.select_shapes(shapes=self.shapes[:])
+                self.select_shapes(
+                    shapes=[shape for shape in self.shapes if shape.visible]
+                )
         self._update_status(extra_messages=None)
 
     @override
