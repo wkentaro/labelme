@@ -4,9 +4,11 @@ import json
 import os
 import shutil
 import stat
+import time
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
+from typing import Final
 from typing import TextIO
 
 import numpy as np
@@ -700,6 +702,104 @@ def test_write_label_file_leaves_another_writers_temporary_file(
     assert json.loads(existing_label_file.read_text(encoding="utf-8"))["imagePath"] == (
         "new.jpg"
     )
+
+
+_ORPHAN_NAME: Final = ".0123456789abcdef0123456789abcdef.tmp"
+
+
+def _make_old(*, path: Path) -> None:
+    TWO_HOURS: Final = 2 * 60 * 60
+    old = time.time() - TWO_HOURS
+    os.utime(path, (old, old))
+
+
+def _save(*, label_file: Path, annotation: Annotation) -> None:
+    write_label_file(
+        filename=str(label_file),
+        annotation=annotation,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+
+@pytest.fixture
+def fresh_sweep_memory(*, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("labelme._label_file._SWEPT_DIRECTORIES", set())
+
+
+@pytest.mark.usefixtures("fresh_sweep_memory")
+def test_write_label_file_removes_a_stale_orphaned_temporary_file(
+    *, annotation_to_write: Annotation, existing_label_file: Path
+) -> None:
+    orphan = existing_label_file.with_name(_ORPHAN_NAME)
+    orphan.write_text("half written", encoding="utf-8")
+    _make_old(path=orphan)
+
+    _save(label_file=existing_label_file, annotation=annotation_to_write)
+
+    assert not orphan.exists()
+
+
+@pytest.mark.usefixtures("fresh_sweep_memory")
+def test_write_label_file_keeps_files_the_sweep_must_not_touch(
+    *, annotation_to_write: Annotation, existing_label_file: Path
+) -> None:
+    folder = existing_label_file.parent
+    recent = folder / ".fedcba9876543210fedcba9876543210.tmp"
+    recent.write_text("being written", encoding="utf-8")
+    kept = [
+        folder / "annotation.json.tmp",  # the name used before unique names
+        folder / ".notes.tmp",
+        folder / ".0123456789ABCDEF0123456789ABCDEF.tmp",  # not lowercase hex
+        folder / "x.0123456789abcdef0123456789abcdef.tmp",
+    ]
+    for path in kept:
+        path.write_text("user file", encoding="utf-8")
+        _make_old(path=path)
+    # A different digit run: the uppercase name above is the same file on
+    # case-insensitive filesystems.
+    old_directory = folder / f".{'a' * 32}.tmp"
+    old_directory.mkdir()
+    _make_old(path=old_directory)
+
+    _save(label_file=existing_label_file, annotation=annotation_to_write)
+
+    assert recent.exists()
+    assert all(path.exists() for path in kept)
+    assert old_directory.is_dir()
+
+
+@pytest.mark.usefixtures("fresh_sweep_memory")
+def test_write_label_file_sweeps_a_directory_once(
+    *, annotation_to_write: Annotation, existing_label_file: Path
+) -> None:
+    _save(label_file=existing_label_file, annotation=annotation_to_write)
+    orphan = existing_label_file.with_name(_ORPHAN_NAME)
+    orphan.write_text("half written", encoding="utf-8")
+    _make_old(path=orphan)
+
+    _save(label_file=existing_label_file, annotation=annotation_to_write)
+
+    assert orphan.exists()
+
+
+@pytest.mark.skipif(os.name == "nt", reason="symlink creation needs privileges")
+@pytest.mark.usefixtures("fresh_sweep_memory")
+def test_write_label_file_sweeps_the_directory_of_a_symlinked_file(
+    *, annotation_to_write: Annotation, existing_label_file: Path, tmp_path: Path
+) -> None:
+    link_directory = tmp_path / "links"
+    link_directory.mkdir()
+    link = link_directory / "annotation.json"
+    link.symlink_to(existing_label_file)
+    orphan = link_directory / _ORPHAN_NAME
+    orphan.write_text("half written", encoding="utf-8")
+    _make_old(path=orphan)
+
+    _save(label_file=link, annotation=annotation_to_write)
+
+    assert not orphan.exists()
 
 
 @pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
