@@ -23,6 +23,7 @@ import labelme
 from labelme._automation import InferenceRequest
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._automation._ai_assist import AiAssistSession
+from labelme._config import load_config
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._widgets._canvas import _CREATE_MODE_TO_SHAPE_TYPE
@@ -4322,6 +4323,6 @@ def test_ai_prompt_hint_fits_a_narrow_view_in_a_long_translation(
 
 
 def test_draft_palette_defaults_to_the_shipped_config(*, canvas: Canvas) -> None:
-    shape = labelme._config.load_config(config_file=None, config_overrides={})["shape"]
+    shape = load_config(config_file=None, config_overrides={})["shape"]
 
     assert canvas._draft_palette == Palette.from_shape_config(shape=shape)
