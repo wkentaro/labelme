@@ -227,6 +227,30 @@ def test_resolve_config_source_takes_a_yaml_string_as_overrides(
     ) == (None, {"auto_save": True})
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="':' is not allowed in file names")
+def test_resolve_config_source_reads_a_file_whose_name_parses_as_yaml(
+    *, tmp_path: Path
+) -> None:
+    config_file = tmp_path / "a: b.yaml"
+    config_file.write_text("auto_save: true\n", encoding="utf-8")
+
+    assert _resolve_config_source(
+        config_arg=str(config_file), default_config_file=str(tmp_path / ".labelmerc")
+    ) == (config_file, {})
+
+
+@pytest.mark.parametrize("config_arg", ["@home/cfg", "%cfg"])
+def test_resolve_config_source_exits_on_a_value_that_is_not_yaml(
+    *, tmp_path: Path, config_arg: str
+) -> None:
+    with pytest.raises(SystemExit) as exc:
+        _resolve_config_source(
+            config_arg=config_arg, default_config_file=str(tmp_path / ".labelmerc")
+        )
+
+    assert exc.value.code == 1
+
+
 def test_logger_io_forwards_stripped_writes_to_debug() -> None:
     forwarded: list[tuple[str, str]] = []
     sink_id = logger.add(
