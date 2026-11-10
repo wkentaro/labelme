@@ -252,6 +252,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _label_list_menu_origin: QtCore.QPoint | None
     _save_revision: int
     _auto_save_path: str | None
+    _chosen_save_path: str | None
     _save_writer: SaveWriter
     _image_prefetcher: ImagePrefetcher
     _model_manager: ModelManager
@@ -404,6 +405,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
         self._auto_save_path = None
+        self._chosen_save_path = None
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
         self._image_prefetcher = ImagePrefetcher()
@@ -1642,7 +1644,38 @@ class MainWindow(QtWidgets.QMainWindow):
             dirty=dirty,
         )
 
+    def _save_destination(self) -> str:
+        # Where a save that asks nothing writes the open document. It never
+        # replaces an existing Annotation File other than the one loaded.
+        assert self._image_path is not None
+        if self._auto_save_path is not None:
+            return self._auto_save_path
+        # Chosen once per document: after its own first write the disk no
+        # longer tells a first copy from a file that was already there.
+        if self._chosen_save_path is None:
+            self._chosen_save_path = self._choose_save_destination()
+        return self._chosen_save_path
+
+    def _choose_save_destination(self) -> str:
+        assert self._image_path is not None
+        resolved = _resolve_label_path(
+            image_path=self._file_list_image_path or self._image_path,
+            output_dir=self._output_dir,
+            root_prefix=self._file_list_root_prefix,
+        )
+        if self._label_file_path is None:
+            return resolved
+        # The Annotation Folder takes the first copy of a file opened from
+        # elsewhere.
+        if self._output_dir is not None and not Path(resolved).exists():
+            return resolved
+        return self._label_file_path
+
     def mark_dirty(self) -> None:
+        # The Flags dock stays clickable with no Image open; nothing can be
+        # dirty then.
+        if self._image_path is None:
+            return
         self._save_revision += 1
         self._sync_edit_actions()
         self._is_changed = True
@@ -1650,14 +1683,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(self._get_window_title(dirty=True))
         if self._actions.save_auto.isChecked():
             assert self._image_path is not None
-            self._queue_auto_save(
-                label_path=self._auto_save_path
-                or _resolve_label_path(
-                    image_path=self._file_list_image_path or self._image_path,
-                    output_dir=self._output_dir,
-                    root_prefix=self._file_list_root_prefix,
-                )
-            )
+            self._queue_auto_save(label_path=self._save_destination())
         else:
             self._status_bar.save.setText(self.tr("Unsaved changes"))
             self._status_bar.retry.setVisible(self._failed_save_path is not None)
@@ -1986,7 +2012,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def reset_state(self) -> None:
         self._auto_save_path = None
+        self._chosen_save_path = None
         self._docks.label_list.clear()
+        self._load_flags(flags={}, widget=self._docks.flag_list)
         self._annotation = None
         self._image = QtGui.QImage()
         self._image_path = None
@@ -3392,6 +3420,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._output_dir = previous_output_dir
             return False
         self._auto_save_path = None
+        self._chosen_save_path = None
         self._refresh_file_list()
         return True
 
@@ -3411,7 +3440,11 @@ class MainWindow(QtWidgets.QMainWindow):
         label_path: str | None = None
         if not save_as:
             # A first auto-save already owns a destination, even before it finishes.
-            label_path = self._save_writer.get_latest_path() or self._label_file_path
+            label_path = (
+                self._save_writer.get_latest_path()
+                or self._auto_save_path
+                or self._label_file_path
+            )
         if label_path is None:
             label_path = self.prompt_save_file_path()
             if label_path:
