@@ -3440,11 +3440,11 @@ class MainWindow(QtWidgets.QMainWindow):
         label_path: str | None = None
         if not save_as:
             # A first auto-save already owns a destination, even before it finishes.
-            label_path = (
-                self._save_writer.get_latest_path()
-                or self._auto_save_path
-                or self._label_file_path
-            )
+            label_path = self._save_writer.get_latest_path()
+            if label_path is None and (
+                self._auto_save_path is not None or self._label_file_path is not None
+            ):
+                label_path = self._save_destination()
         if label_path is None:
             label_path = self.prompt_save_file_path()
             if label_path:
