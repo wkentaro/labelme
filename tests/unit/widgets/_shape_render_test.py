@@ -736,3 +736,97 @@ def test_negative_point_carries_a_minus_mark() -> None:
     assert min(center.red(), center.green(), center.blue()) > 200
     above = image.pixelColor(100, 97)
     assert above.red() > 200 > above.green()
+
+
+# The next three tests record where a one-pixel mask at image coordinate (5, 5)
+# is placed by its fill, its outline and its hit-test, at 10 screen pixels per
+# image pixel. Integer image coordinates are pixel centers elsewhere in the
+# codebase, so a pixel at 5 should span 4.5 to 5.5 in all three.
+_ALIGNMENT_SCALE: Final = 10.0
+
+
+def _one_pixel_mask() -> Shape:
+    return Shape(
+        shape_type="mask",
+        points=np.array([[5, 5], [5, 5]], dtype=np.float64),
+        mask=np.ones((1, 1), dtype=bool),
+    )
+
+
+def _painted_extent(*, fill_mask: bool, outline: bool) -> tuple[int, int, int, int]:
+    # Bounding box of non-transparent screen pixels as (left, top, right,
+    # bottom), right and bottom exclusive.
+    image = QtGui.QImage(_SIZE, _SIZE, QtGui.QImage.Format.Format_ARGB32)
+    image.fill(0)
+    painter = QtGui.QPainter(image)
+    render_shape(
+        painter=painter,
+        shape=_one_pixel_mask(),
+        context=ShapeRenderContext(
+            scale=_ALIGNMENT_SCALE,
+            palette=Palette.from_rgb(rgb=(255, 0, 0)),
+            point_size=8,
+            point_type="round",
+            selected=False,
+            fill=False,
+            highlight=None,
+            rotation_highlight=None,
+            fill_mask=fill_mask,
+            outline=outline,
+        ),
+    )
+    painter.end()
+    xs: list[int] = []
+    ys: list[int] = []
+    for y in range(_SIZE):
+        for x in range(_SIZE):
+            if image.pixelColor(x, y).alpha() > 0:
+                xs.append(x)
+                ys.append(y)
+    return min(xs), min(ys), max(xs) + 1, max(ys) + 1
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+def test_mask_alignment_fill_extent() -> None:
+    left, top, right, bottom = _painted_extent(fill_mask=True, outline=False)
+    # Screen pixels, then image space: the fill spans 5.0 to 6.0, half an
+    # image pixel right of and below the outline and the hit area.
+    assert (left, top, right, bottom) == (50, 50, 60, 60)
+    assert [v / _ALIGNMENT_SCALE for v in (left, top, right, bottom)] == [
+        5.0,
+        5.0,
+        6.0,
+        6.0,
+    ]
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+def test_mask_alignment_outline_extent() -> None:
+    left, top, right, bottom = _painted_extent(fill_mask=False, outline=True)
+    # The 2 px pen reaches 1 px beyond the path on every side; trim it to get
+    # the path itself.
+    assert (left, top, right, bottom) == (44, 44, 56, 56)
+    pen_half = 1
+    assert [
+        (v + sign * pen_half) / _ALIGNMENT_SCALE
+        for v, sign in ((left, 1), (top, 1), (right, -1), (bottom, -1))
+    ] == [4.5, 4.5, 5.5, 5.5]
+
+
+def test_mask_alignment_hit_extent() -> None:
+    shape = _one_pixel_mask()
+    xs = [
+        x
+        for x in (4.0 + 0.05 * i for i in range(51))
+        if is_hit_by_point(
+            shape=shape,
+            point=np.array([x, 5.0]),
+            scale=_ALIGNMENT_SCALE,
+            point_size=8,
+            epsilon=0.0,
+        )
+    ]
+    # The hit area matches the outline (4.5 to 5.5), not the fill (5.0 to 6.0).
+    assert (round(xs[0], 2), round(xs[-1], 2)) == (4.5, 5.5)
