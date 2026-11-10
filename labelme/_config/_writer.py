@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import contextlib
 import os
+import re
 import stat
 import tempfile
+import time
 from collections.abc import Sequence
 from io import StringIO
 from pathlib import Path
@@ -86,6 +89,27 @@ def _atomic_write(*, config_file: Path, content: str) -> None:
     except BaseException:
         os.unlink(tmp)
         raise
+    _sweep_stale_temporary_files(config_file=config_file)
+
+
+def _sweep_stale_temporary_files(*, config_file: Path) -> None:
+    # A killed save leaves its uniquely named temporary file behind, and no
+    # later save reuses the name. Best effort: it must never fail a save.
+    # The pattern is the name mkstemp gives this Config File's temporary files.
+    pattern = re.compile(re.escape(config_file.name) + r"\.[a-z0-9_]{8}\.tmp")
+    # Far longer than any save, so a file another process is writing stays.
+    STALE_AGE_SECONDS: Final = 60 * 60
+    cutoff = time.time() - STALE_AGE_SECONDS
+    with contextlib.suppress(OSError), os.scandir(config_file.parent) as entries:
+        for entry in entries:
+            if not pattern.fullmatch(entry.name):
+                continue
+            with contextlib.suppress(OSError):
+                if (
+                    entry.is_file(follow_symlinks=False)
+                    and entry.stat(follow_symlinks=False).st_mtime < cutoff
+                ):
+                    os.unlink(entry.path)
 
 
 def reset_config(*, config_file: Path) -> Path:
