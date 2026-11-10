@@ -655,7 +655,9 @@ class _SettingsPage(QtWidgets.QWidget):
         target_top = target.mapTo(self._content, QtCore.QPoint()).y()
         self._scroll_area.verticalScrollBar().setValue(target_top - TOP_INSET)
         self._navigation.setFocus(QtCore.Qt.FocusReason.OtherFocusReason)
-        if editor.isEnabled():
+        # Read-only Settings disable every editor without a reason to show.
+        reason = row.toolTip()
+        if editor.isEnabled() or not reason:
             self._announcement_timer.stop()
             item.setData(QtCore.Qt.ItemDataRole.AccessibleDescriptionRole, "")
             self._status.setText(
@@ -664,7 +666,6 @@ class _SettingsPage(QtWidgets.QWidget):
                 )
             )
         else:
-            reason = row.toolTip()
             item.setData(QtCore.Qt.ItemDataRole.AccessibleDescriptionRole, reason)
             self._set_status(message=reason)
         self._destination = editor
