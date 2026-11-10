@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
@@ -10,7 +9,6 @@ from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 
 
-@pytest.mark.gui
 def test_MainWindow_open(
     *, main_win: MainWinFactory, qtbot: QtBot, pause: bool
 ) -> None:
@@ -19,7 +17,6 @@ def test_MainWindow_open(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_file_search_config_regex_filters_on_startup(
     *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path, pause: bool
 ) -> None:
@@ -41,7 +38,6 @@ def test_file_search_config_regex_filters_on_startup(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_select_tool_heads_the_shape_tool_rail(*, main_win: MainWinFactory) -> None:
     win = main_win()
     rail = win.findChild(QtWidgets.QToolBar, "CreateShapeToolsToolBar")

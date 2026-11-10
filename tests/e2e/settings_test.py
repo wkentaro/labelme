@@ -57,7 +57,6 @@ def editable_config_file(*, tmp_path: Path) -> Path:
     return config_file
 
 
-@pytest.mark.gui
 def test_settings_search_navigation_and_explicit_edits_persist_and_sync_menu(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path
 ) -> None:
@@ -121,7 +120,6 @@ def settings_with_label_history(
     return win, _open_settings_dialog(win=win)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
 def test_ai_text_model_persists_and_syncs_settings(
     *, main_win: MainWinFactory, editable_config_file: Path
@@ -148,7 +146,6 @@ def test_ai_text_model_persists_and_syncs_settings(
     reopened.close()
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
 def test_startup_syncs_first_ai_model_without_rewriting_config(
     *,
@@ -168,7 +165,6 @@ def test_startup_syncs_first_ai_model_without_rewriting_config(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_startup_applies_existing_shape_suppression_override(
     *,
     main_win: MainWinFactory,
@@ -187,7 +183,6 @@ def test_startup_applies_existing_shape_suppression_override(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_settings_dialog_opens_when_editable(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -201,7 +196,6 @@ def test_settings_dialog_opens_when_editable(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_setting_change_persists_and_applies(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -233,7 +227,6 @@ def test_setting_change_persists_and_applies(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("use_widget_color_dialog")
 def test_shape_color_picker_previews_and_persists_only_on_accept(
     *,
@@ -313,7 +306,6 @@ def test_shape_color_picker_previews_and_persists_only_on_accept(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_show_labels_toggle_applies_to_canvas(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -337,7 +329,6 @@ def test_show_labels_toggle_applies_to_canvas(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_existing_shape_suppression_toggle_applies_to_canvas(
     *,
     main_win: MainWinFactory,
@@ -366,7 +357,6 @@ def test_existing_shape_suppression_toggle_applies_to_canvas(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_label_edit_preserves_label_history(
     *,
     settings_with_label_history: tuple[MainWindow, SettingsDialog],
@@ -389,7 +379,6 @@ def test_label_edit_preserves_label_history(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_flags_setting_refreshes_flag_dock_live(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -436,7 +425,6 @@ def test_flags_setting_refreshes_flag_dock_live(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_clearing_labels_is_rejected_when_validate_label_is_exact(
     *,
     main_win: MainWinFactory,
@@ -482,7 +470,6 @@ def test_clearing_labels_is_rejected_when_validate_label_is_exact(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
 def test_setting_controls_revert_when_write_fails(
     *,
@@ -541,7 +528,6 @@ def test_setting_controls_revert_when_write_fails(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_settings_dialog_is_deleted_when_opening_text_editor(
     *,
     main_win: MainWinFactory,
@@ -565,7 +551,6 @@ def test_settings_dialog_is_deleted_when_opening_text_editor(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_model_management_available_with_cli_overrides(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -587,7 +572,6 @@ def test_model_management_available_with_cli_overrides(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_keep_prev_dialog_toggle_checks_menu_action(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -606,7 +590,6 @@ def test_keep_prev_dialog_toggle_checks_menu_action(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("action_name", "key_path"),
     [
@@ -651,7 +634,6 @@ def test_menu_toggle_persists_and_syncs_settings_dialog(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("action_name", "key"),
     [
@@ -697,7 +679,6 @@ def test_keep_previous_menu_toggle_survives_restart(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_fill_drawing_dialog_toggle_applies_to_canvas(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -720,7 +701,6 @@ def test_fill_drawing_dialog_toggle_applies_to_canvas(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_fill_drawing_menu_toggle_applies_with_cli_overrides(
     *, main_win: MainWinFactory, qtbot: QtBot, pause: bool
 ) -> None:
@@ -736,7 +716,6 @@ def test_fill_drawing_menu_toggle_applies_with_cli_overrides(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_sort_labels_dialog_toggle_rebuilds_label_dialog(
     *,
     settings_with_label_history: tuple[MainWindow, SettingsDialog],
@@ -769,7 +748,6 @@ def test_sort_labels_dialog_toggle_rebuilds_label_dialog(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_show_label_text_field_dialog_toggle_rebuilds_label_dialog(
     *,
     settings_with_label_history: tuple[MainWindow, SettingsDialog],
@@ -796,7 +774,6 @@ def test_show_label_text_field_dialog_toggle_rebuilds_label_dialog(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_label_completion_dialog_change_rebuilds_label_dialog(
     *,
     settings_with_label_history: tuple[MainWindow, SettingsDialog],
@@ -828,7 +805,6 @@ def test_label_completion_dialog_change_rebuilds_label_dialog(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
 def test_ai_default_dialog_change_syncs_dock_combo(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
@@ -854,7 +830,6 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
 def test_ai_dock_change_persists_and_syncs_settings_dialog(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
@@ -878,7 +853,6 @@ def test_ai_dock_change_persists_and_syncs_settings_dialog(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_polygon_detail_popover_and_settings_stay_in_sync(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
@@ -904,7 +878,6 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_color_theme_setting_applies_live_and_persists(
     *,
     main_win: MainWinFactory,
@@ -932,7 +905,6 @@ def test_color_theme_setting_applies_live_and_persists(
     dialog.close()
 
 
-@pytest.mark.gui
 def test_out_of_bounds_setting_applies_live_and_persists(
     *, main_win: MainWinFactory, editable_config_file: Path
 ) -> None:
@@ -952,7 +924,6 @@ def test_out_of_bounds_setting_applies_live_and_persists(
     dialog.close()
 
 
-@pytest.mark.gui
 @pytest.mark.skipif(
     sys.platform == "win32",
     reason="offscreen Qt on Windows has no system font, so its text widths are a "

@@ -54,7 +54,6 @@ def _draw_oriented_rectangle(
     qtbot.waitUntil(lambda: any(s.label == label for s in canvas.shapes))
 
 
-@pytest.mark.gui
 def test_drag_rotation_handle_rotates_oriented_rectangle(
     *,
     qtbot: QtBot,
@@ -113,7 +112,6 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
     *,
     qtbot: QtBot,
@@ -180,7 +178,6 @@ def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_oriented_rectangle_disallows_add_and_remove_point(
     *,
     qtbot: QtBot,

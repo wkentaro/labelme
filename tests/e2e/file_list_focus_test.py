@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
@@ -12,7 +11,6 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_arrow_keys_walk_file_list_across_loads(
     *,
     main_win: MainWinFactory,
@@ -39,7 +37,6 @@ def test_arrow_keys_walk_file_list_across_loads(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_canvas_takes_focus_when_file_list_has_none(
     *,
     main_win: MainWinFactory,

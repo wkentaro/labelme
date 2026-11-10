@@ -12,7 +12,6 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("row", "direction", "expected_row"),
     [(0, "next", 1), (1, "next", 2), (1, "previous", 0), (2, "previous", 1)],
@@ -44,7 +43,6 @@ def test_navigation_after_closing_image(
     assert win._docks.file_list.currentRow() == expected_row
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("direction", ["previous", "next"])
 def test_navigation_from_filtered_out_image(
     *, main_win: MainWinFactory, data_path: Path, direction: str
@@ -68,7 +66,6 @@ def test_navigation_from_filtered_out_image(
     assert win._actions.open_next_img.isEnabled() == (direction == "previous")
 
 
-@pytest.mark.gui
 def test_navigation_actions_follow_filter_and_boundaries(
     *, main_win: MainWinFactory, data_path: Path
 ) -> None:
@@ -89,7 +86,6 @@ def test_navigation_actions_follow_filter_and_boundaries(
     assert not win._actions.open_next_img.isEnabled()
 
 
-@pytest.mark.gui
 def test_image_navigation_while_selecting_shape(
     *,
     main_win: MainWinFactory,

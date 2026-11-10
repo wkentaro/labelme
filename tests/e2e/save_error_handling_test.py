@@ -12,7 +12,6 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_save_labels_reports_filesystem_failure_without_crashing(
     *,
     main_win: MainWinFactory,

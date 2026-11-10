@@ -133,7 +133,6 @@ def _check_or_update_snapshot(
         _assert_matches_snapshot(actual=actual, snapshot_path=snapshot_path)
 
 
-@pytest.mark.gui
 def test_snapshot_empty_canvas(
     *,
     qtbot: QtBot,
@@ -155,7 +154,6 @@ def test_snapshot_empty_canvas(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_snapshot_shapes_unselected(
     *,
     qtbot: QtBot,
@@ -178,7 +176,6 @@ def test_snapshot_shapes_unselected(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_snapshot_one_polygon_selected(
     *,
     qtbot: QtBot,
@@ -203,7 +200,6 @@ def test_snapshot_one_polygon_selected(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_snapshot_polygon_mid_draw(
     *,
     qtbot: QtBot,
@@ -248,7 +244,6 @@ def test_snapshot_polygon_mid_draw(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_snapshot_after_polygon_commit(
     *,
     qtbot: QtBot,

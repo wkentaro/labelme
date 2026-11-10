@@ -65,7 +65,6 @@ def _raw_auto_save_win(
     return win
 
 
-@pytest.mark.gui
 def test_auto_save_on_shape_move(
     *,
     qtbot: QtBot,
@@ -94,7 +93,6 @@ def test_auto_save_on_shape_move(
     close_or_pause(qtbot=qtbot, widget=_auto_save_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -155,7 +153,6 @@ def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
     assert not prompt_shown
 
 
-@pytest.mark.gui
 def test_auto_save_on_undo(
     *,
     qtbot: QtBot,
@@ -192,7 +189,6 @@ def test_auto_save_on_undo(
     close_or_pause(qtbot=qtbot, widget=_auto_save_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_auto_save_on_undo_of_first_shape(
     *,
     qtbot: QtBot,
@@ -228,7 +224,6 @@ def test_auto_save_on_undo_of_first_shape(
     close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -339,7 +334,6 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_auto_save_stays_nonmodal_after_target_changes(
     *,
     monkeypatch: pytest.MonkeyPatch,

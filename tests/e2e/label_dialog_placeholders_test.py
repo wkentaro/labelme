@@ -10,7 +10,6 @@ from labelme._locale import TRANSLATE_DIR
 from .conftest import MainWinFactory
 
 
-@pytest.mark.gui
 @pytest.mark.skipif(
     sys.platform == "win32",
     reason="offscreen Qt on Windows has no system font, so its text widths are a "

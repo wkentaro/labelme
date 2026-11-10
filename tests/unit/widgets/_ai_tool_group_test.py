@@ -33,7 +33,6 @@ def group(*, qtbot: QtBot) -> AiToolGroup:
     return group
 
 
-@pytest.mark.gui
 def test_every_control_works_from_any_tool(*, group: AiToolGroup) -> None:
     # Running switches to AI-Find All, so no control waits for an AI tool.
     for control in (
@@ -48,7 +47,6 @@ def test_every_control_works_from_any_tool(*, group: AiToolGroup) -> None:
     assert group.minimumWidth() == group.maximumWidth()
 
 
-@pytest.mark.gui
 def test_run_sits_inside_the_query_field(*, group: AiToolGroup) -> None:
     text_input = group._detect._text_input
     run_button = group._detect._run_button
@@ -59,7 +57,6 @@ def test_run_sits_inside_the_query_field(*, group: AiToolGroup) -> None:
     assert text_input.textMargins().right() >= run_button.width()
 
 
-@pytest.mark.gui
 def test_run_fits_its_label_inside_the_reserved_room(*, group: AiToolGroup) -> None:
     text_input = group._detect._text_input
     run_button = group._detect._run_button
@@ -75,7 +72,6 @@ def test_run_fits_its_label_inside_the_reserved_room(*, group: AiToolGroup) -> N
     assert text_input.textMargins().right() == margin
 
 
-@pytest.mark.gui
 def test_run_keeps_clear_of_right_to_left_text(*, qtbot: QtBot) -> None:
     QtWidgets.QApplication.setLayoutDirection(QtCore.Qt.LayoutDirection.RightToLeft)
     try:
@@ -94,7 +90,6 @@ def _menu_texts(*, menu: QtWidgets.QMenu) -> list[str]:
     return [action.text() for action in menu.actions() if not action.isSeparator()]
 
 
-@pytest.mark.gui
 def test_model_menu_has_a_section_per_tool(*, group: AiToolGroup) -> None:
     menu = group._model_button._build_menu()
     texts = _menu_texts(menu=menu)
@@ -127,7 +122,6 @@ def test_model_menu_has_a_section_per_tool(*, group: AiToolGroup) -> None:
     assert checked == ["SAM 2 Base+\tBalanced", "SAM 3\tMost accurate"]
 
 
-@pytest.mark.gui
 def test_model_button_names_one_model_when_both_tools_share_it(
     *, group: AiToolGroup
 ) -> None:
@@ -139,7 +133,6 @@ def test_model_button_names_one_model_when_both_tools_share_it(
     assert group._model_button.toolTip() == "AI-Segment: SAM 3\nAI-Find All: SAM 3"
 
 
-@pytest.mark.gui
 def test_choosing_from_the_model_menu_selects_that_tools_model(
     *, group: AiToolGroup
 ) -> None:
@@ -153,7 +146,6 @@ def test_choosing_from_the_model_menu_selects_that_tools_model(
     assert group._model_button.currentText() == "SAM 2 Base+ · YOLO-World"
 
 
-@pytest.mark.gui
 def test_run_reads_detecting_while_a_job_runs(*, group: AiToolGroup) -> None:
     detect = group._detect
 
@@ -166,7 +158,6 @@ def test_run_reads_detecting_while_a_job_runs(*, group: AiToolGroup) -> None:
     assert detect._run_button.text() == AiTextToAnnotationWidget._RUN_GLYPH
 
 
-@pytest.mark.gui
 def test_options_button_marks_thresholds_off_their_defaults(
     *, group: AiToolGroup
 ) -> None:
@@ -179,7 +170,6 @@ def test_options_button_marks_thresholds_off_their_defaults(
     assert not group._options_button._changed
 
 
-@pytest.mark.gui
 def test_tab_moves_between_fields_in_options(
     *, group: AiToolGroup, qtbot: QtBot
 ) -> None:
@@ -201,7 +191,6 @@ def test_tab_moves_between_fields_in_options(
     menu.hide()
 
 
-@pytest.mark.gui
 def test_model_button_opens_the_model_menu(*, group: AiToolGroup, qtbot: QtBot) -> None:
     group._model_button.showPopup()
     menu = QtWidgets.QApplication.activePopupWidget()
@@ -212,7 +201,6 @@ def test_model_button_opens_the_model_menu(*, group: AiToolGroup, qtbot: QtBot) 
     menu.hide()
 
 
-@pytest.mark.gui
 def test_model_menu_shows_the_download_size_of_missing_models(
     *, group: AiToolGroup
 ) -> None:
@@ -234,7 +222,6 @@ def test_model_menu_shows_the_download_size_of_missing_models(
     assert "SAM 2 Large\t868 MB" in _menu_texts(menu=more)
 
 
-@pytest.mark.gui
 def test_model_menu_explains_each_model_on_hover(*, group: AiToolGroup) -> None:
     group._detect._model_combo.set_unavailable_models(
         unavailable={"yoloworld:latest": "Not for masks"}

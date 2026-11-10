@@ -19,7 +19,6 @@ from ..conftest import DOWNLOAD_START_TIMEOUT_MS
 from .conftest import MainWinFactory
 
 
-@pytest.mark.gui
 def test_recommended_models_are_explained_before_all_models(
     *, main_win: MainWinFactory
 ) -> None:
@@ -56,7 +55,6 @@ def test_recommended_models_are_explained_before_all_models(
     assert "Best for text prompts and finding multiple objects." in labels
 
 
-@pytest.mark.gui
 def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     *,
     main_win: MainWinFactory,
@@ -134,7 +132,6 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert requests == ["/slow"]
 
 
-@pytest.mark.gui
 def test_delete_releases_loaded_session(
     *,
     main_win: MainWinFactory,
@@ -189,7 +186,6 @@ def test_delete_releases_loaded_session(
     assert not Path(blob.path).exists()
 
 
-@pytest.mark.gui
 def test_file_menu_opens_models_outside_settings_and_tabs_into_controls(
     *, main_win: MainWinFactory, qtbot: QtBot
 ) -> None:
@@ -211,7 +207,6 @@ def test_file_menu_opens_models_outside_settings_and_tabs_into_controls(
     assert viewport.rect().contains(focused.mapTo(viewport, focused.rect().center()))
 
 
-@pytest.mark.gui
 def test_failed_download_keeps_retry_visible_and_details_accessible(
     *,
     main_win: MainWinFactory,
@@ -265,7 +260,6 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     qtbot.waitUntil(lambda: win._model_manager._pull is None)
 
 
-@pytest.mark.gui
 def test_model_links_follow_live_theme_contrast(
     *, main_win: MainWinFactory, qtbot: QtBot
 ) -> None:
@@ -301,7 +295,6 @@ def test_model_links_follow_live_theme_contrast(
         )
 
 
-@pytest.mark.gui
 def test_picker_downloads_and_selects_a_missing_model_in_place(
     *,
     main_win: MainWinFactory,
@@ -337,7 +330,6 @@ def test_picker_downloads_and_selects_a_missing_model_in_place(
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
 
 
-@pytest.mark.gui
 def test_picker_asks_before_downloading_sam3_and_cancel_keeps_setting(
     *, main_win: MainWinFactory, monkeypatch: pytest.MonkeyPatch
 ) -> None:

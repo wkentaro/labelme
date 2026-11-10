@@ -58,7 +58,6 @@ def _delete_selected_shape(
     qtbot.wait(50)
 
 
-@pytest.mark.gui
 def test_select_shape(
     *,
     main_win: MainWinFactory,
@@ -79,7 +78,6 @@ def test_select_shape(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_copy_paste_shape(
     *,
     main_win: MainWinFactory,
@@ -112,7 +110,6 @@ def test_copy_paste_shape(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_duplicate_shape(
     *,
     main_win: MainWinFactory,
@@ -142,7 +139,6 @@ def test_duplicate_shape(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("coordinate_offset", [0, 1.5])
 def test_merge_mask_shapes(
     *,
@@ -242,7 +238,6 @@ def test_merge_mask_shapes(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_disabled_merge_action_says_why(
     *,
     main_win: MainWinFactory,
@@ -272,7 +267,6 @@ def test_disabled_merge_action_says_why(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_delete_shape(
     *,
     main_win: MainWinFactory,
@@ -300,7 +294,6 @@ def test_delete_shape(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_delete_undo_shape(
     *,
     main_win: MainWinFactory,
@@ -332,7 +325,6 @@ def test_delete_undo_shape(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_reorder_label_list_is_one_undo_step(
     *,
     qtbot: QtBot,

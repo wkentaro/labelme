@@ -105,7 +105,6 @@ def _verify_change_output_dir(win: MainWindow, paths: _Paths, /) -> bool:
     return win._output_dir == paths.new_output_dir
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("dialog_method", "dialog_return", "trigger", "verify"),
     [
@@ -165,7 +164,6 @@ def test_action_via_qfile_dialog(
     close_or_pause(qtbot=qtbot, widget=loaded_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_open_file_dialog_normalizes_the_reported_path(
     *,
     qtbot: QtBot,

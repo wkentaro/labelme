@@ -24,7 +24,6 @@ def _selected_labels(*, win: MainWindow) -> list[str]:
     return [str(shape.label) for shape in win._canvas_widgets.canvas.selected_shapes]
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("shape_index", "key", "expected_label"),
     [
@@ -56,7 +55,6 @@ def test_ctrl_arrow_selects_neighbor_shape(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_ctrl_arrow_keeps_selection_when_nothing_lies_that_way(
     *,
     qtbot: QtBot,
@@ -77,7 +75,6 @@ def test_ctrl_arrow_keeps_selection_when_nothing_lies_that_way(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_ctrl_arrow_starts_from_top_left_shape(
     *,
     qtbot: QtBot,
@@ -97,7 +94,6 @@ def test_ctrl_arrow_starts_from_top_left_shape(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_ctrl_arrow_skips_hidden_shapes(
     *,
     qtbot: QtBot,

@@ -49,7 +49,6 @@ def discard_unsaved_changes(*, monkeypatch: pytest.MonkeyPatch) -> None:
     )
 
 
-@pytest.mark.gui
 def test_last_label_memo(
     *,
     qtbot: QtBot,
@@ -74,7 +73,6 @@ def test_last_label_memo(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_restore_last_shape_via_undo(
     *,
     qtbot: QtBot,
@@ -110,7 +108,6 @@ def test_restore_last_shape_via_undo(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_first_and_subsequent_shapes_can_be_undone_and_saved(
     *,
     qtbot: QtBot,
@@ -163,7 +160,6 @@ def test_first_and_subsequent_shapes_can_be_undone_and_saved(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("discard_unsaved_changes")
 def test_undo_not_enabled_after_opening_image_with_shapes_carried_forward(
     *,
@@ -197,7 +193,6 @@ def test_undo_not_enabled_after_opening_image_with_shapes_carried_forward(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("image_dir", ["raw", "annotated"])
 @pytest.mark.usefixtures("discard_unsaved_changes")
 def test_navigation_disables_undo_for_clean_image_history(
@@ -230,7 +225,6 @@ def test_navigation_disables_undo_for_clean_image_history(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_save_keeps_shape_undo_disabled_while_drawing(
     *,
     qtbot: QtBot,

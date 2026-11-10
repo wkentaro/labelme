@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-import pytest
 from pytestqt.qtbot import QtBot
 
 from ..conftest import close_or_pause
@@ -14,7 +13,6 @@ from .conftest import show_window_and_wait_for_imagedata
 from .conftest import submit_label_dialog
 
 
-@pytest.mark.gui
 def test_undo_creation_keeps_earlier_label_edit(
     *,
     main_win: MainWinFactory,

@@ -11,7 +11,6 @@ from labelme._widgets._model_picker import ModelPicker
 from .conftest import MainWinFactory
 
 
-@pytest.mark.gui
 @pytest.mark.skipif(
     sys.platform == "win32",
     reason="offscreen Qt on Windows has no system font, so its text widths are a "

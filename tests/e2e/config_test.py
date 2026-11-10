@@ -60,7 +60,6 @@ def recovery_buttons(
     timer.stop()
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     "with_config_file",
     [
@@ -101,7 +100,6 @@ def test_MainWindow_config(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("old_key", ["ai_points_to_shape", "ai_box_to_shape"])
 def test_inline_config_migrates_legacy_ai_crosshair(
     *,
@@ -118,7 +116,6 @@ def test_inline_config_migrates_legacy_ai_crosshair(
     assert win._config_overrides == overrides
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     "original",
     [b"labels: [cat]\nauto_save: false\nunknown: true\n", b"labels: [unclosed\n"],
@@ -154,7 +151,6 @@ def test_config_recovery_resets_and_reopens(
     assert recovery_buttons == [QMessageBox.ButtonRole.AcceptRole]
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("original", ["unknown: true\n", "labels: [unclosed\n"])
 def test_config_recovery_continue_keeps_file_and_valid_cli_overrides(
     *,
@@ -172,7 +168,6 @@ def test_config_recovery_continue_keeps_file_and_valid_cli_overrides(
     assert not list(tmp_path.glob("*.bak"))
 
 
-@pytest.mark.gui
 def test_config_recovery_allows_continuing_after_write_failure(
     *,
     main_win: MainWinFactory,
@@ -197,7 +192,6 @@ def test_config_recovery_allows_continuing_after_write_failure(
     assert recovery_buttons == []
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("original", "overrides"),
     [

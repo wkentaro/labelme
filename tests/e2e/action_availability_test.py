@@ -18,7 +18,6 @@ from .conftest import click_canvas_fraction
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_actions_follow_image_and_shapes(
     *, main_win: MainWinFactory, data_path: Path
 ) -> None:
@@ -55,7 +54,6 @@ def test_actions_follow_image_and_shapes(
     assert all(not action.isEnabled() for action in visibility_actions)
 
 
-@pytest.mark.gui
 def test_canceling_a_point_label_restores_select_and_undo(
     *,
     main_win: MainWinFactory,
@@ -97,7 +95,6 @@ def _start_polygon(*, win: MainWindow, qtbot: QtBot) -> None:
     assert not win._actions.edit_mode.isEnabled()
 
 
-@pytest.mark.gui
 def test_paste_mid_draw_keeps_the_unfinished_shape(
     *,
     main_win: MainWinFactory,
@@ -118,7 +115,6 @@ def test_paste_mid_draw_keeps_the_unfinished_shape(
     assert len(canvas.shapes) == n_shapes
 
 
-@pytest.mark.gui
 def test_switching_image_mid_draw_restores_select(
     *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
 ) -> None:
@@ -133,7 +129,6 @@ def test_switching_image_mid_draw_restores_select(
     assert not win._actions.undo_last_point.isEnabled()
 
 
-@pytest.mark.gui
 def test_canceling_a_draft_keeps_delete_disabled_without_selection(
     *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
 ) -> None:
@@ -146,7 +141,6 @@ def test_canceling_a_draft_keeps_delete_disabled_without_selection(
     assert not win._actions.delete.isEnabled()
 
 
-@pytest.mark.gui
 def test_editing_a_label_enables_undo(
     *,
     main_win: MainWinFactory,
@@ -175,7 +169,6 @@ def test_editing_a_label_enables_undo(
     assert win._actions.undo.isEnabled()
 
 
-@pytest.mark.gui
 def test_hiding_a_shape_mid_draw_keeps_undo_disabled(
     *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
 ) -> None:
@@ -188,7 +181,6 @@ def test_hiding_a_shape_mid_draw_keeps_undo_disabled(
     assert not win._actions.edit_mode.isEnabled()
 
 
-@pytest.mark.gui
 def test_save_as_writes_empty_annotation(
     *,
     main_win: MainWinFactory,
@@ -210,7 +202,6 @@ def test_save_as_writes_empty_annotation(
     assert len(win._docks.label_list) == 0
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("clear_by", ["undo", "delete"])
 def test_visibility_actions_follow_last_shape_and_restore(
     *,
@@ -259,7 +250,6 @@ def test_visibility_actions_follow_last_shape_and_restore(
     win.mark_clean()
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("keep_prev", [False, True])
 @pytest.mark.parametrize("tool", ["point", "polygon"])
 def test_drawing_tool_survives_file_transitions(
@@ -315,7 +305,6 @@ def test_drawing_tool_survives_file_transitions(
     win.mark_clean()
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("auto_save", [False, True])
 def test_delete_file_follows_carried_annotation_save_state(
     *, main_win: MainWinFactory, data_path: Path, auto_save: bool, qtbot: QtBot
@@ -335,7 +324,6 @@ def test_delete_file_follows_carried_annotation_save_state(
     assert win._actions.delete_file.isEnabled() == auto_save
 
 
-@pytest.mark.gui
 def test_delete_file_enables_after_first_auto_save(
     *, main_win: MainWinFactory, data_path: Path, qtbot: QtBot
 ) -> None:

@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Final
 
-import pytest
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import QTimer
 from pytestqt.qtbot import QtBot
@@ -17,7 +16,6 @@ from .conftest import dismiss_active_modal
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_shape_mode_actions_update_status_without_pointer_movement(
     *,
     raw_win: MainWindow,
@@ -49,7 +47,6 @@ def test_shape_mode_actions_update_status_without_pointer_movement(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_status_shows_rounded_pointer_coordinates_across_transition(
     *,
     raw_win: MainWindow,
@@ -70,7 +67,6 @@ def test_status_shows_rounded_pointer_coordinates_across_transition(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_pointer_coordinates_stay_put_as_other_status_changes(
     *,
     raw_win: MainWindow,
@@ -121,7 +117,6 @@ def _wait_for_status_message_containing(
     return captured
 
 
-@pytest.mark.gui
 def test_status_bar_shows_loaded_message_after_opening(
     *,
     main_win: MainWinFactory,
@@ -141,7 +136,6 @@ def test_status_bar_shows_loaded_message_after_opening(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_save_does_not_emit_transient_status_message(
     *,
     main_win: MainWinFactory,
@@ -174,7 +168,6 @@ def test_save_does_not_emit_transient_status_message(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_status_bar_shows_error_message_on_corrupt_file(
     *,
     main_win: MainWinFactory,

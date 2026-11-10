@@ -132,7 +132,6 @@ def test_bounds_is_empty_for_incomplete_shape(
     assert bounds(shape=shape).getRect() == (0.0, 0.0, 0.0, 0.0)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_show_labels_draws_text_above_shape() -> None:
     shape = _polygon(label="car")
@@ -159,7 +158,6 @@ def test_show_labels_draws_text_above_shape() -> None:
     )
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 @pytest.mark.parametrize("group_id", [0, 3])
 def test_show_labels_draws_group_id(*, group_id: int) -> None:
@@ -182,7 +180,6 @@ def test_show_labels_draws_group_id(*, group_id: int) -> None:
     )
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_empty_label_draws_no_text() -> None:
     for label in (None, ""):
@@ -209,7 +206,6 @@ def test_empty_label_draws_no_text() -> None:
         )
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_point_shape_label_is_drawn() -> None:
     # A single-point shape has a degenerate bounding box; the label must still
@@ -241,7 +237,6 @@ def test_point_shape_label_is_drawn() -> None:
     )
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 @pytest.mark.parametrize(
     # The probe is a screen pixel on the zoomed outline, away from any vertex
@@ -287,7 +282,6 @@ def test_outline_scales_like_its_points(
     )
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 @pytest.mark.parametrize(
     # A pixel halfway along the segment that must not exist: a linestrip is
@@ -350,7 +344,6 @@ def _outline_center(*, image: QtGui.QImage) -> tuple[float, float]:
     return (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_mask_outline_aligns_with_fill() -> None:
     # The mask fill is rasterized at the correct position; the contour outline
@@ -375,7 +368,6 @@ def test_mask_outline_aligns_with_fill() -> None:
     assert abs(outline[1] - expected[1]) <= 0.5
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 @pytest.mark.parametrize("fill_mask", [True, False])
 @pytest.mark.parametrize("outline", [True, False])
@@ -406,7 +398,6 @@ def test_mask_draws_fill_and_edge_as_asked(*, fill_mask: bool, outline: bool) ->
     assert bool(_outline_pixels(image=image)) is outline
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 @pytest.mark.parametrize("outline", [True, False])
 def test_polygon_without_outline_draws_its_fill_alone(*, outline: bool) -> None:
@@ -436,7 +427,6 @@ def test_polygon_without_outline_draws_its_fill_alone(*, outline: bool) -> None:
     assert (image.pixelColor(47, 47) != white) is outline
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_label_anchor_tracks_scale() -> None:
     shape = _polygon(label="car")
@@ -566,7 +556,6 @@ def test_polygon_hit_uses_path_containment() -> None:
     assert _hit(shape=shape, point=(50, 50), scale=1.0) is False
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 @pytest.mark.parametrize("shape_type", ["polygon", "linestrip"])
 def test_vertex_highlight_colors_the_vertex_group(*, shape_type: ShapeType) -> None:
@@ -584,7 +573,6 @@ def test_vertex_highlight_colors_the_vertex_group(*, shape_type: ShapeType) -> N
     assert image.pixelColor(150, 50) == QtGui.QColor(255, 255, 255)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_rotation_highlight_colors_rotation_group_without_coloring_vertices() -> None:
     shape = _polygon(label=None)
@@ -715,7 +703,6 @@ def _assert_intersects_every_painted_pixel(
         painter.end()
 
 
-@pytest.mark.gui
 def test_negative_point_carries_a_minus_mark() -> None:
     # Red alone tells a negative point from a positive one only to readers
     # who can see red; the white "−" does not depend on it.
@@ -786,7 +773,6 @@ def _painted_extent(*, fill_mask: bool, outline: bool) -> tuple[int, int, int, i
     return min(xs), min(ys), max(xs) + 1, max(ys) + 1
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_mask_alignment_fill_extent() -> None:
     left, top, right, bottom = _painted_extent(fill_mask=True, outline=False)
@@ -801,7 +787,6 @@ def test_mask_alignment_fill_extent() -> None:
     ]
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_mask_alignment_outline_extent() -> None:
     left, top, right, bottom = _painted_extent(fill_mask=False, outline=True)
