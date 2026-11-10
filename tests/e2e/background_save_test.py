@@ -13,6 +13,7 @@ from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 import labelme._app
+import labelme._save_request
 import labelme._save_writer
 from labelme._app import MainWindow
 from labelme._save_request import SaveRequest
@@ -37,7 +38,7 @@ def blocked_writer(
 
     monkeypatch.setattr(labelme._save_writer, "write_save_request", write)
 
-    monkeypatch.setattr(labelme._app, "write_save_request", write)
+    monkeypatch.setattr(labelme._save_request, "write_save_request", write)
     raw_win._actions.save_auto.setChecked(True)
     yield entered, release, writes
     release.set()
@@ -190,7 +191,7 @@ def test_failed_background_save_retries_only_on_request_or_edit(
 
     monkeypatch.setattr(labelme._save_writer, "write_save_request", fail)
 
-    monkeypatch.setattr(labelme._app, "write_save_request", fail)
+    monkeypatch.setattr(labelme._save_request, "write_save_request", fail)
     raw_win._actions.save_auto.setChecked(True)
     _edit(win=raw_win, x=1)
     qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
@@ -238,11 +239,11 @@ def test_retry_preserves_failed_save_as_destination(
     monkeypatch.setattr(raw_win, "prompt_save_file_path", lambda: str(destination))
     monkeypatch.setattr(raw_win, "show_error_message", lambda **_kwargs: 0)
     monkeypatch.setattr(labelme._save_writer, "write_save_request", fail)
-    monkeypatch.setattr(labelme._app, "write_save_request", fail)
+    monkeypatch.setattr(labelme._save_request, "write_save_request", fail)
     raw_win._save_label_file(save_as=True)
     assert raw_win._status_bar.save.text() == "Save failed"
     monkeypatch.setattr(labelme._save_writer, "write_save_request", original)
-    monkeypatch.setattr(labelme._app, "write_save_request", original)
+    monkeypatch.setattr(labelme._save_request, "write_save_request", original)
     raw_win._status_bar.retry.click()
     qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
     _edit(win=raw_win, x=2)

@@ -39,39 +39,29 @@ from . import _ai_models
 from . import _automation
 from . import _config
 from . import _image_codec
+from . import _label_file
+from . import _label_flags
 from . import _label_path
+from . import _save_request
+from . import _shape
+from . import _shape_color
 from . import _utils
+from . import _widgets
 from ._image_prefetcher import ImagePrefetcher
-from ._label_file import LABEL_FILE_SUFFIX
-from ._label_file import RASTER_MAX_SIDE
 from ._label_file import Annotation
 from ._label_file import ImageNotFoundError
 from ._label_file import ImageTooLargeError
 from ._label_file import LabelFileError
 from ._label_file import LabelFileReadError
-from ._label_file import is_label_file_path
-from ._label_file import read_image_file
-from ._label_file import read_label_file
-from ._label_file import relink_label_file
-from ._label_flags import apply_default_flags
 from ._model_manager import ModelManager
 from ._save_request import SaveRequest
-from ._save_request import write_save_request
 from ._save_writer import SaveWriter
 from ._shape import MergeBlocker
 from ._shape import Shape
 from ._shape import ShapeDict
 from ._shape import ShapeType
-from ._shape import can_merge_shapes
-from ._shape import merge_blocker
-from ._shape import merge_masks
 from ._shape_clipboard import ShapeClipboard
-from ._shape_color import resolve_shape_color
 from ._utils import ImageDecodeRequirement
-from ._utils import get_image_decode_requirement
-from ._widgets import LABEL_COLOR_ROLE
-from ._widgets import MIN_ZOOM
-from ._widgets import ZOOM_STEP_FACTOR
 from ._widgets import AiAssistedAnnotationWidget
 from ._widgets import AiTextToAnnotationWidget
 from ._widgets import AiToolGroup
@@ -92,9 +82,6 @@ from ._widgets import StatusStats
 from ._widgets import ToolBar
 from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
-from ._widgets import format_shape_label
-from ._widgets import license_link
-from ._widgets import license_notice
 
 
 @dataclasses.dataclass(frozen=True, eq=False)
@@ -1329,7 +1316,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not file_or_dir:
             return
-        if self._output_dir is not None and not is_label_file_path(
+        if self._output_dir is not None and not _label_file.is_label_file_path(
             filename=file_or_dir
         ):
             # --output replaces the folder's remembered Annotation Folder, so
@@ -1995,7 +1982,9 @@ class MainWindow(QtWidgets.QMainWindow):
             shape.description = entry.description
             if entry.group_id is not None:
                 shape.group_id = entry.group_id
-        apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
+        _label_flags.apply_default_flags(
+            shapes=shapes, label_flags=self._config["label_flags"]
+        )
         self._load_shapes(shapes=shapes, replace=False)
         self.mark_dirty()
         return shapes
@@ -2056,7 +2045,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete.setEnabled(
             not busy and any(not shape.locked for shape in selected)
         )
-        blocker = merge_blocker(shapes=selected)
+        blocker = _shape.merge_blocker(shapes=selected)
         self._actions.merge.setEnabled(not busy and blocker is None)
         # The tooltip is all a disabled menu item can show: Qt sends no status
         # tip for one on macOS or Fusion.
@@ -2195,7 +2184,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 unique_label_list=self._docks.unique_label_list,
             )
             item.set_label(
-                text=format_shape_label(shape=shape),
+                text=_widgets.format_shape_label(shape=shape),
                 color=fill_rgb,
             )
             if self._docks.unique_label_list.find_label_item(label=shape.label) is None:
@@ -2312,7 +2301,7 @@ class MainWindow(QtWidgets.QMainWindow):
             unique_label_list=self._docks.unique_label_list,
         )
         label_list_item.set_label(
-            text=format_shape_label(shape=shape),
+            text=_widgets.format_shape_label(shape=shape),
             color=fill_rgb,
         )
 
@@ -2331,7 +2320,7 @@ class MainWindow(QtWidgets.QMainWindow):
         shape_color = self._shape_color_preview
         if shape_color is None:
             shape_color = self._config["shape_color"]
-        return resolve_shape_color(
+        return _shape_color.resolve_shape_color(
             config=shape_color,
             label=label,
             label_index=label_index,
@@ -2448,7 +2437,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._wait_for_save()
         try:
             request = self._capture_save_request(label_path=label_path)
-            write_save_request(request=request)
+            _save_request.write_save_request(request=request)
         except (LabelFileError, OSError, ValueError) as e:
             self._show_save_failure(label_path=label_path, error=e)
             self.show_error_message(
@@ -2462,7 +2451,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _insert_shapes(self, *, shapes: list[Shape]) -> None:
         if not shapes:
             return
-        apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
+        _label_flags.apply_default_flags(
+            shapes=shapes, label_flags=self._config["label_flags"]
+        )
         # A pasted or duplicated copy of a locked shape starts out editable.
         for shape in shapes:
             shape.locked = False
@@ -2472,9 +2463,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _merge_selected_shapes(self) -> None:
         canvas = self._canvas_widgets.canvas
         selected = list(canvas.selected_shapes)
-        if not can_merge_shapes(shapes=selected):
+        if not _shape.can_merge_shapes(shapes=selected):
             return
-        merged = merge_masks(shapes=selected)
+        merged = _shape.merge_masks(shapes=selected)
         # The merged shape takes the first input's slot so the Label List
         # order is preserved; the other inputs are dropped.
         shapes = [
@@ -2554,7 +2545,9 @@ class MainWindow(QtWidgets.QMainWindow):
         shapes = self._canvas_widgets.canvas.set_last_label(
             text=entry.label, flags=entry.flags
         )
-        apply_default_flags(shapes=shapes, label_flags=self._config["label_flags"])
+        _label_flags.apply_default_flags(
+            shapes=shapes, label_flags=self._config["label_flags"]
+        )
         for shape in shapes:
             if entry.group_id is not None or shape.group_id is None:
                 shape.group_id = entry.group_id
@@ -2703,7 +2696,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _add_zoom(self, *, steps: float, pos: QtCore.QPointF | None) -> None:
         # Steps in and out cancel, so zooming in then out returns to the start.
-        zoom_value = self._canvas_widgets.zoom_widget.value() * ZOOM_STEP_FACTOR**steps
+        zoom_value = (
+            self._canvas_widgets.zoom_widget.value() * _widgets.ZOOM_STEP_FACTOR**steps
+        )
         self._zoom_mode = _ZoomMode.MANUAL_ZOOM
         self._set_zoom(value=zoom_value, pos=pos)
 
@@ -2827,7 +2822,7 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             try:
                 return (
-                    read_label_file(
+                    _label_file.read_label_file(
                         filename=label_path, max_decode_mb=_max_decode_mb()
                     ),
                     None,
@@ -2847,7 +2842,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     image_path=image_path, label_dir=Path(label_path).parent
                 )
                 return (
-                    read_label_file(
+                    _label_file.read_label_file(
                         filename=label_path,
                         image_path_override=stored_image_path,
                         max_decode_mb=_max_decode_mb(),
@@ -2908,7 +2903,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _read_image_as_annotation(self, *, image_path: str) -> Annotation | None:
         try:
-            image_data = read_image_file(
+            image_data = _label_file.read_image_file(
                 filename=image_path, max_decode_mb=_max_decode_mb()
             )
         except OSError as e:
@@ -2974,7 +2969,7 @@ class MainWindow(QtWidgets.QMainWindow):
         image_or_label_path = os.path.normpath(image_or_label_path)
         file_list_image_path = (
             None
-            if is_label_file_path(filename=image_or_label_path)
+            if _label_file.is_label_file_path(filename=image_or_label_path)
             else image_or_label_path
         )
 
@@ -3049,11 +3044,14 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("Created QImage in {:.0f}ms", (time.time() - t0) * 1000)
 
         if image.isNull():
-            requirement = get_image_decode_requirement(image_data=annotation.image_data)
+            requirement = _utils.get_image_decode_requirement(
+                image_data=annotation.image_data
+            )
             original_limit = QtGui.QImageReader.allocationLimit()
             if (
                 requirement is not None
-                and max(requirement.width, requirement.height) <= RASTER_MAX_SIDE
+                and max(requirement.width, requirement.height)
+                <= _label_file.RASTER_MAX_SIDE
                 and 0 < original_limit < requirement.required_mb
             ):
                 if not self._confirm_large_image_open(
@@ -3086,7 +3084,9 @@ class MainWindow(QtWidgets.QMainWindow):
             try:
                 # Choosing the Image was the confirmation, and nothing can
                 # cancel this load any more, so the repair is written now.
-                relink_label_file(filename=label_path, image_path=located_image_path)
+                _label_file.relink_label_file(
+                    filename=label_path, image_path=located_image_path
+                )
             except LabelFileError as e:
                 self._show_file_open_error(
                     path=label_path, file_kind="label", exc=e, extra=None
@@ -3209,7 +3209,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def _update_zoom_floor(self) -> None:
         # Let an image too big for 1% still zoom out to half of Fit to Window.
         half_fit_percent = self._fit_window_scale() * 100 / 2
-        self._canvas_widgets.zoom_widget.setMinimum(min(MIN_ZOOM, half_fit_percent))
+        self._canvas_widgets.zoom_widget.setMinimum(
+            min(_widgets.MIN_ZOOM, half_fit_percent)
+        )
 
     def _apply_zoom_to_canvas(self) -> None:
         if self._image.isNull():
@@ -3354,7 +3356,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         formats = [f"*{ext}" for ext in _list_supported_image_extensions()]
         filters = self.tr("Images and annotation files (%s)") % " ".join(
-            formats + [f"*{LABEL_FILE_SUFFIX}"]
+            formats + [f"*{_label_file.LABEL_FILE_SUFFIX}"]
         )
         image_or_label_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
@@ -3471,7 +3473,7 @@ class MainWindow(QtWidgets.QMainWindow):
             parent=self,
             caption=self.tr("Save Annotation File"),
             dir=default_path,
-            filter=self.tr("Annotation files (*%s)") % LABEL_FILE_SUFFIX,
+            filter=self.tr("Annotation files (*%s)") % _label_file.LABEL_FILE_SUFFIX,
         )
         return label_path
 
@@ -3762,12 +3764,12 @@ class MainWindow(QtWidgets.QMainWindow):
             assert item is not None
             label = item.data(Qt.ItemDataRole.UserRole)
             color = self._get_rgb_by_label(label=label, unique_label_list=unique_labels)
-            item.setData(LABEL_COLOR_ROLE, QtGui.QColor(*color))
+            item.setData(_widgets.LABEL_COLOR_ROLE, QtGui.QColor(*color))
         for item in self._docks.label_list:
             shape = item.shape()
             assert shape is not None and shape.label is not None
             item.set_label(
-                text=format_shape_label(shape=shape),
+                text=_widgets.format_shape_label(shape=shape),
                 color=self._get_rgb_by_label(
                     label=shape.label, unique_label_list=unique_labels
                 ),
@@ -3807,7 +3809,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _download_and_select(
         self, model_name: str, /, *, select: Callable[[str], None]
     ) -> None:
-        notice = license_notice(model_name=model_name)
+        notice = _widgets.license_notice(model_name=model_name)
         if notice is not None:
             message = QtWidgets.QMessageBox(self)
             message.setWindowTitle(
@@ -3821,7 +3823,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 Qt.TextInteractionFlag.TextBrowserInteraction
             )
             message.setText(
-                f"{html.escape(notice)}<br><br>{license_link(model_name=model_name)}"
+                f"{html.escape(notice)}<br><br>{_widgets.license_link(model_name=model_name)}"
             )
             download = message.addButton(
                 self.tr("Download"), QtWidgets.QMessageBox.ButtonRole.AcceptRole
@@ -4011,7 +4013,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not file_or_dir:
             raise ValueError("file_or_dir cannot be empty")
 
-        if is_label_file_path(filename=file_or_dir):
+        if _label_file.is_label_file_path(filename=file_or_dir):
             # Load before dropping the Image List, so a failed load leaves the
             # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
@@ -4325,7 +4327,7 @@ def _shapes_from_dicts(
         shape.locked = shape_dict["locked"]
 
         shapes.append(shape)
-    apply_default_flags(shapes=shapes, label_flags=label_flags)
+    _label_flags.apply_default_flags(shapes=shapes, label_flags=label_flags)
     return shapes
 
 
@@ -4442,7 +4444,7 @@ def _make_raster_side_message(*, width: int, height: int) -> str:
     ).format(
         width=width,
         height=height,
-        max_side=RASTER_MAX_SIDE,
+        max_side=_label_file.RASTER_MAX_SIDE,
     )
 
 
@@ -4450,13 +4452,13 @@ def _make_image_too_large_message(*, image_data: bytes) -> str | None:
     # None means the failure is not explained by image size, so the caller
     # falls back to the generic unsupported-format message.
 
-    requirement = get_image_decode_requirement(image_data=image_data)
+    requirement = _utils.get_image_decode_requirement(image_data=image_data)
     if requirement is None:
         return None
     width = requirement.width
     height = requirement.height
 
-    if max(width, height) > RASTER_MAX_SIDE:
+    if max(width, height) > _label_file.RASTER_MAX_SIDE:
         return _make_raster_side_message(width=width, height=height)
 
     limit_mb = QtGui.QImageReader.allocationLimit()
