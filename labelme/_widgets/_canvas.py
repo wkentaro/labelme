@@ -292,8 +292,6 @@ class Canvas(QtWidgets.QWidget):
     zoom_request = QtCore.Signal(int, QPointF)
     scroll_request = QtCore.Signal(int, Qt.Orientation)
     pan_request = QtCore.Signal(QPoint)
-    # The AI-Find All query that found the new Shapes; it prefills their label
-    # dialog. Empty for every other tool.
     new_shape = QtCore.Signal()
     inference_produced_no_shapes = QtCore.Signal()
     inference_failed = QtCore.Signal(str)
@@ -1376,7 +1374,7 @@ class Canvas(QtWidgets.QWidget):
         self.edge_selected.emit(self._hovered_edge is not None)
         self._update_status(extra_messages=status_messages)
 
-    def _update_drawing_line(self, *, pos: QPointF, is_shift_pressed: bool) -> QPointF:
+    def _update_drawing_line(self, *, pos: QPointF, is_shift_pressed: bool) -> None:
         current = self._current
         assert current is not None
         mode = self.create_mode
@@ -1420,7 +1418,6 @@ class Canvas(QtWidgets.QWidget):
             self._line = dataclasses.replace(
                 self._line, points=(current.points[0],), point_labels=(1,), closed=True
             )
-        return pos
 
     def _continue_left_button_drag(
         self, *, pos: QPointF, event: QtGui.QMouseEvent
@@ -1603,7 +1600,7 @@ class Canvas(QtWidgets.QWidget):
         shape = self._last_hovered_shape
         index = self._last_hovered_edge
         point = self._prev_move_point
-        if shape is None or index is None or point is None or shape.locked:
+        if shape is None or index is None or shape.locked:
             return
         shape.insert_point(i=index, point=(point.x(), point.y()))
         self._highlight_vertex(index=index, mode="move")

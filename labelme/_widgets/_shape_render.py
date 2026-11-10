@@ -512,7 +512,7 @@ def _build_outline_path(*, shape: Shape) -> QtGui.QPainterPath:
     points = shape.points
     path = QtGui.QPainterPath()
     if shape.shape_type in ("rectangle", "mask", "circle"):
-        path.addPath(_build_two_point_outline(shape=shape, scale=1.0))
+        path.addPath(_build_two_point_outline(shape=shape))
     elif shape.shape_type == "oriented_rectangle" and len(points) not in (
         LINE_POINT_COUNT,
         ORIENTED_RECTANGLE_POINT_COUNT,
@@ -546,7 +546,7 @@ def _build_rect_between(
     return QtCore.QRectF(x0, y0, x1 - x0, y1 - y0)
 
 
-def _build_two_point_outline(*, shape: Shape, scale: float) -> QtGui.QPainterPath:
+def _build_two_point_outline(*, shape: Shape) -> QtGui.QPainterPath:
     # A rectangle, a mask shape's bounding box, and a circle are each fully
     # described by two points, so one image-space path shape covers all three.
     path = QtGui.QPainterPath()
@@ -562,7 +562,7 @@ def _build_two_point_outline(*, shape: Shape, scale: float) -> QtGui.QPainterPat
     ):
         corner, opposite = shape.points
         path.addRect(_build_rect_between(corner=corner, opposite=opposite))
-    return QtGui.QTransform.fromScale(scale, scale).map(path)
+    return path
 
 
 def _hits_mask_pixel(*, shape: Shape, point: npt.NDArray[np.float64]) -> bool:

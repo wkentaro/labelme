@@ -107,16 +107,6 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         pixmap.setDevicePixelRatio(dpr)
         painter.drawPixmap(rect, pixmap)
 
-    def cacheKey(self) -> int:
-        return hash(
-            (
-                self._svg,
-                int(self._tint_color(mode=QtGui.QIcon.Mode.Normal).rgba()),
-                int(self._tint_color(mode=QtGui.QIcon.Mode.Disabled).rgba()),
-                int(self._tint_color(mode=QtGui.QIcon.Mode.Selected).rgba()),
-            )
-        )
-
     def clone(self) -> QtGui.QIconEngine:
         return _TintedSvgIconEngine(svg=self._svg)
 

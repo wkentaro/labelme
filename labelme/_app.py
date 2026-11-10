@@ -1177,7 +1177,6 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         )
 
-        self._canvas_widgets.canvas.context_menu.addActions(self._actions.context_menu)
         # Lets a disabled item say why it is disabled.
         self._canvas_widgets.canvas.context_menu.setToolTipsVisible(True)
         edit_menu.setToolTipsVisible(True)
