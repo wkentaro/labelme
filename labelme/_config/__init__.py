@@ -141,7 +141,10 @@ def load_config(*, config_file: Path | None, config_overrides: dict) -> dict:
     if config_file is not None:
         with open(config_file, encoding="utf-8") as f:
             config_from_yaml = _yaml.safe_load(stream=f)
-        if isinstance(config_from_yaml, dict):
+        # An empty or comment-only file parses as None and holds no settings.
+        if not isinstance(config_from_yaml, dict | None):
+            raise ValueError("The Config File must contain a mapping of settings")
+        if config_from_yaml is not None:
             migrate_config(config_from_yaml=config_from_yaml)
             if "shape_color" in config_from_yaml:
                 validate_shape_color(config=config_from_yaml["shape_color"])
