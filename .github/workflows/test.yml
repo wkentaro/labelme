@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
   workflow_call:
+permissions:
+  contents: read
 # Nine GUI cells per push are too expensive to keep running for superseded
 # commits. github.ref is unique per pull request (refs/pull/N/merge) even for
 # fork branches that share a name, and the event condition keeps main pushes
@@ -17,13 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:
           fetch-depth: 0
       - uses: extractions/setup-just@4a174aa1487e2bcb3f86a8fe24a05361a4f4fff1
         with:
           just-version: 1.58.0
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78  # v7
         with:
           python-version: '3.12'
       - run: just setup
@@ -37,18 +39,18 @@ jobs:
         os: [windows-latest, macos-latest, ubuntu-latest]
         python-version: ['3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
       - uses: extractions/setup-just@4a174aa1487e2bcb3f86a8fe24a05361a4f4fff1
         with:
           just-version: 1.58.0
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78  # v7
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
       - shell: bash
         run: |
           just setup
-      - uses: awalsh128/cache-apt-pkgs-action@v1
+      - uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9  # v1
         if: matrix.os == 'ubuntu-latest'
         with:
           packages: xvfb libegl1 libxkbcommon0 libxcb-cursor0 libgl1
@@ -106,8 +108,8 @@ jobs:
         os: [windows-latest, macos-latest, ubuntu-latest]
         python-version: ['3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78  # v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Smoke-test installed artifacts
@@ -116,18 +118,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
       - uses: extractions/setup-just@4a174aa1487e2bcb3f86a8fe24a05361a4f4fff1
         with:
           just-version: 1.58.0
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78  # v7
         with:
           python-version: '3.12'
           activate-environment: true
       - shell: bash
         run: |
           just setup
-      - uses: awalsh128/cache-apt-pkgs-action@v1
+      - uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9  # v1
         with:
           packages: xvfb libegl1 libxkbcommon0 libxcb-cursor0 libgl1
           version: 1.0

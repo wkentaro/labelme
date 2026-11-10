@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
+permissions:
+  contents: read
 jobs:
   notify:
     if: |
@@ -17,6 +19,7 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
+          MILESTONE_TITLE: ${{ github.event.pull_request.milestone.title }}
         run: |-
           if [[ -z "$DISCORD_WEBHOOK" ]]; then
             echo "Error: DISCORD_WEBHOOK secret not configured"
@@ -24,7 +27,7 @@ jobs:
           fi
           TYPE="🎉 **New feature merged!** Try it in the next release"
           COLOR=3066993
-          MILESTONE="${{ github.event.pull_request.milestone.title }}"
+          MILESTONE="$MILESTONE_TITLE"
           if [[ -z "$MILESTONE" ]]; then
             MILESTONE="None"
           fi
