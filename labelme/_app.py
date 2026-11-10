@@ -3555,6 +3555,11 @@ class MainWindow(QtWidgets.QMainWindow):
         # Only the label file was deleted, not the image: clear the annotations
         # but keep the image on the canvas.
         self._docks.label_list.clear()
+        self._load_flags(flags={}, widget=self._docks.flag_list)
+        assert self._annotation is not None
+        self._annotation = dataclasses.replace(
+            self._annotation, flags={}, other_data={}
+        )
         # Drop the pre-delete backups first so undo cannot resurrect the
         # annotations of the file we just removed; the reload below re-seeds the
         # stack with the empty state, keeping "top mirrors current" intact.
