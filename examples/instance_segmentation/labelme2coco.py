@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
 
 
-def _count_polygon_vertices_for_circle(radius: float, /) -> int:
+def _count_polygon_vertices_for_circle(*, radius: float) -> int:
     CIRCLE_APPROXIMATION_TOLERANCE_PX: Final = 1.0
     CIRCLE_MIN_VERTEX_COUNT: Final = 12
 
@@ -45,7 +45,7 @@ def _circle_to_polygon_segmentation(
     if radius == 0.0:
         raise ValueError("Degenerate circle: center and edge are the same point.")
 
-    vertex_count = _count_polygon_vertices_for_circle(radius)
+    vertex_count = _count_polygon_vertices_for_circle(radius=radius)
     angles = np.linspace(0.0, 2.0 * math.pi, num=vertex_count, endpoint=False)
     vertices = np.column_stack(
         (cx + radius * np.cos(angles), cy + radius * np.sin(angles))

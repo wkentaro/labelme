@@ -34,7 +34,7 @@ class AiAssistSession:
     def __init__(
         self,
         *,
-        model_name: str = "sam3:latest",
+        model_name: str = "sam2:latest",
         output_format: AiOutputFormat = "polygon",
         polygon_detail: int = 60,
     ) -> None:
@@ -56,7 +56,7 @@ class AiAssistSession:
     ) -> AiAssistProposal:
         detections = [
             detection
-            for detection in _detections_from_annotations(annotations)
+            for detection in _detections_from_annotations(annotations=annotations)
             if detection.score >= score_threshold
         ]
         if prompt_kind == "box" and detections:
@@ -66,7 +66,7 @@ class AiAssistSession:
                 max(
                     detections,
                     key=lambda detection: (
-                        _box_iou(detection.bbox, points.ravel()),
+                        _box_iou(bbox=detection.bbox, box=points.ravel()),
                         detection.score,
                     ),
                 )
@@ -107,7 +107,7 @@ class AiAssistSession:
 
 
 def _box_iou(
-    bbox: tuple[float, float, float, float] | None, box: NDArray[np.floating], /
+    *, bbox: tuple[float, float, float, float] | None, box: NDArray[np.floating]
 ) -> float:
     if bbox is None:
         return 0.0
@@ -152,8 +152,8 @@ def _is_point_inside_detection(
 
 
 def _detections_from_annotations(
+    *,
     annotations: list[osam.types.Annotation],
-    /,
 ) -> list[Detection]:
     if not annotations:
         logger.warning("No annotations returned")

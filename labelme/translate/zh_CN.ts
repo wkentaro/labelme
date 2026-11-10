@@ -16,6 +16,10 @@
         <translation>更多细节</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>输出</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>多边形</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>按住鼠标拖动以移动形状</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>正在创建 %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>按 ESC 键取消</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>单击以添加顶点</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>拖动画框</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>拖动框住一个示例</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>丢弃</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>单击以包含</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>单击以排除</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>添加 %d 个</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>拖动以排除</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -436,6 +468,11 @@
         <translation>撤销上一次添加或编辑形状的操作</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>选择</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>单击放置折线的点；按住 %s 并单击以放置最后一个点。</translation>
     </message>
@@ -585,11 +622,6 @@
     <message>
         <source>Undo</source>
         <translation>撤销</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>编辑</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -896,10 +928,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>取消</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>要保留“{}”的标注更改吗？</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>尚未保存的更改</translation>
     </message>
@@ -1000,12 +1028,48 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>正在分割…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>正在启动 AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>正在加载 {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>正在 CPU 上准备图像…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>正在准备图像…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} 秒</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>找到 {count} 个新的“{query}”</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>未找到新的“{query}”</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>请至少选择两个掩码形状进行合并</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>只能合并掩码形状</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>请先解锁选中的形状再合并</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>只能合并标签相同的形状</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1016,12 +1080,40 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>保存标注文件时出错</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>定位图像后，标注文件将更新为引用该图像。</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>定位图像…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>定位图像</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>图像 (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>标注文件夹：%s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>要删除标注文件吗？此操作无法撤销。</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>要删除“{}”吗？此操作无法撤销。</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>下载</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>要保存对“{}”的标注更改吗？</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1218,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>删除标注文件</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>永久删除该标注文件？此操作无法撤销。</translation>
     </message>
     <message>
         <source>Configuration Error</source>

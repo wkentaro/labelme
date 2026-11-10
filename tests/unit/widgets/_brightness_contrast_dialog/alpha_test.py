@@ -25,7 +25,7 @@ def _make_dialog(
 ) -> tuple[BrightnessContrastDialog, list[NDArray[np.uint8]]]:
     captured: list[NDArray[np.uint8]] = []
     dialog = BrightnessContrastDialog(
-        img=img, callback=lambda qimage: captured.append(img_qt_to_arr(qimage))
+        img=img, callback=lambda qimage: captured.append(img_qt_to_arr(img_qt=qimage))
     )
     qtbot.addWidget(dialog)
     return dialog, captured

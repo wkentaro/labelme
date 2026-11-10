@@ -10,6 +10,13 @@ from PySide6 import QtWidgets
 
 
 class ModelPicker(QtWidgets.QComboBox):
+    _options: list[tuple[str, str]]
+    _available: set[str]
+    _downloading: set[str]
+    _selected: str
+    _requested: str
+    _unavailable: dict[str, str]
+
     model_changed = QtCore.Signal(str)
     download_requested = QtCore.Signal(str)
     manage_requested = QtCore.Signal()
@@ -20,10 +27,10 @@ class ModelPicker(QtWidgets.QComboBox):
         super().__init__()
         self._options = list(options)
         self._available = {name for name, _ in options}
-        self._downloading: set[str] = set()
+        self._downloading = set()
         self._selected = ""
         self._requested = ""
-        self._unavailable: dict[str, str] = {}
+        self._unavailable = {}
         self._populate()
         self.currentIndexChanged.connect(self._on_changed)
 
@@ -94,7 +101,7 @@ class ModelPicker(QtWidgets.QComboBox):
         self._selected = self._requested if self._requested in available else ""
         self._populate()
 
-    def set_unavailable_models(self, unavailable: dict[str, str], /) -> None:
+    def set_unavailable_models(self, *, unavailable: dict[str, str]) -> None:
         # Maps each model that the current context cannot use to the reason.
         # The selection stays, so the Setting is unchanged.
         if self._unavailable == unavailable:
@@ -110,7 +117,7 @@ class ModelPicker(QtWidgets.QComboBox):
             self.setCurrentIndex(self.findData(self._selected))
         self.display_changed.emit()
 
-    def select_model(self, model_name: str, /) -> None:
+    def select_model(self, *, model_name: str) -> None:
         # Choosing a model that is not downloaded yet records the choice now;
         # it takes effect once the download finishes.
         self.set_model_name(model_name=model_name)
@@ -122,9 +129,8 @@ class ModelPicker(QtWidgets.QComboBox):
 
     def add_actions(
         self,
-        menu: QtWidgets.QMenu,
-        /,
         *,
+        menu: QtWidgets.QMenu,
         folded: Collection[str],
         notes: Mapping[str, str],
         sizes: Mapping[str, int],

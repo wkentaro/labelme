@@ -905,3 +905,40 @@ def test_opening_one_image_prefetches_its_folder_neighbors(
     assert set(win._image_prefetcher._decoded) == {str(path) for path in paths}
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_image_opens_with_annotation_recording_a_stale_image_path(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    image = tmp_path / "moved.jpg"
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", image)
+    annotation = tmp_path / "moved.json"
+    annotation_data = json.loads(
+        (data_path / "annotated" / "2011_000003.json").read_text(encoding="utf-8")
+    )
+    annotation_data["imageData"] = None
+    annotation_data["imagePath"] = "../old/moved.jpg"
+    annotation.write_text(json.dumps(annotation_data), encoding="utf-8")
+    original_bytes = annotation.read_bytes()
+
+    win = main_win(file_or_dir=str(image))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    assert win._label_file_path == str(annotation)
+    assert len(win._canvas_widgets.canvas.shapes) == len(annotation_data["shapes"])
+    assert not win._is_changed
+    assert annotation.read_bytes() == original_bytes
+
+    win._save_label_file(save_as=False)
+    qtbot.waitUntil(lambda: annotation.read_bytes() != original_bytes, timeout=5_000)
+    assert json.loads(annotation.read_text(encoding="utf-8"))["imagePath"] == (
+        "moved.jpg"
+    )
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)

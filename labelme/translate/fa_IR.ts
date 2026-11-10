@@ -16,6 +16,10 @@
         <translation>جزئیات بیشتر</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>خروجی</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>چندضلعی</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>کلیک و کشیدن برای جابجایی شکل</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>در حال ایجاد %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC برای لغو</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>کلیک برای افزودن نقطه</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>کشیدن یک کادر</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>کشیدن کادر دور یک نمونه</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>دور انداختن</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>افزودن</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>کلیک برای افزودن</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>کلیک برای حذف</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>افزودن %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>کشیدن برای حذف</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -436,6 +468,11 @@
         <translation>بازگشت آخرین افزودن و ویرایش شکل</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>انتخاب</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>برای قرار دادن نقاط خط شکسته کلیک کنید؛ %s را نگه دارید و کلیک کنید تا آخرین نقطه قرار گیرد.</translation>
     </message>
@@ -585,11 +622,6 @@
     <message>
         <source>Undo</source>
         <translation>بازگشت</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>ویرایش</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -896,10 +928,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>لغو</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>تغییرات حاشیه‌نویسی برای «{}» نگه داشته شوند؟</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>تغییرات ذخیره‌نشده</translation>
     </message>
@@ -1000,12 +1028,48 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>در حال قطعه‌بندی…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>در حال راه‌اندازی هوش مصنوعی…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>در حال بارگذاری {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>در حال آماده‌سازی تصویر روی CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>در حال آماده‌سازی تصویر…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} ثانیه</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>{count} «{query}» جدید پیدا شد</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>«{query}» جدیدی پیدا نشد</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>برای ادغام، دست‌کم دو شکل ماسک انتخاب کنید</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>فقط شکل‌های ماسک ادغام می‌شوند</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>برای ادغام، قفل شکل‌های انتخاب شده را باز کنید</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>فقط شکل‌های دارای برچسب یکسان ادغام می‌شوند</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1016,12 +1080,40 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>با پیدا کردن تصویر، فایل حاشیه‌نویسی به‌روزرسانی می‌شود تا به آن ارجاع دهد.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>پیدا کردن تصویر…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>پیدا کردن تصویر</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>تصاویر (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>پوشهٔ حاشیه‌نویسی: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>فایل حاشیه‌نویسی حذف شود؟ این کار قابل بازگشت نیست.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>«{}» حذف شود؟ این کار قابل بازگشت نیست.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>بارگیری</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>تغییرات حاشیه‌نویسی «{}» ذخیره شوند؟</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1218,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>حذف فایل حاشیه‌نویسی</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>این فایل حاشیه‌نویسی برای همیشه حذف شود؟ این عمل قابل بازگشت نیست.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

@@ -28,12 +28,12 @@ def blocked_writer(
     writes: list[SaveRequest] = []
     original = labelme._save_writer.write_save_request
 
-    def write(request: SaveRequest, /) -> None:
+    def write(*, request: SaveRequest) -> None:
         writes.append(request)
         if len(writes) == 1:
             entered.set()
             assert release.wait(5), "test did not release the writer"
-        original(request)
+        original(request=request)
 
     monkeypatch.setattr(labelme._save_writer, "write_save_request", write)
 
@@ -46,7 +46,7 @@ def blocked_writer(
 
 def _edit(*, win: MainWindow, x: float) -> None:
     win._commit_shapes(
-        [Shape(label="object", points=np.array([[x, 10], [20, 10], [20, 20]]))]
+        shapes=[Shape(label="object", points=np.array([[x, 10], [20, 10], [20, 20]]))]
     )
 
 
@@ -69,11 +69,11 @@ def test_background_save_delivers_completion_on_gui_thread(
     completions: list[tuple[bool, object]] = []
     original = labelme._save_writer.write_save_request
 
-    def write(request: SaveRequest, /) -> None:
+    def write(*, request: SaveRequest) -> None:
         worker_on_gui_thread.append(QtCore.QThread.currentThread() == raw_win.thread())
         if failure is not None:
             raise failure
-        original(request)
+        original(request=request)
 
     monkeypatch.setattr(labelme._save_writer, "write_save_request", write)
     writer = raw_win._save_writer
@@ -184,7 +184,7 @@ def test_failed_background_save_retries_only_on_request_or_edit(
 ) -> None:
     attempts: list[SaveRequest] = []
 
-    def fail(request: SaveRequest, /) -> None:
+    def fail(*, request: SaveRequest) -> None:
         attempts.append(request)
         raise PermissionError("read-only output")
 
@@ -232,7 +232,7 @@ def test_retry_preserves_failed_save_as_destination(
     destination = tmp_path / "renamed.json"
     original = labelme._save_writer.write_save_request
 
-    def fail(_request: SaveRequest, /) -> None:
+    def fail(**_: SaveRequest) -> None:
         raise PermissionError("read-only output")
 
     monkeypatch.setattr(raw_win, "prompt_save_file_path", lambda: str(destination))

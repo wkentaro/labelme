@@ -16,6 +16,10 @@
         <translation>Більше деталей</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Виведення</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Багатокутник</translation>
     </message>
@@ -147,10 +151,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>Створення %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC для скасування</translation>
     </message>
@@ -189,6 +189,38 @@
     <message>
         <source>Hold %s and click to add a point on the edge</source>
         <translation>Утримуйте %s і клацніть, щоб додати точку на ребрі</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Перетягніть рамку</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Обведіть рамкою один приклад</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Відхилити</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Додати</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Клацніть, щоб включити</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Клацніть, щоб виключити</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Додати %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Перетягніть, щоб виключити</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -386,6 +418,11 @@
     <message>
         <source>Edit Shapes</source>
         <translation>Редагувати фігури</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Вибрати</translation>
     </message>
     <message>
         <source>Move and edit the selected shapes</source>
@@ -613,11 +650,6 @@
     <message>
         <source>Delete the selected point from the polygon or LineStrip</source>
         <translation>Видаляє вибрану точку з багатокутника або ламаної</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Змінити</translation>
     </message>
     <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
@@ -862,10 +894,6 @@
         <translation>Скасувати</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Зберегти зміни анотацій для «{}»?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Незбережені зміни</translation>
     </message>
@@ -1004,8 +1032,44 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
 Перемкніть модель AI-Find All на &apos;SAM 3&apos; або встановіть формат виводу &apos;Rectangle&apos;.</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Запуск ШІ…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Завантаження {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Підготовка зображення на CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Підготовка зображення…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} с</translation>
+    </message>
+    <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Нових «{query}» не знайдено</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Виберіть щонайменше дві фігури-маски для об&apos;єднання</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Об&apos;єднувати можна лише фігури-маски</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Розблокуйте вибрані фігури, щоб об&apos;єднати їх</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Об&apos;єднувати можна лише фігури з однаковою міткою</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1014,6 +1078,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>%s can&apos;t use an example box. Choose SAM 3.</source>
         <translation>%s не може використати рамку-приклад. Виберіть SAM 3.</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Після вибору зображення файл анотацій оновлюється й посилається на нього.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Знайти зображення…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Знайти зображення</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Зображення (%s)</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1036,12 +1116,24 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Видалити файл анотацій</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Видалити файл анотацій? Цю дію неможливо скасувати.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Видалити «{}»? Цю дію неможливо скасувати.</translation>
+    </message>
+    <message>
         <source>Error Deleting Annotation File</source>
         <translation>Помилка видалення файлу анотацій</translation>
     </message>
     <message>
         <source>Download</source>
         <translation>Завантажити</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Зберегти зміни анотацій для «{}»?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1218,6 @@ Expected location: {path}</source>
     <message>
         <source>Annotation files (*%s)</source>
         <translation>Файли анотацій (*%s)</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Остаточно видалити цей файл анотацій? Цю дію неможливо скасувати.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

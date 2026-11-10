@@ -66,7 +66,9 @@ def nearest_rotation_point_index(
     point: npt.NDArray[np.float64],
     image_epsilon: float,
 ) -> int | None:
-    if not is_full_oriented_rectangle(shape):
+    if not is_full_oriented_rectangle(shape=shape):
         return None
-    distances = np.linalg.norm(get_rotation_handles(shape.points) - point, axis=1)
+    distances = np.linalg.norm(
+        get_rotation_handles(points=shape.points) - point, axis=1
+    )
     return _find_closest_index_within(distances=distances, epsilon=image_epsilon)

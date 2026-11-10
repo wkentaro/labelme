@@ -5,6 +5,7 @@ from ._annotation_folder_footer import AnnotationFolderFooter
 from ._brightness_contrast_dialog import BrightnessContrastDialog
 from ._canvas import Canvas
 from ._empty_state import EmptyStateWidget
+from ._image_list_delegate import ImageListDelegate
 from ._label_dialog import LabelDialog
 from ._label_dialog import LabelDialogEntry
 from ._label_dialog import LabelDialogField
@@ -20,10 +21,14 @@ from ._shape_render import Palette
 from ._status import StatusStats
 from ._tool_bar import ToolBar
 from ._unique_label_qlist_widget import UniqueLabelQListWidget
+from ._zoom_widget import MIN_ZOOM
+from ._zoom_widget import ZOOM_STEP_FACTOR
 from ._zoom_widget import ZoomWidget
 
 __all__ = [
     "LABEL_COLOR_ROLE",
+    "MIN_ZOOM",
+    "ZOOM_STEP_FACTOR",
     "AiAssistedAnnotationWidget",
     "AiTextToAnnotationWidget",
     "AiToolGroup",
@@ -31,6 +36,7 @@ __all__ = [
     "BrightnessContrastDialog",
     "Canvas",
     "EmptyStateWidget",
+    "ImageListDelegate",
     "LabelDialog",
     "LabelDialogEntry",
     "LabelDialogField",

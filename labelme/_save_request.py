@@ -16,7 +16,7 @@ class SaveRequest:
     save_image_data: bool
 
 
-def write_save_request(request: SaveRequest, /) -> None:
+def write_save_request(*, request: SaveRequest) -> None:
     Path(request.filename).parent.mkdir(parents=True, exist_ok=True)
     write_label_file(
         filename=request.filename,

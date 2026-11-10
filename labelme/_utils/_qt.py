@@ -6,6 +6,7 @@ import re
 from collections.abc import Callable
 from collections.abc import Sequence
 from typing import Final
+from typing import override
 
 import numpy as np
 import numpy.typing as npt
@@ -30,10 +31,13 @@ def apply_color_theme(*, theme: str) -> None:
 class _TintedSvgIconEngine(QtGui.QIconEngine):
     # Substitutes fill="currentColor" with the palette text color at paint time, so
     # icons re-tint live on a theme change instead of baking a fixed color.
+    _svg: bytes
+    _pixmaps: dict[tuple[int, int, str], QtGui.QPixmap]
+
     def __init__(self, *, svg: bytes) -> None:
         super().__init__()
         self._svg = svg
-        self._pixmaps: dict[tuple[int, int, str], QtGui.QPixmap] = {}
+        self._pixmaps = {}
 
     @staticmethod
     def _tint_color(*, mode: QtGui.QIcon.Mode) -> QtGui.QColor:
@@ -53,7 +57,11 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
     def _tinted_pixmap(
         self, *, size: QtCore.QSize, color: QtGui.QColor
     ) -> QtGui.QPixmap:
-        key = (size.width(), size.height(), color.name())
+        key = (
+            size.width(),
+            size.height(),
+            color.name(QtGui.QColor.NameFormat.HexArgb),
+        )
         cached = self._pixmaps.get(key)
         if cached is not None:
             return cached
@@ -62,6 +70,8 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         image = QtGui.QImage(size, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
         image.fill(QtCore.Qt.GlobalColor.transparent)
         painter = QtGui.QPainter(image)
+        # macOS palettes dim disabled text with alpha, which color.name() drops.
+        painter.setOpacity(color.alphaF())
         renderer.render(painter, QtCore.QRectF(0, 0, size.width(), size.height()))
         painter.end()
         pixmap = QtGui.QPixmap.fromImage(image)
@@ -76,6 +86,7 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         cached = self._tinted_pixmap(size=size, color=self._tint_color(mode=mode))
         return QtGui.QPixmap(cached)
 
+    @override
     def paint(
         self,
         painter: QtGui.QPainter,
@@ -110,7 +121,7 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
         return _TintedSvgIconEngine(svg=self._svg)
 
 
-def new_icon(name: str, /) -> QtGui.QIcon:
+def new_icon(*, name: str) -> QtGui.QIcon:
     DEFAULT_ICON_SUFFIX: Final = ".png"
 
     if not os.path.splitext(name)[1]:
@@ -118,9 +129,7 @@ def new_icon(name: str, /) -> QtGui.QIcon:
     path = os.path.join(_ICONS_DIR, name)
     if path.endswith(".svg"):
         with open(path, "rb") as f:
-            svg = f.read()
-        if b"currentColor" in svg:
-            return QtGui.QIcon(_TintedSvgIconEngine(svg=svg))
+            return QtGui.QIcon(_TintedSvgIconEngine(svg=f.read()))
     return QtGui.QIcon(path)
 
 
@@ -128,7 +137,7 @@ def new_icon(name: str, /) -> QtGui.QIcon:
 ONE_LINE_ICON_TEXT: Final = "one_line_icon_text"
 
 
-def _toolbar_label(text: str, /, *, wrap: bool = True) -> str:
+def _toolbar_label(*, text: str, wrap: bool = True) -> str:
     # Two lines at most, so no language's label grows the toolbar taller.
     # Toolbar labels name the command, so they drop the menu's ellipsis, and
     # toolbar buttons don't use mnemonics, so the "(&O)" form that CJK
@@ -153,9 +162,8 @@ def _toolbar_label(text: str, /, *, wrap: bool = True) -> str:
 
 
 def new_action(
-    parent: QtCore.QObject,
-    /,
     *,
+    parent: QtCore.QObject,
     text: str = "",
     slot: Callable[..., object] | None = None,
     shortcut: str | Sequence[str] | None = None,
@@ -169,7 +177,7 @@ def new_action(
     # A translation without spaces (e.g. Japanese) marks where the toolbar label
     # breaks with "\n"; menus show the text on one line.
     action = QtGui.QAction(
-        new_icon(icon) if icon else QtGui.QIcon(), text.replace("\n", ""), parent
+        new_icon(name=icon) if icon else QtGui.QIcon(), text.replace("\n", ""), parent
     )
     keys = [shortcut] if isinstance(shortcut, str) else shortcut or ()
     action.setShortcuts([QtGui.QKeySequence(key) for key in keys])
@@ -181,16 +189,16 @@ def new_action(
     if icon:
         # A long menu name can pass a shorter one for the toolbar, where every
         # language's labels have to fit across one row.
-        action.setIconText(_toolbar_label(toolbar_text or text))
+        action.setIconText(_toolbar_label(text=toolbar_text or text))
         action.setProperty(
-            ONE_LINE_ICON_TEXT, _toolbar_label(toolbar_text or text, wrap=False)
+            ONE_LINE_ICON_TEXT, _toolbar_label(text=toolbar_text or text, wrap=False)
         )
     if slot:
         action.triggered.connect(slot)
     return action
 
 
-def modifier_text(modifiers: QtCore.Qt.KeyboardModifier, /) -> str:
+def modifier_text(*, modifiers: QtCore.Qt.KeyboardModifier) -> str:
     # Qt maps Ctrl to Command on macOS, so a hint written as "Ctrl" is wrong
     # there. Spell the keys the platform's way, e.g. ⇧⌘ or Ctrl+Shift.
     combination = QtCore.QKeyCombination(modifiers, QtCore.Qt.Key.Key_A)
@@ -200,7 +208,7 @@ def modifier_text(modifiers: QtCore.Qt.KeyboardModifier, /) -> str:
     return text.removesuffix("A").removesuffix("+")
 
 
-def new_separator(parent: QtWidgets.QWidget, /) -> QtGui.QAction:
+def new_separator(*, parent: QtWidgets.QWidget) -> QtGui.QAction:
     separator = QtGui.QAction(parent)
     separator.setSeparator(True)
     return separator

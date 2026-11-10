@@ -2,12 +2,53 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import Final
+from typing import override
 
 from PySide6 import QtCore
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
+from ._hint_chip import RETURN_GLYPH
 from ._model_picker import ModelPicker
+
+
+def _keycap_outline(*, palette: QtGui.QPalette) -> QtGui.QColor:
+    # Mid matches the field's background in dark themes, so mix the outline
+    # from the field's own colors: 30% of the way from background to text.
+    base = palette.color(QtGui.QPalette.ColorRole.Base)
+    text = palette.color(QtGui.QPalette.ColorRole.Text)
+
+    def mix(b: float, t: float) -> float:
+        return b + (t - b) * 0.3
+
+    return QtGui.QColor.fromRgbF(
+        mix(base.redF(), text.redF()),
+        mix(base.greenF(), text.greenF()),
+        mix(base.blueF(), text.blueF()),
+    )
+
+
+class _RunButton(QtWidgets.QToolButton):
+    """Outlines its label like a keycap.
+
+    Unlike a search field, the query field runs nothing until asked, so Run
+    has to read as clickable before the pointer finds it.
+    """
+
+    def sizeHint(self) -> QtCore.QSize:
+        # Room between the outline and the label.
+        return super().sizeHint() + QtCore.QSize(4, 0)
+
+    @override
+    def paintEvent(self, arg__1: QtGui.QPaintEvent, /) -> None:
+        super().paintEvent(arg__1)
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+        painter.setPen(_keycap_outline(palette=self.palette()))
+        painter.drawRoundedRect(
+            QtCore.QRectF(self.rect()).adjusted(1.5, 1.5, -1.5, -1.5), 4, 4
+        )
 
 
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
@@ -19,13 +60,14 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
     # The Return key's symbol says Enter runs the query.
-    _RUN_GLYPH: Final = "\u21b5"
+    _RUN_GLYPH: Final = RETURN_GLYPH
 
     _text_input: QtWidgets.QLineEdit
     _model_combo: ModelPicker
     _score_spinbox: QtWidgets.QDoubleSpinBox
     _iou_spinbox: QtWidgets.QDoubleSpinBox
-    _run_button: QtWidgets.QToolButton
+    _run_button: _RunButton
+    _run_reserved_width: int
     _thresholds: QtWidgets.QWidget
 
     def __init__(
@@ -47,22 +89,21 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         text_input.returnPressed.connect(on_submit)
         self._text_input = text_input
 
-        self._run_button = run_button = QtWidgets.QToolButton(self)
+        self._run_button = run_button = _RunButton(self)
         run_button.setAutoRaise(True)
         run_button.setAccessibleName(self.tr("Run"))
         run_button.setToolTip(self.tr("Run"))
         run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
         run_button.clicked.connect(lambda: on_submit())
-        # Fixed to fit "Finding…" too, so a run doesn't shift the query text
-        # and the field can reserve exactly this width.
-        run_button.setFixedWidth(
-            max(
-                run_button.fontMetrics().horizontalAdvance(text)
-                for text in (self._RUN_GLYPH, self.tr("Finding…"))
-            )
-            + 12
-        )
-        self.set_detecting(False)  # noqa: FBT003 -- state flag
+        # The field reserves room for Run's widest label, so a run doesn't
+        # shift the query text; Run itself fits its label, so at rest it hugs
+        # the glyph.
+        widths = []
+        # False last, so Run ends at rest.
+        for detecting in (True, False):
+            self.set_detecting(detecting=detecting)
+            widths.append(run_button.sizeHint().width())
+        self._run_reserved_width = max(widths)
 
         self._model_combo = model_combo = ModelPicker(options=AI_TEXT_MODEL_OPTIONS)
         model_combo.setParent(self)
@@ -94,14 +135,14 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         )
         self._iou_spinbox = add_threshold(self.tr("IoU"), self._default_iou_threshold)
 
-    def set_detecting(self, detecting: bool, /) -> None:  # noqa: FBT001 -- state flag
+    def set_detecting(self, *, detecting: bool) -> None:
         # Run stays clickable: running again replaces the pending job.
         self._run_button.setText(self.tr("Finding…") if detecting else self._RUN_GLYPH)
 
     def get_text_prompt(self) -> str:
         return self._text_input.text().strip()
 
-    def set_label_suggestions(self, model: QtCore.QAbstractItemModel, /) -> None:
+    def set_label_suggestions(self, *, model: QtCore.QAbstractItemModel) -> None:
         completer = QtWidgets.QCompleter(model, self._text_input)
         completer.setCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive)
         completer.setFilterMode(QtCore.Qt.MatchFlag.MatchContains)
@@ -123,11 +164,11 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
             available=available, downloading=downloading
         )
 
-    def select_model(self, model_name: str, /) -> None:
-        self._model_combo.select_model(model_name)
+    def select_model(self, model_name: str, /) -> None:  # noqa: GR013 -- _download_and_select calls it as Callable[[str], None]
+        self._model_combo.select_model(model_name=model_name)
 
-    def set_unavailable_models(self, unavailable: dict[str, str], /) -> None:
-        self._model_combo.set_unavailable_models(unavailable)
+    def set_unavailable_models(self, *, unavailable: dict[str, str]) -> None:
+        self._model_combo.set_unavailable_models(unavailable=unavailable)
 
     def get_score_threshold(self) -> float:
         return self._score_spinbox.value()

@@ -73,7 +73,7 @@ def cached_ai_models(*, session_home: Path, monkeypatch: pytest.MonkeyPatch) -> 
 
 
 def image_to_widget_pos(*, canvas: Canvas, image_pos: QPointF) -> QPoint:
-    widget_pos = canvas.transform_image_point_to_widget(image_pos)
+    widget_pos = canvas.transform_image_point_to_widget(point=image_pos)
     return QPoint(int(widget_pos.x()), int(widget_pos.y()))
 
 
@@ -126,6 +126,8 @@ MainWinFactory = Callable[..., MainWindow]
 class _QAppProxy:
     """Proxy that returns the existing QApplication from constructor calls
     and forwards static/class method access to the real QApplication class."""
+
+    _app: QApplication
 
     def __init__(self, *, existing_app: QApplication) -> None:
         self._app = existing_app

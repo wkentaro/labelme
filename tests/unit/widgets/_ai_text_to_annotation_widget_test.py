@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import sys
 
+import pytest
 from PySide6 import QtGui
 from pytestqt.qtbot import QtBot
 
 from labelme._widgets._ai_text_to_annotation_widget import AiTextToAnnotationWidget
+from labelme._widgets._ai_text_to_annotation_widget import _keycap_outline
 
 
 def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
@@ -31,3 +33,22 @@ def test_focusable_controls_expose_accessible_names(*, qtbot: QtBot) -> None:
     assert interface.text(QtGui.QAccessible.Text.Description) == widget.tr(
         "AI-Find All model"
     )
+
+
+@pytest.mark.parametrize(
+    ("base", "text"),
+    [
+        ("#ffffff", "#000000"),
+        # macOS's dark palette, where Mid (#151515) all but matches Base.
+        ("#171717", "#ffffff"),
+    ],
+    ids=["light", "macos-dark"],
+)
+def test_keycap_outline_stands_out_from_the_field(*, base: str, text: str) -> None:
+    palette = QtGui.QPalette()
+    palette.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(base))
+    palette.setColor(QtGui.QPalette.ColorRole.Text, QtGui.QColor(text))
+
+    outline = _keycap_outline(palette=palette)
+
+    assert abs(outline.lightness() - QtGui.QColor(base).lightness()) > 60

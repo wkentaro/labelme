@@ -27,7 +27,7 @@ dependencies = [
   "natsort>=7.1.0",
   "numpy>=1.24",
   "onnxruntime>=1.23.2,<1.29",
-  "osam>=0.10.1",
+  "osam>=0.10.2,<0.11",
   # WebGPU's runtime needs Apple Silicon and macOS 14 (Darwin 23) on Macs.
   "osam[webgpu]; sys_platform != 'darwin' or (platform_machine == 'arm64' and platform_release >= '23.0.0')",
   "pillow>=2.8",
@@ -66,7 +66,7 @@ dev = [
   "typos>=1.45.0",
   "yamlfix>=1.19.1",
   "towncrier>=24.8",
-  "gruff>=0.1.1",
+  "gruff>=0.2.5",
 ]
 
 [project.scripts]
@@ -111,6 +111,8 @@ markers = [
 
 [tool.gruff.lint]
 select = ["GR"]
+# GR013 enforces the stricter form of GR001.
+ignore = ["GR001"]
 
 [tool.ruff.lint]
 select = [

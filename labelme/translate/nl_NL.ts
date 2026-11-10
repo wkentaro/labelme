@@ -16,6 +16,10 @@
         <translation>Meer detail</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Uitvoer</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Polygoon</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>Klik en sleep om vorm te verplaatsen</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Maken van %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC om te annuleren</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>Klik om punt toe te voegen</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Sleep een kader</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Sleep een kader om één voorbeeld</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Verwijder</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Voeg toe</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Klik om op te nemen</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Klik om uit te sluiten</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Voeg %d toe</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Sleep om uit te sluiten</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -436,6 +468,11 @@
         <translation>Laatste toevoeging en bewerking van vorm ongedaan maken</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Selecteren</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Klik om punten van de polylijn te plaatsen; houd %s ingedrukt en klik om het laatste te plaatsen.</translation>
     </message>
@@ -585,11 +622,6 @@
     <message>
         <source>Undo</source>
         <translation>Ongedaan maken</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Bewerken</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -896,10 +928,6 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Annuleren</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>De annotatiewijzigingen voor ‘{}’ behouden?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Niet-opgeslagen wijzigingen</translation>
     </message>
@@ -1000,12 +1028,48 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Segmenteren…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>AI starten…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} laden…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Afbeelding voorbereiden op CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Afbeelding voorbereiden…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} s</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>{count} nieuwe &apos;{query}&apos; gevonden</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Geen nieuwe &apos;{query}&apos; gevonden</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Selecteer minstens twee maskervormen om samen te voegen</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Alleen maskervormen kunnen worden samengevoegd</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Ontgrendel de geselecteerde vormen om ze samen te voegen</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Alleen vormen met hetzelfde label kunnen worden samengevoegd</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1016,12 +1080,40 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Fout bij opslaan van annotatiebestand</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Bij het zoeken van de afbeelding wordt het annotatiebestand bijgewerkt zodat het ernaar verwijst.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Afbeelding zoeken…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Afbeelding zoeken</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Afbeeldingen (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotatiemap: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Het annotatiebestand verwijderen? Je kunt dit niet ongedaan maken.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>‘{}’ verwijderen? Je kunt dit niet ongedaan maken.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Downloaden</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Annotatiewijzigingen voor ‘{}’ opslaan?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1218,6 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Annotatiebestand verwijderen</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Dit annotatiebestand permanent verwijderen? Deze actie kan niet ongedaan worden gemaakt.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

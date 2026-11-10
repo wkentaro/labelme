@@ -24,7 +24,11 @@ from PySide6 import QtWidgets
 if TYPE_CHECKING:
     import osam
 
+    from ._osam_session import InferenceStage
     from ._osam_session import OsamSession
+    from ._osam_session import ProgressCallback
+
+    WorkerStage = Literal["starting"] | InferenceStage
 
 # ponytail: one deadline covers spawning, loading and running, so a first run
 # that compiles a model counts as slow, not hung. Split it per stage if a
@@ -44,7 +48,11 @@ class InferenceRequest:
 
 
 def _run(
-    session: OsamSession, request: InferenceRequest, image: NDArray[np.uint8], /
+    *,
+    session: OsamSession,
+    request: InferenceRequest,
+    image: NDArray[np.uint8],
+    progress: ProgressCallback | None,
 ) -> list[osam.types.Annotation]:
     if request.texts is None or request.points is not None:
         # SAM3 finds every match for a box with text and one object without.
@@ -54,6 +62,7 @@ def _run(
             points=request.points,
             point_labels=request.point_labels,
             texts=request.texts,
+            progress=progress,
         ).annotations
     # ponytail: SAM3 reads only the first text of a prompt, so it runs once per
     # text, reusing the cached image embedding. Drop this once osam's SAM3 takes
@@ -67,7 +76,7 @@ def _run(
         annotation
         for texts in batches
         for annotation in session.run(
-            image=image, image_id=request.image_id, texts=texts
+            image=image, image_id=request.image_id, texts=texts, progress=progress
         ).annotations
     ]
 
@@ -75,9 +84,10 @@ def _run(
 def serve(
     requests: Connection, responses: Connection, providers: str | None, /
 ) -> None:
-    # Answers each ("run", id, request) with ("device", id, device), once the
-    # model loads, then ("done", id, annotations), or ("error" | "fault", id,
-    # message), where a fault comes from ONNX Runtime and may be the device's.
+    # Answers each ("run", id, request) with ("stage", id, (stage, device)) as
+    # each stage starts, the device once the model loads, then ("done", id,
+    # annotations), or ("error" | "fault", id, message), where a fault comes
+    # from ONNX Runtime and may be the device's.
     from ._osam_session import get_osam_session  # noqa: PLC0415 -- child only
 
     if providers is not None:
@@ -96,8 +106,14 @@ def serve(
             if image is None or image_id != request.image_id:
                 raise RuntimeError(f"image {request.image_id!r} was never sent")
             session = get_osam_session(model_name=request.model_name)
-            responses.send(("device", request_id, session.device))
-            annotations = _run(session, request, image)
+            annotations = _run(
+                session=session,
+                request=request,
+                image=image,
+                progress=lambda stage, device: responses.send(
+                    ("stage", request_id, (stage, device))
+                ),
+            )
         except Exception as error:
             logger.opt(exception=error).error("AI inference failed")
             kind = (
@@ -137,6 +153,26 @@ class _Active:
     request: InferenceRequest  # with its image, to retry on a new worker
     deadline: float
     device: str | None = None  # None until the model loads
+    # What the worker reported it is doing; "starting" while a new worker
+    # spawns for this job, None until a warm worker reports.
+    stage: WorkerStage | None = None
+    stage_started_at: float = dataclasses.field(default_factory=time.monotonic)
+
+
+def _log_stage(*, active: _Active) -> None:
+    # Measured here, as the worker's own log never reaches the app's. Only a
+    # slow stage, so previews under a moving cursor never flood the log.
+    SLOW_STAGE_MS: Final = 1000
+    elapsed_ms = (time.monotonic() - active.stage_started_at) * 1000
+    if active.stage is None or elapsed_ms < SLOW_STAGE_MS:
+        return
+    logger.info(
+        "AI {!r} {} on {} took {:.0f} ms",
+        active.request.model_name,
+        active.stage,
+        active.device or "an unknown device",
+        elapsed_ms,
+    )
 
 
 class OsamWorker(QtCore.QObject):
@@ -152,9 +188,24 @@ class OsamWorker(QtCore.QObject):
     device is set again.
     """
 
+    _target: Callable[[Connection, Connection, str | None], None]
+    _timeout_s: float
+    _context: multiprocessing.context.SpawnContext
+    _process: BaseProcess | None
+    _outbox: queue.SimpleQueue | None
+    _inbox: queue.SimpleQueue
+    _sent_image_id: str | None
+    _device: Literal["auto", "cpu"]
+    _fell_back: bool
+    _process_on_cpu: bool
+    _pending: dict[object, tuple[object, InferenceRequest]]
+    _active: _Active | None
+    _request_ids: itertools.count[int]
+    _timer: QtCore.QTimer
+
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
-    activity_changed = QtCore.Signal()  # job, queued or device changed
+    activity_changed = QtCore.Signal()  # job, queued, stage or device changed
 
     def __init__(
         self,
@@ -167,15 +218,15 @@ class OsamWorker(QtCore.QObject):
         self._target = target
         self._timeout_s = timeout_s
         self._context = multiprocessing.get_context("spawn")
-        self._process: BaseProcess | None = None
-        self._outbox: queue.SimpleQueue | None = None
-        self._inbox: queue.SimpleQueue = queue.SimpleQueue()
-        self._sent_image_id: str | None = None
-        self._device: Literal["auto", "cpu"] = "auto"
+        self._process = None
+        self._outbox = None
+        self._inbox = queue.SimpleQueue()
+        self._sent_image_id = None
+        self._device = "auto"
         self._fell_back = False
         self._process_on_cpu = False
-        self._pending: dict[object, tuple[object, InferenceRequest]] = {}
-        self._active: _Active | None = None
+        self._pending = {}
+        self._active = None
         self._request_ids = itertools.count()
         self._timer = QtCore.QTimer(self)
         POLL_INTERVAL_MS: Final = 20
@@ -191,6 +242,11 @@ class OsamWorker(QtCore.QObject):
         if channel in self._pending:
             self.activity_changed.emit()  # queued behind the running job
 
+    def cancel(self, *, channel: object) -> None:
+        # Drops the channel's request that has not started; a running one
+        # still finishes.
+        self._pending.pop(channel, None)
+
     @property
     def job(self) -> object:
         # The running job; None while idle.
@@ -201,7 +257,16 @@ class OsamWorker(QtCore.QObject):
         # Where the running job's model loaded; None while idle or loading.
         return None if self._active is None else self._active.device
 
-    def set_device(self, device: Literal["auto", "cpu"], /) -> None:
+    @property
+    def stage(self) -> WorkerStage | None:
+        # None while idle or before a warm worker reports.
+        return None if self._active is None else self._active.stage
+
+    @property
+    def model_name(self) -> str | None:
+        return None if self._active is None else self._active.request.model_name
+
+    def set_device(self, *, device: Literal["auto", "cpu"]) -> None:
         # The running job finishes where it is; the next one starts a worker
         # on this device. Choosing a device again retries the GPU.
         self._device = device
@@ -211,7 +276,7 @@ class OsamWorker(QtCore.QObject):
     def _cpu_only(self) -> bool:
         return self._device == "cpu" or self._fell_back
 
-    def _set_active(self, active: _Active | None, /) -> None:
+    def _set_active(self, *, active: _Active | None) -> None:
         self._active = active
         self.activity_changed.emit()
 
@@ -229,13 +294,14 @@ class OsamWorker(QtCore.QObject):
         self._pending.clear()
         self._stop_process()
         if self._active is not None:
-            self._set_active(None)
+            self._set_active(active=None)
 
     def _start_next(self) -> None:
         if self._active is not None or not self._pending:
             return
         channel = next(iter(self._pending))
         job, request = self._pending.pop(channel)
+        process = self._process
         try:
             outbox = self._ensure_process()
             sent = request
@@ -251,13 +317,14 @@ class OsamWorker(QtCore.QObject):
             return
         self._sent_image_id = request.image_id
         self._set_active(
-            _Active(
+            active=_Active(
                 request_id=request_id,
                 channel=channel,
                 job=job,
                 request=request,
                 deadline=time.monotonic() + self._timeout_s,
                 device="cpu" if self._process_on_cpu else None,
+                stage="starting" if self._process is not process else None,
             )
         )
         self._timer.start()
@@ -328,7 +395,8 @@ class OsamWorker(QtCore.QObject):
         outcome = self._receive(active=active)
         if outcome is None:
             return
-        self._set_active(None)
+        _log_stage(active=active)
+        self._set_active(active=None)
         kind, payload = outcome
         if kind == "done":
             self.finished.emit(active.job, payload)
@@ -360,8 +428,12 @@ class OsamWorker(QtCore.QObject):
             kind, request_id, payload = self._inbox.get_nowait()
             if request_id != active.request_id:
                 continue
-            if kind == "device":
-                active.device = payload
+            if kind == "stage":
+                stage, device = payload
+                if device is not None:
+                    active.device = device  # where the stage just ended ran
+                _log_stage(active=active)
+                active.stage, active.stage_started_at = stage, time.monotonic()
                 self.activity_changed.emit()
             else:
                 return kind, payload

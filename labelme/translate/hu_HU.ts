@@ -16,6 +16,10 @@
         <translation>Részletesebb</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Kimenet</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Sokszög</translation>
     </message>
@@ -147,10 +151,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>%r létrehozása</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC a megszakításhoz</translation>
     </message>
@@ -189,6 +189,38 @@
     <message>
         <source>Hold %s and click to add a point on the edge</source>
         <translation>Tartsa lenyomva a(z) %s billentyűt, és kattintson egy pont hozzáadásához az élen</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Húzás: keret</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Húzzon keretet egy minta köré</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Elvetés</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Kattintás: belefoglalás</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Kattintás: kizárás</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d hozzáadása</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Húzás: kizárás</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -440,6 +472,11 @@
         <translation>Alakzat utolsó hozzáadásának és szerkesztésének visszavonása</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Kijelölés</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Kattintson a töröttvonal pontjainak elhelyezéséhez; tartsa lenyomva a(z) %s billentyűt, és kattintson az utolsóhoz.</translation>
     </message>
@@ -601,11 +638,6 @@
     <message>
         <source>Undo</source>
         <translation>Visszavonás</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Szerkesztés</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -904,10 +936,6 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>Mégse</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Megtartja a(z) „{}” annotációinak módosításait?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Nem mentett módosítások</translation>
     </message>
@@ -1000,12 +1028,48 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>Szegmentálás…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>MI indítása…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} betöltése…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Kép előkészítése a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Kép előkészítése…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} mp</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>{count} új „{query}” található</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Nincs új „{query}”</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Az egyesítéshez jelöljön ki legalább két maszk alakzatot</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Csak maszk alakzatok egyesíthetők</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Az egyesítéshez oldja fel a kijelölt alakzatokat</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Csak azonos címkéjű alakzatok egyesíthetők</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1016,12 +1080,40 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>Hiba az annotációs fájl mentésekor</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>A kép megkeresése frissíti az annotációs fájlt, hogy arra hivatkozzon.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Kép megkeresése…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Kép megkeresése</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Képek (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotációs mappa: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Törli az annotációs fájlt? Ez nem vonható vissza.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Törli a(z) „{}” fájlt? Ez nem vonható vissza.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Letöltés</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Menti a(z) „{}” annotációinak módosításait?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1218,6 @@ Várt hely: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Annotációs fájl törlése</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Véglegesen törli ezt az annotációs fájlt? Ez a művelet nem vonható vissza.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
