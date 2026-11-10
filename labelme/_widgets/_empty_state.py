@@ -1,20 +1,27 @@
 from __future__ import annotations
 
+from typing import override
+
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
-from .._utils._qt import new_icon
+from .._utils import new_icon
 
 
 class EmptyStateWidget(QtWidgets.QWidget):
+    _icon: QtGui.QIcon
+    _icon_label: QtWidgets.QLabel
+    _open_file: QtWidgets.QPushButton
+    _open_folder: QtWidgets.QPushButton
+
     def __init__(
         self,
         *,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent=parent)
-        self._icon = new_icon("phosphor/image-square.svg")
+        self._icon = new_icon(name="phosphor/image-square.svg")
         self._icon_label = QtWidgets.QLabel()
         self.setObjectName("emptyState")
         self.setAutoFillBackground(True)
@@ -93,6 +100,7 @@ class EmptyStateWidget(QtWidgets.QWidget):
     def _refresh_icon(self) -> None:
         self._icon_label.setPixmap(self._icon.pixmap(56, 56))
 
+    @override
     def changeEvent(self, event: QtCore.QEvent, /) -> None:
         super().changeEvent(event)
         if event.type() in (

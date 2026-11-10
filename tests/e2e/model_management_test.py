@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import threading
-import weakref
 from pathlib import Path
 
 import osam
@@ -12,16 +11,12 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
-from labelme import _automation
 from labelme._shape import Shape
 from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
+from ..conftest import DOWNLOAD_START_TIMEOUT_MS
 from .conftest import MainWinFactory
-
-
-class _LoadedModel:
-    pass
 
 
 @pytest.mark.gui
@@ -79,11 +74,11 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
         osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
     )
     config = tmp_path / "config.yaml"
-    config.write_text("ai:\n  default: Sam3\n  text_model: sam3:latest\n")
+    config.write_text("ai:\n  default: sam3:latest\n  text_model: sam3:latest\n")
     win = main_win(config_file=config)
     assist = win._ai_annotation._model_combo
     text = win._ai_text._model_combo
-    for picker, display in ((assist, "Sam3"), (text, "SAM3 (smart)")):
+    for picker, display in ((assist, "SAM 3"), (text, "SAM 3")):
         assert picker.currentIndex() == -1
         assert picker.findData(name) >= 0
         assert picker.placeholderText() == display
@@ -97,18 +92,20 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     models = dialog.findChild(ModelsWidget)
     assert models is not None
     models._rows[name][1].click()
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     dialog.close()
     assert win._model_manager.active == name
     release.set()
-    qtbot.waitUntil(lambda: win._model_manager.get_state(name) == "downloaded")
+    qtbot.waitUntil(
+        lambda: win._model_manager.get_state(model_name=name) == "downloaded"
+    )
     # The remembered choice is restored without running inference.
     assert assist.currentData() == text.currentData() == name
-    assert win._text_osam_session is None
+    assert win._osam_worker._process is None
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 
-    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args, **_kwargs: True)
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
     # An open Settings dialog shows the cleared choices without reopening.
@@ -125,7 +122,10 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
         assert editor.currentText() == "(none)"
     assert win._ai_text.get_model_name() == ""
     assert win._canvas_widgets.canvas.get_ai_model_name() == ""
-    assert safe_load(config.read_text())["ai"] == {"default": None, "text_model": None}
+    assert safe_load(stream=config.read_text())["ai"] == {
+        "default": None,
+        "text_model": None,
+    }
     assert [shape.label for shape in canvas.shapes] == ["cat"]
     win.close()
     reopened = main_win(config_file=config)
@@ -135,7 +135,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
 
 
 @pytest.mark.gui
-def test_delete_releases_loaded_assist_and_text_sessions(
+def test_delete_releases_loaded_session(
     *,
     main_win: MainWinFactory,
     tmp_path: Path,
@@ -156,25 +156,20 @@ def test_delete_releases_loaded_assist_and_text_sessions(
         osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
     )
     config = tmp_path / "config.yaml"
-    config.write_text("ai:\n  default: Sam3\n  text_model: sam3:latest\n")
+    config.write_text("ai:\n  default: sam3:latest\n  text_model: sam3:latest\n")
     win = main_win(config_file=config)
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
 
-    assist_session = _automation.OsamSession(model_name=name)
-    text_session = _automation.OsamSession(model_name=name)
-    assist_loaded = _LoadedModel()
-    text_loaded = _LoadedModel()
-    setattr(assist_session, "_model", assist_loaded)
-    setattr(text_session, "_model", text_loaded)
-    canvas._ai_assist_session._session = assist_session
-    win._text_osam_session = text_session
-    assist_model = weakref.ref(assist_loaded)
-    text_model = weakref.ref(text_loaded)
-    del assist_loaded, text_loaded
-    del assist_session, text_session
+    # The worker holds the model's files open, so it stops before they go.
+    blob_existed_at_release: list[bool] = []
+    monkeypatch.setattr(
+        win._osam_worker,
+        "release",
+        lambda: blob_existed_at_release.append(Path(blob.path).exists()),
+    )
 
-    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args, **_kwargs: True)
     win._open_models()
     dialog = win._models_dialog
     assert dialog is not None
@@ -182,8 +177,7 @@ def test_delete_releases_loaded_assist_and_text_sessions(
     assert models is not None
     models._rows[name][2].click()
 
-    assert assist_model() is None
-    assert text_model() is None
+    assert blob_existed_at_release == [True]
     assert not Path(blob.path).exists()
     assert win._ai_text.get_model_name() == ""
     assert canvas.get_ai_model_name() == ""
@@ -245,11 +239,12 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     initial_scroll_maximum = dialog._scroll_area.horizontalScrollBar().maximum()
     download.click()
     qtbot.waitUntil(
-        lambda: win._model_manager.get_state(name) == "failed", timeout=20_000
+        lambda: win._model_manager.get_state(model_name=name) == "failed",
+        timeout=20_000,
     )
     assert status.text() == "Failed"
     assert download.text() == "Retry"
-    assert download.accessibleName() == "Retry EfficientSam (speed)"
+    assert download.accessibleName() == "Retry EfficientSAM Tiny"
     QtWidgets.QApplication.processEvents()
     assert dialog._scroll_area.horizontalScrollBar().maximum() == initial_scroll_maximum
     assert details.isVisible()
@@ -324,18 +319,18 @@ def test_picker_downloads_and_selects_a_missing_model_in_place(
         osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
     )
     config = tmp_path / "config.yaml"
-    config.write_text("ai:\n  default: Sam2 (balanced)\n")
+    config.write_text("ai:\n  default: sam2:latest\n")
     win = main_win(config_file=config)
     picker = win._ai_annotation._model_combo
     header = picker.findText("Download and use")
     assert 0 <= header < picker.findData(name) < picker.findData("manage")
 
     picker.setCurrentIndex(picker.findData(name))
-    assert safe_load(config.read_text())["ai"]["default"] == "Sam2 (speed)"
-    qtbot.waitUntil(lambda: requests == ["/slow"])
+    assert safe_load(stream=config.read_text())["ai"]["default"] == name
+    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     assert picker.currentIndex() == -1
-    assert picker.placeholderText() == "Sam2 (speed)"
-    assert picker.toolTip() == "Downloading: Sam2 (speed)"
+    assert picker.placeholderText() == "SAM 2 Small"
+    assert picker.toolTip() == "Downloading: SAM 2 Small"
     assert win._models_dialog is None
     release.set()
     qtbot.waitUntil(lambda: picker.currentData() == name)
@@ -360,25 +355,4 @@ def test_picker_asks_before_downloading_sam3_and_cancel_keeps_setting(
 
     assert len(shown) == 1 and "SAM License" in shown[0]
     assert win._config["ai"]["text_model"] == text_model
-    assert win._model_manager.get_state("sam3:latest") == "missing"
-
-
-@pytest.mark.gui
-def test_point_mode_disables_incompatible_models_before_download(
-    *, main_win: MainWinFactory
-) -> None:
-    win = main_win()
-    picker = win._ai_annotation._model_combo
-    win._ai_annotation.set_point_prompt_mode(enabled=True)
-    model = picker.model()
-    assert isinstance(model, QtGui.QStandardItemModel)
-
-    def enabled(index: int) -> bool:
-        item = model.item(index)
-        assert item is not None
-        return item.isEnabled()
-
-    assert not enabled(picker.findData("sam3:latest"))
-    assert enabled(picker.findData("sam2:latest"))
-    assert not enabled(picker.findText("Download and use"))
-    assert enabled(picker.findData("manage"))
+    assert win._model_manager.get_state(model_name="sam3:latest") == "missing"

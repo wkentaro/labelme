@@ -14,17 +14,6 @@ from labelme._automation._text_detection import propose_shapes_from_texts
 from labelme._shape import Shape
 
 
-class _FakeOsamSession:
-    model_name: str
-
-    def __init__(self, *, response: osam.types.GenerateResponse) -> None:
-        self.model_name = "stub"
-        self._response = response
-
-    def run(self, **_: object) -> osam.types.GenerateResponse:
-        return self._response
-
-
 def _make_annotation(*, with_mask: bool) -> osam.types.Annotation:
     return osam.types.Annotation(
         text="cat",
@@ -35,15 +24,10 @@ def _make_annotation(*, with_mask: bool) -> osam.types.Annotation:
 
 
 def _get_bboxes(
+    *,
     response: osam.types.GenerateResponse,
-    /,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[NDArray[np.bool_]] | None]:
-    return get_bboxes_from_texts(
-        session=_FakeOsamSession(response=response),  # ty: ignore[invalid-argument-type]
-        image=np.zeros((4, 4, 3), dtype=np.uint8),
-        image_id="img",
-        texts=["cat"],
-    )
+    return get_bboxes_from_texts(annotations=response.annotations, texts=["cat"])
 
 
 def test_collects_masks_when_every_annotation_has_one() -> None:
@@ -55,7 +39,7 @@ def test_collects_masks_when_every_annotation_has_one() -> None:
         ],
     )
 
-    _, _, _, masks = _get_bboxes(response)
+    _, _, _, masks = _get_bboxes(response=response)
 
     assert masks is not None
     assert len(masks) == 2
@@ -70,7 +54,7 @@ def test_masks_is_none_when_no_annotation_has_one() -> None:
         ],
     )
 
-    _, _, _, masks = _get_bboxes(response)
+    _, _, _, masks = _get_bboxes(response=response)
 
     assert masks is None
 
@@ -85,7 +69,7 @@ def test_raises_value_error_when_a_later_mask_is_missing() -> None:
     )
 
     with pytest.raises(ValueError, match="Mask is missing"):
-        _get_bboxes(response)
+        _get_bboxes(response=response)
 
 
 def test_raises_value_error_when_bounding_box_is_missing() -> None:
@@ -97,7 +81,7 @@ def test_raises_value_error_when_bounding_box_is_missing() -> None:
     )
 
     with pytest.raises(ValueError, match="Bounding box is missing"):
-        _get_bboxes(response)
+        _get_bboxes(response=response)
 
 
 def test_raises_value_error_when_text_is_not_in_the_prompt() -> None:
@@ -114,7 +98,7 @@ def test_raises_value_error_when_text_is_not_in_the_prompt() -> None:
     )
 
     with pytest.raises(ValueError, match="Unexpected text 'dog'"):
-        _get_bboxes(response)
+        _get_bboxes(response=response)
 
 
 def test_nms_bboxes_returns_empty_indices_for_no_boxes() -> None:
@@ -205,9 +189,7 @@ def test_text_proposal_keeps_mask_and_score_alignment_after_suppression() -> Non
     )
 
     shapes = propose_shapes_from_texts(
-        session=_FakeOsamSession(response=response),  # ty: ignore[invalid-argument-type]
-        image=np.zeros((30, 30, 3), dtype=np.uint8),
-        image_id="img",
+        annotations=response.annotations,
         texts=["cat"],
         shape_type="mask",
         existing_shapes=[existing],
@@ -229,16 +211,9 @@ def test_text_proposal_keeps_mask_and_score_alignment_after_suppression() -> Non
 
 
 def test_text_proposal_rejects_maskless_detections_for_mask_output() -> None:
-    session = _FakeOsamSession(
-        response=osam.types.GenerateResponse(
-            model="stub", annotations=[_make_annotation(with_mask=False)]
-        )
-    )
     with pytest.raises(MaskOutputUnavailableError, match="requires model masks"):
         propose_shapes_from_texts(
-            session=session,  # ty: ignore[invalid-argument-type]
-            image=np.zeros((4, 4, 3), dtype=np.uint8),
-            image_id="img",
+            annotations=[_make_annotation(with_mask=False)],
             texts=["cat"],
             shape_type="mask",
             existing_shapes=[],
@@ -247,3 +222,157 @@ def test_text_proposal_rejects_maskless_detections_for_mask_output() -> None:
             image_size=(4, 4),
             polygon_detail=80,
         )
+
+
+@pytest.mark.parametrize(("chosen", "count"), [("dog", 0), ("cat", 1)])
+def test_text_proposal_is_suppressed_by_the_chosen_label(
+    *, chosen: str, count: int
+) -> None:
+    # "black dog" found this dog before and the user saved it as "dog".
+    annotation = osam.types.Annotation(
+        text="black dog",
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=10, ymax=10),
+    )
+    existing = Shape(
+        label="dog", shape_type="rectangle", points=np.array([[0, 0], [10, 10]])
+    )
+
+    shapes = propose_shapes_from_texts(
+        annotations=[annotation],
+        texts=["black dog"],
+        shape_type="rectangle",
+        existing_shapes=[existing],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(30, 30),
+        polygon_detail=80,
+        suppressed_by=chosen,
+    )
+
+    assert len(shapes) == count
+
+
+def test_text_proposal_covered_candidate_does_not_hide_a_new_one() -> None:
+    # The detection on the existing "dog" overlaps the one beside it; once
+    # covered it must not suppress that one.
+    annotations = [
+        osam.types.Annotation(
+            text="dog",
+            score=score,
+            bounding_box=osam.types.BoundingBox(xmin=x, ymin=0, xmax=x + 10, ymax=10),
+        )
+        for x, score in ((2, 0.9), (5, 0.8))
+    ]
+    existing = Shape(
+        label="dog", shape_type="rectangle", points=np.array([[0, 0], [10, 10]])
+    )
+
+    shapes = propose_shapes_from_texts(
+        annotations=annotations,
+        texts=["dog"],
+        shape_type="rectangle",
+        existing_shapes=[existing],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(30, 30),
+        polygon_detail=80,
+        suppressed_by="dog",
+    )
+
+    (shape,) = shapes
+    np.testing.assert_array_equal(shape.points, [[5, 0], [15, 10]])
+
+
+@pytest.mark.parametrize("chosen_label", ["car", "vehicle"])
+def test_text_proposal_skips_repeated_occluded_object(*, chosen_label: str) -> None:
+    mask = np.zeros((21, 101), dtype=bool)
+    mask[:, :11] = True
+    mask[:, 90:] = True
+    annotation = osam.types.Annotation(
+        text="car",
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=100, ymax=20),
+        mask=mask,
+    )
+
+    def propose(existing_shapes: list[Shape]) -> list[Shape]:
+        return propose_shapes_from_texts(
+            annotations=[annotation],
+            texts=["car"],
+            shape_type="polygon",
+            existing_shapes=existing_shapes,
+            iou_threshold=0.5,
+            score_threshold=0.1,
+            image_size=(101, 21),
+            polygon_detail=60,
+            suppressed_by=chosen_label,
+        )
+
+    first = propose([])
+    assert len(first) == 2
+    assert first[0].group_id == first[1].group_id is not None
+    for shape in first:
+        shape.label = chosen_label
+
+    assert propose(first) == []
+
+
+def test_text_proposal_keeps_an_object_between_existing_polygon_parts() -> None:
+    existing = [
+        Shape(
+            label="car",
+            shape_type="polygon",
+            group_id=1,
+            points=np.array([[x, 0], [x + 10, 0], [x + 10, 20], [x, 20]]),
+        )
+        for x in (0, 90)
+    ]
+    mask = np.zeros((21, 101), dtype=bool)
+    mask[:, 20:81] = True
+    annotation = osam.types.Annotation(
+        text="car",
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=100, ymax=20),
+        mask=mask,
+    )
+
+    shapes = propose_shapes_from_texts(
+        annotations=[annotation],
+        texts=["car"],
+        shape_type="polygon",
+        existing_shapes=existing,
+        iou_threshold=0.5,
+        score_threshold=0.1,
+        image_size=(101, 21),
+        polygon_detail=60,
+    )
+
+    assert len(shapes) == 1
+
+
+@pytest.mark.parametrize(("iou_threshold", "count"), [(0.3, 0), (0.5, 1)])
+def test_text_proposal_uses_the_configured_existing_shape_iou(
+    *, iou_threshold: float, count: int
+) -> None:
+    annotation = osam.types.Annotation(
+        text="car",
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=5, ymin=0, xmax=15, ymax=10),
+    )
+    existing = Shape(
+        label="car", shape_type="rectangle", points=np.array([[0, 0], [10, 10]])
+    )
+
+    shapes = propose_shapes_from_texts(
+        annotations=[annotation],
+        texts=["car"],
+        shape_type="rectangle",
+        existing_shapes=[existing],
+        iou_threshold=iou_threshold,
+        score_threshold=0.1,
+        image_size=(30, 30),
+        polygon_detail=60,
+    )
+
+    assert len(shapes) == count

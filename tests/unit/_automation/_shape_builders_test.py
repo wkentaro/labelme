@@ -13,7 +13,7 @@ from labelme._automation import Detection
 from labelme._automation import assign_available_group_ids
 from labelme._automation import shapes_from_detections
 from labelme._shape import Shape
-from labelme._utils._shape import shape_to_mask
+from labelme._utils import shape_to_mask
 
 
 def test_shapes_from_detections_rectangle_uses_bbox() -> None:
@@ -247,8 +247,8 @@ def test_shapes_from_detections_polygon_drops_hole() -> None:
     )
 
     polygon_mask = shape_to_mask(
-        mask.shape,
-        shape.points.tolist(),
+        img_shape=mask.shape,
+        points=shape.points.tolist(),
         shape_type="polygon",
     )
     assert polygon_mask[20, 20]

@@ -35,13 +35,13 @@ _MINOR_WORDS: Final = frozenset(
 )
 
 
-def _english_window(main_win: MainWinFactory, /) -> MainWindow:
+def _english_window(*, main_win: MainWinFactory) -> MainWindow:
     # The rules and allowlists are about the source strings; a translated
     # session would fail them for reasons unrelated to the menus.
     return main_win(config_overrides={"language": "en_US"})
 
 
-def _plain(text: str, /) -> str:
+def _plain(*, text: str) -> str:
     return text.replace("&", "").replace("\n", " ").strip()
 
 
@@ -53,7 +53,7 @@ def _menus(win: MainWindow, /) -> Iterator[QtWidgets.QMenu]:
     yield win._canvas_widgets.canvas.context_menu
 
 
-def _menu_actions(win: MainWindow, /) -> list[QtGui.QAction]:
+def _menu_actions(*, win: MainWindow) -> list[QtGui.QAction]:
     seen: dict[int, QtGui.QAction] = {}
     for menu in _menus(win):
         for action in menu.actions():
@@ -69,7 +69,7 @@ def _menu_actions(win: MainWindow, /) -> list[QtGui.QAction]:
     return list(seen.values())
 
 
-def _is_title_case(text: str, /) -> bool:
+def _is_title_case(*, text: str) -> bool:
     words = [w for w in re.split(r"[ /]", text.rstrip("…")) if w]
     for index, word in enumerate(words):
         if 0 < index < len(words) - 1 and word.lower() in _MINOR_WORDS:
@@ -93,10 +93,10 @@ def _is_title_case(text: str, /) -> bool:
     ],
 )
 def test_is_title_case(*, text: str, expected: bool) -> None:
-    assert _is_title_case(text) is expected
+    assert _is_title_case(text=text) is expected
 
 
-def _icon_key(action: QtGui.QAction, /) -> bytes:
+def _icon_key(*, action: QtGui.QAction) -> bytes:
     image = action.icon().pixmap(16, 16).toImage()
     return bytes(image.constBits())
 
@@ -106,8 +106,8 @@ def test_menu_text_has_no_newline(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
     allowed = frozenset[str]()
-    win = _english_window(main_win)
-    found = {a.text() for a in _menu_actions(win) if "\n" in a.text()}
+    win = _english_window(main_win=main_win)
+    found = {a.text() for a in _menu_actions(win=win) if "\n" in a.text()}
     assert found == allowed
 
 
@@ -116,11 +116,11 @@ def test_menu_items_use_title_case(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
     allowed = frozenset[str]()
-    win = _english_window(main_win)
+    win = _english_window(main_win=main_win)
     found = {
-        _plain(a.text())
-        for a in _menu_actions(win)
-        if not _is_title_case(_plain(a.text()))
+        _plain(text=a.text())
+        for a in _menu_actions(win=win)
+        if not _is_title_case(text=_plain(text=a.text()))
     }
     assert found == allowed
 
@@ -139,25 +139,34 @@ def test_dialog_actions_end_with_ellipsis(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
     allowed = frozenset[str]()
-    win = _english_window(main_win)
+    win = _english_window(main_win=main_win)
     found = {
         name
         for name in dialog_actions
-        if not _plain(getattr(win._actions, name).text()).endswith("…")
+        if not _plain(text=getattr(win._actions, name).text()).endswith("…")
     }
     assert found == allowed
 
 
 @pytest.mark.gui
 def test_checkable_menu_items_have_no_icon(*, main_win: MainWinFactory) -> None:
-    # Mode toggles that also sit on the toolbar keep their icon; other checkable
-    # items rely on the checkmark alone.
+    # Mode toggles that also sit on the toolbar keep their icon, and so do
+    # shape pickers, whose icon names the shape; other checkable items rely on
+    # the checkmark alone.
     toggles_with_icon = frozenset({"fit_window", "fit_selection"})
-    win = _english_window(main_win)
-    allowed = {id(getattr(win._actions, name)) for name in toggles_with_icon}
+    win = _english_window(main_win=main_win)
+    allowed = {
+        id(a)
+        for a in (
+            *(getattr(win._actions, name) for name in toggles_with_icon),
+            *(a for _, a in win._actions.draw),
+            win._actions.edit_mode,
+            *win._ai_annotation._output_format_actions.values(),
+        )
+    }
     found = {
-        _plain(a.text())
-        for a in _menu_actions(win)
+        _plain(text=a.text())
+        for a in _menu_actions(win=win)
         if a.isCheckable() and not a.icon().isNull() and id(a) not in allowed
     }
     assert found == set()
@@ -168,11 +177,13 @@ def test_each_icon_belongs_to_one_action(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
     allowed = frozenset[frozenset[str]]()
-    win = _english_window(main_win)
+    win = _english_window(main_win=main_win)
     by_icon: dict[bytes, set[str]] = {}
-    for action in _menu_actions(win):
+    for action in _menu_actions(win=win):
         if not action.icon().isNull():
-            by_icon.setdefault(_icon_key(action), set()).add(_plain(action.text()))
+            by_icon.setdefault(_icon_key(action=action), set()).add(
+                _plain(text=action.text())
+            )
     shared = {frozenset(texts) for texts in by_icon.values() if len(texts) > 1}
     assert shared == allowed
 
@@ -182,7 +193,7 @@ def test_view_menu_ends_with_separator(*, main_win: MainWinFactory) -> None:
     # macOS appends Enter Full Screen to the View menu. Without a separator it
     # joins the last section, and its SF Symbol makes AppKit indent the
     # icon-less items there.
-    win = _english_window(main_win)
+    win = _english_window(main_win=main_win)
     ends_with_separator = win._menus.view.actions()[-1].isSeparator()
     assert ends_with_separator
 
@@ -192,11 +203,13 @@ def test_menu_commands_have_icon(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
     allowed = frozenset[str]()
-    win = _english_window(main_win)
+    win = _english_window(main_win=main_win)
+    # A menu's gray heading names its items; it is not a command.
+    headings = {id(win._ai_annotation._output_format_button.menu().actions()[0])}
     found = {
-        _plain(a.text())
-        for a in _menu_actions(win)
-        if not a.isCheckable() and a.icon().isNull()
+        _plain(text=a.text())
+        for a in _menu_actions(win=win)
+        if not a.isCheckable() and a.icon().isNull() and id(a) not in headings
     }
     assert found == allowed
 
@@ -205,11 +218,11 @@ def test_menu_commands_have_icon(*, main_win: MainWinFactory) -> None:
 def test_menu_text_avoids_glossary_terms(*, main_win: MainWinFactory) -> None:
     # Terms GLOSSARY.md tells the UI to avoid.
     avoided_terms = ("label file", "output dir", "save dir", "file list")
-    win = _english_window(main_win)
+    win = _english_window(main_win=main_win)
     texts = [
         text.lower()
-        for a in _menu_actions(win)
-        for text in (_plain(a.text()), a.toolTip())
+        for a in _menu_actions(win=win)
+        for text in (_plain(text=a.text()), a.toolTip())
     ]
     texts += [
         dock.windowTitle().lower() for dock in win.findChildren(QtWidgets.QDockWidget)
@@ -218,13 +231,13 @@ def test_menu_text_avoids_glossary_terms(*, main_win: MainWinFactory) -> None:
     assert found == set()
 
 
-def _mnemonic(text: str, /) -> str | None:
+def _mnemonic(*, text: str) -> str | None:
     # Inline "&File", or the "(&F)" form CJK translations use.
     match = re.search(r"&([^&\s])", text.replace("&&", ""))
     return match.group(1).lower() if match else None
 
 
-def _menu_texts(win: MainWindow, /) -> dict[str, list[str]]:
+def _menu_texts(*, win: MainWindow) -> dict[str, list[str]]:
     menus: dict[str, QtWidgets.QWidget] = {"menu bar": win.menuBar()}
     for name in ("file", "edit", "view", "help", "label_list"):
         menus[name] = getattr(win._menus, name)
@@ -245,15 +258,33 @@ def test_menu_mnemonics_are_unique_in_every_language(
     # Windows and Linux open a menu item with Alt plus its mnemonic, so two
     # items sharing one in a menu can't both be reached that way, and an item
     # whose English text has one should keep one when translated.
-    english = _menu_texts(_english_window(main_win))
-    translated = _menu_texts(main_win(config_overrides={"language": language}))
+    english = _menu_texts(win=_english_window(main_win=main_win))
+    translated = _menu_texts(win=main_win(config_overrides={"language": language}))
     for name, texts in translated.items():
-        keys = [_mnemonic(text) for text in texts]
+        keys = [_mnemonic(text=text) for text in texts]
         duplicates = sorted({k for k in keys if k is not None and keys.count(k) > 1})
         assert duplicates == [], (name, texts)
         dropped = [
             text
             for text, source in zip(texts, english[name], strict=True)
-            if _mnemonic(source) and not _mnemonic(text)
+            if _mnemonic(text=source) and not _mnemonic(text=text)
         ]
         assert dropped == [], name
+
+
+@pytest.mark.gui
+def test_file_menu_groups_actions_by_task(*, main_win: MainWinFactory) -> None:
+    win = _english_window(main_win=main_win)
+    groups: list[list[QtGui.QAction]] = [[]]
+    for action in win._menus.file.actions():
+        if action.isSeparator():
+            groups.append([])
+        else:
+            groups[-1].append(action)
+    a = win._actions
+    assert groups[:4] == [
+        [a.open, a.open_dir],
+        [a.open_prev_img, a.open_next_img],
+        [a.save, a.save_as, a.save_auto, a.change_output_dir, a.save_with_image_data],
+        [a.close, a.delete_file],
+    ]

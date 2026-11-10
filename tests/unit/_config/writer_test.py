@@ -12,8 +12,8 @@ from labelme import _config
 from labelme import _yaml
 
 
-def _parse(config_file: Path, /) -> dict | None:
-    return _yaml.safe_load(config_file.read_text(encoding="utf-8"))
+def _parse(*, config_file: Path) -> dict | None:
+    return _yaml.safe_load(stream=config_file.read_text(encoding="utf-8"))
 
 
 def test_creates_file_when_missing(*, tmp_path: Path) -> None:
@@ -21,7 +21,7 @@ def test_creates_file_when_missing(*, tmp_path: Path) -> None:
 
     _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], False)])
 
-    assert _parse(config_file) == {"auto_save": False}
+    assert _parse(config_file=config_file) == {"auto_save": False}
 
 
 def test_preserves_comment_on_untouched_key(*, tmp_path: Path) -> None:
@@ -34,7 +34,10 @@ def test_preserves_comment_on_untouched_key(*, tmp_path: Path) -> None:
 
     content = config_file.read_text(encoding="utf-8")
     assert "# my custom note" in content
-    assert _parse(config_file) == {"auto_save": False, "with_image_data": True}
+    assert _parse(config_file=config_file) == {
+        "auto_save": False,
+        "with_image_data": True,
+    }
 
 
 def test_prunes_key_when_value_equals_default(*, tmp_path: Path) -> None:
@@ -46,7 +49,7 @@ def test_prunes_key_when_value_equals_default(*, tmp_path: Path) -> None:
     # auto_save default is true, so setting it back to true removes the override
     _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], True)])
 
-    assert _parse(config_file) == {"with_image_data": True}
+    assert _parse(config_file=config_file) == {"with_image_data": True}
 
 
 def test_writes_nested_key(*, tmp_path: Path) -> None:
@@ -58,7 +61,7 @@ def test_writes_nested_key(*, tmp_path: Path) -> None:
 
     content = config_file.read_text(encoding="utf-8")
     assert "shape:" in content
-    assert _parse(config_file) == {"shape": {"point_size": 12}}
+    assert _parse(config_file=config_file) == {"shape": {"point_size": 12}}
 
 
 def test_prunes_nested_key_and_empty_parent(*, tmp_path: Path) -> None:
@@ -70,7 +73,7 @@ def test_prunes_nested_key_and_empty_parent(*, tmp_path: Path) -> None:
         config_file=config_file, overrides=[(["shape", "point_size"], 8)]
     )
 
-    assert _parse(config_file) is None
+    assert _parse(config_file=config_file) is None
 
 
 def test_keeps_sibling_when_pruning_nested_key(*, tmp_path: Path) -> None:
@@ -83,7 +86,7 @@ def test_keeps_sibling_when_pruning_nested_key(*, tmp_path: Path) -> None:
         config_file=config_file, overrides=[(["shape", "point_size"], 8)]
     )
 
-    assert _parse(config_file) == {"shape": {"line_color": [1, 2, 3, 4]}}
+    assert _parse(config_file=config_file) == {"shape": {"line_color": [1, 2, 3, 4]}}
 
 
 def test_toggle_then_revert_is_idempotent(*, tmp_path: Path) -> None:
@@ -96,7 +99,7 @@ def test_toggle_then_revert_is_idempotent(*, tmp_path: Path) -> None:
         config_file=config_file, overrides=[(["shape", "point_size"], 8)]
     )
 
-    assert _parse(config_file) is None
+    assert _parse(config_file=config_file) is None
 
 
 def test_writes_list_in_flow_style(*, tmp_path: Path) -> None:
@@ -124,7 +127,7 @@ def test_nested_shape_color_write_migrates_legacy_scalar_config(
         overrides=[(["shape_color", "by_label", "fallback"], [4, 5, 6])],
     )
 
-    assert _parse(config_file) == {
+    assert _parse(config_file=config_file) == {
         "shape_color": {
             "mode": "by_label",
             "by_label": {
@@ -151,7 +154,7 @@ def test_nested_shape_color_write_removes_legacy_sibling_keys(
         overrides=[(["shape_color", "auto", "shift"], 2)],
     )
 
-    assert _parse(config_file) == {
+    assert _parse(config_file=config_file) == {
         "shape_color": {
             "auto": {"shift": 2},
             "uniform": {"color": [1, 2, 3]},
@@ -200,7 +203,7 @@ def test_set_overrides_applies_batch_in_one_write(*, tmp_path: Path) -> None:
         overrides=[(["auto_save"], True), (["shape", "point_size"], 12)],
     )
 
-    assert _parse(config_file) == {"shape": {"point_size": 12}}
+    assert _parse(config_file=config_file) == {"shape": {"point_size": 12}}
 
 
 def test_set_overrides_bad_key_leaves_file_untouched(*, tmp_path: Path) -> None:
@@ -214,7 +217,7 @@ def test_set_overrides_bad_key_leaves_file_untouched(*, tmp_path: Path) -> None:
         )
 
     # the batch is all-or-nothing: the valid first item must not be persisted
-    assert _parse(config_file) == {"auto_save": False}
+    assert _parse(config_file=config_file) == {"auto_save": False}
 
 
 def test_label_named_like_a_boolean_survives_round_trip(*, tmp_path: Path) -> None:

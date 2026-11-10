@@ -5,6 +5,7 @@ from collections.abc import Iterator
 from typing import Final
 from typing import NamedTuple
 from typing import cast
+from typing import override
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -35,18 +36,21 @@ _INVALID_MODEL_INDEX: Final = QtCore.QModelIndex()
 @functools.cache
 def _lock_icon() -> QtGui.QIcon:
     # Shared by every locked row, so the SVG is read and rasterized once.
-    return _utils.new_icon("phosphor/lock.svg")
+    return _utils.new_icon(name="phosphor/lock.svg")
 
 
-def _is_locked_row(index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, /) -> bool:
+def _is_locked_row(*, index: QtCore.QModelIndex | QtCore.QPersistentModelIndex) -> bool:
     # The delegate also serves the unique label list, whose rows hold no Shape.
     shape = index.data(Qt.ItemDataRole.UserRole)
     return isinstance(shape, Shape) and shape.locked
 
 
-class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
-    _DOT: Final = " ●"
+class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
+    _PAD: Final = "\u2003"
+    # The lock's slot; the thin space keeps the icon off the name.
+    _LOCK_PAD: Final = "\u2003\u2009"
 
+    @override
     def sizeHint(
         self,
         option: QtWidgets.QStyleOptionViewItem,
@@ -56,14 +60,15 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
         size = super().sizeHint(option, index)
         if isinstance(index.data(LABEL_COLOR_ROLE), QtGui.QColor):
             size.setWidth(
-                size.width() + option.fontMetrics.horizontalAdvance(self._DOT)
+                size.width() + option.fontMetrics.horizontalAdvance(self._PAD)
             )
-        if _is_locked_row(index):
-            # Room for the lock; the height stays that of an icon-less row,
-            # since the style pads any row that has an icon.
-            size.setWidth(size.width() + option.fontMetrics.ascent())
+        if _is_locked_row(index=index):
+            size.setWidth(
+                size.width() + option.fontMetrics.horizontalAdvance(self._LOCK_PAD)
+            )
         return size
 
+    @override
     def paint(
         self,
         painter: QtGui.QPainter,
@@ -78,13 +83,7 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
 
         opt = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
-        if _is_locked_row(index):
-            # Only locked rows get the icon, so the common unlocked row wastes no
-            # space; it is added at paint time to keep the row height unchanged.
-            side = opt.fontMetrics.ascent()
-            opt.features |= QtWidgets.QStyleOptionViewItem.ViewItemFeature.HasDecoration
-            opt.decorationSize = QtCore.QSize(side, side)
-            opt.icon = _lock_icon()
+        locked = _is_locked_row(index=index)
         widget_style = (
             opt.widget.style() if opt.widget else QtWidgets.QApplication.style()
         )
@@ -97,30 +96,56 @@ class TrailingColorDotDelegate(QtWidgets.QStyledItemDelegate):
             )
             + 1
         )
-        dot_width = opt.fontMetrics.horizontalAdvance(self._DOT)
-        available_width = max(0, text_rect.width() - 2 * text_margin - dot_width)
-
-        # The dot is painted here rather than appended to opt.text, so that Qt
-        # never draws the glyph in the text color underneath it: the two draws
-        # land a subpixel apart and the one below shows as a fringe.
-        opt.text = opt.fontMetrics.elidedText(
+        # The swatch leads the text, so the colors form one column the eye can
+        # scan. Em spaces reserve slots inside the text, after the checkbox,
+        # for the swatch and then the lock, so the lock never shifts the
+        # swatch. Both are painted here rather than drawn as glyphs or as a
+        # decoration, which would also make the style pad the row taller.
+        pad = self._PAD + (self._LOCK_PAD if locked else "")
+        slot = opt.fontMetrics.horizontalAdvance(self._PAD)
+        available_width = max(
+            0,
+            text_rect.width()
+            - 2 * text_margin
+            - opt.fontMetrics.horizontalAdvance(pad),
+        )
+        opt.text = pad + opt.fontMetrics.elidedText(
             opt.text, opt.textElideMode, available_width
         )
         widget_style.drawControl(
             QStyle.ControlElement.CE_ItemViewItem, opt, painter, opt.widget
         )
 
-        dot_rect = QtCore.QRect(text_rect)
-        dot_rect.setLeft(
-            text_rect.left() + text_margin + opt.fontMetrics.horizontalAdvance(opt.text)
+        # The ring keeps dark label colors visible against a dark background.
+        diameter = opt.fontMetrics.ascent() * 0.6
+        center = QtCore.QPointF(
+            text_rect.left() + text_margin + diameter / 2,
+            text_rect.center().y() + 0.5,
         )
-        dot_rect.setWidth(dot_width)
-
+        ring = QtGui.QColor(opt.palette.color(QtGui.QPalette.ColorRole.Text))
+        ring.setAlphaF(0.35)
         painter.save()
-        painter.setFont(opt.font)
-        painter.setPen(color)
-        painter.drawText(dot_rect, opt.displayAlignment, self._DOT)
+        painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+        painter.setPen(QtGui.QPen(ring, 1))
+        painter.setBrush(color)
+        painter.drawEllipse(center, diameter / 2, diameter / 2)
         painter.restore()
+
+        if not locked:
+            return
+        side = opt.fontMetrics.ascent()
+        _lock_icon().paint(
+            painter,
+            QtCore.QRect(
+                text_rect.left() + text_margin + slot,
+                text_rect.center().y() - side // 2,
+                side,
+                side,
+            ),
+            mode=QtGui.QIcon.Mode.Selected
+            if opt.state & QStyle.StateFlag.State_Selected
+            else QtGui.QIcon.Mode.Normal,
+        )
 
 
 class LabelListWidgetItem(QtGui.QStandardItem):
@@ -149,6 +174,11 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 
     def set_label(self, *, text: str, color: tuple[int, int, int]) -> None:
         self.setText(text)
+        # The row elides long labels; hovering shows the whole name. Escape it,
+        # or Qt renders a label like "<b>cat</b>" as markup.
+        self.setToolTip(
+            QtGui.Qt.convertFromPlainText(text, Qt.WhiteSpaceMode.WhiteSpacePre)
+        )
         self.setData(QtGui.QColor(*color), LABEL_COLOR_ROLE)
 
     def shape(self) -> Shape | None:
@@ -164,6 +194,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 class _ItemModel(QtGui.QStandardItemModel):
     item_dropped = QtCore.Signal()
 
+    @override
     def removeRows(
         self,
         row: int,
@@ -171,7 +202,7 @@ class _ItemModel(QtGui.QStandardItemModel):
         /,
         parent: QtCore.QModelIndex
         | QtCore.QPersistentModelIndex = _INVALID_MODEL_INDEX,
-    ) -> bool:  # noqa: GR005 -- PySide6 declares `parent` positional-or-keyword
+    ) -> bool:
         ret = super().removeRows(row, count, parent)
         self.item_dropped.emit()
         return ret
@@ -185,6 +216,9 @@ class _ItemSnapshot(NamedTuple):
 
 
 class LabelListWidget(QtWidgets.QListView):
+    _model: _ItemModel
+    _press_snapshot: tuple[_ItemSnapshot, ...]
+
     item_double_clicked = QtCore.Signal(LabelListWidgetItem)
     item_selection_changed = QtCore.Signal(list, list)
 
@@ -193,11 +227,13 @@ class LabelListWidget(QtWidgets.QListView):
 
         self.setWindowFlags(Qt.WindowType.Window)
 
-        self._model: _ItemModel = _ItemModel()
+        self._model = _ItemModel()
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)
 
-        self.setItemDelegate(TrailingColorDotDelegate())
+        self.setItemDelegate(ColorSwatchDelegate())
+        # Long labels elide instead of scrolling the list sideways.
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setSelectionMode(
             QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
@@ -207,8 +243,9 @@ class LabelListWidget(QtWidgets.QListView):
         self.doubleClicked.connect(self._on_item_double_clicked)
         self.selectionModel().selectionChanged.connect(self._on_item_selection_changed)
 
-        self._press_snapshot: tuple[_ItemSnapshot, ...] = ()
+        self._press_snapshot = ()
 
+    @override
     def mousePressEvent(self, e: QtGui.QMouseEvent, /) -> None:
         self._press_snapshot = tuple(
             _ItemSnapshot(
@@ -219,6 +256,7 @@ class LabelListWidget(QtWidgets.QListView):
         )
         super().mousePressEvent(e)
 
+    @override
     def mouseReleaseEvent(self, e: QtGui.QMouseEvent, /) -> None:
         super().mouseReleaseEvent(e)
 
@@ -246,6 +284,7 @@ class LabelListWidget(QtWidgets.QListView):
 
         self._press_snapshot = ()
 
+    @override
     def dropEvent(self, e: QtGui.QDropEvent, /) -> None:
         # Qt's default drop rebuilds the dragged rows from MIME data, which
         # swaps every moved shape for a copy the canvas does not hold. Moving

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import struct
 import zlib
@@ -15,40 +16,8 @@ from PySide6 import QtGui
 
 from labelme import __appname__
 from labelme import _app
-from labelme import _automation
-from labelme._label_file import ShapeDict
 from labelme._shape import Shape
-
-
-@pytest.mark.parametrize(
-    "create_mode, ai_output_format, expected",
-    [
-        ("ai_points_to_shape", "mask", "mask"),
-        ("ai_box_to_shape", "polygon", "polygon"),
-        ("polygon", "mask", "polygon"),
-        ("rectangle", "mask", "rectangle"),
-        ("edit", "polygon", None),
-    ],
-    ids=[
-        "ai-points-passthrough",
-        "ai-box-passthrough",
-        "text-polygon",
-        "text-rectangle",
-        "unrelated-mode",
-    ],
-)
-def test_resolve_text_annotation_shape_type(
-    *,
-    create_mode: str,
-    ai_output_format: _automation.AiOutputFormat,
-    expected: _automation.AiOutputFormat | None,
-) -> None:
-    assert (
-        _app._resolve_text_annotation_shape_type(
-            create_mode=create_mode, ai_output_format=ai_output_format
-        )
-        == expected
-    )
+from labelme._shape import ShapeDict
 
 
 @pytest.mark.parametrize(
@@ -410,7 +379,7 @@ def test_shape_to_dict_maps_all_fields() -> None:
         locked=True,
     )
 
-    result = _app._shape_to_dict(shape)
+    result = _app._shape_to_dict(shape=shape)
 
     assert result == {
         "label": "cat",
@@ -446,7 +415,7 @@ def test_shape_to_dict_coalesces_optional_flags_and_description(
 ) -> None:
     shape = Shape(label="cat", flags=flags, description=description)
 
-    result = _app._shape_to_dict(shape)
+    result = _app._shape_to_dict(shape=shape)
 
     assert result["flags"] == expected_flags
     assert result["description"] == expected_description
@@ -461,7 +430,7 @@ def test_shape_to_dict_copies_mask() -> None:
         points=np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float64),
     )
 
-    result = _app._shape_to_dict(shape)["mask"]
+    result = _app._shape_to_dict(shape=shape)["mask"]
     assert result is not mask
     np.testing.assert_array_equal(result, mask)
 
@@ -470,40 +439,128 @@ def test_shape_to_dict_requires_label() -> None:
     shape = Shape(label=None)
 
     with pytest.raises(AssertionError):
-        _app._shape_to_dict(shape)
+        _app._shape_to_dict(shape=shape)
 
 
 @pytest.mark.parametrize(
-    "image_or_label_path, output_dir, expected",
+    "image_path, output_dir, expected",
     [
         (str(Path("/data/img.png")), None, str(Path("/data/img.json"))),
         (str(Path("/data/img.png")), Path("/out"), str(Path("/out/img.json"))),
-        (str(Path("/data/foo.json")), None, str(Path("/data/foo.json"))),
-        (str(Path("/data/foo.json")), Path("/out"), str(Path("/data/foo.json"))),
         (str(Path("/data/a.b.png")), None, str(Path("/data/a.b.json"))),
-        (str(Path("/data/FOO.JSON")), None, str(Path("/data/FOO.JSON"))),
     ],
-    ids=[
-        "image-sibling-json",
-        "image-honors-output-dir",
-        "label-path-passthrough",
-        "label-path-ignores-output-dir",
-        "multi-dot-stem",
-        "uppercase-suffix-passthrough",
-    ],
+    ids=["image-sibling-json", "image-honors-output-dir", "multi-dot-stem"],
 )
 def test_resolve_label_path(
     *,
-    image_or_label_path: str,
+    image_path: str,
     output_dir: Path | None,
     expected: str,
 ) -> None:
     assert (
         _app._resolve_label_path(
-            image_or_label_path=image_or_label_path, output_dir=output_dir
+            image_path=image_path, output_dir=output_dir, root_prefix=None
         )
         == expected
     )
+
+
+def test_resolve_label_path_follows_the_recorded_image(*, tmp_path: Path) -> None:
+    for name in ("x.jpg", "x.png", "y.jpg"):
+        (tmp_path / name).touch()
+
+    def resolve(name: str) -> str:
+        return _app._resolve_label_path(
+            image_path=str(tmp_path / name), output_dir=None, root_prefix=None
+        )
+
+    def record(label_name: str, image_path: str) -> None:
+        (tmp_path / label_name).write_text(json.dumps({"imagePath": image_path}))
+
+    # x.jpg and x.png share the stem name; whichever saves second keeps its
+    # extension.
+    record("x.json", "x.jpg")
+    assert resolve("x.jpg") == str(tmp_path / "x.json")
+    assert resolve("x.png") == str(tmp_path / "x.png.json")
+    record("x.png.json", "x.png")
+    assert resolve("x.png") == str(tmp_path / "x.png.json")
+
+    # A recorded Image that is gone still belongs here, unless its name is
+    # another Image beside this one.
+    record("x.json", "../moved/x.jpg")
+    assert _app._has_label_file(
+        image_path=str(tmp_path / "x.jpg"), output_dir=None, root_prefix=None
+    )
+    record("y.json", "embedded-elsewhere.jpg")
+    assert _app._has_label_file(
+        image_path=str(tmp_path / "y.jpg"), output_dir=None, root_prefix=None
+    )
+    (tmp_path / "x.png.json").unlink()
+    assert resolve("x.png") == str(tmp_path / "x.png.json")
+
+    # An unreadable file stays claimed, so opening reports it.
+    (tmp_path / "y.json").write_text("{")
+    assert resolve("y.jpg") == str(tmp_path / "y.json")
+
+
+def test_find_label_path_reads_a_rewrite_within_one_timestamp(
+    *, tmp_path: Path
+) -> None:
+    for name in ("x.jpg", "x.png"):
+        (tmp_path / name).touch()
+    label = tmp_path / "x.png.json"
+    label.write_text(json.dumps({"imagePath": "x.png"}))
+    image = str(tmp_path / "x.png")
+    assert _app._has_label_file(image_path=image, output_dir=None, root_prefix=None)
+
+    # Same size and mtime, as a fast rewrite on a coarse clock leaves them.
+    stat = label.stat()
+    label.write_text(json.dumps({"imagePath": "x.jpg"}))
+    os.utime(label, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    assert (
+        _app._find_label_path(
+            image_path=image, output_dir=None, root_prefix=None, cached=False
+        )
+        is None
+    )
+
+
+def test_resolve_label_path_mirrors_subfolders(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    images = tmp_path / "images"
+    out = tmp_path / "out"
+    for name in ("0001.jpg", "a/0001.jpg", "b/0001.jpg"):
+        (images / name).parent.mkdir(parents=True, exist_ok=True)
+        (images / name).touch()
+    root_prefix = os.path.join(str(images), "")
+
+    def resolve(image_path: Path) -> str:
+        return _app._resolve_label_path(
+            image_path=str(image_path), output_dir=out, root_prefix=root_prefix
+        )
+
+    assert resolve(images / "a" / "0001.jpg") == str(out / "a" / "0001.json")
+    assert resolve(images / "0001.jpg") == str(out / "0001.json")
+    # Images outside the opened folder have no subfolder to mirror.
+    assert resolve(tmp_path / "x.jpg") == str(out / "x.json")
+    assert resolve(tmp_path / "..x" / "x.jpg") == str(out / "x.json")
+
+    # A flat Annotation File from before mirroring stays with its own Image,
+    # even when the root Image's name is the same.
+    out.mkdir()
+    (out / "0001.json").write_text(json.dumps({"imagePath": "../images/b/0001.jpg"}))
+    assert resolve(images / "b" / "0001.jpg") == str(out / "0001.json")
+    assert resolve(images / "a" / "0001.jpg") == str(out / "a" / "0001.json")
+    assert resolve(images / "0001.jpg") == str(out / "0001.jpg.json")
+
+    # A folder opened as "." lists its Images without the "./" prefix.
+    monkeypatch.chdir(images)
+    assert _app._resolve_label_path(
+        image_path=os.path.join("a", "0001.jpg"),
+        output_dir=out,
+        root_prefix=os.path.join(".", ""),
+    ) == str(out / "a" / "0001.json")
 
 
 def test_resolve_stored_image_path_falls_back_to_absolute(
@@ -546,3 +603,77 @@ def test_scan_image_files_sorts_top_level_and_nested_files_together(
     assert _app._scan_image_files(root_dir=".") == [
         os.path.normpath(name) for name in expected
     ]
+
+
+@pytest.mark.parametrize(
+    "available, toolbar_width, expected",
+    [
+        # Room to spare: the preferred size, centered.
+        (QtCore.QRect(0, 0, 1920, 1200), 1100, QtCore.QRect(320, 200, 1280, 800)),
+        # A toolbar wider than the preferred width widens the window.
+        (QtCore.QRect(0, 0, 1920, 1200), 1400, QtCore.QRect(260, 200, 1400, 800)),
+        # A small screen bounds the size; the offset of its work area carries.
+        (QtCore.QRect(0, 25, 1366, 743), 1400, QtCore.QRect(0, 25, 1366, 743)),
+    ],
+)
+def test_default_window_geometry(
+    *, available: QtCore.QRect, toolbar_width: int, expected: QtCore.QRect
+) -> None:
+    assert (
+        _app._default_window_geometry(available=available, toolbar_width=toolbar_width)
+        == expected
+    )
+
+
+@pytest.mark.skipif(os.name != "nt", reason="only Windows has UNC paths")
+@pytest.mark.parametrize(
+    ("image_path", "label_dir"),
+    [
+        (r"\\server\share\imgs\img.png", Path(r"C:\labels")),
+        (r"C:\imgs\img.png", Path(r"\\server\share\labels")),
+        (r"\\server\share1\imgs\img.png", Path(r"\\server\share2\labels")),
+        (r"\\server1\share\imgs\img.png", Path(r"\\server2\share\labels")),
+    ],
+    ids=[
+        "unc-image-drive-label-dir",
+        "drive-image-unc-label-dir",
+        "unc-share-mismatch",
+        "unc-server-mismatch",
+    ],
+)
+def test_resolve_stored_image_path_falls_back_across_windows_unc_shares(
+    *,
+    image_path: str,
+    label_dir: Path,
+) -> None:
+    assert (
+        _app._resolve_stored_image_path(image_path=image_path, label_dir=label_dir)
+        == image_path
+    )
+
+
+def test_saved_shapes_equal_ignores_visibility_but_not_saved_fields() -> None:
+    def make(
+        *, mask: np.ndarray | None, visible: bool = True, locked: bool = False
+    ) -> Shape:
+        return Shape(
+            label="cat",
+            shape_type="mask",
+            points=np.array([[0, 0], [2, 2]], dtype=np.float64),
+            mask=mask,
+            visible=visible,
+            locked=locked,
+        )
+
+    mask = np.array([[True, False]])
+    assert _app._saved_shapes_equal(
+        a=[make(mask=mask)], b=[make(mask=mask.copy(), visible=False)]
+    )
+    assert not _app._saved_shapes_equal(
+        a=[make(mask=mask)], b=[make(mask=np.array([[False, False]]))]
+    )
+    assert not _app._saved_shapes_equal(a=[make(mask=mask)], b=[make(mask=None)])
+    assert not _app._saved_shapes_equal(
+        a=[make(mask=mask)], b=[make(mask=mask, locked=True)]
+    )
+    assert not _app._saved_shapes_equal(a=[make(mask=mask)], b=[])

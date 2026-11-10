@@ -10,6 +10,7 @@ from collections.abc import Iterator
 from http.server import BaseHTTPRequestHandler
 from http.server import ThreadingHTTPServer
 from pathlib import Path
+from typing import Final
 
 import imgviz
 import pytest
@@ -22,6 +23,7 @@ from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
 import labelme._utils
+from labelme._automation import _osam_session
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
@@ -52,6 +54,9 @@ def pytest_addoption(parser: pytest.Parser) -> None:  # noqa: GR005 -- pluggy ca
 def pytest_configure(config: pytest.Config) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
     if not config.getoption("--headed"):
         os.environ["QT_QPA_PLATFORM"] = "offscreen"
+        # A desktop theme such as gtk3 changes fonts and key handling, so
+        # offscreen runs would differ from CI.
+        os.environ.pop("QT_QPA_PLATFORMTHEME", None)
 
 
 @pytest.fixture()
@@ -104,7 +109,7 @@ def assert_labelfile_sanity(filename: str, /) -> None:
         assert img_file.exists()
         img = imgviz.io.imread(img_file)
     else:
-        img = labelme._utils.img_b64_to_arr(image_data)
+        img = labelme._utils.img_b64_to_arr(img_b64=image_data)
 
     height, width = img.shape[:2]
     assert height == data["imageHeight"]
@@ -157,6 +162,11 @@ def data_path(*, tmp_path: Path) -> Path:
     return data_path
 
 
+# The download worker is a spawned interpreter that re-imports osam before its
+# first request, which can exceed pytest-qt's 5 s default on loaded CI runners.
+DOWNLOAD_START_TIMEOUT_MS: Final = 30_000
+
+
 @pytest.fixture
 def download_server(
     *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -203,3 +213,8 @@ def download_server(
     server.shutdown()
     server.server_close()
     thread.join()
+
+
+@pytest.fixture(autouse=True)
+def _isolate_osam_sessions(*, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(_osam_session, "_SESSIONS", {})

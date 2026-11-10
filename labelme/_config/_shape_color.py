@@ -8,7 +8,7 @@ from loguru import logger
 RGB_CHANNEL_COUNT: Final = 3
 
 
-def _is_rgb(value: object, /) -> bool:
+def _is_rgb(*, value: object) -> bool:
     CHANNEL_VALUE_MAX: Final = 255
 
     return (
@@ -24,7 +24,7 @@ def _is_rgb(value: object, /) -> bool:
 
 
 def _validate_rgb(*, path: str, value: object) -> None:
-    if not _is_rgb(value):
+    if not _is_rgb(value=value):
         raise ValueError(f"{path} must be a list of three integers from 0 to 255")
 
 
@@ -80,7 +80,6 @@ def validate_shape_color(*, config: object) -> None:
 
 
 def migrate_shape_color(*, config: dict) -> None:
-    """Migrate legacy shape color keys in place."""
     legacy_siblings = {
         "default_shape_color",
         "shift_auto_shape_color",

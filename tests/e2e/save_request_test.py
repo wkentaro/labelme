@@ -24,7 +24,7 @@ def test_save_request_owns_mutable_annotation_data(
         flags={"checked": True},
         other_data={"custom": [1]},
     )
-    win._commit_shapes([shape])
+    win._commit_shapes(shapes=[shape])
     assert win._annotation is not None
     win._annotation.other_data["custom"] = [2]
     path = tmp_path / "request.json"
@@ -35,7 +35,7 @@ def test_save_request_owns_mutable_annotation_data(
     shape.flags["checked"] = False
     shape.other_data["custom"].append(3)
     win._annotation.other_data["custom"].append(4)
-    write_save_request(request)
+    write_save_request(request=request)
     restored = read_label_file(filename=str(path))
     assert restored.shapes[0]["points"] == [[0, 0], [2, 2]]
     assert np.all(restored.shapes[0]["mask"])

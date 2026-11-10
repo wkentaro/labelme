@@ -14,9 +14,8 @@ import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
 
 
 def _create_output_directories(
-    output_dir: Path,
-    /,
     *,
+    output_dir: Path,
     include_npy: bool,
     include_visualizations: bool,
     include_objects: bool,
@@ -58,7 +57,7 @@ def _save_label_layer(
         imgviz.io.imsave(output_dir / f"{layer}Visualization" / f"{base}.jpg", viz)
 
 
-def _load_class_names(labels_arg: str, /) -> tuple[list[str], dict[str, int]]:
+def _load_class_names(*, labels_arg: str) -> tuple[list[str], dict[str, int]]:
     if Path(labels_arg).exists():
         with open(labels_arg) as f:
             labels = [label.strip() for label in f if label]
@@ -108,14 +107,14 @@ def main() -> None:
     include_visualizations = not args.noviz
     include_objects = not args.noobject
     _create_output_directories(
-        output_dir,
+        output_dir=output_dir,
         include_npy=include_npy,
         include_visualizations=include_visualizations,
         include_objects=include_objects,
     )
     print("Creating dataset:", output_dir)
 
-    class_names, class_name_to_id = _load_class_names(args.labels)
+    class_names, class_name_to_id = _load_class_names(labels_arg=args.labels)
     print("class_names:", class_names)
     out_class_names_file = output_dir / "class_names.txt"
     with open(out_class_names_file, "w") as f:

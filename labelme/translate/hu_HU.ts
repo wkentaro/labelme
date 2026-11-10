@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Az AI annotációt javasol &apos;AI-Points&apos; és &apos;AI-Box&apos; módokban</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Poligon részletessége</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Poligon részletességének beállítása</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -24,8 +16,32 @@
         <translation>Részletesebb</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>Válassza az &apos;AI-Points&apos; vagy &apos;AI-Box&apos; módot az MI-segéd engedélyezéséhez</translation>
+        <source>Output</source>
+        <translation>Kimenet</translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation>Sokszög</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maszk</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Téglalap</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Irányított téglalap</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Kör</translation>
+    </message>
+    <message>
+        <source>Output format: {format}</source>
+        <translation>Kimeneti formátum: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -39,28 +55,12 @@
         <source>Model</source>
         <translation>Modell</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>MI-segéd</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>Kimeneti formátum</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>pl. kutya,macska,madár</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>Futtatás</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>MI-szöveges utasítás modellje</translation>
     </message>
     <message>
         <source>Score</source>
@@ -71,24 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>Az AI annotációkat hoz létre a szöveges promptból</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>MI-szöveges utasítás</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Válassza a &apos;Polygon&apos;, &apos;Rectangle&apos; vagy &apos;AI-Points&apos; módot az engedélyezéshez</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>Mit keressen</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>Utasítás</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>Keresés…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All modell</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Beállítások</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -136,10 +151,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>%r létrehozása</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC a megszakításhoz</translation>
     </message>
@@ -152,8 +163,16 @@
         <translation>Alakzatok szerkesztése</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>Kattintson pontokra a belefoglaláshoz, vagy tartsa lenyomva a(z) %s billentyűt, és kattintson a kizáráshoz. A befejezéshez tartsa lenyomva a(z) %s billentyűt, és kattintson.</translation>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Írja be az AI-Find All mezőbe, mit kell megtalálni, vagy kattintson egy minta köré rajzolt keret első sarkára</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Kattintson a szemközti sarokra az ilyen objektumok kizárásához</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Kattintson a szemközti sarokra az ehhez hasonló összes objektum megkereséséhez</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -172,8 +191,44 @@
         <translation>Tartsa lenyomva a(z) %s billentyűt, és kattintson egy pont hozzáadásához az élen</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>Húzás: keret</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Húzzon keretet egy minta köré</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Elvetés</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Kattintás: belefoglalás</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Kattintás: kizárás</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d hozzáadása</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Húzás: kizárás</translation>
+    </message>
+    <message>
         <source>Click center point for circle</source>
         <translation>Kattintson a kör középpontjára</translation>
+    </message>
+    <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Kattintson pontokra a belefoglaláshoz, tartsa lenyomva a(z) %s billentyűt, és kattintson a kizáráshoz, vagy húzzon egy keretet. A befejezéshez tartsa lenyomva a(z) %s billentyűt, és kattintson.</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>
@@ -204,12 +259,8 @@
         <translation>Válassza ki a másik sarkot. Négyzethez tartsa lenyomva a Shift billentyűt.</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Kattintson a bbox első sarkára az AI szegmentáláshoz</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Kattintson az átellenes sarokra az objektum szegmentálásához</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Az Enter hozzáadja az eredményeket, az Esc elveti őket. Tartsa lenyomva a(z) %s billentyűt, és rajzoljon keretet a hasonló objektumok kizárásához.</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -421,12 +472,13 @@
         <translation>Alakzat utolsó hozzáadásának és szerkesztésének visszavonása</translation>
     </message>
     <message>
-        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
-        <translation>Kattintson a töröttvonal pontjainak elhelyezéséhez; tartsa lenyomva a(z) %s billentyűt, és kattintson az utolsóhoz.</translation>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Kijelölés</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>Kattintson pontokra az objektum szegmentálásához; tartsa lenyomva a(z) %s billentyűt, és kattintson a befejezéshez.</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Kattintson a töröttvonal pontjainak elhelyezéséhez; tartsa lenyomva a(z) %s billentyűt, és kattintson az utolsóhoz.</translation>
     </message>
     <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
@@ -537,6 +589,16 @@
         <translation>Képeket tartalmazó mappa megnyitása</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Fájl törlése</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Törlés</translation>
+    </message>
+    <message>
         <source>Copy to Clipboard</source>
         <translation>Másolás a vágólapra</translation>
     </message>
@@ -551,6 +613,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>A vágólap alakzatainak beszúrása ebbe a képbe</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Duplikálás</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -573,8 +640,34 @@
         <translation>Visszavonás</translation>
     </message>
     <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Kattintson pontokra, vagy húzzon egy keretet egy objektum szegmentálásához; tartsa lenyomva a(z) %s billentyűt, és kattintson a befejezéshez.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>A szöveges utasításnak vagy egy mintakeretnek megfelelő összes objektum megkeresése</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Következő</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>&amp;Előző kép</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Előző</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -701,10 +794,6 @@
         <translation>További alakzateszközök</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s elindítva.</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>Újra</translation>
     </message>
@@ -723,6 +812,34 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>Egyelőre használhatja az alapértelmezett beállításokat. A visszaállítás előtt biztonsági másolat készül a konfigurációs fájlról.</translation>
+    </message>
+    <message>
+        <source>Type what to find</source>
+        <translation>Írja be, mit kell megtalálni</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>Egyezések keresése a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Egyezések keresése…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú alakzatokat létrehozni.
+
+Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Az annotációs fájl egy másik képhez tartozik: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>A(z) %s nem tud mintakeretet használni. Válassza a SAM 3 modellt.</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -819,14 +936,6 @@
         <translation>Mégse</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Nem érhető el AI-Points módban, mert ez a modell nem támogatja a pont alapú promptokat.</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Megtartja a(z) „{}” annotációinak módosításait?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Nem mentett módosítások</translation>
     </message>
@@ -895,18 +1004,6 @@
         <translation>Vonallánc</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Rajzoljon befoglaló keretet az objektum szegmentálásához.</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>Folytatás az alapértékekkel</translation>
     </message>
@@ -915,12 +1012,64 @@
         <translation>Biztonsági mentés és visszaállítás</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>A(z) %s csak határolókereteket észlel, és nem tud &apos;%s&apos; típusú alakzatokat létrehozni.
-
-Váltson az MI-szöveges utasítás modelljénél &apos;SAM3 (smart)&apos;-re, vagy állítsa a kimeneti formátumot &apos;Rectangle&apos; értékre.</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Az összes „{query}” keresése…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Az összes „{query}” keresése a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Szegmentálás a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Szegmentálás…</translation>
+    </message>
+    <message>
+        <source>Starting AI…</source>
+        <translation>MI indítása…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} betöltése…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Kép előkészítése a CPU-n…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Kép előkészítése…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} mp</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>{count} új „{query}” található</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Nincs új „{query}”</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Az egyesítéshez jelöljön ki legalább két maszk alakzatot</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Csak maszk alakzatok egyesíthetők</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Az egyesítéshez oldja fel a kijelölt alakzatokat</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Csak azonos címkéjű alakzatok egyesíthetők</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -931,22 +1080,40 @@ Váltson az MI-szöveges utasítás modelljénél &apos;SAM3 (smart)&apos;-re, v
         <translation>Hiba az annotációs fájl mentésekor</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points nem elérhető</translation>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>A kép megkeresése frissíti az annotációs fájlt, hogy arra hivatkozzon.</translation>
     </message>
     <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s nem támogatja a pont alapú promptokat.
-Kérjük, válasszon másik modellt vagy használja az AI-Box módot.</translation>
+        <source>Locate Image…</source>
+        <translation>Kép megkeresése…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Kép megkeresése</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Képek (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotációs mappa: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Törli az annotációs fájlt? Ez nem vonható vissza.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Törli a(z) „{}” fájlt? Ez nem vonható vissza.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Letöltés</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Menti a(z) „{}” annotációinak módosításait?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1053,12 +1220,12 @@ Várt hely: {path}</translation>
         <translation>Annotációs fájl törlése</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Véglegesen törli ezt az annotációs fájlt? Ez a művelet nem vonható vissza.</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Konfigurációs hiba</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Csak kereteket ismer fel. A modell használatához váltson a Téglalap módra.</translation>
     </message>
 </context>
 <context>
@@ -1082,6 +1249,10 @@ Várt hely: {path}</translation>
     <message>
         <source>Unavailable: {model}</source>
         <translation>Nem érhető el: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>További modellek…</translation>
     </message>
 </context>
 <context>
@@ -1329,6 +1500,10 @@ Várt hely: {path}</translation>
         <translation>Soronként egy jelzőnév. Minták: ^car$ pontosan a car értékre, car egy előtagra, .* minden címkére illeszkedik.</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All modell</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>Poligon részletessége</translation>
     </message>
@@ -1343,6 +1518,22 @@ Várt hely: {path}</translation>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>másolat másolatok ismétlődés elkerülése duplikátumok eltávolítása</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Számítási eszköz</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Az Automatikus a GPU-t használja, és a CPU-ra vált, ha a GPU hibát jelez.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda processzor lassú összeomlás</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1383,46 +1574,6 @@ Várt hely: {path}</translation>
     <message>
         <source>Default model</source>
         <translation>Alapértelmezett modell</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (sebesség)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (pontosság)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (sebesség)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (kiegyensúlyozott)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (pontosság)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (sebesség)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (kiegyensúlyozott)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (pontosság)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>Szöveges utasítás modellje</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1555,6 +1706,65 @@ Várt hely: {path}</translation>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>{row}. sor: {error} A módosítások nem lettek alkalmazva.</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Modell</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>Leggyorsabb</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Kiegyensúlyozott</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Legpontosabb</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Az eredeti SAM. A SAM 2 minden méretben gyorsabb.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>A leggyorsabb, durva körvonalakkal. Bármilyen számítógépen jól fut.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Élesebb körvonalak, mint a Tinynál, de lassabb a SAM 2 Base+-nál.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Kisebb letöltés, mint a Base+, kicsit kevésbé pontos.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Kiegyensúlyozott sebesség és pontosság. CPU-n is jól fut.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Pontosabb a Base+-nál, de lassabb.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>A legpontosabb, de lassabb a SAM 2 Base+-nál. GPU-val a legjobb.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>A leggyorsabb. Kereteket talál, maszkok nélkül.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Csak keretek</translation>
     </message>
 </context>
 <context>

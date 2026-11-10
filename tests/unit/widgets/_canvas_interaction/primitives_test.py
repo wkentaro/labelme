@@ -12,6 +12,7 @@ from labelme._widgets._canvas_interaction import HitKind
 from labelme._widgets._canvas_interaction import HitTarget
 from labelme._widgets._canvas_interaction import cursor_shape_for
 from labelme._widgets._canvas_interaction import find_hover_target
+from labelme._widgets._canvas_interaction import find_shape_at
 from labelme._widgets._canvas_interaction import is_within_pick_threshold
 
 # Shared test constants
@@ -20,11 +21,11 @@ _SCALE: Final[float] = 1.0
 _POINT_SIZE: Final[int] = 8
 
 
-def _point(x: float, y: float, /) -> np.ndarray:
+def _point(*, x: float, y: float) -> np.ndarray:
     return np.array([x, y], dtype=np.float64)
 
 
-def _polygon(points: list[tuple[float, float]], /, *, visible: bool) -> Shape:
+def _polygon(*, points: list[tuple[float, float]], visible: bool) -> Shape:
     return Shape(
         shape_type="polygon",
         points=np.array(points, dtype=np.float64),
@@ -33,7 +34,7 @@ def _polygon(points: list[tuple[float, float]], /, *, visible: bool) -> Shape:
     )
 
 
-def _oriented_rectangle(points: list[tuple[float, float]], /) -> Shape:
+def _oriented_rectangle(*, points: list[tuple[float, float]]) -> Shape:
     return Shape(
         shape_type="oriented_rectangle",
         points=np.array(points, dtype=np.float64),
@@ -48,7 +49,7 @@ def _oriented_rectangle(points: list[tuple[float, float]], /) -> Shape:
 
 
 def test_hit_target_frozen() -> None:
-    shape = _polygon([(0, 0), (10, 0), (10, 10)], visible=True)
+    shape = _polygon(points=[(0, 0), (10, 0), (10, 10)], visible=True)
     target = HitTarget(kind=HitKind.BODY, shape=shape, index=None)
     with pytest.raises((AttributeError, TypeError)):
         target.kind = HitKind.VERTEX  # ty: ignore[invalid-assignment]
@@ -62,7 +63,7 @@ def test_hit_target_frozen() -> None:
 def test_find_hover_target_empty_shapes_returns_none() -> None:
     result = find_hover_target(
         shapes=[],
-        point=_point(0.0, 0.0),
+        point=_point(x=0.0, y=0.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -77,10 +78,10 @@ def test_find_hover_target_empty_shapes_returns_none() -> None:
 
 
 def test_invisible_shapes_are_excluded() -> None:
-    invisible = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=False)
+    invisible = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=False)
     result = find_hover_target(
         shapes=[invisible],
-        point=_point(25.0, 25.0),
+        point=_point(x=25.0, y=25.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -90,10 +91,10 @@ def test_invisible_shapes_are_excluded() -> None:
 
 
 def test_visible_shape_body_hit() -> None:
-    shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+    shape = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[shape],
-        point=_point(25.0, 25.0),
+        point=_point(x=25.0, y=25.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -111,10 +112,10 @@ def test_visible_shape_body_hit() -> None:
 
 def test_vertex_match_beats_body() -> None:
     # Shape with vertex at (10, 10); hover exactly on vertex -> VERTEX, not BODY.
-    shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+    shape = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[shape],
-        point=_point(10.0, 10.0),
+        point=_point(x=10.0, y=10.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -130,12 +131,14 @@ def test_vertex_on_last_candidate_beats_body_on_first_candidate() -> None:
     # Two shapes: first (in list order) has a body at (25, 25) and its vertex
     # far away; second (examined first in reverse order) has a vertex at (10, 10).
     # Hover at (10, 10): the VERTEX on the second (topmost) shape must win.
-    body_shape = _polygon([(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
-    vertex_shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+    body_shape = _polygon(points=[(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
+    vertex_shape = _polygon(
+        points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True
+    )
     # shapes=[body_shape, vertex_shape]: reverse order tries vertex_shape first.
     result = find_hover_target(
         shapes=[body_shape, vertex_shape],
-        point=_point(10.0, 10.0),
+        point=_point(x=10.0, y=10.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -150,11 +153,11 @@ def test_category_precedence_vertex_over_body_across_shapes() -> None:
     # Shape A (listed first, lower paint order): has body at center, vertex far.
     # Shape B (listed second, higher paint order, examined first): vertex at (10,10).
     # Hover at (10,10): vertex category dominates even though shape A is "first".
-    big = _polygon([(0, 0), (200, 0), (200, 200), (0, 200)], visible=True)
-    small = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+    big = _polygon(points=[(0, 0), (200, 0), (200, 200), (0, 200)], visible=True)
+    small = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[big, small],
-        point=_point(10.0, 10.0),
+        point=_point(x=10.0, y=10.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -176,11 +179,13 @@ def test_rotation_handle_beats_edge_across_shapes() -> None:
     # edge passes through that same point. The polygon is examined first in
     # candidate (reverse paint) order, so a per-shape (rather than global
     # per-category) resolution would wrongly report its edge.
-    oriented_rect = _oriented_rectangle([(0, 0), (40, 0), (40, 10), (0, 10)])
-    polygon = _polygon([(-100, 0), (100, 0), (100, 50), (-100, 50)], visible=True)
+    oriented_rect = _oriented_rectangle(points=[(0, 0), (40, 0), (40, 10), (0, 10)])
+    polygon = _polygon(
+        points=[(-100, 0), (100, 0), (100, 50), (-100, 50)], visible=True
+    )
     result = find_hover_target(
         shapes=[oriented_rect, polygon],
-        point=_point(20.0, 0.0),
+        point=_point(x=20.0, y=0.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -195,13 +200,13 @@ def test_rotation_handle_beats_edge_across_shapes() -> None:
 def test_rotation_handle_beats_body_across_shapes() -> None:
     # (20, 0) is both the oriented rectangle's rotation handle 1 and well
     # inside a larger polygon's interior; the polygon is examined first.
-    oriented_rect = _oriented_rectangle([(0, 0), (40, 0), (40, 10), (0, 10)])
+    oriented_rect = _oriented_rectangle(points=[(0, 0), (40, 0), (40, 10), (0, 10)])
     big_body_shape = _polygon(
-        [(-50, -50), (200, -50), (200, 200), (-50, 200)], visible=True
+        points=[(-50, -50), (200, -50), (200, 200), (-50, 200)], visible=True
     )
     result = find_hover_target(
         shapes=[oriented_rect, big_body_shape],
-        point=_point(20.0, 0.0),
+        point=_point(x=20.0, y=0.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -217,11 +222,13 @@ def test_vertex_beats_rotation_handle_across_shapes() -> None:
     # A polygon vertex coincides with a different shape's rotation handle at
     # (20, 0); the oriented rectangle is examined first in candidate order,
     # but the vertex category must still win globally.
-    oriented_rect = _oriented_rectangle([(0, 0), (40, 0), (40, 10), (0, 10)])
-    polygon_with_vertex = _polygon([(20, 0), (60, 0), (60, 30), (20, 30)], visible=True)
+    oriented_rect = _oriented_rectangle(points=[(0, 0), (40, 0), (40, 10), (0, 10)])
+    polygon_with_vertex = _polygon(
+        points=[(20, 0), (60, 0), (60, 30), (20, 30)], visible=True
+    )
     result = find_hover_target(
         shapes=[polygon_with_vertex, oriented_rect],
-        point=_point(20.0, 0.0),
+        point=_point(x=20.0, y=0.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -240,10 +247,10 @@ def test_vertex_beats_rotation_handle_across_shapes() -> None:
 
 def test_edge_hit_on_polygon() -> None:
     # polygon: midpoint of top edge (10,10)-(90,10) is (50,10).
-    shape = _polygon([(10, 10), (90, 10), (90, 50), (10, 50)], visible=True)
+    shape = _polygon(points=[(10, 10), (90, 10), (90, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[shape],
-        point=_point(50.0, 10.0),
+        point=_point(x=50.0, y=10.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -268,7 +275,7 @@ def test_edge_not_tested_on_non_polyline_shape() -> None:
     # (inside path test), not EDGE.
     result = find_hover_target(
         shapes=[rect],
-        point=_point(30.0, 30.0),
+        point=_point(x=30.0, y=30.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -291,11 +298,11 @@ def test_priority_shape_is_checked_first() -> None:
     # The other shape also has vertex at (10,10).
     # Without priority, reverse order tries shape_b first (it is last in list).
     # With priority=shape_a, shape_a is tried first.
-    shape_a = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
-    shape_b = _polygon([(10, 10), (80, 10), (80, 80), (10, 80)], visible=True)
+    shape_a = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+    shape_b = _polygon(points=[(10, 10), (80, 10), (80, 80), (10, 80)], visible=True)
     result = find_hover_target(
         shapes=[shape_b, shape_a],
-        point=_point(10.0, 10.0),
+        point=_point(x=10.0, y=10.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -308,10 +315,10 @@ def test_priority_shape_is_checked_first() -> None:
 
 def test_priority_shape_not_in_shapes_is_still_checked() -> None:
     # priority_shape need not be a member of shapes.
-    orphan = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+    orphan = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
         shapes=[],
-        point=_point(10.0, 10.0),
+        point=_point(x=10.0, y=10.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -324,11 +331,11 @@ def test_priority_shape_not_in_shapes_is_still_checked() -> None:
 
 def test_priority_shape_not_duplicated_in_candidates() -> None:
     # priority_shape appears in shapes; it must not be examined twice.
-    shape = _polygon([(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+    shape = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     # Only one match expected: VERTEX at index 0.
     result = find_hover_target(
         shapes=[shape],
-        point=_point(10.0, 10.0),
+        point=_point(x=10.0, y=10.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -348,11 +355,11 @@ def test_priority_shape_not_duplicated_in_candidates() -> None:
 def test_reverse_paint_order_topmost_body_wins() -> None:
     # Two overlapping body-only shapes. The second in the list (top paint layer)
     # should be returned as the body hit.
-    shape_a = _polygon([(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
-    shape_b = _polygon([(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
+    shape_a = _polygon(points=[(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
+    shape_b = _polygon(points=[(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
     result = find_hover_target(
         shapes=[shape_a, shape_b],
-        point=_point(50.0, 50.0),
+        point=_point(x=50.0, y=50.0),
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
@@ -365,49 +372,150 @@ def test_reverse_paint_order_topmost_body_wins() -> None:
 
 
 # ---------------------------------------------------------------------------
+# find_hover_target — hover picks the shape a click selects
+# ---------------------------------------------------------------------------
+
+
+def _box() -> Shape:
+    return _polygon(points=[(0, 0), (100, 0), (100, 100), (0, 100)], visible=True)
+
+
+def _keypoint(*, x: float, y: float) -> Shape:
+    return Shape(shape_type="point", points=np.array([(x, y)], dtype=np.float64))
+
+
+def _hover(
+    *, shapes: list[Shape], at: tuple[float, float], priority: Shape | None
+) -> HitTarget | None:
+    return find_hover_target(
+        shapes=shapes,
+        point=_point(x=at[0], y=at[1]),
+        scale=_SCALE,
+        epsilon=_EPSILON,
+        point_size=_POINT_SIZE,
+        priority_shape=priority,
+    )
+
+
+def _assert_hit(
+    *, result: HitTarget | None, kind: HitKind, shape: Shape, index: int | None
+) -> None:
+    assert result is not None
+    assert result.kind == kind
+    assert result.shape is shape
+    assert result.index == index
+
+
+@pytest.mark.parametrize(
+    ("keypoint_at", "cursor_at"),
+    [
+        pytest.param((50, 50), (50, 50), id="inside_box"),
+        pytest.param((50, 3), (50, 3), id="within_edge_tolerance"),
+        pytest.param((50, 50), (52, 51), id="off_center_on_dot"),
+    ],
+)
+def test_point_dot_beats_hovered_box(
+    *, keypoint_at: tuple[float, float], cursor_at: tuple[float, float]
+) -> None:
+    box = _box()
+    keypoint = _keypoint(x=keypoint_at[0], y=keypoint_at[1])
+    result = _hover(shapes=[box, keypoint], at=cursor_at, priority=box)
+    _assert_hit(result=result, kind=HitKind.BODY, shape=keypoint, index=None)
+
+
+def test_box_edge_wins_outside_point_dot() -> None:
+    # 6 px from the edge is within its tolerance but outside the 4 px dot.
+    box = _box()
+    result = _hover(shapes=[box, _keypoint(x=50, y=0)], at=(50, 6), priority=box)
+    assert result is not None
+    assert result.kind == HitKind.EDGE
+    assert result.shape is box
+
+
+def test_hovered_box_vertex_beats_point_on_corner() -> None:
+    box = _box()
+    result = _hover(shapes=[box, _keypoint(x=0, y=0)], at=(0, 0), priority=box)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=box, index=0)
+
+
+def test_vertex_of_shape_under_later_box_stays_grabbable() -> None:
+    small = _polygon(points=[(20, 20), (40, 20), (40, 40), (20, 40)], visible=True)
+    result = _hover(shapes=[small, _box()], at=(20, 20), priority=None)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=small, index=0)
+
+
+def test_body_follows_paint_order_over_priority() -> None:
+    lower = _box()
+    upper = _box()
+    result = _hover(shapes=[lower, upper], at=(50, 50), priority=lower)
+    _assert_hit(result=result, kind=HitKind.BODY, shape=upper, index=None)
+
+
+def test_find_shape_at_prefers_point_under_later_box() -> None:
+    keypoint = _keypoint(x=50, y=50)
+    box = _box()
+    assert (
+        find_shape_at(
+            shapes=[keypoint, box],
+            point=_point(x=50.0, y=50.0),
+            scale=_SCALE,
+            point_size=_POINT_SIZE,
+            epsilon=_EPSILON,
+        )
+        is keypoint
+    )
+    _assert_hit(
+        result=_hover(shapes=[keypoint, box], at=(50, 50), priority=box),
+        kind=HitKind.BODY,
+        shape=keypoint,
+        index=None,
+    )
+
+
+# ---------------------------------------------------------------------------
 # is_within_pick_threshold
 # ---------------------------------------------------------------------------
 
 
 def test_is_within_pick_threshold_strictly_less_than() -> None:
-    a = _point(0.0, 0.0)
+    a = _point(x=0.0, y=0.0)
     # Distance = epsilon/scale - small delta => True
-    b = _point(9.9, 0.0)
+    b = _point(x=9.9, y=0.0)
     assert is_within_pick_threshold(a=a, b=b, scale=_SCALE, epsilon=_EPSILON) is True
 
 
 def test_is_within_pick_threshold_at_boundary_false() -> None:
     # Exactly at epsilon/scale is NOT within (strictly less than).
-    a = _point(0.0, 0.0)
-    b = _point(10.0, 0.0)
+    a = _point(x=0.0, y=0.0)
+    b = _point(x=10.0, y=0.0)
     assert is_within_pick_threshold(a=a, b=b, scale=_SCALE, epsilon=_EPSILON) is False
 
 
 def test_is_within_pick_threshold_beyond_boundary_false() -> None:
-    a = _point(0.0, 0.0)
-    b = _point(11.0, 0.0)
+    a = _point(x=0.0, y=0.0)
+    b = _point(x=11.0, y=0.0)
     assert is_within_pick_threshold(a=a, b=b, scale=_SCALE, epsilon=_EPSILON) is False
 
 
 def test_is_within_pick_threshold_scale_shrinks_image_radius() -> None:
     # At scale=2, the image-space threshold is epsilon/2 = 5.
     # Distance of 6 in image space > 5, so False.
-    a = _point(0.0, 0.0)
-    b = _point(6.0, 0.0)
+    a = _point(x=0.0, y=0.0)
+    b = _point(x=6.0, y=0.0)
     assert is_within_pick_threshold(a=a, b=b, scale=2.0, epsilon=_EPSILON) is False
 
 
 def test_is_within_pick_threshold_scale_shrinks_image_radius_hit() -> None:
     # At scale=2, image threshold = 5. Distance of 4 < 5 => True.
-    a = _point(0.0, 0.0)
-    b = _point(4.0, 0.0)
+    a = _point(x=0.0, y=0.0)
+    b = _point(x=4.0, y=0.0)
     assert is_within_pick_threshold(a=a, b=b, scale=2.0, epsilon=_EPSILON) is True
 
 
 def test_is_within_pick_threshold_larger_scale_smaller_image_radius() -> None:
     # At scale=0.5, image threshold = 20. Distance 15 < 20 => True.
-    a = _point(0.0, 0.0)
-    b = _point(15.0, 0.0)
+    a = _point(x=0.0, y=0.0)
+    b = _point(x=15.0, y=0.0)
     assert is_within_pick_threshold(a=a, b=b, scale=0.5, epsilon=_EPSILON) is True
 
 
@@ -429,4 +537,4 @@ def test_is_within_pick_threshold_larger_scale_smaller_image_radius() -> None:
 def test_cursor_shape_for_all_roles(
     *, role: CursorRole, expected: Qt.CursorShape
 ) -> None:
-    assert cursor_shape_for(role) == expected
+    assert cursor_shape_for(role=role) == expected

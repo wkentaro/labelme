@@ -78,7 +78,7 @@ def _make_release_event(*, pos: QPointF) -> QtGui.QMouseEvent:
 
 
 def _image_to_widget(*, canvas: Canvas, img_x: float, img_y: float) -> QPointF:
-    return canvas.transform_image_point_to_widget(QPointF(img_x, img_y))
+    return canvas.transform_image_point_to_widget(point=QPointF(img_x, img_y))
 
 
 def _clear_cursor_override(*, canvas: Canvas) -> None:
@@ -371,7 +371,7 @@ def test_right_menu_failure_restores_origin(
 @pytest.mark.parametrize(
     ("create_mode", "points", "expected"),
     [
-        ("ai_points_to_shape", (), True),
+        ("ai_segment", (), True),
         ("linestrip", (QPointF(),), False),
         ("linestrip", (QPointF(), QPointF(1, 1)), True),
         ("polygon", (QPointF(), QPointF(1, 0)), False),

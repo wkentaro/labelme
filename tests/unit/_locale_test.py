@@ -10,6 +10,8 @@ import pytest
 
 import labelme
 from labelme import _locale
+from labelme._ai_models import AI_MODEL_TIERS
+from labelme._ai_models import AI_MODEL_TOOLTIPS
 
 
 def test_available_translation_locales_includes_bundled_locale() -> None:
@@ -21,13 +23,13 @@ def test_available_translation_locales_excludes_source_locale() -> None:
 
 
 def test_is_valid_language_accepts_none_source_and_bundled() -> None:
-    assert _locale.is_valid_language(None)
-    assert _locale.is_valid_language(_locale.SOURCE_LOCALE)
-    assert _locale.is_valid_language("ja_JP")
+    assert _locale.is_valid_language(code=None)
+    assert _locale.is_valid_language(code=_locale.SOURCE_LOCALE)
+    assert _locale.is_valid_language(code="ja_JP")
 
 
 def test_is_valid_language_rejects_unknown_code() -> None:
-    assert not _locale.is_valid_language("xx_ZZ")
+    assert not _locale.is_valid_language(code="xx_ZZ")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -48,20 +50,20 @@ class UntranslatableTrCall:
         )
 
 
-# Non-literal tr() calls are only allowed when the underlying strings are
-# registered for extraction via QT_TRANSLATE_NOOP("SettingsDialog", ...)
-# in labelme/_config/_schema.py and labelme/_widgets/_settings_dialog.py.
+# These dynamic calls draw from strings registered in their owning contexts.
 _ALLOWED_NON_LITERAL_TR_CALLS: Final[frozenset[tuple[str, str]]] = frozenset(
     {
         ("_widgets/_settings_dialog.py", "group"),
         ("_widgets/_settings_dialog.py", "setting.label"),
         ("_widgets/_settings_dialog.py", "setting.note"),
         ("_widgets/_settings_dialog.py", "label"),
+        ("_widgets/_ai_tool_group.py", "tier"),
+        ("_widgets/_ai_tool_group.py", "tip"),
     }
 )
 
 
-def _is_tr_call(node: ast.Call, /) -> bool:
+def _is_tr_call(*, node: ast.Call) -> bool:
     if isinstance(node.func, ast.Attribute) and node.func.attr == "tr":
         return True
     return isinstance(node.func, ast.Name) and node.func.id == "tr"
@@ -73,6 +75,10 @@ def find_untranslatable_tr_calls(
     file_path: str,
     allowlist: frozenset[tuple[str, str]] = _ALLOWED_NON_LITERAL_TR_CALLS,
 ) -> tuple[list[UntranslatableTrCall], set[tuple[str, str]]]:
+    contexts = {
+        "_widgets/_settings_dialog.py": "SettingsDialog",
+        "_widgets/_ai_tool_group.py": "_ModelMenuButton",
+    }
     tree = ast.parse(source, filename=file_path)
     violations: list[UntranslatableTrCall] = []
     allowlisted_hits: set[tuple[str, str]] = set()
@@ -83,7 +89,7 @@ def find_untranslatable_tr_calls(
     }
 
     for node in ast.walk(tree):
-        if not isinstance(node, ast.Call) or not _is_tr_call(node):
+        if not isinstance(node, ast.Call) or not _is_tr_call(node=node):
             continue
 
         if node.args:
@@ -101,14 +107,14 @@ def find_untranslatable_tr_calls(
         owner: ast.AST = node
         while owner in parents and not isinstance(owner, ast.ClassDef):
             owner = parents[owner]
-        is_settings_context = (
+        matches_context = (
             isinstance(owner, ast.ClassDef)
-            and owner.name == "SettingsDialog"
+            and owner.name == contexts.get(file_path)
             and isinstance(node.func, ast.Attribute)
             and isinstance(node.func.value, ast.Name)
             and node.func.value.id == "self"
         )
-        if key in allowlist and is_settings_context:
+        if key in allowlist and matches_context:
             allowlisted_hits.add(key)
         else:
             violations.append(
@@ -257,7 +263,12 @@ def test_tr_calls_repo_wide_use_literals_or_allowlist() -> None:
     assert not unused, f"Unused allowlist entries: {unused}"
 
 
-def test_qt_translate_noop_calls_use_settings_dialog_context_and_literals() -> None:
+def test_qt_translate_noop_calls_use_expected_context_and_literals() -> None:
+    contexts = {
+        "_config/_schema.py": "SettingsDialog",
+        "_widgets/_settings_dialog.py": "SettingsDialog",
+        "_ai_models.py": "_ModelMenuButton",
+    }
     labelme_dir = Path(labelme.__file__).resolve().parent
     noop_count = 0
 
@@ -288,8 +299,9 @@ def test_qt_translate_noop_calls_use_settings_dialog_context_and_literals() -> N
             assert isinstance(text_node, ast.Constant) and isinstance(
                 text_node.value, str
             ), f"{rel_path}:{node.lineno}: source text must be a string literal"
-            assert context_node.value == "SettingsDialog", (
-                f"{rel_path}:{node.lineno}: expected context 'SettingsDialog', "
+            expected = contexts.get(rel_path)
+            assert context_node.value == expected, (
+                f"{rel_path}:{node.lineno}: expected context {expected!r}, "
                 f"got {context_node.value!r}"
             )
 
@@ -298,7 +310,7 @@ def test_qt_translate_noop_calls_use_settings_dialog_context_and_literals() -> N
 
 def test_qt_translate_noop_strings_exist_in_all_translation_catalogs() -> None:
     labelme_dir = Path(labelme.__file__).resolve().parent
-    registered_texts: set[str] = set()
+    registered_texts: set[tuple[str, str]] = set()
 
     for py_path in sorted(labelme_dir.rglob("*.py")):
         tree = ast.parse(py_path.read_text(encoding="utf-8"), filename=str(py_path))
@@ -313,11 +325,21 @@ def test_qt_translate_noop_strings_exist_in_all_translation_catalogs() -> None:
             )
             if not is_noop or len(node.args) < 2:
                 continue
-            text_node = node.args[1]
-            if isinstance(text_node, ast.Constant) and isinstance(text_node.value, str):
-                registered_texts.add(text_node.value)
+            context_node, text_node = node.args[:2]
+            if (
+                isinstance(context_node, ast.Constant)
+                and isinstance(context_node.value, str)
+                and isinstance(text_node, ast.Constant)
+                and isinstance(text_node.value, str)
+            ):
+                registered_texts.add((context_node.value, text_node.value))
 
     assert registered_texts, "No QT_TRANSLATE_NOOP strings found"
+    model_texts = {
+        ("_ModelMenuButton", text)
+        for text in (*AI_MODEL_TIERS.values(), *AI_MODEL_TOOLTIPS.values())
+    }
+    assert model_texts <= registered_texts
 
     translate_dir = _locale.TRANSLATE_DIR
     ts_paths = sorted(translate_dir.glob("*.ts"))
@@ -325,19 +347,19 @@ def test_qt_translate_noop_strings_exist_in_all_translation_catalogs() -> None:
 
     for ts_path in ts_paths:
         root = ET.parse(ts_path).getroot()
-        catalog_sources: set[str] = set()
+        catalog_sources: set[tuple[str, str]] = set()
         for ctx in root.findall("context"):
             name = ctx.find("name")
-            if name is None or name.text != "SettingsDialog":
+            if name is None or name.text is None:
                 continue
             for msg in ctx.findall("message"):
                 src = msg.find("source")
                 if src is not None and src.text:
-                    catalog_sources.add(src.text)
+                    catalog_sources.add((name.text, src.text))
 
         missing = registered_texts - catalog_sources
         assert not missing, (
-            f"{ts_path.name} is missing SettingsDialog sources: {sorted(missing)}"
+            f"{ts_path.name} is missing context/source pairs: {sorted(missing)}"
         )
 
 
@@ -372,7 +394,7 @@ class OtherDialog:
     assert hits == set()
 
 
-def _is_named_call(node: ast.AST, /, *, name: str) -> bool:
+def _is_named_call(*, node: ast.AST, name: str) -> bool:
     return isinstance(node, ast.Call) and (
         isinstance(node.func, ast.Name)
         and node.func.id == name
@@ -381,16 +403,16 @@ def _is_named_call(node: ast.AST, /, *, name: str) -> bool:
     )
 
 
-def _is_registered_settings_string(node: ast.AST, /) -> bool:
+def _is_registered_settings_string(*, node: ast.AST) -> bool:
     # cast(str, ...) only changes the static type; lupdate still sees the marker.
     while (
-        _is_named_call(node, name="cast")
+        _is_named_call(node=node, name="cast")
         and isinstance(node, ast.Call)
         and len(node.args) == 2
     ):
         node = node.args[1]
     return (
-        _is_named_call(node, name="QT_TRANSLATE_NOOP")
+        _is_named_call(node=node, name="QT_TRANSLATE_NOOP")
         and isinstance(node, ast.Call)
         and len(node.args) == 2
         and isinstance(node.args[0], ast.Constant)
@@ -401,11 +423,10 @@ def _is_registered_settings_string(node: ast.AST, /) -> bool:
 
 
 def find_unregistered_setting_strings(*, source: str) -> list[str]:
-    """Validate the deliberately maintained schema shapes used by dynamic tr()."""
     tree = ast.parse(source)
     errors: list[str] = []
     for node in ast.walk(tree):
-        if _is_named_call(node, name="Setting") and isinstance(node, ast.Call):
+        if _is_named_call(node=node, name="Setting") and isinstance(node, ast.Call):
             fields = {keyword.arg: keyword.value for keyword in node.keywords}
             if node.args or None in fields:
                 errors.append(
@@ -429,22 +450,31 @@ def find_unregistered_setting_strings(*, source: str) -> list[str]:
                     else [value]
                 )
                 for entry in values:
-                    # Model display names are shared verbatim with the AI dock,
-                    # intentionally untranslated. This is the sole dynamic
-                    # choice source; arbitrary new generators remain rejected.
+                    # The model names are intentionally shared verbatim with the
+                    # AI dock. Other dynamic choices still need registration.
                     key_path = fields.get("key_path")
                     if (
                         name == "choice_labels"
                         and key_path is not None
-                        and ast.unparse(key_path) == "('ai', 'text_model')"
-                        and ast.unparse(entry)
-                        == (
-                            "*(display_name for _, display_name in "
-                            "AI_TEXT_MODEL_OPTIONS)"
+                        and (
+                            ast.unparse(key_path),
+                            ast.unparse(entry),
                         )
+                        in {
+                            (
+                                "('ai', 'default')",
+                                "*(option.display_name for option in "
+                                "AI_ASSIST_MODEL_OPTIONS)",
+                            ),
+                            (
+                                "('ai', 'text_model')",
+                                "*(display_name for _, display_name in "
+                                "AI_TEXT_MODEL_OPTIONS)",
+                            ),
+                        }
                     ):
                         continue
-                    if not _is_registered_settings_string(entry):
+                    if not _is_registered_settings_string(node=entry):
                         errors.append(
                             f"line {entry.lineno}: {name} must use "
                             "QT_TRANSLATE_NOOP('SettingsDialog', literal)"
@@ -456,7 +486,7 @@ def find_unregistered_setting_strings(*, source: str) -> list[str]:
         ):
             continue
         if not isinstance(node.value, ast.Tuple) or not all(
-            _is_registered_settings_string(entry) for entry in node.value.elts
+            _is_registered_settings_string(node=entry) for entry in node.value.elts
         ):
             errors.append(
                 f"line {node.lineno}: group headings must use "

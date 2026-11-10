@@ -4,16 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AIが&apos;AI-Points&apos;および&apos;AI-Box&apos;モードでアノテーションを提案</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>ポリゴンの詳細度</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>ポリゴンの詳細度を調整</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -24,8 +16,32 @@
         <translation>より詳細</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI Assist</source>
-        <translation>&apos;AI-Points&apos; または &apos;AI-Box&apos; モードを選択すると AI アシストが有効になります</translation>
+        <source>Output</source>
+        <translation>出力</translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation>ポリゴン</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>マスク</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>矩形</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>向き付き矩形</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>円</translation>
+    </message>
+    <message>
+        <source>Output format: {format}</source>
+        <translation>出力形式: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -39,28 +55,12 @@
         <source>Model</source>
         <translation>モデル</translation>
     </message>
-    <message>
-        <source>AI Assist</source>
-        <translation>AI アシスト</translation>
-    </message>
-    <message>
-        <source>Output format</source>
-        <translation>出力形式</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
     <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>例: dog,cat,bird</translation>
-    </message>
-    <message>
         <source>Run</source>
         <translation>実行</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt model</source>
-        <translation>AI テキストプロンプトのモデル</translation>
     </message>
     <message>
         <source>Score</source>
@@ -71,24 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AIがテキストプロンプトからアノテーションを作成</translation>
-    </message>
-    <message>
-        <source>AI Text Prompt</source>
-        <translation>AI テキストプロンプト</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>「Polygon」「Rectangle」または「AI-Points」モードで有効</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>モデル</translation>
     </message>
     <message>
+        <source>What to find</source>
+        <translation>探すもの</translation>
+    </message>
+    <message>
         <source>Prompt</source>
         <translation>プロンプト</translation>
+    </message>
+    <message>
+        <source>Finding…</source>
+        <translation>検索中…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All のモデル</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>オプション</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -152,10 +167,6 @@
         <translation>クリック &amp; ドラッグで図形を移動</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>%r を作成中</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC でキャンセル</translation>
     </message>
@@ -168,8 +179,20 @@
         <translation>図形を編集中</translation>
     </message>
     <message>
-        <source>Click points to include, or hold %s and click to exclude. Hold %s and click to finish.</source>
-        <translation>点をクリックで含め、%s を押しながらクリックで除外します。%s を押しながらクリックで完了します。</translation>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>点をクリックで含め、%s を押しながらクリックで除外するか、ドラッグでボックスを描きます。%s を押しながらクリックで完了します。</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>AI-Find All に探したいものを入力するか、例の周りを囲むボックスの最初の角をクリック</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>対角をクリックすると、これと同じような物体を除外します</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>対角をクリックすると、これと同じような物体をすべて探します</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -200,16 +223,44 @@
         <translation>クリックで頂点を追加</translation>
     </message>
     <message>
+        <source>Drag a box</source>
+        <translation>ドラッグで囲む</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>例を1つドラッグで囲む</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>破棄</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>クリックで含める</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>クリックで除外</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d 件を追加</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>ドラッグで除外</translation>
+    </message>
+    <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>もう一方の角を指定してください。Shiftを押しながら操作すると正方形になります。</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>AIセグメンテーション用にbboxの最初の角をクリック</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>対角をクリックしてオブジェクトをセグメント</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter で結果を追加、Esc で破棄します。%s を押しながら囲むと、似たものを除外します。</translation>
     </message>
     <message>
         <source>Click the next point, or hold %s and click to finish the LineStrip</source>
@@ -422,12 +473,13 @@
         <translation>最後の図形追加・編集を元に戻す</translation>
     </message>
     <message>
-        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
-        <translation>クリックで折れ線の点を配置し、%s を押しながらクリックで最後の点を配置します。</translation>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>選択</translation>
     </message>
     <message>
-        <source>Click points to segment the object; hold %s and click to finish.</source>
-        <translation>点をクリックしてオブジェクトをセグメント化し、%s を押しながらクリックで完了します。</translation>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>クリックで折れ線の点を配置し、%s を押しながらクリックで最後の点を配置します。</translation>
     </message>
     <message>
         <source>Open the next image (hold %s to copy the current Shapes)</source>
@@ -524,6 +576,17 @@
         <translation>画像フォルダーを開く</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>ファイルを
+削除</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>削除</translation>
+    </message>
+    <message>
         <source>Modify the label of the selected shape</source>
         <translation>選択した図形のラベルを変更</translation>
     </message>
@@ -542,6 +605,11 @@
     <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>クリップボードの図形をこの画像に挿入</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>複製</translation>
     </message>
     <message>
         <source>Merge Shapes</source>
@@ -564,9 +632,35 @@
         <translation>元に戻す</translation>
     </message>
     <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>点をクリックするかボックスをドラッグして物体を1つセグメント化し、%s を押しながらクリックで完了します。</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>テキストプロンプトや例のボックスに一致する物体をすべて探す</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>次へ</translation>
+    </message>
+    <message>
         <source>&amp;Previous Image</source>
         <translation>前の
 画像(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>前へ</translation>
     </message>
     <message>
         <source>Open the previous image (hold %s to copy the current Shapes)</source>
@@ -702,10 +796,6 @@
         <translation>その他の図形ツール</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s を起動しました</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <translation>再試行</translation>
     </message>
@@ -724,6 +814,34 @@
     <message>
         <source>You can use default settings for now. Resetting saves a backup of your configuration file first.</source>
         <translation>今回は初期設定で続行できます。リセットする場合は、先に設定ファイルのバックアップを保存します。</translation>
+    </message>
+    <message>
+        <source>Type what to find</source>
+        <translation>探したいものを入力してください</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>CPU で一致するものを検索中…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>一致するものを検索中…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; の図形を作成できません。
+
+AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>このアノテーションファイルは別の画像のものです: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s は例のボックスを使えません。SAM 3 を選択してください。</translation>
     </message>
     <message>
         <source>Open Folder</source>
@@ -820,14 +938,6 @@
         <translation>キャンセル</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>このモデルはポイントプロンプトに対応していないため、AI-Points モードでは利用できません。</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>「{}」のアノテーションの変更を保持しますか？</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>未保存の変更</translation>
     </message>
@@ -904,18 +1014,6 @@
         <translation>折れ線</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>バウンディングボックスを描画してオブジェクトをセグメント。</translation>
-    </message>
-    <message>
         <source>Continue with Defaults</source>
         <translation>初期設定で続行</translation>
     </message>
@@ -924,12 +1022,64 @@
         <translation>バックアップしてリセット</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
-
-Switch the AI Text Prompt model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s はバウンディングボックスのみを検出するため、&apos;%s&apos; の図形を作成できません。
-
-AI テキストプロンプトのモデルを &apos;SAM3 (smart)&apos; に切り替えるか、出力形式を &apos;Rectangle&apos; に設定してください。</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>「{query}」をすべて検索中…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>CPU で「{query}」をすべて検索中…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>CPU でセグメンテーション中…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>セグメンテーション中…</translation>
+    </message>
+    <message>
+        <source>Starting AI…</source>
+        <translation>AIを起動中…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model}を読み込み中…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>CPUで画像を準備中…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>画像を準備中…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds}秒</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>新しい「{query}」が {count} 件見つかりました</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>新しい「{query}」は見つかりませんでした</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>結合するマスク図形を2つ以上選択してください</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>結合できるのはマスク図形のみです</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>結合するには、選択した図形のロックを解除してください</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>結合できるのは同じラベルの図形のみです</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -940,22 +1090,40 @@ AI テキストプロンプトのモデルを &apos;SAM3 (smart)&apos; に切り
         <translation>アノテーションファイルの保存エラー</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Pointsは利用できません</translation>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>画像の場所を指定すると、アノテーションファイルの参照先がその画像に更新されます。</translation>
     </message>
     <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s はポイントプロンプトに対応していません。
-別のモデルを選択するか、AI-Boxモードを使用してください。</translation>
+        <source>Locate Image…</source>
+        <translation>画像の場所を指定…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>画像の場所を指定</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>画像 (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>アノテーションフォルダー: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>アノテーションファイルを削除しますか？この操作は取り消せません。</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>「{}」を削除しますか？この操作は取り消せません。</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>ダウンロード</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>「{}」のアノテーションの変更を保存しますか？</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1062,12 +1230,12 @@ Expected location: {path}</source>
         <translation>アノテーションファイルを削除</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>このアノテーションファイルを完全に削除しますか？この操作は元に戻せません。</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>設定エラー</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>バウンディングボックスのみを検出します。このモデルを使うには「矩形」に切り替えてください。</translation>
     </message>
 </context>
 <context>
@@ -1091,6 +1259,10 @@ Expected location: {path}</source>
     <message>
         <source>Unavailable: {model}</source>
         <translation>利用不可: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>その他のモデル…</translation>
     </message>
 </context>
 <context>
@@ -1338,6 +1510,10 @@ Expected location: {path}</source>
         <translation>フラグ名は1行に1つ入力します。パターン: ^car$ は car と完全一致、car は前方一致、.* はすべてのラベルに一致します。</translation>
     </message>
     <message>
+        <source>AI-Find All model</source>
+        <translation>AI-Find All のモデル</translation>
+    </message>
+    <message>
         <source>Polygon detail</source>
         <translation>ポリゴンの詳細度</translation>
     </message>
@@ -1352,6 +1528,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>重複 重複回避 重複を避ける 重複削除</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>計算デバイス</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>「自動」は GPU を使い、GPU でエラーが起きると CPU に切り替えます。</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>GPU CUDA プロセッサ 遅い クラッシュ</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1392,46 +1584,6 @@ Expected location: {path}</source>
     <message>
         <source>Default model</source>
         <translation>デフォルトモデル</translation>
-    </message>
-    <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (高速)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (高精度)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (高速)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (バランス)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (高精度)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (高速)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (バランス)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (高精度)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
-        <source>Text prompt model</source>
-        <translation>テキストプロンプトのモデル</translation>
     </message>
     <message>
         <source>Suppress existing Shape matches</source>
@@ -1564,6 +1716,65 @@ Expected location: {path}</source>
     <message>
         <source>Row {row}: {error} Changes have not been applied.</source>
         <translation>行 {row}: {error} 変更は適用されていません。</translation>
+    </message>
+</context>
+<context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>モデル</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}：{model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>最速</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>バランス</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>最高精度</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>初代SAM。どのサイズでもSAM 2の方が高速です。</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>最速で、輪郭は大まか。どのコンピュータでも快適に動作します。</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Tinyより輪郭が鮮明ですが、SAM 2 Base+より低速です。</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Base+よりダウンロードが小さく、精度はやや下がります。</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>速度と精度のバランス型。CPUでも快適に動作します。</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Base+より高精度ですが、低速です。</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>最も高精度ですが、SAM 2 Base+より低速です。GPUがあると最適です。</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>最速。マスクなしでボックスを検出します。</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>ボックスのみ</translation>
     </message>
 </context>
 <context>
