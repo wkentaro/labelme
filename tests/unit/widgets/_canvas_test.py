@@ -2784,6 +2784,20 @@ def test_remove_selected_point_is_its_own_undo_step(*, canvas: Canvas) -> None:
     assert len(canvas.shapes[0].points) == 4
 
 
+@pytest.mark.gui
+def test_load_shapes_forgets_the_last_hovered_shape(*, canvas: Canvas) -> None:
+    shape = _make_polygon()
+    canvas.load_shapes(shapes=[shape])
+    canvas._last_hovered_shape = shape
+    canvas._last_hovered_vertex = 1
+
+    canvas.load_shapes(shapes=[shape.copy()])
+
+    # Undo reloads copies; the old object must not stay an edit target.
+    assert not canvas.remove_selected_point()
+    assert len(shape.points) == 4
+
+
 def _drag(
     *,
     qtbot: QtBot,

@@ -3106,6 +3106,13 @@ class Canvas(QtWidgets.QWidget):
         self._hovered_vertex = None
         self._hovered_edge = None
         self._hovered_rotation = None
+        # The loaded shapes are new objects; a remembered hover would point at
+        # a detached one.
+        self._last_hovered_shape = None
+        self._last_hovered_vertex = None
+        self._last_hovered_edge = None
+        self.vertex_selected.emit(self._hovered_vertex is not None)
+        self.edge_selected.emit(self._hovered_edge is not None)
         self._clear_highlight_state()
         self._set_ai_existing_shape_highlights(shapes=[])
 
