@@ -43,8 +43,10 @@ def test_auto_save_writes_the_opened_file_not_the_image_named_one(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     _move_first_shape(qtbot=qtbot, win=win)
 
-    qtbot.waitUntil(lambda: opened.read_bytes() != opened_before)
-    qtbot.waitUntil(lambda: not win._is_changed)
+    # Read only after the save: opening the file while the worker replaces
+    # it is a sharing violation on Windows.
+    qtbot.waitUntil(lambda: not win._is_changed and not win._save_writer.is_busy)
+    assert opened.read_bytes() != opened_before
     assert image_named.read_bytes() == image_named_before
 
 
@@ -65,8 +67,8 @@ def test_auto_save_writes_the_opened_file_when_its_image_is_elsewhere(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     _move_first_shape(qtbot=qtbot, win=win)
 
-    qtbot.waitUntil(lambda: opened.read_bytes() != opened_before)
-    qtbot.waitUntil(lambda: not win._is_changed)
+    qtbot.waitUntil(lambda: not win._is_changed and not win._save_writer.is_busy)
+    assert opened.read_bytes() != opened_before
     assert not beside_image.exists()
 
 
@@ -94,8 +96,8 @@ def test_auto_save_keeps_an_existing_annotation_folder_file(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     _move_first_shape(qtbot=qtbot, win=win)
 
-    qtbot.waitUntil(lambda: opened.read_bytes() != opened_before)
-    qtbot.waitUntil(lambda: not win._is_changed)
+    qtbot.waitUntil(lambda: not win._is_changed and not win._save_writer.is_busy)
+    assert opened.read_bytes() != opened_before
     assert in_folder.read_bytes() == in_folder_before
 
 
@@ -160,6 +162,35 @@ def test_auto_save_keeps_its_folder_copy_after_a_stale_completion(
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
 
-    qtbot.waitUntil(lambda: not win._is_changed)
+    qtbot.waitUntil(lambda: not win._is_changed and not win._save_writer.is_busy)
     assert in_folder.read_bytes() != first_copy
     assert opened.read_bytes() == opened_before
+
+
+@pytest.mark.gui
+def test_save_makes_the_first_copy_in_the_annotation_folder(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
+    output_dir = tmp_path / "out"
+    output_dir.mkdir()
+    opened = data_path / "annotated" / f"{_STEM}.json"
+    in_folder = output_dir / f"{_STEM}.json"
+    opened_before = opened.read_bytes()
+
+    win = main_win(
+        file_or_dir=str(opened),
+        config_overrides=dict(auto_save=False),
+        output_dir=str(output_dir),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    _move_first_shape(qtbot=qtbot, win=win)
+
+    win._save_label_file(save_as=False)
+
+    assert in_folder.exists()
+    assert opened.read_bytes() == opened_before
+    assert not win._is_changed

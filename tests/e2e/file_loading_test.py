@@ -6,10 +6,14 @@ import shutil
 import struct
 import zlib
 from collections.abc import Callable
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Literal
+from typing import NamedTuple
 
+import numpy as np
 import pytest
+import tifffile
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -942,3 +946,141 @@ def test_image_opens_with_annotation_recording_a_stale_image_path(
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_MainWindow_applies_image_decode_limit_from_config(
+    *,
+    main_win: MainWinFactory,
+    set_allocation_limit: Callable[[int], None],  # noqa: ARG001 -- restores the limit
+) -> None:
+    main_win(config_overrides={"image_decode_limit_mb": 300})
+    assert QtGui.QImageReader.allocationLimit() == 300
+
+
+class _PromptAnswerer(NamedTuple):
+    start: Callable[..., list[str]]
+    stop: Callable[[], None]
+
+
+@pytest.fixture
+def prompt_answerer() -> Iterator[_PromptAnswerer]:
+    timers: list[QtCore.QTimer] = []
+
+    def stop() -> None:
+        # A stopped timer never fires again, so a late poll cannot answer the
+        # next test's dialog.
+        for timer in timers:
+            timer.stop()
+            timer.deleteLater()
+        timers.clear()
+
+    def start(*, answer: Literal["Open Anyway", "Cancel"]) -> list[str]:
+        stop()
+        prompts: list[str] = []
+
+        def respond() -> None:
+            dialog = QtWidgets.QApplication.activeModalWidget()
+            if isinstance(dialog, QtWidgets.QMessageBox):
+                prompts.append(dialog.text())
+                next(b for b in dialog.buttons() if b.text() == answer).click()
+
+        # Polling also answers a second prompt for the same open, so it shows
+        # up in the list instead of hanging the test.
+        timer = QtCore.QTimer()
+        timer.setInterval(20)
+        timer.timeout.connect(respond)
+        timer.start()
+        timers.append(timer)
+        return prompts
+
+    yield _PromptAnswerer(start=start, stop=stop)
+    stop()
+
+
+@pytest.mark.gui
+def test_MainWindow_cancel_on_large_tiff_prompts_before_decoding(
+    *,
+    raw_win: MainWindow,
+    prompt_answerer: _PromptAnswerer,
+    tmp_path: Path,
+    critical_messages: list[str],
+    set_allocation_limit: Callable[[int], None],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    path = tmp_path / "big.tif"
+    tifffile.imwrite(str(path), np.zeros((600, 600), dtype=np.float32))
+    set_allocation_limit(1)
+    annotation_before = raw_win._annotation
+    monkeypatch.setattr(
+        tifffile.TiffPageSeries, "asarray", lambda _self: pytest.fail("decoded pixels")
+    )
+    prompts = prompt_answerer.start(answer="Cancel")
+
+    loaded = raw_win._load_file(image_or_label_path=str(path))
+    prompt_answerer.stop()
+
+    assert critical_messages == []
+    assert prompts == ["Large image requires more memory"]
+    assert loaded is False
+    assert raw_win._annotation is annotation_before
+
+
+@pytest.mark.gui
+def test_MainWindow_open_anyway_on_large_tiff_prompts_once(
+    *,
+    raw_win: MainWindow,
+    prompt_answerer: _PromptAnswerer,
+    tmp_path: Path,
+    critical_messages: list[str],
+    set_allocation_limit: Callable[[int], None],
+) -> None:
+    path = tmp_path / "big.tif"
+    tifffile.imwrite(str(path), np.zeros((600, 600), dtype=np.uint8))
+    set_allocation_limit(1)
+    prompts = prompt_answerer.start(answer="Open Anyway")
+
+    loaded = raw_win._load_file(image_or_label_path=str(path))
+    prompt_answerer.stop()
+
+    assert critical_messages == []
+    assert prompts == ["Large image requires more memory"]
+    assert loaded is True
+    assert QtGui.QImageReader.allocationLimit() == 1
+
+
+@pytest.mark.gui
+def test_MainWindow_open_anyway_on_label_of_large_image_prompts_once(
+    *,
+    raw_win: MainWindow,
+    prompt_answerer: _PromptAnswerer,
+    tmp_path: Path,
+    critical_messages: list[str],
+    set_allocation_limit: Callable[[int], None],
+) -> None:
+    QtGui.QImage(800, 600, QtGui.QImage.Format.Format_RGB32).save(
+        str(tmp_path / "big.png")
+    )
+    label_path = tmp_path / "big.json"
+    label_path.write_text(
+        json.dumps(
+            {
+                "version": "5.0.0",
+                "flags": {},
+                "shapes": [],
+                "imagePath": "big.png",
+                "imageData": None,
+                "imageHeight": 600,
+                "imageWidth": 800,
+            }
+        )
+    )
+    set_allocation_limit(1)
+    prompts = prompt_answerer.start(answer="Open Anyway")
+
+    loaded = raw_win._load_file(image_or_label_path=str(label_path))
+    prompt_answerer.stop()
+
+    assert critical_messages == []
+    assert prompts == ["Large image requires more memory"]
+    assert loaded is True

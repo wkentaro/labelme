@@ -13,7 +13,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import QTimer
 from pytestqt.qtbot import QtBot
 
-from labelme import _utils
+from labelme import _image_codec
 from labelme._app import MainWindow
 
 from ..conftest import close_or_pause
@@ -60,7 +60,7 @@ def test_save_image_data_field_matches_config(
     assert not os.path.isabs(data["imagePath"])
     if with_image_data:
         assert isinstance(data["imageData"], str) and data["imageData"]
-        decoded = _utils.img_b64_to_arr(img_b64=data["imageData"])
+        decoded = _image_codec.img_b64_to_arr(img_b64=data["imageData"])
         assert decoded.shape[0] == data["imageHeight"]
         assert decoded.shape[1] == data["imageWidth"]
     else:
@@ -182,7 +182,7 @@ def test_round_trip_mask_shape_via_fixture(
 ) -> None:
     mask_arr = np.zeros((4, 4), dtype=np.uint8)
     mask_arr[1:3, 1:3] = 1
-    mask_b64 = _utils.img_arr_to_b64(img_arr=mask_arr)
+    mask_b64 = _image_codec.img_arr_to_b64(img_arr=mask_arr)
 
     raw_image_path = data_path / _RAW_FILE_NAME
     fixture_json = tmp_path / "mask_fixture.json"

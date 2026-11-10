@@ -69,3 +69,10 @@ consumed it once `examples/` became self-contained, so the deprecated camelCase
 properties and the incoherent `save()` are gone. `read_label_file` /
 `write_label_file` and the `LabelFileError` hierarchy remain the only persistence
 entry points, which is the model that option already endorsed.
+
+## Amendment (2026-11): the Qt binding and where `Shape` lives
+
+The Qt binding is now PySide6, not PyQt5. `Shape` lives in the
+`labelme/_shape/` package (`_model.py`), not `_shape.py`. The headless
+example scripts listed above no longer import labelme, because `examples/`
+is self-contained.

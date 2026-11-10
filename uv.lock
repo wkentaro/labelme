@@ -661,6 +661,7 @@ wheels = [
 name = "labelme"
 source = { editable = "." }
 dependencies = [
+    { name = "gdown" },
     { name = "imgviz" },
     { name = "loguru" },
     { name = "matplotlib" },
@@ -699,6 +700,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "gdown", specifier = ">=6.4,<7" },
     { name = "imgviz", specifier = ">=2.0.0" },
     { name = "loguru", specifier = ">=0.7" },
     { name = "matplotlib", specifier = ">=3.7" },

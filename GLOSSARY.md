@@ -27,7 +27,7 @@ The class string on a Shape (e.g. `"cat"`, `"car"`). One Shape has exactly one L
 _Avoid_: class, category, tag, name; also avoid "label" to mean the Annotation File.
 
 **Annotation File**:
-The on-disk persisted form of one Annotation, stored as JSON. There is one Annotation File per Image. Identified in code as `LabelFile` / `LabelData` for historical reasons — that legacy name is not promoted as glossary vocabulary.
+The on-disk persisted form of one Annotation, stored as JSON. There is one Annotation File per Image. The code reads and writes it with `read_label_file` / `write_label_file` in `labelme/_label_file.py`; the `label_file` name is historical and is not promoted as glossary vocabulary.
 _Avoid_: label file, JSON file (when more precision is helpful), annotation json.
 
 **Annotation Folder**:
@@ -129,7 +129,7 @@ The on-disk YAML where Settings are persisted as sparse Overrides on top of the 
 _Avoid_: settings file, rc file, labelmerc.
 
 **Default Config**:
-The baseline Settings shipped in `labelme/config/default_config.yaml`. Read-only, and the single source of both every default value and the set of allowed keys.
+The baseline Settings shipped in `labelme/_config/default_config.yaml`. Read-only, and the single source of both every default value and the set of allowed keys.
 _Avoid_: defaults file, base config, schema.
 
 **Override**:
@@ -142,9 +142,9 @@ _Avoid_: settings (those are the annotation/behavior values), config, layout con
 
 ## Flagged ambiguities
 
-- **`Annotation` / `LabelFile` in code**: the `Annotation` type names the in-memory **Annotation** (the whole bundle); it supersedes the former `LabelData`. `LabelFile` stays as the legacy identifier for the **Annotation File** (the on-disk form). The previously-mooted `LabelFile` → `AnnotationFile` rename remains deferred. The Qt-free codec functions (`read_label_file` / `write_label_file`) and their module (`_label_file.py`) keep the `label_file` name for now; renaming them to `read_annotation_file` / `write_annotation_file` (in an `_annotation.py` module) is the matching deferred cleanup, best done together with the `LabelFile` → `AnnotationFile` rename so the module is renamed once.
+- **`Annotation` / `LabelFile` in code**: the `Annotation` type names the in-memory **Annotation** (the whole bundle); it supersedes the former `LabelData`. The `LabelFile` class was removed; only the module and function names keep `label_file`. The Qt-free codec functions (`read_label_file` / `write_label_file`) and their module (`_label_file.py`) keep the `label_file` name for now; renaming them to `read_annotation_file` / `write_annotation_file` (in an `_annotation.py` module) is the matching deferred cleanup, best done together with the `LabelFile` → `AnnotationFile` rename so the module is renamed once.
 - **Concept vs file naming is an intentional split**: the user-facing values are **Settings**, but the file that persists them is the **Config File** (`~/.labelmerc`) and the CLI flag stays `--config`. The menu entry reads "Settings…" while keeping Qt's `PreferencesRole`. Do not "unify" the file/flag/role naming to "settings".
-- **`Shape` in code is the Qt-free data model**: the `Shape` type (`_shape.py`) holds only data — `points` / `point_labels` are numpy arrays, not `QtCore.QPointF`, and it imports no PyQt5. Rendering, hit-testing, and the per-shape view state (selected, fill, highlight, colors, scale) live in the canvas layer (`_widgets/_shape_render.py` + `_widgets/_canvas.py`), which computes a `ShapeRenderContext` per shape at paint time. The in-progress shape being drawn is a separate QPointF `_DraftShape` (canvas-local) that becomes a `Shape` at finalize. `visible` is the one ephemeral view flag kept on `Shape` (a plain bool, not persisted) so it survives the deepcopy-based undo/backup stack.
+- **`Shape` in code is the Qt-free data model**: the `Shape` type (`labelme/_shape/_model.py`) holds only data — `points` / `point_labels` are numpy arrays, not `QtCore.QPointF`, and it imports no PySide6. Hit-testing lives in `labelme/_shape/_hit_testing.py`. Rendering and the per-shape view state (selected, fill, highlight, colors, scale) live in the canvas layer (`_widgets/_shape_render.py` + `_widgets/_canvas.py`), which computes a `ShapeRenderContext` per shape at paint time. The in-progress shape being drawn is a separate QPointF `_DraftShape` (canvas-local) that becomes a `Shape` at finalize. `visible` is the one ephemeral view flag kept on `Shape` (a plain bool, not persisted) so it survives the deepcopy-based undo/backup stack.
 
 ## Example dialogue
 

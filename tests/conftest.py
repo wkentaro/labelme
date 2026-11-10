@@ -22,7 +22,7 @@ from PySide6.QtWidgets import QColorDialog
 from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
-import labelme._utils
+import labelme._image_codec
 from labelme._automation import _osam_session
 
 
@@ -109,7 +109,7 @@ def assert_labelfile_sanity(filename: str, /) -> None:
         assert img_file.exists()
         img = imgviz.io.imread(img_file)
     else:
-        img = labelme._utils.img_b64_to_arr(img_b64=image_data)
+        img = labelme._image_codec.img_b64_to_arr(img_b64=image_data)
 
     height, width = img.shape[:2]
     assert height == data["imageHeight"]

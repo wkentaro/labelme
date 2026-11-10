@@ -10,8 +10,10 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme import _utils
 from labelme._app import MainWindow
 from labelme._config import _writer
+from labelme._config import load_config
 from labelme._locale import TRANSLATE_DIR
 from labelme._widgets import SettingsDialog
 from labelme._widgets._integer_slider import IntegerSlider
@@ -898,6 +900,54 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
     assert win._canvas_widgets.canvas._ai_assist_session.polygon_detail == 70
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_color_theme_setting_applies_live_and_persists(
+    *,
+    main_win: MainWinFactory,
+    editable_config_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    dialog = _open_settings_dialog(win=win)
+    combo = dialog._editors[("color_theme",)]
+    assert isinstance(combo, QtWidgets.QComboBox)
+    applied: list[str] = []
+
+    def record_theme(*, theme: str) -> None:
+        # The theme must already be persisted when it reaches the live app.
+        persisted = safe_load(stream=editable_config_file.read_text())
+        assert persisted["color_theme"] == theme
+        applied.append(theme)
+
+    # Offscreen Qt may ignore a color-scheme change, so record the call instead
+    # of reading the palette back.
+    monkeypatch.setattr(_utils, "apply_color_theme", record_theme)
+    for theme in ("dark", "light"):
+        combo.setCurrentIndex(combo.findData(theme))
+    assert applied == ["dark", "light"]
+    dialog.close()
+
+
+@pytest.mark.gui
+def test_out_of_bounds_setting_applies_live_and_persists(
+    *, main_win: MainWinFactory, editable_config_file: Path
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    canvas = win._canvas_widgets.canvas
+    dialog = _open_settings_dialog(win=win)
+    checkbox = dialog._editors[("canvas", "allow_out_of_bounds_points")]
+    assert isinstance(checkbox, QtWidgets.QCheckBox)
+    assert canvas._allow_out_of_bounds_points is False
+    for enabled in (True, False):
+        checkbox.setChecked(enabled)
+        assert canvas._allow_out_of_bounds_points is enabled
+        # Returning to the default prunes the override, so reload the file
+        # instead of reading the raw YAML.
+        persisted = load_config(config_file=editable_config_file, config_overrides={})
+        assert persisted["canvas"]["allow_out_of_bounds_points"] is enabled
+    dialog.close()
 
 
 @pytest.mark.gui
