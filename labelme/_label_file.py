@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import base64
+import contextlib
 import io
 import json
 import math
 import os
+import re
 import stat
 import time
 import typing
@@ -32,6 +34,10 @@ PIL.Image.MAX_IMAGE_PIXELS = None
 
 
 _SINGLE_CHANNEL_NDIM: Final = 2
+
+_TEMPORARY_NAME_PATTERN: Final = re.compile(r"\.[0-9a-f]{32}\.tmp")
+# Listing a large or remote Annotation Folder on every save is too slow.
+_SWEPT_DIRECTORIES: Final[set[str]] = set()
 
 
 def _validate_flags(*, flags: object) -> dict[str, bool]:
@@ -492,6 +498,29 @@ def _replace_json_file(*, filename: str, payload: dict[str, Any]) -> None:
         os.replace(temporary_path, filename)
     finally:
         temporary_path.unlink(missing_ok=True)
+    _sweep_stale_temporary_files(directory=Path(filename).absolute().parent)
+
+
+def _sweep_stale_temporary_files(*, directory: Path) -> None:
+    # A killed save leaves its uniquely named temporary file behind, and no
+    # later save reuses the name. Best effort: it must never fail a save.
+    key = str(directory)
+    if key in _SWEPT_DIRECTORIES:
+        return
+    _SWEPT_DIRECTORIES.add(key)
+    # Far longer than any save, so a file another process is writing stays.
+    STALE_AGE_SECONDS: Final = 60 * 60
+    cutoff = time.time() - STALE_AGE_SECONDS
+    with contextlib.suppress(OSError), os.scandir(directory) as entries:
+        for entry in entries:
+            if not _TEMPORARY_NAME_PATTERN.fullmatch(entry.name):
+                continue
+            with contextlib.suppress(OSError):
+                if (
+                    entry.is_file(follow_symlinks=False)
+                    and entry.stat(follow_symlinks=False).st_mtime < cutoff
+                ):
+                    os.unlink(entry.path)
 
 
 def _check_decodable(
