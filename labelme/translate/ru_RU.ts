@@ -1152,6 +1152,22 @@ Expected location: {path}</source>
         <translation>{status} · {seconds} с</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Выберите не менее двух фигур-масок для объединения</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Объединять можно только фигуры-маски</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Разблокируйте выбранные фигуры, чтобы объединить их</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Объединять можно только фигуры с одинаковой меткой</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Неверная метка</translation>
     </message>

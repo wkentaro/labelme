@@ -1056,6 +1056,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Δεν βρέθηκαν νέα «{query}»</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Επιλέξτε τουλάχιστον δύο σχήματα μάσκας για συγχώνευση</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Μόνο τα σχήματα μάσκας συγχωνεύονται</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Ξεκλειδώστε τα επιλεγμένα σχήματα για να τα συγχωνεύσετε</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Μόνο σχήματα με την ίδια ετικέτα συγχωνεύονται</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
     </message>

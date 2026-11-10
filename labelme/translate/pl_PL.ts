@@ -1056,6 +1056,22 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Nie znaleziono nowych „{query}”</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Zaznacz co najmniej dwa kształty maski, aby je scalić</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Scalać można tylko kształty maski</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Odblokuj zaznaczone kształty, aby je scalić</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Scalać można tylko kształty z tą samą etykietą</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Nieprawidłowa etykieta</translation>
     </message>

@@ -1,7 +1,9 @@
 from ._hit_testing import nearest_edge_index
 from ._hit_testing import nearest_rotation_point_index
 from ._hit_testing import nearest_vertex_index
+from ._merge import MergeBlocker
 from ._merge import can_merge_shapes
+from ._merge import merge_blocker
 from ._merge import merge_masks
 from ._model import CIRCLE_POINT_COUNT
 from ._model import LINE_POINT_COUNT
@@ -26,11 +28,13 @@ __all__ = [
     "ORIENTED_RECTANGLE_POINT_COUNT",
     "POLYLINE_SHAPE_TYPES",
     "RECTANGLE_POINT_COUNT",
+    "MergeBlocker",
     "Shape",
     "ShapeDict",
     "ShapeType",
     "can_merge_shapes",
     "get_rotation_handle",
+    "merge_blocker",
     "merge_masks",
     "nearest_edge_index",
     "nearest_rotation_point_index",

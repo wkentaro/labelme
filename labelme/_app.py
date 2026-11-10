@@ -55,10 +55,12 @@ from ._model_manager import ModelManager
 from ._save_request import SaveRequest
 from ._save_request import write_save_request
 from ._save_writer import SaveWriter
+from ._shape import MergeBlocker
 from ._shape import Shape
 from ._shape import ShapeDict
 from ._shape import ShapeType
 from ._shape import can_merge_shapes
+from ._shape import merge_blocker
 from ._shape import merge_masks
 from ._shape_clipboard import ShapeClipboard
 from ._shape_color import resolve_shape_color
@@ -1163,6 +1165,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self._canvas_widgets.canvas.context_menu.addActions(self._actions.context_menu)
+        # Lets a disabled item say why it is disabled.
+        self._canvas_widgets.canvas.context_menu.setToolTipsVisible(True)
+        edit_menu.setToolTipsVisible(True)
 
         return _Menus(
             file=file_menu,
@@ -2004,7 +2009,25 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete.setEnabled(
             not busy and any(not shape.locked for shape in selected)
         )
-        self._actions.merge.setEnabled(not busy and can_merge_shapes(selected))
+        blocker = merge_blocker(selected)
+        self._actions.merge.setEnabled(not busy and blocker is None)
+        # The tooltip is all a disabled menu item can show: Qt sends no status
+        # tip for one on macOS or Fusion.
+        self._actions.merge.setToolTip(self._merge_tip(blocker))
+
+    def _merge_tip(self, blocker: MergeBlocker | None, /) -> str:
+        match blocker:
+            case None:
+                # The status tip keeps the description the action was built with.
+                return self._actions.merge.statusTip()
+            case "too_few":
+                return self.tr("Select at least two mask shapes to merge")
+            case "not_masks":
+                return self.tr("Only mask shapes can be merged")
+            case "locked":
+                return self.tr("Unlock the selected shapes to merge them")
+            case "mixed_labels":
+                return self.tr("Only shapes with the same label can be merged")
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
