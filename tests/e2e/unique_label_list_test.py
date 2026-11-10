@@ -109,8 +109,14 @@ def test_delete_key_on_unique_label_list_removes_unused_label(
     *,
     qtbot: QtBot,
     annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     win = annotated_win
+    monkeypatch.setattr(win, "_can_continue", lambda: True)
+    canvas = win._canvas_widgets.canvas
+    shapes = tuple(canvas.shapes)
+    canvas.select_shapes(shapes=[shapes[0]])
+    assert win._actions.delete.isEnabled()
     unique_list: UniqueLabelQListWidget = win._docks.unique_label_list
     win._label_dialog.add_label_history(label="extra_tag")
     unique_list.add_label_item(label="extra_tag", color=(10, 20, 30))
@@ -118,11 +124,55 @@ def test_delete_key_on_unique_label_list_removes_unused_label(
     item = unique_list.find_label_item(label="extra_tag")
     assert item is not None
     unique_list.setCurrentItem(item)
+    unique_list.setFocus()
+    qtbot.waitUntil(unique_list.hasFocus)
 
     qtbot.keyClick(unique_list, Qt.Key.Key_Delete)
 
+    assert tuple(canvas.shapes) == shapes
     assert "extra_tag" not in unique_list.labels
     assert "extra_tag" not in win._label_dialog.label_history
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("deselect", ["escape", "empty-click"])
+@pytest.mark.parametrize("key", [Qt.Key.Key_Delete, Qt.Key.Key_Backspace])
+def test_removal_key_ignores_unselected_label(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    deselect: str,
+    key: Qt.Key,
+) -> None:
+    win = annotated_win
+    monkeypatch.setattr(win, "_can_continue", lambda: True)
+    unique_list = win._docks.unique_label_list
+    win._label_dialog.add_label_history(label="extra_tag")
+    unique_list.add_label_item(label="extra_tag", color=(10, 20, 30))
+    item = unique_list.find_label_item(label="extra_tag")
+    assert item is not None
+    unique_list.setCurrentItem(item)
+    unique_list.setFocus()
+    qtbot.waitUntil(unique_list.hasFocus)
+    if deselect == "escape":
+        qtbot.keyClick(unique_list, Qt.Key.Key_Escape)
+    else:
+        point = unique_list.viewport().rect().bottomLeft()
+        assert unique_list.itemAt(point) is None
+        qtbot.mouseClick(unique_list.viewport(), Qt.MouseButton.LeftButton, pos=point)
+    assert not unique_list.selectedItems()
+    assert unique_list.currentItem() is item
+    canvas = win._canvas_widgets.canvas
+    shapes = tuple(canvas.shapes)
+    canvas.select_shapes(shapes=[shapes[0]])
+    assert win._actions.delete.isEnabled()
+
+    qtbot.keyClick(unique_list, key)
+
+    assert tuple(canvas.shapes) == shapes
+    assert "extra_tag" in unique_list.labels
+    assert "extra_tag" in win._label_dialog.label_history
 
 
 @pytest.mark.gui

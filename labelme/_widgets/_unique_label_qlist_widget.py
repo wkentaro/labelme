@@ -33,15 +33,27 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
             self.clearSelection()
 
     @override
+    def event(self, event: QtCore.QEvent, /) -> bool:
+        if (
+            event.type() == QtCore.QEvent.Type.ShortcutOverride
+            and isinstance(event, QtGui.QKeyEvent)
+            and _is_removal_key(event=event)
+        ):
+            # The window's Delete Shapes action must not handle list keystrokes.
+            event.accept()
+            return True
+        return super().event(event)
+
+    @override
     def keyPressEvent(self, keyEvent: QtGui.QKeyEvent, /) -> None:
-        if keyEvent.key() in (Qt.Key.Key_Delete, Qt.Key.Key_Backspace):
+        if _is_removal_key(event=keyEvent):
             item = self.currentItem()
-            if item is not None:
+            if item is not None and item.isSelected():
                 label = item.data(Qt.ItemDataRole.UserRole)
                 if isinstance(label, str):
                     self.label_remove_requested.emit(label)
-                    keyEvent.accept()
-                    return
+            keyEvent.accept()
+            return
         super().keyPressEvent(keyEvent)
 
     @property
@@ -78,3 +90,10 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
             raise ValueError(f"Item for label '{label}' not found")
         row = self.row(item)
         self.takeItem(row)
+
+
+def _is_removal_key(*, event: QtGui.QKeyEvent) -> bool:
+    return event.modifiers() == Qt.KeyboardModifier.NoModifier and event.key() in (
+        Qt.Key.Key_Delete,
+        Qt.Key.Key_Backspace,
+    )
