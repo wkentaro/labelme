@@ -9,6 +9,7 @@ from ._model import RECTANGLE_POINT_COUNT
 from ._model import Shape
 from ._model import ShapeType
 
+
 def get_valid_conversion_targets(*, shape: Shape) -> set[ShapeType]:
     if shape.locked:
         return set()
