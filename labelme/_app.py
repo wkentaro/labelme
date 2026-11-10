@@ -2768,9 +2768,26 @@ class MainWindow(QtWidgets.QMainWindow):
                 Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
             )
 
-    def _read_annotation_file(self, *, label_path: str) -> Annotation | None:
+    def _read_annotation_file(
+        self, *, label_path: str, image_path: str | None
+    ) -> Annotation | None:
         try:
-            return read_label_file(filename=label_path, max_decode_mb=_max_decode_mb())
+            try:
+                return read_label_file(
+                    filename=label_path, max_decode_mb=_max_decode_mb()
+                )
+            except ImageNotFoundError:
+                if image_path is None:
+                    raise
+                # The Annotation File was found for this Image, so only its
+                # recorded path is stale. The next save records the new one.
+                return read_label_file(
+                    filename=label_path,
+                    image_path_override=_resolve_stored_image_path(
+                        image_path=image_path, label_dir=Path(label_path).parent
+                    ),
+                    max_decode_mb=_max_decode_mb(),
+                )
         except LabelFileError as e:
             self._show_file_open_error(
                 path=label_path, file_kind="label", exc=e, extra=None
@@ -2885,7 +2902,9 @@ class MainWindow(QtWidgets.QMainWindow):
             label_file_path = None
             shapes = []
         else:
-            annotation = self._read_annotation_file(label_path=label_path)
+            annotation = self._read_annotation_file(
+                label_path=label_path, image_path=file_list_image_path
+            )
             if annotation is None:
                 return False
             # The relative path stored in the Annotation File may carry "." or ".."

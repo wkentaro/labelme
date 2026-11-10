@@ -358,10 +358,18 @@ def _image_path_from_raw(raw: dict[str, Any], /) -> str:
     return PureWindowsPath(raw["imagePath"]).as_posix()
 
 
-def read_label_file(*, filename: str, max_decode_mb: int | None = None) -> Annotation:
+def read_label_file(
+    *,
+    filename: str,
+    image_path_override: str | None = None,
+    max_decode_mb: int | None = None,
+) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
+        if image_path_override is not None:
+            # The caller knows where the Image is; the recorded path is stale.
+            raw["imagePath"] = image_path_override
         image_path = _image_path_from_raw(raw)
         if raw["imageData"] is None:
             resolved_image_path = str(Path(filename).parent / image_path)
