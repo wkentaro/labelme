@@ -55,6 +55,30 @@ def test_png_returns_raw_bytes(*, tmp_path: Path) -> None:
     assert data == path.read_bytes()
 
 
+def test_cmyk_jpeg_returns_raw_bytes(*, tmp_path: Path) -> None:
+    arr = np.random.randint(0, 255, (100, 100, 4), dtype=np.uint8)
+    path = tmp_path / "test.jpg"
+    PIL.Image.fromarray(arr, mode="CMYK").save(str(path))
+    with PIL.Image.open(path) as image:
+        assert image.mode == "CMYK"
+
+    data = read_image_file(filename=str(path))
+
+    assert data == path.read_bytes()
+
+
+def test_16bit_grayscale_png_returns_raw_bytes(*, tmp_path: Path) -> None:
+    arr = np.random.randint(0, 65535, (100, 100), dtype=np.uint16)
+    path = tmp_path / "test.png"
+    PIL.Image.fromarray(arr).save(str(path))
+    with PIL.Image.open(path) as image:
+        assert image.mode == "I;16"
+
+    data = read_image_file(filename=str(path))
+
+    assert data == path.read_bytes()
+
+
 @pytest.mark.parametrize("ext", ["gif", "bmp"])
 def test_palette_image_without_alpha_encoded_as_jpeg(
     *, tmp_path: Path, ext: str

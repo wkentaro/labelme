@@ -517,7 +517,9 @@ def _imread(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
         except ImageTooLargeError:
             image_pil.close()
             raise
-        if image_pil.mode not in DISPLAYABLE_MODES:
+        # Only TIFFs have another reader to fall back to. Qt decodes the other
+        # formats itself, modes Pillow lists here or not.
+        if ext in (".tif", ".tiff") and image_pil.mode not in DISPLAYABLE_MODES:
             raise PIL.UnidentifiedImageError
         return image_pil
     except PIL.UnidentifiedImageError:
