@@ -24,8 +24,8 @@ def _make_annotation(*, with_mask: bool) -> osam.types.Annotation:
 
 
 def _get_bboxes(
+    *,
     response: osam.types.GenerateResponse,
-    /,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[NDArray[np.bool_]] | None]:
     return get_bboxes_from_texts(annotations=response.annotations, texts=["cat"])
 
@@ -39,7 +39,7 @@ def test_collects_masks_when_every_annotation_has_one() -> None:
         ],
     )
 
-    _, _, _, masks = _get_bboxes(response)
+    _, _, _, masks = _get_bboxes(response=response)
 
     assert masks is not None
     assert len(masks) == 2
@@ -54,7 +54,7 @@ def test_masks_is_none_when_no_annotation_has_one() -> None:
         ],
     )
 
-    _, _, _, masks = _get_bboxes(response)
+    _, _, _, masks = _get_bboxes(response=response)
 
     assert masks is None
 
@@ -69,7 +69,7 @@ def test_raises_value_error_when_a_later_mask_is_missing() -> None:
     )
 
     with pytest.raises(ValueError, match="Mask is missing"):
-        _get_bboxes(response)
+        _get_bboxes(response=response)
 
 
 def test_raises_value_error_when_bounding_box_is_missing() -> None:
@@ -81,7 +81,7 @@ def test_raises_value_error_when_bounding_box_is_missing() -> None:
     )
 
     with pytest.raises(ValueError, match="Bounding box is missing"):
-        _get_bboxes(response)
+        _get_bboxes(response=response)
 
 
 def test_raises_value_error_when_text_is_not_in_the_prompt() -> None:
@@ -98,7 +98,7 @@ def test_raises_value_error_when_text_is_not_in_the_prompt() -> None:
     )
 
     with pytest.raises(ValueError, match="Unexpected text 'dog'"):
-        _get_bboxes(response)
+        _get_bboxes(response=response)
 
 
 def test_nms_bboxes_returns_empty_indices_for_no_boxes() -> None:

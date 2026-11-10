@@ -1152,12 +1152,44 @@ Expected location: {path}</source>
         <translation>{status} · {seconds} с</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Выберите не менее двух фигур-масок для объединения</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Объединять можно только фигуры-маски</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Разблокируйте выбранные фигуры, чтобы объединить их</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Объединять можно только фигуры с одинаковой меткой</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Неверная метка</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Ошибка сохранения файла аннотаций</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>При выборе изображения файл аннотаций обновляется и начинает ссылаться на него.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Найти изображение…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Найти изображение</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Изображения (%s)</translation>
     </message>
     <message>
         <source>Large Image</source>

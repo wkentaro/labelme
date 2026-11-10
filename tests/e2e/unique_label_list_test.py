@@ -25,7 +25,7 @@ def test_unique_label_list_context_menu_on_unused_item(
     item_rect = unique_list.visualItemRect(item)
     point = item_rect.center()
 
-    menu = win._build_unique_label_list_menu(point)
+    menu = win._build_unique_label_list_menu(point=point)
     actions = {action.text(): action for action in menu.actions()}
 
     assert "Remove from Label List" in actions
@@ -49,7 +49,7 @@ def test_unique_label_list_context_menu_on_in_use_item(
     item_rect = unique_list.visualItemRect(item)
     point = item_rect.center()
 
-    menu = win._build_unique_label_list_menu(point)
+    menu = win._build_unique_label_list_menu(point=point)
     actions = {action.text(): action for action in menu.actions()}
 
     assert "Remove from Label List" in actions
@@ -73,7 +73,7 @@ def test_unique_label_list_context_menu_on_empty_area(
     empty_pos = QtCore.QPoint(last_rect.center().x(), last_rect.bottom() + 30)
     assert unique_list.itemAt(empty_pos) is None
 
-    menu = win._build_unique_label_list_menu(empty_pos)
+    menu = win._build_unique_label_list_menu(point=empty_pos)
     action_texts = [action.text() for action in menu.actions()]
 
     assert "Remove from Label List" not in action_texts
@@ -96,7 +96,7 @@ def test_remove_unused_label_action_removes_from_dock_and_dialog(
     assert item is not None
     point = unique_list.visualItemRect(item).center()
 
-    menu = win._build_unique_label_list_menu(point)
+    menu = win._build_unique_label_list_menu(point=point)
     actions = {action.text(): action for action in menu.actions()}
     actions["Remove from Label List"].trigger()
 
@@ -183,7 +183,7 @@ def test_clear_unused_labels_clears_only_unused_labels(
     assert "legacy_2" not in win._label_dialog.label_history
 
     # When no unused labels remain, Clear Unused Labels action is disabled
-    menu = win._build_unique_label_list_menu(QtCore.QPoint(0, 0))
+    menu = win._build_unique_label_list_menu(point=QtCore.QPoint(0, 0))
     actions = {action.text(): action for action in menu.actions()}
     assert not actions["Clear Unused Labels"].isEnabled()
 
@@ -202,6 +202,8 @@ def test_show_unique_label_list_menu_executes_popup(
         "exec",
         lambda *_args, **_kwargs: menu_exec_called.append(1) or None,
     )
-    monkeypatch.setattr(win, "_build_unique_label_list_menu", lambda _p: dummy_menu)
+    monkeypatch.setattr(
+        win, "_build_unique_label_list_menu", lambda **_kwargs: dummy_menu
+    )
     win.show_unique_label_list_menu(QtCore.QPoint(10, 10))
     assert menu_exec_called == [1]

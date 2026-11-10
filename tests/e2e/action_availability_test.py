@@ -208,7 +208,7 @@ def test_visibility_actions_follow_last_shape_and_restore(
         win._actions.toggle_all,
     )
     shape = Shape(label="point", shape_type="point", points=np.array([[20.0, 20.0]]))
-    win._insert_shapes([shape])
+    win._insert_shapes(shapes=[shape])
     win.mark_clean()
     assert all(action.isEnabled() for action in visibility_actions)
 
@@ -225,7 +225,7 @@ def test_visibility_actions_follow_last_shape_and_restore(
     if clear_by == "delete":
         win._actions.undo.trigger()
     else:
-        win._insert_shapes([shape])
+        win._insert_shapes(shapes=[shape])
     win.mark_clean()
     assert len(win._docks.label_list) == 1
     assert all(action.isEnabled() for action in visibility_actions)
@@ -322,7 +322,9 @@ def test_delete_file_enables_after_first_auto_save(
     win = main_win(file_or_dir=image_path, config_overrides={"auto_save": True})
     assert not win._actions.delete_file.isEnabled()
     win._insert_shapes(
-        [Shape(label="point", shape_type="point", points=np.array([[20.0, 20.0]]))]
+        shapes=[
+            Shape(label="point", shape_type="point", points=np.array([[20.0, 20.0]]))
+        ]
     )
     qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     assert image_path.with_suffix(".json").exists()

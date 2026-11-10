@@ -25,7 +25,9 @@ def test_brightness_contrast_dialog(
 
     assert annotated_win._annotation is not None
     dialog = BrightnessContrastDialog(
-        img=labelme._utils.img_data_to_pil(annotated_win._annotation.image_data),
+        img=labelme._utils.img_data_to_pil(
+            img_data=annotated_win._annotation.image_data
+        ),
         callback=annotated_win._on_brightness_contrast_changed,
         parent=annotated_win,
     )

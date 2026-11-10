@@ -1056,12 +1056,44 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Нових «{query}» не знайдено</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Виберіть щонайменше дві фігури-маски для об&apos;єднання</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Об&apos;єднувати можна лише фігури-маски</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Розблокуйте вибрані фігури, щоб об&apos;єднати їх</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Об&apos;єднувати можна лише фігури з однаковою міткою</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Недійсна мітка</translation>
     </message>
     <message>
         <source>%s can&apos;t use an example box. Choose SAM 3.</source>
         <translation>%s не може використати рамку-приклад. Виберіть SAM 3.</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Після вибору зображення файл анотацій оновлюється й посилається на нього.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Знайти зображення…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Знайти зображення</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Зображення (%s)</translation>
     </message>
     <message>
         <source>Large Image</source>

@@ -19,7 +19,7 @@ from ._shape_color import validate_shape_color
 _here = Path(__file__).resolve().parent
 
 _DEFAULT_CONFIG: Final = _yaml.safe_load(
-    (_here / "default_config.yaml").read_text(encoding="utf-8")
+    stream=(_here / "default_config.yaml").read_text(encoding="utf-8")
 )
 
 

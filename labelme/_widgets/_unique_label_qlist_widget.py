@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import override
+
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -10,6 +12,7 @@ from ._label_list_widget import ColorSwatchDelegate
 
 
 class _EscapableQListWidget(QtWidgets.QListWidget):
+    @override
     def keyPressEvent(self, keyEvent: QtGui.QKeyEvent, /) -> None:
         super().keyPressEvent(keyEvent)
         if keyEvent.key() == Qt.Key.Key_Escape:
@@ -23,11 +26,13 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
         super().__init__(parent=parent)
         self.setItemDelegate(ColorSwatchDelegate(parent=self))
 
+    @override
     def mousePressEvent(self, mouseEvent: QtGui.QMouseEvent, /) -> None:
         super().mousePressEvent(mouseEvent)
         if not self.indexAt(mouseEvent.position().toPoint()).isValid():
             self.clearSelection()
 
+    @override
     def keyPressEvent(self, keyEvent: QtGui.QKeyEvent, /) -> None:
         if keyEvent.key() in (Qt.Key.Key_Delete, Qt.Key.Key_Backspace):
             item = self.currentItem()

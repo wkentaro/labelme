@@ -79,7 +79,7 @@ def test_pointer_coordinates_stay_put_as_other_status_changes(
 ) -> None:
     raw_win.show()
     status_bar = raw_win._status_bar
-    status_bar.stats.set_position(422, 616)
+    status_bar.stats.set_position(x=422, y=616)
 
     def stats_right_edge() -> int:
         qtbot.wait(50)  # the status bar lays out its widgets on the next pass

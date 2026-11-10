@@ -1056,12 +1056,44 @@ Cambie el modelo de AI-Find All a &apos;SAM 3&apos; o establezca el formato de s
         <translation>No se encontraron «{query}» nuevos</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Selecciona al menos dos formas de máscara para combinarlas</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Solo se pueden combinar formas de máscara</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Desbloquea las formas seleccionadas para combinarlas</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Solo se pueden combinar formas con la misma etiqueta</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Etiqueta no válida</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Error al guardar el archivo de anotaciones</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Al localizar la imagen, el archivo de anotaciones se actualiza para hacer referencia a ella.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Localizar imagen…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Localizar imagen</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Imágenes (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

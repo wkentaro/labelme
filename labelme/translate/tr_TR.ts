@@ -1056,12 +1056,44 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Yeni &apos;{query}&apos; bulunamadı</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Birleştirmek için en az iki maske şekli seçin</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Yalnızca maske şekilleri birleştirilebilir</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Birleştirmek için seçili şekillerin kilidini açın</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Yalnızca aynı etikete sahip şekiller birleştirilebilir</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Geçersiz etiket</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Görüntüyü bulduğunuzda açıklama dosyası bu görüntüye başvuracak şekilde güncellenir.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Görüntüyü Bul…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Görüntüyü Bul</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Görüntüler (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

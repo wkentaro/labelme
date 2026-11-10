@@ -161,7 +161,7 @@ def test_polygon_detail_control_fires_callback_and_exposes_value(
         details=details,
     )
 
-    widget._polygon_detail_slider.set_value(60)
+    widget._polygon_detail_slider.set_value(value=60)
 
     assert details == [60]
     assert widget._polygon_detail_slider.value == 60
@@ -180,7 +180,7 @@ def test_setting_polygon_detail_from_config_does_not_fire_callback(
         details=details,
     )
 
-    widget.set_polygon_detail(75)
+    widget.set_polygon_detail(detail=75)
 
     assert widget._polygon_detail_slider.value == 75
     assert details == []

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 from typing import Final
+from typing import override
 
 from PySide6 import QtCore
 from PySide6 import QtWidgets
@@ -37,13 +38,14 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
         self.setAccessibleName(self.tr("Zoom"))
         self.setToolTip(
             self.tr("Hold %s and scroll to zoom the canvas")
-            % modifier_text(Qt.KeyboardModifier.ControlModifier)
+            % modifier_text(modifiers=Qt.KeyboardModifier.ControlModifier)
         )
 
     @property
     def scale(self) -> float:
         return 0.01 * self.value()
 
+    @override
     def textFromValue(self, value: float, /) -> str:
         # Three significant digits: 1.23, 12.3, 188.
         # Qt formats 0 before the range is set.
@@ -57,6 +59,7 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
             text = text.rstrip("0").removesuffix(decimal_point)
         return text
 
+    @override
     def valueFromText(self, text: str, /) -> float:
         value = super().valueFromText(text)
         # Stateless on purpose: tracking which text the user typed broke on
@@ -66,6 +69,7 @@ class ZoomWidget(QtWidgets.QDoubleSpinBox):
             return self.value()
         return value
 
+    @override
     def stepBy(self, steps: int, /) -> None:
         # Typed text not yet confirmed is the starting point.
         self.interpretText()

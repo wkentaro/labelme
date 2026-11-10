@@ -32,19 +32,19 @@ def widget(*, qtbot: QtBot) -> QtWidgets.QListWidget:
 def delegate(*, widget: QtWidgets.QListWidget) -> ImageListDelegate:
     delegate = ImageListDelegate(parent=widget)
     widget.setItemDelegate(delegate)
-    delegate.set_labels(_NESTED)
+    delegate.set_labels(labels=_NESTED)
     return delegate
 
 
-def _index(delegate: ImageListDelegate, row: int, /) -> QtCore.QModelIndex:
+def _index(*, delegate: ImageListDelegate, row: int) -> QtCore.QModelIndex:
     widget = delegate.parent()
     assert isinstance(widget, QtWidgets.QListWidget)
     return widget.model().index(row, 0)
 
 
-def _shown_text(delegate: ImageListDelegate, row: int, /) -> str:
+def _shown_text(*, delegate: ImageListDelegate, row: int) -> str:
     option = QtWidgets.QStyleOptionViewItem()
-    delegate.initStyleOption(option, _index(delegate, row))
+    delegate.initStyleOption(option, _index(delegate=delegate, row=row))
     return option.text
 
 
@@ -60,13 +60,15 @@ def _shown_text(delegate: ImageListDelegate, row: int, /) -> str:
 def test_set_labels_shows_headings_only_when_they_save_rows(
     *, delegate: ImageListDelegate, labels: list[str], expected: bool
 ) -> None:
-    delegate.set_labels(labels)
-    assert (delegate.heading(_index(delegate, 0)) is not None) is expected
-    assert (_shown_text(delegate, 1) == "1.jpg") is expected
+    delegate.set_labels(labels=labels)
+    assert (delegate.heading(_index(delegate=delegate, row=0)) is not None) is expected
+    assert (_shown_text(delegate=delegate, row=1) == "1.jpg") is expected
 
 
 def test_heading_starts_each_folder_run(*, delegate: ImageListDelegate) -> None:
-    assert [delegate.heading(_index(delegate, row)) for row in range(6)] == [
+    assert [
+        delegate.heading(_index(delegate=delegate, row=row)) for row in range(6)
+    ] == [
         os.curdir + os.sep,
         os.path.join("a", "x") + os.sep,
         None,
@@ -78,6 +80,6 @@ def test_heading_starts_each_folder_run(*, delegate: ImageListDelegate) -> None:
 
 def test_heading_rows_are_taller(*, delegate: ImageListDelegate) -> None:
     option = QtWidgets.QStyleOptionViewItem()
-    with_heading = delegate.sizeHint(option, _index(delegate, 1))
-    without = delegate.sizeHint(option, _index(delegate, 2))
+    with_heading = delegate.sizeHint(option, _index(delegate=delegate, row=1))
+    without = delegate.sizeHint(option, _index(delegate=delegate, row=2))
     assert with_heading.height() > without.height()

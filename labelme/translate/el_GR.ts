@@ -1056,12 +1056,44 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Δεν βρέθηκαν νέα «{query}»</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Επιλέξτε τουλάχιστον δύο σχήματα μάσκας για συγχώνευση</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Μόνο τα σχήματα μάσκας συγχωνεύονται</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Ξεκλειδώστε τα επιλεγμένα σχήματα για να τα συγχωνεύσετε</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Μόνο σχήματα με την ίδια ετικέτα συγχωνεύονται</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
     </message>
     <message>
         <source>%s can&apos;t use an example box. Choose SAM 3.</source>
         <translation>Το %s δεν μπορεί να χρησιμοποιήσει πλαίσιο παραδείγματος. Επιλέξτε SAM 3.</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Ο εντοπισμός της εικόνας ενημερώνει το αρχείο επισημειώσεων ώστε να παραπέμπει σε αυτήν.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Εντοπισμός εικόνας…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Εντοπισμός εικόνας</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Εικόνες (%s)</translation>
     </message>
     <message>
         <source>Large Image</source>

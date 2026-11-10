@@ -78,7 +78,7 @@ def _make_release_event(*, pos: QPointF) -> QtGui.QMouseEvent:
 
 
 def _image_to_widget(*, canvas: Canvas, img_x: float, img_y: float) -> QPointF:
-    return canvas.transform_image_point_to_widget(QPointF(img_x, img_y))
+    return canvas.transform_image_point_to_widget(point=QPointF(img_x, img_y))
 
 
 def _clear_cursor_override(*, canvas: Canvas) -> None:

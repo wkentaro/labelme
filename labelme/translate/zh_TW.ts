@@ -1056,12 +1056,44 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>找不到新的「{query}」</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>請至少選取兩個遮罩形狀進行合併</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>只能合併遮罩形狀</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>請先解鎖選取的形狀再合併</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>只能合併標籤相同的形狀</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>無效的標籤</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>儲存標註檔案時發生錯誤</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>找到影像後，標註檔案會更新為參照該影像。</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>尋找影像…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>尋找影像</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>影像 (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

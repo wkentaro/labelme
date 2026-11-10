@@ -14,6 +14,8 @@ from ._model_picker import ModelPicker
 
 
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
+    _polygon_detail_slider: IntegerSlider
+
     manage_models_requested = QtCore.Signal()
     download_requested = QtCore.Signal(str)
 
@@ -118,7 +120,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             ("circle", self.tr("Circle"), "circle.svg"),
         ]
         for output_format, text, icon in output_formats:
-            action = output_menu.addAction(new_icon(icon), text)
+            action = output_menu.addAction(new_icon(name=icon), text)
             action.setCheckable(True)
             action.setData(output_format)
             self._output_format_group.addAction(action)
@@ -130,7 +132,7 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
         self._model_combo.manage_requested.connect(self.manage_models_requested)
         self._model_combo.download_requested.connect(self.download_requested)
 
-        self._show_output_format("polygon")
+        self._show_output_format(output_format="polygon")
 
         # toggled, unlike triggered, stays quiet when the current shape is
         # picked again.
@@ -138,14 +140,14 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             if not checked:
                 return
             output_format = self.output_format
-            self._show_output_format(output_format)
+            self._show_output_format(output_format=output_format)
             on_output_format_changed(output_format)
 
         for action in self._output_format_actions.values():
             action.toggled.connect(handle_output_format_toggled)
         self._polygon_detail_slider.value_changed.connect(on_polygon_detail_changed)
 
-    def _show_output_format(self, output_format: _automation.AiOutputFormat, /) -> None:
+    def _show_output_format(self, *, output_format: _automation.AiOutputFormat) -> None:
         action = self._output_format_actions[output_format]
         action.setChecked(True)
         self._output_format_button.setIcon(action.icon())
@@ -168,9 +170,9 @@ class AiAssistedAnnotationWidget(QtWidgets.QWidget):
             available=available, downloading=downloading
         )
 
-    def select_model(self, model_name: str, /) -> None:
-        self._model_combo.select_model(model_name)
+    def select_model(self, model_name: str, /) -> None:  # noqa: GR013 -- _download_and_select calls it as Callable[[str], None]
+        self._model_combo.select_model(model_name=model_name)
 
-    def set_polygon_detail(self, detail: int, /) -> None:
+    def set_polygon_detail(self, *, detail: int) -> None:
         with QtCore.QSignalBlocker(self._polygon_detail_slider):
-            self._polygon_detail_slider.set_value(detail)
+            self._polygon_detail_slider.set_value(value=detail)
