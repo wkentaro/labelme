@@ -3109,7 +3109,8 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         # Record one baseline state. Loading carried-forward shapes separately
         # would create a false Undo step that discards them before any edit.
-        carry_prev_shapes = bool(prev_shapes) and not shapes
+        # An Annotation File with no Shapes is a deliberate empty annotation.
+        carry_prev_shapes = bool(prev_shapes) and not shapes and label_file_path is None
         if carry_prev_shapes:
             # A lock approves a shape on its own image, not on the next one.
             for shape in prev_shapes:
