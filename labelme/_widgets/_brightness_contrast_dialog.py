@@ -25,6 +25,8 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         *,
         img: PIL.Image.Image,
         callback: Callable[[QImage], None],
+        brightness: int | None = None,
+        contrast: int | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -40,14 +42,16 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         grid = QtWidgets.QGridLayout(self)
         grid.setColumnStretch(1, 1)
         captioned = (
-            (self.tr("Brightness:"), self.slider_brightness),
-            (self.tr("Contrast:"), self.slider_contrast),
+            (self.tr("Brightness:"), self.slider_brightness, brightness),
+            (self.tr("Contrast:"), self.slider_contrast, contrast),
         )
-        for row, (caption, slider) in enumerate(captioned):
+        for row, (caption, slider, value) in enumerate(captioned):
             slider.setRange(0, 3 * _NEUTRAL)
             slider.setSingleStep(2)
             slider.setPageStep(20)
-            slider.setValue(_NEUTRAL)
+            # Set before the signals connect: each change adjusts the whole
+            # image, and the caller applies the starting values once.
+            slider.setValue(_NEUTRAL if value is None else value)
             readout = QtWidgets.QLabel(_as_percent(value=slider.value()))
             readout.setAlignment(Qt.AlignmentFlag.AlignRight)
             slider.valueChanged.connect(

@@ -2802,13 +2802,10 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog = BrightnessContrastDialog(
             img=_image_codec.img_data_to_pil(img_data=self._annotation.image_data),
             callback=self._on_brightness_contrast_changed,
+            brightness=brightness,
+            contrast=contrast,
             parent=self,
         )
-
-        if brightness is not None:
-            dialog.slider_brightness.setValue(brightness)
-        if contrast is not None:
-            dialog.slider_contrast.setValue(contrast)
 
         if is_initial_load:
             dialog.apply()

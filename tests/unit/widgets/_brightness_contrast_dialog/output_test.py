@@ -48,3 +48,28 @@ def test_restore_defaults_publishes_the_original_image(*, qtbot: QtBot) -> None:
     assert dialog.slider_brightness.value() == 100
     assert dialog.slider_contrast.value() == 100
     np.testing.assert_array_equal(captured[-1], pixels)
+
+
+def test_starting_values_adjust_the_image_once(*, qtbot: QtBot) -> None:
+    source = PIL.Image.fromarray(
+        np.array([[[0, 0, 0], [255, 255, 255]]], dtype=np.uint8), mode="RGB"
+    )
+    captured: list[np.ndarray] = []
+    dialog = BrightnessContrastDialog(
+        img=source,
+        callback=lambda image: captured.append(img_qt_to_arr(img_qt=image)),
+        brightness=200,
+        contrast=0,
+    )
+    qtbot.addWidget(dialog)
+
+    # Each adjustment is a pass over the whole image, so nothing runs until
+    # the caller asks.
+    assert captured == []
+    dialog.apply()
+
+    assert len(captured) == 1
+    np.testing.assert_array_equal(captured[0], np.full((1, 2, 3), 128, dtype=np.uint8))
+    assert [label.text() for label in dialog.findChildren(QtWidgets.QLabel)].count(
+        "200%"
+    ) == 1
