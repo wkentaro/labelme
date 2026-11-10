@@ -998,9 +998,9 @@ def test_MainWindow_cancel_on_large_tiff_prompts_before_decoding(
 
     loaded = raw_win._load_file(image_or_label_path=str(path))
 
-    assert loaded is False
-    assert prompts == ["Large image requires more memory"]
     assert critical_messages == []
+    assert prompts == ["Large image requires more memory"]
+    assert loaded is False
     assert raw_win._annotation is annotation_before
 
 
@@ -1019,9 +1019,9 @@ def test_MainWindow_open_anyway_on_large_tiff_prompts_once(
 
     loaded = raw_win._load_file(image_or_label_path=str(path))
 
-    assert loaded is True
-    assert prompts == ["Large image requires more memory"]
     assert critical_messages == []
+    assert prompts == ["Large image requires more memory"]
+    assert loaded is True
     assert QtGui.QImageReader.allocationLimit() == 1
 
 
@@ -1055,6 +1055,6 @@ def test_MainWindow_open_anyway_on_label_of_large_image_prompts_once(
 
     loaded = raw_win._load_file(image_or_label_path=str(label_path))
 
-    assert loaded is True
-    assert prompts == ["Large image requires more memory"]
     assert critical_messages == []
+    assert prompts == ["Large image requires more memory"]
+    assert loaded is True
