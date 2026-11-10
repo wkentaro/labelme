@@ -112,6 +112,48 @@ def test_16bit_grayscale_png_returns_raw_bytes(*, tmp_path: Path) -> None:
     assert data == path.read_bytes()
 
 
+def _gradient_16bit() -> np.ndarray:
+    return np.linspace(0, 65535, 32 * 24).reshape(24, 32).astype(np.uint16)
+
+
+def test_16bit_pgm_keeps_its_16_bits(*, tmp_path: Path) -> None:
+    path = tmp_path / "test.pgm"
+    PIL.Image.fromarray(_gradient_16bit()).save(str(path))
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.format == "PNG"
+        np.testing.assert_array_equal(np.asarray(image), _gradient_16bit())
+
+
+def test_16bit_png_with_exif_rotation_keeps_its_16_bits(*, tmp_path: Path) -> None:
+    path = tmp_path / "test.png"
+    exif = PIL.Image.Exif()
+    exif[0x0112] = 6  # Orientation: rotate 90 degrees clockwise to display
+    PIL.Image.fromarray(_gradient_16bit()).save(str(path), exif=exif)
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.format == "PNG"
+        np.testing.assert_array_equal(
+            np.asarray(image), np.rot90(_gradient_16bit(), k=-1)
+        )
+
+
+def test_float_image_is_scaled_to_8_bits(*, tmp_path: Path) -> None:
+    path = tmp_path / "test.pfm"
+    arr = np.linspace(-1.0, 3.0, 32 * 24, dtype=np.float32).reshape(24, 32)
+    PIL.Image.fromarray(arr).save(str(path))
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.mode == "L"
+        assert image.size == (32, 24)
+
+
 @pytest.mark.parametrize("ext", ["gif", "bmp"])
 def test_palette_image_without_alpha_encoded_as_jpeg(
     *, tmp_path: Path, ext: str

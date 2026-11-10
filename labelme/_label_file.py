@@ -355,7 +355,23 @@ def _read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
                 has_transparency = "A" in oriented.mode or (
                     oriented.mode == "P" and "transparency" in oriented.info
                 )
-                fmt = "PNG" if has_transparency or is_jpeg2000 else "JPEG"
+                if oriented.mode == "F":
+                    # No format Qt reads holds float pixels; scale them as a
+                    # float TIFF is scaled.
+                    oriented = PIL.Image.fromarray(
+                        _normalize_to_uint8(arr=np.asarray(oriented))
+                    )
+                elif oriented.mode == "I":
+                    # A 16-bit PGM decodes to 32-bit integers, which PNG
+                    # cannot hold.
+                    oriented = oriented.convert("I;16")
+                # JPEG holds 8 bits per channel; PNG keeps 16-bit integers.
+                is_high_depth = oriented.mode.startswith("I")
+                fmt = (
+                    "PNG"
+                    if has_transparency or is_jpeg2000 or is_high_depth
+                    else "JPEG"
+                )
                 if fmt == "JPEG" and oriented.mode == "P":
                     oriented = oriented.convert("RGB")
                 elif fmt == "PNG" and oriented.mode == "PA":
