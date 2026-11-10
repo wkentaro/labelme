@@ -2182,11 +2182,26 @@ class Canvas(QtWidgets.QWidget):
         self._hovered_shape_is_selected = False
         return True
 
+    def _forget_hover(self, *, shapes: list[Shape]) -> None:
+        # A removed or hidden Shape must not stay a hover or edit target.
+        if self.hovered_shape in shapes:
+            self._set_highlight(
+                hovered_shape=None,
+                hovered_edge=None,
+                hovered_vertex=None,
+                hovered_rotation=None,
+            )
+        if self._last_hovered_shape in shapes:
+            self._last_hovered_shape = None
+            self._last_hovered_vertex = None
+            self._last_hovered_edge = None
+
     def delete_selected(self) -> list[Shape]:
         removed = self._movable_selected_shapes()
         if not removed:
             return []
         self.shapes = [s for s in self.shapes if s not in removed]
+        self._forget_hover(shapes=removed)
         self.backup_shapes()
         self.selected_shapes = [s for s in self.selected_shapes if s.locked]
         self._set_ai_existing_shape_highlights(shapes=[])
@@ -2197,6 +2212,7 @@ class Canvas(QtWidgets.QWidget):
         if shape in self.selected_shapes:
             self.selected_shapes.remove(shape)
         self.shapes = [s for s in self.shapes if s is not shape]
+        self._forget_hover(shapes=[shape])
         self.backup_shapes()
         self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
@@ -3092,6 +3108,8 @@ class Canvas(QtWidgets.QWidget):
         if shape.visible == value:
             return
         shape.visible = value
+        if not value:
+            self._forget_hover(shapes=[shape])
         self.update()
 
     def _apply_cursor(self, *, role: CursorRole) -> None:

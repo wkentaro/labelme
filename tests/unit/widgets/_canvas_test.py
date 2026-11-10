@@ -960,6 +960,70 @@ def test_delete_selected_clears_highlights(*, canvas: Canvas) -> None:
     assert canvas._ai_existing_shape_highlights == []
 
 
+def _hover_first_vertex(*, canvas: Canvas, shape: Shape) -> None:
+    canvas._set_highlight(
+        hovered_shape=shape,
+        hovered_edge=None,
+        hovered_vertex=0,
+        hovered_rotation=None,
+    )
+
+
+def _assert_no_hover(*, canvas: Canvas) -> None:
+    assert canvas.hovered_shape is None
+    assert canvas._hovered_vertex is None
+    assert canvas._last_hovered_shape is None
+    assert canvas._last_hovered_vertex is None
+    assert canvas._last_hovered_edge is None
+
+
+@pytest.mark.gui
+def test_delete_shape_forgets_its_hover(*, canvas: Canvas) -> None:
+    shape = _make_rectangle(label="a")
+    canvas.load_shapes(shapes=[shape])
+    _hover_first_vertex(canvas=canvas, shape=shape)
+
+    canvas.delete_shape(shape=shape)
+
+    _assert_no_hover(canvas=canvas)
+
+
+@pytest.mark.gui
+def test_delete_selected_forgets_its_hover(*, canvas: Canvas) -> None:
+    shape = _make_rectangle(label="a")
+    canvas.load_shapes(shapes=[shape])
+    canvas.selected_shapes.append(shape)
+    _hover_first_vertex(canvas=canvas, shape=shape)
+
+    canvas.delete_selected()
+
+    _assert_no_hover(canvas=canvas)
+
+
+@pytest.mark.gui
+def test_hiding_a_shape_forgets_its_hover(*, canvas: Canvas) -> None:
+    shape = _make_rectangle(label="a")
+    canvas.load_shapes(shapes=[shape])
+    _hover_first_vertex(canvas=canvas, shape=shape)
+
+    canvas.set_shape_visible(shape=shape, value=False)
+
+    _assert_no_hover(canvas=canvas)
+
+
+@pytest.mark.gui
+def test_deleting_another_shape_keeps_the_hover(*, canvas: Canvas) -> None:
+    hovered = _make_rectangle(label="a")
+    other = _make_rectangle(label="b")
+    canvas.load_shapes(shapes=[hovered, other])
+    _hover_first_vertex(canvas=canvas, shape=hovered)
+
+    canvas.delete_shape(shape=other)
+
+    assert canvas.hovered_shape is hovered
+    assert canvas._hovered_vertex == 0
+
+
 @dataclasses.dataclass
 class _AiExistingShapeHighlightHarness:
     canvas: Canvas
