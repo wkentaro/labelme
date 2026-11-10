@@ -252,6 +252,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _label_list_menu_origin: QtCore.QPoint | None
     _save_revision: int
     _auto_save_path: str | None
+    _chosen_save_path: str | None
     _save_writer: SaveWriter
     _image_prefetcher: ImagePrefetcher
     _model_manager: ModelManager
@@ -404,6 +405,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
         self._auto_save_path = None
+        self._chosen_save_path = None
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
         self._image_prefetcher = ImagePrefetcher()
@@ -1648,10 +1650,14 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         if self._auto_save_path is not None:
             return self._auto_save_path
-        # A save still in flight owns its destination before its completion
-        # records it.
-        if (latest := self._save_writer.get_latest_path()) is not None:
-            return latest
+        # Chosen once per document: after its own first write the disk no
+        # longer tells a first copy from a file that was already there.
+        if self._chosen_save_path is None:
+            self._chosen_save_path = self._choose_save_destination()
+        return self._chosen_save_path
+
+    def _choose_save_destination(self) -> str:
+        assert self._image_path is not None
         resolved = _resolve_label_path(
             image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
@@ -2006,6 +2012,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def reset_state(self) -> None:
         self._auto_save_path = None
+        self._chosen_save_path = None
         self._docks.label_list.clear()
         self._load_flags(flags={}, widget=self._docks.flag_list)
         self._annotation = None
@@ -3413,6 +3420,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._output_dir = previous_output_dir
             return False
         self._auto_save_path = None
+        self._chosen_save_path = None
         self._refresh_file_list()
         return True
 

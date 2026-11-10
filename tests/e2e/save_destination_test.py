@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import shutil
 from pathlib import Path
 from typing import Final
@@ -125,9 +124,8 @@ def test_save_keeps_the_save_as_destination(
 
 
 @pytest.mark.gui
-def test_save_destination_stays_with_an_unfinished_first_copy(
+def test_auto_save_keeps_its_folder_copy_after_a_stale_completion(
     *,
-    monkeypatch: pytest.MonkeyPatch,
     main_win: MainWinFactory,
     qtbot: QtBot,
     data_path: Path,
@@ -137,17 +135,31 @@ def test_save_destination_stays_with_an_unfinished_first_copy(
     output_dir.mkdir()
     opened = data_path / "annotated" / f"{_STEM}.json"
     in_folder = output_dir / f"{_STEM}.json"
+    opened_before = opened.read_bytes()
 
     win = main_win(
         file_or_dir=str(opened),
-        config_overrides=dict(auto_save=False),
+        config_overrides=dict(auto_save=True),
         output_dir=str(output_dir),
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    assert os.path.realpath(win._save_destination()) == os.path.realpath(in_folder)
+    canvas = win._canvas_widgets.canvas
+    # First edit starts the first copy into the Annotation Folder.
+    _move_first_shape(qtbot=qtbot, win=win)
+    # Second edit with Auto Save off, before the first save's completion is
+    # handled: no event loop runs between these calls.
+    win._actions.save_auto.setChecked(False)
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+    assert in_folder.exists()
+    assert win._is_changed
+    first_copy = in_folder.read_bytes()
 
-    # The worker has written the first copy; its completion is not handled yet.
-    shutil.copy(opened, in_folder)
-    monkeypatch.setattr(win._save_writer, "get_latest_path", lambda: str(in_folder))
+    win._actions.save_auto.setChecked(True)
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
 
-    assert os.path.realpath(win._save_destination()) == os.path.realpath(in_folder)
+    qtbot.waitUntil(lambda: not win._is_changed)
+    assert in_folder.read_bytes() != first_copy
+    assert opened.read_bytes() == opened_before
