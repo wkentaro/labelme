@@ -98,6 +98,27 @@ def _start_polygon(*, win: MainWindow, qtbot: QtBot) -> None:
 
 
 @pytest.mark.gui
+def test_paste_mid_draw_keeps_the_unfinished_shape(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = _open_annotated(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    # A regression dirties the document; fail on the asserts, not on a prompt.
+    monkeypatch.setattr(win, "_can_continue", lambda: True)
+    canvas = win._canvas_widgets.canvas
+    n_shapes = len(canvas.shapes)
+    _start_polygon(win=win, qtbot=qtbot)
+
+    win._insert_shapes(shapes=[canvas.shapes[0].copy()])
+
+    assert canvas.is_drawing
+    assert len(canvas.shapes) == n_shapes
+
+
+@pytest.mark.gui
 def test_switching_image_mid_draw_restores_select(
     *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
 ) -> None:

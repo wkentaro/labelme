@@ -2454,7 +2454,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def _insert_shapes(self, *, shapes: list[Shape]) -> None:
-        if not shapes:
+        # Committing reloads the shapes, which would discard an unfinished one.
+        if not shapes or self._canvas_widgets.canvas.is_drawing:
             return
         _label_flags.apply_default_flags(
             shapes=shapes, label_flags=self._config["label_flags"]
