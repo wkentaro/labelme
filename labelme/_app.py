@@ -2040,7 +2040,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def tutorial(self) -> None:
-        url = "https://github.com/labelmeai/labelme/tree/main/examples/tutorial"  # NOQA
+        url = "https://github.com/wkentaro/labelme/tree/main/examples/tutorial"  # NOQA
         webbrowser.open(url)
 
     def _sync_edit_actions(self) -> None:
