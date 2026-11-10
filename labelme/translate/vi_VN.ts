@@ -1056,6 +1056,22 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Không tìm thấy &apos;{query}&apos; mới</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Chọn ít nhất hai hình dạng mask để gộp</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Chỉ gộp được các hình dạng mask</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Mở khóa các hình dạng đã chọn để gộp</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Chỉ gộp được các hình dạng có cùng nhãn</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Nhãn không hợp lệ</translation>
     </message>

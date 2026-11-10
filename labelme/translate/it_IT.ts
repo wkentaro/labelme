@@ -1056,6 +1056,22 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
         <translation>Nessun nuovo «{query}» trovato</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Seleziona almeno due forme maschera da unire</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Si possono unire solo forme maschera</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Sblocca le forme selezionate per unirle</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Si possono unire solo forme con la stessa etichetta</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Etichetta non valida</translation>
     </message>

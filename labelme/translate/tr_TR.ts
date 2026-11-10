@@ -1056,6 +1056,22 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Yeni &apos;{query}&apos; bulunamadı</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Birleştirmek için en az iki maske şekli seçin</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Yalnızca maske şekilleri birleştirilebilir</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Birleştirmek için seçili şekillerin kilidini açın</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Yalnızca aynı etikete sahip şekiller birleştirilebilir</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Geçersiz etiket</translation>
     </message>

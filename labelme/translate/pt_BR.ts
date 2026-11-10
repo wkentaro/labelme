@@ -1056,6 +1056,22 @@ Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saíd
         <translation>Nenhum &quot;{query}&quot; novo encontrado</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Selecione pelo menos duas formas de máscara para mesclar</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Só é possível mesclar formas de máscara</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Desbloqueie as formas selecionadas para mesclá-las</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Só é possível mesclar formas com o mesmo rótulo</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Rótulo inválido</translation>
     </message>

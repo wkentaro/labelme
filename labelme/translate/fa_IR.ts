@@ -1056,6 +1056,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>«{query}» جدیدی پیدا نشد</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>برای ادغام، دست‌کم دو شکل ماسک انتخاب کنید</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>فقط شکل‌های ماسک ادغام می‌شوند</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>برای ادغام، قفل شکل‌های انتخاب شده را باز کنید</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>فقط شکل‌های دارای برچسب یکسان ادغام می‌شوند</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>برچسب نامعتبر</translation>
     </message>

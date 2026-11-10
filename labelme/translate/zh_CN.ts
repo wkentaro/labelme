@@ -1056,6 +1056,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>未找到新的“{query}”</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>请至少选择两个掩码形状进行合并</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>只能合并掩码形状</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>请先解锁选中的形状再合并</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>只能合并标签相同的形状</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>无效标签</translation>
     </message>

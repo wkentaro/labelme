@@ -1056,6 +1056,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Нових «{query}» не знайдено</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Виберіть щонайменше дві фігури-маски для об&apos;єднання</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Об&apos;єднувати можна лише фігури-маски</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Розблокуйте вибрані фігури, щоб об&apos;єднати їх</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Об&apos;єднувати можна лише фігури з однаковою міткою</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Недійсна мітка</translation>
     </message>

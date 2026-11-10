@@ -1056,6 +1056,22 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>새 &apos;{query}&apos;을(를) 찾지 못했습니다</translation>
     </message>
     <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>병합할 마스크 도형을 두 개 이상 선택하세요</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>마스크 도형만 병합할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>병합하려면 선택한 도형의 잠금을 해제하세요</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>레이블이 같은 도형만 병합할 수 있습니다</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>잘못된 레이블</translation>
     </message>
