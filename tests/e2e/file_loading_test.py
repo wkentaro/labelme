@@ -988,7 +988,7 @@ def test_MainWindow_cancel_on_large_tiff_prompts_before_decoding(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     path = tmp_path / "big.tif"
-    tifffile.imwrite(str(path), np.zeros((600, 600), dtype=np.uint8))
+    tifffile.imwrite(str(path), np.zeros((600, 600), dtype=np.float32))
     set_allocation_limit(1)
     annotation_before = raw_win._annotation
     monkeypatch.setattr(
