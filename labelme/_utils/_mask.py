@@ -50,10 +50,10 @@ def shape_to_mask(
         assert len(xy) == LINE_POINT_COUNT, (
             "Shape of shape_type=line must have 2 points"
         )
-        draw.line(xy=xy, fill=1, width=line_width)  # ty: ignore[invalid-argument-type]
+        draw.line(xy=xy, fill=1, width=line_width)
     elif shape_type == "linestrip":
         # joint="curve" rounds the joints so wide lines have no notch at turns.
-        draw.line(xy=xy, fill=1, width=line_width, joint="curve")  # ty: ignore[invalid-argument-type]
+        draw.line(xy=xy, fill=1, width=line_width, joint="curve")
     elif shape_type == "point":
         assert len(xy) == 1, "Shape of shape_type=point must have 1 points"
         cx, cy = xy[0]
@@ -63,12 +63,12 @@ def shape_to_mask(
         assert len(xy) == ORIENTED_RECTANGLE_POINT_COUNT, (
             "Shape of shape_type=oriented_rectangle must have 4 points"
         )
-        draw.polygon(xy=xy, outline=1, fill=1)  # ty: ignore[invalid-argument-type]
+        draw.polygon(xy=xy, outline=1, fill=1)
     elif shape_type in [None, "polygon"]:
         assert len(xy) >= MIN_POLYGON_POINT_COUNT, (
             "Polygon must have points more than 2"
         )
-        draw.polygon(xy=xy, outline=1, fill=1)  # ty: ignore[invalid-argument-type]
+        draw.polygon(xy=xy, outline=1, fill=1)
     else:
         raise ValueError(f"shape_type={shape_type!r} is not supported.")
     return np.array(mask, dtype=bool)

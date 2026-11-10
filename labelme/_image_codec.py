@@ -78,16 +78,16 @@ def apply_exif_orientation(*, image: PIL.Image.Image) -> PIL.Image.Image:
     elif orientation == EXIF_ORIENTATION_MIRROR_LEFT_TO_RIGHT:
         return PIL.ImageOps.mirror(image)
     elif orientation == EXIF_ORIENTATION_ROTATE_180:
-        return image.transpose(PIL.Image.ROTATE_180)
+        return image.transpose(PIL.Image.Transpose.ROTATE_180)
     elif orientation == EXIF_ORIENTATION_MIRROR_TOP_TO_BOTTOM:
         return PIL.ImageOps.flip(image)
     elif orientation == EXIF_ORIENTATION_MIRROR_TOP_TO_LEFT:
-        return PIL.ImageOps.mirror(image.transpose(PIL.Image.ROTATE_270))
+        return PIL.ImageOps.mirror(image.transpose(PIL.Image.Transpose.ROTATE_270))
     elif orientation == EXIF_ORIENTATION_ROTATE_270:
-        return image.transpose(PIL.Image.ROTATE_270)
+        return image.transpose(PIL.Image.Transpose.ROTATE_270)
     elif orientation == EXIF_ORIENTATION_MIRROR_TOP_TO_RIGHT:
-        return PIL.ImageOps.mirror(image.transpose(PIL.Image.ROTATE_90))
+        return PIL.ImageOps.mirror(image.transpose(PIL.Image.Transpose.ROTATE_90))
     elif orientation == EXIF_ORIENTATION_ROTATE_90:
-        return image.transpose(PIL.Image.ROTATE_90)
+        return image.transpose(PIL.Image.Transpose.ROTATE_90)
     else:
         return image

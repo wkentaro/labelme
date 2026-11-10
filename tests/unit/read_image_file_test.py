@@ -262,6 +262,7 @@ def test_planar_separate_tiff_keeps_image_size_and_bands(*, tmp_path: Path) -> N
         rgb = image.convert("RGB")
         for band in range(3):
             pixel = rgb.getpixel((band * 64 + 32, 32))
+            assert isinstance(pixel, tuple)
             assert pixel[band] > 200
             assert sum(pixel) - pixel[band] < 50
 

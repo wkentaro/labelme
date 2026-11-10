@@ -72,7 +72,6 @@ dev = [
   "ruff~=0.12.11",
   "taplo>=0.9.3",
   "ty>=0.0.31",
-  "types-pillow>=10.2.0.20240822",
   "typos>=1.45.0",
   "yamlfix>=1.19.1",
   "towncrier>=24.8",
