@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 from pathlib import Path
 from typing import Final
@@ -121,3 +122,32 @@ def test_save_keeps_the_save_as_destination(
 
     assert chosen.exists()
     assert opened.read_bytes() == opened_before
+
+
+@pytest.mark.gui
+def test_save_destination_stays_with_an_unfinished_first_copy(
+    *,
+    monkeypatch: pytest.MonkeyPatch,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
+    output_dir = tmp_path / "out"
+    output_dir.mkdir()
+    opened = data_path / "annotated" / f"{_STEM}.json"
+    in_folder = output_dir / f"{_STEM}.json"
+
+    win = main_win(
+        file_or_dir=str(opened),
+        config_overrides=dict(auto_save=False),
+        output_dir=str(output_dir),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert os.path.realpath(win._save_destination()) == os.path.realpath(in_folder)
+
+    # The worker has written the first copy; its completion is not handled yet.
+    shutil.copy(opened, in_folder)
+    monkeypatch.setattr(win._save_writer, "get_latest_path", lambda: str(in_folder))
+
+    assert os.path.realpath(win._save_destination()) == os.path.realpath(in_folder)

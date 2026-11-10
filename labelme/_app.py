@@ -1648,6 +1648,10 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         if self._auto_save_path is not None:
             return self._auto_save_path
+        # A save still in flight owns its destination before its completion
+        # records it.
+        if (latest := self._save_writer.get_latest_path()) is not None:
+            return latest
         resolved = _resolve_label_path(
             image_path=self._file_list_image_path or self._image_path,
             output_dir=self._output_dir,
