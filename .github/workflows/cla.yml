@@ -8,6 +8,18 @@ on:
 jobs:
   cla:
     runs-on: ubuntu-latest
+    # Permissions and condition as documented in the action's README. contents
+    # stays write because signatures are committed to a branch of this repo.
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+      statuses: write
+    if: >-
+      github.event_name == 'pull_request_target' ||
+      github.event.comment.body == 'recheck' ||
+      github.event.comment.body == 'I have read the CLA Document and I hereby sign
+      the CLA'
     steps:
       - name: CLA Assistant
         uses: contributor-assistant/github-action@v2.6.1
