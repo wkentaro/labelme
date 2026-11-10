@@ -49,6 +49,8 @@ _HEIGHT: Final[int] = 50
 
 class _InlineOsamWorker(QtCore.QObject):
     # Answers each submit before returning, as a worker that fails to start does.
+    _held: list[tuple[object, object]]
+
     finished = QtCore.Signal(object, object)
     failed = QtCore.Signal(object, str)
     requests: list[InferenceRequest]
@@ -60,7 +62,7 @@ class _InlineOsamWorker(QtCore.QObject):
         self.requests: list[InferenceRequest] = []
         self.annotations: list[osam.types.Annotation] = []
         self.paused = False
-        self._held: list[tuple[object, object]] = []
+        self._held = []
 
     def submit(
         self, *, channel: object, job: object, request: InferenceRequest

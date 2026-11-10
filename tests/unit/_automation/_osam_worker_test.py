@@ -417,6 +417,8 @@ _OrtFail.__module__ = "onnxruntime.capi.onnxruntime_pybind11_state"
 
 
 class _FailingSession:
+    _error: Exception
+
     device = "webgpu"
 
     def __init__(self, error: Exception, /) -> None:

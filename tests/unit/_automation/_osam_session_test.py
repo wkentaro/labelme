@@ -32,6 +32,8 @@ class _FakeModelRegistry:
 
 
 class _FakeModel:
+    _registry: _FakeModelRegistry
+
     encode_calls: int
     requests: list[osam.types.GenerateRequest]
 

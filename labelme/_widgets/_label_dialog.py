@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import re
 from collections.abc import Collection
 from typing import Final
 from typing import Literal
@@ -26,6 +27,21 @@ class LabelDialogEntry:
 
 class LabelDialog(QtWidgets.QDialog):
     """Dialog for entering label, group id, description, and flags."""
+
+    _sort_labels: bool
+    _flags_spec: dict[re.Pattern[str], list[str]]
+    _label_history: list[str]
+    _locked: frozenset[LabelDialogField]
+    _last_label: str
+    _entry: LabelDialogEntry | None
+    _flag_checkboxes: dict[str, QtWidgets.QCheckBox]
+    _flag_states: dict[str, bool]
+    _stored_flag_names: tuple[str, ...]
+    _fit_to_content: dict[str, bool]
+    _ok_button: QtWidgets.QPushButton
+    _flags_container: QtWidgets.QWidget
+    _flags_layout: QtWidgets.QVBoxLayout
+    _flags_scroll: QtWidgets.QScrollArea
 
     edit: QtWidgets.QLineEdit
     edit_group_id: QtWidgets.QLineEdit
@@ -57,20 +73,20 @@ class LabelDialog(QtWidgets.QDialog):
         self._label_history = label_history[:] if label_history is not None else []
         # Fields the current popup shows read-only because the caller has no
         # single value for them (a mixed multi-selection).
-        self._locked: frozenset[LabelDialogField] = frozenset()
+        self._locked = frozenset()
         # A popup opened without a label starts from the last one accepted.
         self._last_label = ""
-        self._entry: LabelDialogEntry | None = None
+        self._entry = None
         self.accepted.connect(self._capture_entry)
         # The flags currently on show, keyed by flag name, so a flag named by
         # two matching label_flags patterns gets exactly one checkbox.
-        self._flag_checkboxes: dict[str, QtWidgets.QCheckBox] = {}
+        self._flag_checkboxes = {}
         # Checked state per flag key, remembered for the lifetime of one popup.
         # The checkboxes themselves cannot hold it: editing the label rebuilds
         # them, and an intermediate keystroke that matches no pattern destroys
         # them entirely.
-        self._flag_states: dict[str, bool] = {}
-        self._stored_flag_names: tuple[str, ...] = ()
+        self._flag_states = {}
+        self._stored_flag_names = ()
 
         if fit_to_content is None:
             fit_to_content = {"row": False, "column": True}

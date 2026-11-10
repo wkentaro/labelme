@@ -238,6 +238,30 @@ class _CanvasMode(enum.Enum):
 
 
 class Canvas(QtWidgets.QWidget):
+    _epsilon: float
+    _double_click: Literal["close"] | None
+    _num_backups: int
+    _allow_out_of_bounds_points: bool
+    _crosshair: dict[str, bool]
+    _ai_preview_timer: QtCore.QTimer
+    _line: _DraftShape
+    _scale: float
+    _osam_worker: _automation.OsamWorker | None
+    _ai_preview_job: _AiJob | None
+    _ai_result_job: _AiJob | None
+    _ai_finalize_job: _AiJob | None
+    _ai_progress_clock: QtCore.QElapsedTimer
+    _ai_progress_timer: QtCore.QTimer
+    _ai_inference_failed: bool
+    _snapping: bool
+    _hovered_shape_is_selected: bool
+    _painter: QtGui.QPainter
+    _dirty_rect: QtCore.QRect
+    _fill_drawing: bool
+    _show_labels: bool
+    _view_offset: QPointF
+    _ai_prompt_hint_due: bool
+
     ensure_ai_model_ready: Callable[[str], bool]
     # Read on use: the AI-Find All picker can change mid-draft or on download.
     get_ai_find_all_model_name: Callable[[], str]
@@ -347,14 +371,14 @@ class Canvas(QtWidgets.QWidget):
     )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
-        self._epsilon: float = kwargs.pop("epsilon", 10.0)
+        self._epsilon = kwargs.pop("epsilon", 10.0)
         self._double_click = kwargs.pop("double_click", "close")
         if self._double_click not in [None, "close"]:
             raise ValueError(
                 f"Unexpected value for double_click event: {self._double_click}"
             )
-        self._num_backups: int = kwargs.pop("num_backups", 10)
-        self._allow_out_of_bounds_points: bool = kwargs.pop(
+        self._num_backups = kwargs.pop("num_backups", 10)
+        self._allow_out_of_bounds_points = kwargs.pop(
             "allow_out_of_bounds_points", False
         )
         self._crosshair = kwargs.pop(
@@ -390,15 +414,15 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_center = np.zeros(2)
         self._rotation_initial_angle = 0.0
         self._rotation_original_points = np.empty((0, 2))
-        self._scale: float = 1.0
+        self._scale = 1.0
         self._ai_assist_session = _automation.AiAssistSession()
         self.get_ai_find_all_model_name = lambda: ""
         self.get_ai_find_all_thresholds = lambda: (0.0, 0.5)
         self.get_ai_find_all_query = lambda: ""
-        self._osam_worker: _automation.OsamWorker | None = None
-        self._ai_preview_job: _AiJob | None = None
-        self._ai_result_job: _AiJob | None = None
-        self._ai_finalize_job: _AiJob | None = None
+        self._osam_worker = None
+        self._ai_preview_job = None
+        self._ai_result_job = None
+        self._ai_finalize_job = None
         self._ai_progress_clock = QtCore.QElapsedTimer()
         self._ai_progress_timer = QtCore.QTimer(self)
         self._ai_progress_timer.setInterval(16)
@@ -410,7 +434,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_suppress_existing_shape_matches = False
         self._ai_existing_shape_highlights = []
         self._snapping = True
-        self._hovered_shape_is_selected: bool = False
+        self._hovered_shape_is_selected = False
         self._painter = QtGui.QPainter()
         self._dirty_rect = QtCore.QRect()
         self._pan_anchor = None

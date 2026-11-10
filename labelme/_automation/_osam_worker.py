@@ -188,6 +188,21 @@ class OsamWorker(QtCore.QObject):
     device is set again.
     """
 
+    _target: Callable[[Connection, Connection, str | None], None]
+    _timeout_s: float
+    _context: multiprocessing.context.SpawnContext
+    _process: BaseProcess | None
+    _outbox: queue.SimpleQueue | None
+    _inbox: queue.SimpleQueue
+    _sent_image_id: str | None
+    _device: Literal["auto", "cpu"]
+    _fell_back: bool
+    _process_on_cpu: bool
+    _pending: dict[object, tuple[object, InferenceRequest]]
+    _active: _Active | None
+    _request_ids: itertools.count[int]
+    _timer: QtCore.QTimer
+
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
     activity_changed = QtCore.Signal()  # job, queued, stage or device changed
@@ -203,15 +218,15 @@ class OsamWorker(QtCore.QObject):
         self._target = target
         self._timeout_s = timeout_s
         self._context = multiprocessing.get_context("spawn")
-        self._process: BaseProcess | None = None
-        self._outbox: queue.SimpleQueue | None = None
-        self._inbox: queue.SimpleQueue = queue.SimpleQueue()
-        self._sent_image_id: str | None = None
-        self._device: Literal["auto", "cpu"] = "auto"
+        self._process = None
+        self._outbox = None
+        self._inbox = queue.SimpleQueue()
+        self._sent_image_id = None
+        self._device = "auto"
         self._fell_back = False
         self._process_on_cpu = False
-        self._pending: dict[object, tuple[object, InferenceRequest]] = {}
-        self._active: _Active | None = None
+        self._pending = {}
+        self._active = None
         self._request_ids = itertools.count()
         self._timer = QtCore.QTimer(self)
         POLL_INTERVAL_MS: Final = 20

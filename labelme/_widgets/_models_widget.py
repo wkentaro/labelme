@@ -36,22 +36,27 @@ def license_notice(*, model_name: str) -> str | None:
 
 
 class ModelsWidget(QtWidgets.QWidget):
+    _manager: ModelManager
+    _remove_model: Callable[[str], None]
+    _links: dict[QtWidgets.QLabel, str]
+    _rows: dict[
+        str,
+        tuple[
+            QtWidgets.QLabel,
+            QtWidgets.QPushButton,
+            QtWidgets.QPushButton,
+            QtWidgets.QPushButton,
+        ],
+    ]
+
     def __init__(
         self, *, manager: ModelManager, remove_model: Callable[[str], None]
     ) -> None:
         super().__init__()
         self._manager = manager
         self._remove_model = remove_model
-        self._links: dict[QtWidgets.QLabel, str] = {}
-        self._rows: dict[
-            str,
-            tuple[
-                QtWidgets.QLabel,
-                QtWidgets.QPushButton,
-                QtWidgets.QPushButton,
-                QtWidgets.QPushButton,
-            ],
-        ] = {}
+        self._links = {}
+        self._rows = {}
         layout = QtWidgets.QVBoxLayout(self)
         layout.setSpacing(0)
         description = QtWidgets.QLabel(
@@ -270,6 +275,8 @@ class ModelsWidget(QtWidgets.QWidget):
 
 
 class ModelsDialog(QtWidgets.QDialog):
+    _scroll_area: QtWidgets.QScrollArea
+
     def __init__(
         self,
         *,

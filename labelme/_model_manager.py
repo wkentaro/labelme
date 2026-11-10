@@ -55,6 +55,18 @@ def _pull_model(
 
 
 class _Pull(QtCore.QObject):
+    _completed: bool
+    _stopped: bool
+    _blobs: dict[str, osam.types.Blob]
+    _blob_root: Path
+    _cache_root: Path | None
+    _cancel: Event
+    _process: BaseProcess | None
+    _context: multiprocessing.context.SpawnContext
+    _child_connection: Connection
+    _timer: QtCore.QTimer
+    _connection: Connection
+
     model_name: str
     error: str | None
     # Byte counts exceed a C++ int for multi-GiB weights, so pass them as objects.
@@ -75,12 +87,12 @@ class _Pull(QtCore.QObject):
         self._blob_root = (
             first_path.parent.parent if first_blob.attachments else first_path.parent
         )
-        self._cache_root: Path | None = None
+        self._cache_root = None
 
         context = multiprocessing.get_context("spawn")
         self._cancel = context.Event()
         self._connection, child_connection = context.Pipe(duplex=False)
-        self._process: BaseProcess | None = None
+        self._process = None
         self._context = context
         self._child_connection = child_connection
         self._timer = QtCore.QTimer(self)
@@ -178,6 +190,9 @@ class _Pull(QtCore.QObject):
 
 
 class ModelManager(QtCore.QObject):
+    _pull: _Pull | None
+    _closed: bool
+
     changed = QtCore.Signal()
     progress_changed = QtCore.Signal()
 
@@ -197,7 +212,7 @@ class ModelManager(QtCore.QObject):
         self.queue = []
         self.active = None
         self.progress = ("", 0, None)
-        self._pull: _Pull | None = None
+        self._pull = None
         self._closed = False
 
     def is_ready(self, *, model_name: str) -> bool:

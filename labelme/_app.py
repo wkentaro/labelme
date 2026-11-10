@@ -249,6 +249,21 @@ def _try_load_config(
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    _label_list_menu_origin: QtCore.QPoint | None
+    _save_revision: int
+    _auto_save_path: str | None
+    _save_writer: SaveWriter
+    _image_prefetcher: ImagePrefetcher
+    _model_manager: ModelManager
+    _osam_worker: _automation.OsamWorker
+    _ai_text_job: _AiTextJob | None
+    _ai_status_job: object
+    _ai_status_started_at: float
+    _ai_status_announced: set[str]
+    _ai_status_timer: QtCore.QTimer
+    _hidden_annotated_paths: set[str]
+    _window_state: QtCore.QSettings
+
     _config_file: Path | None
     _config: dict
     _config_overrides: dict
@@ -313,7 +328,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_dialog = self._make_label_dialog(label_history=None)
 
         self._prev_opened_dir = None
-        self._label_list_menu_origin: QtCore.QPoint | None = None
+        self._label_list_menu_origin = None
         self._docks = self._setup_dock_widgets()
 
         self.setAcceptDrops(True)
@@ -388,7 +403,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
-        self._auto_save_path: str | None = None
+        self._auto_save_path = None
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
         self._image_prefetcher = ImagePrefetcher()
@@ -399,12 +414,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.activity_changed.connect(self._on_ai_activity_changed)
         self._osam_worker.set_device(device=self._config["ai"]["device"])
         self._canvas_widgets.canvas.set_osam_worker(worker=self._osam_worker)
-        self._ai_text_job: _AiTextJob | None = None
+        self._ai_text_job = None
         # Kept while idle, so a job retried on CPU keeps its clock and what
         # was announced for it.
-        self._ai_status_job: object = None
+        self._ai_status_job = None
         self._ai_status_started_at = 0.0
-        self._ai_status_announced: set[str] = set()  # "task" and slow stages
+        self._ai_status_announced = set()  # "task" and slow stages
         self._ai_status_timer = QtCore.QTimer(self)
         self._ai_status_timer.setInterval(1000)
         self._ai_status_timer.timeout.connect(self._on_ai_activity_changed)
@@ -1252,7 +1267,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Annotated images the search box hides, found when the list is
         # rebuilt and kept current by saves and deletions; the visible ones
         # are counted from their check marks.
-        self._hidden_annotated_paths: set[str] = set()
+        self._hidden_annotated_paths = set()
         self._file_list_root_prefix = None
         self._file_search_pattern = re.compile("")
         self._prev_image_path = None

@@ -22,6 +22,8 @@ class ImageListDelegate(QtWidgets.QStyledItemDelegate):
     shows only the file name; its text and tooltip keep the full path.
     """
 
+    _show_folders: bool
+
     def __init__(self, *, parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
         self._show_folders = False

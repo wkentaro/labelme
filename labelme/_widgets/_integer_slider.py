@@ -7,6 +7,9 @@ from PySide6 import QtWidgets
 
 
 class IntegerSlider(QtWidgets.QWidget):
+    _slider: QtWidgets.QSlider
+    _value_label: QtWidgets.QLabel
+
     value_changed = QtCore.Signal(int)
 
     def __init__(

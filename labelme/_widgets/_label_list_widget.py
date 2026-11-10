@@ -202,7 +202,7 @@ class _ItemModel(QtGui.QStandardItemModel):
         /,
         parent: QtCore.QModelIndex
         | QtCore.QPersistentModelIndex = _INVALID_MODEL_INDEX,
-    ) -> bool:  # noqa: GR001 -- PySide6 declares `parent` positional-or-keyword
+    ) -> bool:
         ret = super().removeRows(row, count, parent)
         self.item_dropped.emit()
         return ret
@@ -216,6 +216,9 @@ class _ItemSnapshot(NamedTuple):
 
 
 class LabelListWidget(QtWidgets.QListView):
+    _model: _ItemModel
+    _press_snapshot: tuple[_ItemSnapshot, ...]
+
     item_double_clicked = QtCore.Signal(LabelListWidgetItem)
     item_selection_changed = QtCore.Signal(list, list)
 
@@ -224,7 +227,7 @@ class LabelListWidget(QtWidgets.QListView):
 
         self.setWindowFlags(Qt.WindowType.Window)
 
-        self._model: _ItemModel = _ItemModel()
+        self._model = _ItemModel()
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)
 
@@ -240,7 +243,7 @@ class LabelListWidget(QtWidgets.QListView):
         self.doubleClicked.connect(self._on_item_double_clicked)
         self.selectionModel().selectionChanged.connect(self._on_item_selection_changed)
 
-        self._press_snapshot: tuple[_ItemSnapshot, ...] = ()
+        self._press_snapshot = ()
 
     @override
     def mousePressEvent(self, e: QtGui.QMouseEvent, /) -> None:

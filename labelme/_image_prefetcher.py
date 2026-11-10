@@ -68,11 +68,14 @@ def _stat_identity(*, path: str) -> tuple[int, int, int, int]:
 class ImagePrefetcher:
     """Decodes the images next to the current one off the GUI thread."""
 
+    _executor: ThreadPoolExecutor
+    _decoded: dict[str, Future[_Decoded]]
+
     def __init__(self) -> None:
         self._executor = ThreadPoolExecutor(
             max_workers=2, thread_name_prefix="image-prefetch"
         )
-        self._decoded: dict[str, Future[_Decoded]] = {}
+        self._decoded = {}
 
     def retain(
         self,

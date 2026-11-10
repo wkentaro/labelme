@@ -453,7 +453,7 @@ class _LongSectionTranslator(QtCore.QTranslator):
         /,
         disambiguation: str | None = None,
         n: int = -1,
-    ) -> str | None:  # noqa: GR001 -- overrides Qt's signature
+    ) -> str | None:
         return self.title if source_text == "Continue between images" else None
 
 

@@ -10,6 +10,11 @@ from .._utils import new_icon
 
 
 class EmptyStateWidget(QtWidgets.QWidget):
+    _icon: QtGui.QIcon
+    _icon_label: QtWidgets.QLabel
+    _open_file: QtWidgets.QPushButton
+    _open_folder: QtWidgets.QPushButton
+
     def __init__(
         self,
         *,

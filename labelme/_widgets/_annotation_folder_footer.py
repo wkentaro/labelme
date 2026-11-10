@@ -32,6 +32,16 @@ class _ElidedLabel(QtWidgets.QLabel):
 class AnnotationFolderFooter(QtWidgets.QWidget):
     # Colors come from palette roles, never a stylesheet, so the row follows a
     # live color-scheme change (see AiTextToAnnotationWidget).
+    _folder: Path | None
+    _missing: str | None
+    _count: tuple[int, int]
+    _on_next_to_images_callback: Callable[[], None]
+    _count_label: QtWidgets.QLabel
+    _icon: QtWidgets.QLabel
+    _text: _ElidedLabel
+    _next_to_images: QtGui.QAction
+    _menu: QtWidgets.QMenu
+
     def __init__(
         self,
         *,
@@ -41,8 +51,8 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
     ) -> None:
         super().__init__(parent=parent)
         self.setAccessibleName(self.tr("Annotation Folder"))
-        self._folder: Path | None = None
-        self._missing: str | None = None
+        self._folder = None
+        self._missing = None
         self._count = (0, 0)
         self._on_next_to_images_callback = on_next_to_images
 

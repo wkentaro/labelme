@@ -14,6 +14,8 @@ from ._model_picker import ModelPicker
 
 
 class AiAssistedAnnotationWidget(QtWidgets.QWidget):
+    _polygon_detail_slider: IntegerSlider
+
     manage_models_requested = QtCore.Signal()
     download_requested = QtCore.Signal(str)
 

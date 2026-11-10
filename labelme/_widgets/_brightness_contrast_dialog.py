@@ -14,6 +14,9 @@ _NEUTRAL: Final = 100
 
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
+    _publish: Callable[[QImage], None]
+    _img: PIL.Image.Image
+
     slider_brightness: QtWidgets.QSlider
     slider_contrast: QtWidgets.QSlider
 

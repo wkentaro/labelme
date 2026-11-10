@@ -127,6 +127,8 @@ class _QAppProxy:
     """Proxy that returns the existing QApplication from constructor calls
     and forwards static/class method access to the real QApplication class."""
 
+    _app: QApplication
+
     def __init__(self, *, existing_app: QApplication) -> None:
         self._app = existing_app
 

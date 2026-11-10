@@ -31,10 +31,13 @@ def apply_color_theme(*, theme: str) -> None:
 class _TintedSvgIconEngine(QtGui.QIconEngine):
     # Substitutes fill="currentColor" with the palette text color at paint time, so
     # icons re-tint live on a theme change instead of baking a fixed color.
+    _svg: bytes
+    _pixmaps: dict[tuple[int, int, str], QtGui.QPixmap]
+
     def __init__(self, *, svg: bytes) -> None:
         super().__init__()
         self._svg = svg
-        self._pixmaps: dict[tuple[int, int, str], QtGui.QPixmap] = {}
+        self._pixmaps = {}
 
     @staticmethod
     def _tint_color(*, mode: QtGui.QIcon.Mode) -> QtGui.QColor:

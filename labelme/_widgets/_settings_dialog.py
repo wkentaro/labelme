@@ -126,16 +126,22 @@ class _PlainTextEdit(QtWidgets.QPlainTextEdit):
 
 
 class _LabelFlagsEditor(QtWidgets.QWidget):
+    _value: dict[str, list[str]] | None
+    _accessible_note: str
+    _rows: list[tuple[QtWidgets.QLineEdit, _PlainTextEdit, QtWidgets.QPushButton]]
+    _committed_rows: tuple[tuple[str, str], ...]
+    _grid: QtWidgets.QGridLayout
+    _error: QtWidgets.QLabel
+    _add_button: QtWidgets.QPushButton
+
     value_changed = QtCore.Signal(object)
 
     def __init__(self) -> None:
         super().__init__()
-        self._value: dict[str, list[str]] | None = None
+        self._value = None
         self._accessible_note = ""
-        self._rows: list[
-            tuple[QtWidgets.QLineEdit, _PlainTextEdit, QtWidgets.QPushButton]
-        ] = []
-        self._committed_rows: tuple[tuple[str, str], ...] = ()
+        self._rows = []
+        self._committed_rows = ()
         self._grid = QtWidgets.QGridLayout()
         self._grid.setColumnStretch(0, 1)
         self._grid.setColumnStretch(1, 2)
@@ -282,6 +288,8 @@ class _LabelFlagsEditor(QtWidgets.QWidget):
 
 
 class _ColorSwatchButton(QtWidgets.QPushButton):
+    _accessible_note: str
+
     _rgb: tuple[int, int, int] = (0, 0, 0)
 
     def __init__(self) -> None:
@@ -338,6 +346,22 @@ class _SettingHighlight(QtWidgets.QWidget):
 
 
 class _SettingsPage(QtWidgets.QWidget):
+    _navigation: QtWidgets.QListWidget
+    _sections: list[tuple[str, QtGui.QIcon]]
+    _navigation_padding: int
+    _search: QtWidgets.QLineEdit
+    _status: QtWidgets.QLabel
+    _scroll_area: QtWidgets.QScrollArea
+    _content: QtWidgets.QWidget
+    _groups: list[QtWidgets.QGroupBox]
+    _scrolling_to_group: bool
+    _editors: dict[tuple[str, ...], QtWidgets.QWidget]
+    _search_index: list[tuple[Setting, tuple[str, ...], str]]
+    _destination: QtWidgets.QWidget | None
+    _highlight: _SettingHighlight
+    _announcement_timer: QtCore.QTimer
+    _announcement_message: str
+
     def __init__(
         self,
         *,
@@ -418,7 +442,7 @@ class _SettingsPage(QtWidgets.QWidget):
         self._groups = [group_box for _title, _icon, group_box in groups]
         self._scrolling_to_group = False
         self._editors = editors
-        self._search_index: list[tuple[Setting, tuple[str, ...], str]] = []
+        self._search_index = []
         settings_by_path = {setting.key_path: setting for setting in SETTINGS}
         for key_path, editor in editors.items():
             setting = settings_by_path[key_path]
@@ -452,7 +476,7 @@ class _SettingsPage(QtWidgets.QWidget):
                 )
             )
         # The editor the last activated search result led to, or None.
-        self._destination: QtWidgets.QWidget | None = None
+        self._destination = None
         self._highlight = _SettingHighlight(content)
         self._highlight.hide()
         self._highlight.setAttribute(
@@ -778,6 +802,12 @@ class _SettingsPage(QtWidgets.QWidget):
 
 
 class SettingsDialog(QtWidgets.QDialog):
+    _config: dict
+    _apply_setting: _ApplySetting
+    _preview_shape_color: _PreviewShapeColor
+    _editors: dict[tuple[str, ...], QtWidgets.QWidget]
+    _page: _SettingsPage
+
     def __init__(
         self,
         *,
@@ -794,7 +824,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self._config = config
         self._apply_setting = apply_setting
         self._preview_shape_color = preview_shape_color
-        self._editors: dict[tuple[str, ...], QtWidgets.QWidget] = {}
+        self._editors = {}
 
         GROUP_ICONS: typing.Final[dict[Group, str]] = {
             "Appearance and language": "phosphor/palette.svg",
