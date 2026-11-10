@@ -1643,6 +1643,10 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def mark_dirty(self) -> None:
+        # The Flags dock stays clickable with no Image open; nothing can be
+        # dirty then.
+        if self._image_path is None:
+            return
         self._save_revision += 1
         self._sync_edit_actions()
         self._is_changed = True
@@ -1987,6 +1991,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def reset_state(self) -> None:
         self._auto_save_path = None
         self._docks.label_list.clear()
+        self._load_flags(flags={}, widget=self._docks.flag_list)
         self._annotation = None
         self._image = QtGui.QImage()
         self._image_path = None
