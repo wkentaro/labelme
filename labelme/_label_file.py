@@ -8,6 +8,7 @@ import os
 import stat
 import time
 import typing
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from pathlib import PureWindowsPath
@@ -475,9 +476,11 @@ def _replace_json_file(*, filename: str, payload: dict[str, Any]) -> None:
         )
     except FileNotFoundError:
         existing_mode = None
-    temporary_path = Path(f"{filename}.tmp")
+    # Unique per write: another process saving this file must not share it.
+    # Not derived from the file's name, which may already be at the length limit.
+    temporary_path = Path(filename).with_name(f".{uuid.uuid4().hex}.tmp")
     try:
-        with open(temporary_path, "w", encoding="utf-8") as f:
+        with open(temporary_path, "x", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
         if existing_mode is not None:
             os.chmod(temporary_path, existing_mode)

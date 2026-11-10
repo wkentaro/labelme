@@ -678,6 +678,30 @@ def test_write_label_file_atomically_replaces_existing_file(
     assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
 
 
+def test_write_label_file_leaves_another_writers_temporary_file(
+    *,
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+) -> None:
+    others_temporary = existing_label_file.with_name(f"{existing_label_file.name}.tmp")
+    others_temporary.write_text("half written by another process", encoding="utf-8")
+
+    write_label_file(
+        filename=str(existing_label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert others_temporary.read_text(encoding="utf-8") == (
+        "half written by another process"
+    )
+    assert json.loads(existing_label_file.read_text(encoding="utf-8"))["imagePath"] == (
+        "new.jpg"
+    )
+
+
 @pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
 def test_write_label_file_preserves_existing_file_mode(
     *,
