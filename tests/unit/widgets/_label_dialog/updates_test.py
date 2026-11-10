@@ -6,7 +6,7 @@ from pytestqt.qtbot import QtBot
 from labelme._widgets._label_dialog import LabelDialog
 
 
-def _labels(dialog: LabelDialog, /) -> set[str]:
+def _labels(*, dialog: LabelDialog) -> set[str]:
     label_list = dialog.label_list
     return {label_list.item(i).text() for i in range(label_list.count())}
 
@@ -20,12 +20,12 @@ def dialog(*, qtbot: QtBot) -> LabelDialog:
 
 def test_set_predefined_labels_adds_new_label(*, dialog: LabelDialog) -> None:
     dialog.set_predefined_labels(labels=["cat", "dog", "bird"])
-    assert _labels(dialog) == {"cat", "dog", "bird"}
+    assert _labels(dialog=dialog) == {"cat", "dog", "bird"}
 
 
 def test_set_predefined_labels_removes_unused_label(*, dialog: LabelDialog) -> None:
     dialog.set_predefined_labels(labels=["cat"])
-    assert _labels(dialog) == {"cat"}
+    assert _labels(dialog=dialog) == {"cat"}
 
 
 def test_set_predefined_labels_preserves_session_history(
@@ -33,7 +33,7 @@ def test_set_predefined_labels_preserves_session_history(
 ) -> None:
     dialog.add_label_history(label="ad-hoc")
     dialog.set_predefined_labels(labels=["cat", "dog", "bird"])
-    assert _labels(dialog) == {"cat", "dog", "bird", "ad-hoc"}
+    assert _labels(dialog=dialog) == {"cat", "dog", "bird", "ad-hoc"}
 
 
 def test_removed_predefined_label_kept_when_used_this_session(
@@ -42,7 +42,7 @@ def test_removed_predefined_label_kept_when_used_this_session(
 ) -> None:
     dialog.add_label_history(label="dog")
     dialog.set_predefined_labels(labels=["cat"])
-    assert _labels(dialog) == {"cat", "dog"}
+    assert _labels(dialog=dialog) == {"cat", "dog"}
 
 
 def test_completer_model_stays_bound_after_update(*, dialog: LabelDialog) -> None:
@@ -56,7 +56,7 @@ def test_set_predefined_labels_with_selected_item_does_not_raise(
 ) -> None:
     dialog.label_list.setCurrentRow(0)
     dialog.set_predefined_labels(labels=["cat", "dog", "bird"])
-    assert _labels(dialog) == {"cat", "dog", "bird"}
+    assert _labels(dialog=dialog) == {"cat", "dog", "bird"}
 
 
 def test_set_predefined_labels_empty_keeps_only_session_history(
@@ -65,13 +65,13 @@ def test_set_predefined_labels_empty_keeps_only_session_history(
 ) -> None:
     dialog.add_label_history(label="ad-hoc")
     dialog.set_predefined_labels(labels=[])
-    assert _labels(dialog) == {"ad-hoc"}
+    assert _labels(dialog=dialog) == {"ad-hoc"}
 
 
 def test_update_flags_skips_an_invalid_pattern(*, qtbot: QtBot) -> None:
     dialog = LabelDialog(labels=["cat"], flags={"cat(": ["occluded"]})
     qtbot.addWidget(dialog)
-    dialog._update_flags("cat")
+    dialog._update_flags(text="cat")
     assert dialog._flag_checkboxes == {}
 
 
@@ -83,5 +83,5 @@ def test_update_flags_applies_a_valid_pattern_despite_an_invalid_one(
         labels=["cat"], flags={"cat(": ["broken"], "cat": ["occluded"]}
     )
     qtbot.addWidget(dialog)
-    dialog._update_flags("cat")
+    dialog._update_flags(text="cat")
     assert list(dialog._flag_checkboxes) == ["occluded"]

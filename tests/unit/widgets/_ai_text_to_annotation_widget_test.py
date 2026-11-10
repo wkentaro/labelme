@@ -49,6 +49,6 @@ def test_keycap_outline_stands_out_from_the_field(*, base: str, text: str) -> No
     palette.setColor(QtGui.QPalette.ColorRole.Base, QtGui.QColor(base))
     palette.setColor(QtGui.QPalette.ColorRole.Text, QtGui.QColor(text))
 
-    outline = _keycap_outline(palette)
+    outline = _keycap_outline(palette=palette)
 
     assert abs(outline.lightness() - QtGui.QColor(base).lightness()) > 60

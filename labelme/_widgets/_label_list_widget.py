@@ -5,6 +5,7 @@ from collections.abc import Iterator
 from typing import Final
 from typing import NamedTuple
 from typing import cast
+from typing import override
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -35,10 +36,10 @@ _INVALID_MODEL_INDEX: Final = QtCore.QModelIndex()
 @functools.cache
 def _lock_icon() -> QtGui.QIcon:
     # Shared by every locked row, so the SVG is read and rasterized once.
-    return _utils.new_icon("phosphor/lock.svg")
+    return _utils.new_icon(name="phosphor/lock.svg")
 
 
-def _is_locked_row(index: QtCore.QModelIndex | QtCore.QPersistentModelIndex, /) -> bool:
+def _is_locked_row(*, index: QtCore.QModelIndex | QtCore.QPersistentModelIndex) -> bool:
     # The delegate also serves the unique label list, whose rows hold no Shape.
     shape = index.data(Qt.ItemDataRole.UserRole)
     return isinstance(shape, Shape) and shape.locked
@@ -49,6 +50,7 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
     # The lock's slot; the thin space keeps the icon off the name.
     _LOCK_PAD: Final = "\u2003\u2009"
 
+    @override
     def sizeHint(
         self,
         option: QtWidgets.QStyleOptionViewItem,
@@ -60,12 +62,13 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
             size.setWidth(
                 size.width() + option.fontMetrics.horizontalAdvance(self._PAD)
             )
-        if _is_locked_row(index):
+        if _is_locked_row(index=index):
             size.setWidth(
                 size.width() + option.fontMetrics.horizontalAdvance(self._LOCK_PAD)
             )
         return size
 
+    @override
     def paint(
         self,
         painter: QtGui.QPainter,
@@ -80,7 +83,7 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
 
         opt = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(opt, index)
-        locked = _is_locked_row(index)
+        locked = _is_locked_row(index=index)
         widget_style = (
             opt.widget.style() if opt.widget else QtWidgets.QApplication.style()
         )
@@ -191,6 +194,7 @@ class LabelListWidgetItem(QtGui.QStandardItem):
 class _ItemModel(QtGui.QStandardItemModel):
     item_dropped = QtCore.Signal()
 
+    @override
     def removeRows(
         self,
         row: int,
@@ -198,7 +202,7 @@ class _ItemModel(QtGui.QStandardItemModel):
         /,
         parent: QtCore.QModelIndex
         | QtCore.QPersistentModelIndex = _INVALID_MODEL_INDEX,
-    ) -> bool:  # noqa: GR001 -- PySide6 declares `parent` positional-or-keyword
+    ) -> bool:
         ret = super().removeRows(row, count, parent)
         self.item_dropped.emit()
         return ret
@@ -212,6 +216,9 @@ class _ItemSnapshot(NamedTuple):
 
 
 class LabelListWidget(QtWidgets.QListView):
+    _model: _ItemModel
+    _press_snapshot: tuple[_ItemSnapshot, ...]
+
     item_double_clicked = QtCore.Signal(LabelListWidgetItem)
     item_selection_changed = QtCore.Signal(list, list)
 
@@ -220,7 +227,7 @@ class LabelListWidget(QtWidgets.QListView):
 
         self.setWindowFlags(Qt.WindowType.Window)
 
-        self._model: _ItemModel = _ItemModel()
+        self._model = _ItemModel()
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)
 
@@ -236,8 +243,9 @@ class LabelListWidget(QtWidgets.QListView):
         self.doubleClicked.connect(self._on_item_double_clicked)
         self.selectionModel().selectionChanged.connect(self._on_item_selection_changed)
 
-        self._press_snapshot: tuple[_ItemSnapshot, ...] = ()
+        self._press_snapshot = ()
 
+    @override
     def mousePressEvent(self, e: QtGui.QMouseEvent, /) -> None:
         self._press_snapshot = tuple(
             _ItemSnapshot(
@@ -248,6 +256,7 @@ class LabelListWidget(QtWidgets.QListView):
         )
         super().mousePressEvent(e)
 
+    @override
     def mouseReleaseEvent(self, e: QtGui.QMouseEvent, /) -> None:
         super().mouseReleaseEvent(e)
 
@@ -275,6 +284,7 @@ class LabelListWidget(QtWidgets.QListView):
 
         self._press_snapshot = ()
 
+    @override
     def dropEvent(self, e: QtGui.QDropEvent, /) -> None:
         # Qt's default drop rebuilds the dragged rows from MIME data, which
         # swaps every moved shape for a copy the canvas does not hold. Moving

@@ -956,7 +956,7 @@ def test_select_mask_shape_by_click(
     # of `_shape.is_hit_by_point`.
     mask_arr = np.zeros((40, 40), dtype=np.uint8)
     mask_arr[10:30, 10:30] = 1
-    mask_b64 = _utils.img_arr_to_b64(mask_arr)
+    mask_b64 = _utils.img_arr_to_b64(img_arr=mask_arr)
 
     raw_image_path = data_path / "raw/2011_000003.jpg"
     img_b64 = base64.b64encode(raw_image_path.read_bytes()).decode("utf-8")

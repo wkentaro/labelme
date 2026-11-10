@@ -22,8 +22,8 @@ def _get_shape_list_labels(*, win: MainWindow) -> list[str]:
 
 
 def _exec_clicking_role(
+    *,
     role: QtWidgets.QMessageBox.ButtonRole,
-    /,
 ) -> Callable[[QtWidgets.QMessageBox], int]:
     def _exec(msg_box: QtWidgets.QMessageBox) -> int:
         for button in msg_box.buttons():
@@ -88,7 +88,7 @@ def test_confirm_deletion_returns_true_when_delete_clicked(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "exec",
-        _exec_clicking_role(QtWidgets.QMessageBox.ButtonRole.DestructiveRole),
+        _exec_clicking_role(role=QtWidgets.QMessageBox.ButtonRole.DestructiveRole),
     )
 
     assert win._confirm_deletion(message="delete?") is True
@@ -105,7 +105,7 @@ def test_confirm_deletion_returns_false_when_cancel_clicked(
     monkeypatch.setattr(
         QtWidgets.QMessageBox,
         "exec",
-        _exec_clicking_role(QtWidgets.QMessageBox.ButtonRole.RejectRole),
+        _exec_clicking_role(role=QtWidgets.QMessageBox.ButtonRole.RejectRole),
     )
 
     assert win._confirm_deletion(message="delete?") is False
@@ -137,7 +137,7 @@ def test_delete_shapes_without_confirmation_and_undo(
     canvas.shapes[0].group_id = 7
     canvas.shapes[0].description = "Restore this annotation"
     canvas.shapes[0].flags = {"reviewed": True}
-    win._commit_shapes(canvas.shapes)
+    win._commit_shapes(shapes=canvas.shapes)
     label_file = tmp_path / Path(ANNOTATED_FILE_NAME).name
     qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     with open(label_file) as f:

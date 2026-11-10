@@ -97,21 +97,21 @@ def test_project_point_on_line_zero_length_returns_point() -> None:
 
 @pytest.mark.usefixtures("qtbot")
 def test_new_icon_returns_qicon() -> None:
-    icon = new_icon("icon-256")
+    icon = new_icon(name="icon-256")
     assert isinstance(icon, QtGui.QIcon)
     assert not icon.isNull()
 
 
 @pytest.mark.usefixtures("qtbot")
 def test_new_icon_with_explicit_png_suffix() -> None:
-    icon = new_icon("icon-256.png")
+    icon = new_icon(name="icon-256.png")
     assert isinstance(icon, QtGui.QIcon)
     assert not icon.isNull()
 
 
 @pytest.mark.usefixtures("qtbot")
 def test_new_icon_with_path_that_includes_subdir() -> None:
-    icon = new_icon("phosphor/info.svg")
+    icon = new_icon(name="phosphor/info.svg")
     assert isinstance(icon, QtGui.QIcon)
     assert not icon.isNull()
 
@@ -122,9 +122,8 @@ def test_new_icon_with_path_that_includes_subdir() -> None:
 
 
 def _set_window_text(
-    app: QtWidgets.QApplication,
-    /,
     *,
+    app: QtWidgets.QApplication,
     color: QtGui.QColor,
     group: QtGui.QPalette.ColorGroup = QtGui.QPalette.ColorGroup.Normal,
 ) -> None:
@@ -139,7 +138,7 @@ def test_tinted_svg_engine_renders_window_text_color(
 ) -> None:
     original = qapp.palette()
     try:
-        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
+        _set_window_text(app=qapp, color=QtGui.QColor(255, 0, 0))
         svg = (
             b'<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4">'
             b'<rect width="4" height="4" fill="currentColor"/></svg>'
@@ -186,9 +185,9 @@ def test_tinted_svg_engine_dims_disabled_icon_by_palette_alpha(
     original = qapp.palette()
     try:
         # macOS palettes: Normal WindowText #d8000000, Disabled #3f000000.
-        _set_window_text(qapp, color=QtGui.QColor("#d8000000"))
+        _set_window_text(app=qapp, color=QtGui.QColor("#d8000000"))
         _set_window_text(
-            qapp,
+            app=qapp,
             color=QtGui.QColor("#3f000000"),
             group=QtGui.QPalette.ColorGroup.Disabled,
         )
@@ -214,10 +213,12 @@ def test_new_icon_tints_monochrome_icon_to_palette(
 ) -> None:
     original = qapp.palette()
     try:
-        icon = new_icon("phosphor/polygon.svg")  # authored with fill="currentColor"
-        _set_window_text(qapp, color=QtGui.QColor(255, 0, 0))
+        icon = new_icon(
+            name="phosphor/polygon.svg"
+        )  # authored with fill="currentColor"
+        _set_window_text(app=qapp, color=QtGui.QColor(255, 0, 0))
         red = icon.pixmap(QtCore.QSize(24, 24)).toImage()
-        _set_window_text(qapp, color=QtGui.QColor(0, 0, 255))
+        _set_window_text(app=qapp, color=QtGui.QColor(0, 0, 255))
         blue = icon.pixmap(QtCore.QSize(24, 24)).toImage()
         assert red != blue
     finally:
@@ -238,70 +239,70 @@ def test_bundled_svg_icons_are_authored_in_current_color() -> None:
 def test_new_action_returns_qaction(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="Open")
+    action = new_action(parent=parent, text="Open")
     assert isinstance(action, QtGui.QAction)
 
 
 def test_new_action_text(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="Save")
+    action = new_action(parent=parent, text="Save")
     assert action.text() == "Save"
 
 
 def test_new_action_enabled_by_default(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X")
+    action = new_action(parent=parent, text="X")
     assert action.isEnabled()
 
 
 def test_new_action_disabled(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", enabled=False)
+    action = new_action(parent=parent, text="X", enabled=False)
     assert not action.isEnabled()
 
 
 def test_new_action_not_checkable_by_default(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X")
+    action = new_action(parent=parent, text="X")
     assert not action.isCheckable()
 
 
 def test_new_action_checkable(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", checkable=True)
+    action = new_action(parent=parent, text="X", checkable=True)
     assert action.isCheckable()
 
 
 def test_new_action_not_checked_by_default(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", checkable=True)
+    action = new_action(parent=parent, text="X", checkable=True)
     assert not action.isChecked()
 
 
 def test_new_action_checked(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", checkable=True, checked=True)
+    action = new_action(parent=parent, text="X", checkable=True, checked=True)
     assert action.isChecked()
 
 
 def test_new_action_shortcut_string(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", shortcut="Ctrl+S")
+    action = new_action(parent=parent, text="X", shortcut="Ctrl+S")
     assert action.shortcut().toString() == "Ctrl+S"
 
 
 def test_new_action_shortcut_list(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", shortcut=["Ctrl+S", "Ctrl+W"])
+    action = new_action(parent=parent, text="X", shortcut=["Ctrl+S", "Ctrl+W"])
     keys = [s.toString() for s in action.shortcuts()]
     assert "Ctrl+S" in keys
     assert "Ctrl+W" in keys
@@ -310,7 +311,7 @@ def test_new_action_shortcut_list(*, qtbot: QtBot) -> None:
 def test_new_action_shortcut_tuple(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", shortcut=("Ctrl+S", "Ctrl+W"))
+    action = new_action(parent=parent, text="X", shortcut=("Ctrl+S", "Ctrl+W"))
     keys = [s.toString() for s in action.shortcuts()]
     assert "Ctrl+S" in keys
     assert "Ctrl+W" in keys
@@ -319,7 +320,7 @@ def test_new_action_shortcut_tuple(*, qtbot: QtBot) -> None:
 def test_new_action_tip(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", tip="My tip")
+    action = new_action(parent=parent, text="X", tip="My tip")
     assert action.toolTip() == "My tip"
     assert action.statusTip() == "My tip"
 
@@ -329,7 +330,7 @@ def test_new_action_no_tip_by_default(*, qtbot: QtBot) -> None:
     # statusTip() returns empty string.
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X")
+    action = new_action(parent=parent, text="X")
     assert action.toolTip() == "X"
     assert action.statusTip() == ""
 
@@ -338,7 +339,7 @@ def test_new_action_with_icon_sets_icon_text(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     # Use an icon file that actually exists so Qt loads it as non-null.
-    action = new_action(parent, text="Save File", icon="ai-points.svg")
+    action = new_action(parent=parent, text="Save File", icon="ai-points.svg")
     # multi-word labels are presented so words are not shown on a single unbroken line
     icon_text = action.iconText()
     assert icon_text != "Save File"  # must not be the original single-line text
@@ -351,7 +352,7 @@ def test_new_action_slot(*, qtbot: QtBot) -> None:
     calls: list[bool] = []
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="X", slot=lambda: calls.append(True))
+    action = new_action(parent=parent, text="X", slot=lambda: calls.append(True))
     action.trigger()
     assert calls == [True]
 
@@ -365,7 +366,7 @@ def test_new_separator_renders_as_menu_separator(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     menu = QtWidgets.QMenu(parent)
-    menu.addActions([QtGui.QAction("Cut", parent), new_separator(parent)])
+    menu.addActions([QtGui.QAction("Cut", parent), new_separator(parent=parent)])
     assert [a.isSeparator() for a in menu.actions()] == [False, True]
 
 
@@ -374,7 +375,7 @@ def test_new_separator_survives_menu_clear(*, qtbot: QtBot) -> None:
     # belong to the caller rather than to the menu that clear() empties.
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    separator = new_separator(parent)
+    separator = new_separator(parent=parent)
     menu = QtWidgets.QMenu(parent)
     menu.addAction(separator)
     menu.clear()
@@ -399,13 +400,13 @@ def test_modifier_text_follows_platform(
     *, modifiers: QtCore.Qt.KeyboardModifier, macos: str, other: str
 ) -> None:
     expected = macos if sys.platform == "darwin" else other
-    assert modifier_text(modifiers) == expected
+    assert modifier_text(modifiers=modifiers) == expected
 
 
 def test_new_action_keeps_translated_line_break_out_of_menu(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="図形を\n編集", icon="phosphor/cursor.svg")
+    action = new_action(parent=parent, text="図形を\n編集", icon="phosphor/cursor.svg")
     assert action.text() == "図形を編集"
     assert action.iconText() == "図形を\n編集"
 
@@ -414,7 +415,7 @@ def test_new_action_shows_toolbar_text_on_the_toolbar(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
     action = new_action(
-        parent,
+        parent=parent,
         text="&Previous Image",
         toolbar_text="Previous",
         icon="phosphor/arrow-fat-left.svg",
@@ -426,7 +427,7 @@ def test_new_action_shows_toolbar_text_on_the_toolbar(*, qtbot: QtBot) -> None:
 def test_new_action_drops_cjk_mnemonic_from_toolbar_label(*, qtbot: QtBot) -> None:
     parent = QtWidgets.QWidget()
     qtbot.addWidget(parent)
-    action = new_action(parent, text="保存(&S)", icon="phosphor/floppy-disk.svg")
+    action = new_action(parent=parent, text="保存(&S)", icon="phosphor/floppy-disk.svg")
     assert action.text() == "保存(&S)"
     assert action.iconText() == "保存"
 
@@ -445,7 +446,7 @@ def test_new_action_drops_cjk_mnemonic_from_toolbar_label(*, qtbot: QtBot) -> No
     ],
 )
 def test_toolbar_label_wraps_to_two_balanced_lines(*, text: str, label: str) -> None:
-    assert _toolbar_label(text) == label
+    assert _toolbar_label(text=text) == label
 
 
 @pytest.mark.parametrize(
@@ -457,7 +458,7 @@ def test_toolbar_label_wraps_to_two_balanced_lines(*, text: str, label: str) -> 
     ],
 )
 def test_toolbar_label_stays_on_one_line_without_wrap(*, text: str, label: str) -> None:
-    assert _toolbar_label(text, wrap=False) == label
+    assert _toolbar_label(text=text, wrap=False) == label
 
 
 @pytest.mark.parametrize(

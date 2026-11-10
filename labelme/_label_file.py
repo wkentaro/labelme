@@ -158,7 +158,7 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
                 f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
             )
         try:
-            mask = _utils.img_b64_to_arr(shape_json_obj["mask"]).astype(bool)
+            mask = _utils.img_b64_to_arr(img_b64=shape_json_obj["mask"]).astype(bool)
         except (OSError, ValueError) as e:
             raise ValueError(f"mask must be base64-encoded PNG: {e}") from e
 
@@ -202,7 +202,7 @@ def _dump_shape_to_json_obj(*, shape: ShapeDict) -> dict[str, Any]:
         flags=shape["flags"],
         mask=None
         if shape["mask"] is None
-        else _utils.img_arr_to_b64(shape["mask"].astype(np.uint8)),
+        else _utils.img_arr_to_b64(img_arr=shape["mask"].astype(np.uint8)),
     )
     # Written only when set, so files without locked shapes stay unchanged.
     if shape["locked"]:
@@ -289,8 +289,8 @@ def read_image_file(*, filename: str, max_decode_mb: int | None = None) -> bytes
 
 def _read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
     t_start = time.time()
-    with _imread(filename, max_decode_mb=max_decode_mb) as image_pil:
-        oriented: PIL.Image.Image = _utils.apply_exif_orientation(image_pil)
+    with _imread(filename=filename, max_decode_mb=max_decode_mb) as image_pil:
+        oriented: PIL.Image.Image = _utils.apply_exif_orientation(image=image_pil)
 
         ext = Path(filename).suffix.lower()
         if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
@@ -332,7 +332,7 @@ def _check_image_dimensions(
         isinstance(expected_width, bool) or not isinstance(expected_width, int)
     ):
         raise TypeError(f"imageWidth must be int: {expected_width}")
-    actual_w, actual_h = _utils.img_data_to_pil(image_data).size
+    actual_w, actual_h = _utils.img_data_to_pil(img_data=image_data).size
     if expected_height is not None and expected_height != actual_h:
         raise ValueError(
             f"imageHeight mismatch: declared={expected_height}, actual={actual_h}"
@@ -347,13 +347,13 @@ def read_label_file_image_path(*, filename: str) -> str:
     # The recorded Image path is relative to the Annotation File.
     try:
         with open(filename, encoding="utf-8") as f:
-            return _image_path_from_raw(json.load(f))
+            return _image_path_from_raw(raw=json.load(f))
     # RuntimeError covers RecursionError from deeply nested JSON.
     except (OSError, KeyError, TypeError, ValueError, RuntimeError) as e:
         raise LabelFileReadError(f"failed to load {filename!r}: {e}") from e
 
 
-def _image_path_from_raw(raw: dict[str, Any], /) -> str:
+def _image_path_from_raw(*, raw: dict[str, Any]) -> str:
     # Annotation Files saved on Windows carry backslashes.
     return PureWindowsPath(raw["imagePath"]).as_posix()
 
@@ -370,7 +370,7 @@ def read_label_file(
         if image_path_override is not None:
             # The caller knows where the Image is; the recorded path is stale.
             raw["imagePath"] = image_path_override
-        image_path = _image_path_from_raw(raw)
+        image_path = _image_path_from_raw(raw=raw)
         if raw["imageData"] is None:
             resolved_image_path = str(Path(filename).parent / image_path)
             try:
@@ -499,7 +499,7 @@ def _check_decodable(
         raise ImageTooLargeError(width=width, height=height, max_side=RASTER_MAX_SIDE)
 
 
-def _imread(filename: str, /, *, max_decode_mb: int | None) -> PIL.Image.Image:
+def _imread(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
     DISPLAYABLE_MODES: Final = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
 
     ext: str = Path(filename).suffix.lower()
@@ -524,11 +524,11 @@ def _imread(filename: str, /, *, max_decode_mb: int | None) -> PIL.Image.Image:
         if image_pil is not None:
             image_pil.close()
         if ext in (".tif", ".tiff"):
-            return _imread_tiff(filename, max_decode_mb=max_decode_mb)
+            return _imread_tiff(filename=filename, max_decode_mb=max_decode_mb)
         raise
 
 
-def _imread_tiff(filename: str, /, *, max_decode_mb: int | None) -> PIL.Image.Image:
+def _imread_tiff(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
     MULTI_CHANNEL_NDIM: Final = 3
     RGB_CHANNEL_COUNT: Final = 3
 
@@ -548,25 +548,25 @@ def _imread_tiff(filename: str, /, *, max_decode_mb: int | None) -> PIL.Image.Im
         img_arr = np.moveaxis(img_arr, 0, -1)
 
     if img_arr.ndim == _SINGLE_CHANNEL_NDIM:
-        img_arr_normalized = _normalize_to_uint8(img_arr)
+        img_arr_normalized = _normalize_to_uint8(arr=img_arr)
     elif img_arr.ndim == MULTI_CHANNEL_NDIM:
         if img_arr.shape[2] >= RGB_CHANNEL_COUNT:
             img_arr_normalized = np.stack(
                 [
-                    _normalize_to_uint8(img_arr[:, :, i])
+                    _normalize_to_uint8(arr=img_arr[:, :, i])
                     for i in range(RGB_CHANNEL_COUNT)
                 ],
                 axis=2,
             )
         else:
-            img_arr_normalized = _normalize_to_uint8(img_arr[:, :, 0])
+            img_arr_normalized = _normalize_to_uint8(arr=img_arr[:, :, 0])
     else:
         raise OSError(f"Unsupported image shape: {img_arr.shape}")
 
     return PIL.Image.fromarray(img_arr_normalized)
 
 
-def _normalize_to_uint8(arr: NDArray, /) -> NDArray[np.uint8]:
+def _normalize_to_uint8(*, arr: NDArray) -> NDArray[np.uint8]:
     arr = arr.astype(np.float64)
     finite = arr[np.isfinite(arr)]
     if finite.size == 0:

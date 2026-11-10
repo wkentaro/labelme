@@ -14,6 +14,9 @@ _NEUTRAL: Final = 100
 
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
+    _publish: Callable[[QImage], None]
+    _img: PIL.Image.Image
+
     slider_brightness: QtWidgets.QSlider
     slider_contrast: QtWidgets.QSlider
 
@@ -45,10 +48,10 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             slider.setSingleStep(2)
             slider.setPageStep(20)
             slider.setValue(_NEUTRAL)
-            readout = QtWidgets.QLabel(_as_percent(slider.value()))
+            readout = QtWidgets.QLabel(_as_percent(value=slider.value()))
             readout.setAlignment(Qt.AlignmentFlag.AlignRight)
             slider.valueChanged.connect(
-                lambda value, readout=readout: readout.setText(_as_percent(value))
+                lambda value, readout=readout: readout.setText(_as_percent(value=value))
             )
             slider.valueChanged.connect(lambda _value: self.apply())
             label = QtWidgets.QLabel(caption)
@@ -113,5 +116,5 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self._publish(qimage)
 
 
-def _as_percent(value: int, /) -> str:
+def _as_percent(*, value: int) -> str:
     return f"{value}%"

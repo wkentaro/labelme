@@ -51,7 +51,7 @@ def main() -> None:
         theta = np.linspace(0, 2 * np.pi, args.vertices, endpoint=False)
         points = np.column_stack((50 + 40 * np.cos(theta), 50 + 40 * np.sin(theta)))
         win._load_shapes(
-            [
+            shapes=[
                 Shape(
                     label=f"object-{i % args.labels}",
                     points=points + [i % 10 * 90, i // 10 * 90],

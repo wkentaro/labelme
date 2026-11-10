@@ -83,7 +83,7 @@ def test_resize_preserves_zoom_mode(
 ) -> None:
     win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
     qtbot.waitExposed(win)
-    win._switch_zoom_mode(mode)
+    win._switch_zoom_mode(mode=mode)
     canvas = win._canvas_widgets.canvas
     if mode == _ZoomMode.MANUAL_ZOOM:
         win._set_zoom(value=300, pos=None)
@@ -130,12 +130,12 @@ def test_navigation_recalculates_fit_mode(
         config_overrides={"keep_prev_scale": keep_prev_scale},
     )
     qtbot.waitExposed(win)
-    win._switch_zoom_mode(mode)
+    win._switch_zoom_mode(mode=mode)
     win._open_next_image()
     if keep_prev_scale:
         assert win._zoom_mode == mode
         _wait_for_fitted_image(qtbot=qtbot, win=win)
-    win._switch_zoom_mode(mode)
+    win._switch_zoom_mode(mode=mode)
     win.resize(win.width() + 150, win.height() + 100)
     _wait_for_fitted_image(qtbot=qtbot, win=win)
     win._open_prev_image()
@@ -462,7 +462,7 @@ def test_navigation_restores_fitted_view_position(
         config_overrides={"keep_prev_scale": keep_prev_scale},
     )
     qtbot.waitExposed(win)
-    win._switch_zoom_mode(mode)
+    win._switch_zoom_mode(mode=mode)
     canvas = win._canvas_widgets.canvas
     vertical_bar = win._canvas_widgets.scroll_bars[Qt.Orientation.Vertical]
     canvas.pan_view(step=QPointF(17, 23))
@@ -758,7 +758,9 @@ def test_ctrl_wheel_keeps_image_point_under_cursor(
     ) + QPointF(0.25, 0.75)
 
     def _get_image_point_under_cursor() -> QPointF:
-        return canvas.transform_widget_point_to_image(canvas.mapFrom(viewport, cursor))
+        return canvas.transform_widget_point_to_image(
+            point=canvas.mapFrom(viewport, cursor)
+        )
 
     before = _get_image_point_under_cursor()
     for _ in range(repetitions):
@@ -791,7 +793,7 @@ def test_percentage_entry_preserves_mode_and_updates_canvas(
     _win: MainWindow,
     mode: _ZoomMode,
 ) -> None:
-    _win._switch_zoom_mode(mode)
+    _win._switch_zoom_mode(mode=mode)
     widget = _win._canvas_widgets.zoom_widget
     widget.setFocus()
     widget.selectAll()
@@ -811,7 +813,7 @@ def _to_viewport(*, win: MainWindow, image_pos: QPointF) -> QPointF:
     canvas = win._canvas_widgets.canvas
     viewport = win._canvas_widgets.scroll_area.viewport()
     return QPointF(
-        canvas.mapTo(viewport, canvas.transform_image_point_to_widget(image_pos))
+        canvas.mapTo(viewport, canvas.transform_image_point_to_widget(point=image_pos))
     )
 
 

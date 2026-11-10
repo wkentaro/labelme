@@ -259,7 +259,7 @@ def test_load_shape_json_obj_accepts_out_of_bounds_mask_shape(
             "label": "mask",
             "points": [[-2.25, -3.25], [0.75, -1.25]],
             "shape_type": "mask",
-            "mask": img_arr_to_b64(sample_mask.astype(np.uint8)),
+            "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
         }
     )
 
@@ -290,7 +290,7 @@ def test_load_shape_json_obj_rejects_wrong_point_count(
         "shape_type": shape_type,
     }
     if shape_type == "mask":
-        shape_json_obj["mask"] = img_arr_to_b64(np.ones((1, 1), dtype=np.uint8))
+        shape_json_obj["mask"] = img_arr_to_b64(img_arr=np.ones((1, 1), dtype=np.uint8))
 
     with pytest.raises(ValueError, match="points"):
         _load_shape_json_obj(shape_json_obj=shape_json_obj)
@@ -339,7 +339,7 @@ def test_load_shape_json_obj_rejects_mask_for_non_mask_shape(
                 "label": "rectangle",
                 "points": [[0.0, 0.0], [3.0, 2.0]],
                 "shape_type": "rectangle",
-                "mask": img_arr_to_b64(sample_mask.astype(np.uint8)),
+                "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
             }
         )
 
@@ -351,7 +351,7 @@ def test_load_shape_json_obj_rejects_multichannel_mask() -> None:
                 "label": "mask",
                 "points": [[0.0, 0.0], [3.0, 2.0]],
                 "shape_type": "mask",
-                "mask": img_arr_to_b64(np.ones((3, 4, 3), dtype=np.uint8)),
+                "mask": img_arr_to_b64(img_arr=np.ones((3, 4, 3), dtype=np.uint8)),
             }
         )
 
@@ -367,7 +367,7 @@ def test_load_shape_json_obj_accepts_mask_extent_mismatch(
             "label": "mask",
             "points": [[0.5, 0.5], [4.5, 2.5]],
             "shape_type": "mask",
-            "mask": img_arr_to_b64(sample_mask.astype(np.uint8)),
+            "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
         }
     )
 
@@ -499,7 +499,7 @@ def test_load_shape_json_obj_decodes_mask_to_bool_array(
             "label": "thing",
             "points": [[0.0, 0.0], [4.0, 3.0]],
             "shape_type": "mask",
-            "mask": img_arr_to_b64(sample_mask.astype(np.uint8)),
+            "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
         }
     )
 
@@ -917,18 +917,18 @@ def test_write_label_file_raises_write_error_on_io_failure(*, tmp_path: Path) ->
 
 
 def test_normalize_to_uint8_scales_finite_range() -> None:
-    result = _normalize_to_uint8(np.array([[0.0, 50.0, 100.0]]))
+    result = _normalize_to_uint8(arr=np.array([[0.0, 50.0, 100.0]]))
     assert result.dtype == np.uint8
     np.testing.assert_array_equal(result, [[0, 127, 255]])
 
 
 def test_normalize_to_uint8_constant_array_returns_zeros() -> None:
-    result = _normalize_to_uint8(np.full((2, 2), 42.0))
+    result = _normalize_to_uint8(arr=np.full((2, 2), 42.0))
     np.testing.assert_array_equal(result, np.zeros((2, 2), dtype=np.uint8))
 
 
 def test_normalize_to_uint8_all_non_finite_returns_zeros() -> None:
-    result = _normalize_to_uint8(np.full((2, 2), np.nan))
+    result = _normalize_to_uint8(arr=np.full((2, 2), np.nan))
     np.testing.assert_array_equal(result, np.zeros((2, 2), dtype=np.uint8))
 
 
@@ -937,7 +937,7 @@ def test_normalize_to_uint8_maps_non_finite_pixels_deterministically() -> None:
     # finite pixel black. Non-finite pixels must saturate instead: +inf -> 255,
     # -inf -> 0, nan -> 0, leaving finite pixels scaled over the finite range.
     result = _normalize_to_uint8(
-        np.array([[0.0, 50.0, 100.0, np.inf, -np.inf, np.nan]])
+        arr=np.array([[0.0, 50.0, 100.0, np.inf, -np.inf, np.nan]])
     )
     np.testing.assert_array_equal(result, [[0, 127, 255, 255, 0, 0]])
 

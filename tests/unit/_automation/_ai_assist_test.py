@@ -17,9 +17,8 @@ from labelme._shape import Shape
 
 
 def _propose(
-    session: AiAssistSession,
-    /,
     *,
+    session: AiAssistSession,
     prompt_kind: _ai_assist.AiPromptKind,
     existing_shapes: list[Shape] | None,
     annotations: list[osam.types.Annotation],
@@ -58,7 +57,7 @@ def test_point_prompt_uses_best_answer() -> None:
     session = AiAssistSession(model_name="a", output_format="rectangle")
 
     proposal = _propose(
-        session,
+        session=session,
         annotations=response.annotations,
         prompt_kind="points",
         existing_shapes=None,
@@ -72,7 +71,7 @@ def test_point_prompt_uses_best_answer() -> None:
     )
 
     _propose(
-        session,
+        session=session,
         annotations=response.annotations,
         prompt_kind="points",
         existing_shapes=None,
@@ -80,7 +79,7 @@ def test_point_prompt_uses_best_answer() -> None:
 
     session.model_name = "b"
     _propose(
-        session,
+        session=session,
         annotations=response.annotations,
         prompt_kind="points",
         existing_shapes=None,
@@ -109,14 +108,14 @@ def test_polygon_detail_controls_ai_polygon_points() -> None:
     session = AiAssistSession(polygon_detail=100)
 
     maximum_detail = _propose(
-        session,
+        session=session,
         annotations=response.annotations,
         prompt_kind="points",
         existing_shapes=None,
     ).new_shapes
     session.polygon_detail = 80
     balanced_detail = _propose(
-        session,
+        session=session,
         annotations=response.annotations,
         prompt_kind="points",
         existing_shapes=None,
@@ -136,7 +135,7 @@ def test_polygon_proposal_groups_disconnected_lands() -> None:
     )
 
     shapes = _propose(
-        AiAssistSession(),
+        session=AiAssistSession(),
         annotations=response.annotations,
         prompt_kind="points",
         existing_shapes=None,
@@ -169,12 +168,12 @@ def existing_rectangle() -> Shape:
 
 
 def test_detections_from_annotations_empty_returns_empty() -> None:
-    assert _detections_from_annotations([]) == []
+    assert _detections_from_annotations(annotations=[]) == []
 
 
 def test_detections_from_annotations_sorts_by_score_descending() -> None:
     detections = _detections_from_annotations(
-        [
+        annotations=[
             _annotation(score=0.2, bbox=(0, 0, 1, 1), mask=None),
             _annotation(score=0.9, bbox=(2, 2, 3, 3), mask=None),
             _annotation(score=0.5, bbox=(4, 4, 5, 5), mask=None),
@@ -190,7 +189,7 @@ def test_detections_from_annotations_sorts_by_score_descending() -> None:
 
 def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
     detections = _detections_from_annotations(
-        [
+        annotations=[
             _annotation(score=None, bbox=(0, 0, 1, 1), mask=None),
             _annotation(score=0.5, bbox=(2, 2, 3, 3), mask=None),
         ]
@@ -204,7 +203,7 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
 
 def test_detections_from_annotations_flattens_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
-        [_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)]
+        annotations=[_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)]
     )
 
     assert detection.bbox == (1, 2, 3, 4)
@@ -212,7 +211,7 @@ def test_detections_from_annotations_flattens_bounding_box() -> None:
 
 def test_detections_from_annotations_keeps_bbox_none_without_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
-        [_annotation(score=0.5, bbox=None, mask=None)]
+        annotations=[_annotation(score=0.5, bbox=None, mask=None)]
     )
 
     assert detection.bbox is None
@@ -224,7 +223,7 @@ def test_detections_from_annotations_passes_mask_through() -> None:
     mask[0, 0] = True
 
     (detection,) = _detections_from_annotations(
-        [_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)]
+        annotations=[_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)]
     )
 
     np.testing.assert_array_equal(detection.mask, mask)
@@ -300,7 +299,7 @@ def test_point_prompt_reports_matching_existing_shape(
     session = AiAssistSession(output_format="rectangle")
 
     proposal = _propose(
-        session,
+        session=session,
         annotations=response.annotations,
         existing_shapes=[existing],
         prompt_kind="points",
@@ -325,7 +324,7 @@ def test_example_box_suppresses_only_proposals_matching_existing_shapes(
     session = AiAssistSession(model_name="sam3:latest", output_format="rectangle")
 
     proposal = _propose(
-        session,
+        session=session,
         annotations=response.annotations,
         prompt_kind="example_box",
         existing_shapes=[existing_rectangle],
@@ -351,7 +350,7 @@ def test_single_result_example_box_reports_matching_existing_shape(
     session = AiAssistSession(model_name="sam3:latest", output_format="rectangle")
 
     proposal = _propose(
-        session,
+        session=session,
         annotations=response.annotations,
         prompt_kind="example_box",
         existing_shapes=[existing_rectangle],
@@ -373,7 +372,7 @@ def test_example_box_matches_existing_shape_after_greedy_suppression(
     existing_rectangle: Shape,
 ) -> None:
     proposal = _propose(
-        AiAssistSession(output_format="rectangle"),
+        session=AiAssistSession(output_format="rectangle"),
         annotations=_DUPLICATE_ANNOTATIONS,
         prompt_kind="example_box",
         existing_shapes=[existing_rectangle],
@@ -386,7 +385,7 @@ def test_example_box_matches_existing_shape_after_greedy_suppression(
 
 def test_example_box_still_applies_greedy_suppression_among_new_detections() -> None:
     proposal = _propose(
-        AiAssistSession(output_format="rectangle"),
+        session=AiAssistSession(output_format="rectangle"),
         annotations=_DUPLICATE_ANNOTATIONS,
         prompt_kind="example_box",
         existing_shapes=None,
@@ -427,7 +426,7 @@ def test_example_box_covered_candidate_does_not_hide_a_new_one(
     # The candidate on the existing Shape overlaps the one beside it; once
     # covered it must not suppress that one.
     proposal = _propose(
-        AiAssistSession(output_format="rectangle"),
+        session=AiAssistSession(output_format="rectangle"),
         annotations=[
             _annotation(score=0.9, bbox=(2, 0, 12, 10), mask=None),
             _annotation(score=0.8, bbox=(5, 0, 15, 10), mask=None),

@@ -122,11 +122,11 @@ def get_user_config_file(*, create_if_missing: bool = True) -> str:
 def load_config(*, config_file: Path | None, config_overrides: dict) -> dict:
     config: dict
     with open(here / "default_config.yaml", encoding="utf-8") as f:
-        config = _yaml.safe_load(f)
+        config = _yaml.safe_load(stream=f)
 
     if config_file is not None:
         with open(config_file, encoding="utf-8") as f:
-            config_from_yaml = _yaml.safe_load(f)
+            config_from_yaml = _yaml.safe_load(stream=f)
         if isinstance(config_from_yaml, dict):
             migrate_config(config_from_yaml=config_from_yaml)
             if "shape_color" in config_from_yaml:

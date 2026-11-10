@@ -12,6 +12,7 @@ from typing import Any
 from typing import Final
 from typing import Literal
 from typing import cast
+from typing import override
 
 import numpy as np
 from loguru import logger
@@ -52,23 +53,23 @@ from ._shape_render import intersects_rect
 from ._shape_render import render_shape
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
-_DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(_DEFAULT_SHAPE_RGB)
+_DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(rgb=_DEFAULT_SHAPE_RGB)
 # The shipped config's draft colours, so a canvas the app hasn't configured
 # (as in tests) draws drafts the way users see them.
 _DEFAULT_DRAFT_PALETTE: Final[Palette] = Palette.from_shape_config(
-    _config.load_config(config_file=None, config_overrides={})["shape"]
+    shape=_config.load_config(config_file=None, config_overrides={})["shape"]
 )
-_NEGATIVE_PALETTE: Final[Palette] = Palette.from_rgb(NEGATIVE_RGB)
+_NEGATIVE_PALETTE: Final[Palette] = Palette.from_rgb(rgb=NEGATIVE_RGB)
 
 
-def _drawn_corners(shape: Shape, /) -> np.ndarray:
+def _drawn_corners(*, shape: Shape) -> np.ndarray:
     # Where the shape is drawn, not its raw points: a circle's points are its
     # center and a point on its rim.
     rect = _shape_bounds(shape=shape)
     return np.array([[rect.left(), rect.top()], [rect.right(), rect.bottom()]])
 
 
-def _bounding_corners(points: list[np.ndarray], /) -> tuple[QPointF, QPointF]:
+def _bounding_corners(*, points: list[np.ndarray]) -> tuple[QPointF, QPointF]:
     stacked = np.concatenate(points)
     return QPointF(*stacked.min(axis=0)), QPointF(*stacked.max(axis=0))
 
@@ -135,7 +136,7 @@ class _DraftShape:
         return dataclasses.replace(self, closed=False)
 
     def add_point(
-        self, point: QPointF, /, *, label: int = 1, autoclose: bool = False
+        self, *, point: QPointF, label: int = 1, autoclose: bool = False
     ) -> _DraftShape:
         if autoclose and self.points and self.points[0] == point:
             return dataclasses.replace(self, closed=True)
@@ -153,7 +154,7 @@ class _DraftShape:
         )
 
 
-def _draft_to_shape(draft: _DraftShape, /) -> Shape:
+def _draft_to_shape(*, draft: _DraftShape) -> Shape:
     return Shape(
         shape_type=draft.shape_type,
         points=np.array([[p.x(), p.y()] for p in draft.points], dtype=np.float64),
@@ -162,7 +163,7 @@ def _draft_to_shape(draft: _DraftShape, /) -> Shape:
     )
 
 
-def _shape_to_draft(shape: Shape, /) -> _DraftShape:
+def _shape_to_draft(*, shape: Shape) -> _DraftShape:
     return _DraftShape(
         shape_type=shape.shape_type,
         points=tuple(QPointF(*point) for point in shape.points),
@@ -237,6 +238,30 @@ class _CanvasMode(enum.Enum):
 
 
 class Canvas(QtWidgets.QWidget):
+    _epsilon: float
+    _double_click: Literal["close"] | None
+    _num_backups: int
+    _allow_out_of_bounds_points: bool
+    _crosshair: dict[str, bool]
+    _ai_preview_timer: QtCore.QTimer
+    _line: _DraftShape
+    _scale: float
+    _osam_worker: _automation.OsamWorker | None
+    _ai_preview_job: _AiJob | None
+    _ai_result_job: _AiJob | None
+    _ai_finalize_job: _AiJob | None
+    _ai_progress_clock: QtCore.QElapsedTimer
+    _ai_progress_timer: QtCore.QTimer
+    _ai_inference_failed: bool
+    _snapping: bool
+    _hovered_shape_is_selected: bool
+    _painter: QtGui.QPainter
+    _dirty_rect: QtCore.QRect
+    _fill_drawing: bool
+    _show_labels: bool
+    _view_offset: QPointF
+    _ai_prompt_hint_due: bool
+
     ensure_ai_model_ready: Callable[[str], bool]
     # Read on use: the AI-Find All picker can change mid-draft or on download.
     get_ai_find_all_model_name: Callable[[], str]
@@ -346,14 +371,14 @@ class Canvas(QtWidgets.QWidget):
     )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
-        self._epsilon: float = kwargs.pop("epsilon", 10.0)
+        self._epsilon = kwargs.pop("epsilon", 10.0)
         self._double_click = kwargs.pop("double_click", "close")
         if self._double_click not in [None, "close"]:
             raise ValueError(
                 f"Unexpected value for double_click event: {self._double_click}"
             )
-        self._num_backups: int = kwargs.pop("num_backups", 10)
-        self._allow_out_of_bounds_points: bool = kwargs.pop(
+        self._num_backups = kwargs.pop("num_backups", 10)
+        self._allow_out_of_bounds_points = kwargs.pop(
             "allow_out_of_bounds_points", False
         )
         self._crosshair = kwargs.pop(
@@ -389,15 +414,15 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_center = np.zeros(2)
         self._rotation_initial_angle = 0.0
         self._rotation_original_points = np.empty((0, 2))
-        self._scale: float = 1.0
+        self._scale = 1.0
         self._ai_assist_session = _automation.AiAssistSession()
         self.get_ai_find_all_model_name = lambda: ""
         self.get_ai_find_all_thresholds = lambda: (0.0, 0.5)
         self.get_ai_find_all_query = lambda: ""
-        self._osam_worker: _automation.OsamWorker | None = None
-        self._ai_preview_job: _AiJob | None = None
-        self._ai_result_job: _AiJob | None = None
-        self._ai_finalize_job: _AiJob | None = None
+        self._osam_worker = None
+        self._ai_preview_job = None
+        self._ai_result_job = None
+        self._ai_finalize_job = None
         self._ai_progress_clock = QtCore.QElapsedTimer()
         self._ai_progress_timer = QtCore.QTimer(self)
         self._ai_progress_timer.setInterval(16)
@@ -409,7 +434,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_suppress_existing_shape_matches = False
         self._ai_existing_shape_highlights = []
         self._snapping = True
-        self._hovered_shape_is_selected: bool = False
+        self._hovered_shape_is_selected = False
         self._painter = QtGui.QPainter()
         self._dirty_rect = QtCore.QRect()
         self._pan_anchor = None
@@ -476,7 +501,7 @@ class Canvas(QtWidgets.QWidget):
     def set_point_size(self, *, point_size: int) -> None:
         self._point_size = point_size
 
-    def _resolve_palette(self, label: str | None, /) -> Palette:
+    def _resolve_palette(self, *, label: str | None) -> Palette:
         if label is None or self._color_resolver is None:
             return _DEFAULT_PALETTE
         # Auto colors depend on the live label ordering, so the palette cannot
@@ -485,7 +510,7 @@ class Canvas(QtWidgets.QWidget):
         # resolution into one lookup per distinct label per frame.
         palette = self._palette_cache.get(label)
         if palette is None:
-            palette = Palette.from_rgb(self._color_resolver(label))
+            palette = Palette.from_rgb(rgb=self._color_resolver(label))
             self._palette_cache[label] = palette
         return palette
 
@@ -510,7 +535,7 @@ class Canvas(QtWidgets.QWidget):
         selected = shape in self.selected_shapes
         return ShapeRenderContext(
             scale=self.scale,
-            palette=self._resolve_palette(shape.label),
+            palette=self._resolve_palette(label=shape.label),
             point_size=self._point_size,
             point_type=self._point_type,
             selected=selected,
@@ -627,7 +652,7 @@ class Canvas(QtWidgets.QWidget):
         seed_point = self._current.points[0]
         seed_label = self._current.point_labels[0]
         self._current = _DraftShape(shape_type=new_mode).add_point(
-            seed_point, label=seed_label
+            point=seed_point, label=seed_label
         )
         self._line = dataclasses.replace(self._line, shape_type=new_mode)
         self.update()
@@ -695,7 +720,7 @@ class Canvas(QtWidgets.QWidget):
         )
         return shapes
 
-    def set_ai_find_all_pending(self, shapes: list[Shape], /) -> None:
+    def set_ai_find_all_pending(self, *, shapes: list[Shape]) -> None:
         self._ai_find_all_pending = shapes
         self.update()
 
@@ -725,7 +750,7 @@ class Canvas(QtWidgets.QWidget):
         return self._ai_assist_session.model_name
 
     def set_ai_output_format(
-        self, output_format: _automation.AiOutputFormat, /
+        self, *, output_format: _automation.AiOutputFormat
     ) -> None:
         if self._ai_assist_session.output_format == output_format:
             return
@@ -744,7 +769,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_suppress_existing_shape_matches = enabled
         self._clear_ai_existing_shape_highlights()
 
-    def set_osam_worker(self, worker: _automation.OsamWorker, /) -> None:
+    def set_osam_worker(self, *, worker: _automation.OsamWorker) -> None:
         self._osam_worker = worker
         worker.finished.connect(self._on_ai_job_finished)
         worker.failed.connect(self._on_ai_job_failed)
@@ -765,7 +790,7 @@ class Canvas(QtWidgets.QWidget):
     def ai_image(self) -> tuple[np.ndarray, str]:
         # The id names the image to the AI worker, which caches its embedding.
         if self._pixmap_rgb is None:
-            image: np.ndarray = _utils.img_qt_to_rgb_arr(self.pixmap.toImage())
+            image: np.ndarray = _utils.img_qt_to_rgb_arr(img_qt=self.pixmap.toImage())
             self._pixmap_rgb = (image, str(hash((image.shape, image.tobytes()))))
         return self._pixmap_rgb
 
@@ -842,12 +867,12 @@ class Canvas(QtWidgets.QWidget):
             job is None
             or self.mode != _CanvasMode.CREATE
             or self.create_mode != "ai_segment"
-            or not self._is_current_ai_segment_job(job)
+            or not self._is_current_ai_segment_job(job=job)
         ):
             return None
         return job
 
-    def _is_current_ai_segment_job(self, job: _AiJob, /) -> bool:
+    def _is_current_ai_segment_job(self, *, job: _AiJob) -> bool:
         key = (
             self._ai_segment_result_key
             if job.channel == "result"
@@ -869,7 +894,7 @@ class Canvas(QtWidgets.QWidget):
             point = QPointF(*job.points[-1])
         else:
             point = self._current.points[-1]
-        return self.transform_image_point_to_widget(point)
+        return self.transform_image_point_to_widget(point=point)
 
     def _ai_progress_rect(self) -> QtCore.QRect | None:
         if (center := self._ai_progress_center()) is None:
@@ -932,7 +957,7 @@ class Canvas(QtWidgets.QWidget):
         )
         return proposal
 
-    def _take_ai_job(self, job: object, /) -> _AiJob | None:
+    def _take_ai_job(self, *, job: object) -> _AiJob | None:
         # Frees the slot the job held; returns it only if its result applies.
         if not isinstance(job, _AiJob):
             return None
@@ -952,10 +977,10 @@ class Canvas(QtWidgets.QWidget):
             return None
         else:
             return None
-        return job if self._is_current_ai_segment_job(job) else None
+        return job if self._is_current_ai_segment_job(job=job) else None
 
     def _on_ai_job_finished(self, job: object, annotations: object, /) -> None:
-        ai_job = self._take_ai_job(job)
+        ai_job = self._take_ai_job(job=job)
         if ai_job is None:
             return
         try:
@@ -976,7 +1001,7 @@ class Canvas(QtWidgets.QWidget):
                 )
 
     def _on_ai_job_failed(self, job: object, message: str, /) -> None:
-        ai_job = self._take_ai_job(job)
+        ai_job = self._take_ai_job(job=job)
         if ai_job is None:
             return
         logger.error("AI inference failed: {}", message)
@@ -1020,10 +1045,12 @@ class Canvas(QtWidgets.QWidget):
         self._drag_anchor = None
         self.update()
 
+    @override
     def enterEvent(self, _a0: QtCore.QEvent, /) -> None:
-        self._apply_cursor(self._cursor)
+        self._apply_cursor(role=self._cursor)
         self._update_status(extra_messages=None)
 
+    @override
     def leaveEvent(self, _a0: QtCore.QEvent, /) -> None:
         self._set_highlight(
             hovered_shape=None,
@@ -1034,6 +1061,7 @@ class Canvas(QtWidgets.QWidget):
         self._release_cursor()
         self._update_status(extra_messages=None)
 
+    @override
     def focusOutEvent(self, _a0: QtGui.QFocusEvent, /) -> None:
         self._drag_anchor = None
         self._release_cursor()
@@ -1146,15 +1174,15 @@ class Canvas(QtWidgets.QWidget):
                 "Click points to include, hold %s and click to exclude, or drag a"
                 " box. Hold %s and click to finish."
             ) % (
-                _utils.modifier_text(Qt.KeyboardModifier.ShiftModifier),
-                _utils.modifier_text(Qt.KeyboardModifier.ControlModifier),
+                _utils.modifier_text(modifiers=Qt.KeyboardModifier.ShiftModifier),
+                _utils.modifier_text(modifiers=Qt.KeyboardModifier.ControlModifier),
             )
         if self.create_mode == "ai_find_all":
             if is_new and self.has_ai_find_all_draft:
                 return self.tr(
                     "Enter adds the results, Esc discards them."
                     " Hold %s and draw a box to exclude objects like it."
-                ) % _utils.modifier_text(Qt.KeyboardModifier.ShiftModifier)
+                ) % _utils.modifier_text(modifiers=Qt.KeyboardModifier.ShiftModifier)
             if is_new:
                 return self.tr(
                     "Type what to find in AI-Find All, or click the first corner"
@@ -1179,7 +1207,7 @@ class Canvas(QtWidgets.QWidget):
             else:
                 return self.tr(
                     "Click the next point, or hold %s and click to finish the LineStrip"
-                ) % _utils.modifier_text(Qt.KeyboardModifier.ControlModifier)
+                ) % _utils.modifier_text(modifiers=Qt.KeyboardModifier.ControlModifier)
         if self.create_mode == "circle":
             if is_new:
                 return self.tr("Click center point for circle")
@@ -1199,9 +1227,10 @@ class Canvas(QtWidgets.QWidget):
             return self.tr("Click third corner to close oriented rectangle")
         return self.tr("Click to add point")
 
+    @override
     def mouseMoveEvent(self, a0: QtGui.QMouseEvent, /) -> None:
         try:
-            pos = self.transform_widget_point_to_image(a0.position())
+            pos = self.transform_widget_point_to_image(point=a0.position())
         except AttributeError:
             return
         self.mouse_moved.emit(pos)
@@ -1246,7 +1275,7 @@ class Canvas(QtWidgets.QWidget):
             self._line = dataclasses.replace(
                 self._line, shape_type=desired_line_shape_type
             )
-        self._apply_cursor(CursorRole.DRAW)
+        self._apply_cursor(role=CursorRole.DRAW)
         if self._current is None:
             self.update()
             self._update_status(extra_messages=None)
@@ -1261,15 +1290,15 @@ class Canvas(QtWidgets.QWidget):
     def _track_ai_segment_cursor(
         self, *, pos: QPointF, event: QtGui.QMouseEvent
     ) -> None:
-        self._apply_cursor(CursorRole.DRAW)
+        self._apply_cursor(role=CursorRole.DRAW)
         if not event.buttons() & Qt.MouseButton.LeftButton:
             # The release went elsewhere, e.g. while a finalize blocked input.
             self._ai_segment_press = None
             self._ai_segment_dragging = False
         if self._ai_segment_press is None:
-            if self._should_constrain_to_pixmap(pos):
-                pos = _clamp_into_image(pos, self.pixmap.size())
-            self._line = _ai_segment_point(pos, event.modifiers())
+            if self._should_constrain_to_pixmap(point=pos):
+                pos = _clamp_into_image(point=pos, image_size=self.pixmap.size())
+            self._line = _ai_segment_point(pos=pos, modifiers=event.modifiers())
         else:
             self._drag_ai_segment(pos=pos, widget_pos=event.position())
         self.update()
@@ -1284,8 +1313,8 @@ class Canvas(QtWidgets.QWidget):
             ).manhattanLength() >= QtWidgets.QApplication.startDragDistance()
         if not self._ai_segment_dragging:
             return
-        if self._should_constrain_to_pixmap(pos):
-            pos = _clamp_into_image(pos, self.pixmap.size())
+        if self._should_constrain_to_pixmap(point=pos):
+            pos = _clamp_into_image(point=pos, image_size=self.pixmap.size())
         self._line = _DraftShape(
             shape_type="points", points=(press[0], pos), point_labels=_AI_BOX_LABELS
         )
@@ -1312,13 +1341,13 @@ class Canvas(QtWidgets.QWidget):
             )
             self._current = dataclasses.replace(current, points=new_corners)
             return self._current.points[MOVING_CORNER_INDEX]
-        if self._should_constrain_to_pixmap(pos):
+        if self._should_constrain_to_pixmap(point=pos):
             return _compute_intersection_edges_image(
                 p1=current.points[-1], p2=pos, image_size=self.pixmap.size()
             )
         if not self._cursor_should_snap_to_polygon_origin(pos=pos):
             return pos
-        self._apply_cursor(CursorRole.HANDLE)
+        self._apply_cursor(role=CursorRole.HANDLE)
         self._highlight_vertex(index=0, mode="near")
         return current.points[0]
 
@@ -1457,7 +1486,7 @@ class Canvas(QtWidgets.QWidget):
         shapes = self._movable_selected_shapes()
         if not shapes:
             return
-        self._apply_cursor(CursorRole.MOVE)
+        self._apply_cursor(role=CursorRole.MOVE)
         self._drag_shapes(shapes=shapes, cursor=pos, constrain_cursor=True)
         self.update()
         self._is_moving_shape = True
@@ -1493,13 +1522,13 @@ class Canvas(QtWidgets.QWidget):
                 hovered_rotation=None,
             )
             self._highlight_vertex(index=target.index, mode="move")
-            self._apply_cursor(CursorRole.HANDLE)
+            self._apply_cursor(role=CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to move point"))
             if target.shape.can_remove_point():
                 status_messages.append(
                     self.tr("Hold %s and click to delete the point")
                     % _utils.modifier_text(
-                        Qt.KeyboardModifier.AltModifier
+                        modifiers=Qt.KeyboardModifier.AltModifier
                         | Qt.KeyboardModifier.ShiftModifier
                     )
                 )
@@ -1514,7 +1543,7 @@ class Canvas(QtWidgets.QWidget):
                 hovered_rotation=target.index,
             )
             self._highlight_rotation_point(index=target.index, mode="move")
-            self._apply_cursor(CursorRole.HANDLE)
+            self._apply_cursor(role=CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to rotate the shape"))
             return
 
@@ -1526,10 +1555,10 @@ class Canvas(QtWidgets.QWidget):
                 hovered_vertex=None,
                 hovered_rotation=None,
             )
-            self._apply_cursor(CursorRole.HANDLE)
+            self._apply_cursor(role=CursorRole.HANDLE)
             status_messages.append(
                 self.tr("Hold %s and click to add a point on the edge")
-                % _utils.modifier_text(Qt.KeyboardModifier.AltModifier)
+                % _utils.modifier_text(modifiers=Qt.KeyboardModifier.AltModifier)
             )
             return
 
@@ -1545,7 +1574,7 @@ class Canvas(QtWidgets.QWidget):
                 self._release_cursor()
                 return
             status_messages.append(self.tr("Click & drag to move shape"))
-            self._apply_cursor(CursorRole.GRAB)
+            self._apply_cursor(role=CursorRole.GRAB)
             return
 
         typing.assert_never(target.kind)
@@ -1588,11 +1617,12 @@ class Canvas(QtWidgets.QWidget):
         self.update()
         return True
 
+    @override
     def mousePressEvent(self, a0: QtGui.QMouseEvent, /) -> None:
         self._is_pointer_held = a0.buttons() != Qt.MouseButton.NoButton
         if self.is_ai_finalizing:
             return
-        pos: QPointF = self.transform_widget_point_to_image(a0.position())
+        pos: QPointF = self.transform_widget_point_to_image(point=a0.position())
         self._dispatch_pointer_press(pos=pos, event=a0)
         self._update_status(extra_messages=None)
 
@@ -1629,7 +1659,7 @@ class Canvas(QtWidgets.QWidget):
         event: QtGui.QMouseEvent,
         is_shift_pressed: bool,
     ) -> None:
-        if self._current is None and self._should_constrain_to_pixmap(pos):
+        if self._current is None and self._should_constrain_to_pixmap(point=pos):
             return
         self._ai_prompt_hint_due = False
         if self.create_mode == "ai_segment":
@@ -1667,7 +1697,7 @@ class Canvas(QtWidgets.QWidget):
         vertex = self._line.points[1]
         label = self._line.point_labels[1]
         current = current.add_point(
-            vertex, label=label, autoclose=self.create_mode == "polygon"
+            point=vertex, label=label, autoclose=self.create_mode == "polygon"
         )
         self._current = current
         if current.closed or self._is_final_open_path_click(event=event):
@@ -1678,7 +1708,7 @@ class Canvas(QtWidgets.QWidget):
         )
 
     def _press_ai_segment(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        if self._should_constrain_to_pixmap(pos):
+        if self._should_constrain_to_pixmap(point=pos):
             return
         if self._current is None and not self.ensure_ai_model_ready(
             self._get_mode_ai_model_name()
@@ -1688,7 +1718,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_segment_press = (pos, event.position(), modifiers)
         self._ai_segment_dragging = False
         # A release before the drag distance places this point.
-        self._line = _ai_segment_point(pos, modifiers)
+        self._line = _ai_segment_point(pos=pos, modifiers=modifiers)
 
     def _release_ai_segment(self, *, event: QtGui.QMouseEvent) -> None:
         press = self._ai_segment_press
@@ -1696,13 +1726,13 @@ class Canvas(QtWidgets.QWidget):
             return
         # The release can land past the last move event.
         self._drag_ai_segment(
-            pos=self.transform_widget_point_to_image(event.position()),
+            pos=self.transform_widget_point_to_image(point=event.position()),
             widget_pos=event.position(),
         )
         self._ai_segment_press = None
         self._ai_segment_dragging = False
         draft = _with_ai_segment_input(
-            self._current or _DraftShape(shape_type="points"), self._line
+            draft=self._current or _DraftShape(shape_type="points"), line=self._line
         )
         self._line = _DraftShape(shape_type="points")
         if draft is None:  # A box with no area.
@@ -1719,7 +1749,7 @@ class Canvas(QtWidgets.QWidget):
         current = self._current
         if current is None:
             return
-        pos = self.transform_widget_point_to_image(event.position())
+        pos = self.transform_widget_point_to_image(point=event.position())
         # The release can land past the last move event.
         self._track_drawing_cursor(pos=pos, event=event)
         # Measure the pointer, not the corner clamped into the image.
@@ -1769,7 +1799,7 @@ class Canvas(QtWidgets.QWidget):
 
         self._current = _DraftShape(
             shape_type=_CREATE_MODE_TO_SHAPE_TYPE[mode]
-        ).add_point(pos, label=0 if is_shift_pressed else 1)
+        ).add_point(point=pos, label=0 if is_shift_pressed else 1)
 
         if mode == "point":
             self._finalize()
@@ -1794,7 +1824,7 @@ class Canvas(QtWidgets.QWidget):
         if self._is_rotation_point_selected():
             self._capture_rotation_anchors()
         self._select_shape_point(
-            pos,
+            point=pos,
             multiple_selection_mode=modifiers == Qt.KeyboardModifier.ControlModifier,
         )
         self._prev_point = pos
@@ -1818,7 +1848,7 @@ class Canvas(QtWidgets.QWidget):
             selected_shapes=self.selected_shapes, hovered_shape=self.hovered_shape
         ):
             self._select_shape_point(
-                pos,
+                point=pos,
                 multiple_selection_mode=event.modifiers()
                 == Qt.KeyboardModifier.ControlModifier,
             )
@@ -1826,9 +1856,10 @@ class Canvas(QtWidgets.QWidget):
         self._prev_point = pos
 
     def _begin_pan(self, *, event: QtGui.QMouseEvent) -> None:
-        self._apply_cursor(CursorRole.GRAB)
+        self._apply_cursor(role=CursorRole.GRAB)
         self._pan_anchor = QPointF(self.mapToGlobal(event.position().toPoint()))
 
+    @override
     def mouseReleaseEvent(self, a0: QtGui.QMouseEvent, /) -> None:
         self._is_pointer_held = a0.buttons() != Qt.MouseButton.NoButton
         if self.is_ai_finalizing:
@@ -1938,6 +1969,7 @@ class Canvas(QtWidgets.QWidget):
         }.get(self.create_mode, MIN_POLYGON_POINT_COUNT)
         return len(self._current.points) >= minimum_points
 
+    @override
     def mouseDoubleClickEvent(self, a0: QtGui.QMouseEvent, /) -> None:
         if self.is_ai_finalizing:
             return
@@ -1947,8 +1979,8 @@ class Canvas(QtWidgets.QWidget):
             return
         if a0.button() != Qt.MouseButton.LeftButton:
             return
-        pos: QPointF = self.transform_widget_point_to_image(a0.position())
-        shape = self._find_pointed_shape(pos)
+        pos: QPointF = self.transform_widget_point_to_image(point=a0.position())
+        shape = self._find_pointed_shape(point=pos)
         if shape is None:
             return
         self.select_shapes(shapes=[shape])
@@ -1998,7 +2030,7 @@ class Canvas(QtWidgets.QWidget):
             self.select_shapes(shapes=[min(scored, key=lambda t: t[0])[1]])
 
     def _select_shape_point(
-        self, point: QPointF, /, *, multiple_selection_mode: bool
+        self, *, point: QPointF, multiple_selection_mode: bool
     ) -> None:
         if self._hovered_vertex is not None:
             assert self.hovered_shape is not None
@@ -2007,7 +2039,7 @@ class Canvas(QtWidgets.QWidget):
                 self.update()
             return
 
-        clicked_shape = self._find_pointed_shape(point)
+        clicked_shape = self._find_pointed_shape(point=point)
         if clicked_shape is None:
             if self.deselect_shape():
                 self.update()
@@ -2026,7 +2058,7 @@ class Canvas(QtWidgets.QWidget):
             self._hovered_shape_is_selected = False
         self._record_drag_anchor(shapes=self._movable_selected_shapes(), click=point)
 
-    def _find_pointed_shape(self, point: QPointF, /) -> Shape | None:
+    def _find_pointed_shape(self, *, point: QPointF) -> Shape | None:
         # A hovered vertex or rotation handle acts on its own shape, so it wins
         # over a body lying under it.
         if self._hovered_vertex is not None or self._hovered_rotation is not None:
@@ -2078,7 +2110,7 @@ class Canvas(QtWidgets.QWidget):
             )
             return
 
-        if self._should_constrain_to_pixmap(pos):
+        if self._should_constrain_to_pixmap(point=pos):
             pos = _compute_intersection_edges_image(
                 p1=QPointF(*shape.points[vertex_index]),
                 p2=pos,
@@ -2110,7 +2142,7 @@ class Canvas(QtWidgets.QWidget):
     def _drag_shapes(
         self, *, shapes: list[Shape], cursor: QPointF, constrain_cursor: bool
     ) -> None:
-        if constrain_cursor and self._should_constrain_to_pixmap(cursor):
+        if constrain_cursor and self._should_constrain_to_pixmap(point=cursor):
             return
 
         current_bounds = _compute_shapes_bounds(shapes=shapes)
@@ -2169,6 +2201,7 @@ class Canvas(QtWidgets.QWidget):
         self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
 
+    @override
     def paintEvent(self, a0: QtGui.QPaintEvent, /) -> None:
         if self.pixmap.isNull():
             super().paintEvent(a0)
@@ -2241,8 +2274,8 @@ class Canvas(QtWidgets.QWidget):
         if (hint := self._ai_suggestion_hint()) is not None:
             (top_left, bottom_right), rows = hint
             anchor = QRectF(
-                self.transform_image_point_to_widget(top_left),
-                self.transform_image_point_to_widget(bottom_right),
+                self.transform_image_point_to_widget(point=top_left),
+                self.transform_image_point_to_widget(point=bottom_right),
             )
         elif (prompt_rows := self._ai_prompt_hint()) is not None:
             rows, anchor = prompt_rows, None
@@ -2261,9 +2294,10 @@ class Canvas(QtWidgets.QWidget):
             return  # A ring frame elsewhere.
         painter.save()
         painter.resetTransform()
-        paint_hint_chip(painter, lines=lines, font=font, rect=rect)
+        paint_hint_chip(painter=painter, lines=lines, font=font, rect=rect)
         painter.restore()
 
+    @override
     def moveEvent(self, event: QtGui.QMoveEvent, /) -> None:
         # Scrolling moves the canvas and repaints only the exposed strip, but
         # the hint is placed within the visible part, so it moves too.
@@ -2299,9 +2333,9 @@ class Canvas(QtWidgets.QWidget):
                 or (self._ai_segment_dragging)
             ):
                 return None
-            points = [_drawn_corners(s) for s in self._ai_segment_result]
+            points = [_drawn_corners(shape=s) for s in self._ai_segment_result]
             points.append(np.array([[p.x(), p.y()] for p in current.points]))
-            return _bounding_corners(points), [
+            return _bounding_corners(points=points), [
                 [HintItem(self.tr("Add"), key=RETURN_GLYPH), discard],
                 self._ai_click_items(),
             ]
@@ -2317,14 +2351,16 @@ class Canvas(QtWidgets.QWidget):
             if draft:
                 add = self.tr("Add %d") % len(draft)
                 first.insert(0, HintItem(add, key=RETURN_GLYPH))
-            points = [_drawn_corners(s) for s in draft]
+            points = [_drawn_corners(shape=s) for s in draft]
             points.append(self._ai_find_all_points)
-            return _bounding_corners(points), [
+            return _bounding_corners(points=points), [
                 first,
                 [
                     HintItem(
                         self.tr("Drag to exclude"),
-                        key=_utils.modifier_text(Qt.KeyboardModifier.ShiftModifier),
+                        key=_utils.modifier_text(
+                            modifiers=Qt.KeyboardModifier.ShiftModifier
+                        ),
                         mark=functools.partial(
                             _paint_box_mark, color=_NEGATIVE_PALETTE.line
                         ),
@@ -2338,7 +2374,7 @@ class Canvas(QtWidgets.QWidget):
             HintItem(self.tr("Click to include"), mark=self._paint_point_mark),
             HintItem(
                 self.tr("Click to exclude"),
-                key=_utils.modifier_text(Qt.KeyboardModifier.ShiftModifier),
+                key=_utils.modifier_text(modifiers=Qt.KeyboardModifier.ShiftModifier),
                 mark=functools.partial(self._paint_point_mark, label=0),
             ),
         ]
@@ -2400,7 +2436,7 @@ class Canvas(QtWidgets.QWidget):
             return False
         if cursor is None:
             return False
-        return not self._should_constrain_to_pixmap(cursor)
+        return not self._should_constrain_to_pixmap(point=cursor)
 
     def _draw_committed_shapes_layer(self, painter: QtGui.QPainter, /) -> None:
         # Zoomed in, the scroll area shows a small part of the canvas, and a
@@ -2427,7 +2463,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _draw_active_shape_layer(self, painter: QtGui.QPainter, /) -> None:
         if self.create_mode == "ai_segment":
-            self._draw_ai_segment_drafts(painter)
+            self._draw_ai_segment_drafts(painter=painter)
             return
         if self._current is None:
             return
@@ -2435,21 +2471,21 @@ class Canvas(QtWidgets.QWidget):
         self._render_draft(painter=painter, draft=self._current, highlighted=True)
         self._render_draft(painter=painter, draft=self._line, highlighted=False)
 
-    def _draw_ai_segment_drafts(self, painter: QtGui.QPainter, /) -> None:
+    def _draw_ai_segment_drafts(self, *, painter: QtGui.QPainter) -> None:
         # The box being dragged hides the one it replaces.
         if self._current is not None:
             current = self._current
             if self._ai_segment_dragging:
-                current = _without_ai_segment_box(current)
-            for draft in _split_ai_segment_draft(current):
+                current = _without_ai_segment_box(draft=current)
+            for draft in _split_ai_segment_draft(draft=current):
                 self._render_draft(painter=painter, draft=draft, highlighted=True)
         if self._current is not None or self._ai_segment_dragging:
-            for draft in _split_ai_segment_draft(self._line):
+            for draft in _split_ai_segment_draft(draft=self._line):
                 self._render_draft(painter=painter, draft=draft, highlighted=False)
 
     def _draw_preview_overlay_layer(self, painter: QtGui.QPainter, /) -> None:
         if self.create_mode == "ai_segment":
-            self._draw_ai_segment_proposals(painter)
+            self._draw_ai_segment_proposals(painter=painter)
             return
         previews = self._build_preview_shapes()
         if not previews:
@@ -2526,7 +2562,7 @@ class Canvas(QtWidgets.QWidget):
     def _render_draft(
         self, *, painter: QtGui.QPainter, draft: _DraftShape, highlighted: bool
     ) -> None:
-        shape = _draft_to_shape(draft)
+        shape = _draft_to_shape(draft=draft)
         context = self._draft_render_context(
             selected=False,
             fill=False,
@@ -2540,7 +2576,7 @@ class Canvas(QtWidgets.QWidget):
             context = dataclasses.replace(context, palette=_NEGATIVE_PALETTE)
         render_shape(painter=painter, shape=shape, context=context)
 
-    def _draw_ai_segment_proposals(self, painter: QtGui.QPainter, /) -> None:
+    def _draw_ai_segment_proposals(self, *, painter: QtGui.QPainter) -> None:
         # Defer inference until painting ends; unchanged inputs stop the loop.
         self._ai_preview_timer.start(0)
         if self._current is None and not self._ai_segment_dragging:
@@ -2575,8 +2611,8 @@ class Canvas(QtWidgets.QWidget):
 
         preview = current
         if self._fill_drawing and len(preview.points) >= MIN_POINTS_FOR_FILL_PREVIEW:
-            preview = preview.add_point(self._line.points[1], autoclose=True)
-        return _draft_to_shape(preview)
+            preview = preview.add_point(point=self._line.points[1], autoclose=True)
+        return _draft_to_shape(draft=preview)
 
     def _refresh_ai_segment_preview(self) -> None:
         if self.is_ai_finalizing:
@@ -2614,7 +2650,7 @@ class Canvas(QtWidgets.QWidget):
             else:
                 self._submit_ai_job(
                     channel="result",
-                    **_ai_segment_prompt(current),
+                    **_ai_segment_prompt(draft=current),
                     preview_key=result_key,
                 )
         key = (current, self._line, *settings)
@@ -2622,20 +2658,20 @@ class Canvas(QtWidgets.QWidget):
             return
         self._ai_segment_preview_key = key
         base = current or _DraftShape(shape_type="points")
-        preview = _with_ai_segment_input(base, self._line)
+        preview = _with_ai_segment_input(draft=base, line=self._line)
         # No input at the cursor, or a box with no area: nothing to guess.
         if preview is None or preview == base:
             if self._ai_preview_job is not None:
                 # A guess still queued would delay the result of a new click.
                 assert self._osam_worker is not None
-                self._osam_worker.cancel("preview")
+                self._osam_worker.cancel(channel="preview")
                 self._ai_preview_job = None
             self._ai_segment_preview = None
             self.update()
             return
         self._submit_ai_job(
             channel="preview",
-            **_ai_segment_prompt(preview),
+            **_ai_segment_prompt(draft=preview),
             preview_key=key,
         )
 
@@ -2664,12 +2700,12 @@ class Canvas(QtWidgets.QWidget):
             self._ai_inference_failed = False
         self.update()
 
-    def transform_widget_point_to_image(self, point: QPointF, /) -> QPointF:
+    def transform_widget_point_to_image(self, *, point: QPointF) -> QPointF:
         origin = self._compute_image_origin_offset(area=None)
         return point / self.scale - origin
 
     def transform_image_point_to_widget(
-        self, point: QPointF, /, *, area: QtCore.QSize | None = None
+        self, *, point: QPointF, area: QtCore.QSize | None = None
     ) -> QPointF:
         return (point + self._compute_image_origin_offset(area=area)) * self.scale
 
@@ -2682,11 +2718,11 @@ class Canvas(QtWidgets.QWidget):
         slack_h = max(area.height() - scaled_h, 0.0)
         return (QPointF(slack_w, slack_h) / 2.0 + self._view_offset) / self.scale
 
-    def is_out_of_pixmap(self, p: QPointF, /) -> bool:
-        return _is_out_of_image(p, self.pixmap.size())
+    def is_out_of_pixmap(self, *, p: QPointF) -> bool:
+        return _is_out_of_image(point=p, image_size=self.pixmap.size())
 
-    def _should_constrain_to_pixmap(self, point: QPointF, /) -> bool:
-        return not self._allow_out_of_bounds_points and self.is_out_of_pixmap(point)
+    def _should_constrain_to_pixmap(self, *, point: QPointF) -> bool:
+        return not self._allow_out_of_bounds_points and self.is_out_of_pixmap(p=point)
 
     def _finalize(self) -> None:
         assert self._current is not None
@@ -2707,15 +2743,15 @@ class Canvas(QtWidgets.QWidget):
                 return
             assert self.create_mode == "ai_segment"
             self._submit_ai_job(
-                channel="finalize", **_ai_segment_prompt(draft), draft=draft
+                channel="finalize", **_ai_segment_prompt(draft=draft), draft=draft
             )
             return
         self._current = self._current.close()
-        if _is_degenerate_draft(self._current):
+        if _is_degenerate_draft(draft=self._current):
             self.degenerate_shape_rejected.emit()
             self._cancel_current_shape()
             return
-        self._commit_new_shapes([_draft_to_shape(self._current)])
+        self._commit_new_shapes(new_shapes=[_draft_to_shape(draft=self._current)])
 
     def _submit_ai_find_all(
         self,
@@ -2774,14 +2810,14 @@ class Canvas(QtWidgets.QWidget):
             self._set_ai_existing_shape_highlights(
                 shapes=proposal.matching_existing_shapes
             )
-            self._commit_new_shapes(proposal.new_shapes)
+            self._commit_new_shapes(new_shapes=proposal.new_shapes)
             return
         if not proposal.matching_existing_shapes:
             self.inference_produced_no_shapes.emit()
         self._cancel_current_shape()
         self._set_ai_existing_shape_highlights(shapes=proposal.matching_existing_shapes)
 
-    def _commit_new_shapes(self, new_shapes: list[Shape], /) -> None:
+    def _commit_new_shapes(self, *, new_shapes: list[Shape]) -> None:
         self.shapes.extend(new_shapes)
         self.backup_shapes()
         self._reset_after_shape_creation()
@@ -2859,6 +2895,7 @@ class Canvas(QtWidgets.QWidget):
     def minimumSizeHint(self) -> QtCore.QSize:
         return self._compute_canvas_size()
 
+    @override
     def wheelEvent(self, a0: QtGui.QWheelEvent, /) -> None:
         self._clear_ai_existing_shape_highlights()
         mods: Qt.KeyboardModifier = a0.modifiers()
@@ -2894,6 +2931,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
         self._is_moving_shape = True
 
+    @override
     def keyPressEvent(self, a0: QtGui.QKeyEvent, /) -> None:
         self._clear_ai_existing_shape_highlights()
         modifiers = a0.modifiers()
@@ -2927,6 +2965,7 @@ class Canvas(QtWidgets.QWidget):
                 self.select_shapes(shapes=self.shapes[:])
         self._update_status(extra_messages=None)
 
+    @override
     def keyReleaseEvent(self, a0: QtGui.QKeyEvent, /) -> None:
         modifiers = a0.modifiers()
         if self.mode == _CanvasMode.CREATE:
@@ -2958,7 +2997,7 @@ class Canvas(QtWidgets.QWidget):
                 self.shapes.pop()
             self._cancel_current_shape()
             return
-        self._current = _shape_to_draft(self.shapes.pop()).open()
+        self._current = _shape_to_draft(shape=self.shapes.pop()).open()
         if self.create_mode in POLYLINE_SHAPE_TYPES:
             self._line = dataclasses.replace(
                 self._line,
@@ -2999,7 +3038,7 @@ class Canvas(QtWidgets.QWidget):
             return
         if self.create_mode == "ai_segment":
             self._current = (
-                _without_ai_segment_box(current)
+                _without_ai_segment_box(draft=current)
                 if current.point_labels[-1] == _AI_BOX_LABELS[1]
                 else current.pop_point()
             )
@@ -3055,10 +3094,10 @@ class Canvas(QtWidgets.QWidget):
         shape.visible = value
         self.update()
 
-    def _apply_cursor(self, role: CursorRole, /) -> None:
+    def _apply_cursor(self, *, role: CursorRole) -> None:
         if role == self._cursor:
             return
-        shape = _canvas_interaction.cursor_shape_for(role)
+        shape = _canvas_interaction.cursor_shape_for(role=role)
         # Push on first apply; swap the top of the stack we already own afterwards.
         if self._cursor == CursorRole.DEFAULT:
             QtWidgets.QApplication.setOverrideCursor(shape)
@@ -3110,7 +3149,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
 
-def _is_degenerate_draft(draft: _DraftShape, /) -> bool:
+def _is_degenerate_draft(*, draft: _DraftShape) -> bool:
     points = draft.points
     shape_type = draft.shape_type
     if shape_type == "polygon":
@@ -3134,7 +3173,7 @@ def _is_degenerate_draft(draft: _DraftShape, /) -> bool:
     return False
 
 
-def _ai_segment_point(pos: QPointF, modifiers: Qt.KeyboardModifier, /) -> _DraftShape:
+def _ai_segment_point(*, pos: QPointF, modifiers: Qt.KeyboardModifier) -> _DraftShape:
     # Shift marks a negative point.
     is_negative = bool(modifiers & Qt.KeyboardModifier.ShiftModifier)
     return _DraftShape(
@@ -3142,7 +3181,7 @@ def _ai_segment_point(pos: QPointF, modifiers: Qt.KeyboardModifier, /) -> _Draft
     )
 
 
-def _without_ai_segment_box(draft: _DraftShape, /) -> _DraftShape:
+def _without_ai_segment_box(*, draft: _DraftShape) -> _DraftShape:
     kept = [
         (point, label)
         for point, label in zip(draft.points, draft.point_labels, strict=True)
@@ -3156,19 +3195,19 @@ def _without_ai_segment_box(draft: _DraftShape, /) -> _DraftShape:
 
 
 def _with_ai_segment_input(
-    draft: _DraftShape, line: _DraftShape, /
+    *, draft: _DraftShape, line: _DraftShape
 ) -> _DraftShape | None:
     # line holds no input, one point, or two box corners that replace the
     # draft's box; None for a box with no area.
     if not line.points:
         return draft
     if line.point_labels != _AI_BOX_LABELS:
-        return draft.add_point(line.points[0], label=line.point_labels[0])
+        return draft.add_point(point=line.points[0], label=line.point_labels[0])
     first, second = line.points
     if first.x() == second.x() or first.y() == second.y():
         return None
     # A new box replaces the old one; the draft keeps input order for undo.
-    draft = _without_ai_segment_box(draft)
+    draft = _without_ai_segment_box(draft=draft)
     return dataclasses.replace(
         draft,
         points=(*draft.points, first, second),
@@ -3176,7 +3215,7 @@ def _with_ai_segment_input(
     )
 
 
-def _ai_segment_box(draft: _DraftShape, /) -> tuple[QPointF, ...]:
+def _ai_segment_box(*, draft: _DraftShape) -> tuple[QPointF, ...]:
     return tuple(
         point
         for point, label in zip(draft.points, draft.point_labels, strict=True)
@@ -3184,13 +3223,13 @@ def _ai_segment_box(draft: _DraftShape, /) -> tuple[QPointF, ...]:
     )
 
 
-def _split_ai_segment_draft(draft: _DraftShape, /) -> list[_DraftShape]:
+def _split_ai_segment_draft(*, draft: _DraftShape) -> list[_DraftShape]:
     # Points draw as markers and the box as a rectangle.
     drafts = []
-    points = _without_ai_segment_box(draft)
+    points = _without_ai_segment_box(draft=draft)
     if points.points:
         drafts.append(points)
-    corners = _ai_segment_box(draft)
+    corners = _ai_segment_box(draft=draft)
     if corners:
         drafts.append(
             _DraftShape(
@@ -3203,9 +3242,9 @@ def _split_ai_segment_draft(draft: _DraftShape, /) -> list[_DraftShape]:
     return drafts
 
 
-def _ai_segment_prompt(draft: _DraftShape, /) -> dict[str, Any]:
-    points = _without_ai_segment_box(draft)
-    corners = _ai_segment_box(draft)
+def _ai_segment_prompt(*, draft: _DraftShape) -> dict[str, Any]:
+    points = _without_ai_segment_box(draft=draft)
+    corners = _ai_segment_box(draft=draft)
     box = _normalize_bbox_points(bbox_points=corners) if corners else []
     return dict(
         prompt_kind="points" if points.points else "box",
@@ -3214,7 +3253,7 @@ def _ai_segment_prompt(draft: _DraftShape, /) -> dict[str, Any]:
     )
 
 
-def _clamp_into_image(point: QPointF, image_size: QtCore.QSize, /) -> QPointF:
+def _clamp_into_image(*, point: QPointF, image_size: QtCore.QSize) -> QPointF:
     return QPointF(
         min(max(point.x(), 0.0), image_size.width() - 1.0),
         min(max(point.y(), 0.0), image_size.height() - 1.0),
@@ -3326,7 +3365,7 @@ def _project_oriented_rectangle_corners(
     return perp, para
 
 
-def _is_out_of_image(point: QPointF, image_size: QtCore.QSize, /) -> bool:
+def _is_out_of_image(*, point: QPointF, image_size: QtCore.QSize) -> bool:
     return (
         point.x() < 0
         or point.y() < 0
@@ -3354,7 +3393,7 @@ def _reproject_oriented_rectangle_corners(
     )
 
     if not allow_out_of_bounds:
-        if _is_out_of_image(moving, image_size):
+        if _is_out_of_image(point=moving, image_size=image_size):
             edge_a = _compute_intersection_edges_image(
                 p1=adjacent_perp, p2=moving, image_size=image_size
             )
@@ -3374,7 +3413,7 @@ def _reproject_oriented_rectangle_corners(
                 anchor=anchor, edge_axis=adjacent_para, moving=moving
             )
 
-        if _is_out_of_image(adjacent_perp, image_size):
+        if _is_out_of_image(point=adjacent_perp, image_size=image_size):
             adjacent_perp = _compute_intersection_edges_image(
                 p1=anchor, p2=adjacent_perp, image_size=image_size
             )
@@ -3382,7 +3421,7 @@ def _reproject_oriented_rectangle_corners(
                 opposite_to=anchor, neighbor1=adjacent_perp, neighbor2=adjacent_para
             )
 
-        if _is_out_of_image(adjacent_para, image_size):
+        if _is_out_of_image(point=adjacent_para, image_size=image_size):
             adjacent_para = _compute_intersection_edges_image(
                 p1=anchor, p2=adjacent_para, image_size=image_size
             )

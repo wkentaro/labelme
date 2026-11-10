@@ -61,7 +61,7 @@ def test_separated_vertex_pixels_match_combined_paths(
     shape = Shape(points=np.array([[50, 50], [250, 50], [250, 250]]), closed=True)
     context = ShapeRenderContext(
         scale=1,
-        palette=Palette.from_rgb((240, 20, 40)),
+        palette=Palette.from_rgb(rgb=(240, 20, 40)),
         point_size=8,
         point_type=point_type,
         selected=state == "selected",
@@ -93,7 +93,7 @@ def test_overlapping_vertex_pixels_match_except_antialiased_edges(
     )
     context = ShapeRenderContext(
         scale=1,
-        palette=Palette.from_rgb((240, 20, 40)),
+        palette=Palette.from_rgb(rgb=(240, 20, 40)),
         point_size=8,
         point_type="round",
         selected=state == "selected",
@@ -122,7 +122,7 @@ def test_overlapping_translucent_draft_vertices_match_combined_paths(
     context = ShapeRenderContext(
         scale=1,
         palette=dataclasses.replace(
-            Palette.from_rgb((0, 255, 0)), line=QtGui.QColor(0, 255, 0, 128)
+            Palette.from_rgb(rgb=(0, 255, 0)), line=QtGui.QColor(0, 255, 0, 128)
         ),
         point_size=8,
         point_type="round",

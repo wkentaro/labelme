@@ -20,11 +20,11 @@ from .conftest import image_to_widget_pos
 from .conftest import submit_label_dialog
 
 
-def _centroid(points: np.ndarray, /) -> QPointF:
+def _centroid(*, points: np.ndarray) -> QPointF:
     return QPointF(float(points[:, 0].mean()), float(points[:, 1].mean()))
 
 
-def _edge_lengths(points: np.ndarray, /) -> list[float]:
+def _edge_lengths(*, points: np.ndarray) -> list[float]:
     n = len(points)
     return [float(np.linalg.norm(points[(i + 1) % n] - points[i])) for i in range(n)]
 
@@ -70,8 +70,8 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
     )
     shape = next(s for s in canvas.shapes if s.label == "rect")
     original_points = [QPointF(float(p[0]), float(p[1])) for p in shape.points]
-    original_centroid = _centroid(shape.points)
-    original_edges = _edge_lengths(shape.points)
+    original_centroid = _centroid(points=shape.points)
+    original_edges = _edge_lengths(points=shape.points)
 
     raw_win._switch_canvas_mode(edit=True, create_mode=None)
     qtbot.wait(50)
@@ -99,11 +99,11 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
         end=target_widget,
     )
 
-    rotated_centroid = _centroid(shape.points)
+    rotated_centroid = _centroid(points=shape.points)
     assert rotated_centroid.x() == pytest.approx(original_centroid.x(), abs=1.0)
     assert rotated_centroid.y() == pytest.approx(original_centroid.y(), abs=1.0)
 
-    rotated_edges = _edge_lengths(shape.points)
+    rotated_edges = _edge_lengths(points=shape.points)
     for actual, expected in zip(rotated_edges, original_edges):
         assert actual == pytest.approx(expected, abs=1.0)
 
@@ -174,7 +174,7 @@ def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
     assert float(side_01[0]) == pytest.approx(float(side_32[0]), abs=1e-3)
     assert float(side_01[1]) == pytest.approx(float(side_32[1]), abs=1e-3)
 
-    edges = _edge_lengths(shape.points)
+    edges = _edge_lengths(points=shape.points)
     assert min(edges) > 1.0
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

@@ -128,9 +128,9 @@ def _install_mock_session(
         assert request.image is not None
         try:
             annotations = _osam_worker._run(
-                _osam_session.get_osam_session(model_name=request.model_name),
-                request,
-                request.image,
+                session=_osam_session.get_osam_session(model_name=request.model_name),
+                request=request,
+                image=request.image,
                 progress=None,
             )
         except Exception as e:
@@ -483,10 +483,10 @@ def test_run_reads_detecting_under_any_tool(
     monkeypatch.setattr(win, "_ensure_ai_model_ready", lambda _: True)
     win._switch_canvas_mode(edit=False, create_mode="polygon")
     if case == "queued":  # Another AI tool's request is still running.
-        worker._set_active(MagicMock())
+        worker._set_active(active=MagicMock())
     else:
         monkeypatch.setattr(
-            OsamWorker, "submit", lambda self, **_: self._set_active(MagicMock())
+            OsamWorker, "submit", lambda self, **_: self._set_active(active=MagicMock())
         )
     if case == "drawing":  # Submitting keeps the tool of a Shape mid-drawing.
         click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.5, 0.5))
@@ -500,7 +500,7 @@ def test_run_reads_detecting_under_any_tool(
     assert canvas.create_mode == ("ai_find_all" if case == "queued" else "polygon")
     assert run_button.text() == "Finding…"
     worker._pending.clear()
-    worker._set_active(None)
+    worker._set_active(active=None)
     assert run_button.text() == win._ai_text._RUN_GLYPH
 
 
@@ -639,9 +639,11 @@ def _hold_text_results(
                 self,
                 job,
                 _osam_worker._run(
-                    _osam_session.get_osam_session(model_name=request.model_name),
-                    request,
-                    request.image,
+                    session=_osam_session.get_osam_session(
+                        model_name=request.model_name
+                    ),
+                    request=request,
+                    image=request.image,
                     progress=None,
                 ),
             )
@@ -711,7 +713,7 @@ def test_text_result_waits_for_a_drag(
         shape_type="rectangle",
         points=np.array([(400.0, 20.0), (460.0, 80.0)]),
     )
-    win._load_shapes([box], replace=True)
+    win._load_shapes(shapes=[box], replace=True)
     deliver = _hold_text_results(
         win=win, qtbot=qtbot, monkeypatch=monkeypatch, create_mode="rectangle"
     )
@@ -757,7 +759,7 @@ def test_text_result_waits_for_a_held_vertex(
         shape_type="rectangle",
         points=np.array([(400.0, 20.0), (460.0, 80.0)]),
     )
-    win._load_shapes([box], replace=True)
+    win._load_shapes(shapes=[box], replace=True)
     deliver = _hold_text_results(
         win=win, qtbot=qtbot, monkeypatch=monkeypatch, create_mode="rectangle"
     )
@@ -796,7 +798,7 @@ def test_text_result_keeps_the_selection_editable(
         shape_type="rectangle",
         points=np.array([(400.0, 20.0), (460.0, 80.0)]),
     )
-    win._load_shapes([box], replace=True)
+    win._load_shapes(shapes=[box], replace=True)
     deliver = _hold_text_results(
         win=win, qtbot=qtbot, monkeypatch=monkeypatch, create_mode="rectangle"
     )
@@ -884,7 +886,7 @@ def test_ai_find_all_box_checks_the_model_setting_before_download(
         config_overrides={"ai": {"text_model": text_model}},
     )
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    monkeypatch.setattr(win._model_manager, "is_ready", lambda _name: False)
+    monkeypatch.setattr(win._model_manager, "is_ready", lambda **_: False)
     win._refresh_model_availability()
     assert win._ai_text.get_model_name() == ""
 
@@ -1029,7 +1031,7 @@ def test_batch_skips_what_shapes_with_its_label_cover(
         shape_type="rectangle",
         points=np.array([(50.0, 30.0), (200.0, 300.0)]),
     )
-    win._load_shapes([dog], replace=True)
+    win._load_shapes(shapes=[dog], replace=True)
     _install_mock_session(
         monkeypatch=monkeypatch,
         response_fn=lambda *, texts: _make_response(
@@ -1176,7 +1178,10 @@ def test_example_box_batch_skips_and_reports_like_a_query(
         del channel
         assert request.image is not None
         self.finished.emit(
-            job, _osam_worker._run(session, request, request.image, progress=None)
+            job,
+            _osam_worker._run(
+                session=session, request=request, image=request.image, progress=None
+            ),
         )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
@@ -1191,7 +1196,7 @@ def test_example_box_batch_skips_and_reports_like_a_query(
         Shape(label="dog", shape_type="rectangle", points=np.array(box, dtype=float))
         for box in ([(50, 30), (200, 300)], [(220, 40), (350, 290)])
     ]
-    win._load_shapes(dogs[:existing], replace=True)
+    win._load_shapes(shapes=dogs[:existing], replace=True)
     monkeypatch.setattr(
         win._label_dialog,
         "popup",
@@ -1200,7 +1205,7 @@ def test_example_box_batch_skips_and_reports_like_a_query(
         ),
     )
     announced: list[str] = []
-    monkeypatch.setattr(win, "_announce", announced.append)
+    monkeypatch.setattr(win, "_announce", lambda *, message: announced.append(message))
     win._switch_canvas_mode(edit=False, create_mode="ai_find_all")
     for x, y in ((50.0, 30.0), (200.0, 300.0)):
         pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(x, y))
@@ -1242,7 +1247,10 @@ def test_run_with_an_example_box_draft_refines_it(
         del channel
         assert request.image is not None
         self.finished.emit(
-            job, _osam_worker._run(session, request, request.image, progress=None)
+            job,
+            _osam_worker._run(
+                session=session, request=request, image=request.image, progress=None
+            ),
         )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
@@ -1280,7 +1288,7 @@ def test_run_with_an_example_box_draft_refines_it(
     ) -> None:
         del channel
         held.append((job, request))
-        self._set_active(MagicMock(job=job, device=None))
+        self._set_active(active=MagicMock(job=job, device=None))
 
     monkeypatch.setattr(OsamWorker, "submit", hold)
     monkeypatch.setattr(canvas, "_ai_progress_clock", MagicMock(elapsed=lambda: 1000))
@@ -1293,9 +1301,12 @@ def test_run_with_an_example_box_draft_refines_it(
 
     (job, request), worker = held[0], win._osam_worker
     assert request.image is not None
-    worker._set_active(None)
+    worker._set_active(active=None)
     worker.finished.emit(
-        job, _osam_worker._run(session, request, request.image, progress=None)
+        job,
+        _osam_worker._run(
+            session=session, request=request, image=request.image, progress=None
+        ),
     )
     assert run_button.text() == win._ai_text._RUN_GLYPH
     assert len(canvas._ai_find_all_draft) == 2
@@ -1330,7 +1341,10 @@ def test_enter_asks_once_for_the_draft_label(
         del channel
         assert request.image is not None
         self.finished.emit(
-            job, _osam_worker._run(session, request, request.image, progress=None)
+            job,
+            _osam_worker._run(
+                session=session, request=request, image=request.image, progress=None
+            ),
         )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
