@@ -2505,28 +2505,35 @@ class MainWindow(QtWidgets.QMainWindow):
             if item in selected_group and len(selected_group) > 1
             else [item]
         )
-        items_to_change = [
-            it
-            for it in items_to_toggle
-            if (sh := it.shape()) is not None and sh.visible != is_visible_new
-        ]
-        if not items_to_change:
-            return
-
-        new_check_state = (
-            Qt.CheckState.Checked if is_visible_new else Qt.CheckState.Unchecked
+        self._apply_item_visibility(
+            changes=[(it, is_visible_new) for it in items_to_toggle]
         )
-        with QtCore.QSignalBlocker(self._docks.label_list._model):
-            for item_to_toggle in items_to_change:
-                shape_to_toggle = item_to_toggle.shape()
-                assert shape_to_toggle is not None
-                item_to_toggle.setCheckState(new_check_state)
-                self._canvas_widgets.canvas.set_shape_visible(
-                    shape=shape_to_toggle, value=is_visible_new
-                )
 
-        self._canvas_widgets.canvas.backup_shapes()
-        self._sync_edit_actions()
+    def _apply_item_visibility(
+        self, *, changes: list[tuple[LabelListWidgetItem, bool]]
+    ) -> None:
+        canvas = self._canvas_widgets.canvas
+        label_list = self._docks.label_list
+        changed = False
+        # Detached so a row's own handler cannot flip its selection group
+        # again, and so the whole change takes one Undo snapshot. The model
+        # keeps notifying the view, which repaints the checkboxes.
+        label_list.item_changed.disconnect(self._on_label_item_changed)
+        try:
+            for item, value in changes:
+                shape = item.shape()
+                if shape is None or shape.visible == value:
+                    continue
+                item.setCheckState(
+                    Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
+                )
+                canvas.set_shape_visible(shape=shape, value=value)
+                changed = True
+        finally:
+            label_list.item_changed.connect(self._on_label_item_changed)
+        if changed:
+            canvas.backup_shapes()
+            self._sync_edit_actions()
 
     def _on_label_order_changed(self) -> None:
         self._commit_shapes(
@@ -2811,13 +2818,13 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def toggle_shape_visibility(self, *, value: bool | None) -> None:
-        for item in self._docks.label_list:
-            target = (
-                item.checkState() == Qt.CheckState.Unchecked if value is None else value
-            )
-            item.setCheckState(
-                Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
-            )
+        self._apply_item_visibility(
+            changes=[
+                (item, not shape.visible if value is None else value)
+                for item in self._docks.label_list
+                if (shape := item.shape()) is not None
+            ]
+        )
 
     def _read_annotation_file(
         self, *, label_path: str, image_path: str | None
