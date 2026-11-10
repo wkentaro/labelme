@@ -265,6 +265,28 @@ def test_empties_file_when_last_override_pruned(*, tmp_path: Path) -> None:
     assert config_file.read_text(encoding="utf-8") == ""
 
 
+def test_keeps_comments_of_a_comment_only_file(*, tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("# my notes\n# auto_save: false\n", encoding="utf-8")
+
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["with_image_data"], True)]
+    )
+
+    content = config_file.read_text(encoding="utf-8")
+    assert content.startswith("# my notes\n# auto_save: false\n")
+    assert _parse(config_file=config_file) == {"with_image_data": True}
+
+
+def test_keeps_comments_when_last_override_pruned(*, tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("# my notes\nauto_save: false\n", encoding="utf-8")
+
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], True)])
+
+    assert config_file.read_text(encoding="utf-8") == "# my notes\n"
+
+
 def test_written_file_reloads_via_load_config(*, tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
