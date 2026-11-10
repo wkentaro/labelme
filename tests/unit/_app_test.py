@@ -379,7 +379,7 @@ def test_shape_to_dict_maps_all_fields() -> None:
         locked=True,
     )
 
-    result = _app._shape_to_dict(shape)
+    result = _app._shape_to_dict(shape=shape)
 
     assert result == {
         "label": "cat",
@@ -415,7 +415,7 @@ def test_shape_to_dict_coalesces_optional_flags_and_description(
 ) -> None:
     shape = Shape(label="cat", flags=flags, description=description)
 
-    result = _app._shape_to_dict(shape)
+    result = _app._shape_to_dict(shape=shape)
 
     assert result["flags"] == expected_flags
     assert result["description"] == expected_description
@@ -430,7 +430,7 @@ def test_shape_to_dict_copies_mask() -> None:
         points=np.array([[0.0, 0.0], [1.0, 1.0]], dtype=np.float64),
     )
 
-    result = _app._shape_to_dict(shape)["mask"]
+    result = _app._shape_to_dict(shape=shape)["mask"]
     assert result is not mask
     np.testing.assert_array_equal(result, mask)
 
@@ -439,7 +439,7 @@ def test_shape_to_dict_requires_label() -> None:
     shape = Shape(label=None)
 
     with pytest.raises(AssertionError):
-        _app._shape_to_dict(shape)
+        _app._shape_to_dict(shape=shape)
 
 
 @pytest.mark.parametrize(
@@ -620,7 +620,7 @@ def test_default_window_geometry(
     *, available: QtCore.QRect, toolbar_width: int, expected: QtCore.QRect
 ) -> None:
     assert (
-        _app._default_window_geometry(available, toolbar_width=toolbar_width)
+        _app._default_window_geometry(available=available, toolbar_width=toolbar_width)
         == expected
     )
 
@@ -640,13 +640,13 @@ def test_saved_shapes_equal_ignores_visibility_but_not_saved_fields() -> None:
 
     mask = np.array([[True, False]])
     assert _app._saved_shapes_equal(
-        [make(mask=mask)], [make(mask=mask.copy(), visible=False)]
+        a=[make(mask=mask)], b=[make(mask=mask.copy(), visible=False)]
     )
     assert not _app._saved_shapes_equal(
-        [make(mask=mask)], [make(mask=np.array([[False, False]]))]
+        a=[make(mask=mask)], b=[make(mask=np.array([[False, False]]))]
     )
-    assert not _app._saved_shapes_equal([make(mask=mask)], [make(mask=None)])
+    assert not _app._saved_shapes_equal(a=[make(mask=mask)], b=[make(mask=None)])
     assert not _app._saved_shapes_equal(
-        [make(mask=mask)], [make(mask=mask, locked=True)]
+        a=[make(mask=mask)], b=[make(mask=mask, locked=True)]
     )
-    assert not _app._saved_shapes_equal([make(mask=mask)], [])
+    assert not _app._saved_shapes_equal(a=[make(mask=mask)], b=[])

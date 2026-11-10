@@ -166,7 +166,9 @@ def test_merge_mask_shapes(
             "description": "",
             "shape_type": "mask",
             "flags": {},
-            "mask": _utils.img_arr_to_b64(np.ones((size, size), dtype=np.uint8)),
+            "mask": _utils.img_arr_to_b64(
+                img_arr=np.ones((size, size), dtype=np.uint8)
+            ),
         }
 
     raw_image_path = data_path / "raw/2011_000003.jpg"

@@ -39,7 +39,7 @@ def test_empty_state_icon_rethemes_with_application_palette(
             lambda: icon.pixmap() is not None and icon.pixmap().toImage() != red
         )
 
-        expected = new_icon("phosphor/image-square.svg").pixmap(56, 56).toImage()
+        expected = new_icon(name="phosphor/image-square.svg").pixmap(56, 56).toImage()
         assert icon.pixmap().toImage() == expected
     finally:
         qapp.setPalette(original_palette)

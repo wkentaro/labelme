@@ -54,7 +54,7 @@ class Palette:
     hvertex_fill: QtGui.QColor
 
     @classmethod
-    def from_rgb(cls, rgb: tuple[int, int, int], /) -> Palette:
+    def from_rgb(cls, *, rgb: tuple[int, int, int]) -> Palette:
         r, g, b = rgb
         return cls(
             line=QtGui.QColor(r, g, b),
@@ -66,7 +66,7 @@ class Palette:
         )
 
     @classmethod
-    def from_shape_config(cls, shape: dict, /) -> Palette:
+    def from_shape_config(cls, *, shape: dict) -> Palette:
         return cls(
             line=QtGui.QColor(*shape["line_color"]),
             fill=QtGui.QColor(*shape["fill_color"]),

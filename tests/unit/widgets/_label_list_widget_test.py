@@ -290,7 +290,7 @@ def test_format_shape_label(*, shape: Shape, expected: str) -> None:
     assert format_shape_label(shape=shape) == expected
 
 
-def _model_texts(model: _ItemModel, /) -> list[str]:
+def _model_texts(*, model: _ItemModel) -> list[str]:
     return [model.item(row).text() for row in range(model.rowCount())]
 
 
@@ -400,4 +400,4 @@ def test_remove_rows_emits_item_dropped(*, item_model: _ItemModel) -> None:
     item_model.removeRows(0, 1)
 
     assert fired == [None]
-    assert _model_texts(item_model) == ["b", "c"]
+    assert _model_texts(model=item_model) == ["b", "c"]

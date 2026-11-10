@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from pathlib import Path
+from typing import override
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -11,7 +12,8 @@ from .._utils import new_icon
 
 
 class _ElidedLabel(QtWidgets.QLabel):
-    def paintEvent(self, event: QtGui.QPaintEvent, /) -> None:  # noqa: ARG002 -- fixed by the base class
+    @override
+    def paintEvent(self, event: QtGui.QPaintEvent, /) -> None:
         rect = self.contentsRect()
         text = self.fontMetrics().elidedText(
             self.text(), QtCore.Qt.TextElideMode.ElideRight, rect.width()
@@ -59,7 +61,7 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
         self._next_to_images.setCheckable(True)
         self._next_to_images.triggered.connect(self._on_next_to_images)
         menu.addAction(
-            new_icon("phosphor/folders.svg"), self.tr("Change Annotation Folder…")
+            new_icon(name="phosphor/folders.svg"), self.tr("Change Annotation Folder…")
         ).triggered.connect(on_choose)
 
         button = QtWidgets.QToolButton()
@@ -81,11 +83,11 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
 
         self.set_count(annotated=0, total=0)
 
-    def set_folder(self, folder: Path | None, /) -> None:
+    def set_folder(self, *, folder: Path | None) -> None:
         self._folder = folder
         self._sync()
 
-    def set_missing(self, missing: str | None, /) -> None:
+    def set_missing(self, *, missing: str | None) -> None:
         # The warning shows while no folder is set, and only the caller
         # clears it, so a rolled-back folder change brings it back.
         self._missing = missing
@@ -138,7 +140,7 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
 
     def _sync_icon(self) -> None:
         if self._folder is not None:
-            icon = new_icon("phosphor/folders.svg")
+            icon = new_icon(name="phosphor/folders.svg")
         elif self._missing is not None:
             icon = self.style().standardIcon(
                 QtWidgets.QStyle.StandardPixmap.SP_MessageBoxWarning
@@ -149,6 +151,7 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
         if icon is not None:
             self._icon.setPixmap(icon.pixmap(16, 16))
 
+    @override
     def mousePressEvent(self, event: QtGui.QMouseEvent, /) -> None:
         # The whole row opens the menu, not only the arrow.
         if event.button() == QtCore.Qt.MouseButton.LeftButton:
@@ -156,11 +159,13 @@ class AnnotationFolderFooter(QtWidgets.QWidget):
             return
         super().mousePressEvent(event)
 
+    @override
     def changeEvent(self, event: QtCore.QEvent, /) -> None:
         super().changeEvent(event)
         if event.type() == QtCore.QEvent.Type.PaletteChange:
             self._sync_icon()
 
+    @override
     def paintEvent(self, event: QtGui.QPaintEvent, /) -> None:
         if self._folder is not None:
             # A highlight tint over the window color reads as a set state in

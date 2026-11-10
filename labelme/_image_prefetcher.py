@@ -33,7 +33,7 @@ def _decode(image_path: str, /) -> _Decoded:
         # handle, while the byte checks reopen the path. A file replaced or
         # rewritten in between changes its stat, so keep the pixels only if
         # the stat still matches after the decode.
-        before = _stat_identity(image_path)
+        before = _stat_identity(path=image_path)
         # QImage.fromData decodes through this same reader, so a prefetched
         # image is pixel-identical; unlike fromData, read() releases the GIL.
         reader = QtGui.QImageReader(image_path)
@@ -52,7 +52,7 @@ def _decode(image_path: str, /) -> _Decoded:
             if f.read() != image_data:
                 return None
         image = reader.read()
-        if image.isNull() or _stat_identity(image_path) != before:
+        if image.isNull() or _stat_identity(path=image_path) != before:
             return None
     except OSError as e:
         logger.debug("Skipped prefetching {!r}: {}", image_path, e)
@@ -60,7 +60,7 @@ def _decode(image_path: str, /) -> _Decoded:
     return image_data, image
 
 
-def _stat_identity(path: str, /) -> tuple[int, int, int, int]:
+def _stat_identity(*, path: str) -> tuple[int, int, int, int]:
     st = os.stat(path)
     return st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns
 

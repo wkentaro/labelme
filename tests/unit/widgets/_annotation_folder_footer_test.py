@@ -22,14 +22,14 @@ def _palette(*, window: str, text: str, highlight: str) -> QtGui.QPalette:
     return palette
 
 
-def _text(footer: AnnotationFolderFooter, /) -> str:
+def _text(*, footer: AnnotationFolderFooter) -> str:
     labels = footer.findChildren(QtWidgets.QLabel)
     return " ".join(
         label.text() for label in labels if label.isVisibleTo(footer) and label.text()
     )
 
 
-def _menu(footer: AnnotationFolderFooter, /) -> QtWidgets.QMenu:
+def _menu(*, footer: AnnotationFolderFooter) -> QtWidgets.QMenu:
     menu = footer.findChild(QtWidgets.QMenu)
     assert menu is not None
     return menu
@@ -59,7 +59,7 @@ def test_set_state_is_tinted(
         window = palette.color(QtGui.QPalette.ColorRole.Window)
         qtbot.waitUntil(lambda: footer.grab().toImage().pixelColor(1, 1) == window)
 
-        footer.set_folder(Path("/data/annotations"))
+        footer.set_folder(folder=Path("/data/annotations"))
         tint = footer.grab().toImage().pixelColor(1, 1)
         assert tint != window
         # The tint stays close to the window color so text keeps its contrast.
@@ -71,31 +71,31 @@ def test_set_state_is_tinted(
 def test_states_and_menu(*, qtbot: QtBot) -> None:
     footer = AnnotationFolderFooter(on_choose=_ignore, on_next_to_images=_ignore)
     qtbot.addWidget(footer)
-    next_to_images, choose = _menu(footer).actions()
+    next_to_images, choose = _menu(footer=footer).actions()
     assert choose.text() == "Change Annotation Folder…"
 
-    assert _text(footer) == "0 of 0 annotated · next to images"
+    assert _text(footer=footer) == "0 of 0 annotated · next to images"
     assert next_to_images.isChecked()
 
-    footer.set_folder(Path("/data/out"))
-    assert "out" in _text(footer)
+    footer.set_folder(folder=Path("/data/out"))
+    assert "out" in _text(footer=footer)
     assert footer.toolTip() == str(Path("/data/out"))
     assert not next_to_images.isChecked()
 
-    footer.set_folder(None)
-    footer.set_missing("/mnt/usb/out")
-    assert "Not found: out · next to images" in _text(footer)
+    footer.set_folder(folder=None)
+    footer.set_missing(missing="/mnt/usb/out")
+    assert "Not found: out · next to images" in _text(footer=footer)
     assert footer.toolTip() == "/mnt/usb/out"
     assert next_to_images.isChecked()
 
     # A folder hides the warning; going back without clearing shows it again.
-    footer.set_folder(Path("/data/out"))
-    assert "out" in _text(footer)
-    footer.set_folder(None)
-    assert "Not found" in _text(footer)
+    footer.set_folder(folder=Path("/data/out"))
+    assert "out" in _text(footer=footer)
+    footer.set_folder(folder=None)
+    assert "Not found" in _text(footer=footer)
 
-    footer.set_missing(None)
-    assert _text(footer) == "0 of 0 annotated · next to images"
+    footer.set_missing(missing=None)
+    assert _text(footer=footer) == "0 of 0 annotated · next to images"
 
 
 def test_next_to_images_stays_checked_when_the_switch_is_refused(
@@ -103,8 +103,8 @@ def test_next_to_images_stays_checked_when_the_switch_is_refused(
 ) -> None:
     footer = AnnotationFolderFooter(on_choose=_ignore, on_next_to_images=_ignore)
     qtbot.addWidget(footer)
-    footer.set_folder(Path("/data/out"))
-    next_to_images = _menu(footer).actions()[0]
+    footer.set_folder(folder=Path("/data/out"))
+    next_to_images = _menu(footer=footer).actions()[0]
 
     next_to_images.trigger()
 
@@ -116,12 +116,12 @@ def test_count_text(*, qtbot: QtBot) -> None:
     qtbot.addWidget(footer)
 
     footer.set_count(annotated=3, total=5)
-    assert _text(footer) == "3 of 5 annotated · next to images"
+    assert _text(footer=footer) == "3 of 5 annotated · next to images"
 
-    footer.set_folder(Path("/data/out"))
-    assert _text(footer) == "3 of 5 annotated in out"
+    footer.set_folder(folder=Path("/data/out"))
+    assert _text(footer=footer) == "3 of 5 annotated in out"
 
     # The warning replaces the count.
-    footer.set_folder(None)
-    footer.set_missing("/mnt/usb/out")
-    assert _text(footer) == "Not found: out · next to images"
+    footer.set_folder(folder=None)
+    footer.set_missing(missing="/mnt/usb/out")
+    assert _text(footer=footer) == "Not found: out · next to images"

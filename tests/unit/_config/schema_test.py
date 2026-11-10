@@ -25,7 +25,7 @@ def _resolve(*, config: dict, key_path: tuple[str, ...]) -> object:
     return node
 
 
-def _ids(settings: tuple[Setting, ...], /) -> list[str]:
+def _ids(*, settings: tuple[Setting, ...]) -> list[str]:
     return [".".join(setting.key_path) for setting in settings]
 
 
@@ -35,7 +35,7 @@ _COLOR_SETTINGS: Final = tuple(s for s in SETTINGS if s.kind == "color")
 _INT_SETTINGS: Final = tuple(s for s in SETTINGS if s.kind == "int")
 
 
-@pytest.mark.parametrize("setting", SETTINGS, ids=_ids(SETTINGS))
+@pytest.mark.parametrize("setting", SETTINGS, ids=_ids(settings=SETTINGS))
 def test_key_path_resolves_in_default_config(
     *, setting: Setting, default_config: dict
 ) -> None:
@@ -53,7 +53,7 @@ def test_every_group_is_used() -> None:
     assert used == set(typing.get_args(Group))
 
 
-@pytest.mark.parametrize("setting", _ENUM_SETTINGS, ids=_ids(_ENUM_SETTINGS))
+@pytest.mark.parametrize("setting", _ENUM_SETTINGS, ids=_ids(settings=_ENUM_SETTINGS))
 def test_enum_default_is_a_choice(*, setting: Setting, default_config: dict) -> None:
     assert setting.choices is not None
     assert len(setting.choices) >= 1
@@ -61,20 +61,20 @@ def test_enum_default_is_a_choice(*, setting: Setting, default_config: dict) -> 
     assert default in setting.choices
 
 
-@pytest.mark.parametrize("setting", _ENUM_SETTINGS, ids=_ids(_ENUM_SETTINGS))
+@pytest.mark.parametrize("setting", _ENUM_SETTINGS, ids=_ids(settings=_ENUM_SETTINGS))
 def test_enum_choice_labels_match_choices(*, setting: Setting) -> None:
     assert setting.choices is not None
     if setting.choice_labels is not None:
         assert len(setting.choice_labels) == len(setting.choices)
 
 
-@pytest.mark.parametrize("setting", _BOOL_SETTINGS, ids=_ids(_BOOL_SETTINGS))
+@pytest.mark.parametrize("setting", _BOOL_SETTINGS, ids=_ids(settings=_BOOL_SETTINGS))
 def test_bool_default_is_bool(*, setting: Setting, default_config: dict) -> None:
     default = _resolve(config=default_config, key_path=setting.key_path)
     assert isinstance(default, bool), setting.key_path
 
 
-@pytest.mark.parametrize("setting", _COLOR_SETTINGS, ids=_ids(_COLOR_SETTINGS))
+@pytest.mark.parametrize("setting", _COLOR_SETTINGS, ids=_ids(settings=_COLOR_SETTINGS))
 def test_color_default_is_rgb(*, setting: Setting, default_config: dict) -> None:
     default = _resolve(config=default_config, key_path=setting.key_path)
     assert (
@@ -84,7 +84,7 @@ def test_color_default_is_rgb(*, setting: Setting, default_config: dict) -> None
     ), setting.key_path
 
 
-@pytest.mark.parametrize("setting", _INT_SETTINGS, ids=_ids(_INT_SETTINGS))
+@pytest.mark.parametrize("setting", _INT_SETTINGS, ids=_ids(settings=_INT_SETTINGS))
 def test_int_default_matches_editor_range(
     *, setting: Setting, default_config: dict
 ) -> None:

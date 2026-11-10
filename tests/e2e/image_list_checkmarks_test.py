@@ -15,7 +15,7 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
-def _checked(win: MainWindow, /) -> list[bool]:
+def _checked(*, win: MainWindow) -> list[bool]:
     file_list = win._docks.file_list
     return [
         file_list.item(i).checkState() == Qt.CheckState.Checked
@@ -54,11 +54,11 @@ def test_save_as_onto_another_images_annotation_file_checks_neither(
     # The file records 2011_000003.jpg, so it is not 2011_000006.jpg's, and
     # 2011_000003.jpg does not look for it under that name.
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=other)
-    assert _checked(win) == [False, False, False]
+    assert _checked(win=win) == [False, False, False]
 
     _delete(win=win, monkeypatch=monkeypatch)
     assert not other.exists()
-    assert _checked(win) == [False, False, False]
+    assert _checked(win=win) == [False, False, False]
 
 
 @pytest.mark.gui
@@ -98,7 +98,7 @@ def test_save_as_outside_the_annotation_folder_checks_nothing(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=tmp_path / "copy.json")
-    assert _checked(win) == [False, False, False]
+    assert _checked(win=win) == [False, False, False]
 
 
 @pytest.mark.gui
@@ -119,7 +119,7 @@ def test_deleting_a_save_as_copy_keeps_the_images_checkmark(
 
     _delete(win=win, monkeypatch=monkeypatch)
     assert not copy.exists()
-    assert _checked(win) == [True, True, True]
+    assert _checked(win=win) == [True, True, True]
 
 
 @pytest.mark.gui
@@ -141,11 +141,11 @@ def test_save_through_a_symlinked_annotation_folder_checks_the_image(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=saved)
-    assert _checked(win) == [True, False, False]
+    assert _checked(win=win) == [True, False, False]
 
     _delete(win=win, monkeypatch=monkeypatch)
     assert not saved.exists()
-    assert _checked(win) == [False, False, False]
+    assert _checked(win=win) == [False, False, False]
 
 
 @pytest.mark.gui
@@ -168,10 +168,10 @@ def test_save_whose_name_differs_only_in_case_checks_the_image(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=saved)
-    assert _checked(win) == [True, False, False]
+    assert _checked(win=win) == [True, False, False]
 
     _delete(win=win, monkeypatch=monkeypatch)
-    assert _checked(win) == [False, False, False]
+    assert _checked(win=win) == [False, False, False]
 
 
 @pytest.mark.gui
@@ -202,7 +202,7 @@ def test_save_onto_the_annotation_file_of_an_unusual_name_checks_it(
     saved.unlink()
     win = main_win(file_or_dir=images)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    assert _checked(win) == [False, False]
+    assert _checked(win=win) == [False, False]
 
     _save_as(win=win, qtbot=qtbot, monkeypatch=monkeypatch, path=saved)
-    assert sorted(_checked(win)) == [False, True]
+    assert sorted(_checked(win=win)) == [False, True]

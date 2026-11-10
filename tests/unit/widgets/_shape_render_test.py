@@ -50,7 +50,7 @@ def _render(
     painter = QtGui.QPainter(image)
     context = ShapeRenderContext(
         scale=scale,
-        palette=Palette.from_rgb((255, 0, 0)),
+        palette=Palette.from_rgb(rgb=(255, 0, 0)),
         point_size=8,
         point_type="round",
         selected=False,
@@ -388,7 +388,7 @@ def test_mask_draws_fill_and_edge_as_asked(*, fill_mask: bool, outline: bool) ->
         shape=_mask_shape(),
         context=ShapeRenderContext(
             scale=1.0,
-            palette=Palette.from_rgb((255, 0, 0)),
+            palette=Palette.from_rgb(rgb=(255, 0, 0)),
             point_size=8,
             point_type="round",
             selected=False,
@@ -418,7 +418,7 @@ def test_polygon_without_outline_draws_its_fill_alone(*, outline: bool) -> None:
         shape=_polygon(label=None),
         context=ShapeRenderContext(
             scale=1.0,
-            palette=Palette.from_rgb((255, 0, 0)),
+            palette=Palette.from_rgb(rgb=(255, 0, 0)),
             point_size=8,
             point_type="round",
             selected=False,
@@ -684,7 +684,7 @@ def _assert_intersects_every_painted_pixel(
         painter.setFont(font)
     context = ShapeRenderContext(
         scale=scale,
-        palette=Palette.from_rgb((255, 0, 0)),
+        palette=Palette.from_rgb(rgb=(255, 0, 0)),
         point_size=point_size,
         point_type="round",
         selected=False,

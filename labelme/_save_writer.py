@@ -12,7 +12,7 @@ def _write_and_notify(
     request: SaveRequest, completed: QtCore.SignalInstance, /
 ) -> None:
     try:
-        write_save_request(request)
+        write_save_request(request=request)
     except BaseException as error:
         # Every worker failure must release the GUI's save barrier.
         completed.emit(error)

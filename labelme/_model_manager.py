@@ -200,7 +200,7 @@ class ModelManager(QtCore.QObject):
         self._pull: _Pull | None = None
         self._closed = False
 
-    def is_ready(self, model_name: str, /) -> bool:
+    def is_ready(self, *, model_name: str) -> bool:
         # Every writer verifies the hash before moving a file into the cache, so
         # presence is enough; a file corrupted later fails the check on load.
         if model_name not in self.models:
@@ -209,12 +209,12 @@ class ModelManager(QtCore.QObject):
 
         return osam.apis.get_model_type_by_name(model_name).get_size() is not None
 
-    def get_state(self, model_name: str, /) -> str:
+    def get_state(self, *, model_name: str) -> str:
         if model_name in self.queue:
             return "queued"
         if model_name == self.active:
             return "downloading"
-        if self.is_ready(model_name):
+        if self.is_ready(model_name=model_name):
             return "downloaded"
         if model_name in self.errors:
             return "failed"
@@ -223,8 +223,12 @@ class ModelManager(QtCore.QObject):
     def refresh(self) -> None:
         self.changed.emit()
 
-    def enqueue(self, model_name: str, /) -> None:
-        if self._closed or model_name not in self.models or self.is_ready(model_name):
+    def enqueue(self, *, model_name: str) -> None:
+        if (
+            self._closed
+            or model_name not in self.models
+            or self.is_ready(model_name=model_name)
+        ):
             return
         if model_name == self.active or model_name in self.queue:
             return
@@ -295,7 +299,7 @@ class ModelManager(QtCore.QObject):
             if stopped:
                 self._start_next()
 
-    def remove(self, model_name: str, /) -> None:
+    def remove(self, *, model_name: str) -> None:
         if model_name in self.queue:
             self.queue.remove(model_name)
         elif model_name == self.active:

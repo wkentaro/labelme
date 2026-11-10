@@ -5,6 +5,7 @@ import typing
 from collections.abc import Callable
 from collections.abc import Sequence
 from itertools import pairwise
+from typing import override
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -29,6 +30,7 @@ class _SearchResultDelegate(QtWidgets.QStyledItemDelegate):
     # Search results carry "name\nsection" as their text; the section is drawn
     # smaller and muted so the setting name stays primary. Section results keep
     # the default single-line rendering.
+    @override
     def paint(
         self,
         painter: QtGui.QPainter,
@@ -117,6 +119,7 @@ class _PlainTextEdit(QtWidgets.QPlainTextEdit):
         self.mark_committed()
         self.editing_finished.emit()
 
+    @override
     def focusOutEvent(self, e: QtGui.QFocusEvent, /) -> None:
         super().focusOutEvent(e)
         self.commit()
@@ -152,7 +155,7 @@ class _LabelFlagsEditor(QtWidgets.QWidget):
         layout.addWidget(self._add_button, alignment=QtCore.Qt.AlignmentFlag.AlignLeft)
         self.setFocusProxy(self._add_button)
 
-    def set_accessible_note(self, note: str, /) -> None:
+    def set_accessible_note(self, *, note: str) -> None:
         self._accessible_note = note
         self._validate()
 
@@ -289,7 +292,7 @@ class _ColorSwatchButton(QtWidgets.QPushButton):
     def get_rgb(self) -> tuple[int, int, int]:
         return self._rgb
 
-    def set_rgb(self, rgb: tuple[int, int, int], /) -> None:
+    def set_rgb(self, *, rgb: tuple[int, int, int]) -> None:
         self._rgb = rgb
         r, g, b = rgb
         self.setToolTip(
@@ -301,7 +304,7 @@ class _ColorSwatchButton(QtWidgets.QPushButton):
         self.setIcon(QtGui.QIcon(swatch))
         self.setIconSize(swatch.size())
 
-    def set_accessible_note(self, note: str, /) -> None:
+    def set_accessible_note(self, *, note: str) -> None:
         self._accessible_note = note
         self._update_accessible_description()
 
@@ -313,6 +316,7 @@ class _ColorSwatchButton(QtWidgets.QPushButton):
 
 
 class _SettingHighlight(QtWidgets.QWidget):
+    @override
     def paintEvent(self, _event: QtGui.QPaintEvent, /) -> None:
         # macOS lets users choose text-selection and accent colors independently.
         color = self.palette().color(
@@ -475,6 +479,7 @@ class _SettingsPage(QtWidgets.QWidget):
         )
         navigation.setCurrentRow(0)
 
+    @override
     def showEvent(self, event: QtGui.QShowEvent, /) -> None:
         super().showEvent(event)
         self._search.clear()
@@ -568,14 +573,14 @@ class _SettingsPage(QtWidgets.QWidget):
                 "No matching settings in this dialog. Try another term or clear search."
             )
         )
-        self._set_status(message)
+        self._set_status(message=message)
 
-    def _set_status(self, message: str, /) -> None:
+    def _set_status(self, *, message: str) -> None:
         self._status.setText(message)
         self._status.show()
-        self._queue_announcement(message)
+        self._queue_announcement(message=message)
 
-    def _queue_announcement(self, message: str, /) -> None:
+    def _queue_announcement(self, *, message: str) -> None:
         self._announcement_message = message
         # Results update immediately; speech waits for a typing pause.
         ANNOUNCEMENT_DELAY_MS: typing.Final = 350
@@ -637,7 +642,7 @@ class _SettingsPage(QtWidgets.QWidget):
         else:
             reason = row.toolTip()
             item.setData(QtCore.Qt.ItemDataRole.AccessibleDescriptionRole, reason)
-            self._set_status(reason)
+            self._set_status(message=reason)
         self._destination = editor
         self._place_highlight()
         self._highlight.show()
@@ -652,6 +657,7 @@ class _SettingsPage(QtWidgets.QWidget):
             QtCore.QRect(row.mapTo(self._content, QtCore.QPoint()), row.size())
         )
 
+    @override
     def focusNextPrevChild(self, next: bool, /) -> bool:  # noqa: FBT001 -- QWidget override
         # Tab from an activated result enters that setting rather than the
         # first editor on the page. A disabled setting refuses focus, so
@@ -666,6 +672,7 @@ class _SettingsPage(QtWidgets.QWidget):
             return True
         return super().focusNextPrevChild(next)
 
+    @override
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
         if watched is self._content and event.type() == QtCore.QEvent.Type.Resize:
             self._place_highlight()
@@ -710,7 +717,7 @@ class _SettingsPage(QtWidgets.QWidget):
                 item = self._navigation.currentItem()
                 if item is not None:
                     self._queue_announcement(
-                        item.data(QtCore.Qt.ItemDataRole.AccessibleTextRole)
+                        message=item.data(QtCore.Qt.ItemDataRole.AccessibleTextRole)
                     )
                 return True
             if key in (QtCore.Qt.Key.Key_Return, QtCore.Qt.Key.Key_Enter):
@@ -778,7 +785,7 @@ class SettingsDialog(QtWidgets.QDialog):
         apply_setting: _ApplySetting,
         preview_shape_color: _PreviewShapeColor,
         open_as_text: Callable[[], None],
-        settings_editable: bool = True,  # noqa: FBT001 -- controls config editing
+        settings_editable: bool = True,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -806,7 +813,7 @@ class SettingsDialog(QtWidgets.QDialog):
             groups.append(
                 (
                     self.tr(group),
-                    new_icon(GROUP_ICONS[group]),
+                    new_icon(name=GROUP_ICONS[group]),
                     self._build_group(title=self.tr(group), settings=settings),
                 )
             )
@@ -863,6 +870,7 @@ class SettingsDialog(QtWidgets.QDialog):
         self._sync_validate_label_gate()
         self._sync_shape_color_mode()
 
+    @override
     def keyPressEvent(self, event: QtGui.QKeyEvent, /) -> None:
         if event.key() == QtCore.Qt.Key.Key_Escape and self._page.clear_search():
             event.accept()
@@ -930,7 +938,7 @@ class SettingsDialog(QtWidgets.QDialog):
             if setting.note:
                 note = self.tr(setting.note)
                 if isinstance(editor, _ColorSwatchButton | _LabelFlagsEditor):
-                    editor.set_accessible_note(note)
+                    editor.set_accessible_note(note=note)
                 else:
                     editor.setAccessibleDescription(note)
             self._editors[setting.key_path] = editor
@@ -999,7 +1007,7 @@ class SettingsDialog(QtWidgets.QDialog):
             check = QtWidgets.QCheckBox()
             self._set_editor_value(editor=check, value=value)
             check.toggled.connect(
-                lambda checked: self._apply(setting.key_path, checked)
+                lambda checked: self._apply(key_path=setting.key_path, value=checked)
             )
             return check
         if setting.kind == "enum":
@@ -1040,7 +1048,9 @@ class SettingsDialog(QtWidgets.QDialog):
             )
             slider.setMinimumWidth(180)
             slider.value_changed.connect(
-                lambda new_value: self._apply(setting.key_path, new_value)
+                lambda new_value: self._apply(
+                    key_path=setting.key_path, value=new_value
+                )
             )
             return slider
         if setting.kind == "language":
@@ -1076,7 +1086,7 @@ class SettingsDialog(QtWidgets.QDialog):
             flags_editor = _LabelFlagsEditor()
             self._set_editor_value(editor=flags_editor, value=value)
             flags_editor.value_changed.connect(
-                lambda rules: self._apply(setting.key_path, rules)
+                lambda rules: self._apply(key_path=setting.key_path, value=rules)
             )
             return flags_editor
         if setting.kind == "str_list":
@@ -1089,7 +1099,9 @@ class SettingsDialog(QtWidgets.QDialog):
                 edit.editing_finished.connect(lambda: self._on_labels_edited(edit=edit))
             else:
                 edit.editing_finished.connect(
-                    lambda: self._apply(setting.key_path, _parse_str_list(edit=edit))
+                    lambda: self._apply(
+                        key_path=setting.key_path, value=_parse_str_list(edit=edit)
+                    )
                 )
             return edit
         typing.assert_never(setting.kind)
@@ -1114,7 +1126,7 @@ class SettingsDialog(QtWidgets.QDialog):
         return combo
 
     def _apply_combo(self, *, setting: Setting, combo: QtWidgets.QComboBox) -> None:
-        self._apply(setting.key_path, combo.currentData())
+        self._apply(key_path=setting.key_path, value=combo.currentData())
         if setting.key_path == ("shape_color", "mode"):
             self._sync_shape_color_mode()
 
@@ -1127,7 +1139,7 @@ class SettingsDialog(QtWidgets.QDialog):
             self._revert_editor(key_path=key_path)
             return
         edit.setText(str(value))
-        self._apply(key_path, value)
+        self._apply(key_path=key_path, value=value)
 
     def _pick_color(
         self, *, key_path: tuple[str, ...], swatch: _ColorSwatchButton
@@ -1142,7 +1154,7 @@ class SettingsDialog(QtWidgets.QDialog):
         )
         accepted = picker.exec() == QtWidgets.QDialog.DialogCode.Accepted
         if accepted:
-            self._apply(key_path, list(swatch.get_rgb()))
+            self._apply(key_path=key_path, value=list(swatch.get_rgb()))
         else:
             self._revert_editor(key_path=key_path)
         self._preview_shape_color(key_path, None)
@@ -1155,7 +1167,7 @@ class SettingsDialog(QtWidgets.QDialog):
         color: QtGui.QColor,
     ) -> None:
         rgb = (color.red(), color.green(), color.blue())
-        swatch.set_rgb(rgb)
+        swatch.set_rgb(rgb=rgb)
         self._preview_shape_color(key_path, list(rgb))
 
     def _set_editor_value(self, *, editor: QtWidgets.QWidget, value: object) -> None:
@@ -1165,7 +1177,7 @@ class SettingsDialog(QtWidgets.QDialog):
             editor.setCurrentIndex(max(editor.findData(value), 0))
         elif isinstance(editor, IntegerSlider):
             assert isinstance(value, int)
-            editor.set_value(value)
+            editor.set_value(value=value)
         elif isinstance(editor, QtWidgets.QLineEdit):
             assert isinstance(value, int)
             editor.setText(str(value))
@@ -1177,9 +1189,9 @@ class SettingsDialog(QtWidgets.QDialog):
             assert value is None or isinstance(value, dict)
             editor.set_value(value=typing.cast(dict[str, list[str]] | None, value))
         elif isinstance(editor, _ColorSwatchButton):
-            editor.set_rgb(_parse_rgb(value=value))
+            editor.set_rgb(rgb=_parse_rgb(value=value))
 
-    def _apply(self, key_path: tuple[str, ...], value: object, /) -> bool:
+    def _apply(self, *, key_path: tuple[str, ...], value: object) -> bool:
         editor = self._editors[key_path]
         if isinstance(editor, QtWidgets.QComboBox):
             model = editor.model()
@@ -1218,7 +1230,7 @@ class SettingsDialog(QtWidgets.QDialog):
             )
             self._revert_editor(key_path=("labels",))
             return
-        self._apply(("labels",), labels)
+        self._apply(key_path=("labels",), value=labels)
         self._sync_validate_label_gate()
 
     def _sync_validate_label_gate(self) -> None:

@@ -11,7 +11,7 @@ from ._model import Shape
 MergeBlocker = Literal["too_few", "not_masks", "locked", "mixed_labels"]
 
 
-def merge_blocker(shapes: list[Shape], /) -> MergeBlocker | None:
+def merge_blocker(*, shapes: list[Shape]) -> MergeBlocker | None:
     # Ordered by what the user fixes first: a locked polygon reports
     # "not_masks", since unlocking it would still not make it mergeable.
     if len(shapes) <= 1:
@@ -25,11 +25,11 @@ def merge_blocker(shapes: list[Shape], /) -> MergeBlocker | None:
     return None
 
 
-def can_merge_shapes(shapes: list[Shape], /) -> bool:
-    return merge_blocker(shapes) is None
+def can_merge_shapes(*, shapes: list[Shape]) -> bool:
+    return merge_blocker(shapes=shapes) is None
 
 
-def _round_bbox_to_int(shape: Shape, /) -> tuple[int, int, int, int]:
+def _round_bbox_to_int(*, shape: Shape) -> tuple[int, int, int, int]:
     # Must match the AI Assist bbox rounding, so a merged bbox lands on the
     # same pixel grid as the Mask Shapes AI Assist produces.
     (xmin, ymin), (xmax, ymax) = shape.points
@@ -41,10 +41,10 @@ def _round_bbox_to_int(shape: Shape, /) -> tuple[int, int, int, int]:
     )
 
 
-def merge_masks(shapes: list[Shape], /) -> Shape:
-    if not can_merge_shapes(shapes):
+def merge_masks(*, shapes: list[Shape]) -> Shape:
+    if not can_merge_shapes(shapes=shapes):
         raise ValueError("merge_masks needs 2+ Mask Shapes sharing one label")
-    bboxes = [_round_bbox_to_int(s) for s in shapes]
+    bboxes = [_round_bbox_to_int(shape=s) for s in shapes]
     placed: list[tuple[int, int, npt.NDArray[np.bool_]]] = []
     for shape, (x0, y0, _, _) in zip(shapes, bboxes):
         assert shape.mask is not None

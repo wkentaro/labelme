@@ -4,6 +4,7 @@ import dataclasses
 from collections.abc import Collection
 from typing import Final
 from typing import Literal
+from typing import override
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -216,7 +217,7 @@ class LabelDialog(QtWidgets.QDialog):
             return
         self._refresh_ok_button()
         if "flags" not in self._locked:
-            self._update_flags(text)
+            self._update_flags(text=text)
 
     def _refresh_ok_button(self) -> None:
         # Return only ever reaches an enabled default button, so disabling OK is
@@ -225,6 +226,7 @@ class LabelDialog(QtWidgets.QDialog):
             "label" in self._locked or bool(self.edit.text().strip())
         )
 
+    @override
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent, /) -> bool:
         if watched is not self.edit or event.type() != QtCore.QEvent.Type.KeyPress:
             return super().eventFilter(watched, event)
@@ -273,7 +275,7 @@ class LabelDialog(QtWidgets.QDialog):
     def set_flag_rules(self, *, flags: dict[str, list[str]] | None) -> None:
         self._flags_spec = compile_label_flags(label_flags=flags)
 
-    def _update_flags(self, text: str, /) -> None:
+    def _update_flags(self, *, text: str) -> None:
         if "flags" in self._locked:
             self._set_flag_checkboxes(flags={})
             return
@@ -308,7 +310,7 @@ class LabelDialog(QtWidgets.QDialog):
     def remember_label(self, *, label: str) -> None:
         self._last_label = label
 
-    def _find_label_row(self, text: str, /) -> int:
+    def _find_label_row(self, *, text: str) -> int:
         # Match through the model so the highlight folds case the way Qt's own
         # text matching does; Python's folding differs on the sharp s, say.
         model = self.label_list.model()
@@ -363,11 +365,11 @@ class LabelDialog(QtWidgets.QDialog):
         self.edit.selectAll()
         self.edit_group_id.setText("" if group_id is None else str(group_id))
         self.edit_description.setPlainText(description or "")
-        self._update_flags(text)
+        self._update_flags(text=text)
 
         # Highlight the suggestion without applying its spelling to the label.
         with QtCore.QSignalBlocker(self.label_list):
-            self.label_list.setCurrentRow(self._find_label_row(text))
+            self.label_list.setCurrentRow(self._find_label_row(text=text))
 
         self._fit_label_list_to_content()
         self._refresh_ok_button()
@@ -375,12 +377,14 @@ class LabelDialog(QtWidgets.QDialog):
 
         if move:
             target = position if position is not None else QtGui.QCursor.pos()
-            self._move_within_screen(target)
+            self._move_within_screen(target=target)
             # frameGeometry() lacks the window-manager decoration size until the
             # dialog is mapped, so re-clamp once exec() has shown it. Clamp only
             # (no re-anchor to target): a full re-move visibly jerks the already
             # visible dialog, while the clamp is a no-op unless it overflows.
-            QtCore.QTimer.singleShot(0, lambda: self._clamp_within_screen(target))
+            QtCore.QTimer.singleShot(
+                0, lambda: self._clamp_within_screen(target=target)
+            )
 
         self.exec()
         return self._entry
@@ -439,14 +443,14 @@ class LabelDialog(QtWidgets.QDialog):
         if self._fit_to_content["column"]:
             self.label_list.setMinimumWidth(self.label_list.sizeHintForColumn(0) + 2)
 
-    def _move_within_screen(self, target: QtCore.QPoint, /) -> None:
+    def _move_within_screen(self, *, target: QtCore.QPoint) -> None:
         self.adjustSize()
         # setGeometry() anchors the client area, unlike move() which anchors the
         # window frame: the content corner lands at target, not the title bar's.
         self.setGeometry(QtCore.QRect(target, self.size()))
-        self._clamp_within_screen(target)
+        self._clamp_within_screen(target=target)
 
-    def _clamp_within_screen(self, target: QtCore.QPoint, /) -> None:
+    def _clamp_within_screen(self, *, target: QtCore.QPoint) -> None:
         screen = (
             QtGui.QGuiApplication.screenAt(target)
             or QtGui.QGuiApplication.primaryScreen()

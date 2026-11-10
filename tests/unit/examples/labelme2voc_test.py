@@ -15,7 +15,7 @@ import pytest
 _REPO_ROOT: Final = Path(__file__).resolve().parents[3]
 
 
-def _write_annotation(directory: Path, /) -> None:
+def _write_annotation(*, directory: Path) -> None:
     img = PIL.Image.new("RGB", (8, 8), color=(0, 0, 0))
     buf = io.BytesIO()
     img.save(buf, format="PNG")
@@ -62,7 +62,7 @@ def _run(
 def _annotated_dir(*, tmp_path: Path) -> Path:
     directory = tmp_path / "data_annotated"
     directory.mkdir()
-    _write_annotation(directory)
+    _write_annotation(directory=directory)
     return directory
 
 

@@ -4,6 +4,7 @@ import itertools
 import os
 from collections.abc import Sequence
 from typing import Final
+from typing import override
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -25,7 +26,7 @@ class ImageListDelegate(QtWidgets.QStyledItemDelegate):
         super().__init__(parent)
         self._show_folders = False
 
-    def set_labels(self, labels: Sequence[str], /) -> None:
+    def set_labels(self, *, labels: Sequence[str]) -> None:
         # Headings pay off at two or more Images per folder run. One Image per
         # folder, such as sample_01/image.jpg, would add a heading to every
         # row, so those lists keep the full path in each row.
@@ -48,6 +49,7 @@ class ImageListDelegate(QtWidgets.QStyledItemDelegate):
         # don't read as part of the folder above them.
         return (folder or os.curdir) + os.sep
 
+    @override
     def initStyleOption(
         self,
         option: QtWidgets.QStyleOptionViewItem,
@@ -58,6 +60,7 @@ class ImageListDelegate(QtWidgets.QStyledItemDelegate):
         if self._show_folders:
             option.text = os.path.basename(option.text)
 
+    @override
     def sizeHint(
         self,
         option: QtWidgets.QStyleOptionViewItem,
@@ -68,7 +71,7 @@ class ImageListDelegate(QtWidgets.QStyledItemDelegate):
         heading = self.heading(index)
         if heading is None:
             return size
-        metrics = QtGui.QFontMetrics(_heading_font(option))
+        metrics = QtGui.QFontMetrics(_heading_font(option=option))
         # The width lets the list scroll sideways to a long heading, as it
         # does to a long row.
         size.setWidth(
@@ -77,6 +80,7 @@ class ImageListDelegate(QtWidgets.QStyledItemDelegate):
         size.setHeight(size.height() + metrics.height() + 2 * _HEADING_PADDING)
         return size
 
+    @override
     def paint(
         self,
         painter: QtGui.QPainter,
@@ -88,7 +92,7 @@ class ImageListDelegate(QtWidgets.QStyledItemDelegate):
         if heading is None:
             super().paint(painter, option, index)
             return
-        font = _heading_font(option)
+        font = _heading_font(option=option)
         rect: QtCore.QRect = option.rect
         strip = QtCore.QRect(rect)
         strip.setHeight(QtGui.QFontMetrics(font).height() + 2 * _HEADING_PADDING)
@@ -107,7 +111,7 @@ class ImageListDelegate(QtWidgets.QStyledItemDelegate):
         super().paint(painter, row, index)
 
 
-def _heading_font(option: QtWidgets.QStyleOptionViewItem, /) -> QtGui.QFont:
+def _heading_font(*, option: QtWidgets.QStyleOptionViewItem) -> QtGui.QFont:
     font = QtGui.QFont(option.font)
     font.setPointSizeF(font.pointSizeF() * 0.85)
     return font
