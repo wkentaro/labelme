@@ -1632,7 +1632,9 @@ class Canvas(QtWidgets.QWidget):
         self.hovered_shape = shape
         self._hovered_vertex = None
         self._last_hovered_vertex = None
-        self._is_moving_shape = True  # commit the removal on release
+        # Snapshot now: a shortcut has no mouse release to commit on.
+        self.backup_shapes()
+        self.shape_moved.emit()
         # Repaint now; otherwise the edit is invisible until the next mouse move.
         self.update()
         return True

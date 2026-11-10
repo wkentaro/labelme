@@ -680,7 +680,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         remove_point = action(
             text=self.tr("Delete Selected Point"),
-            slot=self.remove_selected_point,
+            slot=self._canvas_widgets.canvas.remove_selected_point,
             shortcut=shortcuts["remove_selected_point"],
             icon="phosphor/minus-circle.svg",
             tip=self.tr("Delete the selected point from the polygon or LineStrip"),
@@ -4028,19 +4028,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def current_path(self) -> str:
         return str(Path(self._image_path).parent) if self._image_path else "."
-
-    def remove_selected_point(self) -> None:
-        if not self._canvas_widgets.canvas.remove_selected_point():
-            return
-        if (
-            self._canvas_widgets.canvas.hovered_shape
-            and len(self._canvas_widgets.canvas.hovered_shape.points) == 0
-        ):
-            self._canvas_widgets.canvas.delete_shape(
-                shape=self._canvas_widgets.canvas.hovered_shape
-            )
-            self.remove_labels(shapes=[self._canvas_widgets.canvas.hovered_shape])
-        self.mark_dirty()
 
     def delete_selected_shapes(self) -> None:
         self.remove_labels(shapes=self._canvas_widgets.canvas.delete_selected())

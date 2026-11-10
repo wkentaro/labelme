@@ -2766,6 +2766,24 @@ def test_remove_selected_point_deselects_vertex(*, canvas: Canvas) -> None:
     assert not canvas._is_vertex_selected()
 
 
+@pytest.mark.gui
+def test_remove_selected_point_is_its_own_undo_step(*, canvas: Canvas) -> None:
+    canvas.load_shapes(shapes=[_make_polygon()])
+    shape = canvas.shapes[0]
+    canvas._last_hovered_shape = shape
+    canvas._last_hovered_vertex = 1
+    moved = Mock()
+    canvas.shape_moved.connect(moved)
+
+    canvas.remove_selected_point()
+
+    # A shortcut has no mouse release, so the snapshot cannot wait for one.
+    moved.assert_called_once()
+    assert not canvas.is_interacting
+    canvas.restore_last_shape()
+    assert len(canvas.shapes[0].points) == 4
+
+
 def _drag(
     *,
     qtbot: QtBot,
