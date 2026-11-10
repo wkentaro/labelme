@@ -4259,11 +4259,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.annotation_folder_footer.setVisible(
             has_folder and bool(self._loaded_image_paths)
         )
+        # Once per path: the search, the headings and the rows all show it.
+        labels = [
+            self._file_list_label(image_path=path) for path in self._loaded_image_paths
+        ]
         image_paths = []
+        shown_labels = []
         self._hidden_annotated_paths = set()
-        for path in self._loaded_image_paths:
-            if self._matches_file_search(image_path=path):
+        for path, label in zip(self._loaded_image_paths, labels):
+            if self._file_search_pattern.search(label):
                 image_paths.append(path)
+                shown_labels.append(label)
             elif _label_path.has_label_file(
                 image_path=path,
                 output_dir=self._output_dir,
@@ -4274,19 +4280,14 @@ class MainWindow(QtWidgets.QMainWindow):
         file_list = self._docks.file_list
         # Decided from every loaded Image, so headings don't come and go while
         # a search narrows the list.
-        self._docks.file_list_delegate.set_labels(
-            labels=[
-                self._file_list_label(image_path=path)
-                for path in self._loaded_image_paths
-            ]
-        )
+        self._docks.file_list_delegate.set_labels(labels=labels)
         with QtCore.QSignalBlocker(file_list):
             file_list.clear()
-            for image_path in image_paths:
+            for image_path, label in zip(image_paths, shown_labels):
                 file_list.addItem(
                     _make_image_list_item(
                         image_path=image_path,
-                        label=self._file_list_label(image_path=image_path),
+                        label=label,
                         output_dir=self._output_dir,
                         root_prefix=self._file_list_root_prefix,
                     )
