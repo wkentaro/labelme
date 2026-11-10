@@ -1642,6 +1642,25 @@ class MainWindow(QtWidgets.QMainWindow):
             dirty=dirty,
         )
 
+    def _save_destination(self) -> str:
+        # Where a save that asks nothing writes the open document. It never
+        # replaces an existing Annotation File other than the one loaded.
+        assert self._image_path is not None
+        if self._auto_save_path is not None:
+            return self._auto_save_path
+        resolved = _resolve_label_path(
+            image_path=self._file_list_image_path or self._image_path,
+            output_dir=self._output_dir,
+            root_prefix=self._file_list_root_prefix,
+        )
+        if self._label_file_path is None:
+            return resolved
+        # The Annotation Folder takes the first copy of a file opened from
+        # elsewhere.
+        if self._output_dir is not None and not Path(resolved).exists():
+            return resolved
+        return self._label_file_path
+
     def mark_dirty(self) -> None:
         # The Flags dock stays clickable with no Image open; nothing can be
         # dirty then.
@@ -1654,14 +1673,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(self._get_window_title(dirty=True))
         if self._actions.save_auto.isChecked():
             assert self._image_path is not None
-            self._queue_auto_save(
-                label_path=self._auto_save_path
-                or _resolve_label_path(
-                    image_path=self._file_list_image_path or self._image_path,
-                    output_dir=self._output_dir,
-                    root_prefix=self._file_list_root_prefix,
-                )
-            )
+            self._queue_auto_save(label_path=self._save_destination())
         else:
             self._status_bar.save.setText(self.tr("Unsaved changes"))
             self._status_bar.retry.setVisible(self._failed_save_path is not None)
@@ -3416,7 +3428,11 @@ class MainWindow(QtWidgets.QMainWindow):
         label_path: str | None = None
         if not save_as:
             # A first auto-save already owns a destination, even before it finishes.
-            label_path = self._save_writer.get_latest_path() or self._label_file_path
+            label_path = (
+                self._save_writer.get_latest_path()
+                or self._auto_save_path
+                or self._label_file_path
+            )
         if label_path is None:
             label_path = self.prompt_save_file_path()
             if label_path:
