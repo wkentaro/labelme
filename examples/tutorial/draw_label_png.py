@@ -51,7 +51,9 @@ def main() -> None:
         logger.info(
             "Label names: {}".format(
                 [
-                    f"{label_value}:{label_names[label_value]}"
+                    # -1 is the unlabeled value, not the last name in the list.
+                    f"{label_value}:"
+                    f"{'__ignore__' if label_value == -1 else label_names[label_value]}"
                     for label_value in unique_label_values
                 ]
             )
