@@ -185,19 +185,21 @@ Run `labelme --help` for the full list.
 
 ## How to build standalone executable
 
+Run this from the repository root. CI does not exercise it.
+
 ```bash
 LABELME_PATH=./labelme
 OSAM_PATH=$(python -c 'import os, osam; print(os.path.dirname(osam.__file__))')
-pyinstaller labelme/labelme/__main__.py \
+pyinstaller $LABELME_PATH/__main__.py \
   --name=Labelme \
   --windowed \
   --noconfirm \
   --specpath=build \
-  --add-data=$(OSAM_PATH)/_models/yoloworld/clip/bpe_simple_vocab_16e6.txt.gz:osam/_models/yoloworld/clip \
-  --add-data=$(LABELME_PATH)/_config/default_config.yaml:labelme/_config \
-  --add-data=$(LABELME_PATH)/icons/*:labelme/icons \
-  --add-data=$(LABELME_PATH)/translate/*:translate \
-  --icon=$(LABELME_PATH)/icons/icon-256.png \
+  --add-data=$OSAM_PATH/_models/yoloworld/clip/bpe_simple_vocab_16e6.txt.gz:osam/_models/yoloworld/clip \
+  --add-data=$LABELME_PATH/_config/default_config.yaml:labelme/_config \
+  --add-data=$LABELME_PATH/icons/*:labelme/icons \
+  --add-data=$LABELME_PATH/translate/*:labelme/translate \
+  --icon=$LABELME_PATH/icons/icon-256.png \
   --onedir
 ```
 

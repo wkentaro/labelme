@@ -27,8 +27,8 @@ self-merge on green CI. That is ongoing custodianship of a third-party package
 for a distribution channel we never recommended.
 
 The technical motivation raised (MKL-accelerated NumPy/SciPy via conda-forge)
-does not apply: labelme does not depend on scipy, and `uv`/`pip` install of the
-labelme stack does not need conda for performance.
+does not apply: scipy is a dependency, but the `uv`/`pip` wheels of numpy and
+scipy already ship an optimised BLAS, so conda is not needed for performance.
 
 ## If this is ever revisited
 
