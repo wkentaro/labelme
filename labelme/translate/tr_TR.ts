@@ -1080,6 +1080,22 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Görüntüyü bulduğunuzda açıklama dosyası bu görüntüye başvuracak şekilde güncellenir.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Görüntüyü Bul…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Görüntüyü Bul</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Görüntüler (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Açıklama Klasörü: %s</translation>
     </message>

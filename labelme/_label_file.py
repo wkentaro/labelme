@@ -358,10 +358,18 @@ def _image_path_from_raw(raw: dict[str, Any], /) -> str:
     return PureWindowsPath(raw["imagePath"]).as_posix()
 
 
-def read_label_file(*, filename: str, max_decode_mb: int | None = None) -> Annotation:
+def read_label_file(
+    *,
+    filename: str,
+    image_path_override: str | None = None,
+    max_decode_mb: int | None = None,
+) -> Annotation:
     try:
         with open(filename, encoding="utf-8") as f:
             raw: dict[str, Any] = json.load(f)
+        if image_path_override is not None:
+            # The caller knows where the Image is; the recorded path is stale.
+            raw["imagePath"] = image_path_override
         image_path = _image_path_from_raw(raw)
         if raw["imageData"] is None:
             resolved_image_path = str(Path(filename).parent / image_path)
@@ -441,26 +449,41 @@ def write_label_file(
                 raise ValueError(f"reserved key in other_data: {key!r}")
             payload[key] = value
 
-        # A failed save must leave the previous file intact, so write next to
-        # it and rename over it only once the temporary file closed cleanly.
-        # Windows cannot represent POSIX modes, so preservation is POSIX-only.
-        try:
-            existing_mode = (
-                None if os.name == "nt" else stat.S_IMODE(os.stat(filename).st_mode)
-            )
-        except FileNotFoundError:
-            existing_mode = None
-        temporary_path = Path(f"{filename}.tmp")
-        try:
-            with open(temporary_path, "w", encoding="utf-8") as f:
-                json.dump(payload, f, ensure_ascii=False, indent=2)
-            if existing_mode is not None:
-                os.chmod(temporary_path, existing_mode)
-            os.replace(temporary_path, filename)
-        finally:
-            temporary_path.unlink(missing_ok=True)
+        _replace_json_file(filename=filename, payload=payload)
     except (OSError, TypeError, ValueError) as e:
         raise LabelFileWriteError(f"failed to write {filename!r}: {e}") from e
+
+
+def relink_label_file(*, filename: str, image_path: str) -> None:
+    # Point the Annotation File at a located Image and change nothing else.
+    try:
+        with open(filename, encoding="utf-8") as f:
+            raw: dict[str, Any] = json.load(f)
+        raw["imagePath"] = image_path
+        _replace_json_file(filename=filename, payload=raw)
+    except (OSError, TypeError, ValueError) as e:
+        raise LabelFileWriteError(f"failed to write {filename!r}: {e}") from e
+
+
+def _replace_json_file(*, filename: str, payload: dict[str, Any]) -> None:
+    # A failed save must leave the previous file intact, so write next to
+    # it and rename over it only once the temporary file closed cleanly.
+    # Windows cannot represent POSIX modes, so preservation is POSIX-only.
+    try:
+        existing_mode = (
+            None if os.name == "nt" else stat.S_IMODE(os.stat(filename).st_mode)
+        )
+    except FileNotFoundError:
+        existing_mode = None
+    temporary_path = Path(f"{filename}.tmp")
+    try:
+        with open(temporary_path, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+        if existing_mode is not None:
+            os.chmod(temporary_path, existing_mode)
+        os.replace(temporary_path, filename)
+    finally:
+        temporary_path.unlink(missing_ok=True)
 
 
 def _check_decodable(

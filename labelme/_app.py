@@ -50,6 +50,7 @@ from ._label_file import is_label_file_path
 from ._label_file import read_image_file
 from ._label_file import read_label_file
 from ._label_file import read_label_file_image_path
+from ._label_file import relink_label_file
 from ._label_flags import apply_default_flags
 from ._model_manager import ModelManager
 from ._save_request import SaveRequest
@@ -2768,14 +2769,92 @@ class MainWindow(QtWidgets.QMainWindow):
                 Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
             )
 
-    def _read_annotation_file(self, *, label_path: str) -> Annotation | None:
+    def _read_annotation_file(
+        self, *, label_path: str, image_path: str | None
+    ) -> tuple[Annotation, str | None] | None:
+        # The second value is a located Image path, which _load_file writes to
+        # the Annotation File once the load is certain to complete.
         try:
-            return read_label_file(filename=label_path, max_decode_mb=_max_decode_mb())
+            try:
+                return (
+                    read_label_file(
+                        filename=label_path, max_decode_mb=_max_decode_mb()
+                    ),
+                    None,
+                )
+            except ImageNotFoundError as e:
+                # An Annotation File found for an Image has only a stale
+                # recorded path, which the next save replaces. One opened
+                # directly needs the user to locate its Image.
+                located = image_path is None
+                if image_path is None:
+                    image_path = self._locate_missing_image(
+                        label_path=label_path, exc=e
+                    )
+                    if image_path is None:
+                        return None
+                stored_image_path = _resolve_stored_image_path(
+                    image_path=image_path, label_dir=Path(label_path).parent
+                )
+                return (
+                    read_label_file(
+                        filename=label_path,
+                        image_path_override=stored_image_path,
+                        max_decode_mb=_max_decode_mb(),
+                    ),
+                    stored_image_path if located else None,
+                )
         except LabelFileError as e:
             self._show_file_open_error(
                 path=label_path, file_kind="label", exc=e, extra=None
             )
             return None
+
+    def _locate_missing_image(
+        self, *, label_path: str, exc: ImageNotFoundError
+    ) -> str | None:
+        dialog = self._make_image_not_found_dialog(exc)
+        dialog.setInformativeText(
+            self.tr("Locating the image updates the annotation file to refer to it.")
+        )
+        locate_button = dialog.addButton(
+            self.tr("Locate Image…"), QtWidgets.QMessageBox.ButtonRole.AcceptRole
+        )
+        dialog.addButton(QtWidgets.QMessageBox.StandardButton.Cancel)
+        dialog.setDefaultButton(locate_button)
+        dialog.exec()
+        located_path = ""
+        if dialog.clickedButton() is locate_button:
+            missing_dir = Path(exc.image_path).parent
+            located_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                self,
+                self.tr("Locate Image"),
+                str(missing_dir if missing_dir.is_dir() else Path(label_path).parent),
+                self.tr("Images (%s)")
+                % " ".join(f"*{ext}" for ext in _list_supported_image_extensions()),
+            )
+        if not located_path:
+            self.show_status_message(
+                self.tr("Failed to load: {path}").format(path=label_path)
+            )
+            return None
+        return located_path
+
+    def _make_image_not_found_dialog(
+        self, exc: ImageNotFoundError, /
+    ) -> QtWidgets.QMessageBox:
+        dialog = QtWidgets.QMessageBox(self)
+        dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+        dialog.setWindowTitle(self.tr("Image Not Found"))
+        dialog.setTextFormat(Qt.TextFormat.PlainText)
+        dialog.setText(
+            self.tr(
+                'This annotation refers to "{name}", but that image could not '
+                "be found.\n\nExpected location: {path}"
+            ).format(name=Path(exc.image_path).name, path=exc.image_path)
+        )
+        dialog.setDetailedText(str(exc.__cause__))
+        return dialog
 
     def _read_image_as_annotation(self, *, image_path: str) -> Annotation | None:
         try:
@@ -2881,13 +2960,17 @@ class MainWindow(QtWidgets.QMainWindow):
             annotation = self._read_image_as_annotation(image_path=image_or_label_path)
             if annotation is None:
                 return False
+            located_image_path = None
             image_path = image_or_label_path
             label_file_path = None
             shapes = []
         else:
-            annotation = self._read_annotation_file(label_path=label_path)
-            if annotation is None:
+            read_result = self._read_annotation_file(
+                label_path=label_path, image_path=file_list_image_path
+            )
+            if read_result is None:
                 return False
+            annotation, located_image_path = read_result
             # The relative path stored in the Annotation File may carry "." or ".."
             # components, which would survive the join and break the
             # exact-string comparisons against the Image List.
@@ -2948,6 +3031,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 extra=extra,
             )
             return False
+
+        if located_image_path is not None:
+            assert label_path is not None
+            try:
+                # Choosing the Image was the confirmation, and nothing can
+                # cancel this load any more, so the repair is written now.
+                relink_label_file(filename=label_path, image_path=located_image_path)
+            except LabelFileError as e:
+                self._show_file_open_error(
+                    path=label_path, file_kind="label", exc=e, extra=None
+                )
+                return False
 
         # The replacement session is fully staged; only now replace the
         # current one.
@@ -3793,18 +3888,7 @@ class MainWindow(QtWidgets.QMainWindow):
         extra: str | None,
     ) -> None:
         if isinstance(exc, ImageNotFoundError):
-            dialog = QtWidgets.QMessageBox(self)
-            dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
-            dialog.setWindowTitle(self.tr("Image Not Found"))
-            dialog.setTextFormat(Qt.TextFormat.PlainText)
-            dialog.setText(
-                self.tr(
-                    'This annotation refers to "{name}", but that image could not '
-                    "be found.\n\nExpected location: {path}"
-                ).format(name=Path(exc.image_path).name, path=exc.image_path)
-            )
-            dialog.setDetailedText(str(exc.__cause__))
-            dialog.exec()
+            self._make_image_not_found_dialog(exc).exec()
             self.show_status_message(
                 self.tr("Failed to load: {path}").format(path=path)
             )

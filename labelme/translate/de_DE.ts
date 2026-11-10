@@ -1084,6 +1084,22 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
         <translation>Fehler beim Speichern der Annotationsdatei</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Beim Auswählen des Bildes wird der Verweis in der Annotationsdatei aktualisiert.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Bild suchen…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Bild suchen</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Bilder (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotationsordner: %s</translation>
     </message>

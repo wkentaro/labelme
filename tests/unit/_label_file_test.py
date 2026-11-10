@@ -23,6 +23,7 @@ from labelme._label_file import _normalize_to_uint8
 from labelme._label_file import is_label_file_path
 from labelme._label_file import read_label_file
 from labelme._label_file import read_label_file_image_path
+from labelme._label_file import relink_label_file
 from labelme._label_file import write_label_file
 from labelme._shape import ShapeDict
 from labelme._utils import img_arr_to_b64
@@ -1046,3 +1047,54 @@ def test_read_label_file_image_path_reports_unreadable_files(*, tmp_path: Path) 
         path.write_text(text)
         with pytest.raises(LabelFileReadError):
             read_label_file_image_path(filename=str(path))
+
+
+def _write_label_file_with_missing_image(*, path: Path) -> None:
+    _dump_json(
+        path=path,
+        raw={
+            "version": "6.0.0",
+            "flags": {},
+            "shapes": [],
+            "imagePath": "absent.jpg",
+            "imageData": None,
+            "imageHeight": 338,
+            "imageWidth": 500,
+            "reviewer": "kept",
+        },
+    )
+
+
+def test_relink_label_file_changes_only_image_path(
+    *, data_path: Path, tmp_path: Path
+) -> None:
+    (tmp_path / "moved").mkdir()
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", tmp_path / "moved" / "a.jpg")
+    label_file = tmp_path / "a.json"
+    _write_label_file_with_missing_image(path=label_file)
+    expected = json.loads(label_file.read_text())
+    expected["imagePath"] = "moved/a.jpg"
+
+    relink_label_file(filename=str(label_file), image_path="moved/a.jpg")
+
+    assert json.loads(label_file.read_text()) == expected
+    assert read_label_file(filename=str(label_file)).image_path == "moved/a.jpg"
+
+
+def test_read_label_file_validates_located_image_without_writing(
+    *, data_path: Path, tmp_path: Path
+) -> None:
+    shutil.copy(data_path / "raw" / "2011_000003.jpg", tmp_path / "same.jpg")
+    shutil.copy(data_path / "raw" / "2011_000006.jpg", tmp_path / "other.jpg")
+    label_file = tmp_path / "a.json"
+    _write_label_file_with_missing_image(path=label_file)
+    original_bytes = label_file.read_bytes()
+
+    annotation = read_label_file(
+        filename=str(label_file), image_path_override="same.jpg"
+    )
+    with pytest.raises(LabelFileReadError, match="mismatch"):
+        read_label_file(filename=str(label_file), image_path_override="other.jpg")
+
+    assert annotation.image_path == "same.jpg"
+    assert label_file.read_bytes() == original_bytes

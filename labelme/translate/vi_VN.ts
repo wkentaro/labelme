@@ -1080,6 +1080,22 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Lỗi khi lưu tệp chú thích</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Khi bạn định vị ảnh, tệp chú thích sẽ được cập nhật để tham chiếu đến ảnh đó.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Định vị ảnh…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Định vị ảnh</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Hình ảnh (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Thư mục chú thích: %s</translation>
     </message>

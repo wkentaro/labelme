@@ -1080,6 +1080,22 @@ Cambie el modelo de AI-Find All a &apos;SAM 3&apos; o establezca el formato de s
         <translation>Error al guardar el archivo de anotaciones</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Al localizar la imagen, el archivo de anotaciones se actualiza para hacer referencia a ella.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Localizar imagen…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Localizar imagen</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Imágenes (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Carpeta de anotaciones: %s</translation>
     </message>

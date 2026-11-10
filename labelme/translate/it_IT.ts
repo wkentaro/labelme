@@ -1080,6 +1080,22 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
         <translation>Errore durante il salvataggio del file di annotazioni</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Individuando l’immagine, il file di annotazioni viene aggiornato per farvi riferimento.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Individua immagine…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Individua immagine</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Immagini (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Cartella annotazioni: %s</translation>
     </message>
