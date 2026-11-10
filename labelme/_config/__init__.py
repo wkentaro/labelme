@@ -104,6 +104,14 @@ def _validate_config_item(*, key_path: tuple[str, ...], value: object) -> None:
         raise ValueError(f"ai.device must be 'auto' or 'cpu', but got {value!r}")
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
+    if key_path == ("label_completion",) and value not in ("startswith", "contains"):
+        raise ValueError(
+            f"label_completion must be 'startswith' or 'contains', but got {value!r}"
+        )
+    if key_path == ("canvas", "double_click") and value not in (None, "close"):
+        raise ValueError(
+            f"canvas.double_click must be null or 'close', but got {value!r}"
+        )
     if key != "labels" or value is None:
         return
     if not isinstance(value, list):

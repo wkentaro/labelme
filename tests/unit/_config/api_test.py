@@ -408,6 +408,8 @@ def test_legacy_false_overrides_disable_file_brightness_contrast(
             {"validate_label": "none"},
             "Unexpected value for config key 'validate_label'",
         ),
+        ({"label_completion": "fuzzy"}, "label_completion must be"),
+        ({"canvas": {"double_click": "open"}}, "canvas.double_click must be"),
         ({"shape_color": "random"}, "Unexpected value for config key 'shape_color'"),
         ({"labels": ["cat", "cat"]}, "Duplicates are detected for config key 'labels'"),
         ({"labels": "cat"}, "Config key 'labels' must be a list, but got str"),
@@ -419,6 +421,8 @@ def test_legacy_false_overrides_disable_file_brightness_contrast(
     ],
     ids=[
         "validate_label",
+        "label_completion",
+        "canvas_double_click",
         "shape_color",
         "labels",
         "labels_not_a_list",
