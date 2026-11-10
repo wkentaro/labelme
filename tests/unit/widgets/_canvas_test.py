@@ -989,6 +989,31 @@ def test_delete_shape_forgets_its_hover(*, canvas: Canvas) -> None:
 
 
 @pytest.mark.gui
+def test_movable_selected_shapes_skip_hidden(*, canvas: Canvas) -> None:
+    shown = _make_rectangle(label="shown")
+    hidden = _make_rectangle(label="hidden")
+    hidden.visible = False
+    canvas.load_shapes(shapes=[shown, hidden])
+    canvas.selected_shapes = [shown, hidden]
+
+    assert canvas._movable_selected_shapes() == [shown]
+
+
+@pytest.mark.gui
+def test_delete_selected_keeps_hidden_shape(*, canvas: Canvas) -> None:
+    shown = _make_rectangle(label="shown")
+    hidden = _make_rectangle(label="hidden")
+    hidden.visible = False
+    canvas.load_shapes(shapes=[shown, hidden])
+    canvas.selected_shapes = [shown, hidden]
+
+    assert canvas.delete_selected() == [shown]
+
+    assert canvas.shapes == [hidden]
+    assert canvas.selected_shapes == [hidden]
+
+
+@pytest.mark.gui
 def test_delete_selected_forgets_its_hover(*, canvas: Canvas) -> None:
     shape = _make_rectangle(label="a")
     canvas.load_shapes(shapes=[shape])
