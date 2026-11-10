@@ -43,8 +43,10 @@ def test_auto_save_writes_the_opened_file_not_the_image_named_one(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     _move_first_shape(qtbot=qtbot, win=win)
 
-    qtbot.waitUntil(lambda: opened.read_bytes() != opened_before)
-    qtbot.waitUntil(lambda: not win._is_changed)
+    # Read only after the save: opening the file while the worker replaces
+    # it is a sharing violation on Windows.
+    qtbot.waitUntil(lambda: not win._is_changed and not win._save_writer.is_busy)
+    assert opened.read_bytes() != opened_before
     assert image_named.read_bytes() == image_named_before
 
 
@@ -65,8 +67,8 @@ def test_auto_save_writes_the_opened_file_when_its_image_is_elsewhere(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     _move_first_shape(qtbot=qtbot, win=win)
 
-    qtbot.waitUntil(lambda: opened.read_bytes() != opened_before)
-    qtbot.waitUntil(lambda: not win._is_changed)
+    qtbot.waitUntil(lambda: not win._is_changed and not win._save_writer.is_busy)
+    assert opened.read_bytes() != opened_before
     assert not beside_image.exists()
 
 
@@ -94,8 +96,8 @@ def test_auto_save_keeps_an_existing_annotation_folder_file(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     _move_first_shape(qtbot=qtbot, win=win)
 
-    qtbot.waitUntil(lambda: opened.read_bytes() != opened_before)
-    qtbot.waitUntil(lambda: not win._is_changed)
+    qtbot.waitUntil(lambda: not win._is_changed and not win._save_writer.is_busy)
+    assert opened.read_bytes() != opened_before
     assert in_folder.read_bytes() == in_folder_before
 
 
@@ -160,7 +162,7 @@ def test_auto_save_keeps_its_folder_copy_after_a_stale_completion(
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
 
-    qtbot.waitUntil(lambda: not win._is_changed)
+    qtbot.waitUntil(lambda: not win._is_changed and not win._save_writer.is_busy)
     assert in_folder.read_bytes() != first_copy
     assert opened.read_bytes() == opened_before
 
