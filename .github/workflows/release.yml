@@ -6,13 +6,14 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
-  release:
+  # Build runs third-party tools, so it holds no credentials. Publishing and
+  # the GitHub release get their own jobs so each token is only in the job
+  # that needs it.
+  build:
     needs: test
     runs-on: ubuntu-latest
-    environment: pypi
     permissions:
-      contents: write
-      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
       - uses: extractions/setup-just@4a174aa1487e2bcb3f86a8fe24a05361a4f4fff1
@@ -22,9 +23,32 @@ jobs:
       - run: just check_translate
       - name: Validate release artifacts
         uses: ./.github/actions/artifact-install-smoke
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: dist
+          path: dist/
       - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086  # release/v1
         with:
           skip-existing: true
+  github-release:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
