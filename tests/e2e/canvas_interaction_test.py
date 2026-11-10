@@ -371,29 +371,48 @@ def test_linestrip_only_adds_points_on_drawn_edges(
 
 
 @pytest.mark.gui
-def test_add_point_via_context_menu_action(
+def test_right_click_just_outside_polygon_can_insert_edge_point(
     *,
     qtbot: QtBot,
     annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
-    shape = canvas.shapes[_SHAPE_INDEX]
-    num_points_before = len(shape.points)
+    shape = Shape(
+        label="polygon",
+        shape_type="polygon",
+        points=np.array([(30, 60), (170, 60), (170, 120), (30, 120)], dtype=np.float64),
+        closed=True,
+    )
+    annotated_win._load_shapes(shapes=[shape], replace=True)
+    edge = image_to_widget_pos(canvas=canvas, image_pos=QPointF(100, 60))
+    outside = edge - QPoint(0, 2)
+    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=outside)
+    assert canvas.transform_widget_point_to_image(point=QPointF(outside)).y() < 60
 
-    assert not annotated_win._actions.add_point_to_edge.isEnabled()
+    action = annotated_win._actions.add_point_to_edge
+    opened: list[str] = []
+    with monkeypatch.context() as patch:
+        patch.setattr(
+            canvas.shape_context_menu, "exec", lambda *_a, **_k: opened.append("shape")
+        )
+        patch.setattr(
+            canvas.canvas_context_menu,
+            "exec",
+            lambda *_a, **_k: opened.append("canvas"),
+        )
+        qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=outside)
 
-    midpoint = _find_edge_midpoint_clear_of_vertices(canvas=canvas, shape=shape)
-    qtbot.mouseMove(canvas, pos=image_to_widget_pos(canvas=canvas, image_pos=midpoint))
-    qtbot.wait(100)
-
-    assert annotated_win._actions.add_point_to_edge.isEnabled()
-    annotated_win._actions.add_point_to_edge.trigger()
+    assert opened == ["shape"]
+    assert canvas.selected_shapes == [shape]
+    assert action in canvas.shape_context_menu.actions()
+    assert action.isEnabled()
+    action.trigger()
     qtbot.wait(50)
 
-    assert len(shape.points) == num_points_before + 1
-
+    assert len(shape.points) == 5
     _save_and_check(win=annotated_win, tmp_path=tmp_path)
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
@@ -925,71 +944,6 @@ def test_right_click_on_shape_opens_shape_context_menu(
     assert annotated_win._actions.remove_point in shape_actions
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
-
-
-@pytest.mark.gui
-def test_right_click_just_outside_polygon_can_insert_edge_point(
-    *, qtbot: QtBot, raw_win: MainWindow, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    canvas = raw_win._canvas_widgets.canvas
-    shape = Shape(
-        label="polygon",
-        shape_type="polygon",
-        points=np.array([(30, 60), (170, 60), (170, 120), (30, 120)], dtype=np.float64),
-        closed=True,
-    )
-    raw_win._load_shapes(shapes=[shape], replace=True)
-    edge = image_to_widget_pos(canvas=canvas, image_pos=QPointF(100, 60))
-    outside = edge - QPoint(0, 2)
-    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=outside)
-    assert canvas.transform_widget_point_to_image(point=QPointF(outside)).y() < 60
-    action = raw_win._actions.add_point_to_edge
-    assert action.isEnabled()
-
-    def insert_point(*_args: object, **_kwargs: object) -> None:
-        assert canvas.selected_shapes == [shape]
-        assert action in canvas.shape_context_menu.actions()
-        action.trigger()
-
-    monkeypatch.setattr(canvas.shape_context_menu, "exec", insert_point)
-    monkeypatch.setattr(canvas.canvas_context_menu, "exec", lambda *_a, **_k: None)
-    monkeypatch.setattr(raw_win, "_can_continue", lambda: True)
-
-    qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=outside)
-
-    assert len(shape.points) == 5
-
-
-@pytest.mark.gui
-def test_right_press_on_empty_canvas_keeps_canvas_menu_on_shape_release(
-    *, qtbot: QtBot, annotated_win: MainWindow, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    canvas = annotated_win._canvas_widgets.canvas
-    selected, other = canvas.shapes[:2]
-    canvas.select_shapes(shapes=[selected])
-    inside = image_to_widget_pos(
-        canvas=canvas, image_pos=_shape_bounds(shape=other).center()
-    )
-    empty = QPoint(5, 5)
-    opened: list[str] = []
-    monkeypatch.setattr(
-        canvas.shape_context_menu, "exec", lambda *_a, **_k: opened.append("shape")
-    )
-    monkeypatch.setattr(
-        canvas.canvas_context_menu, "exec", lambda *_a, **_k: opened.append("canvas")
-    )
-    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=empty)
-
-    drag_canvas(
-        qtbot=qtbot,
-        canvas=canvas,
-        button=Qt.MouseButton.RightButton,
-        start=empty,
-        end=inside,
-    )
-
-    assert opened == ["canvas"]
-    assert canvas.selected_shapes == [selected]
 
 
 @pytest.mark.gui

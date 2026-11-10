@@ -390,6 +390,40 @@ def test_right_release_on_shape_executes_shape_context_menu(
 
 
 @pytest.mark.gui
+def test_right_press_on_empty_canvas_keeps_canvas_menu_on_shape_release(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    selected = Shape(
+        shape_type="rectangle",
+        points=np.array([(10, 10), (30, 30)], dtype=np.float64),
+        closed=True,
+    )
+    other = Shape(
+        shape_type="rectangle",
+        points=np.array([(60, 10), (90, 30)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[selected, other])
+    canvas.set_editing(value=True)
+    canvas.select_shapes(shapes=[selected])
+    opened: list[str] = []
+    monkeypatch.setattr(
+        canvas.shape_context_menu, "exec", lambda _pos=None: opened.append("shape")
+    )
+    monkeypatch.setattr(
+        canvas.canvas_context_menu, "exec", lambda _pos=None: opened.append("canvas")
+    )
+    outside = _image_to_widget(canvas=canvas, img_x=75, img_y=45)
+    inside = _image_to_widget(canvas=canvas, img_x=75, img_y=20)
+
+    canvas.mousePressEvent(_make_press_event(pos=outside))
+    canvas.mouseReleaseEvent(_make_release_event(pos=inside))
+
+    assert opened == ["canvas"]
+    assert canvas.selected_shapes == [selected]
+
+
+@pytest.mark.gui
 def test_right_click_rotation_handle_opens_its_shape_menu(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
