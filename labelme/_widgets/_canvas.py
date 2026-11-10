@@ -1246,7 +1246,10 @@ class Canvas(QtWidgets.QWidget):
         self.mouse_moved.emit(pos)
         if self.is_ai_finalizing:
             return
-        self._prev_move_point = pos
+        if not (
+            self.mode == _CanvasMode.EDIT and a0.buttons() & Qt.MouseButton.RightButton
+        ):
+            self._prev_move_point = pos
         self._dispatch_pointer_move(pos=pos, event=a0)
 
     def _dispatch_pointer_move(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
@@ -1872,13 +1875,12 @@ class Canvas(QtWidgets.QWidget):
         return False
 
     def _press_right(self, *, pos: QPointF) -> None:
+        self._prev_move_point = pos
+        self._refresh_hover_state(pos=pos)
         shape = self._find_pointed_shape(point=pos)
-        if shape is None:
-            self._right_click_shape = None
-        else:
-            if shape not in self.selected_shapes:
-                self.select_shapes(shapes=[shape])
-            self._right_click_shape = shape
+        self._right_click_shape = shape
+        if shape is not None and shape not in self.selected_shapes:
+            self.select_shapes(shapes=[shape])
         self._prev_point = pos
 
     def _begin_pan(self, *, event: QtGui.QMouseEvent) -> None:
@@ -1914,12 +1916,12 @@ class Canvas(QtWidgets.QWidget):
     def _release_right(self, *, event: QtGui.QMouseEvent) -> None:
         self._release_cursor()
         self.context_menu_origin = self.mapToGlobal(event.position().toPoint())
-        pos: QPointF = self.transform_widget_point_to_image(point=event.position())
-        shape = self._right_click_shape or self._find_pointed_shape(point=pos)
+        # An empty press is a canvas gesture even if it ends over a shape.
+        shape = self._right_click_shape
         self._right_click_shape = None
         menu = (
             self.shape_context_menu
-            if (shape is not None and self.mode == _CanvasMode.EDIT)
+            if self.mode == _CanvasMode.EDIT and shape in self.selected_shapes
             else self.canvas_context_menu
         )
         try:
@@ -2094,9 +2096,13 @@ class Canvas(QtWidgets.QWidget):
         self._record_drag_anchor(shapes=self._movable_selected_shapes(), click=point)
 
     def _find_pointed_shape(self, *, point: QPointF) -> Shape | None:
-        # A hovered vertex or rotation handle acts on its own shape, so it wins
-        # over a body lying under it.
-        if self._hovered_vertex is not None or self._hovered_rotation is not None:
+        # Use the resolved hover target for handles and edges, even when the
+        # pointer lies outside the target shape's body.
+        if (
+            self._hovered_vertex is not None
+            or self._hovered_rotation is not None
+            or self._hovered_edge is not None
+        ):
             return self.hovered_shape
         return _canvas_interaction.find_shape_at(
             shapes=self.shapes,
