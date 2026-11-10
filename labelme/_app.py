@@ -3352,12 +3352,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @override
     def dropEvent(self, a0: QtGui.QDropEvent, /) -> None:
-        if not self._can_continue():
-            a0.ignore()
-            return
-        self.import_dropped_image_files(
+        image_files = self._new_image_files(
             image_files=_extract_dropped_image_paths(mime=a0.mimeData())
         )
+        # Only a dropped Image the Image List shows is opened, which replaces
+        # the document.
+        if any(self._matches_file_search(image_path=path) for path in image_files):
+            if not self._can_continue():
+                a0.ignore()
+                return
+            # A Discard is final: selecting the dropped Image must not ask again.
+            self.mark_clean()
+        self._add_image_files(image_files=image_files)
 
     # User Dialogs #
 
@@ -4199,22 +4205,29 @@ class MainWindow(QtWidgets.QMainWindow):
             lst.append(_file_list_item_path(item=item))
         return lst
 
-    def import_dropped_image_files(self, *, image_files: list[str]) -> None:
+    def _new_image_files(self, *, image_files: list[str]) -> list[str]:
         extensions = _list_supported_image_extensions()
         already_loaded = set(self._loaded_image_paths)
-        new_files = [
+        return [
             path
             for path in image_files
             if path not in already_loaded and path.lower().endswith(extensions)
         ]
-        if not new_files:
+
+    def import_dropped_image_files(self, *, image_files: list[str]) -> None:
+        self._add_image_files(
+            image_files=self._new_image_files(image_files=image_files)
+        )
+
+    def _add_image_files(self, *, image_files: list[str]) -> None:
+        if not image_files:
             return
 
-        self._loaded_image_paths.extend(new_files)
+        self._loaded_image_paths.extend(image_files)
         self._refresh_file_list()
 
         visible_image_paths = self.image_list
-        for image_path in new_files:
+        for image_path in image_files:
             if image_path in visible_image_paths:
                 self._docks.file_list.setCurrentRow(
                     visible_image_paths.index(image_path)
