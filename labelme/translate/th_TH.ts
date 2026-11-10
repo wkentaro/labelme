@@ -4,20 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>แอนโนเทชันด้วย AI</translation>
-    </message>
-    <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI แนะนำแอนโนเทชันในโหมด &apos;AI-Points&apos; และ &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>รายละเอียดโพลีกอน</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>ปรับรายละเอียดโพลีกอน</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -28,8 +16,32 @@
         <translation>รายละเอียดมากขึ้น</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>เลือกโหมด &apos;AI-Points&apos; หรือ &apos;AI-Box&apos; เพื่อเปิดใช้งานแอนโนเทชันด้วย AI</translation>
+        <source>Output</source>
+        <translation>ผลลัพธ์</translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation>หลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>มาสก์</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>สี่เหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>สี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>วงกลม</translation>
+    </message>
+    <message>
+        <source>Output format: {format}</source>
+        <translation>รูปแบบผลลัพธ์: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -43,21 +55,9 @@
         <source>Model</source>
         <translation>โมเดล</translation>
     </message>
-    <message>
-        <source>Output format</source>
-        <translation>รูปแบบผลลัพธ์</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI ข้อความสู่แอนโนเทชัน</translation>
-    </message>
-    <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>เช่น สุนัข, แมว, นก</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>รัน</translation>
@@ -71,24 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI สร้างแอนโนเทชันจากข้อความที่ป้อน</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>เลือกโหมด &apos;Polygon&apos;, &apos;Rectangle&apos; หรือ &apos;AI-Points&apos; เพื่อเปิดใช้งาน</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>โมเดล</translation>
+    </message>
+    <message>
+        <source>What to find</source>
+        <translation>สิ่งที่จะค้นหา</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>พรอมต์</translation>
     </message>
     <message>
-        <source>Text-to-annotation model</source>
-        <translation>โมเดลแปลงข้อความเป็นคำอธิบายประกอบ</translation>
+        <source>Finding…</source>
+        <translation>กำลังค้นหา…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>โมเดล AI-Find All</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>ตัวเลือก</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -102,8 +117,8 @@
         <translation>โฟลเดอร์เดียวกับรูปภาพ</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>เลือกโฟลเดอร์แอนโนเทชัน…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>เปลี่ยนโฟลเดอร์แอนโนเทชัน…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -140,16 +155,16 @@
         <translation>คลิกและลากเพื่อย้ายจุด</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>กด %s ค้างไว้แล้วคลิกเพื่อเพิ่มจุดบนขอบ</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>รูปร่างถูกล็อกอยู่</translation>
     </message>
     <message>
         <source>Click &amp; drag to move shape</source>
         <translation>คลิกและลากเพื่อย้ายรูปร่าง</translation>
-    </message>
-    <message>
-        <source>Creating %r</source>
-        <translation>กำลังสร้าง %r</translation>
     </message>
     <message>
         <source>ESC to cancel</source>
@@ -164,6 +179,22 @@
         <translation>แก้ไขรูปร่าง</translation>
     </message>
     <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>คลิกจุดเพื่อรวม กด %s ค้างไว้แล้วคลิกเพื่อยกเว้น หรือลากกรอบ กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>พิมพ์สิ่งที่ต้องการค้นหาใน AI-Find All หรือคลิกมุมแรกของกรอบรอบตัวอย่างหนึ่งชิ้น</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>คลิกมุมตรงข้ามเพื่อยกเว้นวัตถุที่คล้ายกับสิ่งนี้</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>คลิกมุมตรงข้ามเพื่อค้นหาวัตถุทุกชิ้นที่เหมือนชิ้นนี้</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>คลิกจุดเริ่มต้นของเส้น</translation>
     </message>
@@ -174,10 +205,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>คลิกจุดเริ่มต้นของเส้นต่อเนื่อง</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>คลิกจุดถัดไป หรือ Ctrl/Cmd+คลิกเพื่อจบเส้นต่อเนื่อง</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -200,24 +227,44 @@
         <translation>คลิกเพื่อเพิ่มจุด</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + คลิกเพื่อลบจุด</translation>
+        <source>Drag a box</source>
+        <translation>ลากกรอบ</translation>
     </message>
     <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + คลิกเพื่อสร้างจุดบนรูปร่าง</translation>
+        <source>Drag around one example</source>
+        <translation>ลากกรอบรอบตัวอย่างหนึ่งรายการ</translation>
     </message>
     <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>คลิกจุดเพื่อรวม หรือ Shift+Click เพื่อยกเว้น Ctrl+LeftClick เพื่อจบการสร้าง</translation>
+        <source>Discard</source>
+        <translation>ละทิ้ง</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>คลิกมุมแรกของ bbox สำหรับ AI segmentation</translation>
+        <source>Add</source>
+        <translation>เพิ่ม</translation>
     </message>
     <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>คลิกมุมตรงข้ามเพื่อแบ่งส่วนวัตถุ</translation>
+        <source>Click to include</source>
+        <translation>คลิกเพื่อรวม</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>คลิกเพื่อยกเว้น</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>เพิ่ม %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>ลากเพื่อยกเว้น</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter เพิ่มผลลัพธ์ Esc ทิ้งผลลัพธ์ กด %s ค้างไว้แล้ววาดกรอบเพื่อยกเว้นวัตถุที่คล้ายกัน</translation>
+    </message>
+    <message>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>คลิกจุดถัดไป หรือกด %s ค้างไว้แล้วคลิกเพื่อจบเส้นหักมุม</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +277,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>คลิกมุมที่สามเพื่อปิดสี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>กด %s ค้างไว้แล้วคลิกเพื่อลบจุด</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -247,14 +298,6 @@
         <translation>เปิดรูปภาพหรือโฟลเดอร์รูปภาพเพื่อเริ่มต้น</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>เปิดโฟลเดอร์</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>เปิดรูปภาพ</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>หรือลากและวางไฟล์รูปภาพที่นี่</translation>
     </message>
@@ -264,6 +307,10 @@
     <message>
         <source>Shape Label</source>
         <translation>เลเบลรูปร่าง</translation>
+    </message>
+    <message>
+        <source>Enter object label</source>
+        <translation>ป้อนเลเบลของวัตถุ</translation>
     </message>
     <message>
         <source>Label</source>
@@ -309,38 +356,8 @@
         <translation>ปิดแอป</translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>เปิด (&amp;O)</translation>
-    </message>
-    <message>
         <source>&amp;Next Image</source>
         <translation>รูปถัดไป (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>เปิดรูปถัดไป (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>รูปก่อนหน้า (&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>เปิดรูปก่อนหน้า (กด Ctrl+Shift เพื่อคัดลอกเลเบล)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>บันทึก (&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>บันทึกเป็น (&amp;S)</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>บันทึกอัตโนมัติ (&amp;A)</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -395,8 +412,16 @@
         <translation>บันทึกไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>บันทึกเป็น (&amp;A)…</translation>
+    </message>
+    <message>
         <source>Save the annotation file under a new name</source>
         <translation>บันทึกไฟล์คำอธิบายประกอบด้วยชื่อใหม่</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>บันทึกอัตโนมัติ (&amp;T)</translation>
     </message>
     <message>
         <source>Embed Image in Annotation File</source>
@@ -407,12 +432,17 @@
         <translation>เก็บสำเนาของรูปภาพไว้ในไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>เปลี่ยนโฟลเดอร์แอนโนเทชัน (&amp;F)…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>เปิดรูปภาพหรือไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>ลบไฟล์คำอธิบายประกอบ (&amp;D)</translation>
+        <translation>ลบไฟล์
+คำอธิบายประกอบ (&amp;D)</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
@@ -431,44 +461,33 @@
         <translation>สร้างสำเนารูปร่างที่เลือก</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>ยกเลิกจุดล่าสุด</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>ยกเลิกจุดที่วาดล่าสุด</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>ยกเลิก</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
         <translation>ยกเลิกการเพิ่มและแก้ไขรูปร่างล่าสุด</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>ซ่อนรูปร่าง (&amp;H)</translation>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>เลือก</translation>
+    </message>
+    <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>คลิกเพื่อวางจุดของเส้นหักมุม กด %s ค้างไว้แล้วคลิกเพื่อวางจุดสุดท้าย</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>เปิดรูปถัดไป (กด %s ค้างไว้เพื่อคัดลอกรูปร่างปัจจุบัน)</translation>
     </message>
     <message>
         <source>Hide all shapes</source>
         <translation>ซ่อนรูปร่างทั้งหมด</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>แสดงรูปร่าง (&amp;S)</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>แสดงรูปร่างทั้งหมด</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>สลับรูปร่าง (&amp;S)</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -495,24 +514,52 @@ Shapes</source>
         <translation>ซูมออก (&amp;Z)</translation>
     </message>
     <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>ความสว่าง คอนทราสต์ (&amp;B)</translation>
-    </message>
-    <message>
         <source>Adjust brightness and contrast</source>
         <translation>ปรับความสว่างและคอนทราสต์</translation>
     </message>
     <message>
-        <source>&amp;Edit Label</source>
-        <translation>แก้ไขเลเบล (&amp;E)</translation>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>การทำคำอธิบายประกอบรูปภาพแบบรูปหลายเหลี่ยมด้วย Python</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>เปลี่ยนโฟลเดอร์แอนโนเทชัน (&amp;A)…</translation>
+        <source>Version: %s</source>
+        <translation>เวอร์ชัน: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>ผู้พัฒนา: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>เว็บไซต์</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>เอกสาร</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>การแก้ไขปัญหา</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>เกี่ยวกับ %s (&amp;A)</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>เกี่ยวกับ %s</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>บันทึก (&amp;S)</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>เลือกตำแหน่งที่จะอ่านและบันทึกไฟล์แอนโนเทชัน</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>เปิดไฟล์ (&amp;O)…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -521,6 +568,16 @@ Shapes</source>
     <message>
         <source>Open a folder of images</source>
         <translation>เปิดโฟลเดอร์รูปภาพ</translation>
+    </message>
+    <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>ลบไฟล์</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>ลบ</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -543,6 +600,11 @@ Shapes</source>
         <translation>แทรกรูปร่างจากคลิปบอร์ดลงในภาพนี้</translation>
     </message>
     <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>ทำซ้ำ</translation>
+    </message>
+    <message>
         <source>Merge Shapes</source>
         <translation>รวมรูปร่าง</translation>
     </message>
@@ -559,16 +621,42 @@ Shapes</source>
         <translation>ล็อกรูปร่างที่เลือกไม่ให้แก้ไข หรือปลดล็อก</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>ลบจุดยอดที่เลือก</translation>
+        <source>Undo</source>
+        <translation>ยกเลิก</translation>
     </message>
     <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>ลบจุดยอดที่เลือกออกจากรูปหลายเหลี่ยมหรือเส้นหักมุม</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>คลิกเพื่อวางจุดของเส้นต่อเนื่อง Ctrl+คลิกเพื่อวางจุดสุดท้าย</translation>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>คลิกจุดหรือลากกรอบเพื่อแบ่งส่วนวัตถุหนึ่งชิ้น กด %s ค้างไว้แล้วคลิกเพื่อเสร็จสิ้น</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>ค้นหาวัตถุทุกชิ้นที่ตรงกับพรอมต์ข้อความหรือกรอบตัวอย่าง</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>ถัดไป</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>รูปก่อนหน้า (&amp;P)</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>ก่อนหน้า</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>เปิดรูปก่อนหน้า (กด %s ค้างไว้เพื่อคัดลอกรูปร่างปัจจุบัน)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
@@ -583,6 +671,10 @@ Shapes</source>
         <translation>ซูมไปที่รูปร่างที่เลือกทุกครั้งที่การเลือกเปลี่ยน</translation>
     </message>
     <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>ความสว่าง/คอนทราสต์ (&amp;B)…</translation>
+    </message>
+    <message>
         <source>Make the image appear larger</source>
         <translation>แสดงภาพให้ใหญ่ขึ้น</translation>
     </message>
@@ -592,7 +684,7 @@ Shapes</source>
     </message>
     <message>
         <source>&amp;Actual Size</source>
-        <translation>ขนาด&amp;จริง</translation>
+        <translation>ขนาดจริง(&amp;จ)</translation>
     </message>
     <message>
         <source>Show the image at 100%</source>
@@ -605,6 +697,18 @@ Shapes</source>
     <message>
         <source>Fill polygon while drawing</source>
         <translation>เติมสีหลายเหลี่ยมขณะวาด</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>ซ่อนรูปร่าง (&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>แสดงรูปร่าง (&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>สลับการแสดงรูปร่าง (&amp;T)</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -643,6 +747,14 @@ Shapes</source>
         <translation>พอดีหน้าต่าง</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>โมเดล AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>ดาวน์โหลดหรือลบโมเดล AI</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
         <translation>ไฟล์ (&amp;F)</translation>
     </message>
@@ -659,16 +771,20 @@ Shapes</source>
         <translation>ช่วยเหลือ (&amp;H)</translation>
     </message>
     <message>
+        <source>Tools</source>
+        <translation>เครื่องมือ</translation>
+    </message>
+    <message>
         <source>More tools</source>
         <translation>เครื่องมือเพิ่มเติม</translation>
     </message>
     <message>
-        <source>More shape tools</source>
-        <translation>เครื่องมือรูปทรงเพิ่มเติม</translation>
+        <source>Shape Tools</source>
+        <translation>เครื่องมือรูปร่าง</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s เริ่มทำงานแล้ว</translation>
+        <source>More shape tools</source>
+        <translation>เครื่องมือรูปทรงเพิ่มเติม</translation>
     </message>
     <message>
         <source>Retry</source>
@@ -691,16 +807,40 @@ Shapes</source>
         <translation>คุณสามารถใช้การตั้งค่าเริ่มต้นไปก่อนได้ ก่อนรีเซ็ต ระบบจะบันทึกสำเนาสำรองของไฟล์การกำหนดค่าของคุณ</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>พิมพ์สิ่งที่ต้องการค้นหา</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>กำลังค้นหารายการที่ตรงกันบน CPU…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>กำลังค้นหารายการที่ตรงกัน…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างรูปร่าง &apos;%s&apos; ได้
+
+เปลี่ยนโมเดล AI-Find All เป็น &apos;SAM 3&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>ไฟล์คำอธิบายประกอบนี้เป็นของรูปอื่น: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s ใช้กรอบตัวอย่างไม่ได้ เลือก SAM 3</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>เปิดโฟลเดอร์</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>การตั้งค่าบรรทัดคำสั่ง</translation>
-    </message>
-    <message>
-        <source>Back up and reset</source>
-        <translation>สำรองข้อมูลและรีเซ็ต</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>ใช้ค่าเริ่มต้นต่อไป</translation>
     </message>
     <message>
         <source>Fit to S&amp;election</source>
@@ -723,18 +863,6 @@ Shapes</source>
     <message>
         <source>Mask Output Unavailable</source>
         <translation>ไม่สามารถสร้างเอาต์พุตมาสก์ได้</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s ตรวจจับได้เฉพาะกรอบขอบเขตเท่านั้น และไม่สามารถสร้างคำอธิบายประกอบ &apos;%s&apos; ได้
-
-เปลี่ยนโมเดล AI Text-to-Annotation เป็น &apos;SAM3 (smart)&apos; หรือตั้งค่ารูปแบบเอาต์พุตเป็น &apos;Rectangle&apos;</translation>
-    </message>
-    <message>
-        <source>Invalid label</source>
-        <translation>เลเบลไม่ถูกต้อง</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -765,14 +893,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>พอดีส่วนที่เลือก</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>รูปภาพขนาดใหญ่</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>รูปภาพขนาดใหญ่ต้องใช้หน่วยความจำเพิ่มขึ้น</translation>
     </message>
@@ -783,10 +903,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>เปิดต่อไป</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>เกิดข้อผิดพลาดในการเปิดไฟล์</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -805,14 +921,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>ภาพและไฟล์คำอธิบายประกอบ (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - เปิดภาพหรือคำอธิบายประกอบ</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>คำเตือน</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>ลบ</translation>
     </message>
@@ -821,16 +929,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>ยกเลิก</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>ไม่สามารถใช้ในโหมด AI-Points ได้ เนื่องจากโมเดลนี้ไม่รองรับพรอมต์แบบจุด</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>เก็บการเปลี่ยนแปลงคำอธิบายประกอบของ &quot;{}&quot; ไว้หรือไม่?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>การเปลี่ยนแปลงที่ยังไม่ได้บันทึก</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>ดาวน์โหลด {model}</translation>
     </message>
     <message>
         <source>The selected annotation file could not be opened: {path}</source>
@@ -839,10 +943,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>ไม่พบโฟลเดอร์แอนโนเทชัน: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - เรียกดูโฟลเดอร์ภาพ</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -869,6 +969,22 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>หลายเหลี่ยม</translation>
     </message>
     <message>
+        <source>&amp;Edit Label…</source>
+        <translation>แก้ไขเลเบล (&amp;E)…</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>ยกเลิกจุดล่าสุด</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>ลบจุดที่เลือก</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>ลบจุดที่เลือกออกจากรูปหลายเหลี่ยมหรือเส้นหักมุม</translation>
+    </message>
+    <message>
         <source>Rectangle</source>
         <translation>สี่เหลี่ยม</translation>
     </message>
@@ -889,42 +1005,116 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>เส้นต่อเนื่อง</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
+        <source>Continue with Defaults</source>
+        <translation>ใช้ค่าเริ่มต้นต่อไป</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>คลิกจุดเพื่อแบ่งส่วนวัตถุ Ctrl+LeftClick เพื่อจบการสร้าง</translation>
+        <source>Back Up and Reset</source>
+        <translation>สำรองข้อมูลและรีเซ็ต</translation>
     </message>
     <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>กำลังค้นหา &apos;{query}&apos; ทั้งหมด…</translation>
     </message>
     <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>วาดกรอบสี่เหลี่ยมเพื่อแบ่งส่วนวัตถุ</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>กำลังค้นหา &apos;{query}&apos; ทั้งหมดบน CPU…</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points ไม่พร้อมใช้งาน</translation>
+        <source>Segmenting on CPU…</source>
+        <translation>กำลังแบ่งส่วนบน CPU…</translation>
     </message>
     <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s ไม่รองรับการกำหนดจุด
-กรุณาเลือกโมเดลอื่นหรือใช้โหมด AI-Box</translation>
+        <source>Segmenting…</source>
+        <translation>กำลังแบ่งส่วน…</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - เลือกโฟลเดอร์แอนโนเทชัน</translation>
+        <source>Starting AI…</source>
+        <translation>กำลังเริ่ม AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>กำลังโหลด {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>กำลังเตรียมภาพบน CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>กำลังเตรียมภาพ…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} วินาที</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>พบ &apos;{query}&apos; ใหม่ {count} รายการ</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>ไม่พบ &apos;{query}&apos; ใหม่</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>เลือกรูปร่างมาสก์อย่างน้อยสองรูปเพื่อรวม</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>รวมได้เฉพาะรูปร่างมาสก์</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>ปลดล็อกรูปร่างที่เลือกเพื่อรวม</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>รวมได้เฉพาะรูปร่างที่มีเลเบลเดียวกัน</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>เลเบลไม่ถูกต้อง</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>เมื่อระบุตำแหน่งรูปภาพ ไฟล์คำอธิบายประกอบจะได้รับการอัปเดตให้อ้างอิงรูปภาพนั้น</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>ระบุตำแหน่งรูปภาพ…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>ระบุตำแหน่งรูปภาพ</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>รูปภาพ (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>โฟลเดอร์แอนโนเทชัน: %s</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>ไม่พบรูปภาพ</translation>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>ลบไฟล์คำอธิบายประกอบหรือไม่ คุณไม่สามารถเลิกทำการกระทำนี้ได้</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>ลบ &quot;{}&quot; หรือไม่ คุณไม่สามารถเลิกทำการกระทำนี้ได้</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>ดาวน์โหลด</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>บันทึกการเปลี่ยนแปลงคำอธิบายประกอบของ &quot;{}&quot; หรือไม่</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -953,6 +1143,18 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>รูปแบบที่อนุญาต: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>เกิดข้อผิดพลาดขณะลบไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>การเปลี่ยนแปลงที่ยังไม่ได้บันทึก</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>ไม่พบรูปภาพ</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -991,6 +1193,22 @@ Expected location: {path}</source>
         <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>รูปภาพขนาดใหญ่</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>เกิดข้อผิดพลาดในการเปิดไฟล์</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>เปิดไฟล์</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>เลือกโฟลเดอร์แอนโนเทชัน</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>บันทึกไฟล์คำอธิบายประกอบ</translation>
     </message>
@@ -999,16 +1217,16 @@ Expected location: {path}</source>
         <translation>ไฟล์คำอธิบายประกอบ (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>ลบไฟล์คำอธิบายประกอบนี้อย่างถาวรหรือไม่ การกระทำนี้ไม่สามารถเลิกทำได้</translation>
-    </message>
-    <message>
-        <source>Error deleting annotation file</source>
-        <translation>เกิดข้อผิดพลาดขณะลบไฟล์คำอธิบายประกอบ</translation>
+        <source>Delete Annotation File</source>
+        <translation>ลบไฟล์คำอธิบายประกอบ</translation>
     </message>
     <message>
         <source>Configuration Error</source>
         <translation>ข้อผิดพลาดการตั้งค่า</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>ตรวจจับได้เฉพาะกรอบ เปลี่ยนเป็นสี่เหลี่ยมเพื่อใช้โมเดลนี้</translation>
     </message>
 </context>
 <context>
@@ -1018,16 +1236,31 @@ Expected location: {path}</source>
         <translation>จัดการโมเดล…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>ดาวน์โหลดโมเดล…</translation>
+        <source>Download and use</source>
+        <translation>ดาวน์โหลดและใช้งาน</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>เลือกโมเดล…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>กำลังดาวน์โหลด: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>ไม่พร้อมใช้งาน: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>โมเดลเพิ่มเติม…</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>โมเดล AI</translation>
     </message>
 </context>
 <context>
@@ -1121,11 +1354,15 @@ Expected location: {path}</source>
         <translation>ดาวน์โหลด</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>ดาวน์โหลดไม่สำเร็จ</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>ดาวน์โหลดไม่สำเร็จ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>ลบโมเดล</translation>
     </message>
     <message>
@@ -1177,7 +1414,7 @@ Expected location: {path}</source>
     </message>
     <message>
         <source>Continue between images</source>
-        <translation>การทำงานต่อเนื่องระหว่างภาพ</translation>
+        <translation>เมื่อเปลี่ยนภาพ</translation>
     </message>
     <message>
         <source>Label sources</source>
@@ -1264,8 +1501,8 @@ Expected location: {path}</source>
         <translation>หนึ่งชื่อแฟล็กต่อบรรทัด รูปแบบ: ^car$ ตรงกับ car เท่านั้น, car ตรงกับคำนำหน้า, .* ตรงกับทุกป้ายกำกับ</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI ข้อความสู่แอนโนเทชัน</translation>
+        <source>AI-Find All model</source>
+        <translation>โมเดล AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>
@@ -1282,6 +1519,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>ซ้ำ รายการซ้ำ หลีกเลี่ยงรายการซ้ำ ลบรายการซ้ำ</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>อุปกรณ์ประมวลผล</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>อัตโนมัติจะใช้ GPU และเปลี่ยนไปใช้ CPU หาก GPU ล้มเหลว</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda โปรเซสเซอร์ ช้า ขัดข้อง</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1324,42 +1577,6 @@ Expected location: {path}</source>
         <translation>โมเดลเริ่มต้น</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (ความเร็ว)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (ความแม่นยำ)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (ความเร็ว)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (สมดุล)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (ความแม่นยำ)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (ความเร็ว)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (สมดุล)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (ความแม่นยำ)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>ระงับรายการที่ตรงกับรูปร่างที่มีอยู่</translation>
     </message>
@@ -1370,10 +1587,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>การตั้งค่า</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>โมเดล AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>
@@ -1442,8 +1655,8 @@ Expected location: {path}</source>
         <translation>ซูม</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+ล้อเลื่อน เพื่อซูมแคนวาส</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>กด %s ค้างไว้แล้วเลื่อนเพื่อซูมผืนผ้าใบ</translation>
     </message>
 </context>
 <context>
@@ -1497,6 +1710,65 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>โมเดล</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>เร็วที่สุด</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>สมดุล</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>แม่นยำที่สุด</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM รุ่นแรก SAM 2 เร็วกว่าในทุกขนาด</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>เร็วที่สุด เส้นขอบหยาบ ทำงานได้ดีบนทุกคอมพิวเตอร์</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>เส้นขอบคมกว่า Tiny แต่ช้ากว่า SAM 2 Base+</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>ขนาดดาวน์โหลดเล็กกว่า Base+ แม่นยำน้อยกว่าเล็กน้อย</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>สมดุลระหว่างความเร็วและความแม่นยำ ทำงานได้ดีบน CPU</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>แม่นยำกว่า Base+ แต่ช้ากว่า</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>แม่นยำที่สุด แต่ช้ากว่า SAM 2 Base+ เหมาะกับ GPU</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>เร็วที่สุด ค้นหากรอบโดยไม่มีมาสก์</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>กรอบเท่านั้น</translation>
+    </message>
+</context>
+<context>
     <name>_SettingsPage</name>
     <message>
         <source>Settings sections</source>
@@ -1517,6 +1789,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>ไม่พบการตั้งค่าที่ตรงกันในกล่องโต้ตอบนี้ ลองใช้คำอื่นหรือล้างการค้นหา</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>ข้อผิดพลาด</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>เกิดข้อผิดพลาดที่ไม่คาดคิด แอปพลิเคชันจะปิดลง&lt;br/&gt;&lt;br/&gt;โปรดรายงานปัญหาตาม&lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;การแก้ไขปัญหา&lt;/a&gt;</translation>
     </message>
 </context>
 </TS>

@@ -18,6 +18,11 @@ writes and failed loads without adding physical-storage latency to every edit.
   after the replacement Image and Annotation are ready.
 - A corrupt adjacent Annotation File blocks opening its Image instead of
   silently opening an empty Annotation that could overwrite recoverable data.
+- An Annotation File opened directly whose Image is missing offers Locate
+  Image. Choosing the Image is the confirmation: the reference is rewritten as
+  the last step of that load, and the Annotation opens clean, so no repair
+  stays pending in memory. A load that is cancelled or fails, such as with an
+  Image of another size, leaves the current session and the file unchanged.
 - Successful saves do not leave persistent backup files. Recovery history, its
   retention, and its cleanup belong to a separate feature.
 - Atomic writing uses a deterministic sibling `.tmp` file (`<filename>.tmp`) for

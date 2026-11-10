@@ -23,7 +23,7 @@ def _setup_logging() -> None:
     )
 
 
-def _log_tool_version(tool: str, /) -> None:
+def _log_tool_version(*, tool: str) -> None:
     version: str = (
         subprocess.check_output([tool, "-version"], stderr=subprocess.STDOUT)
         .decode()
@@ -99,8 +99,8 @@ def main() -> None:
     )
     check: bool = parser.parse_args().check
 
-    _log_tool_version("pyside6-lupdate")
-    _log_tool_version("pyside6-lrelease")
+    _log_tool_version(tool="pyside6-lupdate")
+    _log_tool_version(tool="pyside6-lrelease")
 
     labelme_path: Path = here / ".." / "labelme"
     source_files: list[Path] = sorted(labelme_path.rglob("*.py"))

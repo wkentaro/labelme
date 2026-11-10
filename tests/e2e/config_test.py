@@ -43,7 +43,7 @@ def recovery_buttons(
             if widget.standardButtons() == QMessageBox.StandardButton.Ok:
                 widget.button(QMessageBox.StandardButton.Ok).click()
                 continue
-            assert widget.defaultButton().text() == "Continue with defaults"
+            assert widget.defaultButton().text() == "Continue with Defaults"
             assert widget.escapeButton() is widget.defaultButton()
             recovery_button_states.update(
                 (widget.buttonRole(button), button.isEnabled())
@@ -99,6 +99,23 @@ def test_MainWindow_config(
     assert not win._settings_dialog._editors[("auto_save",)].isEnabled()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("old_key", ["ai_points_to_shape", "ai_box_to_shape"])
+def test_inline_config_migrates_legacy_ai_crosshair(
+    *,
+    main_win: MainWinFactory,
+    recovery_messages: list[str],
+    old_key: str,
+) -> None:
+    overrides = {"canvas": {"crosshair": {old_key: False}}, "auto_save": False}
+    win = main_win(config_overrides=overrides)
+
+    assert recovery_messages == []
+    assert win._config["canvas"]["crosshair"]["ai_segment"] is False
+    assert win._config["auto_save"] is False
+    assert win._config_overrides == overrides
 
 
 @pytest.mark.gui

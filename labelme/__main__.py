@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import importlib.metadata
 import io
 import multiprocessing
 import os
+import platform
 import sys
 import traceback
 import types
@@ -12,6 +14,7 @@ import warnings
 from pathlib import Path
 from typing import AnyStr
 from typing import Final
+from typing import override
 
 from loguru import logger
 from PySide6 import QtCore
@@ -38,6 +41,7 @@ _LOGGER_LEVELS: Final = (  # noqa: GR011 -- parametrized by tests
 
 
 class _LoggerIO(io.StringIO):
+    @override
     def write(self, s: AnyStr, /) -> int:
         assert isinstance(s, str)
         if stripped_s := s.strip():
@@ -49,6 +53,31 @@ class _LoggerIO(io.StringIO):
 
     def seekable(self) -> bool:
         return False
+
+
+def _log_environment() -> None:
+    # onnxruntime and onnxruntime-gpu install into the same package directory,
+    # so a log showing both explains a broken GPU setup.
+    AI_DISTRIBUTIONS: Final = (
+        "osam",
+        "onnxruntime",
+        "onnxruntime-gpu",
+        "onnxruntime-ep-webgpu",
+    )
+    versions: dict[str, str] = {}
+    for name in AI_DISTRIBUTIONS:
+        try:
+            versions[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            pass
+    logger.info(
+        "Environment: platform={!r}, python={!r}, versions={!r}, "
+        "OSAM_ONNX_PROVIDERS={!r}",
+        platform.platform(),
+        platform.python_version(),
+        versions,
+        os.environ.get("OSAM_ONNX_PROVIDERS"),
+    )
 
 
 def _setup_loguru(*, logger_level: str) -> None:
@@ -147,12 +176,21 @@ def _handle_exception(
     )
     logger.critical(traceback_str)
 
-    traceback_html: str = traceback_str.replace("\n", "<br/>").replace(" ", "&nbsp;")
-    QtWidgets.QMessageBox.critical(
-        None,
-        "Error",
-        f"An unexpected error occurred. The application will close.<br/><br/>Please report issues following the <a href='https://labelme.io/docs/troubleshoot'>Troubleshoot</a>.<br/><br/>{traceback_html}",  # noqa: E501
+    translate = QtCore.QCoreApplication.translate
+    message = QtWidgets.QMessageBox(
+        QtWidgets.QMessageBox.Icon.Critical,
+        translate("main", "Error"),
+        translate(
+            "main",
+            "An unexpected error occurred. The application will close.<br/><br/>"
+            "Please report the issue by following "
+            "<a href='https://labelme.io/docs/troubleshoot'>Troubleshooting</a>.",
+        ),
     )
+    message.setTextFormat(QtCore.Qt.TextFormat.RichText)
+    # Plain text, so frames like "<module>" survive instead of parsing as tags.
+    message.setDetailedText(traceback_str)
+    message.exec()
 
     if app := QtWidgets.QApplication.instance():
         app.quit()
@@ -188,7 +226,7 @@ class _DeprecatedAlias(argparse.Action):
         setattr(namespace, self.dest, self.const if self.nargs == 0 else values)
 
 
-def _parse_list_arg(value: str, /) -> list[str]:
+def _parse_list_arg(*, value: str) -> list[str]:
     if os.path.isfile(value):
         with open(value, encoding="utf-8") as f:
             return [line.strip() for line in f if line.strip()]
@@ -210,7 +248,7 @@ def _resolve_config_source(
             return None, {}
         return Path(default_config_file), {}
 
-    if isinstance(config_loaded := _yaml.safe_load(config_arg), dict):
+    if isinstance(config_loaded := _yaml.safe_load(stream=config_arg), dict):
         return None, config_loaded
 
     if not os.path.isfile(config_arg):
@@ -327,21 +365,22 @@ def main() -> None:
     _setup_loguru(logger_level=args.logger_level.upper())
     _route_qt_logging_to_loguru()
     logger.info("Starting {} {}", __appname__, __version__)
+    _log_environment()
 
     sys.excepthook = _handle_exception
 
     if hasattr(args, "flags"):
-        args.flags = _parse_list_arg(args.flags)
+        args.flags = _parse_list_arg(value=args.flags)
 
     if hasattr(args, "labels"):
-        args.labels = _parse_list_arg(args.labels)
+        args.labels = _parse_list_arg(value=args.labels)
 
     if hasattr(args, "label_flags"):
         if os.path.isfile(args.label_flags):
             with open(args.label_flags, encoding="utf-8") as f:
-                args.label_flags = _yaml.safe_load(f)
+                args.label_flags = _yaml.safe_load(stream=f)
         else:
-            args.label_flags = _yaml.safe_load(args.label_flags)
+            args.label_flags = _yaml.safe_load(stream=args.label_flags)
 
     config_from_args = args.__dict__
     config_from_args.pop("version")
@@ -389,12 +428,17 @@ def main() -> None:
         color_theme = "system"
     # A stale or hand-edited language code with no bundled translation follows the
     # system locale, matching the Settings dialog.
-    if not _locale.is_valid_language(language):
+    if not _locale.is_valid_language(code=language):
         language = None
+    locale_name = language or QtCore.QLocale.system().name()
     translator = QtCore.QTranslator()
-    translator.load(
-        language or QtCore.QLocale.system().name(),
-        str(_locale.TRANSLATE_DIR),
+    translator.load(locale_name, str(_locale.TRANSLATE_DIR))
+    # Qt's own catalog translates standard buttons (OK, Cancel, Save, Discard)
+    # and file dialogs; a missing catalog leaves them in English.
+    qt_translator = QtCore.QTranslator()
+    qt_translator.load(
+        f"qtbase_{locale_name}",
+        QtCore.QLibraryInfo.path(QtCore.QLibraryInfo.LibraryPath.TranslationsPath),
     )
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")  # for consistent appearance across platforms
@@ -403,8 +447,11 @@ def main() -> None:
     # On macOS the window icon replaces the Dock icon, which needs Apple's
     # padded rounded shape rather than the full-bleed square.
     app.setWindowIcon(
-        new_icon("icon-macos-512.png" if sys.platform == "darwin" else "icon-256.png")
+        new_icon(
+            name="icon-macos-512.png" if sys.platform == "darwin" else "icon-256.png"
+        )
     )
+    app.installTranslator(qt_translator)
     app.installTranslator(translator)
     win = MainWindow(
         config_file=config_file,

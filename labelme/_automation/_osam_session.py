@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import collections
+import time
+from collections.abc import Callable
 from typing import TYPE_CHECKING
+from typing import Final
+from typing import Literal
 
 import numpy as np
 from loguru import logger
@@ -9,6 +13,14 @@ from numpy.typing import NDArray
 
 if TYPE_CHECKING:
     import osam
+
+InferenceStage = Literal["loading", "encoding", "generating"]
+# Called as each stage starts, with the model's device once it has loaded.
+ProgressCallback = Callable[[InferenceStage, str | None], None]
+
+
+def _elapsed_ms(*, t_start: float) -> float:
+    return (time.perf_counter() - t_start) * 1000
 
 
 class OsamSession:
@@ -19,7 +31,7 @@ class OsamSession:
     def __init__(
         self,
         *,
-        model_name: str = "sam2:latest",
+        model_name: str,
         embedding_cache_size: int = 3,
     ) -> None:
         logger.debug("Initializing OsamSession with model_name={!r}", model_name)
@@ -27,10 +39,6 @@ class OsamSession:
         self._model = None
         self._embedding_cache = collections.deque(maxlen=embedding_cache_size)
         logger.debug("Initialized OsamSession with model_name={!r}", model_name)
-
-    @property
-    def model_name(self) -> str:
-        return self._model_name
 
     def run(
         self,
@@ -40,13 +48,14 @@ class OsamSession:
         points: NDArray[np.floating] | None = None,
         point_labels: NDArray[np.intp] | None = None,
         texts: list[str] | None = None,
+        progress: ProgressCallback | None = None,
     ) -> osam.types.GenerateResponse:
         import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
         image_embedding: osam.types.ImageEmbedding | None
         try:
             image_embedding = self._get_or_compute_embedding(
-                image=image, image_id=image_id
+                image=image, image_id=image_id, progress=progress
             )
         except NotImplementedError:
             image_embedding = None
@@ -54,23 +63,26 @@ class OsamSession:
         prompt: osam.types.Prompt
         if points is not None and point_labels is not None:
             prompt = osam.types.Prompt(
-                points=points,
-                point_labels=point_labels,
+                points=points, point_labels=point_labels, texts=texts
             )
         elif texts is not None:
-            prompt = osam.types.Prompt(
-                texts=texts,
-                iou_threshold=1.0,
-                score_threshold=0.01,
-                max_annotations=1000,
-            )
+            prompt = osam.types.Prompt(texts=texts)
         else:
             raise ValueError(
                 "Either points and point_labels, or texts must be provided."
             )
 
-        model: osam.types.Model = self._get_or_load_model()
-        return model.generate(
+        if texts is not None:
+            # Keep every candidate; the user's Score and IoU filter later.
+            prompt.iou_threshold = 1.0
+            prompt.score_threshold = 0.01
+            prompt.max_annotations = 1000
+
+        model: osam.types.Model = self._get_or_load_model(progress=progress)
+        if progress is not None:
+            progress("generating", model.device)
+        t_start = time.perf_counter()
+        response: osam.types.GenerateResponse = model.generate(
             request=osam.types.GenerateRequest(
                 model=model.name,
                 image=image,
@@ -78,26 +90,75 @@ class OsamSession:
                 prompt=prompt,
             )
         )
+        logger.info(
+            "Generated {} annotations with {!r} in {:.0f} ms",
+            len(response.annotations),
+            self._model_name,
+            _elapsed_ms(t_start=t_start),
+        )
+        return response
 
     def _get_or_compute_embedding(
-        self, *, image: NDArray[np.uint8], image_id: str
+        self,
+        *,
+        image: NDArray[np.uint8],
+        image_id: str,
+        progress: ProgressCallback | None,
     ) -> osam.types.ImageEmbedding:
+        import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
         for key, embedding in self._embedding_cache:
             if key == image_id:
                 return embedding
 
-        model: osam.types.Model = self._get_or_load_model()
-        logger.debug("Computing embedding for cache_key={!r}", image_id)
+        model: osam.types.Model = self._get_or_load_model(progress=progress)
+        # A model without an encoder skips preparing, rather than reporting it.
+        if type(model).encode_image is osam.types.Model.encode_image:
+            raise NotImplementedError
+        if progress is not None:
+            progress("encoding", model.device)
+        t_start = time.perf_counter()
         embedding: osam.types.ImageEmbedding = model.encode_image(image=image)
         self._embedding_cache.append((image_id, embedding))
-        logger.debug("Cached embedding for cache_key={!r}", image_id)
+        logger.info(
+            "Encoded image {}x{} with {!r} in {:.0f} ms",
+            image.shape[1],
+            image.shape[0],
+            self._model_name,
+            _elapsed_ms(t_start=t_start),
+        )
         return embedding
 
-    def _get_or_load_model(self) -> osam.types.Model:
+    def _get_or_load_model(
+        self, *, progress: ProgressCallback | None
+    ) -> osam.types.Model:
         if self._model is None:
             import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
-            logger.debug("Loading model with name={!r}", self._model_name)
+            if progress is not None:
+                progress("loading", None)
+            t_start = time.perf_counter()
             self._model = osam.apis.get_model_type_by_name(self._model_name)()
-            logger.debug("Loaded model with name={!r}", self._model_name)
+            logger.info(
+                "Loaded {!r} in {:.0f} ms",
+                self._model_name,
+                _elapsed_ms(t_start=t_start),
+            )
         return self._model
+
+
+# ponytail: process-wide sessions keyed by model, so AI Assist and the AI text
+# prompt load a shared model once. Keeps the two most recently used, one per
+# control; a third model evicts the oldest, which reloads on its next use.
+_SESSIONS: Final[dict[str, OsamSession]] = {}
+
+
+def get_osam_session(*, model_name: str) -> OsamSession:
+    MAX_SESSIONS: Final = 2
+    session = _SESSIONS.pop(model_name, None)
+    if session is None:
+        session = OsamSession(model_name=model_name)
+    _SESSIONS[model_name] = session
+    while len(_SESSIONS) > MAX_SESSIONS:
+        _SESSIONS.pop(next(iter(_SESSIONS)))
+    return session

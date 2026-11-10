@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 from collections.abc import Iterator
 from pathlib import Path
+from typing import override
 
 import pytest
 from PySide6 import QtCore
@@ -10,7 +11,8 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
-from labelme._config import _schema as schema
+from labelme._config import SETTINGS
+from labelme._config import Group
 from labelme._config import load_config
 from labelme._widgets._integer_slider import IntegerSlider
 from labelme._widgets._settings_dialog import SettingsDialog
@@ -27,7 +29,7 @@ def applied() -> Applied:
     return []
 
 
-def _preferred_width(dialog: SettingsDialog, /) -> int:
+def _preferred_width(*, dialog: SettingsDialog) -> int:
     # The width the dialog opens at on an unconstrained screen: its page held
     # out of sideways scrolling plus its own chrome, never below the default.
     page = dialog._page
@@ -114,7 +116,7 @@ def test_polygon_detail_slider_applies_integer_value(
     assert isinstance(slider, IntegerSlider)
     assert slider.value == 60
 
-    slider.set_value(40)
+    slider.set_value(value=40)
 
     assert (("mask_polygonization", "detail"), 40) in applied
 
@@ -145,7 +147,7 @@ def test_unbounded_integer_edit_accepts_python_ints(
 
 
 def test_editors_have_accessible_names(*, dialog: SettingsDialog) -> None:
-    for setting in schema.SETTINGS:
+    for setting in SETTINGS:
         editor = dialog._editors[setting.key_path]
         assert editor.accessibleName() == dialog.tr(setting.label)
         interface = QtGui.QAccessible.queryAccessibleInterface(editor)
@@ -239,7 +241,7 @@ def test_shape_color_picker_applies_rgb(
 def test_setting_note_is_accessible_description(*, dialog: SettingsDialog) -> None:
     setting = next(
         setting
-        for setting in schema.SETTINGS
+        for setting in SETTINGS
         if setting.key_path == ("shape_color", "by_label", "fallback")
     )
     assert setting.note is not None
@@ -251,7 +253,7 @@ def test_setting_note_is_accessible_description(*, dialog: SettingsDialog) -> No
 
 
 def test_beta_settings_render_a_badge(*, dialog: SettingsDialog) -> None:
-    expected = {dialog.tr(setting.label) for setting in schema.SETTINGS if setting.beta}
+    expected = {dialog.tr(setting.label) for setting in SETTINGS if setting.beta}
     assert expected, "no beta settings to verify"
 
     badge_text = dialog.tr("BETA")
@@ -411,7 +413,7 @@ def test_failed_apply_reverts_labels_editor(*, qtbot: QtBot, applied: Applied) -
 
 
 def test_groups_and_navigation_follow_schema_order(*, dialog: SettingsDialog) -> None:
-    expected = list(typing.get_args(schema.Group))
+    expected = list(typing.get_args(Group))
     assert [group.title() for group in dialog._page._groups] == expected
     assert [
         dialog._page._navigation.item(index).text()
@@ -438,13 +440,36 @@ def test_navigation_uses_readable_typography_and_spacing(
     )
 
 
-@pytest.mark.parametrize("locale", ["ru_RU"])
+class _LongSectionTranslator(QtCore.QTranslator):
+    # No shipped catalog names a section too long for the sidebar any more, so
+    # this stands in for a future one that does.
+    title: str = "Продолжение работы между изображениями"
+
+    @override
+    def translate(
+        self,
+        context: str,
+        source_text: str,
+        /,
+        disambiguation: str | None = None,
+        n: int = -1,
+    ) -> str | None:
+        return self.title if source_text == "Continue between images" else None
+
+
 def test_navigation_elides_long_localized_names_without_squeezing_content(
-    *, localized_dialog: SettingsDialog, qtbot: QtBot
+    *, qapp: QtWidgets.QApplication, qtbot: QtBot, applied: Applied
 ) -> None:
-    dialog = localized_dialog
+    translator = _LongSectionTranslator()
+    qapp.installTranslator(translator)
+    try:
+        dialog = _make_dialog(
+            qtbot=qtbot, applied=applied, overrides={}, succeed=True, previewed=None
+        )
+    finally:
+        qapp.removeTranslator(translator)
     navigation = dialog._page._navigation
-    long_title = "Продолжение работы между изображениями"
+    long_title = _LongSectionTranslator.title
 
     assert navigation.item(3).text() == long_title
     assert navigation.item(3).toolTip() == long_title
@@ -455,7 +480,7 @@ def test_navigation_elides_long_localized_names_without_squeezing_content(
         dialog.show()
     # A screen narrower than the dialog wants leaves it no room to keep the
     # content out of a horizontal scroll bar.
-    if dialog.width() < _preferred_width(dialog):
+    if dialog.width() < _preferred_width(dialog=dialog):
         pytest.skip("this screen is narrower than the settings content")
     assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
 
@@ -466,7 +491,7 @@ def test_default_size_scrolls_vertically_only(
     with qtbot.waitExposed(dialog):
         dialog.show()
 
-    if _preferred_width(dialog) > 760:
+    if _preferred_width(dialog=dialog) > 760:
         pytest.skip("this font needs the dialog wider than its default size")
 
     scroll_area = dialog._page._scroll_area
@@ -488,7 +513,7 @@ def test_dialog_prevents_narrow_content_overflow(
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
-    if dialog.width() < _preferred_width(dialog):
+    if dialog.width() < _preferred_width(dialog=dialog):
         pytest.skip("this screen is narrower than the settings content")
     minimum_width = dialog.width()
 
@@ -498,7 +523,7 @@ def test_dialog_prevents_narrow_content_overflow(
     assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
 
 
-@pytest.mark.parametrize("target", range(len(typing.get_args(schema.Group))))
+@pytest.mark.parametrize("target", range(len(typing.get_args(Group))))
 def test_navigation_jumps_to_group(
     *, qtbot: QtBot, dialog: SettingsDialog, target: int
 ) -> None:
@@ -616,8 +641,10 @@ def test_large_font_uses_default_size_with_scrolling(
             dialog.show()
 
         available_size = dialog.screen().availableGeometry().size()
-        assert _preferred_width(dialog) >= 760
-        assert dialog.width() == min(_preferred_width(dialog), available_size.width())
+        assert _preferred_width(dialog=dialog) >= 760
+        assert dialog.width() == min(
+            _preferred_width(dialog=dialog), available_size.width()
+        )
         assert dialog.height() == min(590, available_size.height())
         assert dialog._page._scroll_area.verticalScrollBar().maximum() > 0
         assert dialog._editors[("color_theme",)].font().pointSize() == 24
@@ -673,9 +700,7 @@ def test_search_matches_metadata_in_both_languages(
     ]
     assert expected in paths
     assert len(paths) == len(set(paths))
-    setting = next(
-        setting for setting in schema.SETTINGS if setting.key_path == expected
-    )
+    setting = next(setting for setting in SETTINGS if setting.key_path == expected)
     item = page._navigation.item(paths.index(expected))
     assert item.text() == f"{dialog.tr(setting.label)}\n{dialog.tr(setting.group)}"
     assert item.data(QtCore.Qt.ItemDataRole.AccessibleTextRole) == (
@@ -910,7 +935,7 @@ def test_tab_order_connects_page_and_footer(
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
-    last_editor = dialog._editors[("ai", "suppress_existing_shape_matches")]
+    last_editor = dialog._editors[SETTINGS[-1].key_path]
     last_editor.setFocus()
     qtbot.keyClick(last_editor, QtCore.Qt.Key.Key_Tab)
     open_button = dialog.focusWidget()
@@ -943,7 +968,7 @@ def test_escape_closes_with_empty_search(
 
 
 @pytest.mark.parametrize("query", ["", "autosave"])
-def test_enter_in_editor_reaches_default_button(
+def test_enter_in_editor_keeps_dialog_open(
     *, qtbot: QtBot, dialog: SettingsDialog, applied: Applied, query: str
 ) -> None:
     with qtbot.waitExposed(dialog):
@@ -959,8 +984,25 @@ def test_enter_in_editor_reaches_default_button(
     assert editor.hasFocus()
     qtbot.keyClick(editor, QtCore.Qt.Key.Key_Return)
     assert not page._navigation.hasFocus()
-    assert not dialog.isVisible()
+    assert dialog.isVisible()
+    assert editor.hasFocus()
     assert applied == []
+
+
+def test_enter_on_focused_close_button_closes(
+    *, qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    last_editor = dialog._editors[SETTINGS[-1].key_path]
+    last_editor.setFocus()
+    for _ in range(2):
+        qtbot.keyClick(dialog.focusWidget(), QtCore.Qt.Key.Key_Tab)
+    close_button = dialog.focusWidget()
+    assert isinstance(close_button, QtWidgets.QPushButton)
+    assert close_button.text() == "Close"
+    qtbot.keyClick(close_button, QtCore.Qt.Key.Key_Return)
+    assert not dialog.isVisible()
 
 
 @pytest.mark.parametrize("saved_rules", [None, {"^car$": ["occluded"]}])

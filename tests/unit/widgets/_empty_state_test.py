@@ -9,16 +9,9 @@ from labelme._utils import new_icon
 from labelme._widgets._empty_state import EmptyStateWidget
 
 
-def _ignore_click() -> None:
-    return
-
-
 @pytest.fixture()
 def empty_state(*, qtbot: QtBot) -> EmptyStateWidget:
-    widget = EmptyStateWidget(
-        on_open_image=_ignore_click,
-        on_open_directory=_ignore_click,
-    )
+    widget = EmptyStateWidget()
     qtbot.addWidget(widget)
     widget.resize(640, 480)
     return widget
@@ -46,7 +39,7 @@ def test_empty_state_icon_rethemes_with_application_palette(
             lambda: icon.pixmap() is not None and icon.pixmap().toImage() != red
         )
 
-        expected = new_icon("phosphor/image-square.svg").pixmap(56, 56).toImage()
+        expected = new_icon(name="phosphor/image-square.svg").pixmap(56, 56).toImage()
         assert icon.pixmap().toImage() == expected
     finally:
         qapp.setPalette(original_palette)

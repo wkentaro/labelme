@@ -8,10 +8,11 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._utils import new_action
 from labelme._widgets._tool_bar import ToolBar
 
 
-def _user_buttons(toolbar: ToolBar, /) -> list[QtWidgets.QToolButton]:
+def _user_buttons(*, toolbar: ToolBar) -> list[QtWidgets.QToolButton]:
     # Qt adds an internal overflow button; exclude it from user button counts.
     EXT_BUTTON_NAME: Final = "qt_toolbar_ext_button"
 
@@ -22,7 +23,7 @@ def _user_buttons(toolbar: ToolBar, /) -> list[QtWidgets.QToolButton]:
     ]
 
 
-def _make_action(text: str, /) -> QtGui.QAction:
+def _make_action(*, text: str) -> QtGui.QAction:
     # Create without a parent so the action outlives any ephemeral container.
     return QtGui.QAction(text)
 
@@ -36,10 +37,10 @@ def _make_separator() -> QtGui.QAction:
 @pytest.fixture()
 def actions() -> list[QtGui.QAction]:
     return [
-        _make_action("Alpha"),
-        _make_action("Beta"),
+        _make_action(text="Alpha"),
+        _make_action(text="Beta"),
         _make_separator(),
-        _make_action("Gamma"),
+        _make_action(text="Gamma"),
     ]
 
 
@@ -159,12 +160,12 @@ def test_toolbar_custom_button_style(*, qtbot: QtBot) -> None:
 
 def test_toolbar_actions_create_tool_buttons(*, toolbar_h: ToolBar) -> None:
     # 3 real actions + None separator = 3 user buttons (separator is not a button)
-    buttons = _user_buttons(toolbar_h)
+    buttons = _user_buttons(toolbar=toolbar_h)
     assert len(buttons) == 3
 
 
 def test_toolbar_tool_buttons_inherit_button_style(*, toolbar_h: ToolBar) -> None:
-    for btn in _user_buttons(toolbar_h):
+    for btn in _user_buttons(toolbar=toolbar_h):
         assert btn.toolButtonStyle() == toolbar_h.toolButtonStyle()
 
 
@@ -172,7 +173,7 @@ def test_toolbar_buttons_trigger_actions_and_follow_state(
     *, qtbot: QtBot, toolbar_h: ToolBar, actions: list[QtGui.QAction]
 ) -> None:
     toolbar_h.show()
-    button = _user_buttons(toolbar_h)[0]
+    button = _user_buttons(toolbar=toolbar_h)[0]
     action = actions[0]
     action.setCheckable(True)
 
@@ -215,7 +216,7 @@ def test_toolbar_widget_action_not_wrapped_in_tool_button(*, qtbot: QtBot) -> No
     tb.show()
     assert tb.widgetForAction(wa) is inner
     assert inner.isVisible()
-    assert not _user_buttons(tb)
+    assert not _user_buttons(toolbar=tb)
 
 
 # --- button style change propagates to existing buttons ---
@@ -233,7 +234,7 @@ def test_toolbar_button_style_change_propagates(
     *, toolbar_h: ToolBar, style: Qt.ToolButtonStyle
 ) -> None:
     toolbar_h.setToolButtonStyle(style)
-    for btn in _user_buttons(toolbar_h):
+    for btn in _user_buttons(toolbar=toolbar_h):
         assert btn.toolButtonStyle() == style
 
 
@@ -244,7 +245,7 @@ def test_toolbar_vertical_buttons_have_equal_width_and_alignment(
     *, toolbar_v: ToolBar
 ) -> None:
     toolbar_v.show()
-    buttons = _user_buttons(toolbar_v)
+    buttons = _user_buttons(toolbar=toolbar_v)
     assert len(buttons) >= 2
     widths = [btn.minimumWidth() for btn in buttons]
     assert len(set(widths)) == 1, f"Button minimum widths not equal: {widths}"
@@ -252,9 +253,29 @@ def test_toolbar_vertical_buttons_have_equal_width_and_alignment(
     assert len({(button.x(), button.width()) for button in buttons}) == 1
 
 
+def test_toolbar_vertical_label_wraps_only_when_one_line_is_wider(
+    *, qtbot: QtBot
+) -> None:
+    parent = QtWidgets.QWidget()
+    qtbot.addWidget(parent)
+    ICON: Final = "phosphor/floppy-disk.svg"
+    fits = new_action(parent=parent, text="Find All", icon=ICON)
+    widest = new_action(parent=parent, text="Abcdefghijklmnopqrstu", icon=ICON)
+    wide = new_action(parent=parent, text="Abcdefghijk Lmnopqrstuvw", icon=ICON)
+    assert fits.iconText() == "Find\nAll"
+
+    toolbar = ToolBar(
+        title="T", actions=[fits, widest, wide], orientation=Qt.Orientation.Vertical
+    )
+    qtbot.addWidget(toolbar)
+
+    assert fits.iconText() == "Find All"
+    assert wide.iconText() == "Abcdefghijk\nLmnopqrstuvw"
+
+
 def test_toolbar_horizontal_buttons_not_equalized(*, toolbar_h: ToolBar) -> None:
     # Horizontal toolbar does NOT call _equalize_button_widths; minimumWidth stays 0.
-    for btn in _user_buttons(toolbar_h):
+    for btn in _user_buttons(toolbar=toolbar_h):
         assert btn.minimumWidth() == 0
 
 
@@ -288,4 +309,11 @@ def test_toolbar_no_font_scaling_without_font_base(*, qtbot: QtBot) -> None:
 def test_toolbar_empty_actions(*, qtbot: QtBot) -> None:
     tb = ToolBar(title="Empty", actions=[])
     qtbot.addWidget(tb)
-    assert len(_user_buttons(tb)) == 0
+    assert len(_user_buttons(toolbar=tb)) == 0
+
+
+def test_toolbar_object_name_ignores_translated_title(*, qtbot: QtBot) -> None:
+    tb = ToolBar(name="Tools", title="ツール", actions=[])
+    qtbot.addWidget(tb)
+    assert tb.objectName() == "ToolsToolBar"
+    assert tb.windowTitle() == "ツール"

@@ -311,6 +311,66 @@ def test_add_point_on_edge(
 
 
 @pytest.mark.gui
+@pytest.mark.parametrize("via_action", [False, True], ids=["alt-click", "action"])
+def test_linestrip_only_adds_points_on_drawn_edges(
+    *, qtbot: QtBot, raw_win: MainWindow, pause: bool, via_action: bool
+) -> None:
+    canvas = raw_win._canvas_widgets.canvas
+    raw_win._switch_canvas_mode(edit=False, create_mode="linestrip")
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.2, 0.2))
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.8, 0.2))
+    submit_label_dialog(
+        qtbot=qtbot, label_dialog=raw_win._label_dialog, label="open_path"
+    )
+    click_canvas_fraction(
+        qtbot=qtbot,
+        canvas=canvas,
+        xy=(0.8, 0.8),
+        modifier=Qt.KeyboardModifier.ControlModifier,
+    )
+    shape = _wait_for_shape(qtbot=qtbot, canvas=canvas, label="open_path")
+    assert shape.shape_type == "linestrip"
+    assert len(shape.points) == 3
+    original = shape.points.copy()
+    raw_win._switch_canvas_mode(edit=True, create_mode=None)
+
+    # The first-to-last diagonal is not drawn. It must not offer insertion,
+    # even though the same segment would be a valid closing edge on a polygon.
+    diagonal = (original[0] + original[-1]) / 2
+    diagonal_pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(*diagonal))
+    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=diagonal_pos)
+    assert canvas._hovered_edge is None
+    assert not raw_win._actions.add_point_to_edge.isEnabled()
+    qtbot.mouseClick(
+        canvas,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.AltModifier,
+        pos=diagonal_pos,
+    )
+    np.testing.assert_array_equal(shape.points, original)
+
+    # A real segment must still support both insertion entry points. Visiting
+    # it also checks that the negative assertion is not a disabled edit mode.
+    midpoint = (original[0] + original[1]) / 2
+    edge_pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(*midpoint))
+    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=edge_pos)
+    assert canvas._hovered_edge == 1
+    assert raw_win._actions.add_point_to_edge.isEnabled()
+    if via_action:
+        raw_win._actions.add_point_to_edge.trigger()
+    else:
+        qtbot.mouseClick(
+            canvas,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.AltModifier,
+            pos=edge_pos,
+        )
+    assert len(shape.points) == 4
+    np.testing.assert_array_equal(shape.points[[0, 2, 3]], original)
+    close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
+
+
+@pytest.mark.gui
 def test_add_point_via_context_menu_action(
     *,
     qtbot: QtBot,
@@ -405,30 +465,45 @@ def test_remove_point_does_not_drag_adjacent(
 
 
 @pytest.mark.gui
-def test_draw_actions_disable_only_active_mode(
+def test_mode_actions_check_only_active_mode(
     *,
     annotated_win: MainWindow,
     qtbot: QtBot,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
+    polygon = dict(annotated_win._actions.draw)["polygon"]
+    mode_actions = [
+        *[action for _, action in annotated_win._actions.draw],
+        annotated_win._actions.edit_mode,
+    ]
 
-    annotated_win._switch_canvas_mode(edit=False, create_mode="polygon")
-    qtbot.wait(50)
+    assert annotated_win._actions.edit_mode.isChecked()
+
+    polygon.trigger()
     assert canvas.mode == _CanvasMode.CREATE
+    assert [a for a in mode_actions if a.isChecked()] == [polygon]
+    assert all(a.isEnabled() for a in mode_actions)
 
-    for draw_mode, draw_action in annotated_win._actions.draw:
-        if draw_mode == "polygon":
-            assert not draw_action.isEnabled()
-        else:
-            assert draw_action.isEnabled()
+    click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=(0.3, 0.3))
+    assert canvas.is_drawing
+    assert not annotated_win._actions.edit_mode.isEnabled()
 
-    annotated_win._switch_canvas_mode(edit=True, create_mode=None)
-    qtbot.wait(50)
+    # Re-clicking the active tool keeps it selected and the partial shape alive.
+    polygon.trigger()
+    assert polygon.isChecked()
+    assert canvas.is_drawing
+
+    qtbot.keyClick(canvas, Qt.Key.Key_Escape)
+    assert not canvas.is_drawing
+    annotated_win._actions.edit_mode.trigger()
     assert canvas.mode == _CanvasMode.EDIT
+    assert [a for a in mode_actions if a.isChecked()] == [
+        annotated_win._actions.edit_mode
+    ]
 
-    for _, draw_action in annotated_win._actions.draw:
-        assert draw_action.isEnabled()
+    annotated_win._actions.edit_mode.trigger()
+    assert annotated_win._actions.edit_mode.isChecked()
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
@@ -881,7 +956,7 @@ def test_select_mask_shape_by_click(
     # of `_shape.is_hit_by_point`.
     mask_arr = np.zeros((40, 40), dtype=np.uint8)
     mask_arr[10:30, 10:30] = 1
-    mask_b64 = _utils.img_arr_to_b64(mask_arr)
+    mask_b64 = _utils.img_arr_to_b64(img_arr=mask_arr)
 
     raw_image_path = data_path / "raw/2011_000003.jpg"
     img_b64 = base64.b64encode(raw_image_path.read_bytes()).decode("utf-8")

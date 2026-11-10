@@ -28,6 +28,9 @@ store (Window State), which is not part of the Config.
 - Setting Controls in the dialog edit the effective Config File, so they are
   disabled when `--config` supplies a YAML expression (no file to write to) or
   when per-session CLI override flags are present. A custom `--config <file>`
-  path (e.g. a `labelmerc` beside a standalone build) is editable. AI Models
-  remains accessible because downloading and deleting cached model files does
-  not edit command-line Settings.
+  path (e.g. a `labelmerc` beside a standalone build) is editable.
+- Downloaded Models are cache state, not Settings, so AI Models is its own
+  window (File → AI Models…, or Manage models… in a toolbar model picker)
+  rather than a Settings page. It stays usable when Settings are read-only,
+  because downloading and deleting cached model files does not edit
+  command-line Settings.

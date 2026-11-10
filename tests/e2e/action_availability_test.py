@@ -5,12 +5,17 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFileDialog
 from pytestqt.qtbot import QtBot
 
+from labelme._app import MainWindow
 from labelme._shape import Shape
+from labelme._widgets import LabelDialogEntry
 
 from .conftest import MainWinFactory
+from .conftest import click_canvas_fraction
+from .conftest import show_window_and_wait_for_imagedata
 
 
 @pytest.mark.gui
@@ -48,6 +53,118 @@ def test_actions_follow_image_and_shapes(
     assert not win._canvas_widgets.zoom_widget.isEnabled()
     assert not win._actions.brightness_contrast.isEnabled()
     assert all(not action.isEnabled() for action in visibility_actions)
+
+
+@pytest.mark.gui
+def test_canceling_a_point_label_restores_select_and_undo(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "raw/2011_000003.jpg"),
+        config_overrides={"auto_save": False},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    monkeypatch.setattr(win._label_dialog, "popup", lambda *_a, **_k: None)
+
+    win._actions.create_point_mode.trigger()
+    click_canvas_fraction(qtbot=qtbot, canvas=win._canvas_widgets.canvas, xy=(0.5, 0.5))
+
+    assert not win._canvas_widgets.canvas.shapes
+    assert win._actions.edit_mode.isEnabled()
+    assert not win._actions.undo.isEnabled()
+    assert not win._is_changed
+
+
+def _open_annotated(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> MainWindow:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.jpg"),
+        config_overrides={"auto_save": False},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    return win
+
+
+def _start_polygon(*, win: MainWindow, qtbot: QtBot) -> None:
+    win._actions.create_mode.trigger()
+    click_canvas_fraction(qtbot=qtbot, canvas=win._canvas_widgets.canvas, xy=(0.3, 0.3))
+    assert win._canvas_widgets.canvas.is_drawing
+    assert not win._actions.edit_mode.isEnabled()
+
+
+@pytest.mark.gui
+def test_switching_image_mid_draw_restores_select(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win = _open_annotated(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    _start_polygon(win=win, qtbot=qtbot)
+
+    assert win._load_file(
+        image_or_label_path=str(data_path / "annotated/2011_000006.jpg")
+    )
+
+    assert win._actions.edit_mode.isEnabled()
+    assert not win._actions.undo_last_point.isEnabled()
+
+
+@pytest.mark.gui
+def test_canceling_a_draft_keeps_delete_disabled_without_selection(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win = _open_annotated(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    _start_polygon(win=win, qtbot=qtbot)
+
+    qtbot.keyClick(win._canvas_widgets.canvas, Qt.Key.Key_Escape)
+
+    assert not win._canvas_widgets.canvas.selected_shapes
+    assert not win._actions.delete.isEnabled()
+
+
+@pytest.mark.gui
+def test_editing_a_label_enables_undo(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = _open_annotated(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    assert not win._actions.undo.isEnabled()
+    canvas = win._canvas_widgets.canvas
+    canvas.select_shapes(shapes=[canvas.shapes[0]])
+    monkeypatch.setattr(
+        win._label_dialog,
+        "popup",
+        lambda *_a, **_k: LabelDialogEntry(
+            label="renamed", flags={}, group_id=None, description=""
+        ),
+    )
+
+    # The edit leaves unsaved changes; skip the prompt when the window closes.
+    monkeypatch.setattr(win, "_can_continue", lambda: True)
+
+    win._edit_label()
+
+    assert canvas.shapes[0].label == "renamed"
+    assert win._actions.undo.isEnabled()
+
+
+@pytest.mark.gui
+def test_hiding_a_shape_mid_draw_keeps_undo_disabled(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win = _open_annotated(main_win=main_win, qtbot=qtbot, data_path=data_path)
+    _start_polygon(win=win, qtbot=qtbot)
+
+    win._docks.label_list[0].setCheckState(Qt.CheckState.Unchecked)
+
+    assert not win._actions.undo.isEnabled()
+    assert not win._actions.edit_mode.isEnabled()
 
 
 @pytest.mark.gui
@@ -91,7 +208,7 @@ def test_visibility_actions_follow_last_shape_and_restore(
         win._actions.toggle_all,
     )
     shape = Shape(label="point", shape_type="point", points=np.array([[20.0, 20.0]]))
-    win._insert_shapes([shape])
+    win._insert_shapes(shapes=[shape])
     win.mark_clean()
     assert all(action.isEnabled() for action in visibility_actions)
 
@@ -108,7 +225,7 @@ def test_visibility_actions_follow_last_shape_and_restore(
     if clear_by == "delete":
         win._actions.undo.trigger()
     else:
-        win._insert_shapes([shape])
+        win._insert_shapes(shapes=[shape])
     win.mark_clean()
     assert len(win._docks.label_list) == 1
     assert all(action.isEnabled() for action in visibility_actions)
@@ -151,12 +268,12 @@ def test_drawing_tool_survives_file_transitions(
     assert len(canvas.shapes) == (5 if keep_prev else 0)
     assert canvas.create_mode == tool
     assert canvas.mode == drawing_mode
-    assert not selected_action.isEnabled()
+    assert selected_action.isChecked()
     assert win._actions.edit_mode.isEnabled()
 
     win._actions.save_as.trigger()
     assert destination.exists()
-    assert not selected_action.isEnabled()
+    assert selected_action.isChecked()
     assert canvas.create_mode == tool
     assert canvas.mode == drawing_mode
 
@@ -164,15 +281,16 @@ def test_drawing_tool_survives_file_transitions(
     assert not win._actions.edit_mode.isEnabled()
     assert all(not action.isEnabled() for _, action in win._actions.draw)
     assert win._load_file(image_or_label_path=str(destination))
-    assert not selected_action.isEnabled()
+    assert selected_action.isChecked()
     assert canvas.create_mode == tool
     assert canvas.mode == drawing_mode
     assert win._actions.edit_mode.isEnabled()
 
     win._actions.edit_mode.trigger()
     assert canvas.mode != drawing_mode
-    assert not win._actions.edit_mode.isEnabled()
+    assert win._actions.edit_mode.isChecked()
     assert all(action.isEnabled() for _, action in win._actions.draw)
+    assert not any(action.isChecked() for _, action in win._actions.draw)
     win.mark_clean()
 
 
@@ -204,7 +322,9 @@ def test_delete_file_enables_after_first_auto_save(
     win = main_win(file_or_dir=image_path, config_overrides={"auto_save": True})
     assert not win._actions.delete_file.isEnabled()
     win._insert_shapes(
-        [Shape(label="point", shape_type="point", points=np.array([[20.0, 20.0]]))]
+        shapes=[
+            Shape(label="point", shape_type="point", points=np.array([[20.0, 20.0]]))
+        ]
     )
     qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     assert image_path.with_suffix(".json").exists()

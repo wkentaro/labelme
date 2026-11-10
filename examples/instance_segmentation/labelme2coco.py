@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import utils  # noqa: E402  # examples/utils.py, vendored alongside this script
 
 
-def _count_polygon_vertices_for_circle(radius: float, /) -> int:
+def _count_polygon_vertices_for_circle(*, radius: float) -> int:
     CIRCLE_APPROXIMATION_TOLERANCE_PX: Final = 1.0
     CIRCLE_MIN_VERTEX_COUNT: Final = 12
 
@@ -45,7 +45,7 @@ def _circle_to_polygon_segmentation(
     if radius == 0.0:
         raise ValueError("Degenerate circle: center and edge are the same point.")
 
-    vertex_count = _count_polygon_vertices_for_circle(radius)
+    vertex_count = _count_polygon_vertices_for_circle(radius=radius)
     angles = np.linspace(0.0, 2.0 * math.pi, num=vertex_count, endpoint=False)
     vertices = np.column_stack(
         (cx + radius * np.cos(angles), cy + radius * np.sin(angles))
@@ -141,12 +141,20 @@ def main() -> None:
 
         masks = {}  # for area
         segmentations = collections.defaultdict(list)  # for segmentation
+        instances_with_masks = set()
         for shape in label_file.shapes:
             points: list[list[int | float]] = shape["points"]
             label = shape["label"]
             group_id = shape.get("group_id")
             shape_type = shape.get("shape_type", "polygon")
-            mask = utils.shape_to_mask(img.shape[:2], points, shape_type=shape_type)
+            if shape_type == "mask":
+                mask = utils.shapes_to_label(
+                    img_shape=img.shape[:2],
+                    shapes=[shape],
+                    label_name_to_value={label: 1},
+                )[0].astype(bool)
+            else:
+                mask = utils.shape_to_mask(img.shape[:2], points, shape_type=shape_type)
 
             if group_id is None:
                 group_id = uuid.uuid1()
@@ -157,6 +165,10 @@ def main() -> None:
                 masks[instance] = masks[instance] | mask
             else:
                 masks[instance] = mask
+
+            if shape_type == "mask":
+                instances_with_masks.add(instance)
+                continue
 
             points_coco: list[int | float]
             if shape_type == "rectangle":
@@ -186,12 +198,18 @@ def main() -> None:
             area = float(pycocotools.mask.area(mask))
             bbox = pycocotools.mask.toBbox(mask).flatten().tolist()
 
+            segmentation = (
+                {**mask, "counts": mask["counts"].decode("ascii")}
+                if instance in instances_with_masks
+                else segmentations[instance]
+            )
+
             data["annotations"].append(
                 dict(
                     id=len(data["annotations"]),
                     image_id=image_id,
                     category_id=cls_id,
-                    segmentation=segmentations[instance],
+                    segmentation=segmentation,
                     area=area,
                     bbox=bbox,
                     iscrowd=0,

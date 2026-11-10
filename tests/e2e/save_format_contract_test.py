@@ -60,7 +60,7 @@ def test_save_image_data_field_matches_config(
     assert not os.path.isabs(data["imagePath"])
     if with_image_data:
         assert isinstance(data["imageData"], str) and data["imageData"]
-        decoded = _utils.img_b64_to_arr(data["imageData"])
+        decoded = _utils.img_b64_to_arr(img_b64=data["imageData"])
         assert decoded.shape[0] == data["imageHeight"]
         assert decoded.shape[1] == data["imageWidth"]
     else:
@@ -182,7 +182,7 @@ def test_round_trip_mask_shape_via_fixture(
 ) -> None:
     mask_arr = np.zeros((4, 4), dtype=np.uint8)
     mask_arr[1:3, 1:3] = 1
-    mask_b64 = _utils.img_arr_to_b64(mask_arr)
+    mask_b64 = _utils.img_arr_to_b64(img_arr=mask_arr)
 
     raw_image_path = data_path / _RAW_FILE_NAME
     fixture_json = tmp_path / "mask_fixture.json"
@@ -290,7 +290,7 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
 
     title, message, details = messages[0]
     # Qt ignores message-box window titles on macOS.
-    assert title == ("" if sys.platform == "darwin" else "Image not found")
+    assert title == ("" if sys.platform == "darwin" else "Image Not Found")
     assert "does_not_exist.jpg" in message
     assert str(tmp_path / image_path) in message
     assert "imagePath" not in message

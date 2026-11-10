@@ -54,16 +54,16 @@ def test_empty_state_replaced_after_image_load(
     ("button_name", "dialog_method", "dialog_result"),
     [
         pytest.param(
-            "emptyStateOpenImage",
+            "emptyStateOpenFile",
             "getOpenFileName",
             lambda data_path: (str(data_path / "raw" / "2011_000003.jpg"), ""),
-            id="open_image",
+            id="open_file",
         ),
         pytest.param(
-            "emptyStateOpenDirectory",
+            "emptyStateOpenFolder",
             "getExistingDirectory",
             lambda data_path: str(data_path / "annotated"),
-            id="open_directory",
+            id="open_folder",
         ),
     ],
 )
@@ -149,3 +149,19 @@ def test_empty_state_is_legible_in_every_theme(
         )
     finally:
         apply_color_theme(theme="system")
+
+
+@pytest.mark.gui
+def test_empty_state_buttons_match_file_menu(*, main_win: MainWinFactory) -> None:
+    win: MainWindow = main_win()
+    for name, action in (
+        ("emptyStateOpenFile", win._actions.open),
+        ("emptyStateOpenFolder", win._actions.open_dir),
+    ):
+        button = win.findChild(QtWidgets.QPushButton, name)
+        assert button is not None
+        assert button.text() == action.text()
+        assert (
+            button.icon().pixmap(16, 16).toImage()
+            == action.icon().pixmap(16, 16).toImage()
+        )

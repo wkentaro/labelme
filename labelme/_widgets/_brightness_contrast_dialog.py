@@ -14,6 +14,9 @@ _NEUTRAL: Final = 100
 
 
 class BrightnessContrastDialog(QtWidgets.QDialog):
+    _publish: Callable[[QImage], None]
+    _img: PIL.Image.Image
+
     slider_brightness: QtWidgets.QSlider
     slider_contrast: QtWidgets.QSlider
 
@@ -45,10 +48,10 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             slider.setSingleStep(2)
             slider.setPageStep(20)
             slider.setValue(_NEUTRAL)
-            readout = QtWidgets.QLabel(_as_percent(slider.value()))
+            readout = QtWidgets.QLabel(_as_percent(value=slider.value()))
             readout.setAlignment(Qt.AlignmentFlag.AlignRight)
             slider.valueChanged.connect(
-                lambda value, readout=readout: readout.setText(_as_percent(value))
+                lambda value, readout=readout: readout.setText(_as_percent(value=value))
             )
             slider.valueChanged.connect(lambda _value: self.apply())
             label = QtWidgets.QLabel(caption)
@@ -56,6 +59,23 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
             grid.addWidget(label, row, 0)
             grid.addWidget(slider, row, 1)
             grid.addWidget(readout, row, 2)
+
+        buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.StandardButton.RestoreDefaults
+            | QtWidgets.QDialogButtonBox.StandardButton.Close
+        )
+        restore = buttons.button(
+            QtWidgets.QDialogButtonBox.StandardButton.RestoreDefaults
+        )
+        assert restore is not None
+        restore.clicked.connect(self._restore_defaults)
+        buttons.rejected.connect(self.close)
+        grid.addWidget(buttons, len(captioned), 0, 1, 3)
+        self.setMinimumWidth(360)
+
+    def _restore_defaults(self) -> None:
+        self.slider_brightness.setValue(_NEUTRAL)
+        self.slider_contrast.setValue(_NEUTRAL)
 
     def apply(self) -> None:
         gain = self.slider_brightness.value() / _NEUTRAL
@@ -96,5 +116,5 @@ class BrightnessContrastDialog(QtWidgets.QDialog):
         self._publish(qimage)
 
 
-def _as_percent(value: int, /) -> str:
+def _as_percent(*, value: int) -> str:
     return f"{value}%"

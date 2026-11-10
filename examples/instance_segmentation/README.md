@@ -45,3 +45,7 @@ You can see the label PNG file by following.
 #   - data_dataset_coco/annotations.json
 ./labelme2coco.py data_annotated data_dataset_coco --labels labels.txt
 ```
+
+Instances containing bitmap mask Shapes use COCO run-length encoding (RLE), which
+preserves holes and disconnected regions. Polygon-only instances retain polygon
+segmentations. Shapes with the same label and group ID are combined into one instance.

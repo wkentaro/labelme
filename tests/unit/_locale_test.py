@@ -12,10 +12,10 @@ def test_available_translation_locales_excludes_source_locale() -> None:
 
 
 def test_is_valid_language_accepts_none_source_and_bundled() -> None:
-    assert _locale.is_valid_language(None)
-    assert _locale.is_valid_language(_locale.SOURCE_LOCALE)
-    assert _locale.is_valid_language("ja_JP")
+    assert _locale.is_valid_language(code=None)
+    assert _locale.is_valid_language(code=_locale.SOURCE_LOCALE)
+    assert _locale.is_valid_language(code="ja_JP")
 
 
 def test_is_valid_language_rejects_unknown_code() -> None:
-    assert not _locale.is_valid_language("xx_ZZ")
+    assert not _locale.is_valid_language(code="xx_ZZ")

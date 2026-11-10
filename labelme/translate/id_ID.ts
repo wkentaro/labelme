@@ -4,20 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>Anotasi berbasis AI</translation>
-    </message>
-    <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>AI menyarankan anotasi dalam mode &apos;AI-Points&apos; dan &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Detail poligon</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Sesuaikan detail poligon</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -28,8 +16,32 @@
         <translation>Lebih detail</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Pilih mode &apos;AI-Points&apos; atau &apos;AI-Box&apos; untuk mengaktifkan Anotasi yang berbasis AI</translation>
+        <source>Output</source>
+        <translation>Keluaran</translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation>Poligon</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Mask</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Persegi Panjang</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Persegi Panjang Berorientasi</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Lingkaran</translation>
+    </message>
+    <message>
+        <source>Output format: {format}</source>
+        <translation>Format keluaran: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -43,21 +55,9 @@
         <source>Model</source>
         <translation>Model</translation>
     </message>
-    <message>
-        <source>Output format</source>
-        <translation>Format keluaran</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>Anotasi dari teks (AI)</translation>
-    </message>
-    <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>contoh: anjing, kucing, burung</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>Jalankan</translation>
@@ -71,24 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>AI membuat anotasi dari prompt teks</translation>
-    </message>
-    <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Pilih mode &apos;Polygon&apos;, &apos;Rectangle&apos;, atau &apos;AI-Points&apos; untuk mengaktifkan</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Model</translation>
+    </message>
+    <message>
+        <source>What to find</source>
+        <translation>Yang dicari</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Prompt</translation>
     </message>
     <message>
-        <source>Text-to-annotation model</source>
-        <translation>Model teks ke anotasi</translation>
+        <source>Finding…</source>
+        <translation>Mencari…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>Model AI-Find All</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Opsi</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -102,8 +117,8 @@
         <translation>Di samping gambar</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Pilih Folder Anotasi…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Ubah Folder Anotasi…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -140,16 +155,16 @@
         <translation>Klik &amp; seret untuk memindahkan titik</translation>
     </message>
     <message>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Tahan %s lalu klik untuk menambahkan titik pada tepi</translation>
+    </message>
+    <message>
         <source>Shape is locked</source>
         <translation>Bentuk terkunci</translation>
     </message>
     <message>
         <source>Click &amp; drag to move shape</source>
         <translation>Klik &amp; seret untuk memindahkan bentuk</translation>
-    </message>
-    <message>
-        <source>Creating %r</source>
-        <translation>Membuat %r</translation>
     </message>
     <message>
         <source>ESC to cancel</source>
@@ -164,6 +179,22 @@
         <translation>Mengedit bentuk</translation>
     </message>
     <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Klik titik untuk menyertakan, tahan %s lalu klik untuk mengecualikan, atau seret sebuah kotak. Tahan %s lalu klik untuk menyelesaikan.</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Ketik apa yang ingin dicari di AI-Find All, atau klik sudut pertama kotak di sekitar satu contoh</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Klik sudut seberang untuk mengecualikan objek seperti ini</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Klik sudut seberangnya untuk menemukan setiap objek seperti ini</translation>
+    </message>
+    <message>
         <source>Click start point for line</source>
         <translation>Klik titik awal untuk garis</translation>
     </message>
@@ -174,10 +205,6 @@
     <message>
         <source>Click start point for linestrip</source>
         <translation>Klik titik awal untuk garis patah</translation>
-    </message>
-    <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Klik titik berikutnya atau selesaikan dengan Ctrl/Cmd+Klik untuk garis patah</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -196,28 +223,48 @@
         <translation>Klik untuk menambahkan titik</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Klik untuk menghapus titik</translation>
+        <source>Drag a box</source>
+        <translation>Seret kotak</translation>
     </message>
     <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Klik untuk membuat titik pada bentuk</translation>
+        <source>Drag around one example</source>
+        <translation>Seret mengelilingi satu contoh</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Buang</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Tambah</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Klik untuk menyertakan</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Klik untuk mengecualikan</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Tambah %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Seret untuk mengecualikan</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
         <translation>Pilih sudut lainnya. Tahan Shift untuk membuat persegi.</translation>
     </message>
     <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Klik titik-titik untuk menyertakan, atau Shift+Klik untuk mengecualikan. Ctrl+Klik Kiri untuk mengakhiri pembuatan.</translation>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Enter menambahkan hasil, Esc membuangnya. Tahan %s dan gambar kotak untuk mengecualikan objek yang mirip.</translation>
     </message>
     <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Klik sudut pertama bbox untuk segmentasi AI</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Klik sudut berlawanan untuk segmentasi objek</translation>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Klik titik berikutnya, atau tahan %s lalu klik untuk menyelesaikan garis patah</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +277,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Klik sudut ketiga untuk menutup persegi panjang berorientasi</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Tahan %s lalu klik untuk menghapus titik</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -247,14 +298,6 @@
         <translation>Buka gambar atau folder gambar untuk memulai.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Buka Folder</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Buka Gambar</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Atau seret dan lepaskan file gambar di sini</translation>
     </message>
@@ -264,6 +307,10 @@
     <message>
         <source>Shape Label</source>
         <translation>Label Bentuk</translation>
+    </message>
+    <message>
+        <source>Enter object label</source>
+        <translation>Masukkan label objek</translation>
     </message>
     <message>
         <source>Label</source>
@@ -302,7 +349,7 @@
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>Keluar (&amp;Q)</translation>
+        <translation>&amp;Keluar</translation>
     </message>
     <message>
         <source>Quit application</source>
@@ -310,32 +357,7 @@
     </message>
     <message>
         <source>&amp;Next Image</source>
-        <translation>Gambar Berikutnya (&amp;N)</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Buka Berikutnya (Tahan Ctrl+Shift untuk menyalin label)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>Gambar Sebelumnya (&amp;P)</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Buka Sebelumnya (Tahan Ctrl+Shift untuk menyalin label)</translation>
-    </message>
-    <message>
-        <source>&amp;Save
-</source>
-        <translation>&amp;Simpan</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>&amp;Simpan Sebagai</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Simpan Otomatis (&amp;A)</translation>
+        <translation>&amp;Gambar Berikutnya</translation>
     </message>
     <message>
         <source>Save automatically</source>
@@ -343,7 +365,7 @@
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>Tutup (&amp;C)</translation>
+        <translation>&amp;Tutup</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -398,10 +420,6 @@
         <translation>Buat duplikat dari bentuk terpilih</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Urungkan titik terakhir</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Urungkan titik terakhir yang digambar</translation>
     </message>
@@ -435,31 +453,59 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>Perbesar (&amp;I)</translation>
+        <translation>&amp;Perbesar</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>Perkecil (&amp;Z)</translation>
-    </message>
-    <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>Kecerahan Kontras (&amp;B)</translation>
+        <translation>P&amp;erkecil</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
         <translation>Atur kecerahan dan kontras</translation>
     </message>
     <message>
-        <source>&amp;Edit Label</source>
-        <translation>&amp;Edit Label</translation>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Anotasi Gambar Poligonal dengan Python</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Ubah Folder Anotasi (&amp;A)…</translation>
+        <source>Version: %s</source>
+        <translation>Versi: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Penulis: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Situs Web</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Dokumentasi</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Pemecahan Masalah</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>Te&amp;ntang %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Tentang %s</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>S&amp;impan</translation>
     </message>
     <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Pilih tempat berkas anotasi dibaca dan disimpan</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>&amp;Buka Berkas…</translation>
     </message>
     <message>
         <source>Open Folder…</source>
@@ -468,6 +514,16 @@
     <message>
         <source>Open a folder of images</source>
         <translation>Buka folder gambar</translation>
+    </message>
+    <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Hapus Berkas</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Hapus</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -490,6 +546,11 @@
         <translation>Sisipkan bentuk dari clipboard ke gambar ini</translation>
     </message>
     <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Duplikat</translation>
+    </message>
+    <message>
         <source>Merge Shapes</source>
         <translation>Gabungkan Bentuk</translation>
     </message>
@@ -506,20 +567,46 @@
         <translation>Kunci bentuk terpilih agar tidak dapat diedit, atau buka kuncinya</translation>
     </message>
     <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Hapus Simpul Terpilih</translation>
+        <source>Undo</source>
+        <translation>Urungkan</translation>
     </message>
     <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Menghapus simpul terpilih dari poligon atau garis patah</translation>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Klik untuk menempatkan titik garis patah; Ctrl+klik menempatkan titik terakhir.</translation>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Klik titik atau seret sebuah kotak untuk menyegmentasi satu objek; tahan %s lalu klik untuk menyelesaikan.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Temukan setiap objek yang cocok dengan prompt teks atau kotak contoh</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Berikutnya</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>Gambar &amp;Sebelumnya</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Sebelumnya</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Buka gambar sebelumnya (tahan %s untuk menyalin bentuk saat ini)</translation>
     </message>
     <message>
         <source>Fit to &amp;Window</source>
-        <translation>Sesuaikan Jendela (&amp;W)</translation>
+        <translation>Sesuaikan &amp;Jendela</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -528,6 +615,10 @@
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Perbesar ke bentuk terpilih setiap kali pilihan berubah</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Kecerahan/Kontras…</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -552,6 +643,18 @@
     <message>
         <source>Fill polygon while drawing</source>
         <translation>Isi poligon saat menggambar</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Sembunyikan Bentuk</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Tampilkan Bentuk</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Tampilkan/Sembunyikan &amp;Bentuk</translation>
     </message>
     <message>
         <source>Select Shape Above</source>
@@ -590,32 +693,44 @@
         <translation>Sesuaikan Jendela</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Model AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Unduh atau hapus model AI</translation>
+    </message>
+    <message>
         <source>&amp;File</source>
-        <translation>Berkas (&amp;F)</translation>
+        <translation>&amp;Berkas</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>Edit (&amp;E)</translation>
+        <translation>&amp;Edit</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>Tampilan (&amp;V)</translation>
+        <translation>&amp;Tampilan</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>Bantuan (&amp;H)</translation>
+        <translation>B&amp;antuan</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Alat</translation>
     </message>
     <message>
         <source>More tools</source>
         <translation>Alat lainnya</translation>
     </message>
     <message>
-        <source>More shape tools</source>
-        <translation>Alat bentuk lainnya</translation>
+        <source>Shape Tools</source>
+        <translation>Alat Bentuk</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s dimulai.</translation>
+        <source>More shape tools</source>
+        <translation>Alat bentuk lainnya</translation>
     </message>
     <message>
         <source>Retry</source>
@@ -638,20 +753,44 @@
         <translation>Anda dapat menggunakan pengaturan bawaan untuk saat ini. Sebelum reset, salinan cadangan file konfigurasi Anda akan disimpan.</translation>
     </message>
     <message>
+        <source>Type what to find</source>
+        <translation>Ketik apa yang ingin dicari</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>Mencari kecocokan di CPU…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Mencari kecocokan…</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat bentuk &apos;%s&apos;.
+
+Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Berkas anotasi milik gambar lain: %s</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>%s tidak dapat menggunakan kotak contoh. Pilih SAM 3.</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Buka Folder</translation>
+    </message>
+    <message>
         <source>Command-line settings</source>
         <translation>Pengaturan baris perintah</translation>
     </message>
     <message>
-        <source>Back up and reset</source>
-        <translation>Cadangkan dan reset</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Lanjutkan dengan bawaan</translation>
-    </message>
-    <message>
         <source>Fit to S&amp;election</source>
-        <translation>Sesuaikan Pilihan (&amp;E)</translation>
+        <translation>Ses&amp;uaikan Pilihan</translation>
     </message>
     <message>
         <source>Could not reset the Config File.
@@ -670,18 +809,6 @@
     <message>
         <source>Mask Output Unavailable</source>
         <translation>Keluaran mask tidak tersedia</translation>
-    </message>
-    <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>%s hanya mendeteksi kotak pembatas dan tidak dapat membuat anotasi &apos;%s&apos;.
-
-Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format keluaran ke &apos;Rectangle&apos;.</translation>
-    </message>
-    <message>
-        <source>Invalid label</source>
-        <translation>Label tidak valid</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -720,6 +847,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Simpan berkas anotasi dengan nama baru</translation>
     </message>
     <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Simpan &amp;Otomatis</translation>
+    </message>
+    <message>
         <source>Embed Image in Annotation File</source>
         <translation>Sematkan Gambar dalam Berkas Anotasi</translation>
     </message>
@@ -728,24 +859,73 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Menyimpan salinan gambar di dalam berkas anotasi</translation>
     </message>
     <message>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>&amp;Ubah Folder Anotasi…</translation>
+    </message>
+    <message>
         <source>Open an image or annotation file</source>
         <translation>Buka gambar atau berkas anotasi</translation>
     </message>
     <message>
         <source>&amp;Delete Annotation File</source>
-        <translation>Hapus Berkas Anotasi (&amp;D)</translation>
+        <translation>&amp;Hapus Berkas Anotasi</translation>
     </message>
     <message>
         <source>Delete the current annotation file</source>
         <translation>Hapus berkas anotasi saat ini</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Gagal menyimpan berkas anotasi</translation>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Edit Label…</translation>
     </message>
     <message>
-        <source>Large image</source>
-        <translation>Gambar besar</translation>
+        <source>Undo Last Point</source>
+        <translation>Urungkan Titik Terakhir</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Hapus Titik Terpilih</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Menghapus titik terpilih dari poligon atau garis patah</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Pilih</translation>
+    </message>
+    <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Klik untuk menempatkan titik garis patah; tahan %s lalu klik untuk menempatkan titik terakhir.</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Buka gambar berikutnya (tahan %s untuk menyalin bentuk saat ini)</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Mencari semua &apos;{query}&apos;…</translation>
+    </message>
+    <message>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Mencari semua &apos;{query}&apos; di CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting on CPU…</source>
+        <translation>Menyegmentasi di CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Menyegmentasi…</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Ditemukan {count} &apos;{query}&apos; baru</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Tidak ada &apos;{query}&apos; baru yang ditemukan</translation>
     </message>
     <message>
         <source>Large image requires more memory</source>
@@ -758,10 +938,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Open Anyway</source>
         <translation>Tetap Buka</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Error membuka file</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -780,14 +956,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Gambar dan berkas anotasi (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Buka Gambar atau Anotasi</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Perhatian</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Hapus</translation>
     </message>
@@ -796,16 +964,12 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Batal</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Tidak tersedia dalam mode AI-Points karena model ini tidak mendukung prompt titik.</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Pertahankan perubahan anotasi untuk &quot;{}&quot;?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Perubahan belum disimpan</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>Unduh {model}</translation>
     </message>
     <message>
         <source>The selected annotation file could not be opened: {path}</source>
@@ -814,10 +978,6 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Folder Anotasi tidak ditemukan: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Telusuri Folder Gambar</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -844,6 +1004,10 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Poligon</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Si&amp;mpan Sebagai…</translation>
+    </message>
+    <message>
         <source>Rectangle</source>
         <translation>Persegi Panjang</translation>
     </message>
@@ -864,42 +1028,92 @@ Ganti model AI Text-to-Annotation ke &apos;SAM3 (smart)&apos;, atau atur format 
         <translation>Garis Patah</translation>
     </message>
     <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
+        <source>Continue with Defaults</source>
+        <translation>Lanjutkan dengan bawaan</translation>
     </message>
     <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Klik titik untuk mensegmentasi objek. Ctrl+Klik Kiri untuk mengakhiri pembuatan.</translation>
+        <source>Back Up and Reset</source>
+        <translation>Cadangkan dan reset</translation>
     </message>
     <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
+        <source>Starting AI…</source>
+        <translation>Memulai AI…</translation>
     </message>
     <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Gambar bounding box untuk mensegmentasi objek.</translation>
+        <source>Loading {model}…</source>
+        <translation>Memuat {model}…</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points tidak tersedia</translation>
+        <source>Preparing image on CPU…</source>
+        <translation>Menyiapkan gambar di CPU…</translation>
     </message>
     <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s tidak mendukung point prompt.
-Silakan pilih model lain atau gunakan mode AI-Box.</translation>
+        <source>Preparing image…</source>
+        <translation>Menyiapkan gambar…</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Pilih Folder Anotasi</translation>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} dtk</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Pilih minimal dua bentuk mask untuk digabungkan</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Hanya bentuk mask yang dapat digabungkan</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Buka kunci bentuk terpilih untuk menggabungkannya</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Hanya bentuk dengan label yang sama yang dapat digabungkan</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Label tidak valid</translation>
+    </message>
+    <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Gagal menyimpan berkas anotasi</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Menemukan gambar akan memperbarui berkas anotasi agar merujuk ke gambar tersebut.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Cari Gambar…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Cari Gambar</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Gambar (%s)</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
         <translation>Folder Anotasi: %s</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>Gambar tidak ditemukan</translation>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Hapus berkas anotasi? Tindakan ini tidak dapat diurungkan.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Hapus &quot;{}&quot;? Tindakan ini tidak dapat diurungkan.</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Unduh</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Simpan perubahan anotasi untuk &quot;{}&quot;?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -923,11 +1137,23 @@ Lokasi yang diharapkan: {path}</translation>
     </message>
     <message>
         <source>&amp;Keep Previous Zoom</source>
-        <translation>Pertahankan Zoom Sebelumnya (&amp;K)</translation>
+        <translation>Pertahankan &amp;Zoom Sebelumnya</translation>
     </message>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Format yang didukung: {formats}</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Gagal menghapus berkas anotasi</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Perubahan belum disimpan</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Gambar tidak ditemukan</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -954,31 +1180,6 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Bentuk tidak memiliki area; tidak ada yang dibuat.</translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>Buka (&amp;O)</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Urungkan</translation>
-    </message>
-    <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>Sembunyikan Bentuk (&amp;H)</translation>
-    </message>
-    <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Tampilkan Bentuk (&amp;S)</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>Tampilkan/Sembunyikan Bentuk (&amp;T)</translation>
-    </message>
-    <message>
         <source>Settings…</source>
         <translation>Pengaturan…</translation>
     </message>
@@ -991,6 +1192,22 @@ Shapes</source>
         <translation>Pengaturan dikelola melalui --config untuk sesi ini</translation>
     </message>
     <message>
+        <source>Large Image</source>
+        <translation>Gambar besar</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Error membuka file</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Buka Berkas</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Pilih Folder Anotasi</translation>
+    </message>
+    <message>
         <source>Save Annotation File</source>
         <translation>Simpan Berkas Anotasi</translation>
     </message>
@@ -999,16 +1216,16 @@ Shapes</source>
         <translation>Berkas anotasi (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Hapus permanen berkas anotasi ini? Tindakan ini tidak dapat dibatalkan.</translation>
-    </message>
-    <message>
-        <source>Error deleting annotation file</source>
-        <translation>Gagal menghapus berkas anotasi</translation>
+        <source>Delete Annotation File</source>
+        <translation>Hapus Berkas Anotasi</translation>
     </message>
     <message>
         <source>Configuration Error</source>
         <translation>Error Konfigurasi</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Hanya mendeteksi kotak. Beralih ke Persegi Panjang untuk menggunakan model ini.</translation>
     </message>
 </context>
 <context>
@@ -1018,16 +1235,31 @@ Shapes</source>
         <translation>Kelola model…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Unduh model…</translation>
+        <source>Download and use</source>
+        <translation>Unduh dan gunakan</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Pilih model…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Mengunduh: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Tidak tersedia: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Model lainnya…</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Model AI</translation>
     </message>
 </context>
 <context>
@@ -1121,11 +1353,15 @@ Shapes</source>
         <translation>Unduh</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Unduhan Gagal</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Unduhan gagal. Periksa koneksi Anda dan coba lagi.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Hapus model</translation>
     </message>
     <message>
@@ -1138,10 +1374,6 @@ Shapes</source>
     <message>
         <source>Settings</source>
         <translation>Pengaturan</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Model AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>
@@ -1320,8 +1552,8 @@ Shapes</source>
         <translation>Satu nama flag per baris. Pola: ^car$ cocok persis dengan car, car cocok dengan awalan, .* cocok dengan setiap label.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>Anotasi dari teks (AI)</translation>
+        <source>AI-Find All model</source>
+        <translation>Model AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>
@@ -1338,6 +1570,22 @@ Shapes</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>duplikat hindari duplikat hapus duplikat</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Perangkat komputasi</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Otomatis memakai GPU dan beralih ke CPU jika GPU gagal.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda prosesor lambat crash</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1380,42 +1628,6 @@ Shapes</source>
         <translation>Model default</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (kecepatan)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (akurasi)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (kecepatan)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (seimbang)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (akurasi)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (kecepatan)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (seimbang)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (akurasi)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Abaikan kecocokan dengan bentuk yang ada</translation>
     </message>
@@ -1442,8 +1654,8 @@ Shapes</source>
         <translation>Zoom</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Scroll melakukan zoom pada kanvas</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Tahan %s lalu gulir untuk memperbesar kanvas</translation>
     </message>
 </context>
 <context>
@@ -1497,6 +1709,65 @@ Shapes</source>
     </message>
 </context>
 <context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Model</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>Tercepat</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Seimbang</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Paling akurat</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>SAM asli. SAM 2 lebih cepat di setiap ukuran.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Tercepat, dengan garis tepi kasar. Berjalan baik di komputer apa pun.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Garis tepi lebih tajam daripada Tiny, tetapi lebih lambat daripada SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Unduhan lebih kecil daripada Base+, sedikit kurang akurat.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Seimbang antara kecepatan dan akurasi. Berjalan baik di CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Lebih akurat daripada Base+, tetapi lebih lambat.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Paling akurat, tetapi lebih lambat daripada SAM 2 Base+. Terbaik dengan GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Tercepat. Menemukan kotak, tanpa mask.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Hanya kotak</translation>
+    </message>
+</context>
+<context>
     <name>_SettingsPage</name>
     <message>
         <source>Settings sections</source>
@@ -1517,6 +1788,17 @@ Shapes</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Tidak ada pengaturan yang cocok dalam dialog ini. Coba istilah lain atau hapus pencarian.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Kesalahan</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Terjadi kesalahan tak terduga. Aplikasi akan ditutup.&lt;br/&gt;&lt;br/&gt;Laporkan masalah ini dengan mengikuti &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Pemecahan Masalah&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

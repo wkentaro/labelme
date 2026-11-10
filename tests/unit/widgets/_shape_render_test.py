@@ -50,7 +50,7 @@ def _render(
     painter = QtGui.QPainter(image)
     context = ShapeRenderContext(
         scale=scale,
-        palette=Palette.from_rgb((255, 0, 0)),
+        palette=Palette.from_rgb(rgb=(255, 0, 0)),
         point_size=8,
         point_type="round",
         selected=False,
@@ -330,19 +330,23 @@ def _mask_shape() -> Shape:
     )
 
 
-def _outline_center(*, image: QtGui.QImage) -> tuple[float, float]:
+def _outline_pixels(*, image: QtGui.QImage) -> list[tuple[int, int]]:
     # Restrict to the central window so the bbox rect at the edges does not
     # contaminate the mask block's outline; the opaque line color isolates the
     # outline from the semi-transparent fill blended over the white canvas.
-    xs = []
-    ys = []
-    for y in range(15, 35):
-        for x in range(15, 35):
-            c = image.pixelColor(x, y)
-            if (c.red(), c.green(), c.blue()) == (255, 0, 0):
-                xs.append(x)
-                ys.append(y)
-    assert xs and ys
+    edge = QtGui.QColor(255, 0, 0)
+    return [
+        (x, y)
+        for y in range(15, 35)
+        for x in range(15, 35)
+        if image.pixelColor(x, y) == edge
+    ]
+
+
+def _outline_center(*, image: QtGui.QImage) -> tuple[float, float]:
+    pixels = _outline_pixels(image=image)
+    assert pixels
+    xs, ys = zip(*pixels, strict=True)
     return (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
 
 
@@ -369,6 +373,67 @@ def test_mask_outline_aligns_with_fill() -> None:
     )
     assert abs(outline[0] - expected[0]) <= 0.5
     assert abs(outline[1] - expected[1]) <= 0.5
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+@pytest.mark.parametrize("fill_mask", [True, False])
+@pytest.mark.parametrize("outline", [True, False])
+def test_mask_draws_fill_and_edge_as_asked(*, fill_mask: bool, outline: bool) -> None:
+    image = QtGui.QImage(_SIZE, _SIZE, QtGui.QImage.Format.Format_ARGB32)
+    image.fill(QtGui.QColor(255, 255, 255))
+    painter = QtGui.QPainter(image)
+    render_shape(
+        painter=painter,
+        shape=_mask_shape(),
+        context=ShapeRenderContext(
+            scale=1.0,
+            palette=Palette.from_rgb(rgb=(255, 0, 0)),
+            point_size=8,
+            point_type="round",
+            selected=False,
+            fill=False,
+            highlight=None,
+            rotation_highlight=None,
+            fill_mask=fill_mask,
+            outline=outline,
+        ),
+    )
+    painter.end()
+
+    inside = image.pixelColor(25, 23)  # inside the mask's True block
+    assert (inside != QtGui.QColor(255, 255, 255)) is fill_mask
+    assert bool(_outline_pixels(image=image)) is outline
+
+
+@pytest.mark.gui
+@pytest.mark.usefixtures("qapp")
+@pytest.mark.parametrize("outline", [True, False])
+def test_polygon_without_outline_draws_its_fill_alone(*, outline: bool) -> None:
+    image = QtGui.QImage(_SIZE, _SIZE, QtGui.QImage.Format.Format_ARGB32)
+    image.fill(QtGui.QColor(255, 255, 255))
+    painter = QtGui.QPainter(image)
+    render_shape(
+        painter=painter,
+        shape=_polygon(label=None),
+        context=ShapeRenderContext(
+            scale=1.0,
+            palette=Palette.from_rgb(rgb=(255, 0, 0)),
+            point_size=8,
+            point_type="round",
+            selected=False,
+            fill=True,
+            highlight=None,
+            rotation_highlight=None,
+            outline=outline,
+        ),
+    )
+    painter.end()
+
+    white = QtGui.QColor(255, 255, 255)
+    assert image.pixelColor(100, 100) != white  # the fill
+    # Outside the polygon, beside its top-left vertex marker.
+    assert (image.pixelColor(47, 47) != white) is outline
 
 
 @pytest.mark.gui
@@ -619,7 +684,7 @@ def _assert_intersects_every_painted_pixel(
         painter.setFont(font)
     context = ShapeRenderContext(
         scale=scale,
-        palette=Palette.from_rgb((255, 0, 0)),
+        palette=Palette.from_rgb(rgb=(255, 0, 0)),
         point_size=point_size,
         point_type="round",
         selected=False,
@@ -648,3 +713,26 @@ def _assert_intersects_every_painted_pixel(
         assert not hits(_SIZE + 50, _SIZE + 50)
     finally:
         painter.end()
+
+
+@pytest.mark.gui
+def test_negative_point_carries_a_minus_mark() -> None:
+    # Red alone tells a negative point from a positive one only to readers
+    # who can see red; the white "−" does not depend on it.
+    shape = Shape(
+        shape_type="points",
+        points=np.array([[100.0, 100.0]]),
+        point_labels=np.array([0]),
+    )
+    image = _render(
+        shape=shape,
+        show_label=False,
+        scale=1.0,
+        highlight=None,
+        rotation_highlight=None,
+    )
+
+    center = image.pixelColor(100, 100)
+    assert min(center.red(), center.green(), center.blue()) > 200
+    above = image.pixelColor(100, 97)
+    assert above.red() > 200 > above.green()

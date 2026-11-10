@@ -4,20 +4,8 @@
 <context>
     <name>AiAssistedAnnotationWidget</name>
     <message>
-        <source>AI-Assisted Annotation</source>
-        <translation>Σχολιασμός υποβοηθούμενος από τεχνητή νοημοσύνη</translation>
-    </message>
-    <message>
-        <source>AI suggests annotation in &apos;AI-Points&apos; and &apos;AI-Box&apos; modes</source>
-        <translation>Το AI προτείνει σχολιασμό στις λειτουργίες &apos;AI-Points&apos; και &apos;AI-Box&apos;</translation>
-    </message>
-    <message>
         <source>Polygon detail</source>
         <translation>Λεπτομέρεια πολυγώνου</translation>
-    </message>
-    <message>
-        <source>Adjust polygon detail</source>
-        <translation>Προσαρμογή λεπτομέρειας πολυγώνου</translation>
     </message>
     <message>
         <source>Smoother</source>
@@ -28,8 +16,32 @@
         <translation>Περισσότερη λεπτομέρεια</translation>
     </message>
     <message>
-        <source>Select &apos;AI-Points&apos; or &apos;AI-Box&apos; mode to enable AI-Assisted Annotation</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;AI-Points&apos; ή &apos;AI-Box&apos; για να ενεργοποιήσετε τον σχολιασμό υποβοηθούμενο από AI</translation>
+        <source>Output</source>
+        <translation>Έξοδος</translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation>Πολύγωνο</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Μάσκα</translation>
+    </message>
+    <message>
+        <source>Rectangle</source>
+        <translation>Ορθογώνιο</translation>
+    </message>
+    <message>
+        <source>Oriented Rectangle</source>
+        <translation>Προσανατολισμένο Ορθογώνιο</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Κύκλος</translation>
+    </message>
+    <message>
+        <source>Output format: {format}</source>
+        <translation>Μορφή εξόδου: {format}</translation>
     </message>
     <message>
         <source>AI-assisted annotation model</source>
@@ -43,25 +55,9 @@
         <source>Model</source>
         <translation>Μοντέλο</translation>
     </message>
-    <message>
-        <source>Output format</source>
-        <translation>Μορφή εξόδου</translation>
-    </message>
 </context>
 <context>
     <name>AiTextToAnnotationWidget</name>
-    <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Text-to-Annotation</translation>
-    </message>
-    <message>
-        <source>AI creates annotations from the text prompt</source>
-        <translation>Η τεχνητή νοημοσύνη δημιουργεί σχολιασμούς από την προτροπή κειμένου</translation>
-    </message>
-    <message>
-        <source>e.g., dog,cat,bird</source>
-        <translation>π.χ. σκύλος,γάτα,πουλί</translation>
-    </message>
     <message>
         <source>Run</source>
         <translation>Εκτέλεση</translation>
@@ -75,20 +71,39 @@
         <translation>IoU</translation>
     </message>
     <message>
-        <source>Select &apos;Polygon&apos;, &apos;Rectangle&apos;, or &apos;AI-Points&apos; mode to enable</source>
-        <translation>Επιλέξτε τη λειτουργία &apos;Polygon&apos;, &apos;Rectangle&apos; ή &apos;AI-Points&apos; για ενεργοποίηση</translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation>Μοντέλο</translation>
+    </message>
+    <message>
+        <source>What to find</source>
+        <translation>Τι να βρεθεί</translation>
     </message>
     <message>
         <source>Prompt</source>
         <translation>Προτροπή</translation>
     </message>
     <message>
-        <source>Text-to-annotation model</source>
-        <translation>Μοντέλο σχολιασμού από κείμενο</translation>
+        <source>Finding…</source>
+        <translation>Αναζήτηση…</translation>
+    </message>
+    <message>
+        <source>AI-Find All model</source>
+        <translation>Μοντέλο AI-Find All</translation>
+    </message>
+</context>
+<context>
+    <name>AiToolGroup</name>
+    <message>
+        <source>Options</source>
+        <translation>Επιλογές</translation>
+    </message>
+    <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
     </message>
 </context>
 <context>
@@ -102,8 +117,8 @@
         <translation>Δίπλα στις εικόνες</translation>
     </message>
     <message>
-        <source>Choose Annotation Folder…</source>
-        <translation>Επιλογή φακέλου σχολιασμών…</translation>
+        <source>Change Annotation Folder…</source>
+        <translation>Αλλαγή φακέλου σχολιασμών…</translation>
     </message>
     <message>
         <source>{annotated} of {total} annotated in</source>
@@ -136,10 +151,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>Δημιουργία %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>(Esc για ακύρωση)</translation>
     </message>
@@ -150,6 +161,18 @@
     <message>
         <source>Editing shapes</source>
         <translation>Επεξεργασία σχημάτων</translation>
+    </message>
+    <message>
+        <source>Type what to find in AI-Find All, or click the first corner of a box around one example</source>
+        <translation>Πληκτρολογήστε τι θέλετε να βρείτε στο AI-Find All ή κάντε κλικ στην πρώτη γωνία ενός πλαισίου γύρω από ένα παράδειγμα</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to exclude objects like this one</source>
+        <translation>Κάντε κλικ στην απέναντι γωνία για να εξαιρέσετε αντικείμενα σαν αυτό</translation>
+    </message>
+    <message>
+        <source>Click the opposite corner to find every object like this one</source>
+        <translation>Κάντε κλικ στην απέναντι γωνία για να βρείτε κάθε αντικείμενο σαν αυτό</translation>
     </message>
     <message>
         <source>Click start point for line</source>
@@ -164,12 +187,52 @@
         <translation>Κάντε κλικ στο σημείο έναρξης για το linestrip</translation>
     </message>
     <message>
-        <source>Click next point or finish by Ctrl/Cmd+Click for linestrip</source>
-        <translation>Κάντε κλικ στο επόμενο σημείο ή ολοκληρώστε μέχρι τις Ctrl/Cmd+Click για το linestrip</translation>
+        <source>Hold %s and click to add a point on the edge</source>
+        <translation>Κρατήστε πατημένο το %s και κάντε κλικ για προσθήκη σημείου στην ακμή</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Σύρετε ένα πλαίσιο</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Σύρετε γύρω από ένα παράδειγμα</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Απόρριψη</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Προσθήκη</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Κλικ για συμπερίληψη</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Κλικ για εξαίρεση</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Προσθήκη %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Σύρετε για εξαίρεση</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
         <translation>Κάντε κλικ στο κεντρικό σημείο για τον κύκλο</translation>
+    </message>
+    <message>
+        <source>Click points to include, hold %s and click to exclude, or drag a box. Hold %s and click to finish.</source>
+        <translation>Κάντε κλικ σε σημεία για συμπερίληψη, κρατήστε πατημένο το %s και κάντε κλικ για εξαίρεση ή σύρετε ένα πλαίσιο. Κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
+    </message>
+    <message>
+        <source>Enter adds the results, Esc discards them. Hold %s and draw a box to exclude objects like it.</source>
+        <translation>Το Enter προσθέτει τα αποτελέσματα, το Esc τα απορρίπτει. Κρατήστε πατημένο το %s και σχεδιάστε ένα πλαίσιο για να εξαιρέσετε παρόμοια αντικείμενα.</translation>
     </message>
     <message>
         <source>Click point on circumference for circle</source>
@@ -192,14 +255,6 @@
         <translation>Πάτημα και μεταφορά για μετακίνηση αυτού του σημείου</translation>
     </message>
     <message>
-        <source>ALT + SHIFT + Click to delete point</source>
-        <translation>ALT + SHIFT + Κάντε κλικ για διαγραφή σημείου</translation>
-    </message>
-    <message>
-        <source>ALT + Click to create point on shape</source>
-        <translation>ALT + Κάντε κλικ για να δημιουργήσετε σημείο στο σχήμα</translation>
-    </message>
-    <message>
         <source>Shape is locked</source>
         <translation>Το σχήμα είναι κλειδωμένο</translation>
     </message>
@@ -208,16 +263,8 @@
         <translation>Κάντε κλικ και σύρετε για να μετακινήσετε το σχήμα</translation>
     </message>
     <message>
-        <source>Click points to include or Shift+Click to exclude. Ctrl+LeftClick ends creation.</source>
-        <translation>Κάντε κλικ σε σημεία για συμπερίληψη ή Shift+Click για εξαίρεση. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
-    </message>
-    <message>
-        <source>Click first corner of bbox for AI segmentation</source>
-        <translation>Κάντε κλικ στην πρώτη γωνία του bbox για τμηματοποίηση AI</translation>
-    </message>
-    <message>
-        <source>Click opposite corner to segment object</source>
-        <translation>Κάντε κλικ στην απέναντι γωνία για τμηματοποίηση αντικειμένου</translation>
+        <source>Click the next point, or hold %s and click to finish the LineStrip</source>
+        <translation>Κάντε κλικ στο επόμενο σημείο ή κρατήστε πατημένο το %s και κάντε κλικ για να ολοκληρώσετε την τεθλασμένη γραμμή</translation>
     </message>
     <message>
         <source>Click first corner for oriented rectangle</source>
@@ -230,6 +277,10 @@
     <message>
         <source>Click third corner to close oriented rectangle</source>
         <translation>Κάντε κλικ στην τρίτη γωνία για να κλείσετε το προσανατολισμένο ορθογώνιο</translation>
+    </message>
+    <message>
+        <source>Hold %s and click to delete the point</source>
+        <translation>Κρατήστε πατημένο το %s και κάντε κλικ για διαγραφή του σημείου</translation>
     </message>
     <message>
         <source>Click &amp; drag to rotate the shape</source>
@@ -247,14 +298,6 @@
         <translation>Ανοίξτε μια εικόνα ή έναν φάκελο εικόνων για να ξεκινήσετε.</translation>
     </message>
     <message>
-        <source>Open Folder</source>
-        <translation>Άνοιγμα φακέλου</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation>Άνοιγμα εικόνας</translation>
-    </message>
-    <message>
         <source>Or drag and drop image files here</source>
         <translation>Ή σύρετε και αποθέστε αρχεία εικόνας εδώ</translation>
     </message>
@@ -266,12 +309,16 @@
         <translation>Ετικέτα σχήματος</translation>
     </message>
     <message>
+        <source>Enter object label</source>
+        <translation>Ετικέτα αντικειμένου</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Ετικέτα</translation>
     </message>
     <message>
         <source>Group ID</source>
-        <translation>Αναγνωριστικό ομάδας</translation>
+        <translation>ID ομάδας</translation>
     </message>
     <message>
         <source>Description</source>
@@ -281,30 +328,16 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>&amp;Save
-</source>
-        <translation>Αποθήκευση</translation>
-    </message>
-    <message>
-        <source>&amp;Save As</source>
-        <translation>Αποθήκευση &amp;Ως</translation>
-    </message>
-    <message>
-        <source>Save &amp;Automatically</source>
-        <translation>Αποθήκευση &amp;αυτόματα</translation>
-    </message>
-    <message>
         <source>Save automatically</source>
         <translation>Αυτόματη αποθήκευση</translation>
     </message>
     <message>
-        <source>&amp;Open
-</source>
-        <translation>Ανοιγμα</translation>
+        <source>Change Annotation &amp;Folder…</source>
+        <translation>Αλλαγή φακέλου &amp;σχολιασμών…</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>Κλείσιμο</translation>
+        <translation>&amp;Κλείσιμο</translation>
     </message>
     <message>
         <source>Close current file</source>
@@ -329,10 +362,6 @@
     <message>
         <source>Delete the selected shapes</source>
         <translation>Διαγραφή των επιλεγμένων σχημάτων</translation>
-    </message>
-    <message>
-        <source>&amp;Edit Label</source>
-        <translation>Επεξεργασία ετικέτας</translation>
     </message>
     <message>
         <source>Modify the label of the selected shape</source>
@@ -375,17 +404,8 @@
         <translation>Κλείδωμα των επιλεγμένων σχημάτων έναντι επεξεργασίας ή ξεκλείδωμά τους</translation>
     </message>
     <message>
-        <source>Undo last point</source>
-        <translation>Τελευταίο σημείο</translation>
-    </message>
-    <message>
         <source>Undo last drawn point</source>
         <translation>Αναίρεση τελευταίου σημείου έλξης</translation>
-    </message>
-    <message>
-        <source>Undo
-</source>
-        <translation>Αναίρεση</translation>
     </message>
     <message>
         <source>Undo last add and edit of shape</source>
@@ -398,6 +418,11 @@
     <message>
         <source>Edit Shapes</source>
         <translation>Επεξεργασία σχημάτων</translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Επιλογή</translation>
     </message>
     <message>
         <source>Move and edit the selected shapes</source>
@@ -420,28 +445,20 @@
         <translation>Έναρξη σχεδίασης σημείων</translation>
     </message>
     <message>
+        <source>AI-Segment</source>
+        <translation>AI-Segment</translation>
+    </message>
+    <message>
+        <source>Click points or drag a box to segment one object; hold %s and click to finish.</source>
+        <translation>Κάντε κλικ σε σημεία ή σύρετε ένα πλαίσιο για να τμηματοποιήσετε ένα αντικείμενο· κρατήστε πατημένο το %s και κάντε κλικ για ολοκλήρωση.</translation>
+    </message>
+    <message>
         <source>&amp;Next Image</source>
-        <translation>Επόμενη εικόνα</translation>
-    </message>
-    <message>
-        <source>Open next (hold Ctl+Shift to copy labels)</source>
-        <translation>Ανοίξτε το επόμενο (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
-    </message>
-    <message>
-        <source>&amp;Prev Image</source>
-        <translation>&amp;Προηγούμενη εικόνα</translation>
-    </message>
-    <message>
-        <source>Open prev (hold Ctl+Shift to copy labels)</source>
-        <translation>Άνοιγμα προηγούμενου (κρατήστε πατημένο το πλήκτρο Ctl+Shift για να αντιγράψετε τις ετικέτες)</translation>
+        <translation>&amp;Επόμενη εικόνα</translation>
     </message>
     <message>
         <source>Zoom to the selected shapes whenever the selection changes</source>
         <translation>Εστίαση στα επιλεγμένα σχήματα κάθε φορά που αλλάζει η επιλογή</translation>
-    </message>
-    <message>
-        <source>&amp;Brightness Contrast</source>
-        <translation>αντίθεση φωτεινότητας</translation>
     </message>
     <message>
         <source>Adjust brightness and contrast</source>
@@ -449,11 +466,11 @@
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation>&amp; Μεγέθυνση</translation>
+        <translation>&amp;Μεγέθυνση</translation>
     </message>
     <message>
         <source>&amp;Zoom Out</source>
-        <translation>&amp;Σμίκρυνση</translation>
+        <translation>Σμ&amp;ίκρυνση</translation>
     </message>
     <message>
         <source>Reset Layout</source>
@@ -468,29 +485,12 @@
         <translation>Γεμίστε πολύγωνο ενώ σχεδιάζετε</translation>
     </message>
     <message>
-        <source>&amp;Hide
-Shapes</source>
-        <translation>&amp;Απόκρυψη
-Σχήματα</translation>
-    </message>
-    <message>
         <source>Hide all shapes</source>
         <translation>Όλα τα σχήματα</translation>
     </message>
     <message>
-        <source>&amp;Show
-Shapes</source>
-        <translation>Προβολή σχημάτων</translation>
-    </message>
-    <message>
         <source>Show all shapes</source>
         <translation>Όλα τα σχήματα</translation>
-    </message>
-    <message>
-        <source>&amp;Toggle
-Shapes</source>
-        <translation>&amp;Εναλλαγή
-Σχήματα</translation>
     </message>
     <message>
         <source>Toggle all shapes</source>
@@ -537,6 +537,42 @@ Shapes</source>
         <translation>Προσαρμογή παραθύρου</translation>
     </message>
     <message>
+        <source>Image Polygonal Annotation with Python</source>
+        <translation>Πολυγωνική επισημείωση εικόνων με Python</translation>
+    </message>
+    <message>
+        <source>Version: %s</source>
+        <translation>Έκδοση: %s</translation>
+    </message>
+    <message>
+        <source>Author: %s</source>
+        <translation>Συγγραφέας: %s</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Αρχική σελίδα</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>Τεκμηρίωση</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Αντιμετώπιση προβλημάτων</translation>
+    </message>
+    <message>
+        <source>&amp;About %s</source>
+        <translation>&amp;Σχετικά με το %s</translation>
+    </message>
+    <message>
+        <source>About %s</source>
+        <translation>Σχετικά με το %s</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Αποθήκευση</translation>
+    </message>
+    <message>
         <source>Save the annotation file</source>
         <translation>Αποθήκευση αρχείου επισημειώσεων</translation>
     </message>
@@ -553,12 +589,12 @@ Shapes</source>
         <translation>Αποθηκεύει ένα αντίγραφο της εικόνας μέσα στο αρχείο επισημειώσεων</translation>
     </message>
     <message>
-        <source>Change &amp;Annotation Folder…</source>
-        <translation>Αλλαγή φακέλου &amp;σχολιασμών…</translation>
-    </message>
-    <message>
         <source>Choose where annotation files are read and saved</source>
         <translation>Επιλογή του πού διαβάζονται και αποθηκεύονται τα αρχεία σχολιασμών</translation>
+    </message>
+    <message>
+        <source>&amp;Open File…</source>
+        <translation>&amp;Άνοιγμα αρχείου…</translation>
     </message>
     <message>
         <source>Open an image or annotation file</source>
@@ -577,20 +613,113 @@ Shapes</source>
         <translation>&amp;Διαγραφή αρχείου επισημειώσεων</translation>
     </message>
     <message>
+        <source>Delete File</source>
+        <comment>toolbar</comment>
+        <translation>Διαγραφή αρχείου</translation>
+    </message>
+    <message>
         <source>Delete the current annotation file</source>
         <translation>Διαγραφή τρέχοντος αρχείου επισημειώσεων</translation>
     </message>
     <message>
+        <source>Delete</source>
+        <comment>toolbar</comment>
+        <translation>Διαγραφή</translation>
+    </message>
+    <message>
+        <source>&amp;Edit Label…</source>
+        <translation>&amp;Επεξεργασία ετικέτας…</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <comment>toolbar</comment>
+        <translation>Διπλότυπο</translation>
+    </message>
+    <message>
+        <source>Undo Last Point</source>
+        <translation>Αναίρεση τελευταίου σημείου</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Αναίρεση</translation>
+    </message>
+    <message>
+        <source>Delete Selected Point</source>
+        <translation>Διαγραφή επιλεγμένου σημείου</translation>
+    </message>
+    <message>
+        <source>Delete the selected point from the polygon or LineStrip</source>
+        <translation>Διαγράφει το επιλεγμένο σημείο από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
+    </message>
+    <message>
+        <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
+        <translation>Κάντε κλικ για να τοποθετήσετε σημεία της τεθλασμένης γραμμής· κρατήστε πατημένο το %s και κάντε κλικ για το τελευταίο.</translation>
+    </message>
+    <message>
+        <source>AI-Find All</source>
+        <translation>AI-Find All</translation>
+    </message>
+    <message>
+        <source>Find every object that matches the text prompt or an example box</source>
+        <translation>Εύρεση κάθε αντικειμένου που ταιριάζει με το κείμενο προτροπής ή με ένα πλαίσιο παραδείγματος</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <comment>toolbar</comment>
+        <translation>Επόμενη</translation>
+    </message>
+    <message>
+        <source>Open the next image (hold %s to copy the current Shapes)</source>
+        <translation>Άνοιγμα της επόμενης εικόνας (κρατήστε πατημένο το %s για αντιγραφή των τρεχόντων σχημάτων)</translation>
+    </message>
+    <message>
+        <source>&amp;Previous Image</source>
+        <translation>&amp;Προηγούμενη εικόνα</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <comment>toolbar</comment>
+        <translation>Προηγούμενη</translation>
+    </message>
+    <message>
+        <source>Open the previous image (hold %s to copy the current Shapes)</source>
+        <translation>Άνοιγμα της προηγούμενης εικόνας (κρατήστε πατημένο το %s για αντιγραφή των τρεχόντων σχημάτων)</translation>
+    </message>
+    <message>
+        <source>&amp;Brightness/Contrast…</source>
+        <translation>&amp;Φωτεινότητα/Αντίθεση…</translation>
+    </message>
+    <message>
+        <source>&amp;Hide Shapes</source>
+        <translation>&amp;Απόκρυψη σχημάτων</translation>
+    </message>
+    <message>
+        <source>&amp;Show Shapes</source>
+        <translation>&amp;Εμφάνιση σχημάτων</translation>
+    </message>
+    <message>
+        <source>&amp;Toggle Shapes</source>
+        <translation>Εναλλαγή &amp;σχημάτων</translation>
+    </message>
+    <message>
         <source>&amp;Quit</source>
-        <translation>Τερματισμός</translation>
+        <translation>&amp;Τερματισμός</translation>
     </message>
     <message>
         <source>Quit application</source>
         <translation>Έξοδος από την εφαρμογή</translation>
     </message>
     <message>
+        <source>AI Models…</source>
+        <translation>Μοντέλα AI…</translation>
+    </message>
+    <message>
+        <source>Download or delete AI models</source>
+        <translation>Λήψη ή διαγραφή μοντέλων AI</translation>
+    </message>
+    <message>
         <source>&amp;Tutorial</source>
-        <translation>&amp; Εκμάθηση</translation>
+        <translation>&amp;Εκμάθηση</translation>
     </message>
     <message>
         <source>Show tutorial page</source>
@@ -598,31 +727,35 @@ Shapes</source>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>Αρχείο</translation>
+        <translation>&amp;Αρχείο</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>Επεξεργασία</translation>
+        <translation>&amp;Επεξεργασία</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>Προβολή</translation>
+        <translation>&amp;Προβολή</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation>Βοήθεια</translation>
+        <translation>&amp;Βοήθεια</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>Εργαλεία</translation>
     </message>
     <message>
         <source>More tools</source>
         <translation>Περισσότερα εργαλεία</translation>
     </message>
     <message>
-        <source>More shape tools</source>
-        <translation>Περισσότερα εργαλεία σχημάτων</translation>
+        <source>Shape Tools</source>
+        <translation>Εργαλεία σχημάτων</translation>
     </message>
     <message>
-        <source>%s started.</source>
-        <translation>%s ξεκίνησε.</translation>
+        <source>More shape tools</source>
+        <translation>Περισσότερα εργαλεία σχημάτων</translation>
     </message>
     <message>
         <source>Retry</source>
@@ -657,24 +790,40 @@ Shapes</source>
         <translation>Ρυθμίσεις γραμμής εντολών</translation>
     </message>
     <message>
+        <source>Continue with Defaults</source>
+        <translation>Συνέχεια με προεπιλογές</translation>
+    </message>
+    <message>
+        <source>Back Up and Reset</source>
+        <translation>Αντίγραφο και επαναφορά</translation>
+    </message>
+    <message>
         <source>Saving…</source>
         <translation>Αποθήκευση…</translation>
+    </message>
+    <message>
+        <source>Type what to find</source>
+        <translation>Πληκτρολογήστε τι θέλετε να βρείτε</translation>
+    </message>
+    <message>
+        <source>Finding matches on CPU…</source>
+        <translation>Αναζήτηση αντιστοιχιών στη CPU…</translation>
+    </message>
+    <message>
+        <source>Finding matches…</source>
+        <translation>Αναζήτηση αντιστοιχιών…</translation>
     </message>
     <message>
         <source>Mask Output Unavailable</source>
         <translation>Η έξοδος μάσκας δεν είναι διαθέσιμη</translation>
     </message>
     <message>
-        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; annotations.
-
-Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the output format to &apos;Rectangle&apos;.</source>
-        <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχολιασμούς &apos;%s&apos;.
-
-Αλλάξτε το μοντέλο AI Text-to-Annotation σε &apos;SAM3 (smart)&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+        <source>The Annotation File belongs to another Image: %s</source>
+        <translation>Το αρχείο επισημειώσεων ανήκει σε άλλη εικόνα: %s</translation>
     </message>
     <message>
-        <source>Invalid label</source>
-        <translation>Μη έγκυρη ετικέτα</translation>
+        <source>Open Folder</source>
+        <translation>Άνοιγμα φακέλου</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -693,6 +842,10 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Η αποθήκευση απέτυχε</translation>
     </message>
     <message>
+        <source>Error Saving Annotation File</source>
+        <translation>Σφάλμα αποθήκευσης αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
         <source>&lt;b&gt;%s&lt;/b&gt;</source>
         <translation>&lt;b&gt;%s&lt;/b&gt;</translation>
     </message>
@@ -705,14 +858,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Προσαρμογή στην επιλογή</translation>
     </message>
     <message>
-        <source>Error saving annotation file</source>
-        <translation>Σφάλμα αποθήκευσης αρχείου επισημειώσεων</translation>
-    </message>
-    <message>
-        <source>Large image</source>
-        <translation>Μεγάλη εικόνα</translation>
-    </message>
-    <message>
         <source>Large image requires more memory</source>
         <translation>Η μεγάλη εικόνα απαιτεί περισσότερη μνήμη</translation>
     </message>
@@ -723,10 +868,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Open Anyway</source>
         <translation>Άνοιγμα ούτως ή άλλως</translation>
-    </message>
-    <message>
-        <source>Error opening file</source>
-        <translation>Σφάλμα κατά το άνοιγμα του αρχείου</translation>
     </message>
     <message>
         <source>No such file: &lt;b&gt;%s&lt;/b&gt;</source>
@@ -745,14 +886,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Εικόνες και αρχεία επισημειώσεων (%s)</translation>
     </message>
     <message>
-        <source>%s - Open Image or Annotations</source>
-        <translation>%s - Άνοιγμα εικόνας ή επισημειώσεων</translation>
-    </message>
-    <message>
-        <source>Attention</source>
-        <translation>Προσοχή</translation>
-    </message>
-    <message>
         <source>Delete</source>
         <translation>Διαγραφή</translation>
     </message>
@@ -761,16 +894,12 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Άκυρο</translation>
     </message>
     <message>
-        <source>Unavailable in AI-Points mode because this model does not support point prompts.</source>
-        <translation>Μη διαθέσιμο στη λειτουργία AI-Points, επειδή αυτό το μοντέλο δεν υποστηρίζει εντολές σημείων.</translation>
-    </message>
-    <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Να διατηρηθούν οι αλλαγές επισημειώσεων για το «{}»;</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Μη αποθηκευμένες αλλαγές</translation>
+    </message>
+    <message>
+        <source>Download {model}</source>
+        <translation>Λήψη {model}</translation>
     </message>
     <message>
         <source>The selected annotation file could not be opened: {path}</source>
@@ -779,10 +908,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     <message>
         <source>Annotation Folder not found: %s</source>
         <translation>Ο φάκελος σχολιασμών δεν βρέθηκε: %s</translation>
-    </message>
-    <message>
-        <source>%s - Browse Image Folder</source>
-        <translation>%s - Επιλογή φακέλου εικόνων</translation>
     </message>
     <message>
         <source>The image is too large to open: {width}x{height} pixels exceeds the {max_side} pixel per-side limit of the raster engine. Raising the decode limit will not help. Split the image into tiles (for example with gdal_retile.py) or open a smaller copy.</source>
@@ -797,16 +922,16 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Πολύγωνο</translation>
     </message>
     <message>
+        <source>Save &amp;As…</source>
+        <translation>Αποθήκευση &amp;ως…</translation>
+    </message>
+    <message>
+        <source>Save Au&amp;tomatically</source>
+        <translation>Απ&amp;οθήκευση αυτόματα</translation>
+    </message>
+    <message>
         <source>Insert the clipboard shapes into this image</source>
         <translation>Εισαγωγή των σχημάτων του προχείρου σε αυτήν την εικόνα</translation>
-    </message>
-    <message>
-        <source>Delete Selected Vertex</source>
-        <translation>Διαγραφή επιλεγμένης κορυφής</translation>
-    </message>
-    <message>
-        <source>Delete the selected vertex from the polygon or line strip</source>
-        <translation>Διαγράφει την επιλεγμένη κορυφή από το πολύγωνο ή την τεθλασμένη γραμμή</translation>
     </message>
     <message>
         <source>Rectangle</source>
@@ -829,28 +954,8 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>LineStrip</translation>
     </message>
     <message>
-        <source>Click to place linestrip points; Ctrl+click places the last one.</source>
-        <translation>Κάντε κλικ για να τοποθετήσετε σημεία του linestrip· Ctrl+κλικ τοποθετεί το τελευταίο.</translation>
-    </message>
-    <message>
-        <source>AI-Points</source>
-        <translation>AI-Points</translation>
-    </message>
-    <message>
-        <source>Click points to segment object. Ctrl+LeftClick ends creation.</source>
-        <translation>Κάντε κλικ σε σημεία για κατάτμηση αντικειμένου. Ctrl+LeftClick ολοκληρώνει τη δημιουργία.</translation>
-    </message>
-    <message>
-        <source>AI-Box</source>
-        <translation>AI-Box</translation>
-    </message>
-    <message>
-        <source>Draw a bounding box to segment object.</source>
-        <translation>Σχεδιάστε ένα πλαίσιο οριοθέτησης για τμηματοποίηση αντικειμένου.</translation>
-    </message>
-    <message>
         <source>Fit to &amp;Window</source>
-        <translation>&amp;Προσαρμογή παραθύρου</translation>
+        <translation>Π&amp;ροσαρμογή παραθύρου</translation>
     </message>
     <message>
         <source>Keep the whole image visible when the window is resized</source>
@@ -858,7 +963,7 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
     </message>
     <message>
         <source>Fit to S&amp;election</source>
-        <translation>Προσαρμογή στην &amp;επιλογή</translation>
+        <translation>Πρ&amp;οσαρμογή στην επιλογή</translation>
     </message>
     <message>
         <source>Make the image appear larger</source>
@@ -889,14 +994,6 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Μπορείτε προς το παρόν να χρησιμοποιήσετε τις προεπιλεγμένες ρυθμίσεις. Πριν από την επαναφορά θα αποθηκευτεί ένα αντίγραφο ασφαλείας του αρχείου διαμόρφωσής σας.</translation>
     </message>
     <message>
-        <source>Back up and reset</source>
-        <translation>Αντίγραφο και επαναφορά</translation>
-    </message>
-    <message>
-        <source>Continue with defaults</source>
-        <translation>Συνέχεια με προεπιλογές</translation>
-    </message>
-    <message>
         <source>Could not reset the Config File.
 %s</source>
         <translation>Δεν ήταν δυνατή η επαναφορά του αρχείου ρυθμίσεων.
@@ -907,18 +1004,136 @@ Switch the AI Text-to-Annotation model to &apos;SAM3 (smart)&apos;, or set the o
         <translation>Το αντίγραφο ασφαλείας των ρυθμίσεων αποθηκεύτηκε στο %s</translation>
     </message>
     <message>
-        <source>AI-Points Unavailable</source>
-        <translation>AI-Points μη διαθέσιμο</translation>
+        <source>Finding all &apos;{query}&apos;…</source>
+        <translation>Εύρεση όλων των «{query}»…</translation>
     </message>
     <message>
-        <source>%s does not support point prompts.
-Please select a different model or use AI-Box mode.</source>
-        <translation>%s δεν υποστηρίζει εντολές σημείων.
-Επιλέξτε διαφορετικό μοντέλο ή χρησιμοποιήστε τη λειτουργία AI-Box.</translation>
+        <source>Finding all &apos;{query}&apos; on CPU…</source>
+        <translation>Εύρεση όλων των «{query}» στη CPU…</translation>
     </message>
     <message>
-        <source>Image not found</source>
-        <translation>Η εικόνα δεν βρέθηκε</translation>
+        <source>Segmenting on CPU…</source>
+        <translation>Τμηματοποίηση στη CPU…</translation>
+    </message>
+    <message>
+        <source>Segmenting…</source>
+        <translation>Τμηματοποίηση…</translation>
+    </message>
+    <message>
+        <source>Found {count} new &apos;{query}&apos;</source>
+        <translation>Βρέθηκαν {count} νέα «{query}»</translation>
+    </message>
+    <message>
+        <source>%s only detects bounding boxes and cannot create &apos;%s&apos; Shapes.
+
+Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &apos;Rectangle&apos;.</source>
+        <translation>Το %s εντοπίζει μόνο πλαίσια οριοθέτησης και δεν μπορεί να δημιουργήσει σχήματα &apos;%s&apos;.
+
+Αλλάξτε το μοντέλο AI-Find All σε &apos;SAM 3&apos; ή ορίστε τη μορφή εξόδου σε &apos;Rectangle&apos;.</translation>
+    </message>
+    <message>
+        <source>Starting AI…</source>
+        <translation>Εκκίνηση AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Φόρτωση {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Προετοιμασία εικόνας στη CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Προετοιμασία εικόνας…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} δευτ.</translation>
+    </message>
+    <message>
+        <source>No new &apos;{query}&apos; found</source>
+        <translation>Δεν βρέθηκαν νέα «{query}»</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Επιλέξτε τουλάχιστον δύο σχήματα μάσκας για συγχώνευση</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Μόνο τα σχήματα μάσκας συγχωνεύονται</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Ξεκλειδώστε τα επιλεγμένα σχήματα για να τα συγχωνεύσετε</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Μόνο σχήματα με την ίδια ετικέτα συγχωνεύονται</translation>
+    </message>
+    <message>
+        <source>Invalid Label</source>
+        <translation>Μη έγκυρη ετικέτα</translation>
+    </message>
+    <message>
+        <source>%s can&apos;t use an example box. Choose SAM 3.</source>
+        <translation>Το %s δεν μπορεί να χρησιμοποιήσει πλαίσιο παραδείγματος. Επιλέξτε SAM 3.</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Ο εντοπισμός της εικόνας ενημερώνει το αρχείο επισημειώσεων ώστε να παραπέμπει σε αυτήν.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Εντοπισμός εικόνας…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Εντοπισμός εικόνας</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Εικόνες (%s)</translation>
+    </message>
+    <message>
+        <source>Large Image</source>
+        <translation>Μεγάλη εικόνα</translation>
+    </message>
+    <message>
+        <source>Error Opening File</source>
+        <translation>Σφάλμα κατά το άνοιγμα του αρχείου</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Άνοιγμα αρχείου</translation>
+    </message>
+    <message>
+        <source>Choose Annotation Folder</source>
+        <translation>Επιλογή φακέλου σχολιασμών</translation>
+    </message>
+    <message>
+        <source>Delete Annotation File</source>
+        <translation>Διαγραφή αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Διαγραφή του αρχείου επισημειώσεων; Δεν μπορείτε να αναιρέσετε αυτήν την ενέργεια.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Διαγραφή του «{}»; Δεν μπορείτε να αναιρέσετε αυτήν την ενέργεια.</translation>
+    </message>
+    <message>
+        <source>Error Deleting Annotation File</source>
+        <translation>Σφάλμα διαγραφής αρχείου επισημειώσεων</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Λήψη</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Αποθήκευση των αλλαγών επισημειώσεων στο «{}»;</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -947,6 +1162,14 @@ Expected location: {path}</source>
     <message>
         <source>Allowed formats: {formats}</source>
         <translation>Επιτρεπόμενες μορφές: {formats}</translation>
+    </message>
+    <message>
+        <source>Unsaved Changes</source>
+        <translation>Μη αποθηκευμένες αλλαγές</translation>
+    </message>
+    <message>
+        <source>Image Not Found</source>
+        <translation>Η εικόνα δεν βρέθηκε</translation>
     </message>
     <message>
         <source>The selected image file could not be opened: {path}</source>
@@ -985,10 +1208,6 @@ Expected location: {path}</source>
         <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
     </message>
     <message>
-        <source>%s - Choose Annotation Folder</source>
-        <translation>%s - Επιλογή φακέλου σχολιασμών</translation>
-    </message>
-    <message>
         <source>Annotation Folder: %s</source>
         <translation>Φάκελος σχολιασμών: %s</translation>
     </message>
@@ -1001,16 +1220,12 @@ Expected location: {path}</source>
         <translation>Αρχεία επισημειώσεων (*%s)</translation>
     </message>
     <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Οριστική διαγραφή αυτού του αρχείου επισημειώσεων; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</translation>
-    </message>
-    <message>
-        <source>Error deleting annotation file</source>
-        <translation>Σφάλμα διαγραφής αρχείου επισημειώσεων</translation>
-    </message>
-    <message>
         <source>Configuration Error</source>
         <translation>Σφάλμα διαμόρφωσης</translation>
+    </message>
+    <message>
+        <source>Detects boxes only. Switch to Rectangle to use this model.</source>
+        <translation>Εντοπίζει μόνο πλαίσια. Επιλέξτε «Ορθογώνιο» για να χρησιμοποιήσετε αυτό το μοντέλο.</translation>
     </message>
 </context>
 <context>
@@ -1020,16 +1235,31 @@ Expected location: {path}</source>
         <translation>Διαχείριση μοντέλων…</translation>
     </message>
     <message>
-        <source>Download a model…</source>
-        <translation>Λήψη μοντέλου…</translation>
+        <source>Download and use</source>
+        <translation>Λήψη και χρήση</translation>
     </message>
     <message>
         <source>Choose a model…</source>
         <translation>Επιλογή μοντέλου…</translation>
     </message>
     <message>
+        <source>Downloading: {model}</source>
+        <translation>Γίνεται λήψη: {model}</translation>
+    </message>
+    <message>
         <source>Unavailable: {model}</source>
         <translation>Μη διαθέσιμο: {model}</translation>
+    </message>
+    <message>
+        <source>More models…</source>
+        <translation>Περισσότερα μοντέλα…</translation>
+    </message>
+</context>
+<context>
+    <name>ModelsDialog</name>
+    <message>
+        <source>AI Models</source>
+        <translation>Μοντέλα AI</translation>
     </message>
 </context>
 <context>
@@ -1123,11 +1353,15 @@ Expected location: {path}</source>
         <translation>Λήψη</translation>
     </message>
     <message>
+        <source>Download Failed</source>
+        <translation>Η λήψη απέτυχε</translation>
+    </message>
+    <message>
         <source>Download failed. Check your connection and retry.</source>
         <translation>Η λήψη απέτυχε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</translation>
     </message>
     <message>
-        <source>Delete model</source>
+        <source>Delete Model</source>
         <translation>Διαγραφή μοντέλου</translation>
     </message>
     <message>
@@ -1266,8 +1500,8 @@ Expected location: {path}</source>
         <translation>Ένα όνομα σημαίας ανά γραμμή. Μοτίβα: ^car$ αντιστοιχεί ακριβώς στο car, car σε πρόθεμα, .* σε κάθε ετικέτα.</translation>
     </message>
     <message>
-        <source>AI Text-to-Annotation</source>
-        <translation>AI Text-to-Annotation</translation>
+        <source>AI-Find All model</source>
+        <translation>Μοντέλο AI-Find All</translation>
     </message>
     <message>
         <source>Polygon detail</source>
@@ -1284,6 +1518,22 @@ Expected location: {path}</source>
     <message>
         <source>duplicate duplicates avoid duplicates deduplicate</source>
         <translation>διπλότυπο διπλότυπα αποφυγή αφαίρεση διπλοτύπων</translation>
+    </message>
+    <message>
+        <source>Compute device</source>
+        <translation>Συσκευή υπολογισμού</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Automatic uses the GPU and switches to the CPU if the GPU fails.</source>
+        <translation>Η αυτόματη επιλογή χρησιμοποιεί τη GPU και μεταβαίνει στη CPU αν η GPU αποτύχει.</translation>
+    </message>
+    <message>
+        <source>gpu cuda processor slow crash</source>
+        <translation>gpu cuda επεξεργαστής αργό κατάρρευση</translation>
     </message>
     <message>
         <source>Predefined labels</source>
@@ -1326,42 +1576,6 @@ Expected location: {path}</source>
         <translation>Προεπιλεγμένο μοντέλο</translation>
     </message>
     <message>
-        <source>EfficientSam (speed)</source>
-        <translation>EfficientSam (ταχύτητα)</translation>
-    </message>
-    <message>
-        <source>EfficientSam (accuracy)</source>
-        <translation>EfficientSam (ακρίβεια)</translation>
-    </message>
-    <message>
-        <source>Sam (speed)</source>
-        <translation>Sam (ταχύτητα)</translation>
-    </message>
-    <message>
-        <source>Sam (balanced)</source>
-        <translation>Sam (ισορροπημένο)</translation>
-    </message>
-    <message>
-        <source>Sam (accuracy)</source>
-        <translation>Sam (ακρίβεια)</translation>
-    </message>
-    <message>
-        <source>Sam2 (speed)</source>
-        <translation>Sam2 (ταχύτητα)</translation>
-    </message>
-    <message>
-        <source>Sam2 (balanced)</source>
-        <translation>Sam2 (ισορροπημένο)</translation>
-    </message>
-    <message>
-        <source>Sam2 (accuracy)</source>
-        <translation>Sam2 (ακρίβεια)</translation>
-    </message>
-    <message>
-        <source>Sam3</source>
-        <translation>Sam3</translation>
-    </message>
-    <message>
         <source>Suppress existing Shape matches</source>
         <translation>Καταστολή αντιστοιχιών με υπάρχοντα σχήματα</translation>
     </message>
@@ -1372,10 +1586,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings</source>
         <translation>Ρυθμίσεις</translation>
-    </message>
-    <message>
-        <source>AI Models</source>
-        <translation>Μοντέλα AI</translation>
     </message>
     <message>
         <source>Open config file as text…</source>
@@ -1444,8 +1654,8 @@ Expected location: {path}</source>
         <translation>Εστίαση</translation>
     </message>
     <message>
-        <source>Ctrl+Wheel zooms the canvas</source>
-        <translation>Ctrl+Ροδέλα κάνει ζουμ στον καμβά</translation>
+        <source>Hold %s and scroll to zoom the canvas</source>
+        <translation>Κρατήστε πατημένο το %s και κάντε κύλιση για μεγέθυνση του καμβά</translation>
     </message>
 </context>
 <context>
@@ -1499,6 +1709,65 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>_ModelMenuButton</name>
+    <message>
+        <source>Model</source>
+        <translation>Μοντέλο</translation>
+    </message>
+    <message>
+        <source>{tool}: {model}</source>
+        <translation>{tool}: {model}</translation>
+    </message>
+    <message>
+        <source>Fastest</source>
+        <translation>Ταχύτερο</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>Ισορροπημένο</translation>
+    </message>
+    <message>
+        <source>Most accurate</source>
+        <translation>Ακριβέστερο</translation>
+    </message>
+    <message>
+        <source>The original SAM. SAM 2 is faster at every size.</source>
+        <translation>Το αρχικό SAM. Το SAM 2 είναι ταχύτερο σε κάθε μέγεθος.</translation>
+    </message>
+    <message>
+        <source>Fastest, with rough outlines. Runs well on any computer.</source>
+        <translation>Ταχύτερο, με πρόχειρα περιγράμματα. Λειτουργεί καλά σε κάθε υπολογιστή.</translation>
+    </message>
+    <message>
+        <source>Sharper outlines than Tiny, but slower than SAM 2 Base+.</source>
+        <translation>Πιο καθαρά περιγράμματα από το Tiny, αλλά πιο αργό από το SAM 2 Base+.</translation>
+    </message>
+    <message>
+        <source>A smaller download than Base+, a little less accurate.</source>
+        <translation>Μικρότερη λήψη από το Base+, λίγο λιγότερο ακριβές.</translation>
+    </message>
+    <message>
+        <source>Balanced speed and accuracy. Runs well on a CPU.</source>
+        <translation>Ισορροπία ταχύτητας και ακρίβειας. Λειτουργεί καλά σε CPU.</translation>
+    </message>
+    <message>
+        <source>More accurate than Base+, but slower.</source>
+        <translation>Ακριβέστερο από το Base+, αλλά πιο αργό.</translation>
+    </message>
+    <message>
+        <source>Most accurate, but slower than SAM 2 Base+. Best with a GPU.</source>
+        <translation>Ακριβέστερο, αλλά πιο αργό από το SAM 2 Base+. Ιδανικό με GPU.</translation>
+    </message>
+    <message>
+        <source>Fastest. Finds boxes, without masks.</source>
+        <translation>Ταχύτερο. Βρίσκει πλαίσια, χωρίς μάσκες.</translation>
+    </message>
+    <message>
+        <source>Boxes only</source>
+        <translation>Μόνο πλαίσια</translation>
+    </message>
+</context>
+<context>
     <name>_SettingsPage</name>
     <message>
         <source>Settings sections</source>
@@ -1519,6 +1788,17 @@ Expected location: {path}</source>
     <message>
         <source>No matching settings in this dialog. Try another term or clear search.</source>
         <translation>Δεν βρέθηκαν αντίστοιχες ρυθμίσεις σε αυτό το παράθυρο. Δοκιμάστε άλλον όρο ή εκκαθαρίστε την αναζήτηση.</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Error</source>
+        <translation>Σφάλμα</translation>
+    </message>
+    <message>
+        <source>An unexpected error occurred. The application will close.&lt;br/&gt;&lt;br/&gt;Please report the issue by following &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Troubleshooting&lt;/a&gt;.</source>
+        <translation>Παρουσιάστηκε μη αναμενόμενο σφάλμα. Η εφαρμογή θα κλείσει.&lt;br/&gt;&lt;br/&gt;Αναφέρετε το πρόβλημα ακολουθώντας την &lt;a href=&apos;https://labelme.io/docs/troubleshoot&apos;&gt;Αντιμετώπιση προβλημάτων&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

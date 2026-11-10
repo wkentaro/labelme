@@ -22,7 +22,7 @@ class Circle(NamedTuple):
     radius: float
 
 
-def _round_bbox_to_int(
+def round_bbox_to_int(
     *,
     bbox: tuple[float, float, float, float] | NDArray[np.floating],
 ) -> tuple[int, int, int, int]:
@@ -36,9 +36,8 @@ def _round_bbox_to_int(
 
 
 def shape_to_xyxy_bbox(*, shape: Shape) -> NDArray[np.float32] | None:
-    """Returns None only when a supported shape is mid-draw (too few points);
-    raises ValueError for shape types that have no bbox interpretation.
-    """
+    # None means a supported shape is mid-draw (too few points); shape types
+    # with no bbox interpretation raise ValueError.
     if shape.shape_type == "circle":
         if len(shape.points) != CIRCLE_POINT_COUNT:
             return None
@@ -102,10 +101,10 @@ def compute_oriented_rectangle_from_mask(
         # All pixels are collinear, so no rectangle can be fit; let callers
         # fall back to the axis-aligned bbox.
         return None
-    return _min_area_rect(points[hull_indices]).astype(np.float32)
+    return _min_area_rect(hull=points[hull_indices]).astype(np.float32)
 
 
-def _min_area_rect(hull: NDArray[np.float64], /) -> NDArray[np.float64]:
+def _min_area_rect(*, hull: NDArray[np.float64]) -> NDArray[np.float64]:
     # Rotating calipers: the minimum-area enclosing rectangle must have one
     # side flush with an edge of the convex hull. Try each hull edge as the
     # rect orientation and keep the smallest-area candidate.
@@ -156,7 +155,7 @@ def _min_area_rect(hull: NDArray[np.float64], /) -> NDArray[np.float64]:
     return best_corners
 
 
-def _compute_signed_area(points: NDArray[np.float64], /) -> float:
+def _compute_signed_area(*, points: NDArray[np.float64]) -> float:
     local_points = points - points[0]
     x = local_points[:, 0]
     y = local_points[:, 1]
@@ -278,7 +277,7 @@ def compute_polygons_from_mask(
     for contour in contours:
         contour = contour - PAD
         raw_points = contour[:, ::-1]
-        if _compute_signed_area(raw_points) <= 0:
+        if _compute_signed_area(points=raw_points) <= 0:
             continue
         polygon = _simplify_contour(
             contour=contour,
