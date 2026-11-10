@@ -201,6 +201,39 @@ def test_drag_hovered_rotation_point_does_not_drift_on_repeated_drags(
         assert canvas.shapes[0].points[i][1] == pytest.approx(y)
 
 
+def _start_rotation_near_right_edge(*, canvas: Canvas) -> None:
+    shape = _make_oriented_rectangle(corners=[(70, 5), (100, 5), (100, 45), (70, 45)])
+    canvas.load_shapes(shapes=[shape])
+    canvas._refresh_hover_state(pos=QPointF(85, 5))
+    assert canvas._hovered_rotation is not None
+    canvas._capture_rotation_anchors()
+
+
+@pytest.mark.gui
+def test_rotation_stops_at_the_image_edge(*, canvas: Canvas) -> None:
+    _start_rotation_near_right_edge(canvas=canvas)
+
+    canvas._drag_hovered_rotation_point(pos=QPointF(105, 25))
+
+    points = canvas.shapes[0].points
+    assert points[:, 0].max() <= _WIDTH
+    assert points[:, 0].min() >= 0
+    assert points[:, 1].max() <= _HEIGHT
+    assert points[:, 1].min() >= 0
+
+
+@pytest.mark.gui
+def test_rotation_leaves_the_image_when_out_of_bounds_is_allowed(
+    *, canvas: Canvas
+) -> None:
+    canvas.set_allow_out_of_bounds_points(value=True)
+    _start_rotation_near_right_edge(canvas=canvas)
+
+    canvas._drag_hovered_rotation_point(pos=QPointF(105, 25))
+
+    assert canvas.shapes[0].points[:, 0].max() > _WIDTH
+
+
 @pytest.mark.gui
 def test_bounded_move_oriented_rectangle_vertex_clips_when_perpendicular_corner_outside(
     *,
