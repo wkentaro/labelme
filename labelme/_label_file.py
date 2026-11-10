@@ -100,8 +100,12 @@ def _validate_shape_semantics(
         raise ValueError(f"mask must decode to a 2D image, got shape {mask.shape}")
 
 
-def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
+def _load_shape_json_obj(
+    *, shape_json_obj: dict, image_size: tuple[int, int] | None
+) -> ShapeDict:
     POINT_COORDINATE_COUNT: Final = 2
+    MASK_PIXEL_BUDGET_FACTOR: Final = 16
+    MASK_PIXEL_BUDGET_FLOOR: Final = 4096 * 4096
     SHAPE_KEYS: Final[set[str]] = {
         "label",
         "points",
@@ -165,6 +169,23 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
                 f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
             )
         try:
+            if image_size is not None:
+                # A decoded mask costs about a byte per pixel, so this bounds memory.
+                # The floor (about 16 MB) lets small Images keep masks that merges and
+                # out-of-bounds edits grew far past them; the factor lets large Images
+                # keep masks somewhat larger than themselves. The header gives the size.
+                with PIL.Image.open(
+                    io.BytesIO(base64.b64decode(shape_json_obj["mask"]))
+                ) as mask_image:
+                    mask_width, mask_height = mask_image.size
+                budget_pixels = max(
+                    MASK_PIXEL_BUDGET_FACTOR * image_size[0] * image_size[1],
+                    MASK_PIXEL_BUDGET_FLOOR,
+                )
+                if mask_width * mask_height > budget_pixels:
+                    raise ValueError(
+                        f"mask is too large for the image: {mask_width}x{mask_height}"
+                    )
             mask = _image_codec.img_b64_to_arr(img_b64=shape_json_obj["mask"]).astype(
                 bool
             )
@@ -400,12 +421,15 @@ def read_label_file(
             expected_height=raw.get("imageHeight"),
             expected_width=raw.get("imageWidth"),
         )
+        image_size = _image_codec.img_data_to_pil(img_data=image_data).size
         shapes: list[ShapeDict] = []
         for shape_index, shape_json_obj in enumerate(raw["shapes"]):
             if not isinstance(shape_json_obj, dict):
                 raise TypeError(f"shapes[{shape_index}] must be dict: {shape_json_obj}")
             try:
-                shape = _load_shape_json_obj(shape_json_obj=shape_json_obj)
+                shape = _load_shape_json_obj(
+                    shape_json_obj=shape_json_obj, image_size=image_size
+                )
             except (TypeError, ValueError, RuntimeError) as e:
                 raise ValueError(f"shapes[{shape_index}]: {e}") from e
             shapes.append(shape)

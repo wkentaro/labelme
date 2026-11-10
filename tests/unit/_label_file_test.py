@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import errno
+import io
 import json
 import os
 import shutil
@@ -13,6 +14,7 @@ from typing import Final
 from typing import TextIO
 
 import numpy as np
+import PIL.Image
 import pytest
 from numpy.typing import NDArray
 
@@ -246,7 +248,8 @@ def test_load_shape_json_obj_accepts_supported_geometry(
             "label": "shape",
             "points": points,
             "shape_type": shape_type,
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["shape_type"] == shape_type
@@ -263,11 +266,107 @@ def test_load_shape_json_obj_accepts_out_of_bounds_mask_shape(
             "points": [[-2.25, -3.25], [0.75, -1.25]],
             "shape_type": "mask",
             "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["mask"] is not None
     assert np.array_equal(loaded["mask"], sample_mask)
+
+
+def test_load_shape_json_obj_rejects_mask_over_pixel_budget() -> None:
+    shape_json_obj = {
+        "label": "mask",
+        "points": [[0, 0], [4096, 4095]],
+        "shape_type": "mask",
+        "mask": img_arr_to_b64(img_arr=np.zeros((4096, 4097), dtype=np.uint8)),
+    }
+
+    with pytest.raises(ValueError, match="mask is too large for the image"):
+        _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
+
+
+def test_load_shape_json_obj_accepts_mask_at_pixel_budget() -> None:
+    shape_json_obj = {
+        "label": "mask",
+        "points": [[0, 0], [4095, 4095]],
+        "shape_type": "mask",
+        "mask": img_arr_to_b64(img_arr=np.zeros((4096, 4096), dtype=np.uint8)),
+    }
+
+    loaded = _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
+
+    assert loaded["mask"] is not None
+
+
+def test_load_shape_json_obj_rejects_oversized_mask_before_decoding(
+    *, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def _fail(**_: object) -> None:
+        raise AssertionError("decoded")
+
+    monkeypatch.setattr("labelme._label_file._image_codec.img_b64_to_arr", _fail)
+    shape_json_obj = {
+        "label": "mask",
+        "points": [[0, 0], [4096, 4095]],
+        "shape_type": "mask",
+        "mask": img_arr_to_b64(img_arr=np.zeros((4096, 4097), dtype=np.uint8)),
+    }
+
+    with pytest.raises(ValueError, match="mask is too large"):
+        _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
+
+
+def test_read_label_file_loads_mask_grown_past_small_image(*, tmp_path: Path) -> None:
+    # Merging 2x2 masks at 0 and 50 on a 10x10 Image saves a 52x52 mask.
+    image_buffer = io.BytesIO()
+    PIL.Image.new("RGB", (10, 10)).save(image_buffer, format="PNG")
+    mask = np.zeros((52, 52), dtype=bool)
+    mask[0:2, 0:2] = True
+    mask[50:52, 50:52] = True
+    shape = ShapeDict(
+        label="merged",
+        points=[[0.0, 0.0], [51.0, 51.0]],
+        shape_type="mask",
+        flags={},
+        description="",
+        group_id=None,
+        mask=mask,
+        locked=False,
+        other_data={},
+    )
+    filename = tmp_path / "grown.json"
+    write_label_file(
+        filename=str(filename),
+        annotation=Annotation(
+            image_path="grown.png",
+            image_data=image_buffer.getvalue(),
+            shapes=[shape],
+            flags={},
+            other_data={},
+        ),
+        image_height=10,
+        image_width=10,
+        save_image_data=True,
+    )
+
+    [reloaded_shape] = read_label_file(filename=str(filename)).shapes
+
+    assert reloaded_shape["mask"] is not None
+    assert reloaded_shape["mask"].shape == (52, 52)
+
+
+def test_load_shape_json_obj_accepts_mask_grown_past_image_by_merge() -> None:
+    shape_json_obj = {
+        "label": "mask",
+        "points": [[0, 0], [10, 10]],
+        "shape_type": "mask",
+        "mask": img_arr_to_b64(img_arr=np.zeros((11, 11), dtype=np.uint8)),
+    }
+
+    loaded = _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
+
+    assert loaded["mask"] is not None
 
 
 @pytest.mark.parametrize(
@@ -296,7 +395,7 @@ def test_load_shape_json_obj_rejects_wrong_point_count(
         shape_json_obj["mask"] = img_arr_to_b64(img_arr=np.ones((1, 1), dtype=np.uint8))
 
     with pytest.raises(ValueError, match="points"):
-        _load_shape_json_obj(shape_json_obj=shape_json_obj)
+        _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=None)
 
 
 def test_load_shape_json_obj_rejects_unknown_shape_type() -> None:
@@ -306,7 +405,8 @@ def test_load_shape_json_obj_rejects_unknown_shape_type() -> None:
                 "label": "shape",
                 "points": [[0.0, 0.0]],
                 "shape_type": "triangle",
-            }
+            },
+            image_size=None,
         )
 
 
@@ -317,7 +417,8 @@ def test_load_shape_json_obj_rejects_non_finite_points() -> None:
                 "label": "shape",
                 "points": [[float("inf"), 0.0]],
                 "shape_type": "point",
-            }
+            },
+            image_size=None,
         )
 
 
@@ -328,7 +429,8 @@ def test_load_shape_json_obj_requires_mask_for_mask_shape() -> None:
                 "label": "mask",
                 "points": [[0.0, 0.0], [1.0, 1.0]],
                 "shape_type": "mask",
-            }
+            },
+            image_size=None,
         )
 
 
@@ -343,7 +445,8 @@ def test_load_shape_json_obj_rejects_mask_for_non_mask_shape(
                 "points": [[0.0, 0.0], [3.0, 2.0]],
                 "shape_type": "rectangle",
                 "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
-            }
+            },
+            image_size=None,
         )
 
 
@@ -355,7 +458,8 @@ def test_load_shape_json_obj_rejects_multichannel_mask() -> None:
                 "points": [[0.0, 0.0], [3.0, 2.0]],
                 "shape_type": "mask",
                 "mask": img_arr_to_b64(img_arr=np.ones((3, 4, 3), dtype=np.uint8)),
-            }
+            },
+            image_size=None,
         )
 
 
@@ -371,7 +475,8 @@ def test_load_shape_json_obj_accepts_mask_extent_mismatch(
             "points": [[0.5, 0.5], [4.5, 2.5]],
             "shape_type": "mask",
             "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["mask"] is not None
@@ -428,7 +533,8 @@ def test_load_shape_json_obj_parses_all_fields() -> None:
             "flags": {"occluded": True},
             "description": "a note",
             "group_id": 7,
-        }
+        },
+        image_size=None,
     )
 
     assert loaded == {
@@ -450,7 +556,8 @@ def test_load_shape_json_obj_defaults_absent_optional_fields() -> None:
             "label": "cat",
             "points": [[0.0, 0.0]],
             "shape_type": "point",
-        }
+        },
+        image_size=None,
     )
 
     assert loaded == {
@@ -473,7 +580,8 @@ def test_load_shape_json_obj_keeps_falsy_group_id() -> None:
             "points": [[0.0, 0.0]],
             "shape_type": "point",
             "group_id": 0,
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["group_id"] == 0
@@ -487,7 +595,8 @@ def test_load_shape_json_obj_buckets_unknown_keys_into_other_data() -> None:
             "shape_type": "point",
             "score": 0.9,
             "reviewer": "alice",
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["other_data"] == {"score": 0.9, "reviewer": "alice"}
@@ -503,7 +612,8 @@ def test_load_shape_json_obj_decodes_mask_to_bool_array(
             "points": [[0.0, 0.0], [4.0, 3.0]],
             "shape_type": "mask",
             "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["mask"] is not None
@@ -551,7 +661,9 @@ def test_shape_codec_round_trips_mask(*, sample_mask: NDArray[np.bool_]) -> None
         other_data={},
     )
 
-    reloaded = _load_shape_json_obj(shape_json_obj=_dump_shape_to_json_obj(shape=shape))
+    reloaded = _load_shape_json_obj(
+        shape_json_obj=_dump_shape_to_json_obj(shape=shape), image_size=None
+    )
 
     assert reloaded["mask"] is not None
     assert np.array_equal(reloaded["mask"], sample_mask)
@@ -1205,8 +1317,10 @@ def test_check_image_dimensions_raises_on_mismatch(
 def test_shape_codec_round_trips_locked() -> None:
     json_obj = {"label": "cat", "points": [[1, 2], [3, 4]], "shape_type": "rectangle"}
 
-    unlocked = _load_shape_json_obj(shape_json_obj=json_obj)
-    locked = _load_shape_json_obj(shape_json_obj={**json_obj, "locked": True})
+    unlocked = _load_shape_json_obj(shape_json_obj=json_obj, image_size=None)
+    locked = _load_shape_json_obj(
+        shape_json_obj={**json_obj, "locked": True}, image_size=None
+    )
 
     assert unlocked["locked"] is False
     assert locked["locked"] is True
@@ -1225,7 +1339,8 @@ def test_load_shape_json_obj_rejects_non_bool_locked(*, locked: object) -> None:
                 "points": [[1, 2], [3, 4]],
                 "shape_type": "rectangle",
                 "locked": locked,
-            }
+            },
+            image_size=None,
         )
 
 
