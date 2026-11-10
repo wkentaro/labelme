@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import errno
+import io
 import json
 import os
 import shutil
@@ -13,6 +14,7 @@ from typing import Final
 from typing import TextIO
 
 import numpy as np
+import PIL.Image
 import pytest
 from numpy.typing import NDArray
 
@@ -275,9 +277,9 @@ def test_load_shape_json_obj_accepts_out_of_bounds_mask_shape(
 def test_load_shape_json_obj_rejects_mask_over_pixel_budget() -> None:
     shape_json_obj = {
         "label": "mask",
-        "points": [[0, 0], [40, 39]],
+        "points": [[0, 0], [4096, 4095]],
         "shape_type": "mask",
-        "mask": img_arr_to_b64(img_arr=np.zeros((40, 41), dtype=np.uint8)),
+        "mask": img_arr_to_b64(img_arr=np.zeros((4096, 4097), dtype=np.uint8)),
     }
 
     with pytest.raises(ValueError, match="mask is too large for the image"):
@@ -287,14 +289,71 @@ def test_load_shape_json_obj_rejects_mask_over_pixel_budget() -> None:
 def test_load_shape_json_obj_accepts_mask_at_pixel_budget() -> None:
     shape_json_obj = {
         "label": "mask",
-        "points": [[0, 0], [39, 39]],
+        "points": [[0, 0], [4095, 4095]],
         "shape_type": "mask",
-        "mask": img_arr_to_b64(img_arr=np.zeros((40, 40), dtype=np.uint8)),
+        "mask": img_arr_to_b64(img_arr=np.zeros((4096, 4096), dtype=np.uint8)),
     }
 
     loaded = _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
 
     assert loaded["mask"] is not None
+
+
+def test_load_shape_json_obj_rejects_oversized_mask_before_decoding(
+    *, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def _fail(**_: object) -> None:
+        raise AssertionError("decoded")
+
+    monkeypatch.setattr("labelme._label_file._image_codec.img_b64_to_arr", _fail)
+    shape_json_obj = {
+        "label": "mask",
+        "points": [[0, 0], [4096, 4095]],
+        "shape_type": "mask",
+        "mask": img_arr_to_b64(img_arr=np.zeros((4096, 4097), dtype=np.uint8)),
+    }
+
+    with pytest.raises(ValueError, match="mask is too large"):
+        _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
+
+
+def test_read_label_file_loads_mask_grown_past_small_image(*, tmp_path: Path) -> None:
+    # Merging 2x2 masks at 0 and 50 on a 10x10 Image saves a 52x52 mask.
+    image_buffer = io.BytesIO()
+    PIL.Image.new("RGB", (10, 10)).save(image_buffer, format="PNG")
+    mask = np.zeros((52, 52), dtype=bool)
+    mask[0:2, 0:2] = True
+    mask[50:52, 50:52] = True
+    shape = ShapeDict(
+        label="merged",
+        points=[[0.0, 0.0], [51.0, 51.0]],
+        shape_type="mask",
+        flags={},
+        description="",
+        group_id=None,
+        mask=mask,
+        locked=False,
+        other_data={},
+    )
+    filename = tmp_path / "grown.json"
+    write_label_file(
+        filename=str(filename),
+        annotation=Annotation(
+            image_path="grown.png",
+            image_data=image_buffer.getvalue(),
+            shapes=[shape],
+            flags={},
+            other_data={},
+        ),
+        image_height=10,
+        image_width=10,
+        save_image_data=True,
+    )
+
+    [reloaded_shape] = read_label_file(filename=str(filename)).shapes
+
+    assert reloaded_shape["mask"] is not None
+    assert reloaded_shape["mask"].shape == (52, 52)
 
 
 def test_load_shape_json_obj_accepts_mask_grown_past_image_by_merge() -> None:

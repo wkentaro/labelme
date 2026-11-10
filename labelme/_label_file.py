@@ -105,6 +105,7 @@ def _load_shape_json_obj(
 ) -> ShapeDict:
     POINT_COORDINATE_COUNT: Final = 2
     MASK_PIXEL_BUDGET_FACTOR: Final = 16
+    MASK_PIXEL_BUDGET_FLOOR: Final = 4096 * 4096
     SHAPE_KEYS: Final[set[str]] = {
         "label",
         "points",
@@ -169,17 +170,19 @@ def _load_shape_json_obj(
             )
         try:
             if image_size is not None:
-                # Merges and out-of-bounds edits can save a mask somewhat larger than
-                # the Image, so this is a memory budget, not a validity rule: 16x the
-                # Image's pixels is four times each side. The header gives the size.
+                # A decoded mask costs about a byte per pixel, so this bounds memory.
+                # The floor (about 16 MB) lets small Images keep masks that merges and
+                # out-of-bounds edits grew far past them; the factor lets large Images
+                # keep masks somewhat larger than themselves. The header gives the size.
                 with PIL.Image.open(
                     io.BytesIO(base64.b64decode(shape_json_obj["mask"]))
                 ) as mask_image:
                     mask_width, mask_height = mask_image.size
-                if (
-                    mask_width * mask_height
-                    > MASK_PIXEL_BUDGET_FACTOR * image_size[0] * image_size[1]
-                ):
+                budget_pixels = max(
+                    MASK_PIXEL_BUDGET_FACTOR * image_size[0] * image_size[1],
+                    MASK_PIXEL_BUDGET_FLOOR,
+                )
+                if mask_width * mask_height > budget_pixels:
                     raise ValueError(
                         f"mask is too large for the image: {mask_width}x{mask_height}"
                     )
