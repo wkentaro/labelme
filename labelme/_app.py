@@ -39,6 +39,7 @@ from labelme import __version__
 from . import _ai_models
 from . import _automation
 from . import _config
+from . import _image_codec
 from . import _utils
 from ._image_prefetcher import ImagePrefetcher
 from ._label_file import LABEL_FILE_SUFFIX
@@ -2785,7 +2786,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         assert self._annotation is not None
         dialog = BrightnessContrastDialog(
-            img=_utils.img_data_to_pil(img_data=self._annotation.image_data),
+            img=_image_codec.img_data_to_pil(img_data=self._annotation.image_data),
             callback=self._on_brightness_contrast_changed,
             parent=self,
         )
