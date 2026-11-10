@@ -181,6 +181,15 @@ def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:
     bbox = shape_to_xyxy_bbox(shape=shape)
     if bbox is None:
         return None
+    if shape.shape_type == "mask" and shape.mask is not None:
+        # Corners rounded one by one can resize a mask moved by half a pixel;
+        # its stored extent cannot.
+        stored = shape.mask.astype(np.bool_, copy=False)
+        return _LocalMask(
+            mask=stored,
+            origin_xy=(int(round(float(bbox[0]))), int(round(float(bbox[1])))),
+            area=int(np.count_nonzero(stored)),
+        )
     xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=bbox)
     width = xmax - xmin + 1
     height = ymax - ymin + 1
@@ -198,15 +207,8 @@ def _rasterize_shape(
     *, shape: Shape, xmin: int, ymin: int, width: int, height: int
 ) -> NDArray[np.bool_]:
     if shape.shape_type == "mask":
-        if shape.mask is None:
-            return np.ones((height, width), dtype=np.bool_)
-        # Same bbox-extent contract as detection masks.
-        if shape.mask.shape != (height, width):
-            raise ValueError(
-                f"mask shape {shape.mask.shape} does not match "
-                f"bbox-derived extent {(height, width)}"
-            )
-        return shape.mask.astype(np.bool_, copy=False)
+        # A mask Shape with an array is measured by its caller.
+        return np.ones((height, width), dtype=np.bool_)
     if shape.shape_type == "rectangle":
         return np.ones((height, width), dtype=np.bool_)
     if shape.shape_type == "circle":
