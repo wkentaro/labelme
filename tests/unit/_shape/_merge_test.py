@@ -3,8 +3,10 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from labelme._shape import MergeBlocker
 from labelme._shape import Shape
 from labelme._shape import can_merge_shapes
+from labelme._shape import merge_blocker
 from labelme._shape import merge_masks
 
 
@@ -21,7 +23,7 @@ def test_merge_overlapping_masks_ors_pixels() -> None:
     a = _full_mask(xmin=0, ymin=0, size=3, label="cat")
     b = _full_mask(xmin=2, ymin=2, size=3, label="cat")
 
-    merged = merge_masks([a, b])
+    merged = merge_masks(shapes=[a, b])
 
     expected = np.zeros((5, 5), dtype=bool)
     expected[0:3, 0:3] = True
@@ -35,7 +37,7 @@ def test_merge_disjoint_masks_keeps_both_lands() -> None:
     a = _full_mask(xmin=0, ymin=0, size=2, label="cat")
     b = _full_mask(xmin=5, ymin=5, size=2, label="cat")
 
-    merged = merge_masks([a, b])
+    merged = merge_masks(shapes=[a, b])
 
     expected = np.zeros((7, 7), dtype=bool)
     expected[0:2, 0:2] = True
@@ -48,7 +50,7 @@ def test_merge_nested_masks_keeps_outer_bbox() -> None:
     inner = _full_mask(xmin=12, ymin=12, size=2, label="cat")
     outer = _full_mask(xmin=10, ymin=10, size=6, label="cat")
 
-    merged = merge_masks([inner, outer])
+    merged = merge_masks(shapes=[inner, outer])
 
     assert merged.points.tolist() == [[10, 10], [15, 15]]
     np.testing.assert_array_equal(merged.mask, np.ones((6, 6), dtype=bool))
@@ -59,7 +61,7 @@ def test_merge_rounds_non_integer_bbox_like_ai_assist() -> None:
     a = _full_mask(xmin=0.5, ymin=1.5, size=2, label="cat")
     b = _full_mask(xmin=2.5, ymin=0.5, size=2, label="cat")
 
-    merged = merge_masks([a, b])
+    merged = merge_masks(shapes=[a, b])
 
     assert merged.points.tolist() == [[0, 0], [4, 3]]
     expected = np.zeros((4, 5), dtype=bool)
@@ -80,7 +82,7 @@ def test_merge_takes_identity_from_first_shape() -> None:
     b.description = "second"
     b.other_data = {"extra": 2}
 
-    merged = merge_masks([a, b])
+    merged = merge_masks(shapes=[a, b])
 
     assert merged.label == "cat"
     assert merged.group_id == 7
@@ -112,14 +114,63 @@ def test_merge_takes_identity_from_first_shape() -> None:
     ids=["empty", "single", "mixed-labels", "non-mask"],
 )
 def test_can_merge_shapes_rejects(*, shapes: list[Shape]) -> None:
-    assert not can_merge_shapes(shapes)
+    assert not can_merge_shapes(shapes=shapes)
     with pytest.raises(ValueError, match="Mask Shapes"):
-        merge_masks(shapes)
+        merge_masks(shapes=shapes)
 
 
-def test_can_merge_shapes_accepts_two_masks_with_one_label() -> None:
-    shapes = [
-        _full_mask(xmin=0, ymin=0, size=2, label="cat"),
-        _full_mask(xmin=3, ymin=3, size=2, label="cat"),
-    ]
-    assert can_merge_shapes(shapes)
+def _locked_rectangle(*, label: str) -> Shape:
+    return Shape(
+        label=label,
+        shape_type="rectangle",
+        points=np.array([[0.0, 0.0], [2.0, 2.0]]),
+        locked=True,
+    )
+
+
+def _locked_mask(*, label: str) -> Shape:
+    shape = _full_mask(xmin=0, ymin=0, size=2, label=label)
+    shape.locked = True
+    return shape
+
+
+@pytest.mark.parametrize(
+    ("shapes", "blocker"),
+    [
+        ([], "too_few"),
+        ([_locked_rectangle(label="cat")], "too_few"),
+        (
+            [
+                _full_mask(xmin=0, ymin=0, size=2, label="cat"),
+                _locked_rectangle(label="dog"),
+            ],
+            "not_masks",
+        ),
+        (
+            [
+                _full_mask(xmin=0, ymin=0, size=2, label="cat"),
+                _locked_mask(label="dog"),
+            ],
+            "locked",
+        ),
+        (
+            [
+                _full_mask(xmin=0, ymin=0, size=2, label="cat"),
+                _full_mask(xmin=3, ymin=3, size=2, label="dog"),
+            ],
+            "mixed_labels",
+        ),
+        (
+            [
+                _full_mask(xmin=0, ymin=0, size=2, label="cat"),
+                _full_mask(xmin=3, ymin=3, size=2, label="cat"),
+            ],
+            None,
+        ),
+    ],
+    ids=["empty", "single", "non-mask", "locked", "mixed-labels", "mergeable"],
+)
+def test_merge_blocker_names_first_failing_condition(
+    *, shapes: list[Shape], blocker: MergeBlocker | None
+) -> None:
+    assert merge_blocker(shapes=shapes) == blocker

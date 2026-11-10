@@ -329,6 +329,28 @@ def test_overlapping_uses_existing_mask_shape_geometry() -> None:
     assert result.matching_shapes == [existing]
 
 
+def test_overlapping_accepts_mask_shape_moved_by_half_a_pixel() -> None:
+    # Rounding each corner alone turns x 10.5..13.5 into 10..14, one pixel
+    # wider than the stored 4-pixel mask.
+    existing = Shape(
+        shape_type="mask",
+        points=np.array([(10.5, 20.5), (13.5, 23.5)], dtype=np.float64),
+        mask=np.ones((4, 4), dtype=bool),
+    )
+    covered = Detection(bbox=(10.0, 20.0, 13.0, 23.0), mask=np.ones((4, 4), dtype=bool))
+    elsewhere = Detection(
+        bbox=(40.0, 40.0, 43.0, 43.0), mask=np.ones((4, 4), dtype=bool)
+    )
+
+    result = match_detections_to_existing_shapes(
+        detections=[covered, elsewhere],
+        existing_shapes=[existing],
+    )
+
+    assert result.new_detections == [elsewhere]
+    assert result.matching_shapes == [existing]
+
+
 def test_mask_shape_from_fractional_detection_can_be_an_existing_shape() -> None:
     detection = Detection(
         bbox=(10.4, 20.6, 30.9, 50.1),

@@ -133,21 +133,21 @@ def test_canonical_flag_does_not_warn(
 def test_parse_list_arg_splits_comma_separated_value(
     *, value: str, expected: list[str]
 ) -> None:
-    assert _parse_list_arg(value) == expected
+    assert _parse_list_arg(value=value) == expected
 
 
 def test_parse_list_arg_reads_and_strips_file_lines(*, tmp_path: Path) -> None:
     labels_file = tmp_path / "labels.txt"
     labels_file.write_text("  cat  \n\ndog\n  \nperson\n", encoding="utf-8")
 
-    assert _parse_list_arg(str(labels_file)) == ["cat", "dog", "person"]
+    assert _parse_list_arg(value=str(labels_file)) == ["cat", "dog", "person"]
 
 
 def test_parse_list_arg_splits_value_too_long_to_be_a_path() -> None:
     labels = [f"label{i}" for i in range(60)]
     value = ",".join(labels)
 
-    assert _parse_list_arg(value) == labels
+    assert _parse_list_arg(value=value) == labels
 
 
 def test_resolve_config_source_falls_back_to_defaults_on_missing_default_file(

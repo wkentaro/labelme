@@ -12,7 +12,7 @@ def _write_and_notify(
     request: SaveRequest, completed: QtCore.SignalInstance, /
 ) -> None:
     try:
-        write_save_request(request)
+        write_save_request(request=request)
     except BaseException as error:
         # Every worker failure must release the GUI's save barrier.
         completed.emit(error)
@@ -21,6 +21,10 @@ def _write_and_notify(
 
 
 class SaveWriter(QtCore.QObject):
+    _pool: QtCore.QThreadPool
+    _active: tuple[SaveRequest, int] | None
+    _pending: tuple[SaveRequest, int] | None
+
     finished = QtCore.Signal(object, int, object)
     idle = QtCore.Signal()
     _completed = QtCore.Signal(object)
@@ -29,8 +33,8 @@ class SaveWriter(QtCore.QObject):
         super().__init__(parent)
         self._pool = QtCore.QThreadPool(self)
         self._pool.setMaxThreadCount(1)
-        self._active: tuple[SaveRequest, int] | None = None
-        self._pending: tuple[SaveRequest, int] | None = None
+        self._active = None
+        self._pending = None
         # Save state belongs to the GUI thread, even if a write finishes immediately.
         self._completed.connect(
             self._on_finished, QtCore.Qt.ConnectionType.QueuedConnection

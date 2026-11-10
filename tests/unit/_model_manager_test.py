@@ -78,22 +78,23 @@ def test_queue_continues_after_failure_and_retry_goes_last(
         "_blobs",
         {"model": _make_blob(url=origin + "/slow")},
     )
-    manager.enqueue(failed)
-    manager.enqueue(waiting)
+    manager.enqueue(model_name=failed)
+    manager.enqueue(model_name=waiting)
     qtbot.waitUntil(
-        lambda: manager.get_state(failed) == "failed" and manager.active == waiting,
+        lambda: manager.get_state(model_name=failed) == "failed"
+        and manager.active == waiting,
         timeout=20_000,
     )
     assert manager.errors[failed]
-    manager.enqueue(failed)
+    manager.enqueue(model_name=failed)
     assert manager.queue == [failed]
     release.set()
     qtbot.waitUntil(
         lambda: manager.active is None and not manager.queue, timeout=20_000
     )
-    assert manager.is_ready(waiting)
+    assert manager.is_ready(model_name=waiting)
     # Both variants share the same digest in this fixture; retry reuses the file.
-    assert manager.is_ready(failed)
+    assert manager.is_ready(model_name=failed)
     assert failed not in manager.errors
     assert requests.count("/slow") == 1
 
@@ -106,9 +107,9 @@ def test_cache_setup_failure_marks_model_as_failed(
     model_root.write_text("not a directory")
     name = "efficientsam:10m"
 
-    manager.enqueue(name)
+    manager.enqueue(model_name=name)
 
-    assert manager.get_state(name) == "failed"
+    assert manager.get_state(model_name=name) == "failed"
     assert manager.active is None
     assert not manager.queue
 
@@ -133,21 +134,21 @@ def test_cancel_keeps_completed_files_and_quit_discards_queue(
         "_blobs",
         {"done": completed, "model": blob},
     )
-    manager.enqueue(name)
-    manager.enqueue("sam:100m")
+    manager.enqueue(model_name=name)
+    manager.enqueue(model_name="sam:100m")
     qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     manager.cancel("sam:100m")
     manager.cancel(name)
     assert manager.active is None and not manager.queue
-    assert manager.get_state(name) == "missing"
+    assert manager.get_state(model_name=name) == "missing"
     release.set()
     qtbot.waitUntil(lambda: manager._pull is None)
     assert Path(completed.path).read_bytes() == b"done"
     assert not Path(blob.path).exists()
 
     release.clear()
-    manager.enqueue(name)
-    manager.enqueue("sam:100m")
+    manager.enqueue(model_name=name)
+    manager.enqueue(model_name="sam:100m")
     qtbot.waitUntil(
         lambda: requests == ["/slow", "/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS
     )
@@ -157,7 +158,7 @@ def test_cancel_keeps_completed_files_and_quit_discards_queue(
     assert not Path(blob.path).exists()
     reopened = ModelManager()
     try:
-        assert reopened.get_state(name) == "missing"
+        assert reopened.get_state(model_name=name) == "missing"
         assert reopened.active is None and not reopened.queue
         assert requests == ["/slow", "/slow"]
     finally:
@@ -183,7 +184,7 @@ def test_cancel_preserves_blob_completed_before_active_download(
         "_blobs",
         {"completed": completed, "active": active},
     )
-    manager.enqueue(name)
+    manager.enqueue(model_name=name)
     qtbot.waitUntil(
         lambda: requests == ["/weights", "/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS
     )
@@ -212,7 +213,7 @@ def test_shutdown_interrupts_stalled_download(
         "_blobs",
         {"model": _make_blob(url=origin + "/large")},
     )
-    manager.enqueue(name)
+    manager.enqueue(model_name=name)
     # Consume the entire initial body so the worker is left waiting on a server
     # that sends nothing more.
     qtbot.waitUntil(lambda: manager.progress[1] == 2**20)
@@ -236,7 +237,7 @@ def test_shutdown_terminates_download_stalled_during_tls(
     monkeypatch.setattr(
         osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
     )
-    manager.enqueue(name)
+    manager.enqueue(model_name=name)
     assert accepted.wait(timeout=5)
     blob_root = Path(blob.path).parent
 
@@ -271,8 +272,8 @@ def test_failed_shutdown_keeps_active_download_and_queue(
         "_blobs",
         {"model": _make_blob(url=origin + "/slow")},
     )
-    manager.enqueue(active)
-    manager.enqueue(queued)
+    manager.enqueue(model_name=active)
+    manager.enqueue(model_name=queued)
     qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     assert manager._pull is not None
     pull = manager._pull
@@ -309,11 +310,11 @@ def test_remove_stops_download_before_deleting_files(
     notifications: list[str] = []
     manager.changed.connect(lambda: notifications.append("changed"))
     manager.progress_changed.connect(lambda: notifications.append("progress"))
-    manager.enqueue(name)
+    manager.enqueue(model_name=name)
     qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     notifications.clear()
 
-    manager.remove(name)
+    manager.remove(model_name=name)
     assert not Path(blob.path).exists()
     assert notifications == ["changed"]
     download_release.set()
@@ -335,13 +336,13 @@ def test_existing_files_count_as_downloaded_until_deleted(
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(b"weights")
     manager.refresh()
-    assert manager.get_state(name) == "downloaded"
-    manager.enqueue(name)
+    assert manager.get_state(model_name=name) == "downloaded"
+    manager.enqueue(model_name=name)
     assert manager.active is None
-    manager.remove(name)
+    manager.remove(model_name=name)
     assert not path.exists()
-    assert manager.get_state(name) == "missing"
-    assert not manager.is_ready(name)
+    assert manager.get_state(model_name=name) == "missing"
+    assert not manager.is_ready(model_name=name)
 
 
 def test_progress_supports_files_larger_than_two_gibibytes(
@@ -358,7 +359,7 @@ def test_progress_supports_files_larger_than_two_gibibytes(
         "_blobs",
         {"model": _make_blob(url=origin + "/large")},
     )
-    manager.enqueue(name)
+    manager.enqueue(model_name=name)
     qtbot.waitUntil(lambda: manager.progress[1] > 0)
     # The first report may cover a partial chunk; the total is the point.
     assert manager.progress[0] == "large"

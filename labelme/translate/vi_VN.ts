@@ -16,6 +16,10 @@
         <translation>Chi tiết hơn</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Đầu ra</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Đa giác</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>Nhấn và kéo để di chuyển hình dạng</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Đang tạo %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>Nhấn ESC để hủy</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>Nhấn để thêm điểm</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Kéo một khung</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Kéo quanh một ví dụ</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Hủy bỏ</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Thêm</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Nhấp để bao gồm</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Nhấp để loại trừ</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Thêm %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Kéo để loại trừ</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -436,6 +468,11 @@
         <translation>Hoàn tác lần thêm và chỉnh sửa hình dạng cuối cùng</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Chọn</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Nhấp để đặt các điểm của đường gấp khúc; giữ %s và nhấp để đặt điểm cuối cùng.</translation>
     </message>
@@ -585,11 +622,6 @@
     <message>
         <source>Undo</source>
         <translation>Hoàn tác</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Chỉnh sửa</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -896,10 +928,6 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Hủy</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Giữ lại các thay đổi chú thích cho &quot;{}&quot;?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Thay đổi chưa lưu</translation>
     </message>
@@ -1000,12 +1028,48 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Đang phân đoạn…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Đang khởi động AI…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Đang tải {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Đang chuẩn bị ảnh trên CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Đang chuẩn bị ảnh…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} giây</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>Đã tìm thấy {count} &apos;{query}&apos; mới</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Không tìm thấy &apos;{query}&apos; mới</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Chọn ít nhất hai hình dạng mask để gộp</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Chỉ gộp được các hình dạng mask</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Mở khóa các hình dạng đã chọn để gộp</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Chỉ gộp được các hình dạng có cùng nhãn</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1016,12 +1080,40 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Lỗi khi lưu tệp chú thích</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Khi bạn định vị ảnh, tệp chú thích sẽ được cập nhật để tham chiếu đến ảnh đó.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Định vị ảnh…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Định vị ảnh</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Hình ảnh (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Thư mục chú thích: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Xóa tệp chú thích? Bạn không thể hoàn tác thao tác này.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Xóa &quot;{}&quot;? Bạn không thể hoàn tác thao tác này.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Tải xuống</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Lưu các thay đổi chú thích cho &quot;{}&quot;?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1218,6 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Xóa tệp chú thích</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Xóa vĩnh viễn tệp chú thích này? Hành động này không thể hoàn tác.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

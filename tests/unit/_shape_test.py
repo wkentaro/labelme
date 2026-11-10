@@ -11,7 +11,7 @@ from labelme._shape import Shape
 from labelme._shape import ShapeType
 
 
-def _make_oriented_rectangle(points: list[tuple[float, float]], /) -> Shape:
+def _make_oriented_rectangle(*, points: list[tuple[float, float]]) -> Shape:
     return Shape(
         shape_type="oriented_rectangle",
         points=np.array(points, dtype=np.float64),
@@ -20,7 +20,9 @@ def _make_oriented_rectangle(points: list[tuple[float, float]], /) -> Shape:
 
 
 def _make_axis_aligned_oriented_rectangle() -> Shape:
-    return _make_oriented_rectangle([(0.0, 0.0), (10.0, 0.0), (10.0, 4.0), (0.0, 4.0)])
+    return _make_oriented_rectangle(
+        points=[(0.0, 0.0), (10.0, 0.0), (10.0, 4.0), (0.0, 4.0)]
+    )
 
 
 def test_rotate_oriented_rectangle_around_origin() -> None:
@@ -104,7 +106,9 @@ def test_rotate_uses_source_points_snapshot_not_current_points() -> None:
     source_points = np.array(
         [(0.0, 0.0), (10.0, 0.0), (10.0, 4.0), (0.0, 4.0)], dtype=np.float64
     )
-    shape = _make_oriented_rectangle([(1.0, 1.0), (2.0, 2.0), (3.0, 3.0), (4.0, 4.0)])
+    shape = _make_oriented_rectangle(
+        points=[(1.0, 1.0), (2.0, 2.0), (3.0, 3.0), (4.0, 4.0)]
+    )
 
     _shape.rotate(
         shape=shape,
@@ -589,7 +593,9 @@ def test_oriented_rectangle_arrow_points_axis_aligned() -> None:
 def test_oriented_rectangle_arrow_points_rotates_tip_along_direction() -> None:
     # direction = points[1] - points[0] = (0, 10), so angle = pi/2: the tip
     # rotates from +x to +y. Center is (3, 5).
-    shape = _make_oriented_rectangle([(5.0, 0.0), (5.0, 10.0), (1.0, 10.0), (1.0, 0.0)])
+    shape = _make_oriented_rectangle(
+        points=[(5.0, 0.0), (5.0, 10.0), (1.0, 10.0), (1.0, 0.0)]
+    )
 
     arrow = _shape.oriented_rectangle_arrow_points(shape=shape)
 
@@ -602,7 +608,9 @@ def test_oriented_rectangle_arrow_points_rotates_tip_along_direction() -> None:
 def test_oriented_rectangle_arrow_points_for_non_cardinal_direction() -> None:
     # direction = (8, 6): a non-cardinal angle (cos 0.8, sin 0.6) so that
     # swapping the arctan2 arguments would change the result. Center is (2.5, 5).
-    shape = _make_oriented_rectangle([(0.0, 0.0), (8.0, 6.0), (5.0, 10.0), (-3.0, 4.0)])
+    shape = _make_oriented_rectangle(
+        points=[(0.0, 0.0), (8.0, 6.0), (5.0, 10.0), (-3.0, 4.0)]
+    )
 
     arrow = _shape.oriented_rectangle_arrow_points(shape=shape)
 

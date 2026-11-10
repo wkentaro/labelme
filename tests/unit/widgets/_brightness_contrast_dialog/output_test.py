@@ -17,7 +17,7 @@ def test_combined_adjustment_preserves_clipped_brightness_pivot(
     )
     captured: list[np.ndarray] = []
     dialog = BrightnessContrastDialog(
-        img=source, callback=lambda image: captured.append(img_qt_to_arr(image))
+        img=source, callback=lambda image: captured.append(img_qt_to_arr(img_qt=image))
     )
     qtbot.addWidget(dialog)
 
@@ -33,7 +33,7 @@ def test_restore_defaults_publishes_the_original_image(*, qtbot: QtBot) -> None:
     captured: list[np.ndarray] = []
     dialog = BrightnessContrastDialog(
         img=PIL.Image.fromarray(pixels, mode="RGB"),
-        callback=lambda image: captured.append(img_qt_to_arr(image)),
+        callback=lambda image: captured.append(img_qt_to_arr(img_qt=image)),
     )
     qtbot.addWidget(dialog)
     dialog.slider_brightness.setValue(200)

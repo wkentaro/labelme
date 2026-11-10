@@ -19,6 +19,7 @@ from pytestqt.qtbot import QtBot
 
 from labelme._automation import _osam_worker
 from labelme._automation._osam_session import OsamSession
+from labelme._automation._osam_session import ProgressCallback
 from labelme._automation._osam_worker import InferenceRequest
 from labelme._automation._osam_worker import OsamWorker
 
@@ -38,7 +39,13 @@ def _scripted_serve(
         except EOFError:
             return
         on_gpu = request.model_name.startswith("gpu-") and not cpu_only
-        responses.send(("device", request_id, "webgpu" if on_gpu else "cpu"))
+        if request.model_name == "stages":
+            responses.send(("stage", request_id + 1, ("encoding", "stale")))
+            responses.send(("stage", request_id, ("loading", None)))
+            responses.send(("stage", request_id, ("encoding", "cpu")))
+        responses.send(
+            ("stage", request_id, ("generating", "webgpu" if on_gpu else "cpu"))
+        )
         if on_gpu and request.model_name == "gpu-crash":
             os._exit(3)
         if on_gpu and request.model_name == "gpu-fault":
@@ -87,21 +94,23 @@ def worker(*, qtbot: QtBot) -> Iterator[OsamWorker]:  # noqa: ARG001 -- needs a 
     instance.shutdown()
 
 
-def _results(worker: OsamWorker, /) -> list[tuple[str, object, Any]]:
+def _results(*, worker: OsamWorker) -> list[tuple[str, object, Any]]:
     return worker.results  # ty: ignore[unresolved-attribute]
 
 
-def _wait_for(qtbot: QtBot, worker: OsamWorker, /, *, count: int) -> None:
-    qtbot.waitUntil(lambda: len(_results(worker)) >= count, timeout=_WAIT_MS)
+def _wait_for(*, qtbot: QtBot, worker: OsamWorker, count: int) -> None:
+    qtbot.waitUntil(lambda: len(_results(worker=worker)) >= count, timeout=_WAIT_MS)
 
 
 def test_sends_an_image_once_per_image_id(*, worker: OsamWorker, qtbot: QtBot) -> None:
     for job in ["a", "b"]:
         worker.submit(channel=job, job=job, request=_request())
     worker.submit(channel="c", job="c", request=_request(image_id="other"))
-    _wait_for(qtbot, worker, count=3)
+    _wait_for(qtbot=qtbot, worker=worker, count=3)
 
-    assert [(kind, job, r["sent_image"]) for kind, job, r in _results(worker)] == [
+    assert [
+        (kind, job, r["sent_image"]) for kind, job, r in _results(worker=worker)
+    ] == [
         ("done", "a", True),
         ("done", "b", False),
         ("done", "c", True),
@@ -116,21 +125,21 @@ def test_newer_submit_replaces_a_waiting_one_on_its_channel(
     worker.submit(channel="finalize", job="running", request=_request())
     worker.submit(channel="preview", job="stale", request=_request())
     worker.submit(channel="preview", job="latest", request=_request())
-    _wait_for(qtbot, worker, count=2)
+    _wait_for(qtbot=qtbot, worker=worker, count=2)
 
-    assert [job for _, job, _ in _results(worker)] == ["running", "latest"]
+    assert [job for _, job, _ in _results(worker=worker)] == ["running", "latest"]
 
 
 def test_reports_a_model_error_and_keeps_the_worker(
     *, worker: OsamWorker, qtbot: QtBot
 ) -> None:
     worker.submit(channel="x", job="first", request=_request())
-    _wait_for(qtbot, worker, count=1)
+    _wait_for(qtbot=qtbot, worker=worker, count=1)
     worker.submit(channel="x", job="bad", request=_request(model_name="error"))
     worker.submit(channel="y", job="after", request=_request())
-    _wait_for(qtbot, worker, count=3)
+    _wait_for(qtbot=qtbot, worker=worker, count=3)
 
-    (_, _, first), bad, (_, _, after) = _results(worker)
+    (_, _, first), bad, (_, _, after) = _results(worker=worker)
     assert bad == ("error", "bad", "ValueError: bad prompt")
     assert after["pid"] == first["pid"]
 
@@ -212,11 +221,11 @@ def test_holds_results_while_a_modal_dialog_is_open(
     dialog.show()
     worker.submit(channel="x", job="job", request=_request())
     qtbot.wait(1000)
-    assert _results(worker) == []
+    assert _results(worker=worker) == []
 
     dialog.close()
-    _wait_for(qtbot, worker, count=1)
-    assert _results(worker)[0][:2] == ("done", "job")
+    _wait_for(qtbot=qtbot, worker=worker, count=1)
+    assert _results(worker=worker)[0][:2] == ("done", "job")
 
 
 @pytest.mark.parametrize("model_name", ["gpu-crash", "gpu-fault"])
@@ -224,11 +233,11 @@ def test_retries_a_gpu_failure_once_on_cpu(
     *, worker: OsamWorker, qtbot: QtBot, model_name: str
 ) -> None:
     worker.submit(channel="x", job="job", request=_request(model_name=model_name))
-    _wait_for(qtbot, worker, count=1)
+    _wait_for(qtbot=qtbot, worker=worker, count=1)
     worker.submit(channel="x", job="later", request=_request(model_name=model_name))
-    _wait_for(qtbot, worker, count=2)
+    _wait_for(qtbot=qtbot, worker=worker, count=2)
 
-    (kind, job, result), (_, _, later) = _results(worker)
+    (kind, job, result), (_, _, later) = _results(worker=worker)
     assert (kind, job) == ("done", "job")
     assert result["cpu_only"]
     assert result["sent_image"]  # the CPU worker gets the image again
@@ -240,9 +249,9 @@ def test_fails_a_cpu_fault_without_retrying(
 ) -> None:
     worker.submit(channel="x", job="job", request=_request(model_name="cpu-fault"))
     worker.submit(channel="y", job="next", request=_request())
-    _wait_for(qtbot, worker, count=2)
+    _wait_for(qtbot=qtbot, worker=worker, count=2)
 
-    (kind, job, message), (_, _, after) = _results(worker)
+    (kind, job, message), (_, _, after) = _results(worker=worker)
     assert (kind, job, message) == ("error", "job", "Fail: bad model")
     assert not after["cpu_only"]
 
@@ -250,9 +259,9 @@ def test_fails_a_cpu_fault_without_retrying(
 def test_a_newer_job_replaces_the_retry(*, worker: OsamWorker, qtbot: QtBot) -> None:
     worker.submit(channel="x", job="old", request=_request(model_name="gpu-crash"))
     worker.submit(channel="x", job="new", request=_request())
-    _wait_for(qtbot, worker, count=2)
+    _wait_for(qtbot=qtbot, worker=worker, count=2)
 
-    (kind, job, message), (_, new_job, result) = _results(worker)
+    (kind, job, message), (_, new_job, result) = _results(worker=worker)
     assert (kind, job, message) == ("error", "old", "AI worker exited with code 3")
     assert new_job == "new"
     assert result["cpu_only"]
@@ -262,12 +271,12 @@ def test_set_device_restarts_the_worker_for_the_next_job(
     *, worker: OsamWorker, qtbot: QtBot
 ) -> None:
     worker.submit(channel="x", job="gpu", request=_request(model_name="gpu-ok"))
-    _wait_for(qtbot, worker, count=1)
-    worker.set_device("cpu")
+    _wait_for(qtbot=qtbot, worker=worker, count=1)
+    worker.set_device(device="cpu")
     worker.submit(channel="x", job="cpu", request=_request(model_name="gpu-ok"))
-    _wait_for(qtbot, worker, count=2)
+    _wait_for(qtbot=qtbot, worker=worker, count=2)
 
-    (_, _, on_gpu), (_, _, on_cpu) = _results(worker)
+    (_, _, on_gpu), (_, _, on_cpu) = _results(worker=worker)
     assert not on_gpu["cpu_only"]
     assert on_cpu["cpu_only"]
     assert on_cpu["pid"] != on_gpu["pid"]
@@ -277,13 +286,13 @@ def test_set_device_retries_the_gpu_after_a_fallback(
     *, worker: OsamWorker, qtbot: QtBot
 ) -> None:
     worker.submit(channel="x", job="job", request=_request(model_name="gpu-fault"))
-    _wait_for(qtbot, worker, count=1)
-    worker.set_device("auto")
+    _wait_for(qtbot=qtbot, worker=worker, count=1)
+    worker.set_device(device="auto")
     worker.submit(channel="x", job="next", request=_request(model_name="gpu-ok"))
-    _wait_for(qtbot, worker, count=2)
+    _wait_for(qtbot=qtbot, worker=worker, count=2)
 
-    assert _results(worker)[0][2]["cpu_only"]
-    assert not _results(worker)[1][2]["cpu_only"]
+    assert _results(worker=worker)[0][2]["cpu_only"]
+    assert not _results(worker=worker)[1][2]["cpu_only"]
 
 
 def test_reports_activity_and_the_device_it_runs_on(
@@ -294,19 +303,41 @@ def test_reports_activity_and_the_device_it_runs_on(
         lambda: seen.append((worker.job is not None, worker.device))
     )
     worker.submit(channel="x", job="job", request=_request(model_name="gpu-ok"))
-    _wait_for(qtbot, worker, count=1)
-    worker.set_device("cpu")
+    _wait_for(qtbot=qtbot, worker=worker, count=1)
+    worker.set_device(device="cpu")
     worker.submit(channel="x", job="next", request=_request())
-    _wait_for(qtbot, worker, count=2)
+    _wait_for(qtbot=qtbot, worker=worker, count=2)
 
     assert seen == [
-        (True, None),
+        (True, None),  # starting the worker
         (True, "webgpu"),
         (False, None),
         (True, "cpu"),  # known before loading on a CPU worker
         (True, "cpu"),
         (False, None),
     ]
+
+
+def test_reports_the_stages_of_its_own_request(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    seen: list[tuple[str | None, str | None]] = []
+    worker.activity_changed.connect(lambda: seen.append((worker.stage, worker.device)))
+    worker.submit(channel="x", job="job", request=_request(model_name="stages"))
+    assert worker.model_name == "stages"
+    _wait_for(qtbot=qtbot, worker=worker, count=1)
+    worker.submit(channel="x", job="warm", request=_request(model_name="stages"))
+    _wait_for(qtbot=qtbot, worker=worker, count=2)
+
+    run = [
+        ("loading", None),
+        ("encoding", "cpu"),
+        ("generating", "cpu"),
+        (None, None),
+    ]
+    # Only a job that spawns the worker starts it; another request's is ignored.
+    assert seen == [("starting", None), *run, (None, None), *run]
+    assert worker.model_name is None
 
 
 def test_reports_a_job_queued_behind_the_running_one(*, worker: OsamWorker) -> None:
@@ -326,13 +357,13 @@ def test_release_fails_the_jobs_it_drops(*, worker: OsamWorker, qtbot: QtBot) ->
 
     worker.release()
 
-    assert _results(worker) == [
+    assert _results(worker=worker) == [
         ("error", "running", "AI worker stopped"),
         ("error", "waiting", "AI worker stopped"),
     ]
     worker.submit(channel="x", job="later", request=_request())
-    _wait_for(qtbot, worker, count=3)
-    assert _results(worker)[2][:2] == ("done", "later")
+    _wait_for(qtbot=qtbot, worker=worker, count=3)
+    assert _results(worker=worker)[2][:2] == ("done", "later")
 
 
 class _FakeSession:
@@ -369,7 +400,9 @@ def test_run_sends_sam3_one_text_at_a_time(
         model_name=model_name, image_id="img", image=None, texts=["dog", "cat"]
     )
 
-    annotations = _osam_worker._run(cast(OsamSession, session), request, _IMAGE)
+    annotations = _osam_worker._run(
+        session=cast(OsamSession, session), request=request, image=_IMAGE, progress=None
+    )
 
     assert [a.text for a in annotations] == ["dog", "cat"]
     assert [call["texts"] for call in session.calls] == expected_batches
@@ -384,12 +417,18 @@ _OrtFail.__module__ = "onnxruntime.capi.onnxruntime_pybind11_state"
 
 
 class _FailingSession:
+    _error: Exception
+
     device = "webgpu"
 
     def __init__(self, error: Exception, /) -> None:
         self._error = error
 
-    def run(self, **_: object) -> osam.types.GenerateResponse:
+    def run(
+        self, *, progress: ProgressCallback | None = None, **_: object
+    ) -> osam.types.GenerateResponse:
+        assert progress is not None
+        progress("generating", self.device)
         raise self._error
 
 
@@ -412,5 +451,5 @@ def test_serve_reports_onnx_runtime_errors_as_faults(
 
     _osam_worker.serve(requests, responses, None)
 
-    assert from_serve.recv() == ("device", 7, "webgpu")
+    assert from_serve.recv() == ("stage", 7, ("generating", "webgpu"))
     assert from_serve.recv()[:2] == (kind, 7)

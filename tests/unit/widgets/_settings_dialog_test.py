@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 from collections.abc import Iterator
 from pathlib import Path
+from typing import override
 
 import pytest
 from PySide6 import QtCore
@@ -28,7 +29,7 @@ def applied() -> Applied:
     return []
 
 
-def _preferred_width(dialog: SettingsDialog, /) -> int:
+def _preferred_width(*, dialog: SettingsDialog) -> int:
     # The width the dialog opens at on an unconstrained screen: its page held
     # out of sideways scrolling plus its own chrome, never below the default.
     page = dialog._page
@@ -115,7 +116,7 @@ def test_polygon_detail_slider_applies_integer_value(
     assert isinstance(slider, IntegerSlider)
     assert slider.value == 60
 
-    slider.set_value(40)
+    slider.set_value(value=40)
 
     assert (("mask_polygonization", "detail"), 40) in applied
 
@@ -444,14 +445,15 @@ class _LongSectionTranslator(QtCore.QTranslator):
     # this stands in for a future one that does.
     title: str = "Продолжение работы между изображениями"
 
+    @override
     def translate(
         self,
-        context: str,  # noqa: ARG002 -- Qt's signature
+        context: str,
         source_text: str,
         /,
-        disambiguation: str | None = None,  # noqa: ARG002 -- Qt's signature
-        n: int = -1,  # noqa: ARG002 -- Qt's signature
-    ) -> str | None:  # noqa: GR001 -- overrides Qt's signature
+        disambiguation: str | None = None,
+        n: int = -1,
+    ) -> str | None:
         return self.title if source_text == "Continue between images" else None
 
 
@@ -478,7 +480,7 @@ def test_navigation_elides_long_localized_names_without_squeezing_content(
         dialog.show()
     # A screen narrower than the dialog wants leaves it no room to keep the
     # content out of a horizontal scroll bar.
-    if dialog.width() < _preferred_width(dialog):
+    if dialog.width() < _preferred_width(dialog=dialog):
         pytest.skip("this screen is narrower than the settings content")
     assert dialog._page._scroll_area.horizontalScrollBar().maximum() == 0
 
@@ -489,7 +491,7 @@ def test_default_size_scrolls_vertically_only(
     with qtbot.waitExposed(dialog):
         dialog.show()
 
-    if _preferred_width(dialog) > 760:
+    if _preferred_width(dialog=dialog) > 760:
         pytest.skip("this font needs the dialog wider than its default size")
 
     scroll_area = dialog._page._scroll_area
@@ -511,7 +513,7 @@ def test_dialog_prevents_narrow_content_overflow(
 ) -> None:
     with qtbot.waitExposed(dialog):
         dialog.show()
-    if dialog.width() < _preferred_width(dialog):
+    if dialog.width() < _preferred_width(dialog=dialog):
         pytest.skip("this screen is narrower than the settings content")
     minimum_width = dialog.width()
 
@@ -639,8 +641,10 @@ def test_large_font_uses_default_size_with_scrolling(
             dialog.show()
 
         available_size = dialog.screen().availableGeometry().size()
-        assert _preferred_width(dialog) >= 760
-        assert dialog.width() == min(_preferred_width(dialog), available_size.width())
+        assert _preferred_width(dialog=dialog) >= 760
+        assert dialog.width() == min(
+            _preferred_width(dialog=dialog), available_size.width()
+        )
         assert dialog.height() == min(590, available_size.height())
         assert dialog._page._scroll_area.verticalScrollBar().maximum() > 0
         assert dialog._editors[("color_theme",)].font().pointSize() == 24
@@ -964,7 +968,7 @@ def test_escape_closes_with_empty_search(
 
 
 @pytest.mark.parametrize("query", ["", "autosave"])
-def test_enter_in_editor_reaches_default_button(
+def test_enter_in_editor_keeps_dialog_open(
     *, qtbot: QtBot, dialog: SettingsDialog, applied: Applied, query: str
 ) -> None:
     with qtbot.waitExposed(dialog):
@@ -980,8 +984,25 @@ def test_enter_in_editor_reaches_default_button(
     assert editor.hasFocus()
     qtbot.keyClick(editor, QtCore.Qt.Key.Key_Return)
     assert not page._navigation.hasFocus()
-    assert not dialog.isVisible()
+    assert dialog.isVisible()
+    assert editor.hasFocus()
     assert applied == []
+
+
+def test_enter_on_focused_close_button_closes(
+    *, qtbot: QtBot, dialog: SettingsDialog
+) -> None:
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    last_editor = dialog._editors[SETTINGS[-1].key_path]
+    last_editor.setFocus()
+    for _ in range(2):
+        qtbot.keyClick(dialog.focusWidget(), QtCore.Qt.Key.Key_Tab)
+    close_button = dialog.focusWidget()
+    assert isinstance(close_button, QtWidgets.QPushButton)
+    assert close_button.text() == "Close"
+    qtbot.keyClick(close_button, QtCore.Qt.Key.Key_Return)
+    assert not dialog.isVisible()
 
 
 @pytest.mark.parametrize("saved_rules", [None, {"^car$": ["occluded"]}])

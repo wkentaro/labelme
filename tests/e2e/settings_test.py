@@ -77,7 +77,7 @@ def test_settings_search_navigation_and_explicit_edits_persist_and_sync_menu(
     qtbot.mouseClick(editor, Qt.MouseButton.LeftButton)
     assert win._config["auto_save"] is False
     assert not win._actions.save_auto.isChecked()
-    persisted = safe_load(editable_config_file.read_text())
+    persisted = safe_load(stream=editable_config_file.read_text())
     assert persisted["auto_save"] is False
     qtbot.keySequence(editor, QtGui.QKeySequence.StandardKey.Find)
     assert search.selectedText() == "autosave"
@@ -100,7 +100,9 @@ def test_settings_search_navigation_and_explicit_edits_persist_and_sync_menu(
     qtbot.keyClick(dialog.focusWidget(), Qt.Key.Key_Left)
     assert win._config["mask_polygonization"]["detail"] == detail - 1
     assert (
-        safe_load(editable_config_file.read_text())["mask_polygonization"]["detail"]
+        safe_load(stream=editable_config_file.read_text())["mask_polygonization"][
+            "detail"
+        ]
         == detail - 1
     )
     dialog.close()
@@ -141,7 +143,9 @@ def test_ai_text_model_persists_and_syncs_settings(
     assert isinstance(reopened_editor, QtWidgets.QComboBox)
     reopened_editor.setCurrentIndex(reopened_editor.findData("sam3:latest"))
     assert reopened._ai_text.get_model_name() == "sam3:latest"
-    assert "text_model" not in safe_load(editable_config_file.read_text()).get("ai", {})
+    assert "text_model" not in safe_load(stream=editable_config_file.read_text()).get(
+        "ai", {}
+    )
     reopened.close()
 
 
@@ -223,7 +227,7 @@ def test_setting_change_persists_and_applies(
     assert unique_label_list.find_label_item(label="cat") is not None
     assert unique_label_list.find_label_item(label="dog") is not None
 
-    persisted = safe_load(editable_config_file.read_text())
+    persisted = safe_load(stream=editable_config_file.read_text())
     assert persisted["display_label_popup"] is False
     assert persisted["labels"] == ["cat", "dog"]
 
@@ -259,7 +263,7 @@ def test_shape_color_picker_previews_and_persists_only_on_accept(
     assert isinstance(label, str)
     assert color_resolver is not None
     original = unique_labels.item(0).data(LABEL_COLOR_ROLE)
-    persisted_before_pick = safe_load(editable_config_file.read_text())
+    persisted_before_pick = safe_load(stream=editable_config_file.read_text())
     preview_checks: list[tuple[bool, bool, bool, bool]] = []
 
     def preview_color(*, accept: bool) -> None:
@@ -281,7 +285,8 @@ def test_shape_color_picker_previews_and_persists_only_on_accept(
                     for item in win._docks.label_list
                 ),
                 color_resolver(label) == (12, 34, 56),
-                safe_load(editable_config_file.read_text()) == persisted_before_pick,
+                safe_load(stream=editable_config_file.read_text())
+                == persisted_before_pick,
             )
         )
         if accept:
@@ -294,13 +299,13 @@ def test_shape_color_picker_previews_and_persists_only_on_accept(
 
     assert preview_checks == [(True, True, True, True)]
     assert unique_labels.item(0).data(LABEL_COLOR_ROLE) == original
-    assert safe_load(editable_config_file.read_text()) == persisted_before_pick
+    assert safe_load(stream=editable_config_file.read_text()) == persisted_before_pick
 
     QtCore.QTimer.singleShot(50, lambda: preview_color(accept=True))
     swatch.click()
 
     assert preview_checks == [(True, True, True, True)] * 2
-    persisted = safe_load(editable_config_file.read_text())
+    persisted = safe_load(stream=editable_config_file.read_text())
     assert persisted["shape_color"] == {
         "mode": "uniform",
         "uniform": {"color": [12, 34, 56]},
@@ -325,7 +330,10 @@ def test_show_labels_toggle_applies_to_canvas(
 
     assert win._config["shape"]["show_labels"] is True
     assert canvas._show_labels is True
-    assert safe_load(editable_config_file.read_text())["shape"]["show_labels"] is True
+    assert (
+        safe_load(stream=editable_config_file.read_text())["shape"]["show_labels"]
+        is True
+    )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -350,7 +358,7 @@ def test_existing_shape_suppression_toggle_applies_to_canvas(
     assert win._config["ai"]["suppress_existing_shape_matches"] is True
     assert canvas._ai_suppress_existing_shape_matches is True
     assert (
-        safe_load(editable_config_file.read_text())["ai"][
+        safe_load(stream=editable_config_file.read_text())["ai"][
             "suppress_existing_shape_matches"
         ]
         is True
@@ -468,7 +476,7 @@ def test_clearing_labels_is_rejected_when_validate_label_is_exact(
     assert win._config["labels"] == ["cat"]
     assert win._config["validate_label"] == "exact"
 
-    persisted = safe_load(editable_config_file.read_text())
+    persisted = safe_load(stream=editable_config_file.read_text())
     assert persisted["labels"] == ["cat"]
     assert persisted["validate_label"] == "exact"
 
@@ -506,7 +514,7 @@ def test_setting_controls_revert_when_write_fails(
     ai_editor = dialog._editors[("ai", "default")]
     assert isinstance(ai_editor, QtWidgets.QComboBox)
     ai_dock = win._ai_annotation._model_combo
-    assert ai_dock.currentText() == "SAM 3"
+    assert ai_dock.currentText() == "SAM 2 Base+"
 
     # Refuse the save at the boundary a read-only config directory would;
     # injecting the failure keeps it reachable on Windows and as root, where
@@ -523,13 +531,13 @@ def test_setting_controls_revert_when_write_fails(
     assert checkbox.isChecked()  # editor reverted to the last-saved value
     assert win._actions.save_auto.isChecked()
     assert auto_save_editor.isChecked()
-    assert ai_dock.currentText() == "SAM 3"
-    assert ai_editor.currentData() == "sam3:latest"
-    assert win._canvas_widgets.canvas.get_ai_model_name() == "sam3:latest"
+    assert ai_dock.currentText() == "SAM 2 Base+"
+    assert ai_editor.currentData() == "sam2:latest"
+    assert win._canvas_widgets.canvas.get_ai_model_name() == "sam2:latest"
     assert win._config["display_label_popup"] is True
     assert win._config["auto_save"] is True
-    assert win._config["ai"]["default"] == "sam3:latest"
-    assert safe_load(config_file.read_text()) == {"display_label_popup": True}
+    assert win._config["ai"]["default"] == "sam2:latest"
+    assert safe_load(stream=config_file.read_text()) == {"display_label_popup": True}
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -594,7 +602,7 @@ def test_keep_prev_dialog_toggle_checks_menu_action(
 
     assert win._actions.toggle_keep_prev_mode.isChecked()
     assert win._config["keep_prev"] is True
-    assert safe_load(editable_config_file.read_text())["keep_prev"] is True
+    assert safe_load(stream=editable_config_file.read_text())["keep_prev"] is True
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -633,13 +641,59 @@ def test_menu_toggle_persists_and_syncs_settings_dialog(
     action.trigger()
 
     config_value = win._config
-    persisted_value = safe_load(editable_config_file.read_text())
+    persisted_value = safe_load(stream=editable_config_file.read_text())
     for key in key_path:
         config_value = config_value[key]
         persisted_value = persisted_value[key]
     assert config_value is expected
     assert persisted_value is expected
     assert editor.isChecked() is expected
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize(
+    ("action_name", "key"),
+    [
+        ("keep_prev_zoom", "keep_prev_scale"),
+        ("toggle_keep_prev_brightness_contrast", "keep_prev_brightness_contrast"),
+    ],
+)
+def test_keep_previous_menu_toggle_survives_restart(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    editable_config_file: Path,
+    pause: bool,
+    action_name: str,
+    key: str,
+) -> None:
+    win = main_win(config_file=editable_config_file)
+    assert win._config[key] is False
+    assert not getattr(win._actions, action_name).isChecked()
+
+    for expected in (True, False):
+        getattr(win._actions, action_name).trigger()
+        assert win._config[key] is expected
+        persisted = safe_load(stream=editable_config_file.read_text())
+        if expected:
+            assert persisted[key] is True
+        else:
+            # Returning to the default removes the sparse Override; a new
+            # window must then recover False from the Default Config.
+            assert key not in persisted
+        assert persisted["auto_save"] is True
+        assert win.close()
+
+        win = main_win(config_file=editable_config_file)
+        assert win._config[key] is expected
+        assert getattr(win._actions, action_name).isChecked() is expected
+        dialog = _open_settings_dialog(win=win)
+        editor = dialog._editors[(key,)]
+        assert isinstance(editor, QtWidgets.QCheckBox)
+        assert editor.isChecked() is expected
+        dialog.close()
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -660,7 +714,8 @@ def test_fill_drawing_dialog_toggle_applies_to_canvas(
     assert not canvas._fill_drawing
     assert not win._actions.fill_drawing.isChecked()
     assert (
-        safe_load(editable_config_file.read_text())["canvas"]["fill_drawing"] is False
+        safe_load(stream=editable_config_file.read_text())["canvas"]["fill_drawing"]
+        is False
     )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -707,7 +762,7 @@ def test_sort_labels_dialog_toggle_rebuilds_label_dialog(
     assert win._label_dialog is not old_label_dialog
     assert win._label_dialog._sort_labels is False
     assert win._label_dialog.label_history == ["bird"]
-    assert safe_load(editable_config_file.read_text())["sort_labels"] is False
+    assert safe_load(stream=editable_config_file.read_text())["sort_labels"] is False
     qtbot.waitUntil(lambda: bool(deleted))
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -732,7 +787,10 @@ def test_show_label_text_field_dialog_toggle_rebuilds_label_dialog(
     assert win._config["show_label_text_field"] is False
     assert win._label_dialog.edit.parent() is None
     assert win._label_dialog.label_history == ["bird"]
-    assert safe_load(editable_config_file.read_text())["show_label_text_field"] is False
+    assert (
+        safe_load(stream=editable_config_file.read_text())["show_label_text_field"]
+        is False
+    )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -761,7 +819,10 @@ def test_label_completion_dialog_change_rebuilds_label_dialog(
         == QtWidgets.QCompleter.CompletionMode.PopupCompletion
     )
     assert win._label_dialog.label_history == ["bird"]
-    assert safe_load(editable_config_file.read_text())["label_completion"] == "contains"
+    assert (
+        safe_load(stream=editable_config_file.read_text())["label_completion"]
+        == "contains"
+    )
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
@@ -772,9 +833,9 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     *, main_win: MainWinFactory, qtbot: QtBot, editable_config_file: Path, pause: bool
 ) -> None:
     win = main_win(config_file=editable_config_file)
-    assert win._config["ai"]["default"] == "sam3:latest"
+    assert win._config["ai"]["default"] == "sam2:latest"
     dock_combo = win._ai_annotation._model_combo
-    assert dock_combo.currentText() == "SAM 3"
+    assert dock_combo.currentText() == "SAM 2 Base+"
 
     dialog = _open_settings_dialog(win=win)
     combo = dialog._editors[("ai", "default")]
@@ -785,7 +846,7 @@ def test_ai_default_dialog_change_syncs_dock_combo(
     assert dock_combo.currentText() == "EfficientSAM Tiny"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "efficientsam:10m"
     assert (
-        safe_load(editable_config_file.read_text())["ai"]["default"]
+        safe_load(stream=editable_config_file.read_text())["ai"]["default"]
         == "efficientsam:10m"
     )
 
@@ -809,7 +870,7 @@ def test_ai_dock_change_persists_and_syncs_settings_dialog(
     assert settings_combo.currentData() == "efficientsam:10m"
     assert win._canvas_widgets.canvas.get_ai_model_name() == "efficientsam:10m"
     assert (
-        safe_load(editable_config_file.read_text())["ai"]["default"]
+        safe_load(stream=editable_config_file.read_text())["ai"]["default"]
         == "efficientsam:10m"
     )
 
@@ -826,15 +887,15 @@ def test_polygon_detail_popover_and_settings_stay_in_sync(
     assert isinstance(settings_slider, IntegerSlider)
 
     toolbar_slider = win._ai_annotation._polygon_detail_slider
-    toolbar_slider.set_value(40)
+    toolbar_slider.set_value(value=40)
 
     assert win._config["mask_polygonization"]["detail"] == 40
     assert settings_slider.value == 40
     assert win._canvas_widgets.canvas._ai_assist_session.polygon_detail == 40
-    persisted = safe_load(editable_config_file.read_text())
+    persisted = safe_load(stream=editable_config_file.read_text())
     assert persisted["mask_polygonization"]["detail"] == 40
 
-    settings_slider.set_value(70)
+    settings_slider.set_value(value=70)
 
     assert toolbar_slider.value == 70
     assert win._canvas_widgets.canvas._ai_assist_session.polygon_detail == 70
@@ -907,7 +968,9 @@ def test_color_theme_setting_applies_live_and_persists(
         # Keep the real Qt call, which offscreen plugins may ignore. Record at
         # its boundary so this also verifies persist/config-before-apply order.
         assert win._config["color_theme"] == theme
-        assert safe_load(editable_config_file.read_text())["color_theme"] == theme
+        assert (
+            safe_load(stream=editable_config_file.read_text())["color_theme"] == theme
+        )
         apply_color_theme(theme=theme)
         applied.append(theme)
 
@@ -929,14 +992,14 @@ def test_out_of_bounds_setting_updates_canvas_constraint_and_persists(
     canvas = win._canvas_widgets.canvas
     canvas.pixmap = QtGui.QPixmap(32, 32)
     outside = QtCore.QPointF(-1, -1)
-    assert canvas._should_constrain_to_pixmap(outside)
+    assert canvas._should_constrain_to_pixmap(point=outside)
     dialog = _open_settings_dialog(win=win)
     checkbox = dialog._editors[("canvas", "allow_out_of_bounds_points")]
     assert isinstance(checkbox, QtWidgets.QCheckBox)
     for enabled in (True, False):
         checkbox.setChecked(enabled)
         assert canvas._allow_out_of_bounds_points is enabled
-        assert canvas._should_constrain_to_pixmap(outside) is not enabled
+        assert canvas._should_constrain_to_pixmap(point=outside) is not enabled
         assert win._config["canvas"]["allow_out_of_bounds_points"] is enabled
         # Returning to the default prunes the override; reload the persisted
         # config to check both the explicit true and the default false value.

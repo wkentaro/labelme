@@ -171,5 +171,5 @@ assert set(_CURSOR_SHAPE_MAP) == set(CursorRole), (
 )
 
 
-def cursor_shape_for(role: CursorRole, /) -> Qt.CursorShape:
+def cursor_shape_for(*, role: CursorRole) -> Qt.CursorShape:
     return _CURSOR_SHAPE_MAP[role]

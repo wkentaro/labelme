@@ -166,7 +166,9 @@ def test_merge_mask_shapes(
             "description": "",
             "shape_type": "mask",
             "flags": {},
-            "mask": _utils.img_arr_to_b64(np.ones((size, size), dtype=np.uint8)),
+            "mask": _utils.img_arr_to_b64(
+                img_arr=np.ones((size, size), dtype=np.uint8)
+            ),
         }
 
     raw_image_path = data_path / "raw/2011_000003.jpg"
@@ -235,6 +237,36 @@ def test_merge_mask_shapes(
 
     win._save_label_file(save_as=False)
     assert_labelfile_sanity(str(tmp_path / "masks.json"))
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_disabled_merge_action_says_why(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open_and_select_shape(
+        main_win=main_win,
+        qtbot=qtbot,
+        data_path=data_path,
+        config_overrides=None,
+        output_dir=None,
+    )
+    merge = win._actions.merge
+    assert canvas.context_menu.toolTipsVisible()
+    assert win._menus.edit.toolTipsVisible()
+
+    assert not merge.isEnabled()
+    assert merge.toolTip() == "Select at least two mask shapes to merge"
+
+    canvas.select_shapes(shapes=canvas.shapes[:2])
+    qtbot.wait(50)
+    assert not merge.isEnabled()
+    assert merge.toolTip() == "Only mask shapes can be merged"
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 

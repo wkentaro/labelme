@@ -96,14 +96,16 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     dialog.close()
     assert win._model_manager.active == name
     release.set()
-    qtbot.waitUntil(lambda: win._model_manager.get_state(name) == "downloaded")
+    qtbot.waitUntil(
+        lambda: win._model_manager.get_state(model_name=name) == "downloaded"
+    )
     # The remembered choice is restored without running inference.
     assert assist.currentData() == text.currentData() == name
     assert win._osam_worker._process is None
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 
-    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args, **_kwargs: True)
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
     # An open Settings dialog shows the cleared choices without reopening.
@@ -120,7 +122,10 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
         assert editor.currentText() == "(none)"
     assert win._ai_text.get_model_name() == ""
     assert win._canvas_widgets.canvas.get_ai_model_name() == ""
-    assert safe_load(config.read_text())["ai"] == {"default": None, "text_model": None}
+    assert safe_load(stream=config.read_text())["ai"] == {
+        "default": None,
+        "text_model": None,
+    }
     assert [shape.label for shape in canvas.shapes] == ["cat"]
     win.close()
     reopened = main_win(config_file=config)
@@ -164,7 +169,7 @@ def test_delete_releases_loaded_session(
         lambda: blob_existed_at_release.append(Path(blob.path).exists()),
     )
 
-    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args: True)
+    monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args, **_kwargs: True)
     win._open_models()
     dialog = win._models_dialog
     assert dialog is not None
@@ -234,7 +239,8 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     initial_scroll_maximum = dialog._scroll_area.horizontalScrollBar().maximum()
     download.click()
     qtbot.waitUntil(
-        lambda: win._model_manager.get_state(name) == "failed", timeout=20_000
+        lambda: win._model_manager.get_state(model_name=name) == "failed",
+        timeout=20_000,
     )
     assert status.text() == "Failed"
     assert download.text() == "Retry"
@@ -320,7 +326,7 @@ def test_picker_downloads_and_selects_a_missing_model_in_place(
     assert 0 <= header < picker.findData(name) < picker.findData("manage")
 
     picker.setCurrentIndex(picker.findData(name))
-    assert safe_load(config.read_text())["ai"]["default"] == name
+    assert safe_load(stream=config.read_text())["ai"]["default"] == name
     qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
     assert picker.currentIndex() == -1
     assert picker.placeholderText() == "SAM 2 Small"
@@ -349,4 +355,4 @@ def test_picker_asks_before_downloading_sam3_and_cancel_keeps_setting(
 
     assert len(shown) == 1 and "SAM License" in shown[0]
     assert win._config["ai"]["text_model"] == text_model
-    assert win._model_manager.get_state("sam3:latest") == "missing"
+    assert win._model_manager.get_state(model_name="sam3:latest") == "missing"

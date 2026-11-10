@@ -16,6 +16,10 @@
         <translation>より詳細</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>出力</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>ポリゴン</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>クリック &amp; ドラッグで図形を移動</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>%r を作成中</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC でキャンセル</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>クリックで頂点を追加</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>ドラッグで囲む</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>例を1つドラッグで囲む</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>破棄</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>クリックで含める</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>クリックで除外</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d 件を追加</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>ドラッグで除外</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -441,6 +473,11 @@
         <translation>最後の図形追加・編集を元に戻す</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>選択</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>クリックで折れ線の点を配置し、%s を押しながらクリックで最後の点を配置します。</translation>
     </message>
@@ -593,11 +630,6 @@
     <message>
         <source>Undo</source>
         <translation>元に戻す</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>編集</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -906,10 +938,6 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>キャンセル</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>「{}」のアノテーションの変更を保持しますか？</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>未保存の変更</translation>
     </message>
@@ -1010,12 +1038,48 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>セグメンテーション中…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>AIを起動中…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model}を読み込み中…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>CPUで画像を準備中…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>画像を準備中…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds}秒</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>新しい「{query}」が {count} 件見つかりました</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>新しい「{query}」は見つかりませんでした</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>結合するマスク図形を2つ以上選択してください</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>結合できるのはマスク図形のみです</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>結合するには、選択した図形のロックを解除してください</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>結合できるのは同じラベルの図形のみです</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1026,12 +1090,40 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>アノテーションファイルの保存エラー</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>画像の場所を指定すると、アノテーションファイルの参照先がその画像に更新されます。</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>画像の場所を指定…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>画像の場所を指定</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>画像 (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>アノテーションフォルダー: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>アノテーションファイルを削除しますか？この操作は取り消せません。</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>「{}」を削除しますか？この操作は取り消せません。</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>ダウンロード</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>「{}」のアノテーションの変更を保存しますか？</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1136,10 +1228,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>アノテーションファイルを削除</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>このアノテーションファイルを完全に削除しますか？この操作は元に戻せません。</translation>
     </message>
     <message>
         <source>Configuration Error</source>

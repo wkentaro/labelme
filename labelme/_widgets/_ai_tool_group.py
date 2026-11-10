@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Final
+from typing import override
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -26,6 +27,7 @@ class _OptionsButton(QtWidgets.QToolButton):
         self._changed = changed
         self.update()
 
+    @override
     def paintEvent(self, arg__1: QtGui.QPaintEvent, /) -> None:
         super().paintEvent(arg__1)
         if not self._changed:
@@ -41,7 +43,8 @@ class _OptionsButton(QtWidgets.QToolButton):
 class _PanelMenu(QtWidgets.QMenu):
     """A menu that holds a form, where Tab moves between its fields."""
 
-    def focusNextPrevChild(self, next: bool, /) -> bool:  # noqa: A002, FBT001 -- Qt override
+    @override
+    def focusNextPrevChild(self, next: bool, /) -> bool:  # noqa: A002 -- Qt override
         # QMenu takes Tab to step through its actions, which strands focus on
         # the menu itself when a widget action holds several fields.
         return QtWidgets.QWidget.focusNextPrevChild(self, next)
@@ -83,6 +86,7 @@ class _ModelMenuButton(QtWidgets.QComboBox):
             )
         )
 
+    @override
     def initStyleOption(self, option: QtWidgets.QStyleOptionComboBox, /) -> None:
         super().initStyleOption(option)
         # Two model names can outgrow the fixed width; end them with "…".
@@ -114,7 +118,7 @@ class _ModelMenuButton(QtWidgets.QComboBox):
                 menu.addSeparator()
             menu.addAction(tool).setEnabled(False)
             picker.add_actions(
-                menu,
+                menu=menu,
                 folded=AI_ASSIST_FOLDED_MODELS,
                 notes=notes,
                 sizes=AI_MODEL_DOWNLOAD_SIZES,
@@ -160,7 +164,7 @@ class AiToolGroup(QtWidgets.QWidget):
         # Run sits inside the query field, where its status reads in place.
         text_input = detect._text_input
         text_input.addAction(
-            new_icon("phosphor/magnifying-glass.svg"),
+            new_icon(name="phosphor/magnifying-glass.svg"),
             QtWidgets.QLineEdit.ActionPosition.LeadingPosition,
         )
         field_layout = QtWidgets.QHBoxLayout(text_input)
@@ -168,7 +172,7 @@ class AiToolGroup(QtWidgets.QWidget):
         field_layout.addStretch(1)
         field_layout.addWidget(detect._run_button)
         # Layouts mirror for right-to-left languages; text margins don't.
-        run_width = detect._run_button.width()
+        run_width = detect._run_reserved_width
         if text_input.isRightToLeft():
             text_input.setTextMargins(run_width, 0, 0, 0)
         else:
@@ -201,7 +205,7 @@ class AiToolGroup(QtWidgets.QWidget):
         # of the toolbar.
         button = _OptionsButton()
         button.setAutoRaise(True)
-        button.setIcon(new_icon("phosphor/sliders-horizontal.svg"))
+        button.setIcon(new_icon(name="phosphor/sliders-horizontal.svg"))
         button.setIconSize(QtCore.QSize(16, 16))
         button.setAccessibleName(self.tr("Options"))
         button.setToolTip(self.tr("Options"))

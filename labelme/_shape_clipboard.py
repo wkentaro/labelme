@@ -8,11 +8,13 @@ from ._shape import Shape
 
 
 class ShapeClipboard(QtCore.QObject):
+    _buffer: tuple[Shape, ...]
+
     availability_changed = QtCore.Signal(bool)
 
     def __init__(self, *, parent: QtCore.QObject | None = None) -> None:
         super().__init__(parent)
-        self._buffer: tuple[Shape, ...] = ()
+        self._buffer = ()
 
     def store(self, *, shapes: Iterable[Shape]) -> None:
         snapshot = tuple(shape.copy() for shape in shapes)

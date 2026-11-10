@@ -1,23 +1,35 @@
 from __future__ import annotations
 
 import copy
+from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
 
 from ._model import Shape
 
-
-def can_merge_shapes(shapes: list[Shape], /) -> bool:
-    return (
-        len(shapes) > 1
-        and all(s.shape_type == "mask" and s.mask is not None for s in shapes)
-        and not any(s.locked for s in shapes)
-        and len({s.label for s in shapes}) == 1
-    )
+MergeBlocker = Literal["too_few", "not_masks", "locked", "mixed_labels"]
 
 
-def _round_bbox_to_int(shape: Shape, /) -> tuple[int, int, int, int]:
+def merge_blocker(*, shapes: list[Shape]) -> MergeBlocker | None:
+    # Ordered by what the user fixes first: a locked polygon reports
+    # "not_masks", since unlocking it would still not make it mergeable.
+    if len(shapes) <= 1:
+        return "too_few"
+    if any(s.shape_type != "mask" or s.mask is None for s in shapes):
+        return "not_masks"
+    if any(s.locked for s in shapes):
+        return "locked"
+    if len({s.label for s in shapes}) > 1:
+        return "mixed_labels"
+    return None
+
+
+def can_merge_shapes(*, shapes: list[Shape]) -> bool:
+    return merge_blocker(shapes=shapes) is None
+
+
+def _round_bbox_to_int(*, shape: Shape) -> tuple[int, int, int, int]:
     # Must match the AI Assist bbox rounding, so a merged bbox lands on the
     # same pixel grid as the Mask Shapes AI Assist produces.
     (xmin, ymin), (xmax, ymax) = shape.points
@@ -29,10 +41,10 @@ def _round_bbox_to_int(shape: Shape, /) -> tuple[int, int, int, int]:
     )
 
 
-def merge_masks(shapes: list[Shape], /) -> Shape:
-    if not can_merge_shapes(shapes):
+def merge_masks(*, shapes: list[Shape]) -> Shape:
+    if not can_merge_shapes(shapes=shapes):
         raise ValueError("merge_masks needs 2+ Mask Shapes sharing one label")
-    bboxes = [_round_bbox_to_int(s) for s in shapes]
+    bboxes = [_round_bbox_to_int(shape=s) for s in shapes]
     placed: list[tuple[int, int, npt.NDArray[np.bool_]]] = []
     for shape, (x0, y0, _, _) in zip(shapes, bboxes):
         assert shape.mask is not None

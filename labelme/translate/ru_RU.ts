@@ -16,6 +16,10 @@
         <translation>Больше деталей</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Вывод</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Полигон</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>Нажмите и перетащите, чтобы переместить фигуру</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>Создание %r</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC — отмена</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>Нажмите, чтобы добавить точку</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Перетащите рамку</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Обведите рамкой один пример</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Отменить</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Щелчок — включить</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Щелчок — исключить</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>Добавить %d</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Перетащите, чтобы исключить</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -436,6 +468,11 @@
         <translation>Отменить последнее добавление и редактирование фигуры</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Выбрать</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Щёлкайте, чтобы ставить точки ломаной; удерживайте %s и щёлкните, чтобы поставить последнюю.</translation>
     </message>
@@ -585,11 +622,6 @@
     <message>
         <source>Undo</source>
         <translation>Отменить</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Изменить</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -896,10 +928,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Отмена</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Сохранить изменения аннотаций для «{}»?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Несохранённые изменения</translation>
     </message>
@@ -1004,8 +1032,20 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Папка аннотаций: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Удалить файл аннотаций? Это действие нельзя отменить.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>Удалить «{}»? Это действие нельзя отменить.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Скачать</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Сохранить изменения аннотаций для «{}»?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1092,12 +1132,64 @@ Expected location: {path}</source>
         <translation>Создать копию и сбросить</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Запуск ИИ…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>Загрузка {model}…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Подготовка изображения на CPU…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Подготовка изображения…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} с</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Выберите не менее двух фигур-масок для объединения</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Объединять можно только фигуры-маски</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Разблокируйте выбранные фигуры, чтобы объединить их</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Объединять можно только фигуры с одинаковой меткой</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Неверная метка</translation>
     </message>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Ошибка сохранения файла аннотаций</translation>
+    </message>
+    <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>При выборе изображения файл аннотаций обновляется и начинает ссылаться на него.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Найти изображение…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Найти изображение</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Изображения (%s)</translation>
     </message>
     <message>
         <source>Large Image</source>
@@ -1126,10 +1218,6 @@ Expected location: {path}</source>
     <message>
         <source>Delete Annotation File</source>
         <translation>Удалить файл аннотаций</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Безвозвратно удалить этот файл аннотаций? Это действие нельзя отменить.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

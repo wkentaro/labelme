@@ -16,6 +16,10 @@
         <translation>Daha fazla ayrıntı</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Çıktı</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Çokgen</translation>
     </message>
@@ -163,10 +167,6 @@
         <translation>Şekli taşımak için tıklayın &amp; sürükleyin</translation>
     </message>
     <message>
-        <source>Creating %r</source>
-        <translation>%r oluşturuluyor</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>İptal etmek için ESC</translation>
     </message>
@@ -221,6 +221,38 @@
     <message>
         <source>Click to add point</source>
         <translation>Nokta eklemek için tıklayın</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Kutu çizmek için sürükleyin</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Bir örneğin çevresine sürükleyin</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Vazgeç</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Ekle</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Dahil etmek için tıklayın</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Hariç tutmak için tıklayın</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d öğe ekle</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Hariç tutmak için sürükleyin</translation>
     </message>
     <message>
         <source>Choose the other corner. Hold Shift for a square.</source>
@@ -436,6 +468,11 @@
         <translation>Son şekil ekleme veya düzenleme işlemini geri al</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Seç</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Çoklu çizgi noktalarını yerleştirmek için tıklayın; sonuncuyu yerleştirmek için %s tuşunu basılı tutup tıklayın.</translation>
     </message>
@@ -585,11 +622,6 @@
     <message>
         <source>Undo</source>
         <translation>Geri Al</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Düzenle</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -896,10 +928,6 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>İptal</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>&quot;{}&quot; için açıklama değişiklikleri korunsun mu?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Kaydedilmemiş değişiklikler</translation>
     </message>
@@ -1000,12 +1028,48 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Bölütleniyor…</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>Yapay zekâ başlatılıyor…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} yükleniyor…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Görüntü CPU üzerinde hazırlanıyor…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Görüntü hazırlanıyor…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} sn</translation>
+    </message>
+    <message>
         <source>Found {count} new &apos;{query}&apos;</source>
         <translation>{count} yeni &apos;{query}&apos; bulundu</translation>
     </message>
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Yeni &apos;{query}&apos; bulunamadı</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Birleştirmek için en az iki maske şekli seçin</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Yalnızca maske şekilleri birleştirilebilir</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Birleştirmek için seçili şekillerin kilidini açın</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Yalnızca aynı etikete sahip şekiller birleştirilebilir</translation>
     </message>
     <message>
         <source>Invalid Label</source>
@@ -1016,12 +1080,40 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Görüntüyü bulduğunuzda açıklama dosyası bu görüntüye başvuracak şekilde güncellenir.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Görüntüyü Bul…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Görüntüyü Bul</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Görüntüler (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Açıklama Klasörü: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Açıklama dosyası silinsin mi? Bu işlemi geri alamazsınız.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>&quot;{}&quot; silinsin mi? Bu işlemi geri alamazsınız.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>İndir</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>&quot;{}&quot; için açıklama değişiklikleri kaydedilsin mi?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1126,10 +1218,6 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Açıklama Dosyasını Sil</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Bu açıklama dosyası kalıcı olarak silinsin mi? Bu işlem geri alınamaz.</translation>
     </message>
     <message>
         <source>Configuration Error</source>

@@ -16,6 +16,10 @@
         <translation>Mehr Details</translation>
     </message>
     <message>
+        <source>Output</source>
+        <translation>Ausgabe</translation>
+    </message>
+    <message>
         <source>Polygon</source>
         <translation>Polygon</translation>
     </message>
@@ -147,10 +151,6 @@
 <context>
     <name>Canvas</name>
     <message>
-        <source>Creating %r</source>
-        <translation>%r wird erstellt</translation>
-    </message>
-    <message>
         <source>ESC to cancel</source>
         <translation>ESC zum Abbrechen</translation>
     </message>
@@ -189,6 +189,38 @@
     <message>
         <source>Hold %s and click to add a point on the edge</source>
         <translation>%s gedrückt halten und klicken, um einen Punkt auf der Kante hinzuzufügen</translation>
+    </message>
+    <message>
+        <source>Drag a box</source>
+        <translation>Rahmen ziehen</translation>
+    </message>
+    <message>
+        <source>Drag around one example</source>
+        <translation>Rahmen um ein Beispiel ziehen</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation>Verwerfen</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hinzufügen</translation>
+    </message>
+    <message>
+        <source>Click to include</source>
+        <translation>Klicken zum Einschließen</translation>
+    </message>
+    <message>
+        <source>Click to exclude</source>
+        <translation>Klicken zum Ausschließen</translation>
+    </message>
+    <message>
+        <source>Add %d</source>
+        <translation>%d hinzufügen</translation>
+    </message>
+    <message>
+        <source>Drag to exclude</source>
+        <translation>Ziehen zum Ausschließen</translation>
     </message>
     <message>
         <source>Click center point for circle</source>
@@ -440,6 +472,11 @@
         <translation>Letztes Hinzufügen und Bearbeiten der Form rückgängig machen</translation>
     </message>
     <message>
+        <source>Select</source>
+        <comment>toolbar</comment>
+        <translation>Auswählen</translation>
+    </message>
+    <message>
         <source>Click to place LineStrip points; hold %s and click to place the last one.</source>
         <translation>Klicken, um Punkte der Linienfolge zu setzen; %s gedrückt halten und klicken, um den letzten zu setzen.</translation>
     </message>
@@ -601,11 +638,6 @@
     <message>
         <source>Undo</source>
         <translation>Rückgängig</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <comment>toolbar</comment>
-        <translation>Bearbeiten</translation>
     </message>
     <message>
         <source>AI-Segment</source>
@@ -782,6 +814,42 @@
         <translation>Sie können vorerst die Standardeinstellungen verwenden. Vor dem Zurücksetzen wird eine Sicherung Ihrer Konfigurationsdatei gespeichert.</translation>
     </message>
     <message>
+        <source>Starting AI…</source>
+        <translation>KI wird gestartet…</translation>
+    </message>
+    <message>
+        <source>Loading {model}…</source>
+        <translation>{model} wird geladen…</translation>
+    </message>
+    <message>
+        <source>Preparing image on CPU…</source>
+        <translation>Bild wird auf der CPU vorbereitet…</translation>
+    </message>
+    <message>
+        <source>Preparing image…</source>
+        <translation>Bild wird vorbereitet…</translation>
+    </message>
+    <message>
+        <source>{status} · {seconds} s</source>
+        <translation>{status} · {seconds} s</translation>
+    </message>
+    <message>
+        <source>Select at least two mask shapes to merge</source>
+        <translation>Mindestens zwei Maskenformen zum Zusammenführen auswählen</translation>
+    </message>
+    <message>
+        <source>Only mask shapes can be merged</source>
+        <translation>Nur Maskenformen lassen sich zusammenführen</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to merge them</source>
+        <translation>Ausgewählte Formen zum Zusammenführen entsperren</translation>
+    </message>
+    <message>
+        <source>Only shapes with the same label can be merged</source>
+        <translation>Nur Formen mit demselben Label lassen sich zusammenführen</translation>
+    </message>
+    <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Erkennt nur Rahmen. Wechseln Sie zu „Rechteck“, um dieses Modell zu verwenden.</translation>
     </message>
@@ -908,10 +976,6 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <source>Keep the annotation changes for &quot;{}&quot;?</source>
-        <translation>Annotationsänderungen für „{}“ behalten?</translation>
-    </message>
-    <message>
         <source>Unsaved changes</source>
         <translation>Ungespeicherte Änderungen</translation>
     </message>
@@ -1020,12 +1084,40 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
         <translation>Fehler beim Speichern der Annotationsdatei</translation>
     </message>
     <message>
+        <source>Locating the image updates the annotation file to refer to it.</source>
+        <translation>Beim Auswählen des Bildes wird der Verweis in der Annotationsdatei aktualisiert.</translation>
+    </message>
+    <message>
+        <source>Locate Image…</source>
+        <translation>Bild suchen…</translation>
+    </message>
+    <message>
+        <source>Locate Image</source>
+        <translation>Bild suchen</translation>
+    </message>
+    <message>
+        <source>Images (%s)</source>
+        <translation>Bilder (%s)</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Annotationsordner: %s</translation>
     </message>
     <message>
+        <source>Delete the annotation file? You can&apos;t undo this.</source>
+        <translation>Annotationsdatei löschen? Dies kann nicht widerrufen werden.</translation>
+    </message>
+    <message>
+        <source>Delete &quot;{}&quot;? You can&apos;t undo this.</source>
+        <translation>„{}“ löschen? Dies kann nicht widerrufen werden.</translation>
+    </message>
+    <message>
         <source>Download</source>
         <translation>Herunterladen</translation>
+    </message>
+    <message>
+        <source>Save annotation changes to &quot;{}&quot;?</source>
+        <translation>Annotationsänderungen an „{}“ speichern?</translation>
     </message>
     <message>
         <source>This annotation refers to &quot;{name}&quot;, but that image could not be found.
@@ -1130,10 +1222,6 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Delete Annotation File</source>
         <translation>Annotationsdatei löschen</translation>
-    </message>
-    <message>
-        <source>Permanently delete this annotation file? This action cannot be undone.</source>
-        <translation>Diese Annotationsdatei endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.</translation>
     </message>
     <message>
         <source>Configuration Error</source>
