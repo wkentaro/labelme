@@ -88,20 +88,27 @@ def reset_config(*, config_file: Path) -> Path:
     return Path(backup)
 
 
+def _comment_lines(*, text: str) -> str:
+    return "".join(
+        line if line.endswith("\n") else f"{line}\n"
+        for line in text.splitlines(keepends=True)
+        if line.lstrip().startswith("#")
+    )
+
+
 def set_overrides(
     *, config_file: Path, overrides: Sequence[tuple[Sequence[str], object]]
 ) -> None:
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.indent(mapping=2, sequence=4, offset=2)
+    text = config_file.read_text(encoding="utf-8") if config_file.exists() else ""
     try:
-        doc = (
-            yaml.load(config_file.read_text(encoding="utf-8"))
-            if config_file.exists()
-            else None
-        )
+        doc = yaml.load(text)
     except YAMLError as error:
         raise ValueError(f"Could not read the Config File: {error}") from error
+    # A file of comments parses to nothing, so the dump below cannot carry them.
+    is_comment_only = doc is None and bool(text.strip())
     if doc is None:
         doc = CommentedMap()
     if not isinstance(doc, CommentedMap):
@@ -124,9 +131,13 @@ def set_overrides(
     if writes_shape_color and "shape_color" in doc:
         validate_shape_color(config=doc["shape_color"])
 
-    content = ""
     if doc:
         buffer = StringIO()
         yaml.dump(doc, buffer)
         content = buffer.getvalue()
+        if is_comment_only:
+            content = _comment_lines(text=text) + content
+    else:
+        # ruamel dumps an emptied mapping as "{}", so keep the comments by hand.
+        content = _comment_lines(text=text)
     _atomic_write(config_file=config_file, content=content)
