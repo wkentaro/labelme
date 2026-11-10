@@ -237,7 +237,6 @@ def test_MainWindow_rejects_oversized_image_from_header_instantly(
     qtbot: QtBot,
     tmp_path: Path,
     critical_messages: list[str],
-    set_allocation_limit: Callable[[int], None],
     pause: bool,
 ) -> None:
     def make_chunk(chunk_type: bytes, data: bytes) -> bytes:
@@ -264,7 +263,6 @@ def test_MainWindow_rejects_oversized_image_from_header_instantly(
             json.dumps({"imagePath": image_path.name, "imageData": None, "shapes": []})
         )
 
-    set_allocation_limit(256)
     annotation_before = raw_win._annotation
     image_path_before = raw_win._image_path
 

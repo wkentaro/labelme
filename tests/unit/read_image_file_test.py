@@ -220,7 +220,10 @@ def test_planar_separate_tiff_keeps_image_size_and_bands(*, tmp_path: Path) -> N
             assert sum(pixel) - pixel[band] < 50
 
 
-def test_read_image_file_rejects_oversized_png_from_header(*, tmp_path: Path) -> None:
+@pytest.mark.parametrize("max_decode_mb", [256, 2048])
+def test_read_image_file_rejects_oversized_png_from_header(
+    *, tmp_path: Path, max_decode_mb: int
+) -> None:
     def make_chunk(chunk_type: bytes, data: bytes) -> bytes:
         return (
             struct.pack(">I", len(data))
@@ -240,7 +243,7 @@ def test_read_image_file_rejects_oversized_png_from_header(*, tmp_path: Path) ->
     path.write_bytes(png_bytes)
 
     with pytest.raises(ImageTooLargeError) as exc_info:
-        read_image_file(filename=str(path), max_decode_mb=256)
+        read_image_file(filename=str(path), max_decode_mb=max_decode_mb)
 
     assert exc_info.value.width == 37296
     assert exc_info.value.height == 49319

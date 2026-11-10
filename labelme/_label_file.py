@@ -549,16 +549,16 @@ def _sweep_stale_temporary_files(*, directory: Path) -> None:
                     os.unlink(entry.path)
 
 
-def _check_decodable(
-    *, width: int, height: int, bytes_per_pixel: float, max_decode_mb: int | None
-) -> None:
+def _check_decodable(*, width: int, height: int, max_decode_mb: int | None) -> None:
+    QT_MIN_BYTES_PER_PIXEL: Final = 4
+
     # Qt refuses to decode past its allocation limit and cannot raise it for an
     # image over the per-side limit, so decoding such an image is wasted work.
-    # bytes_per_pixel is a lower bound on Qt's decoded format, so this never
+    # Qt counts at least 4 bytes per pixel for every image, so this never
     # rejects an image Qt would accept.
     if max_decode_mb is None or max(width, height) <= RASTER_MAX_SIDE:
         return
-    if width * height * bytes_per_pixel > max_decode_mb * 2**20:
+    if width * height * QT_MIN_BYTES_PER_PIXEL > max_decode_mb * 2**20:
         raise ImageTooLargeError(width=width, height=height, max_side=RASTER_MAX_SIDE)
 
 
@@ -574,7 +574,6 @@ def _imread(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
             _check_decodable(
                 width=width,
                 height=height,
-                bytes_per_pixel=1 / 8 if image_pil.mode == "1" else 1,
                 max_decode_mb=max_decode_mb,
             )
         except ImageTooLargeError:
@@ -603,7 +602,6 @@ def _imread_tiff(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image
         _check_decodable(
             width=page.imagewidth,
             height=page.imagelength,
-            bytes_per_pixel=1,
             max_decode_mb=max_decode_mb,
         )
         series = tif.series[0]
