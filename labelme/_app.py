@@ -3800,6 +3800,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_dialog = self._make_label_dialog(
             label_history=old_label_dialog.label_history
         )
+        self._label_dialog.remember_label(label=old_label_dialog.last_label)
         old_label_dialog.deleteLater()
 
     def _refresh_shape_colors(self) -> None:

@@ -323,6 +323,10 @@ class LabelDialog(QtWidgets.QDialog):
         if self._sort_labels:
             self.label_list.sortItems()
 
+    @property
+    def last_label(self) -> str:
+        return self._last_label
+
     def remember_label(self, *, label: str) -> None:
         self._last_label = label
 
