@@ -64,7 +64,6 @@ exclude = ["examples/*/data_dataset_*", "examples/*/.readme"]
 [dependency-groups]
 dev = [
   "ipython",
-  "mdformat-frontmatter>=2.0.10",
   "mdformat>=0.7",
   "pytest>=8.3.4",
   "pytest-cov>=7.1.0",
@@ -78,6 +77,7 @@ dev = [
   "yamlfix>=1.19.1",
   "towncrier>=24.8",
   "gruff>=0.2.5",
+  "packaging>=26.1",
 ]
 
 [project.scripts]
