@@ -79,6 +79,12 @@ def _validate_config_item(*, key_path: tuple[str, ...], value: object) -> None:
             for pattern, names in value.items()
         ):
             raise ValueError("label_flags must map string patterns to lists of strings")
+    if key_path == ("image_decode_limit_mb",) and (
+        isinstance(value, bool) or not isinstance(value, int) or value < 0
+    ):
+        raise ValueError(
+            f"image_decode_limit_mb must be a non-negative integer, but got {value!r}"
+        )
     if key_path == ("mask_polygonization", "detail") and (
         isinstance(value, bool)
         or not isinstance(value, int)

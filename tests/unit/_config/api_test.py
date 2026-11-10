@@ -133,6 +133,30 @@ def test_load_config_rejects_invalid_polygon_detail(
         _config.load_config(config_file=config_file, config_overrides={})
 
 
+@pytest.mark.parametrize("value", [-1, 1.5, "big", True, None])
+def test_load_config_rejects_invalid_image_decode_limit(
+    *, tmp_path: Path, value: object
+) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(f"image_decode_limit_mb: {json.dumps(value)}\n")
+
+    with pytest.raises(ValueError, match=r"image_decode_limit_mb must be"):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
+@pytest.mark.parametrize("value", [0, 4096])
+def test_load_config_accepts_image_decode_limit(*, tmp_path: Path, value: int) -> None:
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(f"image_decode_limit_mb: {value}\n")
+    config = _config.load_config(config_file=config_file, config_overrides={})
+    assert config["image_decode_limit_mb"] == value
+
+
+def test_default_image_decode_limit_is_2gb() -> None:
+    config = _config.load_config(config_file=None, config_overrides={})
+    assert config["image_decode_limit_mb"] == 2048
+
+
 @pytest.mark.parametrize("value", ["gpu", None, True])
 def test_load_config_rejects_an_unknown_ai_device(
     *, tmp_path: Path, value: object

@@ -309,6 +309,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config_file, self._config = self._load_config(
             config_file=config_file, config_overrides=config_overrides
         )
+        # Qt's own default is 256 MB, about 8192x8192 pixels.
+        QtGui.QImageReader.setAllocationLimit(self._config["image_decode_limit_mb"])
         self._config_overrides = config_overrides or {}
         self._shape_color_preview = None
 

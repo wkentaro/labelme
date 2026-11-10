@@ -2,6 +2,9 @@
 auto_save: true
 display_label_popup: true
 with_image_data: false
+# Largest image, in megabytes of decoded pixels, that opens without asking.
+# A larger image asks first. 0 removes the limit.
+image_decode_limit_mb: 2048
 keep_prev: false
 keep_prev_scale: false
 keep_prev_brightness_contrast: false
