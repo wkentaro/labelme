@@ -1704,7 +1704,11 @@ class Canvas(QtWidgets.QWidget):
         else:
             assert mode in ("rectangle", "circle", "line", "ai_find_all")
             assert len(current.points) == 1
-            self._current = dataclasses.replace(current, points=self._line.points)
+            self._current = dataclasses.replace(
+                current,
+                points=self._line.points,
+                point_labels=self._line.point_labels,
+            )
             self._finalize()
 
     def _commit_preview_vertex(

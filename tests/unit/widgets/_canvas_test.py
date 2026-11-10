@@ -1929,6 +1929,8 @@ def test_extend_after_mode_switch_finalizes_at_last_cursor(
     assert canvas.shapes[0].points[0][1] == pytest.approx(10)
     assert canvas.shapes[0].points[1][0] == pytest.approx(50)
     assert canvas.shapes[0].points[1][1] == pytest.approx(30)
+    # Every point carries a label, as it does for a polygon.
+    assert canvas.shapes[0].point_labels.tolist() == [1, 1]
 
 
 @pytest.mark.gui
