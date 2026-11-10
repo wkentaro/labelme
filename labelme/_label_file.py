@@ -26,7 +26,7 @@ from numpy.typing import NDArray
 
 from labelme import __version__
 
-from . import _utils
+from . import _image_codec
 from ._shape import ShapeDict
 from ._shape import ShapeType
 
@@ -165,7 +165,9 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
                 f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
             )
         try:
-            mask = _utils.img_b64_to_arr(img_b64=shape_json_obj["mask"]).astype(bool)
+            mask = _image_codec.img_b64_to_arr(img_b64=shape_json_obj["mask"]).astype(
+                bool
+            )
         except (OSError, ValueError) as e:
             raise ValueError(f"mask must be base64-encoded PNG: {e}") from e
 
@@ -209,7 +211,7 @@ def _dump_shape_to_json_obj(*, shape: ShapeDict) -> dict[str, Any]:
         flags=shape["flags"],
         mask=None
         if shape["mask"] is None
-        else _utils.img_arr_to_b64(img_arr=shape["mask"].astype(np.uint8)),
+        else _image_codec.img_arr_to_b64(img_arr=shape["mask"].astype(np.uint8)),
     )
     # Written only when set, so files without locked shapes stay unchanged.
     if shape["locked"]:
@@ -297,7 +299,7 @@ def read_image_file(*, filename: str, max_decode_mb: int | None = None) -> bytes
 def _read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
     t_start = time.time()
     with _imread(filename=filename, max_decode_mb=max_decode_mb) as image_pil:
-        oriented: PIL.Image.Image = _utils.apply_exif_orientation(image=image_pil)
+        oriented: PIL.Image.Image = _image_codec.apply_exif_orientation(image=image_pil)
         is_jpeg2000 = image_pil.format == "JPEG2000"
 
         ext = Path(filename).suffix.lower()
@@ -344,7 +346,7 @@ def _check_image_dimensions(
         isinstance(expected_width, bool) or not isinstance(expected_width, int)
     ):
         raise TypeError(f"imageWidth must be int: {expected_width}")
-    actual_w, actual_h = _utils.img_data_to_pil(img_data=image_data).size
+    actual_w, actual_h = _image_codec.img_data_to_pil(img_data=image_data).size
     if expected_height is not None and expected_height != actual_h:
         raise ValueError(
             f"imageHeight mismatch: declared={expected_height}, actual={actual_h}"

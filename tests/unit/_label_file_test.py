@@ -15,6 +15,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
+from labelme._image_codec import img_arr_to_b64
 from labelme._label_file import Annotation
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
@@ -28,7 +29,6 @@ from labelme._label_file import read_label_file_image_path
 from labelme._label_file import relink_label_file
 from labelme._label_file import write_label_file
 from labelme._shape import ShapeDict
-from labelme._utils import img_arr_to_b64
 
 
 def test_read_label_file_load_windows_path(*, data_path: Path, tmp_path: Path) -> None:
