@@ -17,6 +17,7 @@ from pytestqt.qtbot import QtBot
 from labelme import _image_codec
 from labelme._app import MainWindow
 from labelme._shape import Shape
+from labelme._widgets import _canvas_interaction
 from labelme._widgets._canvas import Canvas
 from labelme._widgets._canvas import _CanvasMode
 from labelme._widgets._label_dialog import LabelDialog
@@ -1044,3 +1045,40 @@ def test_square_creation_resize_save_and_reopen(
     raw_win.mark_clean()
     raw_win.close()
     close_or_pause(qtbot=qtbot, widget=reopened, pause=pause)
+
+
+def test_press_ignores_a_vertex_hover_left_stale_by_a_zoom(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    shape = canvas.shapes[_SHAPE_INDEX]
+    points_before = [(float(p[0]), float(p[1])) for p in shape.points]
+    pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(*points_before[0]))
+    qtbot.mouseMove(canvas, pos=pos)
+    qtbot.wait(50)
+    assert canvas._hovered_vertex is not None
+
+    # The image shrinks under the still pointer, which ends up off every shape.
+    for _ in range(3):
+        annotated_win._actions.zoom_out.trigger()
+    qtbot.wait(50)
+    image_pos = canvas.transform_widget_point_to_image(point=QPointF(pos))
+    assert (
+        _canvas_interaction.find_shape_at(
+            shapes=canvas.shapes,
+            point=np.array([image_pos.x(), image_pos.y()]),
+            scale=canvas.scale,
+            point_size=canvas._point_size,
+            epsilon=canvas._epsilon,
+        )
+        is None
+    )
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=pos)
+    qtbot.mouseMove(canvas, pos=pos + QPoint(30, 30))
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=pos + QPoint(30, 30))
+    qtbot.wait(50)
+
+    assert [(float(p[0]), float(p[1])) for p in shape.points] == points_before
+    assert canvas.selected_shapes == []
