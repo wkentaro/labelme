@@ -29,7 +29,6 @@ _DEFAULT_TRIANGLE: Final[tuple[tuple[float, float], ...]] = (
 )
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("with_image_data", [True, False])
 def test_save_image_data_field_matches_config(
     *,
@@ -70,7 +69,6 @@ def test_save_image_data_field_matches_config(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_save_falls_back_to_an_absolute_image_path_across_drives(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -126,7 +124,6 @@ def test_save_falls_back_to_an_absolute_image_path_across_drives(
     close_or_pause(qtbot=qtbot, widget=win2, pause=pause)
 
 
-@pytest.mark.gui
 def test_round_trip_polygon_preserves_points(
     *,
     main_win: MainWinFactory,
@@ -171,7 +168,6 @@ def test_round_trip_polygon_preserves_points(
     close_or_pause(qtbot=qtbot, widget=win2, pause=pause)
 
 
-@pytest.mark.gui
 def test_round_trip_mask_shape_via_fixture(
     *,
     main_win: MainWinFactory,
@@ -251,7 +247,6 @@ def test_round_trip_mask_shape_via_fixture(
     close_or_pause(qtbot=qtbot, widget=win2, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     "image_path", ["does_not_exist.jpg", "images/does_not_exist.jpg"]
 )
@@ -304,7 +299,6 @@ def test_open_json_with_missing_image_shows_error_and_recovers(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_title_returns_to_clean_after_save(
     *,
     monkeypatch: pytest.MonkeyPatch,

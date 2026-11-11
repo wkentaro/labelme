@@ -538,3 +538,49 @@ def test_cursor_shape_for_all_roles(
     *, role: CursorRole, expected: Qt.CursorShape
 ) -> None:
     assert cursor_shape_for(role=role) == expected
+
+
+def test_extent_reject_never_changes_the_hover_target(
+    *, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    rng = np.random.default_rng(0)
+
+    def at(*offsets: tuple[float, float]) -> np.ndarray:
+        return rng.uniform(20, 180, size=2) + np.array(offsets, dtype=np.float64)
+
+    shapes = [
+        Shape(shape_type="polygon", points=at((0, 0), (30, 5), (20, 35)), closed=True),
+        Shape(shape_type="rectangle", points=at((0, 0), (25, 15))),
+        Shape(shape_type="circle", points=at((0, 0), (12, 9))),
+        Shape(shape_type="line", points=at((0, 0), (30, 20))),
+        Shape(shape_type="linestrip", points=at((0, 0), (15, 20), (30, 0))),
+        Shape(shape_type="point", points=at((0, 0))),
+        Shape(
+            shape_type="mask",
+            points=at((0, 0), (9, 9)),
+            mask=np.ones((10, 10), dtype=bool),
+        ),
+        _oriented_rectangle(points=[(100, 100), (140, 110), (135, 130), (95, 120)]),
+    ]
+    points = rng.uniform(0, 200, size=(2000, 2))
+
+    def targets() -> list[HitTarget | None]:
+        return [
+            find_hover_target(
+                shapes=shapes,
+                point=point,
+                scale=1.5,
+                epsilon=10.0,
+                point_size=8,
+                priority_shape=None,
+            )
+            for point in points
+        ]
+
+    rejected = targets()
+    monkeypatch.setattr(
+        "labelme._widgets._canvas_interaction._is_near_extent", lambda **_: True
+    )
+
+    assert rejected == targets()
+    assert {target.kind for target in rejected if target is not None} == set(HitKind)

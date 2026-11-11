@@ -175,7 +175,6 @@ def _run_text_prompt(
     qtbot.wait(100)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("create_mode", "expected_shape_type", "text", "response_fn", "expected_labels"),
     [
@@ -273,7 +272,6 @@ def test_text_prompt_creates_shapes(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("create_mode", "output_format"),
     [
@@ -342,7 +340,6 @@ def test_box_only_model_is_rejected_before_inference(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_nms_deduplicates_existing_shapes(
     *,
     main_win: MainWinFactory,
@@ -386,7 +383,6 @@ def test_nms_deduplicates_existing_shapes(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_score_threshold_filters_detections(
     *,
     main_win: MainWinFactory,
@@ -432,7 +428,6 @@ def test_score_threshold_filters_detections(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("submit", ["run", "enter"])
 def test_query_runs_from_another_tool(
     *,
@@ -467,7 +462,6 @@ def test_query_runs_from_another_tool(
     assert {shape.label for shape in win._canvas_widgets.canvas.shapes} == {"person"}
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("case", ["switched", "drawing", "queued"])
 def test_run_reads_detecting_under_any_tool(
     *,
@@ -504,7 +498,6 @@ def test_run_reads_detecting_under_any_tool(
     assert run_button.text() == win._ai_text._RUN_GLYPH
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("failure_stage", ["inference", "postprocessing"])
 def test_text_prompt_error_preserves_annotation(
     *,
@@ -549,7 +542,6 @@ def test_text_prompt_error_preserves_annotation(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_canvas_inference_failed_signal_surfaces_status_message(
     *,
     main_win: MainWinFactory,
@@ -572,7 +564,6 @@ def test_canvas_inference_failed_signal_surfaces_status_message(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_text_result_waits_for_the_label_dialog(
     *,
     main_win: MainWinFactory,
@@ -661,7 +652,6 @@ def _hold_text_results(
     return lambda: worker.finished.emit(job, annotations)
 
 
-@pytest.mark.gui
 def test_text_result_waits_for_the_draft(
     *,
     main_win: MainWinFactory,
@@ -693,7 +683,6 @@ def test_text_result_waits_for_the_draft(
     assert win._actions.undo.isEnabled()
 
 
-@pytest.mark.gui
 def test_text_result_waits_for_a_drag(
     *,
     main_win: MainWinFactory,
@@ -739,7 +728,6 @@ def test_text_result_waits_for_a_drag(
     assert xmins == [pytest.approx(420, abs=2), 400.0]
 
 
-@pytest.mark.gui
 def test_text_result_waits_for_a_held_vertex(
     *,
     main_win: MainWinFactory,
@@ -778,7 +766,6 @@ def test_text_result_waits_for_a_held_vertex(
     assert canvas.shapes[0].points[0, 0] == pytest.approx(420, abs=2)
 
 
-@pytest.mark.gui
 def test_text_result_keeps_the_selection_editable(
     *,
     main_win: MainWinFactory,
@@ -821,7 +808,6 @@ def test_text_result_keeps_the_selection_editable(
     assert box.label == "renamed"
 
 
-@pytest.mark.gui
 def test_empty_text_prompt_asks_for_a_prompt(
     *,
     main_win: MainWinFactory,
@@ -838,7 +824,6 @@ def test_empty_text_prompt_asks_for_a_prompt(
     assert win._canvas_widgets.canvas.create_mode == "polygon"
 
 
-@pytest.mark.gui
 def test_text_prompt_without_an_image_does_nothing(
     *,
     main_win: MainWinFactory,
@@ -856,7 +841,6 @@ def test_text_prompt_without_an_image_does_nothing(
     assert win._canvas_widgets.canvas.shapes == []
 
 
-@pytest.mark.gui
 def test_ai_find_all_box_reads_the_picker_at_use(
     *,
     main_win: MainWinFactory,
@@ -871,7 +855,6 @@ def test_ai_find_all_box_reads_the_picker_at_use(
     assert win._canvas_widgets.canvas.get_ai_find_all_model_name() == _AI_TEXT_MODEL
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("text_model", ["sam3:latest", None])
 def test_ai_find_all_box_checks_the_model_setting_before_download(
     *,
@@ -908,7 +891,6 @@ def test_ai_find_all_box_checks_the_model_setting_before_download(
     assert readiness_checks == [text_model or ""]
 
 
-@pytest.mark.gui
 def test_text_prompt_is_one_concept(
     *,
     main_win: MainWinFactory,
@@ -945,7 +927,6 @@ def test_text_prompt_is_one_concept(
     assert {s.label for s in shapes} == {"person, sofa"}
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(("chosen", "labels"), [("dog", ["dog", "dog"]), (None, [])])
 def test_one_dialog_labels_the_whole_batch(
     *,
@@ -1004,7 +985,6 @@ def test_one_dialog_labels_the_whole_batch(
         assert win._actions.undo.isEnabled() == undo_enabled  # No undo step.
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("existing", "chosen", "added"),
     [
@@ -1068,7 +1048,6 @@ def test_batch_skips_what_shapes_with_its_label_cover(
     )
 
 
-@pytest.mark.gui
 def test_empty_batch_asks_for_no_label(
     *,
     main_win: MainWinFactory,
@@ -1094,7 +1073,6 @@ def test_empty_batch_asks_for_no_label(
     assert win.statusBar().currentMessage() == "No new 'dog' found"
 
 
-@pytest.mark.gui
 def test_label_list_suggests_the_text_prompt(
     *,
     main_win: MainWinFactory,
@@ -1114,7 +1092,6 @@ def test_label_list_suggests_the_text_prompt(
     assert completer.currentCompletion() == "sofa"
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(("chosen", "labels"), [("dog", ["dog", "dog"]), (None, [])])
 def test_one_dialog_labels_an_example_box_batch(
     *,
@@ -1151,7 +1128,6 @@ def test_one_dialog_labels_an_example_box_batch(
     assert len(canvas.shape_backups) == backups + (1 if labels else 0)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("existing", "message"), [(0, "Found 2 new 'dog'"), (2, "No new 'dog' found")]
 )
@@ -1221,7 +1197,6 @@ def test_example_box_batch_skips_and_reports_like_a_query(
     assert canvas.selected_shapes == canvas.shapes[existing:]
 
 
-@pytest.mark.gui
 def test_run_with_an_example_box_draft_refines_it(
     *,
     main_win: MainWinFactory,
@@ -1312,7 +1287,6 @@ def test_run_with_an_example_box_draft_refines_it(
     assert len(canvas._ai_find_all_draft) == 2
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(("chosen", "labels"), [("dog", ["dog", "dog"]), (None, [])])
 def test_enter_asks_once_for_the_draft_label(
     *,

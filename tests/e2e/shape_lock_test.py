@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
 from PySide6.QtCore import QPoint
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
@@ -20,7 +19,6 @@ from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_locked_shape_resists_edits_and_survives_reopen(
     *,
     annotated_win: MainWindow,
@@ -83,7 +81,6 @@ def test_locked_shape_resists_edits_and_survives_reopen(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_locked_key_is_restored_on_open(
     *,
     main_win: MainWinFactory,
@@ -108,7 +105,6 @@ def test_locked_key_is_restored_on_open(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_shapes_carried_to_the_next_image_are_unlocked(
     *,
     main_win: MainWinFactory,
@@ -128,7 +124,6 @@ def test_shapes_carried_to_the_next_image_are_unlocked(
     win.mark_clean()
 
 
-@pytest.mark.gui
 def test_lock_leaves_an_unfinished_shape_alone(
     *,
     annotated_win: MainWindow,
@@ -153,7 +148,6 @@ def test_lock_leaves_an_unfinished_shape_alone(
     win.mark_clean()
 
 
-@pytest.mark.gui
 def test_drag_right_after_unlock_is_recorded(
     *,
     annotated_win: MainWindow,

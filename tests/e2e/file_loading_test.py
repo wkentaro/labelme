@@ -29,7 +29,6 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_MainWindow_open_img(
     *,
     main_win: MainWinFactory,
@@ -44,7 +43,6 @@ def test_MainWindow_open_img(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_MainWindow_open_json(
     *,
     main_win: MainWinFactory,
@@ -67,7 +65,6 @@ def test_MainWindow_open_json(
         close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("scenario", ["raw", "annotated", "annotated_nested"])
 def test_MainWindow_open_dir(
     *,
@@ -132,7 +129,6 @@ def test_MainWindow_open_dir(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_reopening_directory_preserves_session_when_first_image_fails(
     *,
     main_win: MainWinFactory,
@@ -162,7 +158,6 @@ def test_reopening_directory_preserves_session_when_first_image_fails(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("action", "expected_loaded"),
     [("Open Anyway", True), ("Enter", False)],
@@ -232,7 +227,6 @@ def test_MainWindow_prompts_when_image_exceeds_decode_limit(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("open_via", ["image", "label"])
 def test_MainWindow_rejects_oversized_image_from_header_instantly(
     *,
@@ -283,7 +277,6 @@ def test_MainWindow_rejects_oversized_image_from_header_instantly(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("open_via", ["image", "label"])
 def test_MainWindow_opens_wide_image_within_decode_limit(
     *,
@@ -314,7 +307,6 @@ def test_MainWindow_opens_wide_image_within_decode_limit(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("invalid_shape", "error_field"),
     [
@@ -413,7 +405,6 @@ def choose_candidate_output_dir(
     return candidate_dir
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("failure", "navigation"),
     [
@@ -498,7 +489,6 @@ def test_failed_navigation_preserves_current_session(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_navigation_restores_selected_source_item(
     *,
     main_win: MainWinFactory,
@@ -532,7 +522,6 @@ def test_failed_navigation_restores_selected_source_item(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("use_output_dir", [False, True])
 def test_auto_save_uses_source_image_when_embedded_path_differs(
     *,
@@ -573,7 +562,6 @@ def test_auto_save_uses_source_image_when_embedded_path_differs(
     assert critical_messages == []
 
 
-@pytest.mark.gui
 def test_direct_image_open_preserves_source_selection(
     *,
     main_win: MainWinFactory,
@@ -614,7 +602,6 @@ def test_direct_image_open_preserves_source_selection(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_navigation_restores_filtered_out_selection(
     *,
     main_win: MainWinFactory,
@@ -643,7 +630,6 @@ def test_failed_navigation_restores_filtered_out_selection(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_navigation_refreshes_title_after_saving(
     *,
     main_win: MainWinFactory,
@@ -678,7 +664,6 @@ def test_failed_navigation_refreshes_title_after_saving(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("hide_active_image", [False, True])
 def test_prompt_output_dir_rejects_corrupt_annotation(
     *,
@@ -720,7 +705,6 @@ def test_prompt_output_dir_rejects_corrupt_annotation(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_prompt_output_dir_loads_candidate_before_committing(
     *,
     main_win: MainWinFactory,
@@ -758,7 +742,6 @@ def test_prompt_output_dir_loads_candidate_before_committing(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_load_of_dropped_image_preserves_current_session(
     *,
     main_win: MainWinFactory,
@@ -798,7 +781,6 @@ def test_failed_load_of_dropped_image_preserves_current_session(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_open_dir_with_failing_first_image_keeps_other_images_reachable(
     *,
     main_win: MainWinFactory,
@@ -838,7 +820,6 @@ def test_open_dir_with_failing_first_image_keeps_other_images_reachable(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("configured", [None, [], ["new", "shared", "new"]])
 def test_image_flags_survive_save_and_navigation(
     *,
@@ -887,7 +868,6 @@ def test_image_flags_survive_save_and_navigation(
     assert not win._is_changed
 
 
-@pytest.mark.gui
 def test_opening_one_image_prefetches_its_folder_neighbors(
     *,
     main_win: MainWinFactory,
@@ -911,7 +891,6 @@ def test_opening_one_image_prefetches_its_folder_neighbors(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_image_opens_with_annotation_recording_a_stale_image_path(
     *,
     main_win: MainWinFactory,
@@ -948,7 +927,6 @@ def test_image_opens_with_annotation_recording_a_stale_image_path(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_MainWindow_applies_image_decode_limit_from_config(
     *,
     main_win: MainWinFactory,
@@ -998,7 +976,6 @@ def prompt_answerer() -> Iterator[_PromptAnswerer]:
     stop()
 
 
-@pytest.mark.gui
 def test_MainWindow_cancel_on_large_tiff_prompts_before_decoding(
     *,
     raw_win: MainWindow,
@@ -1026,7 +1003,6 @@ def test_MainWindow_cancel_on_large_tiff_prompts_before_decoding(
     assert raw_win._annotation is annotation_before
 
 
-@pytest.mark.gui
 def test_MainWindow_open_anyway_on_large_tiff_prompts_once(
     *,
     raw_win: MainWindow,
@@ -1049,7 +1025,6 @@ def test_MainWindow_open_anyway_on_large_tiff_prompts_once(
     assert QtGui.QImageReader.allocationLimit() == 1
 
 
-@pytest.mark.gui
 def test_MainWindow_open_anyway_on_label_of_large_image_prompts_once(
     *,
     raw_win: MainWindow,
@@ -1086,7 +1061,6 @@ def test_MainWindow_open_anyway_on_label_of_large_image_prompts_once(
     assert loaded is True
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("stored_image_path", ["gone.jpg", "only.json"])
 def test_auto_save_keeps_embedded_image_without_an_image_file(
     *,

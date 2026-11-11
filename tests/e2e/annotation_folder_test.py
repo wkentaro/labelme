@@ -26,7 +26,6 @@ def _choose_folder(*, monkeypatch: pytest.MonkeyPatch, folder: Path) -> None:
     )
 
 
-@pytest.mark.gui
 def test_annotation_folder_is_restored_for_opened_folder(
     *,
     main_win: MainWinFactory,
@@ -59,7 +58,6 @@ def test_annotation_folder_is_restored_for_opened_folder(
     assert image._output_dir is None
 
 
-@pytest.mark.gui
 def test_cli_output_wins_and_is_remembered(
     *,
     main_win: MainWinFactory,
@@ -84,7 +82,6 @@ def test_cli_output_wins_and_is_remembered(
     assert reopened._output_dir == cli
 
 
-@pytest.mark.gui
 def test_cli_output_that_does_not_exist_yet_is_used(
     *,
     main_win: MainWinFactory,
@@ -98,7 +95,6 @@ def test_cli_output_that_does_not_exist_yet_is_used(
     assert cli.is_dir()
 
 
-@pytest.mark.gui
 def test_missing_annotation_folder_falls_back_next_to_images(
     *,
     main_win: MainWinFactory,
@@ -121,7 +117,6 @@ def test_missing_annotation_folder_falls_back_next_to_images(
     }
 
 
-@pytest.mark.gui
 def test_annotation_folder_menu_needs_an_opened_folder(
     *,
     main_win: MainWinFactory,
@@ -144,7 +139,6 @@ def test_annotation_folder_menu_needs_an_opened_folder(
     assert not footer.isVisibleTo(win)
 
 
-@pytest.mark.gui
 def test_cli_output_stays_with_its_folder(
     *,
     main_win: MainWinFactory,
@@ -163,7 +157,6 @@ def test_cli_output_stays_with_its_folder(
     assert str(data_path / "annotated") not in win._remembered_output_dirs()
 
 
-@pytest.mark.gui
 def test_failed_folder_open_keeps_each_image_on_its_own_annotation_folder(
     *,
     main_win: MainWinFactory,
@@ -208,7 +201,6 @@ def test_failed_folder_open_keeps_each_image_on_its_own_annotation_folder(
     assert win.current_label_file_path() == str(second_folder / "02-valid.json")
 
 
-@pytest.mark.gui
 def test_failed_parent_folder_open_keeps_open_subfolder_image_destination(
     *,
     main_win: MainWinFactory,
@@ -245,7 +237,6 @@ def test_failed_parent_folder_open_keeps_open_subfolder_image_destination(
     assert win.current_label_file_path() == str(sub_folder / "02-valid.json")
 
 
-@pytest.mark.gui
 def test_unsaved_changes_save_before_the_annotation_folder_switches(
     *,
     main_win: MainWinFactory,
@@ -311,7 +302,6 @@ def _check_states(*, win: MainWindow) -> list[Qt.CheckState]:
     return [file_list.item(i).checkState() for i in range(file_list.count())]
 
 
-@pytest.mark.gui
 def test_annotation_folder_footer_follows_changes(
     *,
     main_win: MainWinFactory,
@@ -342,7 +332,6 @@ def test_annotation_folder_footer_follows_changes(
     assert win._window_state.value(ANNOTATION_FOLDERS_KEY) == {}
 
 
-@pytest.mark.gui
 def test_next_to_images_keeps_annotation_folder_when_unsaved_changes_are_kept(
     *,
     main_win: MainWinFactory,
@@ -361,7 +350,6 @@ def test_next_to_images_keeps_annotation_folder_when_unsaved_changes_are_kept(
     assert not _menu_action(win=win, text="Next to Images").isChecked()
 
 
-@pytest.mark.gui
 def test_missing_annotation_folder_warns_in_footer_until_changed(
     *,
     main_win: MainWinFactory,
@@ -382,7 +370,6 @@ def test_missing_annotation_folder_warns_in_footer_until_changed(
     assert _footer_text(win=win) == "3 of 3 annotated · next to images"
 
 
-@pytest.mark.gui
 def test_missing_folder_warning_survives_a_refused_folder(
     *,
     main_win: MainWinFactory,
@@ -411,7 +398,6 @@ def test_missing_folder_warning_survives_a_refused_folder(
     assert _footer_text(win=win) == "Not found: unmounted · next to images"
 
 
-@pytest.mark.gui
 def test_missing_folder_warning_survives_a_failed_open(
     *,
     main_win: MainWinFactory,
@@ -437,7 +423,6 @@ def test_missing_folder_warning_survives_a_failed_open(
     assert _footer_text(win=win) == "Not found: unmounted · next to images"
 
 
-@pytest.mark.gui
 def test_footer_counts_annotated_images(
     *,
     main_win: MainWinFactory,
@@ -463,7 +448,6 @@ def test_footer_counts_annotated_images(
     assert _footer_text(win=win) == "1 of 3 annotated in out"
 
 
-@pytest.mark.gui
 def test_footer_is_hidden_without_images(
     *, main_win: MainWinFactory, data_path: Path, tmp_path: Path
 ) -> None:
@@ -485,7 +469,6 @@ def test_footer_is_hidden_without_images(
     assert not footer.isVisibleTo(win)
 
 
-@pytest.mark.gui
 def test_footer_counts_saves_and_deletes_of_a_hidden_image(
     *,
     main_win: MainWinFactory,
@@ -515,7 +498,6 @@ def test_footer_counts_saves_and_deletes_of_a_hidden_image(
     assert _footer_text(win=win) == "0 of 3 annotated in out"
 
 
-@pytest.mark.gui
 def test_footer_recounts_once_per_save(
     *,
     main_win: MainWinFactory,
@@ -549,7 +531,6 @@ def test_footer_recounts_once_per_save(
     assert counts == [(3, 3)]
 
 
-@pytest.mark.gui
 def test_images_sharing_a_stem_keep_their_own_annotation_files(
     *,
     main_win: MainWinFactory,
@@ -605,7 +586,6 @@ def test_images_sharing_a_stem_keep_their_own_annotation_files(
     win.mark_clean()
 
 
-@pytest.mark.gui
 def test_same_named_images_in_subfolders_keep_separate_annotations(
     *,
     main_win: MainWinFactory,
@@ -641,7 +621,6 @@ def test_same_named_images_in_subfolders_keep_separate_annotations(
     assert _check_states(win=win) == [Qt.CheckState.Checked] * 2
 
 
-@pytest.mark.gui
 def test_opened_image_resolves_against_its_own_folder(
     *,
     main_win: MainWinFactory,

@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Final
 
 import pytest
+from PySide6 import QtCore
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
@@ -65,7 +66,6 @@ def _raw_auto_save_win(
     return win
 
 
-@pytest.mark.gui
 def test_auto_save_on_shape_move(
     *,
     qtbot: QtBot,
@@ -94,7 +94,6 @@ def test_auto_save_on_shape_move(
     close_or_pause(qtbot=qtbot, widget=_auto_save_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -155,7 +154,6 @@ def test_enabling_auto_save_on_dirty_annotation_clears_dirty_state(
     assert not prompt_shown
 
 
-@pytest.mark.gui
 def test_auto_save_on_undo(
     *,
     qtbot: QtBot,
@@ -192,7 +190,6 @@ def test_auto_save_on_undo(
     close_or_pause(qtbot=qtbot, widget=_auto_save_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_auto_save_on_undo_of_first_shape(
     *,
     qtbot: QtBot,
@@ -228,7 +225,6 @@ def test_auto_save_on_undo_of_first_shape(
     close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -339,7 +335,6 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
     close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_auto_save_stays_nonmodal_after_target_changes(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -419,3 +414,49 @@ def test_failed_auto_save_stays_nonmodal_after_target_changes(
     )
 
     close_or_pause(qtbot=qtbot, widget=_raw_auto_save_win, pause=pause)
+
+
+def test_auto_save_checks_the_existing_file_off_the_gui_thread(
+    *, _auto_save_win: MainWindow, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    win = _auto_save_win
+    win.mark_dirty()
+    qtbot.waitUntil(lambda: not win._is_changed)
+    original = labelme._save_request.label_file_belongs_to_image
+    on_gui_thread: list[bool] = []
+
+    def record(*, label_path: Path, image_path: str, cached: bool) -> bool:
+        on_gui_thread.append(QtCore.QThread.currentThread() == win.thread())
+        return original(label_path=label_path, image_path=image_path, cached=cached)
+
+    # The check parses the whole Annotation File, embedded image included.
+    monkeypatch.setattr(labelme._save_request, "label_file_belongs_to_image", record)
+
+    win.mark_dirty()
+    qtbot.waitUntil(lambda: not win._is_changed)
+
+    assert on_gui_thread == [False]
+
+
+def test_auto_save_keeps_a_file_replaced_with_another_images_annotations(
+    *, _auto_save_win: MainWindow, qtbot: QtBot
+) -> None:
+    win = _auto_save_win
+    win.mark_dirty()
+    qtbot.waitUntil(lambda: not win._is_changed)
+    assert win._image_path is not None
+    label_path = Path(win.current_label_file_path())
+    # Another program replaces the file with another Image's annotations.
+    other_image = label_path.with_name("other.jpg")
+    other_image.write_bytes(Path(win._image_path).read_bytes())
+    data = json.loads(label_path.read_text())
+    data["imagePath"] = other_image.name
+    replaced = json.dumps(data)
+    label_path.write_text(replaced)
+
+    win.mark_dirty()
+    qtbot.waitUntil(lambda: win._failed_save_path is not None)
+
+    assert "another Image" in win._status_bar.save.toolTip()
+    assert label_path.read_text() == replaced
+    win.mark_clean()

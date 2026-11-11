@@ -3,12 +3,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
-
 from .conftest import MainWinFactory
 
 
-@pytest.mark.gui
 def test_keep_prev_leaves_an_empty_annotation_file_empty(
     *, main_win: MainWinFactory, data_path: Path
 ) -> None:
@@ -36,7 +33,6 @@ def test_keep_prev_leaves_an_empty_annotation_file_empty(
     assert not is_changed
 
 
-@pytest.mark.gui
 def test_keep_prev_carries_shapes_onto_an_image_without_a_file(
     *, main_win: MainWinFactory, data_path: Path
 ) -> None:
@@ -54,7 +50,6 @@ def test_keep_prev_carries_shapes_onto_an_image_without_a_file(
     win.mark_clean()
 
 
-@pytest.mark.gui
 def test_keep_prev_does_not_carry_shapes_onto_the_reloaded_image(
     *, main_win: MainWinFactory, data_path: Path, tmp_path: Path
 ) -> None:

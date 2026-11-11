@@ -14,7 +14,6 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_toggle_all_shapes(
     *,
     qtbot: QtBot,
@@ -47,7 +46,6 @@ def test_toggle_all_shapes(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_toggle_all_shapes_flips_a_selected_group_once(
     *, annotated_win: MainWindow
 ) -> None:
@@ -71,7 +69,6 @@ def test_toggle_all_shapes_flips_a_selected_group_once(
     assert sorted(repainted_rows) == list(range(len(label_list)))
 
 
-@pytest.mark.gui
 def test_toggle_individual_shape(
     *,
     qtbot: QtBot,
@@ -99,7 +96,6 @@ def test_toggle_individual_shape(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_visibility_preserved_when_undoing_unrelated_edit(
     *,
     qtbot: QtBot,
@@ -134,7 +130,6 @@ def test_visibility_preserved_when_undoing_unrelated_edit(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_undo_recovers_accidental_hide(
     *,
     qtbot: QtBot,
@@ -163,7 +158,6 @@ def test_undo_recovers_accidental_hide(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_undoing_a_hide_leaves_the_file_unmodified(
     *,
     qtbot: QtBot,
@@ -188,7 +182,6 @@ def test_undoing_a_hide_leaves_the_file_unmodified(
     assert not win._actions.save.isEnabled()
 
 
-@pytest.mark.gui
 def test_multi_select_toggle_propagates(
     *,
     qtbot: QtBot,
@@ -230,7 +223,6 @@ def test_multi_select_toggle_propagates(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_multi_select_preserves_selection_after_checkbox_click(
     *,
     qtbot: QtBot,
@@ -264,7 +256,6 @@ def test_multi_select_preserves_selection_after_checkbox_click(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_multi_select_collapses_on_row_body_click(
     *,
     qtbot: QtBot,
@@ -292,7 +283,6 @@ def test_multi_select_collapses_on_row_body_click(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_select_all_skips_hidden_shape(
     *,
     qtbot: QtBot,

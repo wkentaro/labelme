@@ -13,7 +13,8 @@ from labelme._automation import Detection
 from labelme._automation import assign_available_group_ids
 from labelme._automation import shapes_from_detections
 from labelme._shape import Shape
-from labelme._utils import shape_to_mask
+
+from ...mask_utils import shape_to_mask
 
 
 def test_shapes_from_detections_rectangle_uses_bbox() -> None:

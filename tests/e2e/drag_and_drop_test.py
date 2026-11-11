@@ -50,7 +50,6 @@ def _send_drop(*, win: MainWindow, mime: QMimeData) -> None:
     QApplication.sendEvent(win, event)
 
 
-@pytest.mark.gui
 def test_drop_image_files_loads_them(
     *,
     qtbot: QtBot,
@@ -80,7 +79,6 @@ def test_drop_image_files_loads_them(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_dropped_image_files_respect_active_search_filter(
     *,
     qtbot: QtBot,
@@ -111,7 +109,6 @@ def test_dropped_image_files_respect_active_search_filter(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_opening_annotation_file_clears_loaded_directory_images(
     *,
     qtbot: QtBot,
@@ -138,7 +135,6 @@ def test_opening_annotation_file_clears_loaded_directory_images(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_drag_enter_rejects_non_image_and_keeps_state(
     *,
     qtbot: QtBot,
@@ -186,7 +182,6 @@ def _count_unsaved_prompts(
     return asked
 
 
-@pytest.mark.gui
 def test_drop_with_unsaved_changes_asks_once_on_discard(
     *,
     qtbot: QtBot,
@@ -210,7 +205,6 @@ def test_drop_with_unsaved_changes_asks_once_on_discard(
     assert dropped.name in win.windowTitle()
 
 
-@pytest.mark.gui
 def test_drop_with_unsaved_changes_adds_nothing_on_cancel(
     *,
     qtbot: QtBot,
@@ -235,7 +229,6 @@ def test_drop_with_unsaved_changes_adds_nothing_on_cancel(
     win.mark_clean()
 
 
-@pytest.mark.gui
 def test_drop_of_an_already_listed_image_does_not_ask(
     *,
     qtbot: QtBot,

@@ -21,7 +21,8 @@ releases; no release automatically requires an announcement.
 
 To release version `X.Y.Z`:
 
-1. Run `uv run towncrier build --yes --version X.Y.Z`.
+1. Run `just release X.Y.Z`, which builds the changelog with towncrier and
+   formats it.
 2. Commit the updated changelog and deleted fragments, then tag that commit.
 
 Pushing the tag publishes to PyPI and creates the GitHub release from the

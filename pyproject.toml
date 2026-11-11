@@ -56,10 +56,14 @@ replacement = '](https://github.com/wkentaro/labelme/blob/main/\1)'
 [tool.hatch.version]
 source = "vcs"
 
+# Generated datasets and README images make up most of examples/; the
+# scripts and their annotated inputs stay, since tests/unit/examples runs them.
+[tool.hatch.build.targets.sdist]
+exclude = ["examples/*/data_dataset_*", "examples/*/.readme"]
+
 [dependency-groups]
 dev = [
   "ipython",
-  "mdformat-frontmatter>=2.0.10",
   "mdformat>=0.7",
   "pytest>=8.3.4",
   "pytest-cov>=7.1.0",
@@ -68,11 +72,11 @@ dev = [
   "ruff~=0.12.11",
   "taplo>=0.9.3",
   "ty>=0.0.31",
-  "types-pillow>=10.2.0.20240822",
   "typos>=1.45.0",
   "yamlfix>=1.19.1",
   "towncrier>=24.8",
   "gruff>=0.2.5",
+  "packaging>=26.1",
 ]
 
 [project.scripts]
@@ -110,7 +114,6 @@ filterwarnings = [
 ]
 qt_api = "pyside6"
 markers = [
-  "gui: mark a test as a GUI test.",
   "network: mark a test that accesses an external network service.",
   "pixel_snapshot: mark a test that compares rendering against a stored pixel snapshot.",
 ]

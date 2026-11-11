@@ -13,7 +13,6 @@ _ROWS: Final = [[HintItem("Add", key="Enter"), HintItem("Discard", key="Esc")]]
 _BOUNDS: Final = QRectF(0, 0, 400, 300)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 @pytest.mark.parametrize(
     ("anchor", "where"),
@@ -41,7 +40,6 @@ def test_place_hint_chip_prefers_below_then_above_then_inside(
         assert rect.bottom() < _BOUNDS.bottom()
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_place_hint_chip_stays_inside_the_side_edges() -> None:
     rect, _ = place_hint_chip(
@@ -51,7 +49,6 @@ def test_place_hint_chip_stays_inside_the_side_edges() -> None:
     assert rect.left() > _BOUNDS.left()
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_place_hint_chip_wraps_a_row_that_is_too_wide() -> None:
     # Either item fits alone, but not both on one line.
@@ -74,7 +71,6 @@ def test_place_hint_chip_wraps_a_row_that_is_too_wide() -> None:
     assert narrow.contains(rect)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 @pytest.mark.parametrize(
     "text",
@@ -103,7 +99,6 @@ def test_place_hint_chip_wraps_inside_an_item_that_is_too_wide(*, text: str) -> 
     assert " ".join(pieces).replace(" ", "") == text.replace(" ", "")
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("qapp")
 def test_place_hint_chip_drops_secondary_rows_when_too_short() -> None:
     rows = [*_ROWS, [HintItem("Click to include")], [HintItem("Click to exclude")]]

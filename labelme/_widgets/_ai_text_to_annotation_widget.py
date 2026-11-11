@@ -54,7 +54,6 @@ class _RunButton(QtWidgets.QToolButton):
 class AiTextToAnnotationWidget(QtWidgets.QWidget):
     model_changed = QtCore.Signal(str)
     thresholds_changed = QtCore.Signal(bool)  # True when off their defaults
-    manage_models_requested = QtCore.Signal()
     download_requested = QtCore.Signal(str)
 
     _default_score_threshold: float = 0.1
@@ -111,7 +110,6 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
         model_combo.setAccessibleName(self.tr("Model"))
         model_combo.setAccessibleDescription(self.tr("AI-Find All model"))
         model_combo.model_changed.connect(self.model_changed)
-        model_combo.manage_requested.connect(self.manage_models_requested)
         model_combo.download_requested.connect(self.download_requested)
 
         self._thresholds = thresholds = QtWidgets.QWidget(self)

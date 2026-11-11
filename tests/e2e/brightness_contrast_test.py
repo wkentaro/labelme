@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pytest
 from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
@@ -11,7 +10,6 @@ from labelme._widgets._brightness_contrast_dialog import BrightnessContrastDialo
 from ..conftest import close_or_pause
 
 
-@pytest.mark.gui
 def test_brightness_contrast_dialog(
     *,
     annotated_win: MainWindow,

@@ -4,7 +4,6 @@ import shutil
 from pathlib import Path
 from typing import Final
 
-import pytest
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
@@ -24,7 +23,6 @@ def _move_first_shape(*, qtbot: QtBot, win: MainWindow) -> None:
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
 
 
-@pytest.mark.gui
 def test_auto_save_writes_the_opened_file_not_the_image_named_one(
     *,
     main_win: MainWinFactory,
@@ -50,7 +48,6 @@ def test_auto_save_writes_the_opened_file_not_the_image_named_one(
     assert image_named.read_bytes() == image_named_before
 
 
-@pytest.mark.gui
 def test_auto_save_writes_the_opened_file_when_its_image_is_elsewhere(
     *,
     main_win: MainWinFactory,
@@ -72,7 +69,6 @@ def test_auto_save_writes_the_opened_file_when_its_image_is_elsewhere(
     assert not beside_image.exists()
 
 
-@pytest.mark.gui
 def test_auto_save_keeps_an_existing_annotation_folder_file(
     *,
     main_win: MainWinFactory,
@@ -101,7 +97,6 @@ def test_auto_save_keeps_an_existing_annotation_folder_file(
     assert in_folder.read_bytes() == in_folder_before
 
 
-@pytest.mark.gui
 def test_save_keeps_the_save_as_destination(
     *,
     main_win: MainWinFactory,
@@ -125,7 +120,6 @@ def test_save_keeps_the_save_as_destination(
     assert opened.read_bytes() == opened_before
 
 
-@pytest.mark.gui
 def test_auto_save_keeps_its_folder_copy_after_a_stale_completion(
     *,
     main_win: MainWinFactory,
@@ -167,7 +161,6 @@ def test_auto_save_keeps_its_folder_copy_after_a_stale_completion(
     assert opened.read_bytes() == opened_before
 
 
-@pytest.mark.gui
 def test_save_makes_the_first_copy_in_the_annotation_folder(
     *,
     main_win: MainWinFactory,

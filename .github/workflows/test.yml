@@ -60,9 +60,8 @@ jobs:
       # sync that uv run performs.
       - name: Install optional example dependencies
         shell: bash
-        if: matrix.os != 'windows-latest'
         run: |
-          uv pip install cython pycocotools
+          uv pip install pycocotools
       # Pixel snapshots skip themselves off Linux (tests/e2e/conftest.py), so
       # one plain invocation runs the right set everywhere.
       - name: Test
@@ -86,8 +85,8 @@ jobs:
           # examples/ must stay self-contained: no labelme imports (#2231)
           ! grep -rnE "import labelme|from labelme" examples/
           (cd examples/primitives && ../tutorial/export_json.py primitives.json && rm -rf primitives)
-          (cd examples/tutorial && rm -rf apc2016_obj3_json && ./export_json.py apc2016_obj3.json && python load_label_png.py && git checkout -- .)
-          (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
+          (cd examples/tutorial && ./export_json.py apc2016_obj3.json && python load_label_png.py && git checkout -- .)
+          (cd examples/semantic_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt --noobject && git checkout -- .)
           (cd examples/instance_segmentation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
           (cd examples/video_annotation && rm -rf data_dataset_voc && ./labelme2voc.py data_annotated data_dataset_voc --labels labels.txt && git checkout -- .)
           uv pip install lxml  # for bbox_detection/labelme2voc.py

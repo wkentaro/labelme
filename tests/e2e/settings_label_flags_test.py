@@ -19,7 +19,6 @@ from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("close_action", ["button", "escape", "window"])
 def test_closing_untouched_shape_flag_settings_preserves_rules_exactly(
     *,
@@ -60,7 +59,6 @@ def test_closing_untouched_shape_flag_settings_preserves_rules_exactly(
     assert win._config["label_flags"] == expected_rules
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("display_popup", [False, True])
 def test_shape_flag_settings_apply_without_changing_existing_annotation(
     *,
@@ -155,7 +153,6 @@ def test_shape_flag_settings_apply_without_changing_existing_annotation(
     assert reopened._config["label_flags"] is None
 
 
-@pytest.mark.gui
 def test_shape_flag_rules_apply_to_copies_without_changing_original(
     *,
     main_win: MainWinFactory,
@@ -217,7 +214,6 @@ def test_shape_flag_rules_apply_to_copies_without_changing_original(
     assert [shape.flags for shape in canvas.shapes] == [copied_flags] * 3
 
 
-@pytest.mark.gui
 def test_invalid_shape_flag_rules_leave_last_valid_config_active(
     *,
     main_win: MainWinFactory,

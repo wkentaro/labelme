@@ -36,7 +36,6 @@ def _delete(*, win: MainWindow, monkeypatch: pytest.MonkeyPatch) -> None:
     win.delete_file()
 
 
-@pytest.mark.gui
 def test_save_as_onto_another_images_annotation_file_checks_neither(
     *,
     main_win: MainWinFactory,
@@ -61,7 +60,6 @@ def test_save_as_onto_another_images_annotation_file_checks_neither(
     assert _checked(win=win) == [False, False, False]
 
 
-@pytest.mark.gui
 def test_first_save_onto_another_images_annotation_file_is_allowed(
     *,
     main_win: MainWinFactory,
@@ -83,7 +81,6 @@ def test_first_save_onto_another_images_annotation_file_is_allowed(
     qtbot.waitUntil(lambda: "2011_000003" in json.loads(other.read_text())["imagePath"])
 
 
-@pytest.mark.gui
 def test_save_as_outside_the_annotation_folder_checks_nothing(
     *,
     main_win: MainWinFactory,
@@ -101,7 +98,6 @@ def test_save_as_outside_the_annotation_folder_checks_nothing(
     assert _checked(win=win) == [False, False, False]
 
 
-@pytest.mark.gui
 def test_deleting_a_save_as_copy_keeps_the_images_checkmark(
     *,
     main_win: MainWinFactory,
@@ -122,7 +118,6 @@ def test_deleting_a_save_as_copy_keeps_the_images_checkmark(
     assert _checked(win=win) == [True, True, True]
 
 
-@pytest.mark.gui
 @pytest.mark.skipif(os.name == "nt", reason="directory symlinks require privileges")
 def test_save_through_a_symlinked_annotation_folder_checks_the_image(
     *,
@@ -148,7 +143,6 @@ def test_save_through_a_symlinked_annotation_folder_checks_the_image(
     assert _checked(win=win) == [False, False, False]
 
 
-@pytest.mark.gui
 def test_save_whose_name_differs_only_in_case_checks_the_image(
     *,
     main_win: MainWinFactory,
@@ -174,7 +168,6 @@ def test_save_whose_name_differs_only_in_case_checks_the_image(
     assert _checked(win=win) == [False, False, False]
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("image_name", "saved_name"),
     [("..jpg", "..json"), ("café.jpg", "café.json")],

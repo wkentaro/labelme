@@ -18,7 +18,6 @@ from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 @pytest.mark.skipif(os.name == "nt", reason="directory symlinks require privileges")
 @pytest.mark.parametrize("use_image_alias", [False, True])
 def test_save_through_directory_alias_reopens_source_image(
@@ -60,7 +59,6 @@ def test_save_through_directory_alias_reopens_source_image(
     assert read_label_file(filename=str(label_path)).image_data == image_data
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     "set_fit_mode",
     [MainWindow.set_fit_window_mode],
@@ -87,7 +85,6 @@ def test_close_file(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("gesture", ["click", "double_click", "activate"])
 def test_reopen_closed_image_from_current_row(
     *,
@@ -125,7 +122,6 @@ def test_reopen_closed_image_from_current_row(
     assert len(win._annotation.shapes) == n_shapes
 
 
-@pytest.mark.gui
 def test_delete_label_file(
     *,
     main_win: MainWinFactory,
@@ -166,7 +162,6 @@ def test_delete_label_file(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_delete_label_file_drops_its_flags_and_extra_keys(
     *,
     main_win: MainWinFactory,
@@ -199,7 +194,6 @@ def test_delete_label_file_drops_its_flags_and_extra_keys(
     assert not win._is_changed
 
 
-@pytest.mark.gui
 def test_delete_label_file_keeps_image(
     *,
     main_win: MainWinFactory,
@@ -233,7 +227,6 @@ def test_delete_label_file_keeps_image(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_delete_preserves_annotation_and_reports_error(
     *,
     annotated_win: MainWindow,
@@ -266,7 +259,6 @@ def test_failed_delete_preserves_annotation_and_reports_error(
     annotated_win.mark_clean()
 
 
-@pytest.mark.gui
 def test_delete_file_respects_output_dir(
     *,
     main_win: MainWinFactory,
@@ -308,7 +300,6 @@ def test_delete_file_respects_output_dir(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_current_label_file_path_prefers_opened_file(
     *,
     main_win: MainWinFactory,
@@ -331,7 +322,6 @@ def test_current_label_file_path_prefers_opened_file(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_undo_after_delete_file_does_not_restore_shapes(
     *,
     main_win: MainWinFactory,

@@ -140,7 +140,6 @@ def _save_and_check(
     assert_labelfile_sanity(label_path)
 
 
-@pytest.mark.gui
 def test_move_shape_by_drag(
     *,
     qtbot: QtBot,
@@ -169,7 +168,6 @@ def test_move_shape_by_drag(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_move_vertex_by_drag(
     *,
     qtbot: QtBot,
@@ -198,7 +196,6 @@ def test_move_vertex_by_drag(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("key", "expected_dx", "expected_dy"),
     [
@@ -234,7 +231,6 @@ def test_move_shape_by_arrow_key(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_select_all_shapes_from_canvas(
     *,
     qtbot: QtBot,
@@ -255,7 +251,6 @@ def test_select_all_shapes_from_canvas(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_add_point_on_edge(
     *,
     qtbot: QtBot,
@@ -310,7 +305,6 @@ def test_add_point_on_edge(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("via_action", [False, True], ids=["alt-click", "action"])
 def test_linestrip_only_adds_points_on_drawn_edges(
     *, qtbot: QtBot, raw_win: MainWindow, pause: bool, via_action: bool
@@ -370,7 +364,6 @@ def test_linestrip_only_adds_points_on_drawn_edges(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_add_point_via_context_menu_action(
     *,
     qtbot: QtBot,
@@ -398,7 +391,6 @@ def test_add_point_via_context_menu_action(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_remove_point_from_shape(
     *,
     qtbot: QtBot,
@@ -422,7 +414,6 @@ def test_remove_point_from_shape(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("remove_index", [1, 4])
 def test_remove_point_does_not_drag_adjacent(
     *,
@@ -464,7 +455,6 @@ def test_remove_point_does_not_drag_adjacent(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_mode_actions_check_only_active_mode(
     *,
     annotated_win: MainWindow,
@@ -508,7 +498,6 @@ def test_mode_actions_check_only_active_mode(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_cancel_drawing_with_escape(
     *,
     qtbot: QtBot,
@@ -536,7 +525,6 @@ def test_cancel_drawing_with_escape(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_undo_last_point_while_drawing(
     *,
     qtbot: QtBot,
@@ -585,7 +573,6 @@ def test_undo_last_point_while_drawing(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_finalize_polygon_with_enter(
     *,
     qtbot: QtBot,
@@ -618,7 +605,6 @@ def test_finalize_polygon_with_enter(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_undo_shape_creation(
     *,
     qtbot: QtBot,
@@ -656,7 +642,6 @@ def test_undo_shape_creation(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     (
         "create_mode",
@@ -743,7 +728,6 @@ def test_select_nonpolygon_shape(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_cancel_label_reopens_shape(
     *,
     qtbot: QtBot,
@@ -772,7 +756,6 @@ def test_cancel_label_reopens_shape(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     (
         "create_mode",
@@ -850,7 +833,6 @@ def _click_to_select(*, qtbot: QtBot, canvas: Canvas, image_pos: QPointF) -> Non
     qtbot.wait(50)
 
 
-@pytest.mark.gui
 def test_select_point_shape_by_click(
     *,
     qtbot: QtBot,
@@ -881,7 +863,6 @@ def test_select_point_shape_by_click(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_right_click_on_shape_opens_context_menu(
     *,
     qtbot: QtBot,
@@ -909,7 +890,6 @@ def test_right_click_on_shape_opens_context_menu(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_double_click_on_shape_edits_label(
     *,
     qtbot: QtBot,
@@ -942,7 +922,6 @@ def test_double_click_on_shape_edits_label(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_select_mask_shape_by_click(
     *,
     main_win: MainWinFactory,
@@ -1007,7 +986,6 @@ def test_select_mask_shape_by_click(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_square_creation_resize_save_and_reopen(
     *,
     qtbot: QtBot,

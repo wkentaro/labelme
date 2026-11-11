@@ -49,7 +49,6 @@ def _enter_label(
     qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("flag_to_toggle", "expected_flags"),
     [
@@ -99,7 +98,6 @@ def test_label_flags_applied_to_shape(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_enabled_flags_shown_in_label_list(
     *,
     main_win: MainWinFactory,
@@ -142,7 +140,6 @@ def test_enabled_flags_shown_in_label_list(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_flags_survive_retyping_the_label(
     *,
     main_win: MainWinFactory,
@@ -199,7 +196,6 @@ def test_flags_survive_retyping_the_label(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_flags_survive_save_reload_roundtrip(
     *,
     main_win: MainWinFactory,

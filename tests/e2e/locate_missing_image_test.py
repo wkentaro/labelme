@@ -63,7 +63,6 @@ def _answer_dialog_and_file_chooser(
     QTimer.singleShot(0, answer)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("auto_save", [False, True], ids=["manual", "auto-save"])
 @pytest.mark.parametrize("subfolder", ["", "moved"], ids=["beside", "subfolder"])
 def test_locating_image_repairs_reference_and_opens_clean(
@@ -103,7 +102,6 @@ def test_locating_image_repairs_reference_and_opens_clean(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("locate", [False, True], ids=["dialog", "file-chooser"])
 def test_cancelling_locate_keeps_session_and_annotation_file(
     *,
@@ -129,7 +127,6 @@ def test_cancelling_locate_keeps_session_and_annotation_file(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_locating_image_of_another_size_is_refused(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -157,7 +154,6 @@ def test_locating_image_of_another_size_is_refused(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_failed_repair_write_reports_the_annotation_file(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -191,7 +187,6 @@ def test_failed_repair_write_reports_the_annotation_file(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_located_image_is_not_written_when_annotation_is_invalid(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -222,7 +217,6 @@ def test_located_image_is_not_written_when_annotation_is_invalid(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_located_image_is_not_written_when_large_image_is_declined(
     *,
     monkeypatch: pytest.MonkeyPatch,

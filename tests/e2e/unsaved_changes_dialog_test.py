@@ -75,7 +75,6 @@ def _dir_win_no_autosave(
     return win
 
 
-@pytest.mark.gui
 def test_close_with_unsaved_changes_cancel_keeps_window_open(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -100,7 +99,6 @@ def test_close_with_unsaved_changes_cancel_keeps_window_open(
     close_or_pause(qtbot=qtbot, widget=_raw_win_no_autosave, pause=pause)
 
 
-@pytest.mark.gui
 def test_close_choose_save_writes_json_and_closes(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -130,7 +128,6 @@ def test_close_choose_save_writes_json_and_closes(
     assert [shape["label"] for shape in saved["shapes"]] == ["cat"]
 
 
-@pytest.mark.gui
 def test_close_choose_save_but_cancel_save_dialog_keeps_window_open(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -158,7 +155,6 @@ def test_close_choose_save_but_cancel_save_dialog_keeps_window_open(
     close_or_pause(qtbot=qtbot, widget=_raw_win_no_autosave, pause=pause)
 
 
-@pytest.mark.gui
 def test_close_choose_save_but_write_fails_keeps_window_open(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -191,7 +187,6 @@ def test_close_choose_save_but_write_fails_keeps_window_open(
     close_or_pause(qtbot=qtbot, widget=_raw_win_no_autosave, pause=pause)
 
 
-@pytest.mark.gui
 def test_close_choose_discard_no_json_window_closes(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -214,7 +209,6 @@ def test_close_choose_discard_no_json_window_closes(
     assert not expected_json.exists()
 
 
-@pytest.mark.gui
 def test_navigate_with_unsaved_changes_shows_prompt(
     *,
     monkeypatch: pytest.MonkeyPatch,
@@ -243,7 +237,6 @@ def test_navigate_with_unsaved_changes_shows_prompt(
     close_or_pause(qtbot=qtbot, widget=_dir_win_no_autosave, pause=pause)
 
 
-@pytest.mark.gui
 def test_close_clean_window_no_prompt(
     *,
     monkeypatch: pytest.MonkeyPatch,
