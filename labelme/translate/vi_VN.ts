@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Nhấn và kéo để xoay hình dạng</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Nhấn điểm thứ nhất trên chu vi cho hình tròn</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Nhấn điểm thứ hai trên chu vi cho hình tròn</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Nhấn điểm thứ ba trên chu vi để hoàn tất hình tròn</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1226,6 +1238,14 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Chỉ phát hiện khung. Chuyển sang Hình chữ nhật để dùng mô hình này.</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>Hình tròn (3 điểm)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Bắt đầu vẽ hình tròn bằng 3 điểm</translation>
     </message>
 </context>
 <context>

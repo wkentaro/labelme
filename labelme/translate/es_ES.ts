@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Haz clic y arrastra para rotar la forma</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Haz clic en el primer punto de la circunferencia del círculo</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Haz clic en el segundo punto de la circunferencia del círculo</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Haz clic en el tercer punto de la circunferencia para terminar el círculo</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1226,6 +1238,14 @@ Ubicación esperada: {path}</translation>
     <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Solo detecta recuadros. Cambia a «Rectángulo» para usar este modelo.</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>Círculo (3 puntos)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Empezar a dibujar círculos con 3 puntos</translation>
     </message>
 </context>
 <context>

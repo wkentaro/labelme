@@ -75,7 +75,7 @@ def _is_title_case(*, text: str) -> bool:
         if 0 < index < len(words) - 1 and word.lower() in _MINOR_WORDS:
             if word != word.lower():
                 return False
-        elif not word[0].isupper():
+        elif not (word[0].isupper() or word[0].isdigit()):
             return False
     return True
 
@@ -86,6 +86,7 @@ def _is_title_case(*, text: str) -> bool:
         ("Fit to Window", True),
         ("Select Shape to the Left", True),
         ("Save As…", True),
+        ("3-Point Circle", True),
         ("Keep Previous Brightness/Contrast", True),
         ("Copy To Clipboard", False),
         ("Zoom in", False),
