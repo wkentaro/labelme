@@ -2126,6 +2126,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _build_unique_label_list_menu(self, *, point: QtCore.QPoint) -> QtWidgets.QMenu:
         menu = QtWidgets.QMenu(self)
+        # Lets the disabled Remove item say why it is disabled.
+        menu.setToolTipsVisible(True)
         unused_labels = self._unused_unique_labels()
         item = self._docks.unique_label_list.itemAt(point)
         # Settings owns the predefined labels, so none is removable here.
