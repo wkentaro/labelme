@@ -89,6 +89,7 @@ class ShapeRenderContext:
     highlight: VertexHighlight | None
     rotation_highlight: VertexHighlight | None
     show_label: bool = False
+    show_vertices: bool = True
     line_style: QtCore.Qt.PenStyle = QtCore.Qt.PenStyle.SolidLine
     # A mask is filled even when fill is off, as every unselected mask Shape
     # is; False draws its contour alone.
@@ -443,9 +444,12 @@ def _build_shape_points_paths(
     ):
         return paths
     for i in range(len(points)):
-        _append_shape_vertex(
-            vertices=paths.vertices, shape=shape, context=context, vertex_index=i
-        )
+        if context.show_vertices or (
+            context.highlight is not None and context.highlight.index == i
+        ):
+            _append_shape_vertex(
+                vertices=paths.vertices, shape=shape, context=context, vertex_index=i
+            )
     if (
         shape.shape_type == "oriented_rectangle"
         and len(points) == ORIENTED_RECTANGLE_POINT_COUNT

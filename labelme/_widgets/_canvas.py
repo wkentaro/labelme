@@ -15,6 +15,7 @@ from typing import cast
 from typing import override
 
 import numpy as np
+import skimage.measure
 from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -343,6 +344,8 @@ class Canvas(QtWidgets.QWidget):
 
     _prev_point: QPointF
     _prev_move_point: QPointF
+    # The index the press adds its vertex at and its widget position.
+    _stroke_press: tuple[int, QPointF] | None
     _drag_anchor: _DragAnchor | None
     _rotation_center: np.ndarray
     _rotation_initial_angle: float
@@ -582,6 +585,8 @@ class Canvas(QtWidgets.QWidget):
             fill=fill,
             highlight=highlight,
             rotation_highlight=rotation_highlight,
+            # Markers would bury a stroke being drawn under its samples.
+            show_vertices=self._stroke_press is None,
         )
 
     @property
@@ -635,6 +640,7 @@ class Canvas(QtWidgets.QWidget):
         if new_mode == self._create_mode:
             return False
         old_mode = self._create_mode
+        self._stroke_press = None
         # Update the mode before reconciling so any signals fired from a cancel
         # observe the new mode rather than the one being left behind.
         self._create_mode = new_mode
@@ -1309,16 +1315,59 @@ class Canvas(QtWidgets.QWidget):
                     self._line, shape_type=desired_line_shape_type
                 )
         self._apply_cursor(role=CursorRole.DRAW)
+        is_left_held = bool(event.buttons() & Qt.MouseButton.LeftButton)
+        if self._stroke_press is not None and not is_left_held:
+            # The release went elsewhere, e.g. while a modal dialog was open.
+            self._end_held_stroke()
         if self._current is None:
             self.update()
             self._update_status(extra_messages=None)
             return
+        if self.create_mode == "polygon":
+            self._clear_highlight_state()
         is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
+        if self._stroke_press is not None:
+            self._extend_stroke(
+                pos=self._stroke_sample(pos=pos), widget_pos=event.position()
+            )
         pos = self._project_drawing_pos_into_image(pos=pos)
         self._update_drawing_line(pos=pos, is_shift_pressed=is_shift_pressed)
         assert len(self._line.points) == len(self._line.point_labels)
         self.update()
         self._update_status(extra_messages=None)
+
+    def _stroke_sample(self, *, pos: QPointF) -> QPointF:
+        # Clamped on its own, so a sample does not depend on the one before.
+        if self._should_constrain_to_pixmap(point=pos):
+            return _clamp_into_image(point=pos, image_size=self.pixmap.size())
+        return pos
+
+    def _end_held_stroke(self) -> bool:
+        # Ends the stroke where it last moved, as a release there would, and
+        # returns whether that finalized the polygon.
+        assert self._stroke_press is not None
+        finalized = self._current is not None and self._end_stroke(
+            pos=self._current.points[-1], widget_pos=self._stroke_press[1]
+        )
+        self._stroke_press = None
+        self.update()
+        return finalized
+
+    def _extend_stroke(self, *, pos: QPointF, widget_pos: QPointF) -> bool:
+        # Returns False while the press is still a click.
+        DRAG_START_DISTANCE_PIXELS: Final = 4.0
+        current = self._current
+        assert current is not None and self._stroke_press is not None
+        start_index, press_widget_pos = self._stroke_press
+        if (
+            len(current.points) == start_index + 1
+            and QtCore.QLineF(press_widget_pos, widget_pos).length()
+            < DRAG_START_DISTANCE_PIXELS
+        ):
+            return False
+        if pos != current.points[-1]:
+            self._current = current.add_point(point=pos)
+        return True
 
     def _track_ai_segment_cursor(
         self, *, pos: QPointF, event: QtGui.QMouseEvent
@@ -1390,7 +1439,7 @@ class Canvas(QtWidgets.QWidget):
         if self.create_mode != "polygon":
             return False
         current = self._current
-        if current is None or len(current.points) <= 1:
+        if current is None or len(current.points) < MIN_POLYGON_POINT_COUNT:
             return False
         origin = current.points[0]
         return _canvas_interaction.is_within_pick_threshold(
@@ -1715,6 +1764,14 @@ class Canvas(QtWidgets.QWidget):
     def _press_left(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
         is_shift_pressed = bool(event.modifiers() & Qt.KeyboardModifier.ShiftModifier)
         if self.mode == _CanvasMode.CREATE:
+            self._stroke_press = (
+                (
+                    len(self._current.points) if self._current is not None else 0,
+                    event.position(),
+                )
+                if self.create_mode in POLYLINE_SHAPE_TYPES
+                else None
+            )
             self._press_left_while_drawing(
                 pos=pos, event=event, is_shift_pressed=is_shift_pressed
             )
@@ -1736,6 +1793,9 @@ class Canvas(QtWidgets.QWidget):
             self._press_ai_segment(pos=pos, event=event)
             return
         if self._current is not None:
+            if self.create_mode in POLYLINE_SHAPE_TYPES:
+                pos = self._project_drawing_pos_into_image(pos=pos)
+                self._update_drawing_line(pos=pos, is_shift_pressed=is_shift_pressed)
             self._extend_current_shape(current=self._current, event=event)
             return
         self._start_new_shape(pos=pos, is_shift_pressed=is_shift_pressed)
@@ -1963,10 +2023,62 @@ class Canvas(QtWidgets.QWidget):
         self._is_pointer_held = a0.buttons() != Qt.MouseButton.NoButton
         if self.is_ai_finalizing:
             return
+        if a0.button() == Qt.MouseButton.LeftButton and self._stroke_press is not None:
+            if self.mode == _CanvasMode.CREATE and self._current is not None:
+                pos = self._stroke_sample(
+                    pos=self.transform_widget_point_to_image(point=a0.position())
+                )
+                self._end_stroke(pos=pos, widget_pos=a0.position())
+            self._stroke_press = None
+            # Bring back the vertex markers the press hid.
+            self.update()
         self._dispatch_pointer_release(event=a0)
         self._commit_pending_shape_move()
         self._drag_anchor = None
         self._update_status(extra_messages=None)
+
+    def _end_stroke(self, *, pos: QPointF, widget_pos: QPointF) -> bool:
+        # Returns whether the stroke closed and finalized the polygon.
+        close_polygon = self._cursor_should_snap_to_polygon_origin(pos=pos)
+        if not self._extend_stroke(pos=pos, widget_pos=widget_pos):
+            return False
+        current = self._current
+        assert current is not None and self._stroke_press is not None
+        start_index = self._stroke_press[0]
+        if (
+            start_index > 0
+            and current.points[start_index] == current.points[start_index - 1]
+        ):
+            # The press resumed on the last vertex: stroke on from it.
+            start_index -= 1
+        head, stroke = current.points[:start_index], current.points[start_index:]
+        open_points = head + _simplify_stroke(stroke=stroke, scale=self.scale)
+        # The release snaps onto the origin: simplify the stroke as ending there,
+        # so samples along the closing edge go and corners stay.
+        closed_points = (
+            head
+            + _simplify_stroke(
+                stroke=stroke[:-1] + current.points[:1], scale=self.scale
+            )[:-1]
+        )
+        closed = dataclasses.replace(
+            current,
+            points=closed_points,
+            point_labels=current.point_labels[: len(closed_points)],
+        )
+        # Too few corners to close: keep the stroke open where it was released.
+        if close_polygon and not _is_degenerate_draft(draft=closed):
+            self._current = closed
+            self._finalize()
+            return True
+        self._current = dataclasses.replace(
+            current,
+            points=open_points,
+            point_labels=current.point_labels[: len(open_points)],
+        )
+        self._update_drawing_line(pos=pos, is_shift_pressed=False)
+        self.update()
+        return False
 
     def _dispatch_pointer_release(self, *, event: QtGui.QMouseEvent) -> None:
         button = event.button()
@@ -2938,6 +3050,7 @@ class Canvas(QtWidgets.QWidget):
         self._reset_after_shape_creation()
 
     def _reset_after_shape_creation(self) -> None:
+        self._stroke_press = None
         self._current = None
         # new_shape's handler blocks on the modal label dialog, so paint the
         # committed shape synchronously first. Some modes, including point and
@@ -2947,6 +3060,7 @@ class Canvas(QtWidgets.QWidget):
         self.update()
 
     def _cancel_current_shape(self) -> None:
+        self._stroke_press = None
         self._current = None
         self._ai_segment_press = None
         self._ai_segment_dragging = False
@@ -3069,7 +3183,10 @@ class Canvas(QtWidgets.QWidget):
             elif (
                 key in (Qt.Key.Key_Return, Qt.Key.Key_Space) and self._can_close_shape()
             ):
-                self._finalize()
+                finalized = self._stroke_press is not None and self._end_held_stroke()
+                # A cancelled label dialog restores the draft it finalized.
+                if not finalized and self._can_close_shape():
+                    self._finalize()
             elif modifiers == Qt.KeyboardModifier.AltModifier:
                 self._snapping = False
         elif self.mode == _CanvasMode.EDIT:
@@ -3182,6 +3299,8 @@ class Canvas(QtWidgets.QWidget):
                 self._cancel_current_shape()
             self.update()
             return
+        # Undo ends a stroke in progress: its anchor may be the point removed.
+        self._stroke_press = None
         current = current.pop_point()
         self._current = current
         if len(current.points) > 0:
@@ -3272,6 +3391,7 @@ class Canvas(QtWidgets.QWidget):
         self.pixmap = QtGui.QPixmap()
         self._pixmap_rgb = None
         self._drag_anchor = None
+        self._stroke_press = None
         self.shapes = []
         self.shape_backups = collections.deque(maxlen=self._num_backups)
         self._is_moving_shape = False
@@ -3292,6 +3412,16 @@ class Canvas(QtWidgets.QWidget):
         # The draft and any pending AI job are gone with the old image.
         self.busy_changed.emit()
         self.update()
+
+
+def _simplify_stroke(
+    *, stroke: tuple[QPointF, ...], scale: float
+) -> tuple[QPointF, ...]:
+    TOLERANCE_PIXELS: Final = 2.0
+    simplified = skimage.measure.approximate_polygon(
+        np.array([[p.x(), p.y()] for p in stroke]), tolerance=TOLERANCE_PIXELS / scale
+    )
+    return tuple(QPointF(float(x), float(y)) for x, y in simplified)
 
 
 def _is_degenerate_draft(*, draft: _DraftShape) -> bool:
