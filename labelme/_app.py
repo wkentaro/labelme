@@ -726,6 +726,13 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="circle.svg",
             tip=self.tr("Start drawing circles"),
         )
+        create_circle_3p_mode = mode_action(
+            text=self.tr("3-Point Circle"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="circle_3p"),
+            shortcut=shortcuts["create_circle_3p"],
+            icon="circle_3p.svg",
+            tip=self.tr("Start drawing circles with 3 points"),
+        )
         create_line_mode = mode_action(
             text=self.tr("Line"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="line"),
@@ -966,6 +973,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("rectangle", create_rectangle_mode),
             ("oriented_rectangle", create_oriented_rectangle_mode),
             ("circle", create_circle_mode),
+            ("circle_3p", create_circle_3p_mode),
             ("point", create_point_mode),
             ("line", create_line_mode),
             ("linestrip", create_line_strip_mode),
