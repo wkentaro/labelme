@@ -25,7 +25,6 @@ _MOVE_X: Final[int] = 50
 _MOVE_Y: Final[int] = 50
 
 
-@pytest.mark.gui
 def test_window_geometry_persists_across_sessions(
     *,
     main_win: MainWinFactory,
@@ -63,7 +62,6 @@ def test_window_geometry_persists_across_sessions(
     close_or_pause(qtbot=qtbot, widget=win2, pause=pause)
 
 
-@pytest.mark.gui
 def test_cancelled_close_keeps_persisted_window_state(
     *,
     main_win: MainWinFactory,

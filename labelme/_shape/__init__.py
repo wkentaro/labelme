@@ -1,3 +1,4 @@
+from ._hit_testing import image_extent
 from ._hit_testing import nearest_edge_index
 from ._hit_testing import nearest_rotation_point_index
 from ._hit_testing import nearest_vertex_index
@@ -34,6 +35,7 @@ __all__ = [
     "ShapeType",
     "can_merge_shapes",
     "get_rotation_handle",
+    "image_extent",
     "merge_blocker",
     "merge_masks",
     "nearest_edge_index",

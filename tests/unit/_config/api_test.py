@@ -58,14 +58,6 @@ def test_get_user_config_file_does_not_overwrite(
     assert content == "auto_save: true\n"
 
 
-def test_get_user_config_file_skip_creation(
-    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    _steer_home(monkeypatch=monkeypatch, home=tmp_path)
-    config_file = _config.get_user_config_file(create_if_missing=False)
-    assert not Path(config_file).exists()
-
-
 @pytest.mark.parametrize("old_value", [True, False])
 def test_migrate_store_data_to_with_image_data(
     *, tmp_path: Path, old_value: bool

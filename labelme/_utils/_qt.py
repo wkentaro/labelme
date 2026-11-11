@@ -112,10 +112,6 @@ class _TintedSvgIconEngine(QtGui.QIconEngine):
 
 
 def new_icon(*, name: str) -> QtGui.QIcon:
-    DEFAULT_ICON_SUFFIX: Final = ".png"
-
-    if not os.path.splitext(name)[1]:
-        name = name + DEFAULT_ICON_SUFFIX
     path = os.path.join(_ICONS_DIR, name)
     if path.endswith(".svg"):
         with open(path, "rb") as f:

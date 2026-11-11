@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>點擊並拖拽以旋轉形狀</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>點擊圓周上的第一個點</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>點擊圓周上的第二個點</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>點擊圓周上的第三個點以完成圓形</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1242,6 +1254,14 @@ Expected location: {path}</source>
     <message>
         <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
         <translation>標籤 &apos;{label}&apos; 正在被畫布上的形狀使用。</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>三點畫圓</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>開始透過三點繪製圓形</translation>
     </message>
 </context>
 <context>

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Final
 
-import pytest
 from PySide6.QtCore import QPoint
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
@@ -37,7 +36,6 @@ def _zoom_until_overflow(*, canvas: Canvas) -> None:
         canvas.scale *= 1.5
 
 
-@pytest.mark.gui
 def test_middle_drag_emits_pan_request_with_widget_pixel_delta(
     *,
     qtbot: QtBot,
@@ -68,7 +66,6 @@ def test_middle_drag_emits_pan_request_with_widget_pixel_delta(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_middle_drag_no_pan_when_image_fits_viewport(
     *,
     qtbot: QtBot,
@@ -100,7 +97,6 @@ def test_middle_drag_no_pan_when_image_fits_viewport(
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_middle_drag_recenters_fitting_image_after_focal_zoom(
     *,
     qtbot: QtBot,

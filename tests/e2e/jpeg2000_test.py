@@ -20,7 +20,6 @@ from .drag_and_drop_test import _make_drop_mime
 from .drag_and_drop_test import _send_drop
 
 pytestmark = [
-    pytest.mark.gui,
     pytest.mark.skipif(
         not PIL.features.check_codec("jpg_2000"), reason="Pillow needs OpenJPEG"
     ),

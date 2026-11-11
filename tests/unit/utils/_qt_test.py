@@ -97,7 +97,7 @@ def test_project_point_on_line_zero_length_returns_point() -> None:
 
 @pytest.mark.usefixtures("qtbot")
 def test_new_icon_returns_qicon() -> None:
-    icon = new_icon(name="icon-256")
+    icon = new_icon(name="icon-256.png")
     assert isinstance(icon, QtGui.QIcon)
     assert not icon.isNull()
 

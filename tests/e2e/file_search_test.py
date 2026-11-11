@@ -16,7 +16,6 @@ from .conftest import draw_and_commit_polygon
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_file_search_filters_loaded_images_without_changing_active_annotation(
     *,
     main_win: MainWinFactory,
@@ -127,7 +126,6 @@ def test_file_search_filters_loaded_images_without_changing_active_annotation(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_invalid_search_keeps_last_valid_filter_on_current_directory(
     *, main_win: MainWinFactory, data_path: Path
 ) -> None:
@@ -158,7 +156,6 @@ def test_invalid_search_keeps_last_valid_filter_on_current_directory(
     assert win._docks.file_search_error.isHidden()
 
 
-@pytest.mark.gui
 def test_invalid_startup_search_leaves_images_available(
     *, main_win: MainWinFactory, data_path: Path
 ) -> None:
@@ -171,7 +168,6 @@ def test_invalid_startup_search_leaves_images_available(
     assert win._docks.file_search_error.isHidden()
 
 
-@pytest.mark.gui
 def test_file_list_shows_paths_relative_to_opened_folder(
     *, main_win: MainWinFactory, data_path: Path
 ) -> None:
@@ -195,7 +191,6 @@ def test_file_list_shows_paths_relative_to_opened_folder(
     assert win.image_list == [str(raw_dir / "sub/2011_000006.jpg")]
 
 
-@pytest.mark.gui
 def test_file_list_tooltip_is_absolute_for_relative_input(
     *, main_win: MainWinFactory, data_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -209,7 +204,6 @@ def test_file_list_tooltip_is_absolute_for_relative_input(
     assert item.toolTip() == str(data_path / "raw/2011_000003.jpg")
 
 
-@pytest.mark.gui
 def test_file_list_shows_each_folder_once_as_a_heading(
     *, main_win: MainWinFactory, qtbot: QtBot, tmp_path: Path, data_path: Path
 ) -> None:

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
@@ -12,7 +11,6 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_flag_click_without_image_leaves_window_clean(
     *,
     main_win: MainWinFactory,
@@ -35,7 +33,6 @@ def test_flag_click_without_image_leaves_window_clean(
     assert not win.windowTitle().endswith("*")
 
 
-@pytest.mark.gui
 def test_close_file_clears_the_closed_image_flags(
     *,
     main_win: MainWinFactory,

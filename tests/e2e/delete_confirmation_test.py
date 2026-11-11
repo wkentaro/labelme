@@ -35,7 +35,6 @@ def _exec_clicking_role(
     return _exec
 
 
-@pytest.mark.gui
 def test_confirm_deletion_defaults_to_cancel(
     *,
     main_win: MainWinFactory,
@@ -56,7 +55,6 @@ def test_confirm_deletion_defaults_to_cancel(
     assert default_role == [QtWidgets.QMessageBox.ButtonRole.RejectRole]
 
 
-@pytest.mark.gui
 def test_confirm_deletion_shows_message_as_plain_text(
     *,
     main_win: MainWinFactory,
@@ -77,7 +75,6 @@ def test_confirm_deletion_shows_message_as_plain_text(
     assert shown == [('Delete "report<b>final.json"?', Qt.TextFormat.PlainText)]
 
 
-@pytest.mark.gui
 def test_confirm_deletion_returns_true_when_delete_clicked(
     *,
     main_win: MainWinFactory,
@@ -94,7 +91,6 @@ def test_confirm_deletion_returns_true_when_delete_clicked(
     assert win._confirm_deletion(message="delete?") is True
 
 
-@pytest.mark.gui
 def test_confirm_deletion_returns_false_when_cancel_clicked(
     *,
     main_win: MainWinFactory,
@@ -111,7 +107,6 @@ def test_confirm_deletion_returns_false_when_cancel_clicked(
     assert win._confirm_deletion(message="delete?") is False
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("delete_count", [1, 2, 5])
 def test_delete_shapes_without_confirmation_and_undo(
     *,

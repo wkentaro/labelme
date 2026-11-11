@@ -62,7 +62,6 @@ def _wait_for_fitted_image(*, qtbot: QtBot, win: MainWindow) -> None:
     qtbot.waitUntil(check)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("open_at_startup", [True, False])
 def test_open_image_fits_settled_viewport(
     *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path, open_at_startup: bool
@@ -76,7 +75,6 @@ def test_open_image_fits_settled_viewport(
     _wait_for_fitted_image(qtbot=qtbot, win=win)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("mode", list(_ZoomMode))
 def test_resize_preserves_zoom_mode(
     *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path, mode: _ZoomMode
@@ -110,7 +108,6 @@ def test_resize_preserves_zoom_mode(
         _wait_for_fitted_image(qtbot=qtbot, win=win)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("mode", [_ZoomMode.FIT_WINDOW, _ZoomMode.FIT_SELECTION])
 @pytest.mark.parametrize("keep_prev_scale", [True, False])
 def test_navigation_recalculates_fit_mode(
@@ -143,7 +140,6 @@ def test_navigation_recalculates_fit_mode(
     _wait_for_fitted_image(qtbot=qtbot, win=win)
 
 
-@pytest.mark.gui
 def test_zoom_fit_window(
     *,
     qtbot: QtBot,
@@ -160,7 +156,6 @@ def test_zoom_fit_window(
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_huge_image_fits_and_zooms_out_below_one_percent(
     *, main_win: MainWinFactory, qtbot: QtBot, tmp_path: Path
 ) -> None:
@@ -190,7 +185,6 @@ def test_huge_image_fits_and_zooms_out_below_one_percent(
         assert zoom_widget.value() <= before
 
 
-@pytest.mark.gui
 def test_manual_zoom_only_scrolls_the_overflowing_axis(
     *,
     qtbot: QtBot,
@@ -210,7 +204,6 @@ def test_manual_zoom_only_scrolls_the_overflowing_axis(
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_zoom_to_original(
     *,
     qtbot: QtBot,
@@ -228,7 +221,6 @@ def test_zoom_to_original(
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_zoom_step_keeps_fractional_precision(
     *,
     qtbot: QtBot,
@@ -243,7 +235,6 @@ def test_zoom_step_keeps_fractional_precision(
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_zoom_in_then_out_returns_to_the_start(*, _win: MainWindow) -> None:
     _win._canvas_widgets.zoom_widget.setValue(105)
     _win._add_zoom(steps=1, pos=None)
@@ -251,7 +242,6 @@ def test_zoom_in_then_out_returns_to_the_start(*, _win: MainWindow) -> None:
     assert _win._canvas_widgets.zoom_widget.value() == pytest.approx(105)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("delta", "factor"), [(120, 1.1), (-120, 1 / 1.1), (30, 1.1**0.25)]
 )
@@ -325,7 +315,6 @@ def _make_scrolled_win(
     return win, scroll_values
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("keep_prev_scale", [True, False])
 def test_navigation_chooses_viewport_by_keep_previous_scale(
     *,
@@ -410,7 +399,6 @@ def test_navigation_chooses_viewport_by_keep_previous_scale(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_navigation_restores_view_offset_with_retained_brightness(
     *,
     main_win: MainWinFactory,
@@ -442,7 +430,6 @@ def test_navigation_restores_view_offset_with_retained_brightness(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("mode", [_ZoomMode.FIT_WINDOW])
 @pytest.mark.parametrize("keep_prev_scale", [True, False])
 def test_navigation_restores_fitted_view_position(
@@ -479,7 +466,6 @@ def test_navigation_restores_fitted_view_position(
     assert canvas.get_view_offset() == expected_offset
 
 
-@pytest.mark.gui
 def test_navigation_restores_viewport_after_layout_settles(
     *,
     main_win: MainWinFactory,
@@ -533,7 +519,6 @@ def test_navigation_restores_viewport_after_layout_settles(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_open_file_keeps_previous_viewport(
     *,
     scrolled_win: tuple[MainWindow, dict[Qt.Orientation, int]],
@@ -556,7 +541,6 @@ def test_open_file_keeps_previous_viewport(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_file_search_keeps_previous_viewport(
     *,
     scrolled_win: tuple[MainWindow, dict[Qt.Orientation, int]],
@@ -580,7 +564,6 @@ def test_file_search_keeps_previous_viewport(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("next_image_name", ["2011_000003.jpg", "2011_000006.jpg"])
 def test_close_and_open_restores_viewport(
     *,
@@ -627,7 +610,6 @@ def _make_wheel_event(
     )
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("modifiers", "angle_delta", "signal_attr", "expected_orientation"),
     [
@@ -694,7 +676,6 @@ def test_canvas_wheel_event_dispatches_signal(
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("angle_delta", "phase"),
     [
@@ -729,7 +710,6 @@ def test_canvas_wheel_event_ignores_non_vertical_zoom(
     close_or_pause(qtbot=qtbot, widget=_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("angle_delta", "repetitions"),
     [
@@ -785,7 +765,6 @@ def test_ctrl_wheel_keeps_image_point_under_cursor(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("mode", [_ZoomMode.MANUAL_ZOOM, _ZoomMode.FIT_WINDOW])
 def test_percentage_entry_preserves_mode_and_updates_canvas(
     *,
@@ -844,7 +823,6 @@ def _wait_for_fit_selection(*, qtbot: QtBot, win: MainWindow) -> None:
     qtbot.waitUntil(lambda: _check_fits_selection(win=win))
 
 
-@pytest.mark.gui
 def test_fit_selection_follows_selection(*, qtbot: QtBot, _win: MainWindow) -> None:
     canvas = _win._canvas_widgets.canvas
     fit_window_scale = canvas.scale
@@ -863,7 +841,6 @@ def test_fit_selection_follows_selection(*, qtbot: QtBot, _win: MainWindow) -> N
     _wait_for_fit_selection(qtbot=qtbot, win=_win)
 
 
-@pytest.mark.gui
 def test_fit_selection_follows_label_list_arrow_keys(
     *, qtbot: QtBot, _win: MainWindow
 ) -> None:
@@ -879,7 +856,6 @@ def test_fit_selection_follows_label_list_arrow_keys(
     _wait_for_fit_selection(qtbot=qtbot, win=_win)
 
 
-@pytest.mark.gui
 def test_fit_selection_centers_shape_at_image_edge(
     *, qtbot: QtBot, _win: MainWindow
 ) -> None:
@@ -895,7 +871,6 @@ def test_fit_selection_centers_shape_at_image_edge(
     assert not canvas.get_view_offset().isNull()
 
 
-@pytest.mark.gui
 def test_fit_selection_keeps_view_when_selection_clears(*, _win: MainWindow) -> None:
     canvas = _win._canvas_widgets.canvas
     _win.set_fit_selection_mode(True)
@@ -913,7 +888,6 @@ def test_fit_selection_keeps_view_when_selection_clears(*, _win: MainWindow) -> 
     ] == scroll_values
 
 
-@pytest.mark.gui
 def test_fit_selection_fits_clicked_shape_on_release(
     *, qtbot: QtBot, _win: MainWindow
 ) -> None:
@@ -924,7 +898,6 @@ def test_fit_selection_fits_clicked_shape_on_release(
     _wait_for_fit_selection(qtbot=qtbot, win=_win)
 
 
-@pytest.mark.gui
 def test_fit_selection_waits_for_double_click_on_small_shape(
     *, qtbot: QtBot, _win: MainWindow
 ) -> None:
@@ -949,7 +922,6 @@ def test_fit_selection_waits_for_double_click_on_small_shape(
     _wait_for_fit_selection(qtbot=qtbot, win=_win)
 
 
-@pytest.mark.gui
 def test_fit_selection_double_click_in_multi_selection_edits_clicked_shape(
     *, qtbot: QtBot, _win: MainWindow
 ) -> None:
@@ -978,7 +950,6 @@ def test_fit_selection_double_click_in_multi_selection_edits_clicked_shape(
     _wait_for_fit_selection(qtbot=qtbot, win=_win)
 
 
-@pytest.mark.gui
 def test_fit_selection_keeps_view_while_dragging_new_selection(
     *, qtbot: QtBot, _win: MainWindow
 ) -> None:
@@ -1005,7 +976,6 @@ def test_fit_selection_keeps_view_while_dragging_new_selection(
     assert canvas.scale == scale
 
 
-@pytest.mark.gui
 def test_manual_zoom_leaves_fit_selection(*, _win: MainWindow) -> None:
     canvas = _win._canvas_widgets.canvas
     _win.set_fit_selection_mode(True)
@@ -1020,7 +990,6 @@ def test_manual_zoom_leaves_fit_selection(*, _win: MainWindow) -> None:
     assert canvas.scale == scale
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("keep_prev_scale", [True, False])
 def test_fit_selection_shows_whole_image_after_navigation(
     *,
@@ -1057,7 +1026,6 @@ def test_fit_selection_shows_whole_image_after_navigation(
     assert canvas.get_view_offset().isNull()
 
 
-@pytest.mark.gui
 def test_zoom_control_names_mode_and_shows_fit_buttons(*, _win: MainWindow) -> None:
     caption = _win._zoom_mode_label
     fit_buttons = {

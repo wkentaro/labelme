@@ -79,7 +79,6 @@ def reuse_efficient_sam_model(
     shutil.copytree(model_cache, session_home / ".cache/osam/models/blobs")
 
 
-@pytest.mark.gui
 def test_labeling_ai_lands_preserves_generated_group(
     *,
     main_win: MainWinFactory,
@@ -114,7 +113,6 @@ def ai_model_combo(*, raw_win: MainWindow) -> QComboBox:
     return raw_win._ai_annotation._model_combo
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("cached_ai_models")
 def test_ai_segment_mode_keeps_sam3_selected(
     *,
@@ -137,7 +135,6 @@ def test_ai_segment_mode_keeps_sam3_selected(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.usefixtures("reuse_efficient_sam_model")
 @pytest.mark.parametrize(
     (

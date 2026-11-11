@@ -174,15 +174,10 @@ class _Actions(NamedTuple):
     undo_last_point: QtGui.QAction
     undo: QtGui.QAction
     add_point_to_edge: QtGui.QAction
-    remove_point: QtGui.QAction
     create_mode: QtGui.QAction
     edit_mode: QtGui.QAction
     create_rectangle_mode: QtGui.QAction
-    create_oriented_rectangle_mode: QtGui.QAction
-    create_circle_mode: QtGui.QAction
-    create_line_mode: QtGui.QAction
     create_point_mode: QtGui.QAction
-    create_line_strip_mode: QtGui.QAction
     create_ai_segment_mode: QtGui.QAction
     create_ai_find_all_mode: QtGui.QAction
     open_next_img: QtGui.QAction
@@ -421,7 +416,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self._model_manager.changed.connect(self._refresh_model_availability)
         self._canvas_widgets.canvas.ensure_ai_model_ready = self._ensure_ai_model_ready
         self._ai_annotation.manage_models_requested.connect(self._open_models)
-        self._ai_text.manage_models_requested.connect(self._open_models)
         for widget in (self._ai_annotation, self._ai_text):
             widget.download_requested.connect(
                 functools.partial(self._download_and_select, select=widget.select_model)
@@ -732,6 +726,13 @@ class MainWindow(QtWidgets.QMainWindow):
             icon="circle.svg",
             tip=self.tr("Start drawing circles"),
         )
+        create_circle_3p_mode = mode_action(
+            text=self.tr("3-Point Circle"),
+            slot=lambda: self._switch_canvas_mode(edit=False, create_mode="circle_3p"),
+            shortcut=shortcuts["create_circle_3p"],
+            icon="circle_3p.svg",
+            tip=self.tr("Start drawing circles with 3 points"),
+        )
         create_line_mode = mode_action(
             text=self.tr("Line"),
             slot=lambda: self._switch_canvas_mode(edit=False, create_mode="line"),
@@ -972,6 +973,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("rectangle", create_rectangle_mode),
             ("oriented_rectangle", create_oriented_rectangle_mode),
             ("circle", create_circle_mode),
+            ("circle_3p", create_circle_3p_mode),
             ("point", create_point_mode),
             ("line", create_line_mode),
             ("linestrip", create_line_strip_mode),
@@ -1034,16 +1036,11 @@ class MainWindow(QtWidgets.QMainWindow):
             lock=lock,
             undo_last_point=undo_last_point,
             undo=undo,
-            remove_point=remove_point,
             add_point_to_edge=add_point_to_edge,
             create_mode=create_mode,
             edit_mode=edit_mode,
             create_rectangle_mode=create_rectangle_mode,
-            create_oriented_rectangle_mode=create_oriented_rectangle_mode,
-            create_circle_mode=create_circle_mode,
-            create_line_mode=create_line_mode,
             create_point_mode=create_point_mode,
-            create_line_strip_mode=create_line_strip_mode,
             create_ai_segment_mode=create_ai_segment_mode,
             create_ai_find_all_mode=create_ai_find_all_mode,
             open_next_img=open_next_img,
@@ -2474,18 +2471,6 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path
         assert self._annotation is not None
         image_path = self._file_list_image_path or self._image_path
-        # Save As confirms an overwrite in its dialog; no other save may replace
-        # another Image's Annotation File.
-        if (
-            label_path != self._auto_save_path
-            and Path(label_path).exists()
-            and not _label_path.label_file_belongs_to_image(
-                label_path=Path(label_path), image_path=image_path, cached=False
-            )
-        ):
-            raise LabelFileError(
-                self.tr("The Annotation File belongs to another Image: %s") % label_path
-            )
         # An Annotation File can hold the only copy of its Image; dropping the
         # embedded data then loses the Image and the file no longer opens.
         has_image_file = Path(image_path).is_file() and image_path.lower().endswith(
@@ -2510,6 +2495,11 @@ class MainWindow(QtWidgets.QMainWindow):
             image_height=self._image.height(),
             image_width=self._image.width(),
             save_image_data=self._config["with_image_data"] or not has_image_file,
+            # Save As confirms an overwrite in its dialog; no other save may
+            # replace another Image's Annotation File.
+            owner_image_path=(
+                None if label_path == self._auto_save_path else image_path
+            ),
         )
 
     def _record_saved_annotation(self, *, label_path: str) -> None:
@@ -2523,10 +2513,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete_file.setEnabled(True)
         self.mark_clean()
 
+    def _save_error_text(self, *, error: BaseException) -> str:
+        if isinstance(error, _save_request.ForeignAnnotationFileError):
+            return (
+                self.tr("The Annotation File belongs to another Image: %s")
+                % error.filename
+            )
+        return str(error)
+
     def _show_save_failure(self, *, label_path: str, error: BaseException) -> None:
         self._failed_save_path = label_path
         self._status_bar.save.setText(self.tr("Save failed"))
-        self._status_bar.save.setToolTip(f"{label_path}\n{error}")
+        self._status_bar.save.setToolTip(
+            f"{label_path}\n{self._save_error_text(error=error)}"
+        )
         self._status_bar.retry.show()
 
     def _retry_save(self) -> None:
@@ -2543,7 +2543,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_save_failure(label_path=label_path, error=e)
             self.show_error_message(
                 title=self.tr("Error Saving Annotation File"),
-                message=self.tr("<b>%s</b>") % e,
+                message=self.tr("<b>%s</b>") % self._save_error_text(error=e),
             )
             return False
         self._record_saved_annotation(label_path=request.filename)
@@ -2891,13 +2891,10 @@ class MainWindow(QtWidgets.QMainWindow):
         dialog = BrightnessContrastDialog(
             img=_image_codec.img_data_to_pil(img_data=self._annotation.image_data),
             callback=self._on_brightness_contrast_changed,
+            brightness=brightness,
+            contrast=contrast,
             parent=self,
         )
-
-        if brightness is not None:
-            dialog.slider_brightness.setValue(brightness)
-        if contrast is not None:
-            dialog.slider_contrast.setValue(contrast)
 
         if is_initial_load:
             dialog.apply()
@@ -4348,11 +4345,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.annotation_folder_footer.setVisible(
             has_folder and bool(self._loaded_image_paths)
         )
+        # Once per path: the search, the headings and the rows all show it.
+        labels = [
+            self._file_list_label(image_path=path) for path in self._loaded_image_paths
+        ]
         image_paths = []
+        shown_labels = []
         self._hidden_annotated_paths = set()
-        for path in self._loaded_image_paths:
-            if self._matches_file_search(image_path=path):
+        for path, label in zip(self._loaded_image_paths, labels):
+            if self._file_search_pattern.search(label):
                 image_paths.append(path)
+                shown_labels.append(label)
             elif _label_path.has_label_file(
                 image_path=path,
                 output_dir=self._output_dir,
@@ -4363,19 +4366,14 @@ class MainWindow(QtWidgets.QMainWindow):
         file_list = self._docks.file_list
         # Decided from every loaded Image, so headings don't come and go while
         # a search narrows the list.
-        self._docks.file_list_delegate.set_labels(
-            labels=[
-                self._file_list_label(image_path=path)
-                for path in self._loaded_image_paths
-            ]
-        )
+        self._docks.file_list_delegate.set_labels(labels=labels)
         with QtCore.QSignalBlocker(file_list):
             file_list.clear()
-            for image_path in image_paths:
+            for image_path, label in zip(image_paths, shown_labels):
                 file_list.addItem(
                     _make_image_list_item(
                         image_path=image_path,
-                        label=self._file_list_label(image_path=image_path),
+                        label=label,
                         output_dir=self._output_dir,
                         root_prefix=self._file_list_root_prefix,
                     )

@@ -49,7 +49,6 @@ def _draw_polygon(
     qtbot.waitUntil(_assert_shape_created, timeout=3000)
 
 
-@pytest.mark.gui
 def test_draw_shape_appears_in_label_list(
     *,
     qtbot: QtBot,
@@ -71,7 +70,6 @@ def test_draw_shape_appears_in_label_list(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_click_label_list_entry_selects_canvas_shape(
     *,
     qtbot: QtBot,
@@ -98,7 +96,6 @@ def test_click_label_list_entry_selects_canvas_shape(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_click_canvas_shape_selects_label_list_entry(
     *,
     qtbot: QtBot,
@@ -122,7 +119,6 @@ def test_click_canvas_shape_selects_label_list_entry(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_rename_via_label_dialog_updates_shape_and_list(
     *,
     qtbot: QtBot,
@@ -158,7 +154,6 @@ def test_rename_via_label_dialog_updates_shape_and_list(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_delete_shape_removes_label_list_entry(
     *,
     qtbot: QtBot,
@@ -200,7 +195,6 @@ def annotated_with_labels(
     return win
 
 
-@pytest.mark.gui
 def test_edit_label_cancel_keeps_labels(
     *,
     qtbot: QtBot,
@@ -226,7 +220,6 @@ def test_edit_label_cancel_keeps_labels(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     "annotated_with_labels",
     [{"validate_label": "exact", "labels": ["dog"]}],
@@ -270,7 +263,6 @@ def test_edit_label_invalid_label_keeps_labels_and_shows_error(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_cancel_mixed_label_edit_keeps_next_shape_prefill_blank(
     *,
     qtbot: QtBot,
@@ -325,7 +317,6 @@ def test_cancel_mixed_label_edit_keeps_next_shape_prefill_blank(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     "annotated_with_labels",
     [{"validate_label": "exact", "labels": ["dog"]}],
@@ -375,7 +366,6 @@ def test_edit_label_multi_shape_mismatch_skips_label_validation(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_open_different_file_repopulates_label_list(
     *,
     qtbot: QtBot,
@@ -410,7 +400,6 @@ def test_open_different_file_repopulates_label_list(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_edit_label_accepted_unchanged_changes_nothing(
     *, qtbot: QtBot, annotated_with_labels: MainWindow
 ) -> None:
@@ -433,7 +422,6 @@ def test_edit_label_accepted_unchanged_changes_nothing(
     assert len(canvas.shape_backups) == n_backups
 
 
-@pytest.mark.gui
 def test_edit_label_records_the_new_label_and_repaints(
     *,
     qtbot: QtBot,

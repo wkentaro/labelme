@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Натисніть і перетягніть, щоб обертати фігуру</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Натисніть першу точку на окружності для кола</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Натисніть другу точку на окружності для кола</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Натисніть третю точку на окружності для завершення кола</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1242,6 +1254,14 @@ Expected location: {path}</source>
     <message>
         <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
         <translation>Мітка &apos;{label}&apos; використовується фігурами на полотні.</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>Коло (3 точки)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Почніть малювати кола за 3 точками</translation>
     </message>
 </context>
 <context>

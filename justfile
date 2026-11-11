@@ -43,6 +43,14 @@ check_translate:
 check_config_migrations:
     uv run python -m tools.check_config_migrations
 
+# Time Undo snapshots (e.g. just benchmark_undo --vertices 1000)
+benchmark_undo *args:
+    QT_QPA_PLATFORM=offscreen uv run python -m tools.benchmark_undo "$@"
+
+# Time mask painting (e.g. just benchmark_mask_paint --masks 12)
+benchmark_mask_paint *args:
+    QT_QPA_PLATFORM=offscreen uv run python -m tools.benchmark_mask_paint "$@"
+
 # Run tests with coverage
 coverage: (test "--numprocesses=auto --cov=labelme --cov-report=term-missing")
 

@@ -34,7 +34,6 @@ def _label_list_texts(*, label_list: QtWidgets.QListWidget) -> list[str]:
     return texts
 
 
-@pytest.mark.gui
 def test_blank_input_keeps_dialog_open(
     *,
     main_win: MainWinFactory,
@@ -69,7 +68,6 @@ def test_blank_input_keeps_dialog_open(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_validate_label_exact_rejects_unknown_label(
     *,
     main_win: MainWinFactory,
@@ -111,7 +109,6 @@ def test_validate_label_exact_rejects_unknown_label(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_arrow_keys_in_label_edit_navigate_label_list(
     *,
     main_win: MainWinFactory,
@@ -152,7 +149,6 @@ def test_arrow_keys_in_label_edit_navigate_label_list(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_add_label_history_dedups_repeated_labels_and_keeps_sorted(
     *,
     main_win: MainWinFactory,
@@ -189,7 +185,6 @@ def test_add_label_history_dedups_repeated_labels_and_keeps_sorted(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_label_completer_autocompletes_typed_prefix(
     *,
     main_win: MainWinFactory,
@@ -230,7 +225,6 @@ def test_label_completer_autocompletes_typed_prefix(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 def test_trailing_whitespace_label_is_stripped(
     *,
     main_win: MainWinFactory,
@@ -264,7 +258,6 @@ def test_trailing_whitespace_label_is_stripped(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("key", [Qt.Key.Key_Return, Qt.Key.Key_Enter])
 def test_editor_arrow_then_immediate_return_survives_save_and_reopen(
     *,

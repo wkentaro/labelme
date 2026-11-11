@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Κάντε κλικ και σύρετε για να περιστρέψετε το σχήμα</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Κάντε κλικ στο πρώτο σημείο στην περιφέρεια για τον κύκλο</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Κάντε κλικ στο δεύτερο σημείο στην περιφέρεια για τον κύκλο</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Κάντε κλικ στο τρίτο σημείο στην περιφέρεια για να ολοκληρώσετε τον κύκλο</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1242,6 +1254,14 @@ Expected location: {path}</source>
     <message>
         <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
         <translation>Η ετικέτα &apos;{label}&apos; χρησιμοποιείται από σχήματα στον καμβά.</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>Κύκλος (3 σημεία)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Έναρξη σχεδίασης κύκλων με 3 σημεία</translation>
     </message>
 </context>
 <context>

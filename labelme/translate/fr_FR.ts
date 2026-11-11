@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Cliquer et glisser pour faire pivoter la forme</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Cliquer sur le premier point de la circonférence du cercle</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Cliquer sur le deuxième point de la circonférence du cercle</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Cliquer sur le troisième point de la circonférence pour terminer le cercle</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1242,6 +1254,14 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
         <translation>L&apos;étiquette &apos;{label}&apos; est utilisée par des formes sur la zone de dessin.</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>Cercle (3 points)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Commencer à dessiner des cercles avec 3 points</translation>
     </message>
 </context>
 <context>

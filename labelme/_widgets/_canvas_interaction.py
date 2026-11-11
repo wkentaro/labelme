@@ -9,6 +9,7 @@ import numpy.typing as npt
 from PySide6.QtCore import Qt
 
 from .._shape import Shape
+from .._shape import image_extent
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
@@ -38,14 +39,22 @@ def find_hover_target(
     point_size: int,
     priority_shape: Shape | None,
 ) -> HitTarget | None:
+    # Proximity is measured in image space, so the screen-pixel threshold is
+    # converted here rather than scaling every shape's points.
+    image_epsilon = epsilon / scale
+
+    # Every pass below costs array work per shape, so drop the shapes the
+    # pointer is nowhere near once, up front.
+    margin = max(image_epsilon, point_size / 2 / scale)
+    shapes = [
+        shape
+        for shape in shapes
+        if _is_near_extent(shape=shape, point=point, margin=margin)
+    ]
     candidates = _build_candidates(
         shapes=shapes,
         priority_shape=priority_shape,
     )
-
-    # Proximity is measured in image space, so the screen-pixel threshold is
-    # converted here rather than scaling every shape's points.
-    image_epsilon = epsilon / scale
 
     # A locked shape offers no vertex, rotation handle, or edge to grab.
     editable = [shape for shape in candidates if not shape.locked]
@@ -122,6 +131,15 @@ def find_shape_at(
             return shape
         first = shape
     return first
+
+
+def _is_near_extent(
+    *, shape: Shape, point: npt.NDArray[np.float64], margin: float
+) -> bool:
+    if len(shape.points) == 0:
+        return False
+    lo, hi = image_extent(shape=shape)
+    return bool(np.all(point >= lo - margin) and np.all(point <= hi + margin))
 
 
 def _build_candidates(

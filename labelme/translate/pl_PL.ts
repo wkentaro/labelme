@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Kliknij i przeciągnij — obróć kształt</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Kliknij pierwszy punkt na obwodzie okręgu</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Kliknij drugi punkt na obwodzie okręgu</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Kliknij trzeci punkt na obwodzie, aby ukończyć okrąg</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1242,6 +1254,14 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
         <translation>Etykieta &apos;{label}&apos; jest używana przez kształty na płótnie.</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>Okrąg (3 punkty)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Rozpocznij rysowanie okręgów przez 3 punkty</translation>
     </message>
 </context>
 <context>

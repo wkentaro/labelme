@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>کلیک و کشیدن برای چرخاندن شکل</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>کلیک روی اولین نقطه روی محیط دایره</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>کلیک روی دومین نقطه روی محیط دایره</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>کلیک روی سومین نقطه روی محیط برای اتمام دایره</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1242,6 +1254,14 @@ Expected location: {path}</source>
     <message>
         <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
         <translation>برچسب &apos;{label}&apos; توسط اشکال روی بوم در حال استفاده است.</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>دایره (۳ نقطه)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>شروع رسم دایره با ۳ نقطه</translation>
     </message>
 </context>
 <context>

@@ -5,8 +5,8 @@ import pytest
 from numpy.typing import NDArray
 
 from labelme._shape import ShapeDict
-from labelme._utils import _mask as mask_module
 
+from ... import mask_utils as mask_module
 from .util import get_img_and_data
 
 

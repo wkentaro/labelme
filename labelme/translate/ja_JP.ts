@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>クリック &amp; ドラッグで図形を回転</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>円周上の1点目をクリック</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>円周上の2点目をクリック</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>円周上の3点目をクリックして円を完了</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1252,6 +1264,14 @@ Expected location: {path}</source>
     <message>
         <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
         <translation>ラベル &apos;{label}&apos; はキャンバス上の図形で使用中です。</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>円（3点指定）</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>3点で円の描画を開始</translation>
     </message>
 </context>
 <context>

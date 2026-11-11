@@ -12,7 +12,6 @@ from labelme._widgets._canvas import Canvas
 from .conftest import MainWinFactory
 
 
-@pytest.mark.gui
 def test_status_bar_names_the_running_ai_task(
     *, main_win: MainWinFactory, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -71,7 +70,6 @@ def test_status_bar_names_the_running_ai_task(
     ]
 
 
-@pytest.mark.gui
 def test_compute_device_setting_reaches_the_worker(*, main_win: MainWinFactory) -> None:
     win: MainWindow = main_win(config_overrides={"ai": {"device": "cpu"}})
     assert win._osam_worker._device == "cpu"
@@ -81,7 +79,6 @@ def test_compute_device_setting_reaches_the_worker(*, main_win: MainWinFactory) 
     assert win._osam_worker._device == "auto"
 
 
-@pytest.mark.gui
 def test_status_bar_names_the_stage_and_time_of_a_slow_prompt(
     *, main_win: MainWinFactory, monkeypatch: pytest.MonkeyPatch
 ) -> None:

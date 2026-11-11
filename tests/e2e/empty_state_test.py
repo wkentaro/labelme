@@ -16,7 +16,6 @@ from .conftest import MainWinFactory
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_empty_state_replaced_after_image_load(
     *,
     main_win: MainWinFactory,
@@ -49,7 +48,6 @@ def test_empty_state_replaced_after_image_load(
     assert not win._canvas_widgets.canvas.isVisible()
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("button_name", "dialog_method", "dialog_result"),
     [
@@ -118,7 +116,6 @@ def _calculate_contrast_ratio(
     return (lighter + 0.05) / (darker + 0.05)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("theme", ["system", "light", "dark"])
 def test_empty_state_is_legible_in_every_theme(
     *,
@@ -151,7 +148,6 @@ def test_empty_state_is_legible_in_every_theme(
         apply_color_theme(theme="system")
 
 
-@pytest.mark.gui
 def test_empty_state_buttons_match_file_menu(*, main_win: MainWinFactory) -> None:
     win: MainWindow = main_win()
     for name, action in (

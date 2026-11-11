@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
@@ -14,7 +13,6 @@ from .conftest import schedule_on_dialog
 from .conftest import show_window_and_wait_for_imagedata
 
 
-@pytest.mark.gui
 def test_undo_creation_keeps_earlier_group_id_and_description(
     *,
     main_win: MainWinFactory,

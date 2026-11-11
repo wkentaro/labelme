@@ -90,7 +90,6 @@ def _clear_cursor_override(*, canvas: Canvas) -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.gui
 def test_cursor_is_cross_when_hovering_in_create_mode(*, canvas: Canvas) -> None:
     # Any mouse move in CREATE mode should engage CrossCursor.
     canvas.set_editing(value=False)
@@ -105,7 +104,6 @@ def test_cursor_is_cross_when_hovering_in_create_mode(*, canvas: Canvas) -> None
     _clear_cursor_override(canvas=canvas)
 
 
-@pytest.mark.gui
 def test_cursor_reverts_to_no_override_after_cursor_cleared(*, canvas: Canvas) -> None:
     # After _release_cursor the override stack is empty; callers treat that
     # as ArrowCursor.
@@ -125,7 +123,6 @@ def test_cursor_reverts_to_no_override_after_cursor_cleared(*, canvas: Canvas) -
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.gui
 def test_cursor_is_arrow_when_hovering_empty_canvas_in_edit_mode(
     *,
     canvas: Canvas,
@@ -145,7 +142,6 @@ def test_cursor_is_arrow_when_hovering_empty_canvas_in_edit_mode(
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.gui
 def test_cursor_is_open_hand_when_hovering_shape_body_in_edit_mode(
     *,
     canvas: Canvas,
@@ -176,7 +172,6 @@ def test_cursor_is_open_hand_when_hovering_shape_body_in_edit_mode(
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.gui
 def test_shape_hidden_while_hovered_stops_being_hover_interactive(
     *,
     canvas: Canvas,
@@ -215,7 +210,6 @@ def test_shape_hidden_while_hovered_stops_being_hover_interactive(
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.gui
 def test_cursor_is_pointing_hand_when_hovering_vertex_in_edit_mode(
     *,
     canvas: Canvas,
@@ -244,7 +238,6 @@ def test_cursor_is_pointing_hand_when_hovering_vertex_in_edit_mode(
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.gui
 def test_cursor_is_pointing_hand_when_hovering_edge_in_edit_mode(
     *,
     canvas: Canvas,
@@ -275,7 +268,6 @@ def test_cursor_is_pointing_hand_when_hovering_edge_in_edit_mode(
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.gui
 def test_cursor_is_pointing_hand_when_snapping_to_polygon_origin(
     *,
     canvas: Canvas,
@@ -301,7 +293,6 @@ def test_cursor_is_pointing_hand_when_snapping_to_polygon_origin(
     _clear_cursor_override(canvas=canvas)
 
 
-@pytest.mark.gui
 def test_cursor_is_cross_when_far_from_polygon_origin(*, canvas: Canvas) -> None:
     # When the cursor is more than epsilon/scale away from the polygon origin,
     # CrossCursor is kept (no snap engagement).
@@ -329,7 +320,6 @@ def test_cursor_is_cross_when_far_from_polygon_origin(*, canvas: Canvas) -> None
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.gui
 def test_right_release_executes_context_menu(
     *,
     canvas: Canvas,
@@ -351,7 +341,6 @@ def test_right_release_executes_context_menu(
     assert calls == [0]
 
 
-@pytest.mark.gui
 def test_right_menu_failure_restores_origin(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -367,7 +356,6 @@ def test_right_menu_failure_restores_origin(
     assert canvas.context_menu_origin is None
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     ("create_mode", "points", "expected"),
     [
@@ -417,7 +405,6 @@ def _make_center_polygon() -> Shape:
     )
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     "scale",
     [0.5, 1.0, 2.0],
@@ -457,7 +444,6 @@ def test_vertex_hover_within_epsilon_screen_pixels_gives_pointing_hand(
     _clear_cursor_override(canvas=canvas)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     "scale",
     [0.5, 1.0, 2.0],
@@ -497,7 +483,6 @@ def test_vertex_hover_beyond_epsilon_screen_pixels_does_not_select_vertex(
     _clear_cursor_override(canvas=canvas)
 
 
-@pytest.mark.gui
 def test_screen_pixel_hit_radius_is_constant_across_scale_levels(
     *,
     qtbot: QtBot,

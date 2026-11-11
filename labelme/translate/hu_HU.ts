@@ -286,6 +286,18 @@
         <source>Click &amp; drag to rotate the shape</source>
         <translation>Kattintson és húzza az alakzat elforgatásához</translation>
     </message>
+    <message>
+        <source>Click first point on circumference for circle</source>
+        <translation>Kattintson a kör kerületén lévő első pontra</translation>
+    </message>
+    <message>
+        <source>Click second point on circumference for circle</source>
+        <translation>Kattintson a kör kerületén lévő második pontra</translation>
+    </message>
+    <message>
+        <source>Click third point on circumference to finish circle</source>
+        <translation>Kattintson a kör kerületén lévő harmadik pontra a kör befejezéséhez</translation>
+    </message>
 </context>
 <context>
     <name>EmptyStateWidget</name>
@@ -1242,6 +1254,14 @@ Várt hely: {path}</translation>
     <message>
         <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
         <translation>A(z) &apos;{label}&apos; címkét alakzatok használják a vásznon.</translation>
+    </message>
+    <message>
+        <source>3-Point Circle</source>
+        <translation>Kör (3 pont)</translation>
+    </message>
+    <message>
+        <source>Start drawing circles with 3 points</source>
+        <translation>Körök rajzolásának megkezdése 3 ponttal</translation>
     </message>
 </context>
 <context>

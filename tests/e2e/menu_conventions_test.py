@@ -75,7 +75,7 @@ def _is_title_case(*, text: str) -> bool:
         if 0 < index < len(words) - 1 and word.lower() in _MINOR_WORDS:
             if word != word.lower():
                 return False
-        elif not word[0].isupper():
+        elif not (word[0].isupper() or word[0].isdigit()):
             return False
     return True
 
@@ -86,6 +86,7 @@ def _is_title_case(*, text: str) -> bool:
         ("Fit to Window", True),
         ("Select Shape to the Left", True),
         ("Save As…", True),
+        ("3-Point Circle", True),
         ("Keep Previous Brightness/Contrast", True),
         ("Copy To Clipboard", False),
         ("Zoom in", False),
@@ -101,7 +102,6 @@ def _icon_key(*, action: QtGui.QAction) -> bytes:
     return bytes(image.constBits())
 
 
-@pytest.mark.gui
 def test_menu_text_has_no_newline(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
@@ -111,7 +111,6 @@ def test_menu_text_has_no_newline(*, main_win: MainWinFactory) -> None:
     assert found == allowed
 
 
-@pytest.mark.gui
 def test_menu_items_use_title_case(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
@@ -125,7 +124,6 @@ def test_menu_items_use_title_case(*, main_win: MainWinFactory) -> None:
     assert found == allowed
 
 
-@pytest.mark.gui
 def test_dialog_actions_end_with_ellipsis(*, main_win: MainWinFactory) -> None:
     # Actions that ask for more input before they act carry an ellipsis.
     dialog_actions = (
@@ -148,7 +146,6 @@ def test_dialog_actions_end_with_ellipsis(*, main_win: MainWinFactory) -> None:
     assert found == allowed
 
 
-@pytest.mark.gui
 def test_checkable_menu_items_have_no_icon(*, main_win: MainWinFactory) -> None:
     # Mode toggles that also sit on the toolbar keep their icon, and so do
     # shape pickers, whose icon names the shape; other checkable items rely on
@@ -172,7 +169,6 @@ def test_checkable_menu_items_have_no_icon(*, main_win: MainWinFactory) -> None:
     assert found == set()
 
 
-@pytest.mark.gui
 def test_each_icon_belongs_to_one_action(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
@@ -188,7 +184,6 @@ def test_each_icon_belongs_to_one_action(*, main_win: MainWinFactory) -> None:
     assert shared == allowed
 
 
-@pytest.mark.gui
 def test_view_menu_ends_with_separator(*, main_win: MainWinFactory) -> None:
     # macOS appends Enter Full Screen to the View menu. Without a separator it
     # joins the last section, and its SF Symbol makes AppKit indent the
@@ -198,7 +193,6 @@ def test_view_menu_ends_with_separator(*, main_win: MainWinFactory) -> None:
     assert ends_with_separator
 
 
-@pytest.mark.gui
 def test_menu_commands_have_icon(*, main_win: MainWinFactory) -> None:
     # Known violations; the change that fixes one removes it, and a stale entry
     # fails, so the set only shrinks.
@@ -214,7 +208,6 @@ def test_menu_commands_have_icon(*, main_win: MainWinFactory) -> None:
     assert found == allowed
 
 
-@pytest.mark.gui
 def test_menu_text_avoids_glossary_terms(*, main_win: MainWinFactory) -> None:
     # Terms GLOSSARY.md tells the UI to avoid.
     avoided_terms = ("label file", "output dir", "save dir", "file list")
@@ -248,7 +241,6 @@ def _menu_texts(*, win: MainWindow) -> dict[str, list[str]]:
     }
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize(
     "language", sorted(path.stem for path in TRANSLATE_DIR.glob("*.qm"))
 )
@@ -272,7 +264,6 @@ def test_menu_mnemonics_are_unique_in_every_language(
         assert dropped == [], name
 
 
-@pytest.mark.gui
 def test_file_menu_groups_actions_by_task(*, main_win: MainWinFactory) -> None:
     win = _english_window(main_win=main_win)
     groups: list[list[QtGui.QAction]] = [[]]
