@@ -206,6 +206,22 @@ def test_predefined_label_is_not_removable_from_the_label_list(
 
 
 @pytest.mark.gui
+def test_clear_unused_labels_refreshes_shape_colors_once(
+    *, annotated_win: MainWindow, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    win = annotated_win
+    for label in ("legacy_1", "legacy_2", "legacy_3"):
+        win._label_dialog.add_label_history(label=label)
+        win._docks.unique_label_list.add_label_item(label=label, color=(4, 5, 6))
+    refreshes: list[None] = []
+    monkeypatch.setattr(win, "_refresh_shape_colors", lambda: refreshes.append(None))
+
+    win._clear_unused_unique_labels()
+
+    assert len(refreshes) == 1
+
+
+@pytest.mark.gui
 def test_clear_unused_labels_clears_only_unused_labels(
     *,
     annotated_win: MainWindow,

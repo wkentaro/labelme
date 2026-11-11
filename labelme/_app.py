@@ -2172,16 +2172,20 @@ class MainWindow(QtWidgets.QMainWindow):
                 message=self._label_in_use_message(label=label),
             )
             return
-        unique_label_list = self._docks.unique_label_list
-        item = unique_label_list.find_label_item(label=label)
-        assert item is not None
-        unique_label_list.takeItem(unique_label_list.row(item))
-        self._label_dialog.remove_label(label=label)
-        self._refresh_shape_colors()
+        self._forget_unique_labels(labels=[label])
 
     def _clear_unused_unique_labels(self) -> None:
-        for label in self._unused_unique_labels():
-            self._remove_unique_label(label)
+        self._forget_unique_labels(labels=self._unused_unique_labels())
+
+    def _forget_unique_labels(self, *, labels: list[str]) -> None:
+        unique_label_list = self._docks.unique_label_list
+        for label in labels:
+            item = unique_label_list.find_label_item(label=label)
+            assert item is not None
+            unique_label_list.takeItem(unique_label_list.row(item))
+            self._label_dialog.remove_label(label=label)
+        # Once for the batch: it repaints every remaining label.
+        self._refresh_shape_colors()
 
     def validate_label(self, *, label: str) -> bool:
         policy = self._config["validate_label"]
