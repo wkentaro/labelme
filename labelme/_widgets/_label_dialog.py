@@ -39,6 +39,7 @@ class LabelDialog(QtWidgets.QDialog):
     _stored_flag_names: tuple[str, ...]
     _fit_to_content: dict[str, bool]
     _ok_button: QtWidgets.QPushButton
+    _cancel_button: QtWidgets.QPushButton
     _flags_container: QtWidgets.QWidget
     _flags_layout: QtWidgets.QVBoxLayout
     _flags_scroll: QtWidgets.QScrollArea
@@ -157,18 +158,21 @@ class LabelDialog(QtWidgets.QDialog):
         self._ok_button = button_box.button(
             QtWidgets.QDialogButtonBox.StandardButton.Ok
         )
+        self._cancel_button = button_box.button(
+            QtWidgets.QDialogButtonBox.StandardButton.Cancel
+        )
 
         # Build layout
         main_layout = QtWidgets.QVBoxLayout()
         self.setLayout(main_layout)
 
+        # Hiding the label text field leaves the label to the list below; the
+        # Group ID has no other editor, so it stays.
+        top_row = QtWidgets.QHBoxLayout()
         if show_text_field:
-            top_row = QtWidgets.QHBoxLayout()
             top_row.addWidget(self.edit, stretch=4)
-            top_row.addWidget(self.edit_group_id, stretch=1)
-            main_layout.addLayout(top_row)
-        else:
-            self.edit.setParent(None)
+        top_row.addWidget(self.edit_group_id, stretch=1)
+        main_layout.addLayout(top_row)
 
         main_layout.addWidget(button_box)
         main_layout.addWidget(self.label_list)
@@ -333,6 +337,10 @@ class LabelDialog(QtWidgets.QDialog):
         if self._sort_labels:
             self.label_list.sortItems()
 
+    @property
+    def last_label(self) -> str:
+        return self._last_label
+
     def remember_label(self, *, label: str) -> None:
         self._last_label = label
 
@@ -399,7 +407,16 @@ class LabelDialog(QtWidgets.QDialog):
 
         self._fit_label_list_to_content()
         self._refresh_ok_button()
-        self.edit.setFocus(QtCore.Qt.FocusReason.PopupFocusReason)
+        if self.edit.parent() is None:
+            # Without the label text field, focus opens on a button, as it did
+            # before the Group ID field joined the layout: the first keystrokes
+            # must not land in Group ID. A blank label disables OK.
+            button = (
+                self._ok_button if self._ok_button.isEnabled() else self._cancel_button
+            )
+            button.setFocus(QtCore.Qt.FocusReason.PopupFocusReason)
+        else:
+            self.edit.setFocus(QtCore.Qt.FocusReason.PopupFocusReason)
 
         if move:
             target = position if position is not None else QtGui.QCursor.pos()

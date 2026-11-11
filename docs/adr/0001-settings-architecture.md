@@ -15,8 +15,8 @@ store (Window State), which is not part of the Config.
 - **Migrate the Config to JSON (or QSettings) with a one-time conversion** —
   rejected: it forces a risky migration of every existing `~/.labelmerc`, and
   comment preservation needs a round-trip parser either way, so YAML wins
-  without a storage-format conversion. Key renames are still applied in place by
-  `_migrate_config_from_file`; only a whole-file format conversion is avoided.
+  without a storage-format conversion. Key renames are still applied on load by
+  `migrate_config` and reach the file on the next Settings write; only a whole-file format conversion is avoided.
 - **OK/Apply/Cancel dialog** — rejected in favor of immediate-apply to match
   modern settings UIs (macOS System Settings, VS Code); Settings are reversible
   by re-editing, so a Cancel button buys little.

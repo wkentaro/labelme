@@ -225,8 +225,6 @@ class LabelListWidget(QtWidgets.QListView):
     def __init__(self) -> None:
         super().__init__()
 
-        self.setWindowFlags(Qt.WindowType.Window)
-
         self._model = _ItemModel()
         self._model.setItemPrototype(LabelListWidgetItem())
         self.setModel(self._model)

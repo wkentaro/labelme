@@ -408,6 +408,8 @@ def test_legacy_false_overrides_disable_file_brightness_contrast(
             {"validate_label": "none"},
             "Unexpected value for config key 'validate_label'",
         ),
+        ({"label_completion": "fuzzy"}, "label_completion must be"),
+        ({"canvas": {"double_click": "open"}}, "canvas.double_click must be"),
         ({"shape_color": "random"}, "Unexpected value for config key 'shape_color'"),
         ({"labels": ["cat", "cat"]}, "Duplicates are detected for config key 'labels'"),
         ({"labels": "cat"}, "Config key 'labels' must be a list, but got str"),
@@ -419,6 +421,8 @@ def test_legacy_false_overrides_disable_file_brightness_contrast(
     ],
     ids=[
         "validate_label",
+        "label_completion",
+        "canvas_double_click",
         "shape_color",
         "labels",
         "labels_not_a_list",
@@ -650,3 +654,26 @@ def test_load_config_rejects_invalid_shape_color(
 def test_reject_malformed_shape_flag_rules(*, value: object) -> None:
     with pytest.raises(ValueError, match="label_flags must map"):
         _config.load_config(config_file=None, config_overrides={"label_flags": value})
+
+
+@pytest.mark.parametrize("content", ["auto_save false\n", "- auto_save\n"])
+def test_load_config_rejects_a_file_that_is_not_a_mapping(
+    *, tmp_path: Path, content: str
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text(content)
+
+    with pytest.raises(ValueError, match="must contain a mapping of settings"):
+        _config.load_config(config_file=config_file, config_overrides={})
+
+
+@pytest.mark.parametrize("content", ["", "# only a comment\n"])
+def test_load_config_accepts_a_file_without_settings(
+    *, tmp_path: Path, content: str
+) -> None:
+    config_file = tmp_path / "labelmerc"
+    config_file.write_text(content)
+
+    config = _config.load_config(config_file=config_file, config_overrides={})
+
+    assert config["auto_save"] is True

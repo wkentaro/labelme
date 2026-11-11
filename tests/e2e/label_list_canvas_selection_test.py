@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Final
+from unittest.mock import Mock
 
 import pytest
 from PySide6.QtCore import Qt
@@ -407,3 +408,55 @@ def test_open_different_file_repopulates_label_list(
     qtbot.waitUntil(_assert_label_list_repopulated, timeout=3000)
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_edit_label_accepted_unchanged_changes_nothing(
+    *, qtbot: QtBot, annotated_with_labels: MainWindow
+) -> None:
+    win = annotated_with_labels
+    canvas = win._canvas_widgets.canvas
+    label_list = win._docks.label_list
+    label_dialog = win._label_dialog
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    save_revision = win._save_revision
+    n_backups = len(canvas.shape_backups)
+
+    schedule_on_dialog(
+        label_dialog=label_dialog,
+        action=lambda: qtbot.keyClick(label_dialog, Qt.Key.Key_Return),
+    )
+    label_list.item_double_clicked.emit(label_list[0])
+    qtbot.waitUntil(lambda: not label_dialog.isVisible(), timeout=3000)
+
+    assert win._save_revision == save_revision
+    assert len(canvas.shape_backups) == n_backups
+
+
+@pytest.mark.gui
+def test_edit_label_records_the_new_label_and_repaints(
+    *,
+    qtbot: QtBot,
+    annotated_with_labels: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = annotated_with_labels
+    canvas = win._canvas_widgets.canvas
+    label_list = win._docks.label_list
+    label_dialog = win._label_dialog
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+
+    def rename() -> None:
+        label_dialog.edit.setText("zebra")
+        # Count only the repaint the edit itself asks for.
+        monkeypatch.setattr(canvas, "update", update)
+        qtbot.keyClick(label_dialog, Qt.Key.Key_Return)
+
+    update = Mock()
+    schedule_on_dialog(label_dialog=label_dialog, action=rename)
+    label_list.item_double_clicked.emit(label_list[0])
+    qtbot.waitUntil(lambda: not label_dialog.isVisible(), timeout=3000)
+
+    assert canvas.shapes[0].label == "zebra"
+    assert "zebra" in label_dialog.label_history
+    update.assert_called()

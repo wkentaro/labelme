@@ -1,7 +1,6 @@
 from ._image import ImageDecodeRequirement
 from ._image import get_image_decode_requirement
 from ._image import get_reader_decode_requirement
-from ._image import img_qt_to_arr
 from ._image import img_qt_to_rgb_arr
 from ._mask import shape_to_mask
 from ._mask import shapes_to_label
@@ -22,7 +21,6 @@ __all__ = [
     "direction_angle",
     "get_image_decode_requirement",
     "get_reader_decode_requirement",
-    "img_qt_to_arr",
     "img_qt_to_rgb_arr",
     "modifier_text",
     "new_action",

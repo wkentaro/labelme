@@ -104,6 +104,14 @@ def _validate_config_item(*, key_path: tuple[str, ...], value: object) -> None:
         raise ValueError(f"ai.device must be 'auto' or 'cpu', but got {value!r}")
     if key == "validate_label" and value not in [None, "exact"]:
         raise ValueError(f"Unexpected value for config key 'validate_label': {value}")
+    if key_path == ("label_completion",) and value not in ("startswith", "contains"):
+        raise ValueError(
+            f"label_completion must be 'startswith' or 'contains', but got {value!r}"
+        )
+    if key_path == ("canvas", "double_click") and value not in (None, "close"):
+        raise ValueError(
+            f"canvas.double_click must be null or 'close', but got {value!r}"
+        )
     if key != "labels" or value is None:
         return
     if not isinstance(value, list):
@@ -133,7 +141,10 @@ def load_config(*, config_file: Path | None, config_overrides: dict) -> dict:
     if config_file is not None:
         with open(config_file, encoding="utf-8") as f:
             config_from_yaml = _yaml.safe_load(stream=f)
-        if isinstance(config_from_yaml, dict):
+        # An empty or comment-only file parses as None and holds no settings.
+        if not isinstance(config_from_yaml, dict | None):
+            raise ValueError("The Config File must contain a mapping of settings")
+        if config_from_yaml is not None:
             migrate_config(config_from_yaml=config_from_yaml)
             if "shape_color" in config_from_yaml:
                 validate_shape_color(config=config_from_yaml["shape_color"])

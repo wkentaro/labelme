@@ -49,7 +49,7 @@ and please use `PIL.Image.open` to avoid unexpected behavior:
 >>> print(lbl.dtype)
 dtype('uint8')
 >>> np.unique(lbl)
-array([0, 1, 2, 3], dtype=uint8)
+array([0, 1, 2, 3, 4], dtype=uint8)
 >>> lbl.shape
 (907, 1210)
 ```

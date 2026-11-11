@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib
 import json
 import os
 import shutil
@@ -155,7 +154,12 @@ def _create_annotated_nested(*, data_path: Path) -> None:
 @pytest.fixture(scope="function")
 def data_path(*, tmp_path: Path) -> Path:
     data_path: Path = tmp_path / "data"
-    shutil.copytree(Path(__file__).parent / "data", data_path)
+    shutil.copytree(
+        Path(__file__).parent / "data",
+        data_path,
+        # Snapshots are read from the source tree, never from the copy.
+        ignore=shutil.ignore_patterns("snapshots", "*.py"),
+    )
 
     _create_annotated_nested(data_path=data_path)
 
@@ -168,16 +172,7 @@ DOWNLOAD_START_TIMEOUT_MS: Final = 30_000
 
 
 @pytest.fixture
-def download_server(
-    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> Iterator[tuple[str, list[str], threading.Event]]:
-    # gdown resolves its staging directory at import time, before HOME is
-    # redirected, so failed transfers would otherwise litter the real cache.
-    monkeypatch.setattr(
-        importlib.import_module("gdown.cached_download"),
-        "cache_root",
-        str(tmp_path / "gdown"),
-    )
+def download_server() -> Iterator[tuple[str, list[str], threading.Event]]:
     requests: list[str] = []
     release = threading.Event()
 

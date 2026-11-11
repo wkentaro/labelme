@@ -162,6 +162,53 @@ def test_show_text_field_false_leaves_edit_parentless(*, qtbot: QtBot) -> None:
     assert dialog.edit.parent() is None
 
 
+def test_show_text_field_false_keeps_group_id_editable(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(
+        qtbot=qtbot, dialog=LabelDialog(show_text_field=False, labels=["cat"])
+    )
+    seen: list[tuple[bool, bool]] = []
+
+    def edit_group_id() -> None:
+        seen.append(
+            (
+                dialog.edit_group_id.isVisible(),
+                # Typing must not land in the Group ID field by default.
+                dialog.focusWidget() is dialog.edit_group_id,
+            )
+        )
+        dialog.edit_group_id.setText("7")
+        dialog.accept()
+
+    QtCore.QTimer.singleShot(0, edit_group_id)
+    entry = dialog.popup(text="cat", group_id=3, move=False)
+
+    assert seen == [(True, False)]
+    assert entry is not None
+    assert entry.group_id == 7
+
+
+def test_show_text_field_false_keeps_typing_out_of_group_id(*, qtbot: QtBot) -> None:
+    dialog = _add_dialog(
+        qtbot=qtbot, dialog=LabelDialog(show_text_field=False, labels=["cat"])
+    )
+    typed: list[str] = []
+
+    def type_a_digit() -> None:
+        # A blank label disables OK, which must not hand focus to Group ID.
+        try:
+            focused = dialog.focusWidget()
+            assert focused is not None
+            qtbot.keyClick(focused, QtCore.Qt.Key.Key_7)
+            typed.append(dialog.edit_group_id.text())
+        finally:
+            dialog.reject()
+
+    QtCore.QTimer.singleShot(0, type_a_digit)
+    dialog.popup(move=False)
+
+    assert typed == [""]
+
+
 def test_initial_labels_listed(*, qtbot: QtBot) -> None:
     dialog = _add_dialog(
         qtbot=qtbot, dialog=LabelDialog(labels=["banana", "apple", "cherry"])

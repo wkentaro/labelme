@@ -48,6 +48,7 @@ def _make_dialog(
     overrides: dict,
     succeed: bool,
     previewed: Previewed | None,
+    settings_editable: bool = True,
 ) -> SettingsDialog:
     config = load_config(config_file=None, config_overrides=overrides)
 
@@ -64,6 +65,7 @@ def _make_dialog(
         apply_setting=apply_setting,
         preview_shape_color=preview_shape_color,
         open_as_text=lambda: None,
+        settings_editable=settings_editable,
     )
     qtbot.addWidget(dialog)
     return dialog
@@ -1053,3 +1055,26 @@ def test_shape_flag_validation_preserves_accessible_note(
     assert editor.accessibleDescription() == note
     remove.click()
     assert editor.accessibleDescription() == note
+
+
+def test_search_activation_keeps_result_count_when_read_only(
+    *, qtbot: QtBot, applied: Applied
+) -> None:
+    dialog = _make_dialog(
+        qtbot=qtbot,
+        applied=applied,
+        overrides={},
+        succeed=True,
+        previewed=None,
+        settings_editable=False,
+    )
+    with qtbot.waitExposed(dialog):
+        dialog.show()
+    page = dialog._page
+    page._search.setText("auto save")
+    count_text = page._status.text()
+    assert count_text
+
+    qtbot.keyClick(page._search, QtCore.Qt.Key.Key_Return)
+
+    assert page._status.text() == count_text

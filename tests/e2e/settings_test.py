@@ -747,6 +747,7 @@ def test_sort_labels_dialog_toggle_rebuilds_label_dialog(
     win, dialog = settings_with_label_history
     assert win._config["sort_labels"] is True
     old_label_dialog = win._label_dialog
+    old_label_dialog.remember_label(label="bird")
     deleted: list[bool] = []
     old_label_dialog.destroyed.connect(lambda: deleted.append(True))
 
@@ -761,6 +762,7 @@ def test_sort_labels_dialog_toggle_rebuilds_label_dialog(
     assert win._label_dialog is not old_label_dialog
     assert win._label_dialog._sort_labels is False
     assert win._label_dialog.label_history == ["bird"]
+    assert win._label_dialog.last_label == "bird"
     assert safe_load(stream=editable_config_file.read_text())["sort_labels"] is False
     qtbot.waitUntil(lambda: bool(deleted))
 

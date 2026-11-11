@@ -177,6 +177,11 @@ def _handle_exception(
     )
     logger.critical(traceback_str)
 
+    # Arguments are parsed before the QApplication exists, and Qt aborts the
+    # process when a widget is built without one.
+    if QtWidgets.QApplication.instance() is None:
+        sys.exit(1)
+
     translate = QtCore.QCoreApplication.translate
     message = QtWidgets.QMessageBox(
         QtWidgets.QMessageBox.Icon.Critical,

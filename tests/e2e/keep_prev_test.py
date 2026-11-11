@@ -52,3 +52,26 @@ def test_keep_prev_carries_shapes_onto_an_image_without_a_file(
     assert len(win._canvas_widgets.canvas.shapes) == carried
     assert win._is_changed
     win.mark_clean()
+
+
+@pytest.mark.gui
+def test_keep_prev_does_not_carry_shapes_onto_the_reloaded_image(
+    *, main_win: MainWinFactory, data_path: Path, tmp_path: Path
+) -> None:
+    win = main_win(
+        file_or_dir=data_path / "annotated",
+        config_overrides={"keep_prev": True, "auto_save": False},
+    )
+    assert win._canvas_widgets.canvas.shapes
+    empty_folder = tmp_path / "empty"
+    empty_folder.mkdir()
+
+    # Changing the Annotation Folder reloads the open Image against it.
+    assert win._switch_output_dir(output_dir=empty_folder)
+
+    shapes = list(win._canvas_widgets.canvas.shapes)
+    is_changed = win._is_changed
+    win.mark_clean()
+
+    assert shapes == []
+    assert not is_changed

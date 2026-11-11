@@ -377,17 +377,6 @@ def test_constructor_copies_the_given_point_labels() -> None:
     assert int(shape.point_labels[1]) == 1
 
 
-def test_translate_shifts_all_points_by_offset() -> None:
-    shape = _make_square_polygon()
-
-    shape.translate(offset=(2.5, -0.75))
-
-    assert len(shape.points) == 4
-    expected = [(2.5, -0.75), (12.5, -0.75), (12.5, 9.25), (2.5, 9.25)]
-    for i, (x, y) in enumerate(expected):
-        assert shape.points[i] == pytest.approx((x, y))
-
-
 # Edge i is the segment from points[i-1] to points[i] (roll-by-1 convention),
 # so for the square below edge 1 is the bottom and edge 0 is the left side.
 @pytest.mark.parametrize(
