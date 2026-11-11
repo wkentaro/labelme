@@ -1084,6 +1084,22 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Hanya bentuk dengan label yang sama yang dapat digabungkan</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Hapus dari Daftar Label</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Bersihkan Label yang Tidak Digunakan</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Label &apos;{label}&apos; sedang digunakan oleh bentuk di kanvas.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Tidak Dapat Menghapus Label</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Label tidak valid</translation>
     </message>
@@ -1665,6 +1681,25 @@ Lokasi yang diharapkan: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Tindakan lainnya</translation>
+    </message>
+</context>
+<context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Set label</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Edit…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Hapus yang Tidak Dipakai</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Ditemukan di file</translation>
     </message>
 </context>
 <context>

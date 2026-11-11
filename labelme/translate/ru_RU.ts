@@ -1180,6 +1180,22 @@ Expected location: {path}</source>
         <translation>Объединять можно только фигуры с одинаковой меткой</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Удалить из списка меток</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Очистить неиспользуемые метки</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Метка &apos;{label}&apos; используется фигурами на холсте.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Невозможно удалить метку</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Неверная метка</translation>
     </message>
@@ -1665,6 +1681,25 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>Другие действия</translation>
+    </message>
+</context>
+<context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Набор меток</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Изменить…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Очистить неиспользуемые</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Найдено в файлах</translation>
     </message>
 </context>
 <context>

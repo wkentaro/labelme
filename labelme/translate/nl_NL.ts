@@ -1084,6 +1084,22 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Alleen vormen met hetzelfde label kunnen worden samengevoegd</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Verwijderen uit labellijst</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Ongebruikte labels wissen</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Het label &apos;{label}&apos; is in gebruik door vormen op het canvas.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Kan label niet verwijderen</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Ongeldig label</translation>
     </message>
@@ -1665,6 +1681,25 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Meer acties</translation>
+    </message>
+</context>
+<context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Labelset</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Bewerken…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Ongebruikte wissen</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Gevonden in bestanden</translation>
     </message>
 </context>
 <context>

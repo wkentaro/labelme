@@ -1084,6 +1084,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>只能合併標籤相同的形狀</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>從標籤列表中刪除</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>清除未使用的標籤</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>標籤 &apos;{label}&apos; 正在被畫布上的形狀使用。</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>無法刪除標籤</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>無效的標籤</translation>
     </message>
@@ -1665,6 +1681,25 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>更多操作</translation>
+    </message>
+</context>
+<context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>標籤集</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>編輯…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>清除未使用</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>在檔案中找到</translation>
     </message>
 </context>
 <context>

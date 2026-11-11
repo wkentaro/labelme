@@ -1084,6 +1084,22 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Scalać można tylko kształty z tą samą etykietą</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Usuń z listy etykiet</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Wyczyść nieużywane etykiety</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Etykieta &apos;{label}&apos; jest używana przez kształty na płótnie.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Nie można usunąć etykiety</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Nieprawidłowa etykieta</translation>
     </message>
@@ -1665,6 +1681,25 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Więcej działań</translation>
+    </message>
+</context>
+<context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Zestaw etykiet</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Edytuj…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Wyczyść nieużywane</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Znalezione w plikach</translation>
     </message>
 </context>
 <context>

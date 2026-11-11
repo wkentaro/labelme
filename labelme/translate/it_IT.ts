@@ -1084,6 +1084,22 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
         <translation>Si possono unire solo forme con la stessa etichetta</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Rimuovi dall&apos;elenco etichette</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Cancella etichette inutilizzate</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>L&apos;etichetta &apos;{label}&apos; è utilizzata dalle forme sulla tela.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Impossibile rimuovere l&apos;etichetta</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Etichetta non valida</translation>
     </message>
@@ -1665,6 +1681,25 @@ Posizione prevista: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Altre azioni</translation>
+    </message>
+</context>
+<context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Set di etichette</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Modifica…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Cancella inutilizzate</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Trovate nei file</translation>
     </message>
 </context>
 <context>

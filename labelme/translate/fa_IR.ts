@@ -1084,6 +1084,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>فقط شکل‌های دارای برچسب یکسان ادغام می‌شوند</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>حذف از فهرست برچسب‌ها</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>پاک کردن برچسب‌های استفاده‌نشده</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>برچسب &apos;{label}&apos; توسط اشکال روی بوم در حال استفاده است.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>امکان حذف برچسب وجود ندارد</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>برچسب نامعتبر</translation>
     </message>
@@ -1665,6 +1681,25 @@ Expected location: {path}</source>
     <message>
         <source>More actions</source>
         <translation>اقدام‌های بیشتر</translation>
+    </message>
+</context>
+<context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>مجموعه برچسب‌ها</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>ویرایش…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>پاک کردن استفاده‌نشده‌ها</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>یافت‌شده در فایل‌ها</translation>
     </message>
 </context>
 <context>

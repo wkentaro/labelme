@@ -227,6 +227,51 @@ def test_setting_change_persists_and_applies(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
+def test_label_list_edit_opens_settings_and_follows_its_labels(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    editable_config_file: Path,
+    pause: bool,
+) -> None:
+    win = main_win(
+        file_or_dir=data_path / "annotated/2011_000003.json",
+        config_file=editable_config_file,
+    )
+    unique_labels = win._docks.unique_label_list
+    header = unique_labels.itemWidget(unique_labels.item(0))
+    edit_button = header.findChild(QtWidgets.QToolButton)
+    assert edit_button is not None
+
+    qtbot.mouseClick(edit_button, Qt.MouseButton.LeftButton)
+
+    dialog = win._settings_dialog
+    assert dialog is not None and dialog.isVisible()
+    labels_editor = dialog._editors[("labels",)]
+    assert isinstance(labels_editor, QtWidgets.QPlainTextEdit)
+    qtbot.waitUntil(labels_editor.hasFocus)
+    labels_editor.setPlainText("red_triangle\ncat\n")
+    dialog.accept()
+
+    assert unique_labels.labels() == [
+        "red_triangle",
+        "cat",
+        "amber_kite",
+        "blue_block",
+        "green_hexagon",
+        "purple_diamond",
+    ]
+    color_resolver = win._canvas_widgets.canvas._color_resolver
+    assert color_resolver is not None
+    for label in unique_labels.labels():
+        item = unique_labels.find_label_item(label=label)
+        assert item is not None
+        assert item.data(LABEL_COLOR_ROLE) == QtGui.QColor(*color_resolver(label))
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
 @pytest.mark.usefixtures("use_widget_color_dialog")
 def test_shape_color_picker_previews_and_persists_only_on_accept(
     *,
@@ -249,12 +294,13 @@ def test_shape_color_picker_previews_and_persists_only_on_accept(
     assert isinstance(swatch, _ColorSwatchButton)
     expected = QtGui.QColor(12, 34, 56)
     unique_labels = win._docks.unique_label_list
-    assert unique_labels.count() > 0
-    label = unique_labels.item(0).data(Qt.ItemDataRole.UserRole)
+    label = unique_labels.labels()[0]
+    first_item = unique_labels.find_label_item(label=label)
+    assert first_item is not None
     color_resolver = win._canvas_widgets.canvas._color_resolver
     assert isinstance(label, str)
     assert color_resolver is not None
-    original = unique_labels.item(0).data(LABEL_COLOR_ROLE)
+    original = first_item.data(LABEL_COLOR_ROLE)
     persisted_before_pick = safe_load(stream=editable_config_file.read_text())
     preview_checks: list[tuple[bool, bool, bool, bool]] = []
 
@@ -269,8 +315,9 @@ def test_shape_color_picker_previews_and_persists_only_on_accept(
         preview_checks.append(
             (
                 all(
-                    unique_labels.item(row).data(LABEL_COLOR_ROLE) == expected
-                    for row in range(unique_labels.count())
+                    item.data(LABEL_COLOR_ROLE) == expected
+                    for label in unique_labels.labels()
+                    if (item := unique_labels.find_label_item(label=label))
                 ),
                 all(
                     item.data(LABEL_COLOR_ROLE) == expected
@@ -290,7 +337,7 @@ def test_shape_color_picker_previews_and_persists_only_on_accept(
     swatch.click()
 
     assert preview_checks == [(True, True, True, True)]
-    assert unique_labels.item(0).data(LABEL_COLOR_ROLE) == original
+    assert first_item.data(LABEL_COLOR_ROLE) == original
     assert safe_load(stream=editable_config_file.read_text()) == persisted_before_pick
 
     QtCore.QTimer.singleShot(50, lambda: preview_color(accept=True))

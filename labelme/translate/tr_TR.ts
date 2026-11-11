@@ -1084,6 +1084,22 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Yalnızca aynı etikete sahip şekiller birleştirilebilir</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Etiket Listesinden Kaldır</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Kullanılmayan Etiketleri Temizle</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>&apos;{label}&apos; etiketi tuvaldeki şekiller tarafından kullanılıyor.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Etiket Kaldırılamıyor</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Geçersiz etiket</translation>
     </message>
@@ -1665,6 +1681,25 @@ Beklenen konum: {path}</translation>
     <message>
         <source>More actions</source>
         <translation>Diğer işlemler</translation>
+    </message>
+</context>
+<context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Etiket kümesi</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Düzenle…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Kullanılmayanları Temizle</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Dosyalarda bulunanlar</translation>
     </message>
 </context>
 <context>
