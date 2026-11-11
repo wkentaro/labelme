@@ -203,6 +203,35 @@ def test_delete_key_on_unique_label_list_in_use_shows_error(
 
 
 @pytest.mark.gui
+def test_predefined_label_is_not_removable_from_the_label_list(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+) -> None:
+    win = annotated_win
+    unique_list: UniqueLabelQListWidget = win._docks.unique_label_list
+    win._config["labels"] = ["predefined_unused"]
+    win._label_dialog.add_label_history(label="predefined_unused")
+    unique_list.add_label_item(label="predefined_unused", color=(1, 2, 3))
+    item = unique_list.find_label_item(label="predefined_unused")
+    assert item is not None
+
+    menu = win._build_unique_label_list_menu(
+        point=unique_list.visualItemRect(item).center()
+    )
+    assert "Remove from Label List" not in [a.text() for a in menu.actions()]
+
+    unique_list.setCurrentItem(item)
+    unique_list.setFocus()
+    qtbot.waitUntil(unique_list.hasFocus)
+    qtbot.keyClick(unique_list, Qt.Key.Key_Delete)
+
+    assert win._config["labels"] == ["predefined_unused"]
+    assert "predefined_unused" in unique_list.labels
+    assert "predefined_unused" in win._label_dialog.label_history
+
+
+@pytest.mark.gui
 def test_clear_unused_labels_clears_only_unused_labels(
     *,
     annotated_win: MainWindow,

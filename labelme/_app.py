@@ -2135,7 +2135,8 @@ class MainWindow(QtWidgets.QMainWindow):
         }
         predefined = set(self._config.get("labels") or [])
 
-        if item is not None:
+        # Settings owns the predefined labels, so none is removable here.
+        if item is not None and item.data(Qt.ItemDataRole.UserRole) not in predefined:
             self._docks.unique_label_list.setCurrentItem(item)
             label = cast(str, item.data(Qt.ItemDataRole.UserRole))
             is_in_use = label in active_labels
@@ -2163,6 +2164,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return menu
 
     def _on_remove_unique_label_requested(self, label: str, /) -> None:
+        if label in (self._config.get("labels") or []):
+            return
         active_labels = {
             shape.label
             for shape in self._canvas_widgets.canvas.shapes
@@ -2181,8 +2184,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def _remove_unique_label(self, *, label: str) -> None:
         self._docks.unique_label_list.remove_label_item(label=label)
         self._label_dialog.remove_label(label=label)
-        if self._config.get("labels") and label in self._config["labels"]:
-            self._config["labels"].remove(label)
         self._refresh_shape_colors()
 
     def _clear_unused_unique_labels(self) -> None:
