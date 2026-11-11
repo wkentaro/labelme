@@ -38,34 +38,6 @@ from .conftest import submit_label_dialog
 _SHAPE_INDEX: Final[int] = 0
 
 
-def _find_edge_midpoint_clear_of_vertices(*, canvas: Canvas, shape: Shape) -> QPointF:
-    # Hovering prefers a vertex over an edge within epsilon/scale of it, so the
-    # middle of a short edge stops being hoverable once a smaller screen scales
-    # the image down. Take the edge midpoint standing farthest from any vertex.
-    vertices = np.array(
-        [
-            [float(point[0]), float(point[1])]
-            for other in canvas.shapes
-            for point in other.points
-        ]
-    )
-    points = [(float(point[0]), float(point[1])) for point in shape.points]
-    midpoints = [
-        ((start[0] + end[0]) / 2, (start[1] + end[1]) / 2)
-        for start, end in zip(points, points[1:] + points[:1])
-    ]
-    clearances = [
-        np.linalg.norm(vertices - np.array(midpoint), axis=1).min()
-        for midpoint in midpoints
-    ]
-    best = int(np.argmax(clearances))
-    # Fail with the cause rather than an opaque disabled action if a smaller
-    # screen ever scales every midpoint back into the vertex preference.
-    assert clearances[best] > canvas._epsilon / canvas.scale
-    x, y = midpoints[best]
-    return QPointF(x, y)
-
-
 def _hover_and_drag(
     *,
     qtbot: QtBot,
@@ -365,29 +337,49 @@ def test_linestrip_only_adds_points_on_drawn_edges(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-def test_add_point_via_context_menu_action(
+def _record_context_menus(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> list[str]:
+    opened: list[str] = []
+    for name in ("shape", "canvas"):
+        menu = getattr(canvas, f"{name}_context_menu")
+        monkeypatch.setattr(menu, "exec", lambda *_a, name=name: opened.append(name))
+    return opened
+
+
+def test_right_click_just_outside_polygon_can_insert_edge_point(
     *,
     qtbot: QtBot,
     annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
-    shape = canvas.shapes[_SHAPE_INDEX]
-    num_points_before = len(shape.points)
+    shape = Shape(
+        label="polygon",
+        shape_type="polygon",
+        points=np.array([(30, 60), (170, 60), (170, 120), (30, 120)], dtype=np.float64),
+        closed=True,
+    )
+    annotated_win._load_shapes(shapes=[shape], replace=True)
+    edge = image_to_widget_pos(canvas=canvas, image_pos=QPointF(100, 60))
+    outside = edge - QPoint(0, 2)
+    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=outside)
+    assert canvas.transform_widget_point_to_image(point=QPointF(outside)).y() < 60
 
-    assert not annotated_win._actions.add_point_to_edge.isEnabled()
+    action = annotated_win._actions.add_point_to_edge
+    opened = _record_context_menus(canvas=canvas, monkeypatch=monkeypatch)
+    qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=outside)
 
-    midpoint = _find_edge_midpoint_clear_of_vertices(canvas=canvas, shape=shape)
-    qtbot.mouseMove(canvas, pos=image_to_widget_pos(canvas=canvas, image_pos=midpoint))
-    qtbot.wait(100)
-
-    assert annotated_win._actions.add_point_to_edge.isEnabled()
-    annotated_win._actions.add_point_to_edge.trigger()
+    assert opened == ["shape"]
+    assert canvas.selected_shapes == [shape]
+    assert action in canvas.shape_context_menu.actions()
+    assert action.isEnabled()
+    action.trigger()
     qtbot.wait(50)
 
-    assert len(shape.points) == num_points_before + 1
-
+    assert len(shape.points) == 5
     _save_and_check(win=annotated_win, tmp_path=tmp_path)
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
@@ -864,7 +856,7 @@ def test_select_point_shape_by_click(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-def test_right_click_on_shape_opens_context_menu(
+def test_right_click_on_shape_opens_shape_context_menu(
     *,
     qtbot: QtBot,
     annotated_win: MainWindow,
@@ -872,21 +864,177 @@ def test_right_click_on_shape_opens_context_menu(
     pause: bool,
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
-    menu_opened: list[int] = []
-    monkeypatch.setattr(
-        canvas.context_menu,
-        "exec",
-        lambda *_args, **_kwargs: menu_opened.append(0) or None,
-    )
+    opened = _record_context_menus(canvas=canvas, monkeypatch=monkeypatch)
 
-    bounds_center = _shape_bounds(shape=canvas.shapes[_SHAPE_INDEX]).center()
+    shape = canvas.shapes[_SHAPE_INDEX]
+    bounds_center = _shape_bounds(shape=shape).center()
     pos = image_to_widget_pos(canvas=canvas, image_pos=bounds_center)
     qtbot.mouseMove(canvas, pos=pos)
     qtbot.wait(50)
     qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=pos)
     qtbot.wait(50)
 
-    assert menu_opened == [0]
+    assert opened == ["shape"]
+    assert canvas.selected_shapes == [shape]
+
+    shape_actions = canvas.shape_context_menu.actions()
+    assert annotated_win._actions.edit in shape_actions
+    assert annotated_win._actions.duplicate in shape_actions
+    assert annotated_win._actions.copy in shape_actions
+    assert annotated_win._actions.delete in shape_actions
+    assert annotated_win._actions.add_point_to_edge in shape_actions
+
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+def test_right_click_on_multi_selection_keeps_selection(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    opened = _record_context_menus(canvas=canvas, monkeypatch=monkeypatch)
+
+    two_shapes = list(canvas.shapes[:2])
+    canvas.select_shapes(shapes=two_shapes)
+    assert len(canvas.selected_shapes) == 2
+
+    bounds_center = _shape_bounds(shape=two_shapes[0]).center()
+    pos = image_to_widget_pos(canvas=canvas, image_pos=bounds_center)
+    qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=pos)
+    qtbot.wait(50)
+
+    assert opened == ["shape"]
+    assert canvas.selected_shapes == two_shapes
+
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+def _hover_then_zoom_off_every_shape(
+    *, qtbot: QtBot, win: MainWindow, image_pos: QPointF
+) -> QPoint:
+    # The image shrinks under the still pointer, which ends up off every shape
+    # while the hover from before the zoom stays.
+    canvas = win._canvas_widgets.canvas
+    pos = image_to_widget_pos(canvas=canvas, image_pos=image_pos)
+    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=pos)
+    for _ in range(3):
+        win._actions.zoom_out.trigger()
+    qtbot.wait(50)
+    image_pos = canvas.transform_widget_point_to_image(point=QPointF(pos))
+    assert (
+        _canvas_interaction.find_shape_at(
+            shapes=canvas.shapes,
+            point=np.array([image_pos.x(), image_pos.y()]),
+            scale=canvas.scale,
+            point_size=canvas._point_size,
+            epsilon=canvas._epsilon,
+        )
+        is None
+    )
+    return pos
+
+
+def test_right_click_ignores_an_edge_hover_left_stale_by_a_zoom(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    opened = _record_context_menus(canvas=canvas, monkeypatch=monkeypatch)
+    shape = canvas.shapes[_SHAPE_INDEX]
+    pos = _hover_then_zoom_off_every_shape(
+        qtbot=qtbot,
+        win=annotated_win,
+        image_pos=QPointF(*((shape.points[0] + shape.points[1]) / 2)),
+    )
+    assert canvas._hovered_edge is not None
+    qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=pos)
+    qtbot.wait(50)
+
+    assert opened == ["canvas"]
+    assert canvas._prev_move_point == canvas.transform_widget_point_to_image(
+        point=QPointF(pos)
+    )
+
+
+def test_left_click_ignores_an_edge_hover_left_stale_by_a_zoom(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    shape = canvas.shapes[_SHAPE_INDEX]
+    pos = _hover_then_zoom_off_every_shape(
+        qtbot=qtbot,
+        win=annotated_win,
+        image_pos=QPointF(*((shape.points[0] + shape.points[1]) / 2)),
+    )
+    assert canvas._hovered_edge is not None
+
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
+    qtbot.wait(50)
+
+    assert canvas.selected_shapes == []
+
+
+def test_ctrl_right_click_adds_the_shape_to_the_selection(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    opened = _record_context_menus(canvas=canvas, monkeypatch=monkeypatch)
+    first, second = canvas.shapes[:2]
+    canvas.select_shapes(shapes=[first])
+
+    pos = image_to_widget_pos(
+        canvas=canvas, image_pos=_shape_bounds(shape=second).center()
+    )
+    qtbot.mouseClick(
+        canvas,
+        Qt.MouseButton.RightButton,
+        Qt.KeyboardModifier.ControlModifier,
+        pos=pos,
+    )
+    qtbot.wait(50)
+
+    assert opened == ["shape"]
+    assert canvas.selected_shapes == [first, second]
+
+
+def test_right_click_on_empty_canvas_opens_canvas_context_menu_keeping_selection(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    monkeypatch: pytest.MonkeyPatch,
+    pause: bool,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    opened = _record_context_menus(canvas=canvas, monkeypatch=monkeypatch)
+
+    selected_shape = canvas.shapes[_SHAPE_INDEX]
+    canvas.select_shapes(shapes=[selected_shape])
+    assert canvas.selected_shapes == [selected_shape]
+
+    empty_pos = QPoint(5, 5)
+    qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=empty_pos)
+    qtbot.wait(50)
+
+    assert opened == ["canvas"]
+    assert canvas.selected_shapes == [selected_shape]
+
+    canvas_actions = canvas.canvas_context_menu.actions()
+    assert annotated_win._actions.edit_mode in canvas_actions
+    assert annotated_win._actions.undo in canvas_actions
+    assert annotated_win._actions.undo_last_point in canvas_actions
+    assert annotated_win._actions.paste in canvas_actions
+    for _, draw_action in annotated_win._actions.draw:
+        assert draw_action in canvas_actions
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
 
@@ -1055,26 +1203,10 @@ def test_press_ignores_a_vertex_hover_left_stale_by_a_zoom(
     canvas = annotated_win._canvas_widgets.canvas
     shape = canvas.shapes[_SHAPE_INDEX]
     points_before = [(float(p[0]), float(p[1])) for p in shape.points]
-    pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(*points_before[0]))
-    qtbot.mouseMove(canvas, pos=pos)
-    qtbot.wait(50)
-    assert canvas._hovered_vertex is not None
-
-    # The image shrinks under the still pointer, which ends up off every shape.
-    for _ in range(3):
-        annotated_win._actions.zoom_out.trigger()
-    qtbot.wait(50)
-    image_pos = canvas.transform_widget_point_to_image(point=QPointF(pos))
-    assert (
-        _canvas_interaction.find_shape_at(
-            shapes=canvas.shapes,
-            point=np.array([image_pos.x(), image_pos.y()]),
-            scale=canvas.scale,
-            point_size=canvas._point_size,
-            epsilon=canvas._epsilon,
-        )
-        is None
+    pos = _hover_then_zoom_off_every_shape(
+        qtbot=qtbot, win=annotated_win, image_pos=QPointF(*points_before[0])
     )
+    assert canvas._hovered_vertex is not None
     qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=pos)
     qtbot.mouseMove(canvas, pos=pos + QPoint(30, 30))
     qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=pos + QPoint(30, 30))

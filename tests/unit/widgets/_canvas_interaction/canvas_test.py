@@ -329,7 +329,7 @@ def test_right_release_executes_context_menu(
     canvas.scale = 1.0
     calls: list[int] = []
     monkeypatch.setattr(
-        canvas.context_menu,
+        canvas.canvas_context_menu,
         "exec",
         lambda _pos=None: calls.append(0),
     )
@@ -341,11 +341,38 @@ def test_right_release_executes_context_menu(
     assert calls == [0]
 
 
+def test_right_press_on_empty_canvas_keeps_canvas_menu_on_shape_release(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    shape = Shape(
+        shape_type="rectangle",
+        points=np.array([(60, 10), (90, 30)], dtype=np.float64),
+        closed=True,
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas.set_editing(value=True)
+    canvas.selected_shapes = [shape]
+    opened: list[str] = []
+    monkeypatch.setattr(
+        canvas.shape_context_menu, "exec", lambda _pos=None: opened.append("shape")
+    )
+    monkeypatch.setattr(
+        canvas.canvas_context_menu, "exec", lambda _pos=None: opened.append("canvas")
+    )
+    outside = _image_to_widget(canvas=canvas, img_x=75, img_y=45)
+    inside = _image_to_widget(canvas=canvas, img_x=75, img_y=20)
+
+    canvas.mousePressEvent(_make_press_event(pos=outside))
+    canvas.mouseReleaseEvent(_make_release_event(pos=inside))
+
+    assert opened == ["canvas"]
+
+
 def test_right_menu_failure_restores_origin(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(
-        canvas.context_menu,
+        canvas.canvas_context_menu,
         "exec",
         lambda _pos=None: (_ for _ in ()).throw(RuntimeError("menu failed")),
     )

@@ -198,7 +198,8 @@ class _Actions(NamedTuple):
     zoom_widget_action: QtWidgets.QWidgetAction
     draw: list[tuple[str, QtGui.QAction]]
     image: QtGui.QActionGroup
-    context_menu: tuple[QtGui.QAction, ...]
+    shape_context_menu: tuple[QtGui.QAction, ...]
+    canvas_context_menu: tuple[QtGui.QAction, ...]
     edit_menu: tuple[QtGui.QAction, ...]
 
 
@@ -980,24 +981,28 @@ class MainWindow(QtWidgets.QMainWindow):
             ("ai_segment", create_ai_segment_mode),
             ("ai_find_all", create_ai_find_all_mode),
         ]
-        # Both menus follow the platform Edit-menu convention: history first,
+        # The Edit menu follows the platform Edit-menu convention: history first,
         # then the clipboard group, then the actions that alter a shape.
         history = (undo, undo_last_point)
         clipboard = (copy, paste, duplicate)
-        context_menu = (
+        shape_context_menu = (
+            edit,
+            duplicate,
+            copy,
+            delete,
+            merge,
+            lock,
+            separator(),
+            add_point_to_edge,
+            remove_point,
+        )
+        canvas_context_menu = (
             *[draw_action for _, draw_action in draw],
             edit_mode,
             separator(),
             *history,
             separator(),
-            *clipboard,
-            separator(),
-            edit,
-            delete,
-            merge,
-            lock,
-            add_point_to_edge,
-            remove_point,
+            paste,
         )
         edit_menu = (
             separator(),
@@ -1061,7 +1066,8 @@ class MainWindow(QtWidgets.QMainWindow):
             zoom_widget_action=zoom_widget_action,
             draw=draw,
             image=image_actions,
-            context_menu=context_menu,
+            shape_context_menu=shape_context_menu,
+            canvas_context_menu=canvas_context_menu,
             edit_menu=edit_menu,
         )
 
@@ -1196,8 +1202,9 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         # Lets a disabled item say why it is disabled.
-        self._canvas_widgets.canvas.context_menu.setToolTipsVisible(True)
-        edit_menu.setToolTipsVisible(True)
+        canvas = self._canvas_widgets.canvas
+        for menu in (canvas.shape_context_menu, canvas.canvas_context_menu, edit_menu):
+            menu.setToolTipsVisible(True)
 
         return _Menus(
             file=file_menu,
@@ -1638,8 +1645,13 @@ class MainWindow(QtWidgets.QMainWindow):
         return not len(self._docks.label_list)
 
     def populate_mode_actions(self) -> None:
-        self._canvas_widgets.canvas.context_menu.clear()
-        self._canvas_widgets.canvas.context_menu.addActions(self._actions.context_menu)
+        canvas = self._canvas_widgets.canvas
+        for menu, menu_actions in (
+            (canvas.shape_context_menu, self._actions.shape_context_menu),
+            (canvas.canvas_context_menu, self._actions.canvas_context_menu),
+        ):
+            menu.clear()
+            menu.addActions(menu_actions)
         self._menus.edit.clear()
         actions = (
             *[draw_action for _, draw_action in self._actions.draw],

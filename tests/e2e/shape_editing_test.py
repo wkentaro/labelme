@@ -253,7 +253,7 @@ def test_disabled_merge_action_says_why(
         output_dir=None,
     )
     merge = win._actions.merge
-    assert canvas.context_menu.toolTipsVisible()
+    assert canvas.shape_context_menu.toolTipsVisible()
     assert win._menus.edit.toolTipsVisible()
 
     assert not merge.isEnabled()
