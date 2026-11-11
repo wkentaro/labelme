@@ -472,6 +472,14 @@
         <translation>Tạo bản sao của các hình dạng đã chọn</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Thay các hình dạng đã chọn bằng hộp giới hạn của chúng</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Chuyển các hình dạng đã chọn thành đường gấp khúc</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Hoàn tác điểm vẽ cuối cùng</translation>
     </message>
@@ -628,10 +636,6 @@
         <translation>Chuyển các hình dạng đã chọn thành đa giác</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>Thay các đa giác đã chọn bằng hộp giới hạn của chúng</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>Chuyển các hình dạng đã chọn thành hình chữ nhật có hướng</translation>
     </message>
@@ -646,10 +650,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>Chuyển các hình dạng đã chọn thành điểm</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>Mở các đa giác đã chọn thành đường gấp khúc</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -916,10 +916,6 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Không có đầu ra mặt nạ</translation>
     </message>
     <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>Chỉ chuyển được đa giác thành hình chữ nhật</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Nhãn không hợp lệ &apos;{}&apos; với loại xác thực &apos;{}&apos;</translation>
     </message>
@@ -1136,10 +1132,6 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Các hình dạng đã chọn đã thuộc loại này</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>Chỉ chuyển được hình chữ nhật và đường gấp khúc thành đa giác</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Không hỗ trợ chuyển thành hình chữ nhật có hướng</translation>
     </message>
@@ -1148,16 +1140,8 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Không hỗ trợ chuyển thành hình tròn</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>Không hỗ trợ chuyển thành đường thẳng</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>Không hỗ trợ chuyển thành điểm</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>Chỉ chuyển được đa giác thành đường gấp khúc</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1166,6 +1150,14 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Đường gấp khúc cần ít nhất 3 điểm để thành đa giác</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Đường gấp khúc cần đúng 2 điểm để thành đường thẳng</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Hình dạng không có diện tích thì không có hộp giới hạn</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1306,6 +1298,22 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Cài đặt được quản lý qua --config trong phiên này</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>Không thể chuyển đường thẳng, hình tròn, điểm và mặt nạ thành đa giác</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Không thể chuyển đường thẳng và điểm thành hình chữ nhật</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Chỉ chuyển được đường gấp khúc thành đường thẳng</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Chỉ chuyển được đa giác và đường thẳng thành đường gấp khúc</translation>
     </message>
     <message>
         <source>Large Image</source>

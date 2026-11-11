@@ -476,6 +476,14 @@
         <translation>Duplikat der ausgewählten Formen erstellen</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Ausgewählte Formen durch ihre Begrenzungsrahmen ersetzen</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Ausgewählte Formen in Linienfolgen umwandeln</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Letzten gezeichneten Punkt rückgängig machen</translation>
     </message>
@@ -644,10 +652,6 @@
         <translation>Ausgewählte Formen in Polygone umwandeln</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>Ausgewählte Polygone durch ihre Begrenzungsrahmen ersetzen</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>Ausgewählte Formen in orientierte Rechtecke umwandeln</translation>
     </message>
@@ -662,10 +666,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>Ausgewählte Formen in Punkte umwandeln</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>Ausgewählte Polygone zu Linienfolgen öffnen</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -910,10 +910,6 @@
         <translation>Die ausgewählten Formen sind bereits von diesem Typ</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>Nur Rechtecke und Linienfolgen lassen sich in Polygone umwandeln</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Umwandlung in orientierte Rechtecke wird nicht unterstützt</translation>
     </message>
@@ -922,16 +918,8 @@
         <translation>Umwandlung in Kreise wird nicht unterstützt</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>Umwandlung in Linien wird nicht unterstützt</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>Umwandlung in Punkte wird nicht unterstützt</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>Nur Polygone lassen sich in Linienfolgen umwandeln</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1006,6 +994,30 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
     <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskenausgabe nicht verfügbar</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>Linien, Kreise, Punkte und Masken lassen sich nicht in Polygone umwandeln</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Linien und Punkte lassen sich nicht in Rechtecke umwandeln</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Nur Linienfolgen lassen sich in Linien umwandeln</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Nur Polygone und Linien lassen sich in Linienfolgen umwandeln</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Eine Linienfolge braucht genau 2 Punkte, um eine Linie zu werden</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Eine Form ohne Fläche hat keinen Begrenzungsrahmen</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -1170,10 +1182,6 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Keine neuen „{query}“ gefunden</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>Nur Polygone lassen sich in Rechtecke umwandeln</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

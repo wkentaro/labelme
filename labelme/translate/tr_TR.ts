@@ -472,6 +472,14 @@
         <translation>Seçili şekillerin kopyasını oluştur</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Seçili şekilleri sınırlayıcı kutularıyla değiştir</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Seçili şekilleri çizgi şeridine dönüştür</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Son çizilen noktayı geri al</translation>
     </message>
@@ -628,10 +636,6 @@
         <translation>Seçili şekilleri çokgene dönüştür</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>Seçili çokgenleri sınırlayıcı kutularıyla değiştir</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>Seçili şekilleri yönlü dikdörtgene dönüştür</translation>
     </message>
@@ -646,10 +650,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>Seçili şekilleri noktaya dönüştür</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>Seçili çokgenleri açarak çizgi şeridine dönüştür</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -916,10 +916,6 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Maske çıktısı kullanılamıyor</translation>
     </message>
     <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>Yalnızca çokgenler dikdörtgene dönüştürülebilir</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>&apos;{}&apos; etiketi &apos;{}&apos; doğrulama türüne göre geçersiz</translation>
     </message>
@@ -1136,10 +1132,6 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Seçili şekiller zaten bu türde</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>Yalnızca dikdörtgenler ve çizgi şeritleri çokgene dönüştürülebilir</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Yönlü dikdörtgene dönüştürme desteklenmiyor</translation>
     </message>
@@ -1148,16 +1140,8 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Daireye dönüştürme desteklenmiyor</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>Çizgiye dönüştürme desteklenmiyor</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>Noktaya dönüştürme desteklenmiyor</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>Yalnızca çokgenler çizgi şeridine dönüştürülebilir</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1166,6 +1150,14 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Bir çizgi şeridinin çokgen olması için en az 3 noktası olmalı</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Bir çizgi şeridinin çizgi olması için tam 2 noktası olmalı</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Alanı olmayan bir şeklin sınırlayıcı kutusu olmaz</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1306,6 +1298,22 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Bu oturumda ayarlar --config ile yönetiliyor</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>Çizgiler, daireler, noktalar ve maskeler çokgene dönüştürülemez</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Çizgiler ve noktalar dikdörtgene dönüştürülemez</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Yalnızca çizgi şeritleri çizgiye dönüştürülebilir</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Yalnızca çokgenler ve çizgiler çizgi şeridine dönüştürülebilir</translation>
     </message>
     <message>
         <source>Large Image</source>

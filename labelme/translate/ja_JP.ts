@@ -477,6 +477,14 @@
         <translation>選択した図形の複製を作成</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>選択した図形をバウンディングボックスに置き換え</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>選択した図形を折れ線に変換</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>最後に描画した頂点を取り消し</translation>
     </message>
@@ -636,10 +644,6 @@
         <translation>選択した図形をポリゴンに変換</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>選択したポリゴンをバウンディングボックスに置き換え</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>選択した図形を向き付き矩形に変換</translation>
     </message>
@@ -654,10 +658,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>選択した図形を点に変換</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>選択したポリゴンを開いて折れ線にする</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -926,10 +926,6 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>マスク出力は利用できません</translation>
     </message>
     <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>矩形に変換できるのはポリゴンのみです</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>ラベル &apos;{}&apos; は検証タイプ &apos;{}&apos; では無効です</translation>
     </message>
@@ -1146,10 +1142,6 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>選択した図形はすでにこの種類です</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>ポリゴンに変換できるのは矩形と折れ線のみです</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>向き付き矩形への変換には対応していません</translation>
     </message>
@@ -1158,16 +1150,8 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>円への変換には対応していません</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>直線への変換には対応していません</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>点への変換には対応していません</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>折れ線に変換できるのはポリゴンのみです</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1176,6 +1160,14 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>ポリゴンにするには、折れ線に3つ以上の点が必要です</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>直線にするには、折れ線の点がちょうど2つである必要があります</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>面積のない図形にはバウンディングボックスがありません</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1316,6 +1308,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>このセッションの設定は --config で管理されています</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>直線、円、点、マスクはポリゴンに変換できません</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>直線と点は矩形に変換できません</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>直線に変換できるのは折れ線のみです</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>折れ線に変換できるのはポリゴンと直線のみです</translation>
     </message>
     <message>
         <source>Large Image</source>

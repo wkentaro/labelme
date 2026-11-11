@@ -667,7 +667,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 text=self.tr("Rectangle"),
                 slot=lambda: self._convert_selected_shapes(target="rectangle"),
                 icon="rectangle.svg",
-                tip=self.tr("Replace the selected polygons with their bounding boxes"),
+                tip=self.tr("Replace the selected shapes with their bounding boxes"),
                 checkable=True,
                 enabled=False,
             ),
@@ -707,7 +707,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 text=self.tr("LineStrip"),
                 slot=lambda: self._convert_selected_shapes(target="linestrip"),
                 icon="linestrip.svg",
-                tip=self.tr("Open the selected polygons into linestrips"),
+                tip=self.tr("Convert the selected shapes to linestrips"),
                 checkable=True,
                 enabled=False,
             ),
@@ -2171,7 +2171,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # tip for one on macOS or Fusion.
         self._actions.merge.setToolTip(self._merge_tip(blocker=blocker))
         for target, convert_action in self._actions.convert.items():
-            blocker = _shape.convert_blocker(shapes=selected, target=target)
+            blocker = _shape.convert_blocker(
+                shapes=selected, target=target, image_size=self._convert_image_size()
+            )
             convert_action.setEnabled(not busy and blocker is None)
             convert_action.setChecked(blocker == "already_target")
             convert_action.setToolTip(self._convert_tip(target=target, blocker=blocker))
@@ -2203,19 +2205,20 @@ class MainWindow(QtWidgets.QMainWindow):
             case "wrong_type":
                 return {
                     "polygon": self.tr(
-                        "Only rectangles and linestrips can be converted to polygons"
+                        "Lines, circles, points, and masks can’t be converted"
+                        " to polygons"
                     ),
                     "rectangle": self.tr(
-                        "Only polygons can be converted to rectangles"
+                        "Lines and points can’t be converted to rectangles"
                     ),
                     "oriented_rectangle": self.tr(
                         "Converting to oriented rectangles isn’t supported"
                     ),
                     "circle": self.tr("Converting to circles isn’t supported"),
-                    "line": self.tr("Converting to lines isn’t supported"),
+                    "line": self.tr("Only linestrips can be converted to lines"),
                     "point": self.tr("Converting to points isn’t supported"),
                     "linestrip": self.tr(
-                        "Only polygons can be converted to linestrips"
+                        "Only polygons and lines can be converted to linestrips"
                     ),
                     "mask": self.tr("Converting to masks isn’t supported"),
                 }[target]
@@ -2223,6 +2226,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 return self.tr(
                     "A linestrip needs at least 3 points to become a polygon"
                 )
+            case "too_many_points":
+                return self.tr("A linestrip needs exactly 2 points to become a line")
+            case "no_area":
+                return self.tr("A shape with no area has no bounding box")
             case "locked":
                 return self.tr("Unlock the selected shapes to convert them")
 
@@ -2726,13 +2733,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self._commit_shapes(shapes=shapes)
         canvas.select_shapes(shapes=[merged])
 
+    def _convert_image_size(self) -> tuple[int, int] | None:
+        # New points stay inside the image unless out-of-bounds points are on.
+        if self._config["canvas"]["allow_out_of_bounds_points"]:
+            return None
+        return (self._image.width(), self._image.height())
+
     def _convert_selected_shapes(self, *, target: ConvertTarget) -> None:
         canvas = self._canvas_widgets.canvas
         selected = list(canvas.selected_shapes)
-        if _shape.convert_blocker(shapes=selected, target=target) is not None:
+        if _shape.convert_blocker(
+            shapes=selected, target=target, image_size=self._convert_image_size()
+        ):
             return
+        image_size = self._convert_image_size()
         converted = {
-            s: _shape.convert_shape(shape=s, target=target)
+            s: _shape.convert_shape(shape=s, target=target, image_size=image_size)
             for s in selected
             if s.shape_type != target
         }
@@ -4013,6 +4029,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 value=self._config["canvas"]["allow_out_of_bounds_points"]
             )
             canvas.update()
+            # Whether a bounding box has area depends on clipping it.
+            self._sync_edit_actions()
         elif key_path[0] == "shape_color":
             self._refresh_shape_colors()
         elif key_path[0] == "labels":

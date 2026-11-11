@@ -472,6 +472,14 @@
         <translation>Maak een duplicaat van de geselecteerde vormen</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Geselecteerde vormen vervangen door hun begrenzingskaders</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Geselecteerde vormen omzetten naar lijnstrips</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Laatste getekende punt ongedaan maken</translation>
     </message>
@@ -628,10 +636,6 @@
         <translation>Geselecteerde vormen omzetten naar polygonen</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>Geselecteerde polygonen vervangen door hun begrenzingskaders</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>Geselecteerde vormen omzetten naar georiënteerde rechthoeken</translation>
     </message>
@@ -646,10 +650,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>Geselecteerde vormen omzetten naar punten</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>Geselecteerde polygonen openen tot lijnstrips</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -916,10 +916,6 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Maskeruitvoer niet beschikbaar</translation>
     </message>
     <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>Alleen polygonen kunnen worden omgezet naar rechthoeken</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Ongeldig label &apos;{}&apos; met validatietype &apos;{}&apos;</translation>
     </message>
@@ -1136,10 +1132,6 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>De geselecteerde vormen zijn al van dit type</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>Alleen rechthoeken en lijnstrips kunnen worden omgezet naar polygonen</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Omzetten naar georiënteerde rechthoeken wordt niet ondersteund</translation>
     </message>
@@ -1148,16 +1140,8 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Omzetten naar cirkels wordt niet ondersteund</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>Omzetten naar lijnen wordt niet ondersteund</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>Omzetten naar punten wordt niet ondersteund</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>Alleen polygonen kunnen worden omgezet naar lijnstrips</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1166,6 +1150,14 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Een lijnstrip heeft minstens 3 punten nodig om een polygoon te worden</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Een lijnstrip heeft precies 2 punten nodig om een lijn te worden</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Een vorm zonder oppervlakte heeft geen begrenzingskader</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1306,6 +1298,22 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>Lijnen, cirkels, punten en maskers kunnen niet worden omgezet naar polygonen</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Lijnen en punten kunnen niet worden omgezet naar rechthoeken</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Alleen lijnstrips kunnen worden omgezet naar lijnen</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Alleen polygonen en lijnen kunnen worden omgezet naar lijnstrips</translation>
     </message>
     <message>
         <source>Large Image</source>

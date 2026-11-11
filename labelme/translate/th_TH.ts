@@ -473,6 +473,14 @@
         <translation>สร้างสำเนารูปร่างที่เลือก</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>แทนที่รูปร่างที่เลือกด้วยกรอบล้อมรอบ</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นเส้นต่อเนื่อง</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>ยกเลิกจุดที่วาดล่าสุด</translation>
     </message>
@@ -629,10 +637,6 @@
         <translation>แปลงรูปร่างที่เลือกเป็นหลายเหลี่ยม</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>แทนที่หลายเหลี่ยมที่เลือกด้วยกรอบล้อมรอบ</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>แปลงรูปร่างที่เลือกเป็นสี่เหลี่ยมมีทิศทาง</translation>
     </message>
@@ -647,10 +651,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>แปลงรูปร่างที่เลือกเป็นจุด</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>เปิดหลายเหลี่ยมที่เลือกเป็นเส้นต่อเนื่อง</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -917,10 +917,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>ไม่สามารถสร้างเอาต์พุตมาสก์ได้</translation>
     </message>
     <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>แปลงเป็นสี่เหลี่ยมได้เฉพาะหลายเหลี่ยม</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>เลเบล &apos;{}&apos; ไม่ถูกต้อง ประเภทการตรวจ &apos;{}&apos;</translation>
     </message>
@@ -1137,10 +1133,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>รูปร่างที่เลือกเป็นประเภทนี้อยู่แล้ว</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>แปลงเป็นหลายเหลี่ยมได้เฉพาะสี่เหลี่ยมและเส้นต่อเนื่อง</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>ไม่รองรับการแปลงเป็นสี่เหลี่ยมมีทิศทาง</translation>
     </message>
@@ -1149,16 +1141,8 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>ไม่รองรับการแปลงเป็นวงกลม</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>ไม่รองรับการแปลงเป็นเส้น</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>ไม่รองรับการแปลงเป็นจุด</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>แปลงเป็นเส้นต่อเนื่องได้เฉพาะหลายเหลี่ยม</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1167,6 +1151,14 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>เส้นต่อเนื่องต้องมีอย่างน้อย 3 จุดจึงจะเป็นหลายเหลี่ยมได้</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>เส้นต่อเนื่องต้องมี 2 จุดพอดีจึงจะเป็นเส้นได้</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>รูปร่างที่ไม่มีพื้นที่จะไม่มีกรอบล้อมรอบ</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1307,6 +1299,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>แปลงเส้น วงกลม จุด และมาสก์เป็นหลายเหลี่ยมไม่ได้</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>แปลงเส้นและจุดเป็นสี่เหลี่ยมไม่ได้</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>แปลงเป็นเส้นได้เฉพาะเส้นต่อเนื่อง</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>แปลงเป็นเส้นต่อเนื่องได้เฉพาะหลายเหลี่ยมและเส้น</translation>
     </message>
     <message>
         <source>Large Image</source>

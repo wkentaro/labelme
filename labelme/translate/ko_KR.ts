@@ -472,6 +472,14 @@
         <translation>선택한 도형의 복사본 생성</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>선택한 도형을 경계 상자로 바꾸기</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>선택한 도형을 연결선으로 변환</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>마지막으로 그린 점 실행 취소</translation>
     </message>
@@ -628,10 +636,6 @@
         <translation>선택한 도형을 다각형으로 변환</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>선택한 다각형을 경계 상자로 바꾸기</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>선택한 도형을 방향 있는 사각형으로 변환</translation>
     </message>
@@ -646,10 +650,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>선택한 도형을 점으로 변환</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>선택한 다각형을 열어 연결선으로 만들기</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -916,10 +916,6 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>마스크 출력을 사용할 수 없음</translation>
     </message>
     <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>다각형만 사각형으로 변환할 수 있습니다</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>검증 유형 &apos;{}&apos;에 대한 잘못된 레이블 &apos;{}&apos;</translation>
     </message>
@@ -1136,10 +1132,6 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>선택한 도형은 이미 이 유형입니다</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>사각형과 연결선만 다각형으로 변환할 수 있습니다</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>방향 있는 사각형으로의 변환은 지원되지 않습니다</translation>
     </message>
@@ -1148,16 +1140,8 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>원으로의 변환은 지원되지 않습니다</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>선으로의 변환은 지원되지 않습니다</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>점으로의 변환은 지원되지 않습니다</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>다각형만 연결선으로 변환할 수 있습니다</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1166,6 +1150,14 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>연결선을 다각형으로 만들려면 점이 3개 이상 필요합니다</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>연결선을 선으로 만들려면 점이 정확히 2개여야 합니다</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>면적이 없는 도형에는 경계 상자가 없습니다</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1306,6 +1298,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>이 세션의 설정은 --config로 관리됩니다</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>선, 원, 점, 마스크는 다각형으로 변환할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>선과 점은 사각형으로 변환할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>연결선만 선으로 변환할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>다각형과 선만 연결선으로 변환할 수 있습니다</translation>
     </message>
     <message>
         <source>Large Image</source>

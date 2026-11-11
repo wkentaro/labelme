@@ -472,6 +472,14 @@
         <translation>Crear un duplicado de las formas seleccionadas</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Reemplazar las formas seleccionadas por sus cuadros delimitadores</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Convertir las formas seleccionadas en líneas continuas</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Deshacer último punto dibujado</translation>
     </message>
@@ -628,10 +636,6 @@
         <translation>Convertir las formas seleccionadas en polígonos</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>Reemplazar los polígonos seleccionados por sus cuadros delimitadores</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>Convertir las formas seleccionadas en rectángulos orientados</translation>
     </message>
@@ -646,10 +650,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>Convertir las formas seleccionadas en puntos</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>Abrir los polígonos seleccionados en líneas continuas</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -916,10 +916,6 @@ Cambie el modelo de AI-Find All a &apos;SAM 3&apos; o establezca el formato de s
         <translation>Salida de máscara no disponible</translation>
     </message>
     <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>Solo se pueden convertir polígonos en rectángulos</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Etiqueta no válida &apos;{}&apos; con tipo de validación &apos;{}&apos;</translation>
     </message>
@@ -1136,10 +1132,6 @@ Cambie el modelo de AI-Find All a &apos;SAM 3&apos; o establezca el formato de s
         <translation>Las formas seleccionadas ya son de este tipo</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>Solo se pueden convertir en polígonos rectángulos y líneas continuas</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>No se admite la conversión en rectángulos orientados</translation>
     </message>
@@ -1148,16 +1140,8 @@ Cambie el modelo de AI-Find All a &apos;SAM 3&apos; o establezca el formato de s
         <translation>No se admite la conversión en círculos</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>No se admite la conversión en líneas</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>No se admite la conversión en puntos</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>Solo se pueden convertir polígonos en líneas continuas</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1166,6 +1150,14 @@ Cambie el modelo de AI-Find All a &apos;SAM 3&apos; o establezca el formato de s
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Una línea continua necesita al menos 3 puntos para convertirse en polígono</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Una línea continua necesita exactamente 2 puntos para convertirse en línea</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Una forma sin área no tiene cuadro delimitador</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1306,6 +1298,22 @@ Ubicación esperada: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Los ajustes se gestionan mediante --config para esta sesión</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>No se pueden convertir líneas, círculos, puntos ni máscaras en polígonos</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>No se pueden convertir líneas ni puntos en rectángulos</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Solo se pueden convertir líneas continuas en líneas</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Solo se pueden convertir polígonos y líneas en líneas continuas</translation>
     </message>
     <message>
         <source>Large Image</source>

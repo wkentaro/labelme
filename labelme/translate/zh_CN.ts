@@ -472,6 +472,14 @@
         <translation>创建选中形状的副本</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>将选中的形状替换为其边界框</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>将选中的形状转换为折线</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>撤销上一个绘制的点</translation>
     </message>
@@ -628,10 +636,6 @@
         <translation>将选中的形状转换为多边形</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>将选中的多边形替换为其边界框</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>将选中的形状转换为有向矩形</translation>
     </message>
@@ -646,10 +650,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>将选中的形状转换为点</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>将选中的多边形断开为折线</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -916,10 +916,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>掩膜输出不可用</translation>
     </message>
     <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>只能将多边形转换为矩形</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>标签“{}”不符合“{}”验证类型</translation>
     </message>
@@ -1136,10 +1132,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>选中的形状已是此类型</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>只能将矩形和折线转换为多边形</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>不支持转换为有向矩形</translation>
     </message>
@@ -1148,16 +1140,8 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>不支持转换为圆形</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>不支持转换为直线</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>不支持转换为点</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>只能将多边形转换为折线</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1166,6 +1150,14 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>折线至少需要 3 个点才能转换为多边形</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>折线必须恰好有 2 个点才能转换为直线</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>没有面积的形状没有边界框</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1306,6 +1298,22 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>本次会话的设置通过 --config 管理</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>无法将直线、圆形、点和掩码转换为多边形</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>无法将直线和点转换为矩形</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>只能将折线转换为直线</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>只能将多边形和直线转换为折线</translation>
     </message>
     <message>
         <source>Large Image</source>

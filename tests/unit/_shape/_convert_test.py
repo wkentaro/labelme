@@ -58,6 +58,80 @@ def test_polygon_linestrip_keeps_vertices(
     assert converted.point_labels.tolist() == [1, 0, 1]
 
 
+@pytest.mark.parametrize(
+    ("shape", "box"),
+    [
+        (_shape(shape_type="circle", points=[[5, 5], [8, 9]]), [[0, 0], [10, 10]]),
+        (
+            _shape(
+                shape_type="oriented_rectangle", points=[[2, 0], [4, 2], [2, 4], [0, 2]]
+            ),
+            [[0, 0], [4, 4]],
+        ),
+        (
+            _shape(shape_type="linestrip", points=[[0, 3], [2, 0], [5, 4]]),
+            [[0, 0], [5, 4]],
+        ),
+        (
+            Shape(
+                shape_type="mask",
+                points=np.array([[10, 20], [14, 23]]),
+                mask=np.array(
+                    [
+                        [0, 0, 0, 0, 0],
+                        [0, 1, 1, 0, 0],
+                        [0, 0, 1, 1, 0],
+                        [0, 0, 0, 0, 0],
+                    ],
+                    dtype=bool,
+                ),
+            ),
+            [[11, 21], [13, 22]],
+        ),
+    ],
+    ids=["circle", "oriented-rectangle", "linestrip", "mask-hugs-pixels"],
+)
+def test_bounding_box_from_any_area_kind(shape: Shape, box: list[list[int]]) -> None:
+    rect = convert_shape(shape=shape, target="rectangle")
+
+    assert rect.shape_type == "rectangle"
+    assert rect.points.tolist() == box
+    assert rect.mask is None
+
+
+def test_bounding_box_stays_inside_the_given_image() -> None:
+    circle = _shape(shape_type="circle", points=[[5, 64], [20, 64]])
+
+    rect = convert_shape(shape=circle, target="rectangle", image_size=(128, 70))
+
+    assert rect.points.tolist() == [[0, 49], [20, 70]]
+
+
+def test_bounding_box_outside_the_image_has_no_area() -> None:
+    circle = _shape(shape_type="circle", points=[[150, 50], [160, 50]])
+
+    assert (
+        convert_blocker(shapes=[circle], target="rectangle", image_size=(100, 100))
+        == "no_area"
+    )
+
+
+@pytest.mark.parametrize(
+    ("source", "target", "points"),
+    [
+        ("line", "linestrip", [[0, 0], [4, 4]]),
+        ("linestrip", "line", [[0, 0], [4, 4]]),
+        ("oriented_rectangle", "polygon", [[2, 0], [4, 2], [2, 4], [0, 2]]),
+    ],
+)
+def test_vertex_preserving_routes_keep_points(
+    source: ShapeType, target: ConvertTarget, points: list[list[int]]
+) -> None:
+    shape = _shape(shape_type=source, points=points)
+
+    assert convert_shape(shape=shape, target=target).points.tolist() == points
+
+
 def test_convert_keeps_identity_and_leaves_source_alone() -> None:
     rect = Shape(
         shape_type="rectangle",
@@ -132,6 +206,31 @@ _POLYGON: Final = [[0, 0], [4, 0], [4, 4]]
             "locked",
         ),
         (
+            [_shape(shape_type="linestrip", points=[[0, 0], [1, 1], [2, 0]])],
+            "line",
+            "too_many_points",
+        ),
+        (
+            [_shape(shape_type="linestrip", points=[[0, 0], [1, 1], [0, 0]])],
+            "line",
+            "too_many_points",
+        ),
+        (
+            [_shape(shape_type="linestrip", points=[[0, 0], [1, 1], [2, 2]])],
+            "rectangle",
+            None,
+        ),
+        (
+            [_shape(shape_type="linestrip", points=[[0, 0], [0, 1], [0, 2]])],
+            "rectangle",
+            "no_area",
+        ),
+        (
+            [_shape(shape_type="point", points=[[0, 0]])],
+            "rectangle",
+            "wrong_type",
+        ),
+        (
             [_shape(shape_type="circle", points=[[0, 0], [1, 1]], locked=True)],
             "polygon",
             "wrong_type",
@@ -155,6 +254,11 @@ _POLYGON: Final = [[0, 0], [4, 0], [4, 4]]
         "short-linestrip",
         "revisiting-linestrip",
         "locked",
+        "long-linestrip-to-line",
+        "revisiting-linestrip-to-line",
+        "diagonal-linestrip-to-rectangle",
+        "flat-linestrip-to-rectangle",
+        "point-to-rectangle",
         "locked-wrong-type",
         "rectangle-and-linestrip",
         "polygon-to-linestrip",

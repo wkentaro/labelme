@@ -472,6 +472,14 @@
         <translation>Utwórz duplikat zaznaczonych kształtów</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Zastąp zaznaczone kształty ich ramkami ograniczającymi</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Konwertuj zaznaczone kształty na łamane</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Cofnij ostatnio narysowany punkt</translation>
     </message>
@@ -628,10 +636,6 @@
         <translation>Konwertuj zaznaczone kształty na wielokąty</translation>
     </message>
     <message>
-        <source>Replace the selected polygons with their bounding boxes</source>
-        <translation>Zastąp zaznaczone wielokąty ich ramkami ograniczającymi</translation>
-    </message>
-    <message>
         <source>Convert the selected shapes to oriented rectangles</source>
         <translation>Konwertuj zaznaczone kształty na prostokąty zorientowane</translation>
     </message>
@@ -646,10 +650,6 @@
     <message>
         <source>Convert the selected shapes to points</source>
         <translation>Konwertuj zaznaczone kształty na punkty</translation>
-    </message>
-    <message>
-        <source>Open the selected polygons into linestrips</source>
-        <translation>Otwórz zaznaczone wielokąty w łamane</translation>
     </message>
     <message>
         <source>Mask</source>
@@ -916,10 +916,6 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Wyjście maski niedostępne</translation>
     </message>
     <message>
-        <source>Only polygons can be converted to rectangles</source>
-        <translation>Na prostokąty można konwertować tylko wielokąty</translation>
-    </message>
-    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Nieprawidłowa etykieta &apos;{}&apos; dla typu walidacji &apos;{}&apos;</translation>
     </message>
@@ -1136,10 +1132,6 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Zaznaczone kształty są już tego typu</translation>
     </message>
     <message>
-        <source>Only rectangles and linestrips can be converted to polygons</source>
-        <translation>Na wielokąty można konwertować tylko prostokąty i łamane</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Konwersja na prostokąty zorientowane nie jest obsługiwana</translation>
     </message>
@@ -1148,16 +1140,8 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Konwersja na okręgi nie jest obsługiwana</translation>
     </message>
     <message>
-        <source>Converting to lines isn’t supported</source>
-        <translation>Konwersja na linie nie jest obsługiwana</translation>
-    </message>
-    <message>
         <source>Converting to points isn’t supported</source>
         <translation>Konwersja na punkty nie jest obsługiwana</translation>
-    </message>
-    <message>
-        <source>Only polygons can be converted to linestrips</source>
-        <translation>Na łamane można konwertować tylko wielokąty</translation>
     </message>
     <message>
         <source>Converting to masks isn’t supported</source>
@@ -1166,6 +1150,14 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Łamana musi mieć co najmniej 3 punkty, aby stać się wielokątem</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Łamana musi mieć dokładnie 2 punkty, aby stać się linią</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Kształt bez pola powierzchni nie ma ramki ograniczającej</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1306,6 +1298,22 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Ustawienia są zarządzane przez --config w tej sesji</translation>
+    </message>
+    <message>
+        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
+        <translation>Linii, okręgów, punktów i masek nie można konwertować na wielokąty</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Linii i punktów nie można konwertować na prostokąty</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Na linie można konwertować tylko łamane</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Na łamane można konwertować tylko wielokąty i linie</translation>
     </message>
     <message>
         <source>Large Image</source>

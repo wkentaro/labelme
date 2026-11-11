@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
 from labelme._label_file import read_label_file
+from labelme._shape import Shape
 from labelme._widgets._canvas import Canvas
 
 from ..conftest import close_or_pause
@@ -103,7 +105,7 @@ def test_convert_menu_lists_every_kind_and_enables_valid_ones(
     assert [t for t, a in convert.items() if a.isEnabled()] == ["polygon"]
     assert [t for t, a in convert.items() if a.isChecked()] == ["rectangle"]
     assert convert["linestrip"].toolTip() == (
-        "Only polygons can be converted to linestrips"
+        "Only polygons and lines can be converted to linestrips"
     )
     assert convert["circle"].toolTip() == "Converting to circles isn’t supported"
 
@@ -112,5 +114,35 @@ def test_convert_menu_lists_every_kind_and_enables_valid_ones(
     qtbot.wait(50)
     assert not convert["polygon"].isEnabled()
     assert convert["polygon"].toolTip() == "Unlock the selected shapes to convert them"
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+def test_out_of_bounds_setting_refreshes_convert_actions(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open(
+        main_win=main_win, qtbot=qtbot, data_path=data_path, tmp_path=tmp_path
+    )
+    outside = Shape(
+        label="ball",
+        shape_type="circle",
+        points=np.array([[-50.0, -50.0], [-40.0, -50.0]]),
+    )
+    win._commit_shapes(shapes=[*canvas.shapes, outside])
+    canvas.select_shapes(shapes=[canvas.shapes[-1]])
+    qtbot.wait(50)
+    rectangle = win._actions.convert["rectangle"]
+    assert not rectangle.isEnabled()
+
+    # Unclipped, its box has area; clipped to the image, it has none.
+    for enabled in (True, False):
+        win._apply_setting_change(("canvas", "allow_out_of_bounds_points"), enabled)
+        assert rectangle.isEnabled() is enabled
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
