@@ -1700,6 +1700,12 @@ class Canvas(QtWidgets.QWidget):
         self, *, pos: QPointF, event: QtGui.QMouseEvent
     ) -> None:
         self._clear_ai_existing_shape_highlights()
+        if self.mode == _CanvasMode.EDIT and event.buttons() == event.button():
+            # The view can change under a still pointer (keyboard zoom), leaving
+            # the hover from the last move on a shape the press is not over. A
+            # press joining a held button keeps that gesture's target.
+            self._prev_move_point = pos
+            self._refresh_hover_state(pos=pos)
         button = event.button()
         if button == Qt.MouseButton.LeftButton:
             self._press_left(pos=pos, event=event)
