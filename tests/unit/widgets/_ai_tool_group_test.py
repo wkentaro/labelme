@@ -155,7 +155,11 @@ def test_run_reads_detecting_while_a_job_runs(*, group: AiToolGroup) -> None:
 
     detect.set_detecting(detecting=False)  # noqa: FBT003 -- state flag
 
-    assert detect._run_button.text() == AiTextToAnnotationWidget._RUN_GLYPH
+    assert detect._run_button.text() == ""
+    assert (
+        detect._run_button.toolButtonStyle()
+        == QtCore.Qt.ToolButtonStyle.ToolButtonIconOnly
+    )
 
 
 def test_options_button_marks_thresholds_off_their_defaults(
