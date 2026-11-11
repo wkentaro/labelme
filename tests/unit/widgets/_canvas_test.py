@@ -3233,7 +3233,6 @@ def test_double_click_in_create_mode_finalizes_shape(
     assert len(canvas.shapes) == 1
 
 
-@pytest.mark.gui
 def test_circle_3p_drawing_lifecycle(*, canvas: Canvas) -> None:
     canvas.set_editing(value=False)
     canvas.create_mode = "circle_3p"
@@ -3318,7 +3317,6 @@ def test_circle_3p_drawing_lifecycle(*, canvas: Canvas) -> None:
     assert radius == pytest.approx(10.0)
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("allow_out_of_bounds", [False, True])
 def test_circle_3p_center_obeys_the_image_bounds(
     *, canvas: Canvas, allow_out_of_bounds: bool
@@ -3367,7 +3365,6 @@ def test_circle_3p_undo_last_point(*, canvas: Canvas) -> None:
     assert canvas._current is None
 
 
-@pytest.mark.gui
 def test_circle_3p_escape_cancels(*, canvas: Canvas) -> None:
     canvas.set_editing(value=False)
     canvas.create_mode = "circle_3p"
