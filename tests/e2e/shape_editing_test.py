@@ -12,6 +12,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QDropEvent
 from pytestqt.qtbot import QtBot
 
+from labelme import _image_codec
 from labelme import _utils
 from labelme._app import MainWindow
 from labelme._label_file import read_label_file
@@ -166,7 +167,7 @@ def test_merge_mask_shapes(
             "description": "",
             "shape_type": "mask",
             "flags": {},
-            "mask": _utils.img_arr_to_b64(
+            "mask": _image_codec.img_arr_to_b64(
                 img_arr=np.ones((size, size), dtype=np.uint8)
             ),
         }

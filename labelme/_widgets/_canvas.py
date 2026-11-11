@@ -330,6 +330,7 @@ class Canvas(QtWidgets.QWidget):
     _rotation_center: np.ndarray
     _rotation_initial_angle: float
     _rotation_original_points: np.ndarray
+    _rotation_stays_in_image: bool
 
     _pan_anchor: QPointF | None
 
@@ -414,6 +415,7 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_center = np.zeros(2)
         self._rotation_initial_angle = 0.0
         self._rotation_original_points = np.empty((0, 2))
+        self._rotation_stays_in_image = False
         self._scale = 1.0
         self._ai_assist_session = _automation.AiAssistSession()
         self.get_ai_find_all_model_name = lambda: ""
@@ -1456,12 +1458,18 @@ class Canvas(QtWidgets.QWidget):
         current_angle = _utils.direction_angle(
             start=self._rotation_center, end=(pos.x(), pos.y())
         )
+        accepted = self.hovered_shape.points.copy()
         _shape.rotate(
             shape=self.hovered_shape,
             center=self._rotation_center,
             angle=current_angle - self._rotation_initial_angle,
             source_points=self._rotation_original_points,
         )
+        if self._rotation_stays_in_image and _points_leave_image(
+            points=self.hovered_shape.points, image_size=self.pixmap.size()
+        ):
+            self.hovered_shape.points = accepted
+            return
         self.update()
         self._is_moving_shape = True
 
@@ -1478,9 +1486,21 @@ class Canvas(QtWidgets.QWidget):
             start=self._rotation_center, end=handle
         )
         self._rotation_original_points = self.hovered_shape.points.copy()
+        # A rectangle already outside, e.g. from a file, must stay rotatable.
+        self._rotation_stays_in_image = (
+            not self._allow_out_of_bounds_points
+            and not _points_leave_image(
+                points=self._rotation_original_points, image_size=self.pixmap.size()
+            )
+        )
 
     def _movable_selected_shapes(self) -> list[Shape]:
-        return [shape for shape in self.selected_shapes if not shape.locked]
+        # A hidden Shape has to be shown before it can be moved or deleted.
+        return [
+            shape
+            for shape in self.selected_shapes
+            if shape.visible and not shape.locked
+        ]
 
     def _drag_selected_shapes(self, *, pos: QPointF) -> None:
         shapes = self._movable_selected_shapes()
@@ -2203,7 +2223,7 @@ class Canvas(QtWidgets.QWidget):
         self.shapes = [s for s in self.shapes if s not in removed]
         self._forget_hover(shapes=removed)
         self.backup_shapes()
-        self.selected_shapes = [s for s in self.selected_shapes if s.locked]
+        self.selected_shapes = [s for s in self.selected_shapes if s not in removed]
         self._set_ai_existing_shape_highlights(shapes=[])
         self.update()
         return removed
@@ -2978,7 +2998,9 @@ class Canvas(QtWidgets.QWidget):
             if direction is not None:
                 self._move_by_keyboard(offset=direction * MOVE_SPEED)
             elif a0.matches(QtGui.QKeySequence.StandardKey.SelectAll):
-                self.select_shapes(shapes=self.shapes[:])
+                self.select_shapes(
+                    shapes=[shape for shape in self.shapes if shape.visible]
+                )
         self._update_status(extra_messages=None)
 
     @override
@@ -3381,6 +3403,16 @@ def _project_oriented_rectangle_corners(
         opposite_to=perp, neighbor1=anchor, neighbor2=moving
     )
     return perp, para
+
+
+def _points_leave_image(*, points: np.ndarray, image_size: QtCore.QSize) -> bool:
+    # Rotating onto the edge lands within float error of it.
+    TOLERANCE: Final = 1e-6
+    return bool(
+        points.min() < -TOLERANCE
+        or points[:, 0].max() > image_size.width() + TOLERANCE
+        or points[:, 1].max() > image_size.height() + TOLERANCE
+    )
 
 
 def _is_out_of_image(*, point: QPointF, image_size: QtCore.QSize) -> bool:

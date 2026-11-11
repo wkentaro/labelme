@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from collections.abc import Callable
 from pathlib import Path
@@ -163,6 +164,39 @@ def test_delete_label_file(
     assert item.checkState() == Qt.CheckState.Unchecked
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+@pytest.mark.gui
+def test_delete_label_file_drops_its_flags_and_extra_keys(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    label_file = data_path / "annotated/2011_000003.json"
+    raw = json.loads(label_file.read_text(encoding="utf-8"))
+    raw["flags"] = {"blurry": True}
+    raw["reviewer"] = "someone"
+    label_file.write_text(json.dumps(raw), encoding="utf-8")
+    win = main_win(file_or_dir=str(label_file), config_overrides=dict(auto_save=False))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert win._docks.flag_list.count() == 1
+    assert win._annotation is not None
+    assert win._annotation.other_data == {"reviewer": "someone"}
+
+    def _confirm(*, message: str) -> bool:
+        del message
+        return True
+
+    monkeypatch.setattr(win, "_confirm_deletion", _confirm)
+    win.delete_file()
+
+    assert not label_file.exists()
+    assert win._docks.flag_list.count() == 0
+    assert win._annotation.flags == {}
+    assert win._annotation.other_data == {}
+    assert not win._is_changed
 
 
 @pytest.mark.gui

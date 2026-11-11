@@ -1,18 +1,23 @@
 from __future__ import annotations
 
 import io
+import json
 import struct
 import zlib
 from pathlib import Path
 
 import numpy as np
+import PIL.features
 import PIL.Image
 import pytest
 import tifffile
 
 from labelme._label_file import RASTER_MAX_SIDE
+from labelme._label_file import ImageDecodeLimitError
 from labelme._label_file import ImageTooLargeError
+from labelme._label_file import LabelFileReadError
 from labelme._label_file import read_image_file
+from labelme._label_file import read_label_file
 
 
 def _make_image(*, tmp_path: Path, filename: str, mode: str) -> Path:
@@ -53,6 +58,34 @@ def test_png_returns_raw_bytes(*, tmp_path: Path) -> None:
     path = _make_image(tmp_path=tmp_path, filename="test.png", mode="RGB")
     data = read_image_file(filename=str(path))
     assert data == path.read_bytes()
+
+
+@pytest.mark.skipif(
+    not PIL.features.check_codec("jpg_2000"), reason="Pillow needs OpenJPEG"
+)
+@pytest.mark.parametrize("suffix", [".jp2", ".jpx", ".j2k", ".j2c"])
+@pytest.mark.parametrize("mode", ["L", "RGB", "RGBA", "I;16"])
+def test_jpeg2000_encoded_as_lossless_png(
+    *, tmp_path: Path, suffix: str, mode: str
+) -> None:
+    path = tmp_path / f"image{suffix}"
+    rng = np.random.default_rng(0)
+    shape = (24, 32) if mode in ("L", "I;16") else (24, 32, len(mode))
+    pixels = rng.integers(
+        0,
+        65536 if mode == "I;16" else 256,
+        size=shape,
+        dtype=np.uint16 if mode == "I;16" else np.uint8,
+    )
+    PIL.Image.fromarray(pixels).save(
+        path, format="JPEG2000", no_jp2=suffix in (".j2k", ".j2c")
+    )
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as decoded:
+        assert decoded.format == "PNG"
+        np.testing.assert_array_equal(np.asarray(decoded), pixels)
 
 
 def test_cmyk_jpeg_returns_raw_bytes(*, tmp_path: Path) -> None:
@@ -191,7 +224,10 @@ def test_planar_separate_tiff_keeps_image_size_and_bands(*, tmp_path: Path) -> N
             assert sum(pixel) - pixel[band] < 50
 
 
-def test_read_image_file_rejects_oversized_png_from_header(*, tmp_path: Path) -> None:
+@pytest.mark.parametrize("max_decode_mb", [256, 2048])
+def test_read_image_file_rejects_oversized_png_from_header(
+    *, tmp_path: Path, max_decode_mb: int
+) -> None:
     def make_chunk(chunk_type: bytes, data: bytes) -> bytes:
         return (
             struct.pack(">I", len(data))
@@ -211,7 +247,7 @@ def test_read_image_file_rejects_oversized_png_from_header(*, tmp_path: Path) ->
     path.write_bytes(png_bytes)
 
     with pytest.raises(ImageTooLargeError) as exc_info:
-        read_image_file(filename=str(path), max_decode_mb=256)
+        read_image_file(filename=str(path), max_decode_mb=max_decode_mb)
 
     assert exc_info.value.width == 37296
     assert exc_info.value.height == 49319
@@ -273,3 +309,81 @@ def test_read_image_file_reads_wide_image_within_decode_limit(
     data = read_image_file(filename=str(path), max_decode_mb=256)
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert image.size == (40000, 100)
+
+
+def test_read_image_file_raises_decode_limit_error_within_side_limit(
+    *, tmp_path: Path
+) -> None:
+    path = tmp_path / "big.png"
+    PIL.Image.new("RGB", (600, 600)).save(path)
+
+    with pytest.raises(ImageDecodeLimitError) as exc_info:
+        read_image_file(filename=str(path), max_decode_mb=1)
+
+    assert exc_info.value.width == 600
+    assert exc_info.value.height == 600
+    assert exc_info.value.required_mb == 2
+
+
+@pytest.mark.parametrize("max_decode_mb", [2, None])
+def test_read_image_file_reads_image_within_or_without_decode_limit(
+    *, tmp_path: Path, max_decode_mb: int | None
+) -> None:
+    path = tmp_path / "big.png"
+    PIL.Image.new("RGB", (600, 600)).save(path)
+
+    data = read_image_file(filename=str(path), max_decode_mb=max_decode_mb)
+
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.size == (600, 600)
+
+
+def test_read_image_file_raises_decode_limit_error_for_tiff_before_decoding(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "big.tif"
+    tifffile.imwrite(str(path), np.zeros((600, 600), dtype=np.float32))
+    monkeypatch.setattr(
+        tifffile.TiffPageSeries, "asarray", lambda _self: pytest.fail("decoded pixels")
+    )
+
+    with pytest.raises(ImageDecodeLimitError):
+        read_image_file(filename=str(path), max_decode_mb=1)
+
+
+def test_read_image_file_raises_decode_limit_error_before_exif_rotation(
+    *, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "rotated.jpg"
+    exif = PIL.Image.Exif()
+    exif[0x0112] = 6
+    PIL.Image.new("RGB", (600, 600)).save(path, exif=exif)
+    monkeypatch.setattr(
+        PIL.Image.Image, "load", lambda _self: pytest.fail("decoded pixels")
+    )
+
+    with pytest.raises(ImageDecodeLimitError):
+        read_image_file(filename=str(path), max_decode_mb=1)
+
+
+def test_read_label_file_wraps_decode_limit_error_with_cause(*, tmp_path: Path) -> None:
+    PIL.Image.new("RGB", (600, 600)).save(tmp_path / "big.png")
+    label_path = tmp_path / "big.json"
+    label_path.write_text(
+        json.dumps(
+            {
+                "version": "5.0.0",
+                "flags": {},
+                "shapes": [],
+                "imagePath": "big.png",
+                "imageData": None,
+                "imageHeight": 600,
+                "imageWidth": 600,
+            }
+        )
+    )
+
+    with pytest.raises(LabelFileReadError) as exc_info:
+        read_label_file(filename=str(label_path), max_decode_mb=1)
+
+    assert isinstance(exc_info.value.__cause__, ImageDecodeLimitError)

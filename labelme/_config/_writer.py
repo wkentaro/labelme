@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import contextlib
 import os
+import re
+import stat
 import tempfile
+import time
 from collections.abc import Sequence
 from io import StringIO
 from pathlib import Path
@@ -65,16 +69,47 @@ def _prune(*, doc: CommentedMap, key_path: Sequence[str]) -> None:
 
 
 def _atomic_write(*, config_file: Path, content: str) -> None:
+    # Windows cannot represent POSIX modes, so preservation is POSIX-only.
+    try:
+        existing_mode = (
+            None if os.name == "nt" else stat.S_IMODE(config_file.stat().st_mode)
+        )
+    except FileNotFoundError:
+        existing_mode = None
+
     fd, tmp = tempfile.mkstemp(
         dir=config_file.parent, prefix=f"{config_file.name}.", suffix=".tmp"
     )
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write(content)
+        if existing_mode is not None:
+            os.chmod(tmp, existing_mode)
         os.replace(tmp, config_file)
     except BaseException:
         os.unlink(tmp)
         raise
+    _sweep_stale_temporary_files(config_file=config_file)
+
+
+def _sweep_stale_temporary_files(*, config_file: Path) -> None:
+    # A killed save leaves its uniquely named temporary file behind, and no
+    # later save reuses the name. Best effort: it must never fail a save.
+    # The pattern is the name mkstemp gives this Config File's temporary files.
+    pattern = re.compile(re.escape(config_file.name) + r"\.[a-z0-9_]{8}\.tmp")
+    # Far longer than any save, so a file another process is writing stays.
+    STALE_AGE_SECONDS: Final = 60 * 60
+    cutoff = time.time() - STALE_AGE_SECONDS
+    with contextlib.suppress(OSError), os.scandir(config_file.parent) as entries:
+        for entry in entries:
+            if not pattern.fullmatch(entry.name):
+                continue
+            with contextlib.suppress(OSError):
+                if (
+                    entry.is_file(follow_symlinks=False)
+                    and entry.stat(follow_symlinks=False).st_mtime < cutoff
+                ):
+                    os.unlink(entry.path)
 
 
 def reset_config(*, config_file: Path) -> Path:
@@ -88,20 +123,27 @@ def reset_config(*, config_file: Path) -> Path:
     return Path(backup)
 
 
+def _comment_lines(*, text: str) -> str:
+    return "".join(
+        line if line.endswith("\n") else f"{line}\n"
+        for line in text.splitlines(keepends=True)
+        if line.lstrip().startswith("#")
+    )
+
+
 def set_overrides(
     *, config_file: Path, overrides: Sequence[tuple[Sequence[str], object]]
 ) -> None:
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.indent(mapping=2, sequence=4, offset=2)
+    text = config_file.read_text(encoding="utf-8") if config_file.exists() else ""
     try:
-        doc = (
-            yaml.load(config_file.read_text(encoding="utf-8"))
-            if config_file.exists()
-            else None
-        )
+        doc = yaml.load(text)
     except YAMLError as error:
         raise ValueError(f"Could not read the Config File: {error}") from error
+    # A file of comments parses to nothing, so the dump below cannot carry them.
+    is_comment_only = doc is None and bool(text.strip())
     if doc is None:
         doc = CommentedMap()
     if not isinstance(doc, CommentedMap):
@@ -124,9 +166,13 @@ def set_overrides(
     if writes_shape_color and "shape_color" in doc:
         validate_shape_color(config=doc["shape_color"])
 
-    content = ""
     if doc:
         buffer = StringIO()
         yaml.dump(doc, buffer)
         content = buffer.getvalue()
+        if is_comment_only:
+            content = _comment_lines(text=text) + content
+    else:
+        # ruamel dumps an emptied mapping as "{}", so keep the comments by hand.
+        content = _comment_lines(text=text)
     _atomic_write(config_file=config_file, content=content)

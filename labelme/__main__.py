@@ -19,6 +19,7 @@ from typing import override
 from loguru import logger
 from PySide6 import QtCore
 from PySide6 import QtWidgets
+from ruamel.yaml.error import YAMLError
 
 from labelme import __appname__
 from labelme import __version__
@@ -248,15 +249,22 @@ def _resolve_config_source(
             return None, {}
         return Path(default_config_file), {}
 
-    if isinstance(config_loaded := _yaml.safe_load(stream=config_arg), dict):
+    try:
+        is_file = os.path.isfile(config_arg)
+    except ValueError:  # an embedded null byte
+        is_file = False
+    if is_file:
+        return Path(config_arg), {}
+
+    try:
+        config_loaded = _yaml.safe_load(stream=config_arg)
+    except YAMLError:
+        config_loaded = None
+    if isinstance(config_loaded, dict):
         return None, config_loaded
 
-    if not os.path.isfile(config_arg):
-        logger.error(
-            "Config file does not exist: {!r}", str(Path(config_arg).absolute())
-        )
-        sys.exit(1)
-    return Path(config_arg), {}
+    logger.error("Config file does not exist: {!r}", str(Path(config_arg).absolute()))
+    sys.exit(1)
 
 
 def main() -> None:

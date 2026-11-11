@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import base64
+import contextlib
 import io
 import json
 import math
 import os
+import re
 import stat
 import time
 import typing
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from pathlib import PureWindowsPath
@@ -23,7 +26,7 @@ from numpy.typing import NDArray
 
 from labelme import __version__
 
-from . import _utils
+from . import _image_codec
 from ._shape import ShapeDict
 from ._shape import ShapeType
 
@@ -31,6 +34,10 @@ PIL.Image.MAX_IMAGE_PIXELS = None
 
 
 _SINGLE_CHANNEL_NDIM: Final = 2
+
+_TEMPORARY_NAME_PATTERN: Final = re.compile(r"\.[0-9a-f]{32}\.tmp")
+# Listing a large or remote Annotation Folder on every save is too slow.
+_SWEPT_DIRECTORIES: Final[set[str]] = set()
 
 
 def _validate_flags(*, flags: object) -> dict[str, bool]:
@@ -93,8 +100,12 @@ def _validate_shape_semantics(
         raise ValueError(f"mask must decode to a 2D image, got shape {mask.shape}")
 
 
-def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
+def _load_shape_json_obj(
+    *, shape_json_obj: dict, image_size: tuple[int, int] | None
+) -> ShapeDict:
     POINT_COORDINATE_COUNT: Final = 2
+    MASK_PIXEL_BUDGET_FACTOR: Final = 16
+    MASK_PIXEL_BUDGET_FLOOR: Final = 4096 * 4096
     SHAPE_KEYS: Final[set[str]] = {
         "label",
         "points",
@@ -158,7 +169,26 @@ def _load_shape_json_obj(*, shape_json_obj: dict) -> ShapeDict:
                 f"mask must be base64-encoded PNG: {shape_json_obj['mask']}"
             )
         try:
-            mask = _utils.img_b64_to_arr(img_b64=shape_json_obj["mask"]).astype(bool)
+            if image_size is not None:
+                # A decoded mask costs about a byte per pixel, so this bounds memory.
+                # The floor (about 16 MB) lets small Images keep masks that merges and
+                # out-of-bounds edits grew far past them; the factor lets large Images
+                # keep masks somewhat larger than themselves. The header gives the size.
+                with PIL.Image.open(
+                    io.BytesIO(base64.b64decode(shape_json_obj["mask"]))
+                ) as mask_image:
+                    mask_width, mask_height = mask_image.size
+                budget_pixels = max(
+                    MASK_PIXEL_BUDGET_FACTOR * image_size[0] * image_size[1],
+                    MASK_PIXEL_BUDGET_FLOOR,
+                )
+                if mask_width * mask_height > budget_pixels:
+                    raise ValueError(
+                        f"mask is too large for the image: {mask_width}x{mask_height}"
+                    )
+            mask = _image_codec.img_b64_to_arr(img_b64=shape_json_obj["mask"]).astype(
+                bool
+            )
         except (OSError, ValueError) as e:
             raise ValueError(f"mask must be base64-encoded PNG: {e}") from e
 
@@ -202,7 +232,7 @@ def _dump_shape_to_json_obj(*, shape: ShapeDict) -> dict[str, Any]:
         flags=shape["flags"],
         mask=None
         if shape["mask"] is None
-        else _utils.img_arr_to_b64(img_arr=shape["mask"].astype(np.uint8)),
+        else _image_codec.img_arr_to_b64(img_arr=shape["mask"].astype(np.uint8)),
     )
     # Written only when set, so files without locked shapes stay unchanged.
     if shape["locked"]:
@@ -248,6 +278,25 @@ class ImageTooLargeError(OSError):
         self.max_side = max_side
 
 
+class ImageDecodeLimitError(OSError):
+    # The image fits Qt's per-side limit but needs more memory than the
+    # decode limit allows. The caller may ask the user and read again
+    # without a limit.
+
+    width: int
+    height: int
+    required_mb: int
+
+    def __init__(self, *, width: int, height: int, required_mb: int) -> None:
+        super().__init__(
+            f"image is {width}x{height} pixels and needs about {required_mb} MB "
+            "to decode, above the decode limit"
+        )
+        self.width = width
+        self.height = height
+        self.required_mb = required_mb
+
+
 class LabelFileWriteError(LabelFileError):
     """Wraps an underlying I/O failure during save."""
 
@@ -290,10 +339,15 @@ def read_image_file(*, filename: str, max_decode_mb: int | None = None) -> bytes
 def _read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
     t_start = time.time()
     with _imread(filename=filename, max_decode_mb=max_decode_mb) as image_pil:
-        oriented: PIL.Image.Image = _utils.apply_exif_orientation(image=image_pil)
+        oriented: PIL.Image.Image = _image_codec.apply_exif_orientation(image=image_pil)
+        is_jpeg2000 = image_pil.format == "JPEG2000"
 
         ext = Path(filename).suffix.lower()
-        if oriented is image_pil and ext in (".jpg", ".jpeg", ".png"):
+        if (
+            oriented is image_pil
+            and ext in (".jpg", ".jpeg", ".png")
+            and not is_jpeg2000
+        ):
             with open(filename, "rb") as f:
                 image_data = f.read()
         else:
@@ -301,7 +355,7 @@ def _read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
                 has_transparency = "A" in oriented.mode or (
                     oriented.mode == "P" and "transparency" in oriented.info
                 )
-                fmt = "PNG" if has_transparency else "JPEG"
+                fmt = "PNG" if has_transparency or is_jpeg2000 else "JPEG"
                 if fmt == "JPEG" and oriented.mode == "P":
                     oriented = oriented.convert("RGB")
                 elif fmt == "PNG" and oriented.mode == "PA":
@@ -332,7 +386,7 @@ def _check_image_dimensions(
         isinstance(expected_width, bool) or not isinstance(expected_width, int)
     ):
         raise TypeError(f"imageWidth must be int: {expected_width}")
-    actual_w, actual_h = _utils.img_data_to_pil(img_data=image_data).size
+    actual_w, actual_h = _image_codec.img_data_to_pil(img_data=image_data).size
     if expected_height is not None and expected_height != actual_h:
         raise ValueError(
             f"imageHeight mismatch: declared={expected_height}, actual={actual_h}"
@@ -386,12 +440,15 @@ def read_label_file(
             expected_height=raw.get("imageHeight"),
             expected_width=raw.get("imageWidth"),
         )
+        image_size = _image_codec.img_data_to_pil(img_data=image_data).size
         shapes: list[ShapeDict] = []
         for shape_index, shape_json_obj in enumerate(raw["shapes"]):
             if not isinstance(shape_json_obj, dict):
                 raise TypeError(f"shapes[{shape_index}] must be dict: {shape_json_obj}")
             try:
-                shape = _load_shape_json_obj(shape_json_obj=shape_json_obj)
+                shape = _load_shape_json_obj(
+                    shape_json_obj=shape_json_obj, image_size=image_size
+                )
             except (TypeError, ValueError, RuntimeError) as e:
                 raise ValueError(f"shapes[{shape_index}]: {e}") from e
             shapes.append(shape)
@@ -475,28 +532,62 @@ def _replace_json_file(*, filename: str, payload: dict[str, Any]) -> None:
         )
     except FileNotFoundError:
         existing_mode = None
-    temporary_path = Path(f"{filename}.tmp")
+    # Unique per write: another process saving this file must not share it.
+    # Not derived from the file's name, which may already be at the length limit.
+    temporary_path = Path(filename).with_name(f".{uuid.uuid4().hex}.tmp")
     try:
-        with open(temporary_path, "w", encoding="utf-8") as f:
+        with open(temporary_path, "x", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
         if existing_mode is not None:
             os.chmod(temporary_path, existing_mode)
         os.replace(temporary_path, filename)
     finally:
         temporary_path.unlink(missing_ok=True)
+    _sweep_stale_temporary_files(directory=Path(filename).absolute().parent)
 
 
-def _check_decodable(
-    *, width: int, height: int, bytes_per_pixel: float, max_decode_mb: int | None
-) -> None:
-    # Qt refuses to decode past its allocation limit and cannot raise it for an
-    # image over the per-side limit, so decoding such an image is wasted work.
-    # bytes_per_pixel is a lower bound on Qt's decoded format, so this never
-    # rejects an image Qt would accept.
-    if max_decode_mb is None or max(width, height) <= RASTER_MAX_SIDE:
+def _sweep_stale_temporary_files(*, directory: Path) -> None:
+    # A killed save leaves its uniquely named temporary file behind, and no
+    # later save reuses the name. Best effort: it must never fail a save.
+    key = str(directory)
+    if key in _SWEPT_DIRECTORIES:
         return
-    if width * height * bytes_per_pixel > max_decode_mb * 2**20:
-        raise ImageTooLargeError(width=width, height=height, max_side=RASTER_MAX_SIDE)
+    _SWEPT_DIRECTORIES.add(key)
+    # Far longer than any save, so a file another process is writing stays.
+    STALE_AGE_SECONDS: Final = 60 * 60
+    cutoff = time.time() - STALE_AGE_SECONDS
+    with contextlib.suppress(OSError), os.scandir(directory) as entries:
+        for entry in entries:
+            if not _TEMPORARY_NAME_PATTERN.fullmatch(entry.name):
+                continue
+            with contextlib.suppress(OSError):
+                if (
+                    entry.is_file(follow_symlinks=False)
+                    and entry.stat(follow_symlinks=False).st_mtime < cutoff
+                ):
+                    os.unlink(entry.path)
+
+
+def _check_decodable(*, width: int, height: int, max_decode_mb: int | None) -> None:
+    QT_MIN_BYTES_PER_PIXEL: Final = 4
+
+    # Qt counts at least 4 bytes per pixel for every image, so neither check
+    # below rejects or asks about an image Qt would have decoded silently.
+    # Past the per-side limit Qt refuses to decode and cannot be told to
+    # raise it, so such an image is rejected when it also exceeds the byte
+    # budget. Within the side limit the caller may ask the user and read
+    # again without a limit.
+    if max_decode_mb is None:
+        return
+    if max(width, height) > RASTER_MAX_SIDE:
+        if width * height * QT_MIN_BYTES_PER_PIXEL > max_decode_mb * 2**20:
+            raise ImageTooLargeError(
+                width=width, height=height, max_side=RASTER_MAX_SIDE
+            )
+        return
+    required_mb = math.ceil(width * height * QT_MIN_BYTES_PER_PIXEL / 2**20)
+    if required_mb > max_decode_mb:
+        raise ImageDecodeLimitError(width=width, height=height, required_mb=required_mb)
 
 
 def _imread(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
@@ -511,10 +602,9 @@ def _imread(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
             _check_decodable(
                 width=width,
                 height=height,
-                bytes_per_pixel=1 / 8 if image_pil.mode == "1" else 1,
                 max_decode_mb=max_decode_mb,
             )
-        except ImageTooLargeError:
+        except (ImageTooLargeError, ImageDecodeLimitError):
             image_pil.close()
             raise
         # Only TIFFs have another reader to fall back to. Qt decodes the other
@@ -540,7 +630,6 @@ def _imread_tiff(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image
         _check_decodable(
             width=page.imagewidth,
             height=page.imagelength,
-            bytes_per_pixel=1,
             max_decode_mb=max_decode_mb,
         )
         series = tif.series[0]

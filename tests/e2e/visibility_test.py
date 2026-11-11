@@ -266,3 +266,24 @@ def test_multi_select_collapses_on_row_body_click(
     assert {item for item in label_list.selected_items()} == {label_list[clicked_index]}
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+@pytest.mark.gui
+def test_select_all_skips_hidden_shape(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    label_list = annotated_win._docks.label_list
+    hidden_index = 1
+    label_list[hidden_index].setCheckState(Qt.CheckState.Unchecked)
+    qtbot.wait(50)
+    assert not canvas.shapes[hidden_index].visible
+    annotated_win._actions.edit_mode.trigger()
+
+    qtbot.keyClick(canvas, Qt.Key.Key_A, modifier=Qt.KeyboardModifier.ControlModifier)
+    qtbot.wait(50)
+
+    assert len(canvas.selected_shapes) == len(canvas.shapes) - 1
+    assert all(shape.visible for shape in canvas.selected_shapes)

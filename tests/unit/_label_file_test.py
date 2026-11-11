@@ -1,18 +1,24 @@
 from __future__ import annotations
 
+import errno
+import io
 import json
 import os
 import shutil
 import stat
+import time
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
+from typing import Final
 from typing import TextIO
 
 import numpy as np
+import PIL.Image
 import pytest
 from numpy.typing import NDArray
 
+from labelme._image_codec import img_arr_to_b64
 from labelme._label_file import Annotation
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
@@ -26,7 +32,6 @@ from labelme._label_file import read_label_file_image_path
 from labelme._label_file import relink_label_file
 from labelme._label_file import write_label_file
 from labelme._shape import ShapeDict
-from labelme._utils import img_arr_to_b64
 
 
 def test_read_label_file_load_windows_path(*, data_path: Path, tmp_path: Path) -> None:
@@ -243,7 +248,8 @@ def test_load_shape_json_obj_accepts_supported_geometry(
             "label": "shape",
             "points": points,
             "shape_type": shape_type,
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["shape_type"] == shape_type
@@ -260,11 +266,107 @@ def test_load_shape_json_obj_accepts_out_of_bounds_mask_shape(
             "points": [[-2.25, -3.25], [0.75, -1.25]],
             "shape_type": "mask",
             "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["mask"] is not None
     assert np.array_equal(loaded["mask"], sample_mask)
+
+
+def test_load_shape_json_obj_rejects_mask_over_pixel_budget() -> None:
+    shape_json_obj = {
+        "label": "mask",
+        "points": [[0, 0], [4096, 4095]],
+        "shape_type": "mask",
+        "mask": img_arr_to_b64(img_arr=np.zeros((4096, 4097), dtype=np.uint8)),
+    }
+
+    with pytest.raises(ValueError, match="mask is too large for the image"):
+        _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
+
+
+def test_load_shape_json_obj_accepts_mask_at_pixel_budget() -> None:
+    shape_json_obj = {
+        "label": "mask",
+        "points": [[0, 0], [4095, 4095]],
+        "shape_type": "mask",
+        "mask": img_arr_to_b64(img_arr=np.zeros((4096, 4096), dtype=np.uint8)),
+    }
+
+    loaded = _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
+
+    assert loaded["mask"] is not None
+
+
+def test_load_shape_json_obj_rejects_oversized_mask_before_decoding(
+    *, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def _fail(**_: object) -> None:
+        raise AssertionError("decoded")
+
+    monkeypatch.setattr("labelme._label_file._image_codec.img_b64_to_arr", _fail)
+    shape_json_obj = {
+        "label": "mask",
+        "points": [[0, 0], [4096, 4095]],
+        "shape_type": "mask",
+        "mask": img_arr_to_b64(img_arr=np.zeros((4096, 4097), dtype=np.uint8)),
+    }
+
+    with pytest.raises(ValueError, match="mask is too large"):
+        _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
+
+
+def test_read_label_file_loads_mask_grown_past_small_image(*, tmp_path: Path) -> None:
+    # Merging 2x2 masks at 0 and 50 on a 10x10 Image saves a 52x52 mask.
+    image_buffer = io.BytesIO()
+    PIL.Image.new("RGB", (10, 10)).save(image_buffer, format="PNG")
+    mask = np.zeros((52, 52), dtype=bool)
+    mask[0:2, 0:2] = True
+    mask[50:52, 50:52] = True
+    shape = ShapeDict(
+        label="merged",
+        points=[[0.0, 0.0], [51.0, 51.0]],
+        shape_type="mask",
+        flags={},
+        description="",
+        group_id=None,
+        mask=mask,
+        locked=False,
+        other_data={},
+    )
+    filename = tmp_path / "grown.json"
+    write_label_file(
+        filename=str(filename),
+        annotation=Annotation(
+            image_path="grown.png",
+            image_data=image_buffer.getvalue(),
+            shapes=[shape],
+            flags={},
+            other_data={},
+        ),
+        image_height=10,
+        image_width=10,
+        save_image_data=True,
+    )
+
+    [reloaded_shape] = read_label_file(filename=str(filename)).shapes
+
+    assert reloaded_shape["mask"] is not None
+    assert reloaded_shape["mask"].shape == (52, 52)
+
+
+def test_load_shape_json_obj_accepts_mask_grown_past_image_by_merge() -> None:
+    shape_json_obj = {
+        "label": "mask",
+        "points": [[0, 0], [10, 10]],
+        "shape_type": "mask",
+        "mask": img_arr_to_b64(img_arr=np.zeros((11, 11), dtype=np.uint8)),
+    }
+
+    loaded = _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=(10, 10))
+
+    assert loaded["mask"] is not None
 
 
 @pytest.mark.parametrize(
@@ -293,7 +395,7 @@ def test_load_shape_json_obj_rejects_wrong_point_count(
         shape_json_obj["mask"] = img_arr_to_b64(img_arr=np.ones((1, 1), dtype=np.uint8))
 
     with pytest.raises(ValueError, match="points"):
-        _load_shape_json_obj(shape_json_obj=shape_json_obj)
+        _load_shape_json_obj(shape_json_obj=shape_json_obj, image_size=None)
 
 
 def test_load_shape_json_obj_rejects_unknown_shape_type() -> None:
@@ -303,7 +405,8 @@ def test_load_shape_json_obj_rejects_unknown_shape_type() -> None:
                 "label": "shape",
                 "points": [[0.0, 0.0]],
                 "shape_type": "triangle",
-            }
+            },
+            image_size=None,
         )
 
 
@@ -314,7 +417,8 @@ def test_load_shape_json_obj_rejects_non_finite_points() -> None:
                 "label": "shape",
                 "points": [[float("inf"), 0.0]],
                 "shape_type": "point",
-            }
+            },
+            image_size=None,
         )
 
 
@@ -325,7 +429,8 @@ def test_load_shape_json_obj_requires_mask_for_mask_shape() -> None:
                 "label": "mask",
                 "points": [[0.0, 0.0], [1.0, 1.0]],
                 "shape_type": "mask",
-            }
+            },
+            image_size=None,
         )
 
 
@@ -340,7 +445,8 @@ def test_load_shape_json_obj_rejects_mask_for_non_mask_shape(
                 "points": [[0.0, 0.0], [3.0, 2.0]],
                 "shape_type": "rectangle",
                 "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
-            }
+            },
+            image_size=None,
         )
 
 
@@ -352,7 +458,8 @@ def test_load_shape_json_obj_rejects_multichannel_mask() -> None:
                 "points": [[0.0, 0.0], [3.0, 2.0]],
                 "shape_type": "mask",
                 "mask": img_arr_to_b64(img_arr=np.ones((3, 4, 3), dtype=np.uint8)),
-            }
+            },
+            image_size=None,
         )
 
 
@@ -368,7 +475,8 @@ def test_load_shape_json_obj_accepts_mask_extent_mismatch(
             "points": [[0.5, 0.5], [4.5, 2.5]],
             "shape_type": "mask",
             "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["mask"] is not None
@@ -425,7 +533,8 @@ def test_load_shape_json_obj_parses_all_fields() -> None:
             "flags": {"occluded": True},
             "description": "a note",
             "group_id": 7,
-        }
+        },
+        image_size=None,
     )
 
     assert loaded == {
@@ -447,7 +556,8 @@ def test_load_shape_json_obj_defaults_absent_optional_fields() -> None:
             "label": "cat",
             "points": [[0.0, 0.0]],
             "shape_type": "point",
-        }
+        },
+        image_size=None,
     )
 
     assert loaded == {
@@ -470,7 +580,8 @@ def test_load_shape_json_obj_keeps_falsy_group_id() -> None:
             "points": [[0.0, 0.0]],
             "shape_type": "point",
             "group_id": 0,
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["group_id"] == 0
@@ -484,7 +595,8 @@ def test_load_shape_json_obj_buckets_unknown_keys_into_other_data() -> None:
             "shape_type": "point",
             "score": 0.9,
             "reviewer": "alice",
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["other_data"] == {"score": 0.9, "reviewer": "alice"}
@@ -500,7 +612,8 @@ def test_load_shape_json_obj_decodes_mask_to_bool_array(
             "points": [[0.0, 0.0], [4.0, 3.0]],
             "shape_type": "mask",
             "mask": img_arr_to_b64(img_arr=sample_mask.astype(np.uint8)),
-        }
+        },
+        image_size=None,
     )
 
     assert loaded["mask"] is not None
@@ -548,7 +661,9 @@ def test_shape_codec_round_trips_mask(*, sample_mask: NDArray[np.bool_]) -> None
         other_data={},
     )
 
-    reloaded = _load_shape_json_obj(shape_json_obj=_dump_shape_to_json_obj(shape=shape))
+    reloaded = _load_shape_json_obj(
+        shape_json_obj=_dump_shape_to_json_obj(shape=shape), image_size=None
+    )
 
     assert reloaded["mask"] is not None
     assert np.array_equal(reloaded["mask"], sample_mask)
@@ -678,6 +793,128 @@ def test_write_label_file_atomically_replaces_existing_file(
     assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
 
 
+def test_write_label_file_leaves_another_writers_temporary_file(
+    *,
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+) -> None:
+    others_temporary = existing_label_file.with_name(f"{existing_label_file.name}.tmp")
+    others_temporary.write_text("half written by another process", encoding="utf-8")
+
+    write_label_file(
+        filename=str(existing_label_file),
+        annotation=annotation_to_write,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+    assert others_temporary.read_text(encoding="utf-8") == (
+        "half written by another process"
+    )
+    assert json.loads(existing_label_file.read_text(encoding="utf-8"))["imagePath"] == (
+        "new.jpg"
+    )
+
+
+_ORPHAN_NAME: Final = ".0123456789abcdef0123456789abcdef.tmp"
+
+
+def _make_old(*, path: Path) -> None:
+    TWO_HOURS: Final = 2 * 60 * 60
+    old = time.time() - TWO_HOURS
+    os.utime(path, (old, old))
+
+
+def _save(*, label_file: Path, annotation: Annotation) -> None:
+    write_label_file(
+        filename=str(label_file),
+        annotation=annotation,
+        image_height=None,
+        image_width=None,
+        save_image_data=False,
+    )
+
+
+@pytest.fixture
+def fresh_sweep_memory(*, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("labelme._label_file._SWEPT_DIRECTORIES", set())
+
+
+@pytest.mark.usefixtures("fresh_sweep_memory")
+def test_write_label_file_removes_a_stale_orphaned_temporary_file(
+    *, annotation_to_write: Annotation, existing_label_file: Path
+) -> None:
+    orphan = existing_label_file.with_name(_ORPHAN_NAME)
+    orphan.write_text("half written", encoding="utf-8")
+    _make_old(path=orphan)
+
+    _save(label_file=existing_label_file, annotation=annotation_to_write)
+
+    assert not orphan.exists()
+
+
+@pytest.mark.usefixtures("fresh_sweep_memory")
+def test_write_label_file_keeps_files_the_sweep_must_not_touch(
+    *, annotation_to_write: Annotation, existing_label_file: Path
+) -> None:
+    folder = existing_label_file.parent
+    recent = folder / ".fedcba9876543210fedcba9876543210.tmp"
+    recent.write_text("being written", encoding="utf-8")
+    kept = [
+        folder / "annotation.json.tmp",  # the name used before unique names
+        folder / ".notes.tmp",
+        folder / ".0123456789ABCDEF0123456789ABCDEF.tmp",  # not lowercase hex
+        folder / "x.0123456789abcdef0123456789abcdef.tmp",
+    ]
+    for path in kept:
+        path.write_text("user file", encoding="utf-8")
+        _make_old(path=path)
+    # A different digit run: the uppercase name above is the same file on
+    # case-insensitive filesystems.
+    old_directory = folder / f".{'a' * 32}.tmp"
+    old_directory.mkdir()
+    _make_old(path=old_directory)
+
+    _save(label_file=existing_label_file, annotation=annotation_to_write)
+
+    assert recent.exists()
+    assert all(path.exists() for path in kept)
+    assert old_directory.is_dir()
+
+
+@pytest.mark.usefixtures("fresh_sweep_memory")
+def test_write_label_file_sweeps_a_directory_once(
+    *, annotation_to_write: Annotation, existing_label_file: Path
+) -> None:
+    _save(label_file=existing_label_file, annotation=annotation_to_write)
+    orphan = existing_label_file.with_name(_ORPHAN_NAME)
+    orphan.write_text("half written", encoding="utf-8")
+    _make_old(path=orphan)
+
+    _save(label_file=existing_label_file, annotation=annotation_to_write)
+
+    assert orphan.exists()
+
+
+@pytest.mark.skipif(os.name == "nt", reason="symlink creation needs privileges")
+@pytest.mark.usefixtures("fresh_sweep_memory")
+def test_write_label_file_sweeps_the_directory_of_a_symlinked_file(
+    *, annotation_to_write: Annotation, existing_label_file: Path, tmp_path: Path
+) -> None:
+    link_directory = tmp_path / "links"
+    link_directory.mkdir()
+    link = link_directory / "annotation.json"
+    link.symlink_to(existing_label_file)
+    orphan = link_directory / _ORPHAN_NAME
+    orphan.write_text("half written", encoding="utf-8")
+    _make_old(path=orphan)
+
+    _save(label_file=link, annotation=annotation_to_write)
+
+    assert not orphan.exists()
+
+
 @pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
 def test_write_label_file_preserves_existing_file_mode(
     *,
@@ -738,6 +975,75 @@ def test_write_label_file_supports_long_filename(
 
     assert label_file.exists()
     assert list(tmp_path.iterdir()) == [label_file]
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX directory permissions")
+def test_write_label_file_requires_writable_directory(
+    *, annotation_to_write: Annotation, existing_label_file: Path
+) -> None:
+    directory = existing_label_file.parent
+    original_mode = stat.S_IMODE(directory.stat().st_mode)
+    original_bytes = existing_label_file.read_bytes()
+    try:
+        directory.chmod(0o555)
+        if os.access(directory, os.W_OK):
+            pytest.skip("directory write restrictions are bypassed by this process")
+        # The file itself is still writable: the previous in-place save could
+        # open it without needing to create a sibling temporary file.
+        with existing_label_file.open("r+", encoding="utf-8") as file:
+            assert file.read() == original_bytes.decode("utf-8")
+
+        with pytest.raises(LabelFileWriteError) as caught:
+            write_label_file(
+                filename=str(existing_label_file),
+                annotation=annotation_to_write,
+                image_height=None,
+                image_width=None,
+                save_image_data=False,
+            )
+        assert isinstance(caught.value.__cause__, PermissionError)
+        assert existing_label_file.read_bytes() == original_bytes
+        assert list(directory.iterdir()) == [existing_label_file]
+    finally:
+        directory.chmod(original_mode)
+
+
+@pytest.mark.parametrize("error_number", [errno.EACCES, errno.EPERM])
+def test_write_label_file_denied_temporary_creation_preserves_existing_file(
+    *,
+    annotation_to_write: Annotation,
+    existing_label_file: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    error_number: int,
+) -> None:
+    original_bytes = existing_label_file.read_bytes()
+    attempted: list[Path] = []
+
+    def _deny_temporary_file(path: Path, mode: str, **_kwargs: object) -> TextIO:
+        # Each write gets its own sibling temporary file, created exclusively.
+        assert path.parent == existing_label_file.parent
+        assert path != existing_label_file
+        assert path.suffix == ".tmp"
+        assert mode == "x"
+        attempted.append(path)
+        raise PermissionError(error_number, "temporary creation denied", str(path))
+
+    # Portable fault injection complements the real POSIX permission test on
+    # Windows and when an elevated process bypasses directory mode bits.
+    monkeypatch.setattr("labelme._label_file.open", _deny_temporary_file, raising=False)
+    with pytest.raises(LabelFileWriteError) as caught:
+        write_label_file(
+            filename=str(existing_label_file),
+            annotation=annotation_to_write,
+            image_height=None,
+            image_width=None,
+            save_image_data=False,
+        )
+    assert isinstance(caught.value.__cause__, PermissionError)
+    assert caught.value.__cause__.errno == error_number
+    assert len(attempted) == 1
+    assert existing_label_file.read_bytes() == original_bytes
+    assert list(existing_label_file.parent.iterdir()) == [existing_label_file]
 
 
 def test_write_label_file_serialization_failure_preserves_existing_file(
@@ -1011,8 +1317,10 @@ def test_check_image_dimensions_raises_on_mismatch(
 def test_shape_codec_round_trips_locked() -> None:
     json_obj = {"label": "cat", "points": [[1, 2], [3, 4]], "shape_type": "rectangle"}
 
-    unlocked = _load_shape_json_obj(shape_json_obj=json_obj)
-    locked = _load_shape_json_obj(shape_json_obj={**json_obj, "locked": True})
+    unlocked = _load_shape_json_obj(shape_json_obj=json_obj, image_size=None)
+    locked = _load_shape_json_obj(
+        shape_json_obj={**json_obj, "locked": True}, image_size=None
+    )
 
     assert unlocked["locked"] is False
     assert locked["locked"] is True
@@ -1031,7 +1339,8 @@ def test_load_shape_json_obj_rejects_non_bool_locked(*, locked: object) -> None:
                 "points": [[1, 2], [3, 4]],
                 "shape_type": "rectangle",
                 "locked": locked,
-            }
+            },
+            image_size=None,
         )
 
 

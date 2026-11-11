@@ -21,6 +21,8 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
+  # _model_manager.py patches gdown.cached_download internals.
+  "gdown>=6.4,<7",
   "imgviz>=2.0.0",
   "loguru>=0.7",
   "matplotlib>=3.7",

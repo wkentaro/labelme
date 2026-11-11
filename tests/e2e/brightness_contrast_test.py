@@ -4,7 +4,7 @@ import pytest
 from PySide6.QtCore import QPointF
 from pytestqt.qtbot import QtBot
 
-import labelme._utils
+from labelme import _image_codec
 from labelme._app import MainWindow
 from labelme._widgets._brightness_contrast_dialog import BrightnessContrastDialog
 
@@ -25,9 +25,7 @@ def test_brightness_contrast_dialog(
 
     assert annotated_win._annotation is not None
     dialog = BrightnessContrastDialog(
-        img=labelme._utils.img_data_to_pil(
-            img_data=annotated_win._annotation.image_data
-        ),
+        img=_image_codec.img_data_to_pil(img_data=annotated_win._annotation.image_data),
         callback=annotated_win._on_brightness_contrast_changed,
         parent=annotated_win,
     )

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import os
+import stat
 import subprocess
 import sys
 import textwrap
+import time
 from pathlib import Path
 
 import pytest
@@ -265,6 +267,28 @@ def test_empties_file_when_last_override_pruned(*, tmp_path: Path) -> None:
     assert config_file.read_text(encoding="utf-8") == ""
 
 
+def test_keeps_comments_of_a_comment_only_file(*, tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("# my notes\n# auto_save: false\n", encoding="utf-8")
+
+    _config.set_overrides(
+        config_file=config_file, overrides=[(["with_image_data"], True)]
+    )
+
+    content = config_file.read_text(encoding="utf-8")
+    assert content.startswith("# my notes\n# auto_save: false\n")
+    assert _parse(config_file=config_file) == {"with_image_data": True}
+
+
+def test_keeps_comments_when_last_override_pruned(*, tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("# my notes\nauto_save: false\n", encoding="utf-8")
+
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], True)])
+
+    assert config_file.read_text(encoding="utf-8") == "# my notes\n"
+
+
 def test_written_file_reloads_via_load_config(*, tmp_path: Path) -> None:
     config_file = tmp_path / ".labelmerc"
 
@@ -384,3 +408,62 @@ def test_reset_config_backup_failure_keeps_original_file(
     with pytest.raises(OSError, match="disk unavailable"):
         _config.reset_config(config_file=config_file)
     assert config_file.read_bytes() == original
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
+def test_set_overrides_preserves_existing_file_mode(*, tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("auto_save: true\n", encoding="utf-8")
+    config_file.chmod(0o640)
+
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], False)])
+
+    assert stat.S_IMODE(config_file.stat().st_mode) == 0o640
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX file modes")
+def test_reset_config_preserves_existing_file_mode(*, tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    config_file.write_text("auto_save: false\n", encoding="utf-8")
+    config_file.chmod(0o640)
+
+    _config.reset_config(config_file=config_file)
+
+    assert stat.S_IMODE(config_file.stat().st_mode) == 0o640
+
+
+def _make_old(*, path: Path) -> None:
+    two_hours = 2 * 60 * 60
+    old = time.time() - two_hours
+    os.utime(path, (old, old))
+
+
+def test_removes_a_stale_orphaned_temporary_file(*, tmp_path: Path) -> None:
+    config_file = tmp_path / ".labelmerc"
+    orphan = tmp_path / ".labelmerc.abcd_123.tmp"
+    orphan.write_text("half written", encoding="utf-8")
+    _make_old(path=orphan)
+
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], False)])
+
+    assert not orphan.exists()
+
+
+def test_keeps_files_the_sweep_must_not_touch(*, tmp_path: Path) -> None:
+    config_file = tmp_path / "config[1].yaml"
+    recent = tmp_path / "config[1].yaml.abcd_123.tmp"
+    recent.write_text("being written", encoding="utf-8")
+    kept = [
+        tmp_path / "config1.yaml.abcd_123.tmp",  # another Config File's
+        tmp_path / "config[1].yaml.abcd_123.bak",  # a Reset backup
+        tmp_path / "config[1].yaml.notes.tmp",
+        tmp_path / "xconfig[1].yaml.abcd_123.tmp",
+    ]
+    for path in kept:
+        path.write_text("keep", encoding="utf-8")
+        _make_old(path=path)
+
+    _config.set_overrides(config_file=config_file, overrides=[(["auto_save"], False)])
+
+    assert recent.exists()
+    assert all(path.exists() for path in kept)
