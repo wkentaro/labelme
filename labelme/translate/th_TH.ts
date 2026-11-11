@@ -1085,6 +1085,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>รวมได้เฉพาะรูปร่างที่มีเลเบลเดียวกัน</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>ลบออกจากรายการป้ายกำกับ</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>ล้างป้ายกำกับที่ไม่ได้ใช้</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>ป้ายกำกับ &apos;{label}&apos; กำลังถูกใช้งานโดยรูปร่างบนผืนผ้าใบ</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>ไม่สามารถลบป้ายกำกับได้</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>เลเบลไม่ถูกต้อง</translation>
     </message>
@@ -1677,6 +1693,10 @@ Expected location: {path}</source>
     <message>
         <source>Edit…</source>
         <translation>แก้ไข…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>ล้างที่ไม่ได้ใช้</translation>
     </message>
     <message>
         <source>Found in files</source>

@@ -1084,6 +1084,22 @@ Mude o modelo do AI-Find All para &apos;SAM 3&apos; ou defina o formato de saíd
         <translation>Só é possível mesclar formas com o mesmo rótulo</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Remover da lista de rótulos</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Limpar rótulos não utilizados</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>O rótulo &apos;{label}&apos; está em uso por formas na tela.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Não é possível remover o rótulo</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Rótulo inválido</translation>
     </message>
@@ -1676,6 +1692,10 @@ Local esperado: {path}</translation>
     <message>
         <source>Edit…</source>
         <translation>Editar…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Limpar não usados</translation>
     </message>
     <message>
         <source>Found in files</source>

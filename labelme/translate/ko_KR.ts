@@ -1084,6 +1084,22 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>레이블이 같은 도형만 병합할 수 있습니다</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>라벨 목록에서 제거</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>사용되지 않는 라벨 지우기</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>라벨 &apos;{label}&apos;은(는) 캔버스의 도형에서 사용 중입니다。</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>라벨을 제거할 수 없음</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>잘못된 레이블</translation>
     </message>
@@ -1676,6 +1692,10 @@ Expected location: {path}</source>
     <message>
         <source>Edit…</source>
         <translation>편집…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>미사용 지우기</translation>
     </message>
     <message>
         <source>Found in files</source>

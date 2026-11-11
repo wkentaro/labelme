@@ -1094,6 +1094,22 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>結合できるのは同じラベルの図形のみです</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>ラベル一覧から削除</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>未使用のラベルをクリア</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>ラベル &apos;{label}&apos; はキャンバス上の図形で使用中です。</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>ラベルを削除できません</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>無効なラベル</translation>
     </message>
@@ -1686,6 +1702,10 @@ Expected location: {path}</source>
     <message>
         <source>Edit…</source>
         <translation>編集…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>未使用をクリア</translation>
     </message>
     <message>
         <source>Found in files</source>

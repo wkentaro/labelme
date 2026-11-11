@@ -316,6 +316,14 @@ class LabelDialog(QtWidgets.QDialog):
         if self._sort_labels:
             self.label_list.sortItems()
 
+    def remove_label(self, *, label: str) -> None:
+        if label in self._label_history:
+            self._label_history.remove(label)
+        if self._last_label == label:
+            self._last_label = ""
+        for item in self.label_list.findItems(label, QtCore.Qt.MatchFlag.MatchExactly):
+            self.label_list.takeItem(self.label_list.row(item))
+
     def set_predefined_labels(self, *, labels: list[str]) -> None:
         history_extras = [h for h in self._label_history if h not in labels]
         all_labels = list(dict.fromkeys(labels)) + history_extras

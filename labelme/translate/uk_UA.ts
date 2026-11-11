@@ -1084,6 +1084,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Об&apos;єднувати можна лише фігури з однаковою міткою</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Видалити зі списку міток</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Очистити невикористані мітки</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Мітка &apos;{label}&apos; використовується фігурами на полотні.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Неможливо видалити мітку</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Недійсна мітка</translation>
     </message>
@@ -1676,6 +1692,10 @@ Expected location: {path}</source>
     <message>
         <source>Edit…</source>
         <translation>Редагувати…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Очистити невикористані</translation>
     </message>
     <message>
         <source>Found in files</source>

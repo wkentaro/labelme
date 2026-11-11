@@ -1088,6 +1088,22 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
         <translation>Keine neuen „{query}“ gefunden</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Aus Labelliste entfernen</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Ungenutzte Labels bereinigen</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Das Label &apos;{label}&apos; wird von Formen auf der Leinwand verwendet.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Label kann nicht entfernt werden</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Ungültiges Label</translation>
     </message>
@@ -1676,6 +1692,10 @@ Erwarteter Speicherort: {path}</translation>
     <message>
         <source>Edit…</source>
         <translation>Bearbeiten…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Unbenutzte entfernen</translation>
     </message>
     <message>
         <source>Found in files</source>

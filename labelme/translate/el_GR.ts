@@ -1084,6 +1084,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Μόνο σχήματα με την ίδια ετικέτα συγχωνεύονται</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Αφαίρεση από τη λίστα ετικετών</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Εκκαθάριση αχρησιμοποίητων ετικετών</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Η ετικέτα &apos;{label}&apos; χρησιμοποιείται από σχήματα στον καμβά.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Αδυναμία αφαίρεσης ετικέτας</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
     </message>
@@ -1676,6 +1692,10 @@ Expected location: {path}</source>
     <message>
         <source>Edit…</source>
         <translation>Επεξεργασία…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Εκκαθάριση αχρησιμοποίητων</translation>
     </message>
     <message>
         <source>Found in files</source>

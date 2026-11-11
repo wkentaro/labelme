@@ -1084,6 +1084,22 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
         <translation>Seules les formes portant la même étiquette peuvent être fusionnées</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Supprimer de la liste des étiquettes</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Effacer les étiquettes inutilisées</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>L&apos;étiquette &apos;{label}&apos; est utilisée par des formes sur la zone de dessin.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Impossible de supprimer l&apos;étiquette</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Étiquette invalide</translation>
     </message>
@@ -1676,6 +1692,10 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Edit…</source>
         <translation>Modifier…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Effacer les inutilisées</translation>
     </message>
     <message>
         <source>Found in files</source>

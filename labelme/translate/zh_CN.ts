@@ -1084,6 +1084,22 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>只能合并标签相同的形状</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>从标签列表中删除</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>清除未使用的标签</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>标签 &apos;{label}&apos; 正在被画布上的形状使用。</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>无法删除标签</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>无效标签</translation>
     </message>
@@ -1676,6 +1692,10 @@ Expected location: {path}</source>
     <message>
         <source>Edit…</source>
         <translation>编辑…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>清除未使用</translation>
     </message>
     <message>
         <source>Found in files</source>

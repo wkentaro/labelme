@@ -1118,6 +1118,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.label_list.customContextMenuRequested.connect(
             self.show_label_list_menu
         )
+        unique_label_list = self._docks.unique_label_list
+        unique_label_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        unique_label_list.customContextMenuRequested.connect(
+            self.show_unique_label_list_menu
+        )
+        unique_label_list.label_remove_requested.connect(self._remove_unique_label)
+        # The Labels dock lists every shape with its label, so its changes are
+        # the ones that can make a label used or unused. Refresh once the
+        # change is done: a row is inserted before its item is set, and a
+        # load inserts one row per shape.
+        refresh_unused_labels = QtCore.QTimer(self)
+        refresh_unused_labels.setSingleShot(True)
+        refresh_unused_labels.timeout.connect(self._refresh_unused_labels)
+        label_model = self._docks.label_list.model()
+        for signal in (
+            label_model.rowsInserted,
+            label_model.rowsRemoved,
+            label_model.dataChanged,
+            label_model.modelReset,
+        ):
+            signal.connect(refresh_unused_labels.start)
 
         file_menu.addActions(
             (
@@ -1451,7 +1472,8 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.setWidget(label_list)
 
         unique_label_list = UniqueLabelQListWidget(
-            on_edit_settings_labels=self._edit_settings_labels
+            on_edit_settings_labels=self._edit_settings_labels,
+            on_clear_unused=self._clear_unused_unique_labels,
         )
         unique_label_list.setToolTip(
             self.tr(
@@ -2108,6 +2130,80 @@ class MainWindow(QtWidgets.QMainWindow):
             self._menus.label_list.exec(self._label_list_menu_origin)  # ty: ignore[invalid-argument-type]
         finally:
             self._label_list_menu_origin = None
+
+    def show_unique_label_list_menu(self, point: QtCore.QPoint, /) -> None:
+        menu = self._build_unique_label_list_menu(point=point)
+        global_pos = self._docks.unique_label_list.mapToGlobal(point)
+        try:
+            # PySide6 types QMenu.exec() argument too narrowly
+            menu.exec(global_pos)  # ty: ignore[invalid-argument-type]
+        finally:
+            menu.deleteLater()
+
+    def _build_unique_label_list_menu(self, *, point: QtCore.QPoint) -> QtWidgets.QMenu:
+        menu = QtWidgets.QMenu(self)
+        # Lets the disabled Remove item say why it is disabled.
+        menu.setToolTipsVisible(True)
+        unique_label_list = self._docks.unique_label_list
+        unused_labels = self._unused_unique_labels()
+        item = unique_label_list.itemAt(point)
+        # Settings owns the label set, so only labels found in files are
+        # removable here.
+        if (
+            item is not None
+            and (label := item.data(Qt.ItemDataRole.UserRole))
+            in unique_label_list.found_labels()
+        ):
+            remove_action = menu.addAction(
+                self.tr("Remove from Label List"),
+                functools.partial(self._remove_unique_label, label),
+            )
+            if label not in unused_labels:
+                remove_action.setEnabled(False)
+                remove_action.setToolTip(self._label_in_use_message(label=label))
+            menu.addSeparator()
+        menu.addAction(
+            self.tr("Clear Unused Labels"), self._clear_unused_unique_labels
+        ).setEnabled(bool(unused_labels))
+        return menu
+
+    def _unused_unique_labels(self) -> list[str]:
+        in_use = {shape.label for shape in self._canvas_widgets.canvas.shapes}
+        return [
+            label
+            for label in self._docks.unique_label_list.found_labels()
+            if label not in in_use
+        ]
+
+    def _refresh_unused_labels(self) -> None:
+        self._docks.unique_label_list.set_unused_labels(
+            labels=self._unused_unique_labels()
+        )
+
+    def _label_in_use_message(self, *, label: str) -> str:
+        return self.tr("The label '{label}' is in use by shapes on the canvas.").format(
+            label=label
+        )
+
+    def _remove_unique_label(self, label: str, /) -> None:
+        if label not in self._unused_unique_labels():
+            self.show_error_message(
+                title=self.tr("Cannot Remove Label"),
+                message=self._label_in_use_message(label=label),
+            )
+            return
+        self._forget_unique_labels(labels=[label])
+
+    def _clear_unused_unique_labels(self) -> None:
+        self._forget_unique_labels(labels=self._unused_unique_labels())
+
+    def _forget_unique_labels(self, *, labels: list[str]) -> None:
+        self._docks.unique_label_list.remove_label_items(labels=labels)
+        for label in labels:
+            self._label_dialog.remove_label(label=label)
+        # Once for the batch: it repaints every remaining label.
+        self._refresh_shape_colors()
+        self._refresh_unused_labels()
 
     def validate_label(self, *, label: str) -> bool:
         policy = self._config["validate_label"]
@@ -3827,6 +3923,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Moving labels between sections changes their positions, and auto
         # colors follow position.
         self._refresh_shape_colors()
+        self._refresh_unused_labels()
 
     def _recreate_label_dialog(self) -> None:
         # LabelDialog reads sort_labels, show_label_text_field and

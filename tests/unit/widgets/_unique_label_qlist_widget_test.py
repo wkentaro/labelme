@@ -6,6 +6,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._widgets._unique_label_qlist_widget import _UNUSED_ROLE
 from labelme._widgets._unique_label_qlist_widget import UniqueLabelQListWidget
 
 
@@ -17,7 +18,8 @@ def edit_requests() -> list[None]:
 @pytest.fixture()
 def widget(*, qtbot: QtBot, edit_requests: list[None]) -> UniqueLabelQListWidget:
     widget = UniqueLabelQListWidget(
-        on_edit_settings_labels=lambda: edit_requests.append(None)
+        on_edit_settings_labels=lambda: edit_requests.append(None),
+        on_clear_unused=lambda: None,
     )
     qtbot.addWidget(widget)
     widget.resize(200, 200)
@@ -192,3 +194,72 @@ def test_set_settings_labels_keeps_a_selected_label_leaving_settings(
     assert _rows(widget=widget) == [None, "dog", None, "car", "cat"]
     assert widget.selectedItems() == [_item(widget=widget, label="cat")]
     assert widget.currentItem() is _item(widget=widget, label="cat")
+
+
+@pytest.mark.parametrize("key", [Qt.Key.Key_Delete, Qt.Key.Key_Backspace])
+def test_removal_key_requests_only_found_labels(
+    *, qtbot: QtBot, widget: UniqueLabelQListWidget, key: Qt.Key
+) -> None:
+    widget.add_label_item(label="cat", color=(255, 0, 0), from_settings=True)
+    widget.add_label_item(label="car", color=(0, 0, 255))
+    widget.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+    _item(widget=widget, label="cat").setSelected(True)
+    _item(widget=widget, label="car").setSelected(True)
+
+    with qtbot.waitSignal(widget.label_remove_requested) as blocker:
+        qtbot.keyClick(widget, key)
+
+    assert blocker.args == ["car"]
+
+
+def test_unused_labels_dim_with_the_current_palette(
+    *, widget: UniqueLabelQListWidget
+) -> None:
+    widget.add_label_item(label="cat", color=(255, 0, 0), from_settings=True)
+    widget.add_label_item(label="car", color=(0, 0, 255))
+    widget.add_label_item(label="bus", color=(0, 255, 0))
+    widget.set_unused_labels(labels={"cat", "car"})
+    palette = widget.palette()
+    palette.setColor(QtGui.QPalette.ColorRole.PlaceholderText, QtGui.QColor(1, 2, 3))
+    widget.setPalette(palette)
+
+    def text_color(label: str) -> QtGui.QColor:
+        option = QtWidgets.QStyleOptionViewItem()
+        option.initFrom(widget)
+        index = widget.indexFromItem(_item(widget=widget, label=label))
+        delegate = widget.itemDelegate()
+        assert isinstance(delegate, QtWidgets.QStyledItemDelegate)
+        delegate.initStyleOption(option, index)
+        return option.palette.color(QtGui.QPalette.ColorRole.Text)
+
+    assert text_color("car") == QtGui.QColor(1, 2, 3)
+    assert text_color("cat") != QtGui.QColor(1, 2, 3)  # The label set never dims
+    assert text_color("bus") != QtGui.QColor(1, 2, 3)
+
+
+def test_label_moved_into_settings_stops_dimming(
+    *, widget: UniqueLabelQListWidget
+) -> None:
+    widget.add_label_item(label="car", color=(0, 0, 255))
+    widget.set_unused_labels(labels={"car"})
+
+    widget.set_settings_labels(
+        labels=["car"], found_in_annotations=set(), color=lambda _label: (0, 0, 0)
+    )
+    widget.set_unused_labels(labels=set())
+
+    assert not _item(widget=widget, label="car").data(_UNUSED_ROLE)
+
+
+def test_remove_label_items_selects_no_neighbor(
+    *, widget: UniqueLabelQListWidget
+) -> None:
+    for label in ("car", "bus", "van"):
+        widget.add_label_item(label=label, color=(0, 0, 255))
+    widget.setCurrentItem(_item(widget=widget, label="bus"))
+    widget.clearSelection()
+
+    widget.remove_label_items(labels=["bus"])
+
+    assert widget.labels() == ["car", "van"]
+    assert widget.selectedItems() == []

@@ -1084,6 +1084,22 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Chỉ gộp được các hình dạng có cùng nhãn</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Xóa khỏi danh sách nhãn</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Xóa các nhãn chưa dùng</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>Nhãn &apos;{label}&apos; đang được sử dụng bởi các hình trên canvas.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>Không thể xóa nhãn</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Nhãn không hợp lệ</translation>
     </message>
@@ -1676,6 +1692,10 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Edit…</source>
         <translation>Chỉnh sửa…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Xóa mục không dùng</translation>
     </message>
     <message>
         <source>Found in files</source>

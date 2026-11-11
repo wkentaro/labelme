@@ -1084,6 +1084,22 @@ Cambie el modelo de AI-Find All a &apos;SAM 3&apos; o establezca el formato de s
         <translation>Solo se pueden combinar formas con la misma etiqueta</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Eliminar de la lista de etiquetas</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Limpiar etiquetas no utilizadas</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>La etiqueta &apos;{label}&apos; está en uso por formas en el lienzo.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>No se puede eliminar la etiqueta</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Etiqueta no válida</translation>
     </message>
@@ -1676,6 +1692,10 @@ Ubicación esperada: {path}</translation>
     <message>
         <source>Edit…</source>
         <translation>Editar…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Borrar no usadas</translation>
     </message>
     <message>
         <source>Found in files</source>

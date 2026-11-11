@@ -1084,6 +1084,22 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>Csak azonos címkéjű alakzatok egyesíthetők</translation>
     </message>
     <message>
+        <source>Remove from Label List</source>
+        <translation>Eltávolítás a címkelistából</translation>
+    </message>
+    <message>
+        <source>Clear Unused Labels</source>
+        <translation>Nem használt címkék törlése</translation>
+    </message>
+    <message>
+        <source>The label &apos;{label}&apos; is in use by shapes on the canvas.</source>
+        <translation>A(z) &apos;{label}&apos; címkét alakzatok használják a vásznon.</translation>
+    </message>
+    <message>
+        <source>Cannot Remove Label</source>
+        <translation>A címke nem távolítható el</translation>
+    </message>
+    <message>
         <source>Invalid Label</source>
         <translation>Érvénytelen címke</translation>
     </message>
@@ -1676,6 +1692,10 @@ Várt hely: {path}</translation>
     <message>
         <source>Edit…</source>
         <translation>Szerkesztés…</translation>
+    </message>
+    <message>
+        <source>Clear Unused</source>
+        <translation>Nem használtak törlése</translation>
     </message>
     <message>
         <source>Found in files</source>
