@@ -50,7 +50,8 @@ def _menus(win: MainWindow, /) -> Iterator[QtWidgets.QMenu]:
     # footer), plus the context menus that are created without a parent.
     yield from win.findChildren(QtWidgets.QMenu)
     yield win._menus.label_list
-    yield win._canvas_widgets.canvas.context_menu
+    yield win._canvas_widgets.canvas.shape_context_menu
+    yield win._canvas_widgets.canvas.canvas_context_menu
 
 
 def _menu_actions(*, win: MainWindow) -> list[QtGui.QAction]:
@@ -234,7 +235,8 @@ def _menu_texts(*, win: MainWindow) -> dict[str, list[str]]:
     menus: dict[str, QtWidgets.QWidget] = {"menu bar": win.menuBar()}
     for name in ("file", "edit", "view", "help", "label_list"):
         menus[name] = getattr(win._menus, name)
-    menus["canvas"] = win._canvas_widgets.canvas.context_menu
+    menus["shape"] = win._canvas_widgets.canvas.shape_context_menu
+    menus["canvas"] = win._canvas_widgets.canvas.canvas_context_menu
     return {
         name: [a.text() for a in widget.actions() if not a.isSeparator()]
         for name, widget in menus.items()

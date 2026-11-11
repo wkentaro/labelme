@@ -39,7 +39,6 @@ from labelme._widgets._canvas import _opposite_corner_in_parallelogram
 from labelme._widgets._canvas import _project_oriented_rectangle_corners
 from labelme._widgets._canvas import _reproject_oriented_rectangle_corners
 from labelme._widgets._canvas import _shape_to_draft
-from labelme._widgets._canvas import _should_reselect_on_right_press
 from labelme._widgets._canvas import _snap_cursor_pos_for_square
 from labelme._widgets._shape_render import Palette
 from labelme._widgets._shape_render import ShapeRenderContext
@@ -2534,32 +2533,6 @@ def test_reproject_oriented_rectangle_clips_degenerate_projection() -> None:
     for corner in new_corners:
         assert 0 <= corner.x() <= _WIDTH
         assert 0 <= corner.y() <= _HEIGHT
-
-
-def test_should_reselect_on_right_press_with_empty_selection() -> None:
-    # Empty selection reselects even when hovering nothing; without the guard this
-    # input would fall through to `hovered_shape is None` and wrongly return False.
-    assert _should_reselect_on_right_press(selected_shapes=[], hovered_shape=None)
-
-
-def test_should_reselect_on_right_press_keeps_selection_when_hovering_nothing() -> None:
-    selected = [Shape()]
-    assert not _should_reselect_on_right_press(
-        selected_shapes=selected, hovered_shape=None
-    )
-
-
-def test_should_reselect_on_right_press_when_hovering_outside_selection() -> None:
-    assert _should_reselect_on_right_press(
-        selected_shapes=[Shape()], hovered_shape=Shape()
-    )
-
-
-def test_should_reselect_on_right_press_keeps_selection_hovering_selected() -> None:
-    hovered = Shape()
-    assert not _should_reselect_on_right_press(
-        selected_shapes=[Shape(), hovered], hovered_shape=hovered
-    )
 
 
 @pytest.mark.parametrize(

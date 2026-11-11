@@ -293,8 +293,10 @@ class Canvas(QtWidgets.QWidget):
     _pixmap_rgb: tuple[np.ndarray, str] | None
     _cursor: CursorRole
     shapes: list[Shape]
-    context_menu: QtWidgets.QMenu
+    shape_context_menu: QtWidgets.QMenu
+    canvas_context_menu: QtWidgets.QMenu
     context_menu_origin: QtCore.QPoint | None
+    _right_click_shape: Shape | None
     shape_backups: collections.deque[list[Shape]]
     _is_moving_shape: bool
     _is_pointer_held: bool
@@ -463,8 +465,10 @@ class Canvas(QtWidgets.QWidget):
         self._point_type: Literal["square", "round"] = "round"
         self._draft_palette = _DEFAULT_DRAFT_PALETTE
         self._palette_cache = {}
-        self.context_menu = QtWidgets.QMenu()
+        self.shape_context_menu = QtWidgets.QMenu()
+        self.canvas_context_menu = QtWidgets.QMenu()
         self.context_menu_origin = None
+        self._right_click_shape = None
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
 
@@ -1949,15 +1953,13 @@ class Canvas(QtWidgets.QWidget):
         return False
 
     def _press_right(self, *, pos: QPointF, event: QtGui.QMouseEvent) -> None:
-        if _should_reselect_on_right_press(
-            selected_shapes=self.selected_shapes, hovered_shape=self.hovered_shape
-        ):
-            self._select_shape_point(
-                point=pos,
-                multiple_selection_mode=event.modifiers()
-                == Qt.KeyboardModifier.ControlModifier,
+        shape = self._find_pointed_shape(point=pos)
+        self._right_click_shape = shape
+        if shape is not None and shape not in self.selected_shapes:
+            is_adding = event.modifiers() == Qt.KeyboardModifier.ControlModifier
+            self.select_shapes(
+                shapes=[*self.selected_shapes, shape] if is_adding else [shape]
             )
-            self.update()
         self._prev_point = pos
 
     def _begin_pan(self, *, event: QtGui.QMouseEvent) -> None:
@@ -1993,8 +1995,16 @@ class Canvas(QtWidgets.QWidget):
     def _release_right(self, *, event: QtGui.QMouseEvent) -> None:
         self._release_cursor()
         self.context_menu_origin = self.mapToGlobal(event.position().toPoint())
+        # An empty press is a canvas gesture even if it ends over a shape.
+        shape = self._right_click_shape
+        self._right_click_shape = None
+        menu = (
+            self.shape_context_menu
+            if self.mode == _CanvasMode.EDIT and shape in self.selected_shapes
+            else self.canvas_context_menu
+        )
         try:
-            self.context_menu.exec(self.context_menu_origin)  # type: ignore
+            menu.exec(self.context_menu_origin)  # type: ignore
         finally:
             self.context_menu_origin = None
 
@@ -2164,9 +2174,13 @@ class Canvas(QtWidgets.QWidget):
         self._record_drag_anchor(shapes=self._movable_selected_shapes(), click=point)
 
     def _find_pointed_shape(self, *, point: QPointF) -> Shape | None:
-        # A hovered vertex or rotation handle acts on its own shape, so it wins
-        # over a body lying under it.
-        if self._hovered_vertex is not None or self._hovered_rotation is not None:
+        # A hovered vertex, edge, or rotation handle acts on its own shape, so it
+        # wins over a body lying under it, or over none just outside an edge.
+        if (
+            self._hovered_vertex is not None
+            or self._hovered_rotation is not None
+            or self._hovered_edge is not None
+        ):
             return self.hovered_shape
         return _canvas_interaction.find_shape_at(
             shapes=self.shapes,
@@ -3471,16 +3485,6 @@ def _compute_intersection_edges_image(
     if exit_axis == "x":
         return QPointF(start_x, np.clip(p2.y(), 0.0, height))
     return QPointF(np.clip(p2.x(), 0.0, width), start_y)
-
-
-def _should_reselect_on_right_press(
-    *, selected_shapes: list[Shape], hovered_shape: Shape | None
-) -> bool:
-    if not selected_shapes:
-        return True
-    if hovered_shape is None:
-        return False
-    return hovered_shape not in selected_shapes
 
 
 def _opposite_corner_in_parallelogram(
