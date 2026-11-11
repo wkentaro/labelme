@@ -1232,16 +1232,8 @@ Vị trí dự kiến: {path}</translation>
         <translation>Xóa khỏi danh sách nhãn</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>Không thể xóa nhãn hiện đang được các hình trên canvas sử dụng</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>Xóa các nhãn chưa dùng</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>Không có nhãn chưa dùng nào để xóa</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

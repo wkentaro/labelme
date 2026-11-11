@@ -1232,16 +1232,8 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Usuń z listy etykiet</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>Nie można usunąć etykiety aktualnie używanej przez kształty na płótnie</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>Wyczyść nieużywane etykiety</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>Brak nieużywanych etykiet do wyczyszczenia</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

@@ -1232,16 +1232,8 @@ Expected location: {path}</source>
         <translation>从标签列表中删除</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>无法删除画布上形状当前正在使用的标签</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>清除未使用的标签</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>没有可清除的未使用标签</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

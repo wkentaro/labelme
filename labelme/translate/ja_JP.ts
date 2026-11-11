@@ -1242,16 +1242,8 @@ Expected location: {path}</source>
         <translation>ラベル一覧から削除</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>キャンバス上の図形で使用中のラベルは削除できません</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>未使用のラベルをクリア</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>クリアする未使用のラベルはありません</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

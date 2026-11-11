@@ -46,27 +46,11 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
 
     @override
     def keyPressEvent(self, keyEvent: QtGui.QKeyEvent, /) -> None:
-        if _is_removal_key(event=keyEvent):
-            item = self.currentItem()
-            if item is not None and item.isSelected():
-                label = item.data(Qt.ItemDataRole.UserRole)
-                if isinstance(label, str):
-                    self.label_remove_requested.emit(label)
-            keyEvent.accept()
+        if not _is_removal_key(event=keyEvent):
+            super().keyPressEvent(keyEvent)
             return
-        super().keyPressEvent(keyEvent)
-
-    @property
-    def labels(self) -> list[str]:
-        res: list[str] = []
-        for i in range(self.count()):
-            item = self.item(i)
-            if item is None:
-                continue
-            val = item.data(Qt.ItemDataRole.UserRole)
-            if isinstance(val, str):
-                res.append(val)
-        return res
+        for item in self.selectedItems():
+            self.label_remove_requested.emit(item.data(Qt.ItemDataRole.UserRole))
 
     def find_label_item(self, *, label: str) -> QtWidgets.QListWidgetItem | None:
         items = self.findItems(
@@ -83,13 +67,6 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
         item.setData(LABEL_COLOR_ROLE, QtGui.QColor(*color))
         item.setText(label)
         self.addItem(item)
-
-    def remove_label_item(self, *, label: str) -> None:
-        item = self.find_label_item(label=label)
-        if item is None:
-            raise ValueError(f"Item for label '{label}' not found")
-        row = self.row(item)
-        self.takeItem(row)
 
 
 def _is_removal_key(*, event: QtGui.QKeyEvent) -> bool:

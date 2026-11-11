@@ -1232,16 +1232,8 @@ Expected location: {path}</source>
         <translation>حذف از فهرست برچسب‌ها</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>امکان حذف برچسب در حال استفاده توسط اشکال روی بوم وجود ندارد</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>پاک کردن برچسب‌های استفاده‌نشده</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>برچسب استفاده‌نشده‌ای برای پاک کردن وجود ندارد</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

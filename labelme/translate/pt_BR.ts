@@ -1232,16 +1232,8 @@ Local esperado: {path}</translation>
         <translation>Remover da lista de rótulos</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>Não é possível remover o rótulo em uso por formas na tela</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>Limpar rótulos não utilizados</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>Nenhum rótulo não utilizado para limpar</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

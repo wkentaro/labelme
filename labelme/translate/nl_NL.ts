@@ -1232,16 +1232,8 @@ Verwachte locatie: {path}</translation>
         <translation>Verwijderen uit labellijst</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>Kan label dat in gebruik is door vormen op het canvas niet verwijderen</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>Ongebruikte labels wissen</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>Geen ongebruikte labels om te wissen</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

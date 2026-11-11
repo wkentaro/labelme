@@ -1233,16 +1233,8 @@ Expected location: {path}</source>
         <translation>ลบออกจากรายการป้ายกำกับ</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>ไม่สามารถลบป้ายกำกับที่กำลังใช้งานโดยรูปร่างบนผืนผ้าใบได้</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>ล้างป้ายกำกับที่ไม่ได้ใช้</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>ไม่มีป้ายกำกับที่ไม่ได้ใช้ให้ล้าง</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

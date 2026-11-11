@@ -1232,16 +1232,8 @@ Expected location: {path}</source>
         <translation>라벨 목록에서 제거</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>캔버스의 도형에서 사용 중인 라벨은 제거할 수 없습니다</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>사용되지 않는 라벨 지우기</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>지울 사용되지 않는 라벨이 없습니다</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

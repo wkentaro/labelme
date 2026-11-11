@@ -1232,16 +1232,8 @@ Posizione prevista: {path}</translation>
         <translation>Rimuovi dall&apos;elenco etichette</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>Impossibile rimuovere l&apos;etichetta attualmente utilizzata dalle forme sulla tela</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>Cancella etichette inutilizzate</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>Nessuna etichetta inutilizzata da cancellare</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

@@ -1232,16 +1232,8 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Hapus dari Daftar Label</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>Tidak dapat menghapus label yang sedang digunakan oleh bentuk di kanvas</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>Bersihkan Label yang Tidak Digunakan</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>Tidak ada label yang tidak digunakan untuk dibersihkan</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

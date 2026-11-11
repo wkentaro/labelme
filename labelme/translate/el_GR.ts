@@ -1232,16 +1232,8 @@ Expected location: {path}</source>
         <translation>Αφαίρεση από τη λίστα ετικετών</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>Δεν είναι δυνατή η αφαίρεση ετικέτας που χρησιμοποιείται από σχήματα στον καμβά</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>Εκκαθάριση αχρησιμοποίητων ετικετών</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>Δεν υπάρχουν αχρησιμοποίητες ετικέτες για εκκαθάριση</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

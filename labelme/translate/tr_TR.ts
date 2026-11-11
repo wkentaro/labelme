@@ -1232,16 +1232,8 @@ Beklenen konum: {path}</translation>
         <translation>Etiket Listesinden Kaldır</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>Tuvaldeki şekiller tarafından kullanılan etiket kaldırılamaz</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>Kullanılmayan Etiketleri Temizle</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>Temizlenecek kullanılmayan etiket yok</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>

@@ -1232,16 +1232,8 @@ Expected location: {path}</source>
         <translation>Видалити зі списку міток</translation>
     </message>
     <message>
-        <source>Cannot remove label currently in use by shapes on canvas</source>
-        <translation>Неможливо видалити мітку, яка використовується фігурами на полотні</translation>
-    </message>
-    <message>
         <source>Clear Unused Labels</source>
         <translation>Очистити невикористані мітки</translation>
-    </message>
-    <message>
-        <source>No unused labels to clear</source>
-        <translation>Немає невикористаних міток для очищення</translation>
     </message>
     <message>
         <source>Cannot Remove Label</source>
