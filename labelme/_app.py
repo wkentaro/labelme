@@ -2385,18 +2385,6 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path
         assert self._annotation is not None
         image_path = self._file_list_image_path or self._image_path
-        # Save As confirms an overwrite in its dialog; no other save may replace
-        # another Image's Annotation File.
-        if (
-            label_path != self._auto_save_path
-            and Path(label_path).exists()
-            and not _label_path.label_file_belongs_to_image(
-                label_path=Path(label_path), image_path=image_path, cached=False
-            )
-        ):
-            raise LabelFileError(
-                self.tr("The Annotation File belongs to another Image: %s") % label_path
-            )
         # An Annotation File can hold the only copy of its Image; dropping the
         # embedded data then loses the Image and the file no longer opens.
         has_image_file = Path(image_path).is_file() and image_path.lower().endswith(
@@ -2421,6 +2409,11 @@ class MainWindow(QtWidgets.QMainWindow):
             image_height=self._image.height(),
             image_width=self._image.width(),
             save_image_data=self._config["with_image_data"] or not has_image_file,
+            # Save As confirms an overwrite in its dialog; no other save may
+            # replace another Image's Annotation File.
+            owner_image_path=(
+                None if label_path == self._auto_save_path else image_path
+            ),
         )
 
     def _record_saved_annotation(self, *, label_path: str) -> None:
@@ -2434,10 +2427,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.delete_file.setEnabled(True)
         self.mark_clean()
 
+    def _save_error_text(self, *, error: BaseException) -> str:
+        if isinstance(error, _save_request.ForeignAnnotationFileError):
+            return (
+                self.tr("The Annotation File belongs to another Image: %s")
+                % error.filename
+            )
+        return str(error)
+
     def _show_save_failure(self, *, label_path: str, error: BaseException) -> None:
         self._failed_save_path = label_path
         self._status_bar.save.setText(self.tr("Save failed"))
-        self._status_bar.save.setToolTip(f"{label_path}\n{error}")
+        self._status_bar.save.setToolTip(
+            f"{label_path}\n{self._save_error_text(error=error)}"
+        )
         self._status_bar.retry.show()
 
     def _retry_save(self) -> None:
@@ -2454,7 +2457,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._show_save_failure(label_path=label_path, error=e)
             self.show_error_message(
                 title=self.tr("Error Saving Annotation File"),
-                message=self.tr("<b>%s</b>") % e,
+                message=self.tr("<b>%s</b>") % self._save_error_text(error=e),
             )
             return False
         self._record_saved_annotation(label_path=request.filename)
