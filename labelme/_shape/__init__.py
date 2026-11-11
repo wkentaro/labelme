@@ -1,3 +1,7 @@
+from ._convert import ConvertBlocker
+from ._convert import ConvertTarget
+from ._convert import convert_blocker
+from ._convert import convert_shape
 from ._hit_testing import image_extent
 from ._hit_testing import nearest_edge_index
 from ._hit_testing import nearest_rotation_point_index
@@ -29,11 +33,15 @@ __all__ = [
     "ORIENTED_RECTANGLE_POINT_COUNT",
     "POLYLINE_SHAPE_TYPES",
     "RECTANGLE_POINT_COUNT",
+    "ConvertBlocker",
+    "ConvertTarget",
     "MergeBlocker",
     "Shape",
     "ShapeDict",
     "ShapeType",
     "can_merge_shapes",
+    "convert_blocker",
+    "convert_shape",
     "get_rotation_handle",
     "image_extent",
     "merge_blocker",
