@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Final
 from typing import override
 
 from PySide6 import QtCore
@@ -9,7 +8,7 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
-from ._hint_chip import RETURN_GLYPH
+from .._utils import new_icon
 from ._model_picker import ModelPicker
 
 
@@ -58,8 +57,6 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     _default_score_threshold: float = 0.1
     _default_iou_threshold: float = 0.5
-    # The Return key's symbol says Enter runs the query.
-    _RUN_GLYPH: Final = RETURN_GLYPH
 
     _text_input: QtWidgets.QLineEdit
     _model_combo: ModelPicker
@@ -90,6 +87,11 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
         self._run_button = run_button = _RunButton(self)
         run_button.setAutoRaise(True)
+        # The Return key's symbol says Enter runs the query. An icon, not the
+        # "\u21b5" character, so it centers on its own shape rather than the
+        # font's line box.
+        run_button.setIcon(new_icon(name="phosphor/arrow-elbow-down-left.svg"))
+        run_button.setIconSize(QtCore.QSize(12, 12))
         run_button.setAccessibleName(self.tr("Run"))
         run_button.setToolTip(self.tr("Run"))
         run_button.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
@@ -135,7 +137,12 @@ class AiTextToAnnotationWidget(QtWidgets.QWidget):
 
     def set_detecting(self, *, detecting: bool) -> None:
         # Run stays clickable: running again replaces the pending job.
-        self._run_button.setText(self.tr("Finding…") if detecting else self._RUN_GLYPH)
+        self._run_button.setText(self.tr("Finding…") if detecting else "")
+        self._run_button.setToolButtonStyle(
+            QtCore.Qt.ToolButtonStyle.ToolButtonTextOnly
+            if detecting
+            else QtCore.Qt.ToolButtonStyle.ToolButtonIconOnly
+        )
 
     def get_text_prompt(self) -> str:
         return self._text_input.text().strip()

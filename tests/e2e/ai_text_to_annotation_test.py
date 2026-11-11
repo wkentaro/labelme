@@ -495,7 +495,7 @@ def test_run_reads_detecting_under_any_tool(
     assert run_button.text() == "Finding…"
     worker._pending.clear()
     worker._set_active(active=None)
-    assert run_button.text() == win._ai_text._RUN_GLYPH
+    assert run_button.text() == ""
 
 
 @pytest.mark.parametrize("failure_stage", ["inference", "postprocessing"])
@@ -1283,7 +1283,7 @@ def test_run_with_an_example_box_draft_refines_it(
             session=session, request=request, image=request.image, progress=None
         ),
     )
-    assert run_button.text() == win._ai_text._RUN_GLYPH
+    assert run_button.text() == ""
     assert len(canvas._ai_find_all_draft) == 2
 
 
