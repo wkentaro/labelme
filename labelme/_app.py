@@ -680,7 +680,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         remove_point = action(
             text=self.tr("Delete Selected Point"),
-            slot=self.remove_selected_point,
+            slot=self._canvas_widgets.canvas.remove_selected_point,
             shortcut=shortcuts["remove_selected_point"],
             icon="phosphor/minus-circle.svg",
             tip=self.tr("Delete the selected point from the polygon or LineStrip"),
@@ -1177,7 +1177,6 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         )
 
-        self._canvas_widgets.canvas.context_menu.addActions(self._actions.context_menu)
         # Lets a disabled item say why it is disabled.
         self._canvas_widgets.canvas.context_menu.setToolTipsVisible(True)
         edit_menu.setToolTipsVisible(True)
@@ -2176,12 +2175,29 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             return
 
+        edited_fields = [
+            field for field in typing.get_args(LabelDialogField) if field not in locked
+        ]
+        # A Shape loaded without flags or a description holds None, which the
+        # dialog shows, and returns, as empty.
+        empty: dict[str, object] = {"flags": {}, "description": ""}
+        if all(
+            (
+                empty.get(field)
+                if getattr(shape, field) is None
+                else getattr(shape, field)
+            )
+            == getattr(entry, field)
+            for shape in shapes
+            for field in edited_fields
+        ):
+            return
+
         for item in items:
             shape = item.shape()
             assert shape is not None
-            for field in typing.get_args(LabelDialogField):
-                if field not in locked:
-                    setattr(shape, field, getattr(entry, field))
+            for field in edited_fields:
+                setattr(shape, field, getattr(entry, field))
 
             assert shape.label is not None
             fill_rgb = self._get_rgb_by_label(
@@ -2192,15 +2208,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 text=_widgets.format_shape_label(shape=shape),
                 color=fill_rgb,
             )
-            if self._docks.unique_label_list.find_label_item(label=shape.label) is None:
-                self._docks.unique_label_list.add_label_item(
-                    label=shape.label,
-                    color=self._get_rgb_by_label(
-                        label=shape.label,
-                        unique_label_list=self._docks.unique_label_list,
-                    ),
-                )
+            self._register_label(label=shape.label)
         self._canvas_widgets.canvas.backup_shapes()
+        # A new label changes the Shape's color and its drawn text.
+        self._canvas_widgets.canvas.update()
         self.mark_dirty()
 
     def _on_file_search_changed(self) -> None:
@@ -2287,19 +2298,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self._commit_shapes(shapes=canvas.shapes)
         canvas.select_shapes(shapes=shapes)
 
+    def _register_label(self, *, label: str) -> None:
+        if self._docks.unique_label_list.find_label_item(label=label) is None:
+            self._docks.unique_label_list.add_label_item(
+                label=label,
+                color=self._get_rgb_by_label(
+                    label=label, unique_label_list=self._docks.unique_label_list
+                ),
+            )
+        self._label_dialog.add_label_history(label=label)
+
     def add_label(self, *, shape: Shape) -> None:
         assert shape.label is not None
         label_list_item = LabelListWidgetItem(shape=shape)
         self._docks.label_list.add_item(item=label_list_item)
-        if self._docks.unique_label_list.find_label_item(label=shape.label) is None:
-            self._docks.unique_label_list.add_label_item(
-                label=shape.label,
-                color=self._get_rgb_by_label(
-                    label=shape.label,
-                    unique_label_list=self._docks.unique_label_list,
-                ),
-            )
-        self._label_dialog.add_label_history(label=shape.label)
+        self._register_label(label=shape.label)
 
         fill_rgb = self._get_rgb_by_label(
             label=shape.label,
@@ -2395,6 +2408,11 @@ class MainWindow(QtWidgets.QMainWindow):
             raise LabelFileError(
                 self.tr("The Annotation File belongs to another Image: %s") % label_path
             )
+        # An Annotation File can hold the only copy of its Image; dropping the
+        # embedded data then loses the Image and the file no longer opens.
+        has_image_file = Path(image_path).is_file() and image_path.lower().endswith(
+            _list_supported_image_extensions()
+        )
         return SaveRequest(
             filename=label_path,
             annotation=Annotation(
@@ -2413,7 +2431,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ),
             image_height=self._image.height(),
             image_width=self._image.width(),
-            save_image_data=self._config["with_image_data"],
+            save_image_data=self._config["with_image_data"] or not has_image_file,
         )
 
     def _record_saved_annotation(self, *, label_path: str) -> None:
@@ -2454,7 +2472,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     def _insert_shapes(self, *, shapes: list[Shape]) -> None:
-        if not shapes:
+        # Committing reloads the shapes, which would discard an unfinished one.
+        if not shapes or self._canvas_widgets.canvas.is_drawing:
             return
         _label_flags.apply_default_flags(
             shapes=shapes, label_flags=self._config["label_flags"]
@@ -2505,28 +2524,35 @@ class MainWindow(QtWidgets.QMainWindow):
             if item in selected_group and len(selected_group) > 1
             else [item]
         )
-        items_to_change = [
-            it
-            for it in items_to_toggle
-            if (sh := it.shape()) is not None and sh.visible != is_visible_new
-        ]
-        if not items_to_change:
-            return
-
-        new_check_state = (
-            Qt.CheckState.Checked if is_visible_new else Qt.CheckState.Unchecked
+        self._apply_item_visibility(
+            changes=[(it, is_visible_new) for it in items_to_toggle]
         )
-        with QtCore.QSignalBlocker(self._docks.label_list._model):
-            for item_to_toggle in items_to_change:
-                shape_to_toggle = item_to_toggle.shape()
-                assert shape_to_toggle is not None
-                item_to_toggle.setCheckState(new_check_state)
-                self._canvas_widgets.canvas.set_shape_visible(
-                    shape=shape_to_toggle, value=is_visible_new
-                )
 
-        self._canvas_widgets.canvas.backup_shapes()
-        self._sync_edit_actions()
+    def _apply_item_visibility(
+        self, *, changes: list[tuple[LabelListWidgetItem, bool]]
+    ) -> None:
+        canvas = self._canvas_widgets.canvas
+        label_list = self._docks.label_list
+        changed = False
+        # Detached so a row's own handler cannot flip its selection group
+        # again, and so the whole change takes one Undo snapshot. The model
+        # keeps notifying the view, which repaints the checkboxes.
+        label_list.item_changed.disconnect(self._on_label_item_changed)
+        try:
+            for item, value in changes:
+                shape = item.shape()
+                if shape is None or shape.visible == value:
+                    continue
+                item.setCheckState(
+                    Qt.CheckState.Checked if value else Qt.CheckState.Unchecked
+                )
+                canvas.set_shape_visible(shape=shape, value=value)
+                changed = True
+        finally:
+            label_list.item_changed.connect(self._on_label_item_changed)
+        if changed:
+            canvas.backup_shapes()
+            self._sync_edit_actions()
 
     def _on_label_order_changed(self) -> None:
         self._commit_shapes(
@@ -2811,13 +2837,13 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def toggle_shape_visibility(self, *, value: bool | None) -> None:
-        for item in self._docks.label_list:
-            target = (
-                item.checkState() == Qt.CheckState.Unchecked if value is None else value
-            )
-            item.setCheckState(
-                Qt.CheckState.Checked if target else Qt.CheckState.Unchecked
-            )
+        self._apply_item_visibility(
+            changes=[
+                (item, not shape.visible if value is None else value)
+                for item in self._docks.label_list
+                if (shape := item.shape()) is not None
+            ]
+        )
 
     def _read_annotation_file(
         self, *, label_path: str, image_path: str | None
@@ -3005,11 +3031,25 @@ class MainWindow(QtWidgets.QMainWindow):
             else image_or_label_path
         )
 
+        # Keep Previous carries Shapes onto another Image. Reloading the open
+        # one, as a change of Annotation Folder does, would copy its Shapes
+        # into the new destination, discarded edits included.
+        is_reload = image_or_label_path in (
+            self._file_list_image_path,
+            self._image_path,
+            self._label_file_path,
+        )
         prev_shapes: list[Shape] = (
             self._canvas_widgets.canvas.shapes
-            if self._config["keep_prev"]
-            or QtWidgets.QApplication.keyboardModifiers()
-            == (Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier)
+            if not is_reload
+            and (
+                self._config["keep_prev"]
+                or QtWidgets.QApplication.keyboardModifiers()
+                == (
+                    Qt.KeyboardModifier.ControlModifier
+                    | Qt.KeyboardModifier.ShiftModifier
+                )
+            )
             else []
         )
         if not QtCore.QFile.exists(image_or_label_path):
@@ -3326,12 +3366,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @override
     def dropEvent(self, a0: QtGui.QDropEvent, /) -> None:
-        if not self._can_continue():
-            a0.ignore()
-            return
-        self.import_dropped_image_files(
+        image_files = self._new_image_files(
             image_files=_extract_dropped_image_paths(mime=a0.mimeData())
         )
+        # Only a dropped Image the Image List shows is opened, which replaces
+        # the document.
+        if any(self._matches_file_search(image_path=path) for path in image_files):
+            if not self._can_continue():
+                a0.ignore()
+                return
+            # A Discard is final: selecting the dropped Image must not ask again.
+            self.mark_clean()
+        self._add_image_files(image_files=image_files)
 
     # User Dialogs #
 
@@ -3792,6 +3838,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_dialog = self._make_label_dialog(
             label_history=old_label_dialog.label_history
         )
+        self._label_dialog.remember_label(label=old_label_dialog.last_label)
         old_label_dialog.deleteLater()
 
     def _refresh_shape_colors(self) -> None:
@@ -4029,19 +4076,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def current_path(self) -> str:
         return str(Path(self._image_path).parent) if self._image_path else "."
 
-    def remove_selected_point(self) -> None:
-        if not self._canvas_widgets.canvas.remove_selected_point():
-            return
-        if (
-            self._canvas_widgets.canvas.hovered_shape
-            and len(self._canvas_widgets.canvas.hovered_shape.points) == 0
-        ):
-            self._canvas_widgets.canvas.delete_shape(
-                shape=self._canvas_widgets.canvas.hovered_shape
-            )
-            self.remove_labels(shapes=[self._canvas_widgets.canvas.hovered_shape])
-        self.mark_dirty()
-
     def delete_selected_shapes(self) -> None:
         self.remove_labels(shapes=self._canvas_widgets.canvas.delete_selected())
         self.mark_dirty()
@@ -4185,22 +4219,29 @@ class MainWindow(QtWidgets.QMainWindow):
             lst.append(_file_list_item_path(item=item))
         return lst
 
-    def import_dropped_image_files(self, *, image_files: list[str]) -> None:
+    def _new_image_files(self, *, image_files: list[str]) -> list[str]:
         extensions = _list_supported_image_extensions()
         already_loaded = set(self._loaded_image_paths)
-        new_files = [
+        return [
             path
             for path in image_files
             if path not in already_loaded and path.lower().endswith(extensions)
         ]
-        if not new_files:
+
+    def import_dropped_image_files(self, *, image_files: list[str]) -> None:
+        self._add_image_files(
+            image_files=self._new_image_files(image_files=image_files)
+        )
+
+    def _add_image_files(self, *, image_files: list[str]) -> None:
+        if not image_files:
             return
 
-        self._loaded_image_paths.extend(new_files)
+        self._loaded_image_paths.extend(image_files)
         self._refresh_file_list()
 
         visible_image_paths = self.image_list
-        for image_path in new_files:
+        for image_path in image_files:
             if image_path in visible_image_paths:
                 self._docks.file_list.setCurrentRow(
                     visible_image_paths.index(image_path)

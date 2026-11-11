@@ -23,6 +23,7 @@ import labelme
 from labelme._automation import InferenceRequest
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._automation._ai_assist import AiAssistSession
+from labelme._config import load_config
 from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._widgets._canvas import _CREATE_MODE_TO_SHAPE_TYPE
@@ -1928,6 +1929,8 @@ def test_extend_after_mode_switch_finalizes_at_last_cursor(
     assert canvas.shapes[0].points[0][1] == pytest.approx(10)
     assert canvas.shapes[0].points[1][0] == pytest.approx(50)
     assert canvas.shapes[0].points[1][1] == pytest.approx(30)
+    # Every point carries a label, as it does for a polygon.
+    assert canvas.shapes[0].point_labels.tolist() == [1, 1]
 
 
 @pytest.mark.gui
@@ -2764,6 +2767,38 @@ def test_remove_selected_point_deselects_vertex(*, canvas: Canvas) -> None:
     assert len(shape.points) == 3  # the point was removed
     # Vertex is no longer selected, so the next move won't drag the neighbor (#968).
     assert not canvas._is_vertex_selected()
+
+
+@pytest.mark.gui
+def test_remove_selected_point_is_its_own_undo_step(*, canvas: Canvas) -> None:
+    canvas.load_shapes(shapes=[_make_polygon()])
+    shape = canvas.shapes[0]
+    canvas._last_hovered_shape = shape
+    canvas._last_hovered_vertex = 1
+    moved = Mock()
+    canvas.shape_moved.connect(moved)
+
+    canvas.remove_selected_point()
+
+    # A shortcut has no mouse release, so the snapshot cannot wait for one.
+    moved.assert_called_once()
+    assert not canvas.is_interacting
+    canvas.restore_last_shape()
+    assert len(canvas.shapes[0].points) == 4
+
+
+@pytest.mark.gui
+def test_load_shapes_forgets_the_last_hovered_shape(*, canvas: Canvas) -> None:
+    shape = _make_polygon()
+    canvas.load_shapes(shapes=[shape])
+    canvas._last_hovered_shape = shape
+    canvas._last_hovered_vertex = 1
+
+    canvas.load_shapes(shapes=[shape.copy()])
+
+    # Undo reloads copies; the old object must not stay an edit target.
+    assert not canvas.remove_selected_point()
+    assert len(shape.points) == 4
 
 
 def _drag(
@@ -4290,6 +4325,6 @@ def test_ai_prompt_hint_fits_a_narrow_view_in_a_long_translation(
 
 
 def test_draft_palette_defaults_to_the_shipped_config(*, canvas: Canvas) -> None:
-    shape = labelme._config.load_config(config_file=None, config_overrides={})["shape"]
+    shape = load_config(config_file=None, config_overrides={})["shape"]
 
     assert canvas._draft_palette == Palette.from_shape_config(shape=shape)

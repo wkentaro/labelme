@@ -49,6 +49,10 @@ fragments = [{ path = "README.md" }]
 pattern = 'src="(?!https?://)([^"]+)"'
 replacement = 'src="https://raw.githubusercontent.com/wkentaro/labelme/main/\1"'
 
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\((?!https?://|#)([^)]+)\)'
+replacement = '](https://github.com/wkentaro/labelme/blob/main/\1)'
+
 [tool.hatch.version]
 source = "vcs"
 

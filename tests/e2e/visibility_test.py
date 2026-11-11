@@ -48,6 +48,30 @@ def test_toggle_all_shapes(
 
 
 @pytest.mark.gui
+def test_toggle_all_shapes_flips_a_selected_group_once(
+    *, annotated_win: MainWindow
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    label_list = annotated_win._docks.label_list
+    for i in (0, 1):
+        label_list.select_item(item=label_list[i])
+    n_backups = len(canvas.shape_backups)
+    repainted_rows: list[int] = []
+    label_list._model.dataChanged.connect(
+        lambda top_left, *_: repainted_rows.append(top_left.row())
+    )
+
+    annotated_win.toggle_shape_visibility(value=None)
+
+    assert not any(shape.visible for shape in canvas.shapes)
+    assert all(item.checkState() == Qt.CheckState.Unchecked for item in label_list)
+    # One Undo step for the whole action, not one per Shape.
+    assert len(canvas.shape_backups) == n_backups + 1
+    # The view repaints a checkbox only when the model reports the change.
+    assert sorted(repainted_rows) == list(range(len(label_list)))
+
+
+@pytest.mark.gui
 def test_toggle_individual_shape(
     *,
     qtbot: QtBot,

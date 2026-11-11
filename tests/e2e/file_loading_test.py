@@ -1084,3 +1084,34 @@ def test_MainWindow_open_anyway_on_label_of_large_image_prompts_once(
     assert critical_messages == []
     assert prompts == ["Large image requires more memory"]
     assert loaded is True
+
+
+@pytest.mark.gui
+@pytest.mark.parametrize("stored_image_path", ["gone.jpg", "only.json"])
+def test_auto_save_keeps_embedded_image_without_an_image_file(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    stored_image_path: str,
+) -> None:
+    label_path = tmp_path / "only.json"
+    annotation_data = json.loads((data_path / "annotated/2011_000003.json").read_text())
+    annotation_data["imagePath"] = stored_image_path
+    image_data = base64.b64encode(
+        (data_path / "annotated/2011_000003.jpg").read_bytes()
+    ).decode()
+    annotation_data["imageData"] = image_data
+    label_path.write_text(json.dumps(annotation_data))
+    win = main_win(
+        file_or_dir=label_path,
+        config_overrides={"auto_save": True, "with_image_data": False},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+
+    win.mark_dirty()
+    qtbot.waitUntil(lambda: not win._is_changed)
+
+    # The Annotation File holds the only copy of its Image.
+    assert json.loads(label_path.read_text())["imageData"] == image_data

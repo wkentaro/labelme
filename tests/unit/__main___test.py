@@ -13,8 +13,10 @@ from typing import cast
 import pytest
 from loguru import logger
 from PySide6 import QtCore
+from PySide6 import QtWidgets
 
 from labelme.__main__ import _LOGGER_LEVELS
+from labelme.__main__ import _handle_exception
 from labelme.__main__ import _log_environment
 from labelme.__main__ import _LoggerIO
 from labelme.__main__ import _parse_list_arg
@@ -22,6 +24,20 @@ from labelme.__main__ import _resolve_config_source
 from labelme.__main__ import _route_qt_logging_to_loguru
 from labelme.__main__ import _setup_loguru
 from labelme.__main__ import main
+
+
+def test_exception_before_qapplication_exits_without_a_dialog(
+    *, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(QtWidgets.QApplication, "instance", lambda: None)
+    # Qt aborts the process when a widget is built without a QApplication.
+    monkeypatch.setattr(QtWidgets, "QMessageBox", None)
+    error = ValueError("bad argument")
+
+    with pytest.raises(SystemExit) as exc:
+        _handle_exception(ValueError, error, None)
+
+    assert exc.value.code == 1
 
 
 def test_help_uses_console_script_name(

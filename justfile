@@ -52,9 +52,9 @@ release version=env("VERSION", ""):
     version="$1"
     if test -z "$version"; then
         fragments=$(find changelog.d -maxdepth 1 -type f \( \
-            -name "*.added.md" -o -name "*.changed.md" -o \
-            -name "*.deprecated.md" -o -name "*.removed.md" -o \
-            -name "*.fixed.md" -o -name "*.security.md" \))
+            -name "*.added*.md" -o -name "*.changed*.md" -o \
+            -name "*.deprecated*.md" -o -name "*.removed*.md" -o \
+            -name "*.fixed*.md" -o -name "*.security*.md" \))
         latest=$(git tag --sort=-v:refname |
             grep -Em1 "^v[0-9]+\.[0-9]+\.[0-9]+$" || true)
         if test -n "$fragments" && test -n "$latest"; then
@@ -66,8 +66,8 @@ release version=env("VERSION", ""):
             if grep -q '\*\*Breaking:\*\*' $fragments; then
                 next=$((major + 1)).0.0
             elif find changelog.d -maxdepth 1 -type f \( \
-                -name "*.added.md" -o -name "*.changed.md" -o \
-                -name "*.deprecated.md" -o -name "*.removed.md" \) \
+                -name "*.added*.md" -o -name "*.changed*.md" -o \
+                -name "*.deprecated*.md" -o -name "*.removed*.md" \) \
                 -print -quit | grep -q .; then
                 next=$major.$((minor + 1)).0
             else

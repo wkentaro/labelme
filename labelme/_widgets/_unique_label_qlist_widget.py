@@ -40,7 +40,7 @@ class UniqueLabelQListWidget(_EscapableQListWidget):
             raise ValueError(f"Item for label '{label}' already exists")
 
         item = QtWidgets.QListWidgetItem()
-        item.setData(Qt.ItemDataRole.UserRole, label)  # for find_label_item
+        item.setData(Qt.ItemDataRole.UserRole, label)
         item.setData(LABEL_COLOR_ROLE, QtGui.QColor(*color))
         item.setText(label)
         self.addItem(item)

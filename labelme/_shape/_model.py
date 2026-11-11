@@ -117,8 +117,5 @@ class Shape:
     def move_vertex(self, *, i: int, pos: npt.ArrayLike) -> None:
         self.points[i] = np.asarray(pos, dtype=np.float64).reshape(2)
 
-    def translate(self, *, offset: npt.ArrayLike) -> None:
-        self.points = self.points + np.asarray(offset, dtype=np.float64).reshape(2)
-
     def copy(self) -> Shape:
         return copy.deepcopy(self)
