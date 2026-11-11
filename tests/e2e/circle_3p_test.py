@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-import pytest
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
@@ -13,7 +12,6 @@ from .conftest import schedule_on_dialog
 from .conftest import submit_label_dialog
 
 
-@pytest.mark.gui
 def test_circle_3p_action_and_mode_switch(
     *, qtbot: QtBot, raw_win: MainWindow, pause: bool
 ) -> None:
@@ -28,7 +26,6 @@ def test_circle_3p_action_and_mode_switch(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_draw_circle_3p_end_to_end(
     *, qtbot: QtBot, raw_win: MainWindow, pause: bool
 ) -> None:
@@ -55,7 +52,6 @@ def test_draw_circle_3p_end_to_end(
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
 
 
-@pytest.mark.gui
 def test_cancel_then_redraw_three_point_circle_keeps_geometry(
     *, qtbot: QtBot, raw_win: MainWindow
 ) -> None:
