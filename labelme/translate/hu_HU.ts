@@ -1668,6 +1668,21 @@ Várt hely: {path}</translation>
     </message>
 </context>
 <context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Címkekészlet</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Szerkesztés…</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Fájlokban talált</translation>
+    </message>
+</context>
+<context>
     <name>ZoomWidget</name>
     <message>
         <source>Zoom</source>

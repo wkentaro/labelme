@@ -1668,6 +1668,21 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>مجموعه برچسب‌ها</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>ویرایش…</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>یافت‌شده در فایل‌ها</translation>
+    </message>
+</context>
+<context>
     <name>ZoomWidget</name>
     <message>
         <source>Zoom</source>

@@ -1668,6 +1668,21 @@ Verwachte locatie: {path}</translation>
     </message>
 </context>
 <context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Labelset</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Bewerken…</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Gevonden in bestanden</translation>
+    </message>
+</context>
+<context>
     <name>ZoomWidget</name>
     <message>
         <source>Zoom</source>

@@ -1668,6 +1668,21 @@ Beklenen konum: {path}</translation>
     </message>
 </context>
 <context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Etiket kümesi</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Düzenle…</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Dosyalarda bulunanlar</translation>
+    </message>
+</context>
+<context>
     <name>ZoomWidget</name>
     <message>
         <source>Zoom</source>

@@ -1668,6 +1668,21 @@ Expected location: {path}</source>
     </message>
 </context>
 <context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>레이블 세트</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>편집…</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>파일에서 찾음</translation>
+    </message>
+</context>
+<context>
     <name>ZoomWidget</name>
     <message>
         <source>Zoom</source>

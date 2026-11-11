@@ -1668,6 +1668,21 @@ Posizione prevista: {path}</translation>
     </message>
 </context>
 <context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Set di etichette</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Modifica…</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Trovate nei file</translation>
+    </message>
+</context>
+<context>
     <name>ZoomWidget</name>
     <message>
         <source>Zoom</source>

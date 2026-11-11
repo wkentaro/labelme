@@ -1450,7 +1450,9 @@ class MainWindow(QtWidgets.QMainWindow):
         shape.setObjectName("Labels")
         shape.setWidget(label_list)
 
-        unique_label_list = UniqueLabelQListWidget()
+        unique_label_list = UniqueLabelQListWidget(
+            on_edit_settings_labels=self._edit_settings_labels
+        )
         unique_label_list.setToolTip(
             self.tr(
                 "Choose a label to start drawing with it. "
@@ -1464,6 +1466,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     color=self._get_rgb_by_label(
                         label=lbl, unique_label_list=unique_label_list
                     ),
+                    from_settings=True,
                 )
         label = QtWidgets.QDockWidget(self.tr("Label List"), self)
         label.setObjectName("Label List")
@@ -2110,13 +2113,10 @@ class MainWindow(QtWidgets.QMainWindow):
         policy = self._config["validate_label"]
         if policy is None:
             return True
-        unique_label_list = self._docks.unique_label_list
-        existing_labels = [
-            unique_label_list.item(i).data(Qt.ItemDataRole.UserRole)
-            for i in range(unique_label_list.count())
-        ]
         return _is_valid_label(
-            label=label, existing_labels=existing_labels, policy=policy
+            label=label,
+            existing_labels=self._docks.unique_label_list.labels(),
+            policy=policy,
         )
 
     def _edit_label(self) -> None:
@@ -2326,12 +2326,7 @@ class MainWindow(QtWidgets.QMainWindow):
         label: str,
         unique_label_list: UniqueLabelQListWidget,
     ) -> tuple[int, int, int]:
-        item = unique_label_list.find_label_item(label=label)
-        label_index: int = (
-            unique_label_list.indexFromItem(item).row()
-            if item
-            else unique_label_list.count()
-        )
+        label_index = unique_label_list.label_index(label=label)
         shape_color = self._shape_color_preview
         if shape_color is None:
             shape_color = self._config["shape_color"]
@@ -3819,19 +3814,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # a removed predefined label drops from suggestions unless it was used
         # this session.
         self._label_dialog.set_predefined_labels(labels=self._config["labels"] or [])
-        # The Label List dock is append-only (a shape's label stays after the
-        # shape is deleted), so add new predefined labels and leave removed
-        # ones until restart.
-        for label in self._config["labels"] or []:
-            if self._docks.unique_label_list.find_label_item(label=label) is not None:
-                continue
-            self._docks.unique_label_list.add_label_item(
-                label=label,
-                color=self._get_rgb_by_label(
-                    label=label,
-                    unique_label_list=self._docks.unique_label_list,
-                ),
-            )
+        # The Found in files section is append-only (a shape's label stays after
+        # the shape is deleted), so a label leaving Settings stays there when
+        # it was used this session, as it does in the dialog's suggestions.
+        self._docks.unique_label_list.set_settings_labels(
+            labels=self._config["labels"] or [],
+            found_in_annotations=self._label_dialog.label_history,
+            color=lambda label: self._get_rgb_by_label(
+                label=label, unique_label_list=self._docks.unique_label_list
+            ),
+        )
+        # Moving labels between sections changes their positions, and auto
+        # colors follow position.
+        self._refresh_shape_colors()
 
     def _recreate_label_dialog(self) -> None:
         # LabelDialog reads sort_labels, show_label_text_field and
@@ -3845,10 +3840,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _refresh_shape_colors(self) -> None:
         unique_labels = self._docks.unique_label_list
-        for row in range(unique_labels.count()):
-            item = unique_labels.item(row)
+        for label in unique_labels.labels():
+            item = unique_labels.find_label_item(label=label)
             assert item is not None
-            label = item.data(Qt.ItemDataRole.UserRole)
             color = self._get_rgb_by_label(label=label, unique_label_list=unique_labels)
             item.setData(_widgets.LABEL_COLOR_ROLE, QtGui.QColor(*color))
         for item in self._docks.label_list:
@@ -3971,6 +3965,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._settings_dialog.show()
         self._settings_dialog.raise_()
         self._settings_dialog.activateWindow()
+
+    def _edit_settings_labels(self) -> None:
+        self._open_settings()
+        assert self._settings_dialog is not None
+        self._settings_dialog.focus_setting(key_path=("labels",))
 
     def _open_config_file(self) -> None:
         # Command-line overrides cannot be edited through a config file.

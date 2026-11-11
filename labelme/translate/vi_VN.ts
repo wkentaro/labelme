@@ -1668,6 +1668,21 @@ Vị trí dự kiến: {path}</translation>
     </message>
 </context>
 <context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Bộ nhãn</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Chỉnh sửa…</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Tìm thấy trong tệp</translation>
+    </message>
+</context>
+<context>
     <name>ZoomWidget</name>
     <message>
         <source>Zoom</source>

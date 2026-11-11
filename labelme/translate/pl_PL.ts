@@ -1668,6 +1668,21 @@ Oczekiwana lokalizacja: {path}</translation>
     </message>
 </context>
 <context>
+    <name>UniqueLabelQListWidget</name>
+    <message>
+        <source>Label set</source>
+        <translation>Zestaw etykiet</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>Edytuj…</translation>
+    </message>
+    <message>
+        <source>Found in files</source>
+        <translation>Znalezione w plikach</translation>
+    </message>
+</context>
+<context>
     <name>ZoomWidget</name>
     <message>
         <source>Zoom</source>

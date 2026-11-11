@@ -509,6 +509,10 @@ class _SettingsPage(QtWidgets.QWidget):
         self._search.clear()
         self.focus_search()
 
+    def reveal(self, *, widget: QtWidgets.QWidget) -> None:
+        self._search.clear()
+        self._scroll_area.ensureWidgetVisible(widget)
+
     def focus_search(self) -> None:
         self._search.setFocus(QtCore.Qt.FocusReason.ShortcutFocusReason)
         self._search.selectAll()
@@ -896,6 +900,11 @@ class SettingsDialog(QtWidgets.QDialog):
         # Immediate-apply dialog: Escape and the window-close button discard
         # nothing, so treat them like Close and flush pending edits.
         self.accept()
+
+    def focus_setting(self, *, key_path: tuple[str, ...]) -> None:
+        editor = self._editors[key_path]
+        self._page.reveal(widget=editor)
+        editor.setFocus(QtCore.Qt.FocusReason.OtherFocusReason)
 
     def set_value(self, *, key_path: tuple[str, ...], value: object) -> None:
         editor = self._editors[key_path]
