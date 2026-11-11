@@ -2514,6 +2514,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _on_label_item_changed(self, item: LabelListWidgetItem, /) -> None:
         is_visible_new = item.checkState() == Qt.CheckState.Checked
+        # The model reports every data change, such as a new label or color;
+        # only a flipped checkbox toggles visibility.
+        shape = item.shape()
+        if shape is None or shape.visible == is_visible_new:
+            return
 
         selected_group = (
             self._docks.label_list.selection_at_press()

@@ -301,3 +301,30 @@ def test_select_all_skips_hidden_shape(
 
     assert len(canvas.selected_shapes) == len(canvas.shapes) - 1
     assert all(shape.visible for shape in canvas.selected_shapes)
+
+
+def test_recoloring_a_mixed_selection_keeps_each_visibility(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    pause: bool,
+) -> None:
+    canvas = annotated_win._canvas_widgets.canvas
+    label_list = annotated_win._docks.label_list
+    label_list[1].setCheckState(Qt.CheckState.Unchecked)
+    label_list.clearSelection()
+    label_list.select_item(item=label_list[0])
+    label_list.select_item(item=label_list[1])
+    backups = len(canvas.shape_backups)
+
+    # Settings calls this when the shape colors change.
+    annotated_win._shape_color_preview = {
+        "mode": "uniform",
+        "uniform": {"color": [1, 2, 3]},
+    }
+    annotated_win._refresh_shape_colors()
+
+    assert [shape.visible for shape in canvas.shapes[:2]] == [True, False]
+    assert len(canvas.shape_backups) == backups
+
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
