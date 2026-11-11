@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Độ chi tiết đa giác</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Mượt hơn</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Chi tiết hơn</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Chuyển</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Các hình dạng đã chọn đã thuộc loại này</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Không thể chuyển đường thẳng, điểm và mặt nạ thành đa giác</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Không hỗ trợ chuyển thành hình chữ nhật có hướng</translation>
     </message>
@@ -1186,6 +1209,10 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Lỗi khi lưu tệp chú thích</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Chuyển thành đa giác</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1298,10 +1325,6 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Cài đặt được quản lý qua --config trong phiên này</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Không thể chuyển đường thẳng, hình tròn, điểm và mặt nạ thành đa giác</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

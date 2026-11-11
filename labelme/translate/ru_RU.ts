@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Детализация полигона</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Более гладко</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Больше деталей</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Преобразовать</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1080,10 +1099,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Новых «{query}» не найдено</translation>
     </message>
     <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Линии, окружности, точки и маски нельзя преобразовать в полигоны</translation>
-    </message>
-    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Линии и точки нельзя преобразовать в прямоугольники</translation>
     </message>
@@ -1244,6 +1259,10 @@ Expected location: {path}</source>
         <translation>Выбранные фигуры уже этого типа</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Линии, точки и маски нельзя преобразовать в полигоны</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Преобразование в ориентированные прямоугольники не поддерживается</translation>
     </message>
@@ -1298,6 +1317,10 @@ Expected location: {path}</source>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Ошибка сохранения файла аннотаций</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Преобразовать в полигон</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>

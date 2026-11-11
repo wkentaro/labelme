@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>รายละเอียดโพลีกอน</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>เรียบขึ้น</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>รายละเอียดมากขึ้น</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>แปลง</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1133,6 +1152,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>รูปร่างที่เลือกเป็นประเภทนี้อยู่แล้ว</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>แปลงเส้น จุด และมาสก์เป็นหลายเหลี่ยมไม่ได้</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>ไม่รองรับการแปลงเป็นสี่เหลี่ยมมีทิศทาง</translation>
     </message>
@@ -1187,6 +1210,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Error Saving Annotation File</source>
         <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>แปลงเป็นหลายเหลี่ยม</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1299,10 +1326,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>แปลงเส้น วงกลม จุด และมาสก์เป็นหลายเหลี่ยมไม่ได้</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

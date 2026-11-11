@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>多邊形細節</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>更平滑</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>更多細節</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>轉換</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>選取的形狀已是此類型</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>無法將直線、點和遮罩轉換為多邊形</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>不支援轉換為有向矩形</translation>
     </message>
@@ -1186,6 +1209,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Error Saving Annotation File</source>
         <translation>儲存標註檔案時發生錯誤</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>轉換為多邊形</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1298,10 +1325,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>本次工作階段的設定由 --config 管理</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>無法將直線、圓形、點和遮罩轉換為多邊形</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

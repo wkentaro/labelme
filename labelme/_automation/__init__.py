@@ -1,5 +1,6 @@
 from ._ai_assist import AiAssistProposal
 from ._ai_assist import AiAssistSession
+from ._geometry import compute_polygon_from_circle
 from ._geometry import shape_to_xyxy_bbox
 from ._osam_worker import InferenceRequest
 from ._osam_worker import OsamWorker
@@ -22,6 +23,7 @@ __all__ = [
     "InferenceRequest",
     "OsamWorker",
     "assign_available_group_ids",
+    "compute_polygon_from_circle",
     "propose_shapes_from_texts",
     "shape_to_xyxy_bbox",
     "shapes_from_detections",

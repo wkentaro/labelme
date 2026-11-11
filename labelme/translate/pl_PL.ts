@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Szczegółowość wielokąta</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Gładszy</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Więcej szczegółów</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Konwertuj</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Zaznaczone kształty są już tego typu</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Linii, punktów i masek nie można konwertować na wielokąty</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Konwersja na prostokąty zorientowane nie jest obsługiwana</translation>
     </message>
@@ -1186,6 +1209,10 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Błąd zapisu pliku adnotacji</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Konwertuj na wielokąt</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1298,10 +1325,6 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Ustawienia są zarządzane przez --config w tej sesji</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Linii, okręgów, punktów i masek nie można konwertować na wielokąty</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

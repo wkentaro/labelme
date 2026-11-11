@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Dettaglio poligono</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Più uniforme</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Più dettagli</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Converti</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
         <translation>Le forme selezionate sono già di questo tipo</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Linee, punti e maschere non possono essere convertiti in poligoni</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>La conversione in rettangoli orientati non è supportata</translation>
     </message>
@@ -1186,6 +1209,10 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Errore durante il salvataggio del file di annotazioni</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Converti in poligono</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1298,10 +1325,6 @@ Posizione prevista: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Le impostazioni sono gestite tramite --config per questa sessione</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Linee, cerchi, punti e maschere non possono essere convertiti in poligoni</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

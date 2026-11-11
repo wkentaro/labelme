@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>ポリゴンの詳細度</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>より滑らか</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>より詳細</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>変換</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1142,6 +1161,10 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>選択した図形はすでにこの種類です</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>直線、点、マスクはポリゴンに変換できません</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>向き付き矩形への変換には対応していません</translation>
     </message>
@@ -1196,6 +1219,10 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
     <message>
         <source>Error Saving Annotation File</source>
         <translation>アノテーションファイルの保存エラー</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>ポリゴンに変換</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1308,10 +1335,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>このセッションの設定は --config で管理されています</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>直線、円、点、マスクはポリゴンに変換できません</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

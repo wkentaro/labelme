@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Poligon ayrıntısı</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Daha yumuşak</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Daha fazla ayrıntı</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Dönüştür</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Seçili şekiller zaten bu türde</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Çizgiler, noktalar ve maskeler çokgene dönüştürülemez</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Yönlü dikdörtgene dönüştürme desteklenmiyor</translation>
     </message>
@@ -1186,6 +1209,10 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Çokgene dönüştür</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1298,10 +1325,6 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Bu oturumda ayarlar --config ile yönetiliyor</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Çizgiler, daireler, noktalar ve maskeler çokgene dönüştürülemez</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

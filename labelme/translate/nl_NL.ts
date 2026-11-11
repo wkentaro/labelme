@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Polygoondetail</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Gladder</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Meer detail</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Omzetten</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>De geselecteerde vormen zijn al van dit type</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Lijnen, punten en maskers kunnen niet worden omgezet naar polygonen</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Omzetten naar georiënteerde rechthoeken wordt niet ondersteund</translation>
     </message>
@@ -1186,6 +1209,10 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fout bij opslaan van annotatiebestand</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Omzetten naar polygoon</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1298,10 +1325,6 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Lijnen, cirkels, punten en maskers kunnen niet worden omgezet naar polygonen</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

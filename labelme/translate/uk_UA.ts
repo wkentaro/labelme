@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Деталізація полігона</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Плавніше</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Більше деталей</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Перетворити</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Вибрані фігури вже цього типу</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Лінії, точки й маски не можна перетворити на багатокутники</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Перетворення на орієнтовані прямокутники не підтримується</translation>
     </message>
@@ -1182,6 +1205,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Invalid Label</source>
         <translation>Недійсна мітка</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Перетворити на багатокутник</translation>
     </message>
     <message>
         <source>%s can&apos;t use an example box. Choose SAM 3.</source>
@@ -1314,10 +1341,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Параметри керуються через --config для цього сеансу</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Лінії, кола, точки й маски не можна перетворити на багатокутники</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

@@ -71,6 +71,7 @@ from ._widgets import AiToolGroup
 from ._widgets import AnnotationFolderFooter
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
+from ._widgets import ConversionDetailDialog
 from ._widgets import EmptyStateWidget
 from ._widgets import ImageListDelegate
 from ._widgets import LabelDialog
@@ -294,6 +295,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _prev_image_path: str | None
     _viewport_states: dict[str, _ViewportState]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
+    # The last Polygon Detail a Conversion used, apart from AI Assist's.
+    _conversion_detail: int
     _default_state: QtCore.QByteArray
 
     def __init__(
@@ -1374,6 +1377,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._prev_image_path = None
         self._viewport_states = {}
         self._brightness_contrast_values = {}
+        self._conversion_detail = 60
 
         if self._config["file_search"]:
             self._docks.file_search.setText(self._config["file_search"])
@@ -2176,6 +2180,12 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             convert_action.setEnabled(not busy and blocker is None)
             convert_action.setChecked(blocker == "already_target")
+            # An ellipsis says the item asks for a Polygon Detail first.
+            name = convert_action.text().removesuffix("…")
+            needs_detail = blocker is None and _shape.conversion_needs_detail(
+                shapes=selected, target=target
+            )
+            convert_action.setText(name + "…" if needs_detail else name)
             convert_action.setToolTip(self._convert_tip(target=target, blocker=blocker))
 
     def _merge_tip(self, *, blocker: MergeBlocker | None) -> str:
@@ -2205,8 +2215,7 @@ class MainWindow(QtWidgets.QMainWindow):
             case "wrong_type":
                 return {
                     "polygon": self.tr(
-                        "Lines, circles, points, and masks can’t be converted"
-                        " to polygons"
+                        "Lines, points, and masks can’t be converted to polygons"
                     ),
                     "rectangle": self.tr(
                         "Lines and points can’t be converted to rectangles"
@@ -2742,16 +2751,42 @@ class MainWindow(QtWidgets.QMainWindow):
     def _convert_selected_shapes(self, *, target: ConvertTarget) -> None:
         canvas = self._canvas_widgets.canvas
         selected = list(canvas.selected_shapes)
+        image_size = self._convert_image_size()
         if _shape.convert_blocker(
-            shapes=selected, target=target, image_size=self._convert_image_size()
+            shapes=selected, target=target, image_size=image_size
         ):
             return
-        image_size = self._convert_image_size()
-        converted = {
-            s: _shape.convert_shape(shape=s, target=target, image_size=image_size)
-            for s in selected
-            if s.shape_type != target
-        }
+
+        def convert(detail: int | None) -> dict[Shape, Shape]:
+            return {
+                s: _shape.convert_shape(
+                    shape=s, target=target, image_size=image_size, detail=detail
+                )
+                for s in selected
+                if s.shape_type != target
+            }
+
+        detail = None
+        if _shape.conversion_needs_detail(shapes=selected, target=target):
+            dialog = ConversionDetailDialog(
+                title=self.tr("Convert to Polygon"),
+                detail=self._conversion_detail,
+                on_detail_changed=lambda value: canvas.set_conversion_preview(
+                    shapes=list(convert(value).values())
+                ),
+                parent=self,
+            )
+            canvas.set_conversion_preview(
+                shapes=list(convert(self._conversion_detail).values())
+            )
+            accepted = dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted
+            canvas.set_conversion_preview(shapes=[])
+            if not accepted:
+                # Choosing the item checked it; the selection kept its kind.
+                self._sync_edit_actions()
+                return
+            detail = self._conversion_detail = dialog.detail
+        converted = convert(detail)
         self._commit_shapes(shapes=[converted.get(s, s) for s in canvas.shapes])
         canvas.select_shapes(shapes=[converted.get(s, s) for s in selected])
 

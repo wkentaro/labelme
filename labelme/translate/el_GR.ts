@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Λεπτομέρεια πολυγώνου</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Πιο ομαλό</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Περισσότερη λεπτομέρεια</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Μετατροπή</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Τα επιλεγμένα σχήματα είναι ήδη αυτού του τύπου</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Οι γραμμές, τα σημεία και οι μάσκες δεν μετατρέπονται σε πολύγωνα</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Η μετατροπή σε προσανατολισμένα ορθογώνια δεν υποστηρίζεται</translation>
     </message>
@@ -1182,6 +1205,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Invalid Label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Μετατροπή σε πολύγωνο</translation>
     </message>
     <message>
         <source>%s can&apos;t use an example box. Choose SAM 3.</source>
@@ -1314,10 +1341,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Οι γραμμές, οι κύκλοι, τα σημεία και οι μάσκες δεν μετατρέπονται σε πολύγωνα</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

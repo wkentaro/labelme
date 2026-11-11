@@ -250,6 +250,33 @@ def _simplify_contour(
     return simplified[:-1].astype(np.float32)
 
 
+def compute_polygon_from_circle(
+    *,
+    center: NDArray[np.floating],
+    radius: float,
+    detail: int,
+    start_angle: float = 0.0,
+) -> NDArray[np.float64]:
+    # The same detail curve as masks: no edge strays further from the circle
+    # than the deviation a mask outline may have at this detail.
+    # At low detail a small circle still reads as round; past 360 vertices
+    # more edges no longer show.
+    MIN_VERTICES: Final = 8
+    MAX_VERTICES: Final = 360
+    if not 0 <= detail <= _DETAIL_MAX:
+        raise ValueError(f"detail must be between 0 and 100, got {detail}")
+    deviation = _compute_polygon_deviation(detail=detail)
+    if deviation <= 0:
+        count = MAX_VERTICES
+    else:
+        # An edge of a regular n-gon on the circle bulges r(1 - cos(pi/n)) in.
+        half_angle = np.arccos(max(1 - deviation / radius, -1.0))
+        count = int(np.ceil(np.pi / half_angle))
+    count = int(np.clip(count, MIN_VERTICES, MAX_VERTICES))
+    angles = start_angle + 2 * np.pi * np.arange(count) / count
+    return center + radius * np.stack([np.cos(angles), np.sin(angles)], axis=1)
+
+
 def compute_polygons_from_mask(
     *, mask: NDArray[np.bool_], detail: int = 60
 ) -> list[NDArray[np.float32]]:

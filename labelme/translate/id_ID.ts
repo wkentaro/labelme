@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Detail poligon</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Lebih halus</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Lebih detail</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Ubah</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -855,10 +874,6 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Keluaran mask tidak tersedia</translation>
     </message>
     <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Garis, lingkaran, titik, dan mask tidak dapat diubah menjadi poligon</translation>
-    </message>
-    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Garis dan titik tidak dapat diubah menjadi persegi panjang</translation>
     </message>
@@ -1148,6 +1163,10 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Bentuk terpilih sudah berjenis ini</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Garis, titik, dan mask tidak dapat diubah menjadi poligon</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Mengubah menjadi persegi panjang berorientasi tidak didukung</translation>
     </message>
@@ -1202,6 +1221,10 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Gagal menyimpan berkas anotasi</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Ubah Menjadi Poligon</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>

@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 
 import numpy as np
+from PySide6 import QtCore
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
 from labelme._label_file import read_label_file
 from labelme._shape import Shape
+from labelme._widgets import ConversionDetailDialog
 from labelme._widgets._canvas import Canvas
 
 from ..conftest import close_or_pause
@@ -144,5 +147,75 @@ def test_out_of_bounds_setting_refreshes_convert_actions(
     for enabled in (True, False):
         win._apply_setting_change(("canvas", "allow_out_of_bounds_points"), enabled)
         assert rectangle.isEnabled() is enabled
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+def _poll_dialog(*, act: Callable[[ConversionDetailDialog], None]) -> None:
+    def _poll() -> None:
+        dialog = QtWidgets.QApplication.activeModalWidget()
+        if not isinstance(dialog, ConversionDetailDialog):
+            QtCore.QTimer.singleShot(50, _poll)
+            return
+        act(dialog)
+
+    QtCore.QTimer.singleShot(0, _poll)
+
+
+def test_convert_circle_asks_for_detail_and_previews(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open(
+        main_win=main_win, qtbot=qtbot, data_path=data_path, tmp_path=tmp_path
+    )
+    circle = Shape(
+        label="ball",
+        shape_type="circle",
+        points=np.array([[100.0, 100.0], [130.0, 100.0]]),
+    )
+    win._commit_shapes(shapes=[*canvas.shapes, circle])
+    circle = canvas.shapes[-1]
+    canvas.select_shapes(shapes=[circle])
+    qtbot.wait(50)
+    polygon = win._actions.convert["polygon"]
+    assert polygon.isEnabled()
+    assert polygon.text() == "Polygon…"
+    previews: list[int] = []
+
+    def cancel(dialog: ConversionDetailDialog) -> None:
+        previews.append(len(canvas._conversion_preview))
+        # The preview follows the drag before the slider is released.
+        slider = dialog.findChild(QtWidgets.QSlider)
+        assert slider is not None
+        vertices = len(canvas._conversion_preview[0].points)
+        slider.setSliderDown(True)
+        slider.setSliderPosition(100)
+        previews.append(len(canvas._conversion_preview[0].points) > vertices)
+        slider.setSliderDown(False)
+        dialog.reject()
+
+    _poll_dialog(act=cancel)
+    polygon.trigger()
+    assert previews == [1, True]
+    assert canvas._conversion_preview == []
+    assert canvas.shapes[-1] is circle
+    assert [t for t, a in win._actions.convert.items() if a.isChecked()] == ["circle"]
+
+    _poll_dialog(act=lambda dialog: dialog.accept())
+    polygon.trigger()
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+    converted = canvas.shapes[-1]
+    assert (converted.shape_type, converted.label) == ("polygon", "ball")
+    assert canvas.selected_shapes == [converted]
+    assert polygon.text() == "Polygon"
+
+    win.undo_shape_edit()
+    qtbot.wait(50)
+    assert canvas.shapes[-1].shape_type == "circle"
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

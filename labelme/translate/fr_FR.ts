@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Détail du polygone</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Plus lisse</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Plus de détails</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Convertir</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
         <translation>Les formes sélectionnées sont déjà de ce type</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Les lignes, points et masques ne peuvent pas être convertis en polygones</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>La conversion en rectangles orientés n’est pas prise en charge</translation>
     </message>
@@ -1186,6 +1209,10 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Erreur lors de l’enregistrement du fichier d’annotations</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Convertir en polygone</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1298,10 +1325,6 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Les réglages sont gérés via --config pour cette session</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Les lignes, cercles, points et masques ne peuvent pas être convertis en polygones</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

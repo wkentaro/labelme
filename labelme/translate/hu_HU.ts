@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Poligon részletessége</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Simább</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Részletesebb</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Átalakítás</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>A kijelölt alakzatok már ilyen típusúak</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Vonalak, pontok és maszkok nem alakíthatók sokszöggé</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Az irányított téglalappá alakítás nem támogatott</translation>
     </message>
@@ -1186,6 +1209,10 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Hiba az annotációs fájl mentésekor</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Átalakítás sokszöggé</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1298,10 +1325,6 @@ Várt hely: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>A beállítások ebben a munkamenetben --config segítségével vannak kezelve</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Vonalak, körök, pontok és maszkok nem alakíthatók sokszöggé</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

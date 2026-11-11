@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Polygondetails</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Glatter</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Mehr Details</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Umwandeln</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -910,6 +929,10 @@
         <translation>Die ausgewählten Formen sind bereits von diesem Typ</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>Linien, Punkte und Masken lassen sich nicht in Polygone umwandeln</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Umwandlung in orientierte Rechtecke wird nicht unterstützt</translation>
     </message>
@@ -994,10 +1017,6 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
     <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskenausgabe nicht verfügbar</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>Linien, Kreise, Punkte und Masken lassen sich nicht in Polygone umwandeln</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>
@@ -1206,6 +1225,10 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fehler beim Speichern der Annotationsdatei</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>In Polygon umwandeln</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>

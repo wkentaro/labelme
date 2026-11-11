@@ -1,5 +1,6 @@
 from ._convert import ConvertBlocker
 from ._convert import ConvertTarget
+from ._convert import conversion_needs_detail
 from ._convert import convert_blocker
 from ._convert import convert_shape
 from ._hit_testing import image_extent
@@ -40,6 +41,7 @@ __all__ = [
     "ShapeDict",
     "ShapeType",
     "can_merge_shapes",
+    "conversion_needs_detail",
     "convert_blocker",
     "convert_shape",
     "get_rotation_handle",

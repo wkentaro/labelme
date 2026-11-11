@@ -41,3 +41,9 @@ were made together, each against a real alternative:
   not a conversion.
 - Every conversion pushes its own undo snapshot; the snapshot guard that
   compares only point arrays would miss an in-place `shape_type` change.
+- A route with one possible result converts at once. A route with more than
+  one (circle → polygon, mask → polygon) first asks for a Polygon Detail in a
+  dialog that previews the result on the canvas, and its menu item ends with
+  an ellipsis. This dialog collects an input, so it is not the warning dialog
+  ruled out above. Its value is remembered apart from the AI Assist Setting,
+  so tuning AI-Segment output never changes what Convert To produces.

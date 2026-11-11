@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>جزئیات چندضلعی</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>هموارتر</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>جزئیات بیشتر</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>تبدیل</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -1132,6 +1151,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>شکل‌های انتخاب شده از قبل از همین نوع هستند</translation>
     </message>
     <message>
+        <source>Lines, points, and masks can’t be converted to polygons</source>
+        <translation>خط، نقطه و ماسک به چندضلعی تبدیل نمی‌شوند</translation>
+    </message>
+    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>تبدیل به مستطیل جهت‌دار پشتیبانی نمی‌شود</translation>
     </message>
@@ -1186,6 +1209,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Error Saving Annotation File</source>
         <translation>خطا در ذخیره فایل حاشیه‌نویسی</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>تبدیل به چندضلعی</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1298,10 +1325,6 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>تنظیمات این نشست از طریق --config مدیریت می‌شوند</translation>
-    </message>
-    <message>
-        <source>Lines, circles, points, and masks can’t be converted to polygons</source>
-        <translation>خط، دایره، نقطه و ماسک به چندضلعی تبدیل نمی‌شوند</translation>
     </message>
     <message>
         <source>Lines and points can’t be converted to rectangles</source>

@@ -9,6 +9,7 @@ from labelme._shape import ConvertBlocker
 from labelme._shape import ConvertTarget
 from labelme._shape import Shape
 from labelme._shape import ShapeType
+from labelme._shape import conversion_needs_detail
 from labelme._shape import convert_blocker
 from labelme._shape import convert_shape
 
@@ -154,10 +155,10 @@ def test_convert_keeps_identity_and_leaves_source_alone() -> None:
 
 
 def test_convert_refuses_blocked_shape() -> None:
-    circle = _shape(shape_type="circle", points=[[0, 0], [1, 1]])
+    point = _shape(shape_type="point", points=[[0, 0]])
 
     with pytest.raises(ValueError):
-        convert_shape(shape=circle, target="polygon")
+        convert_shape(shape=point, target="polygon")
 
 
 _POLYGON: Final = [[0, 0], [4, 0], [4, 4]]
@@ -168,7 +169,7 @@ _POLYGON: Final = [[0, 0], [4, 0], [4, 4]]
     [
         ([], "polygon", "no_selection"),
         (
-            [_shape(shape_type="circle", points=[[0, 0], [1, 1]])],
+            [_shape(shape_type="point", points=[[0, 0]])],
             "polygon",
             "wrong_type",
         ),
@@ -231,7 +232,7 @@ _POLYGON: Final = [[0, 0], [4, 0], [4, 4]]
             "wrong_type",
         ),
         (
-            [_shape(shape_type="circle", points=[[0, 0], [1, 1]], locked=True)],
+            [_shape(shape_type="point", points=[[0, 0]], locked=True)],
             "polygon",
             "wrong_type",
         ),
@@ -268,3 +269,87 @@ def test_convert_blocker_names_first_failing_condition(
     *, shapes: list[Shape], target: ConvertTarget, blocker: ConvertBlocker | None
 ) -> None:
     assert convert_blocker(shapes=shapes, target=target) == blocker
+
+
+def test_circle_to_polygon_needs_detail() -> None:
+    circle = _shape(shape_type="circle", points=[[0, 0], [10, 0]])
+    rect = _shape(shape_type="rectangle", points=[[0, 0], [2, 2]])
+
+    assert conversion_needs_detail(shapes=[rect, circle], target="polygon")
+    assert not conversion_needs_detail(shapes=[rect], target="polygon")
+    assert not conversion_needs_detail(shapes=[circle], target="rectangle")
+    with pytest.raises(ValueError):
+        convert_shape(shape=circle, target="polygon")
+
+    polygon = convert_shape(shape=circle, target="polygon", detail=60)
+
+    assert polygon.shape_type == "polygon"
+    assert polygon.point_labels.tolist() == [1] * len(polygon.points)
+
+
+def test_circle_polygon_stays_inside_the_given_image() -> None:
+    circle = _shape(shape_type="circle", points=[[5, 50], [20, 50]])
+
+    polygon = convert_shape(
+        shape=circle, target="polygon", image_size=(100, 100), detail=60
+    )
+
+    assert polygon.points.min() >= 0
+    # The edges crossing x=0 end where they cross it, not at a clamped vertex.
+    on_border = polygon.points[np.isclose(polygon.points[:, 0], 0)]
+    np.testing.assert_allclose(sorted(on_border[:, 1]), [37.0711, 62.9289], atol=1e-4)
+
+
+def test_zero_radius_circle_has_no_polygon_even_unclipped() -> None:
+    circle = _shape(shape_type="circle", points=[[50, 50], [50, 50]])
+
+    assert convert_blocker(shapes=[circle], target="polygon") == "no_area"
+
+
+@pytest.mark.parametrize(
+    ("points", "blocker"),
+    [
+        ([[-14, -14], [6, -14]], None),
+        ([[-15, -15], [6, -15]], "no_area"),
+        ([[-10, 50], [5, 50]], None),
+        ([[-19, 50], [1, 50]], None),
+        ([[200, 50], [210, 50]], "no_area"),
+    ],
+    ids=["corner-graze", "corner-miss", "overhang", "sliver", "outside"],
+)
+def test_circle_polygon_needs_an_area_inside_the_image(
+    points: list[list[int]], blocker: ConvertBlocker | None
+) -> None:
+    circle = _shape(shape_type="circle", points=points)
+
+    assert (
+        convert_blocker(shapes=[circle], target="polygon", image_size=(100, 100))
+        == blocker
+    )
+    if blocker is None:
+        for detail in range(0, 101, 10):
+            polygon = convert_shape(
+                shape=circle, target="polygon", image_size=(100, 100), detail=detail
+            )
+            assert len(np.unique(polygon.points, axis=0)) >= 3  # noqa: PLR2004
+
+
+def test_circle_polygon_has_no_repeated_vertex_on_the_border() -> None:
+    circle = _shape(shape_type="circle", points=[[50, 0], [60, 0]])
+
+    polygon = convert_shape(
+        shape=circle, target="polygon", image_size=(100, 100), detail=60
+    )
+
+    gaps = np.linalg.norm(polygon.points - np.roll(polygon.points, 1, axis=0), axis=1)
+    assert gaps.min() > 1e-3  # noqa: PLR2004
+
+
+def test_small_circle_far_from_the_origin_keeps_every_vertex() -> None:
+    circle = _shape(shape_type="circle", points=[[3000, 3000], [3001, 3000]])
+
+    polygon = convert_shape(
+        shape=circle, target="polygon", image_size=(4000, 4000), detail=100
+    )
+
+    assert len(np.unique(polygon.points, axis=0)) == len(polygon.points) == 360  # noqa: PLR2004
