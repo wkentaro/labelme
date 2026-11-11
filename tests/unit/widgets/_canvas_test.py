@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import itertools
 import math
 import weakref
 from collections.abc import Callable
@@ -1904,6 +1905,420 @@ def _start_open_path(*, canvas: Canvas, mode: str, cursor: QPointF) -> _DraftSha
         shape_type=shape_type, points=(QPointF(10, 10), cursor), point_labels=(1, 1)
     )
     return canvas._current
+
+
+def _send_drag_move(
+    *,
+    canvas: Canvas,
+    x: float,
+    y: float,
+    buttons: Qt.MouseButton = Qt.MouseButton.LeftButton,
+) -> None:
+    pos = QPointF(x, y)
+    QtCore.QCoreApplication.sendEvent(
+        canvas,
+        QtGui.QMouseEvent(
+            QtCore.QEvent.Type.MouseMove,
+            pos,
+            pos,
+            Qt.MouseButton.NoButton,
+            buttons,
+            Qt.KeyboardModifier.NoModifier,
+        ),
+    )
+
+
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_drag_keeps_only_corner_vertices_in_existing_shape_type(
+    *, canvas: Canvas, qtbot: QtBot, mode: str
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(2, 2))
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
+    for x, y in [
+        (10, 5),
+        (15, 5),
+        (20, 6),
+        (25, 5),
+        (30, 5),
+        (30, 10),
+        (30, 15),
+        (30, 20),
+        (31, 25),
+        (30, 30),
+    ]:
+        _send_drag_move(canvas=canvas, x=x, y=y)
+    assert canvas._current is not None
+    assert len(canvas._current.points) == 12  # The live stroke follows the mouse.
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(30, 35))
+
+    assert canvas._current is not None
+    assert canvas._current.points == (
+        QPointF(2, 2),
+        QPointF(5, 5),
+        QPointF(30, 5),
+        QPointF(30, 35),
+    )
+    assert canvas.shapes == []
+
+    qtbot.mouseMove(canvas, pos=QtCore.QPoint(40, 40))
+    assert canvas._current is not None
+    assert len(canvas._current.points) == 4
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
+    qtbot.keyPress(canvas, Qt.Key.Key_Return)
+    assert len(canvas.shapes) == 1
+    assert canvas.shapes[0].shape_type == mode
+    np.testing.assert_array_equal(
+        canvas.shapes[0].points,
+        [[2, 2], [5, 5], [30, 5], [30, 35], [40, 40]],
+    )
+
+
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_undo_during_a_press_ends_the_stroke(
+    *, canvas: Canvas, qtbot: QtBot, mode: str
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(30, 10))
+
+    canvas.undo_last_point()
+    _send_drag_move(canvas=canvas, x=40, y=20)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(50, 30))
+
+    assert canvas._current is not None
+    assert canvas._current.points == (QPointF(10, 10),)
+
+
+def test_drag_closing_onto_the_origin_keeps_a_corner_inside_the_snap_radius(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="polygon")
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    for x, y in [(28, 20), (28, 28), (20, 28)]:
+        _send_drag_move(canvas=canvas, x=x, y=y)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+
+    assert len(canvas.shapes) == 1
+    np.testing.assert_array_equal(
+        canvas.shapes[0].points, [[20, 20], [28, 20], [28, 28], [20, 28]]
+    )
+
+
+@pytest.mark.parametrize("xs", [[25, 29], [22, 25, 27, 29], list(range(21, 30))])
+def test_drag_too_short_to_close_keeps_its_release_point(
+    *, canvas: Canvas, qtbot: QtBot, xs: list[int]
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="polygon")
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    for x in xs:
+        _send_drag_move(canvas=canvas, x=x, y=20)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(29, 20))
+
+    assert canvas.shapes == []
+    assert canvas._current is not None
+    assert canvas._current.points == (QPointF(20, 20), QPointF(29, 20))
+
+
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_drag_resumed_on_the_last_vertex_shares_it(
+    *, canvas: Canvas, qtbot: QtBot, mode: str
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    _send_drag_move(canvas=canvas, x=40, y=20)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 20))
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 20))
+    _send_drag_move(canvas=canvas, x=40, y=30)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 40))
+
+    assert canvas._current is not None
+    assert canvas._current.points == (
+        QPointF(20, 20),
+        QPointF(40, 20),
+        QPointF(40, 40),
+    )
+
+
+def test_drag_retracing_onto_the_origin_keeps_the_draft_open(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="polygon")
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    _send_drag_move(canvas=canvas, x=40, y=20)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 20))
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 20))
+    for x in [30, 21]:
+        _send_drag_move(canvas=canvas, x=x, y=20)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+
+    assert canvas.shapes == []
+    assert canvas._current is not None
+    assert canvas._current.points[-1] == QPointF(20, 20)
+
+
+def test_densely_sampled_drag_closing_onto_the_origin_keeps_every_corner(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="polygon")
+    corners = [(20, 20), (60, 20), (60, 40), (20, 40), (20, 20)]
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    for (x0, y0), (x1, y1) in itertools.pairwise(corners):
+        steps = max(abs(x1 - x0), abs(y1 - y0))
+        for k in range(1, steps + 1):
+            _send_drag_move(
+                canvas=canvas,
+                x=x0 + (x1 - x0) * k / steps,
+                y=y0 + (y1 - y0) * k / steps,
+            )
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+
+    assert len(canvas.shapes) == 1
+    np.testing.assert_array_equal(canvas.shapes[0].points, corners[:-1])
+
+
+def test_drag_closing_onto_the_origin_keeps_only_the_drawn_corners(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="polygon")
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    for x, y in [(30, 20), (45, 20), (45, 30), (45, 45), (23, 23)]:
+        _send_drag_move(canvas=canvas, x=x, y=y)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(21, 21))
+
+    assert len(canvas.shapes) == 1
+    np.testing.assert_array_equal(
+        canvas.shapes[0].points, [[20, 20], [45, 20], [45, 45]]
+    )
+
+
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_click_jitter_does_not_add_vertices_but_drag_does(
+    *, canvas: Canvas, qtbot: QtBot, mode: str
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    assert canvas._current is not None
+    assert canvas._current.points == (QPointF(10, 10),)
+
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 10))
+    for x, y in [(21, 10), (20, 11)]:
+        _send_drag_move(canvas=canvas, x=x, y=y)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(21, 11))
+    assert canvas._current is not None
+    assert canvas._current.points == (
+        QPointF(10, 10),
+        QPointF(20, 10),
+    )
+
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(30, 10))
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(35, 10))
+    assert canvas._current is not None
+    assert canvas._current.points == (
+        QPointF(10, 10),
+        QPointF(20, 10),
+        QPointF(30, 10),
+        QPointF(35, 10),
+    )
+
+
+@pytest.mark.parametrize("key", [Qt.Key.Key_Return, Qt.Key.Key_Space])
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_finishing_a_held_stroke_by_key_simplifies_it(
+    *, canvas: Canvas, qtbot: QtBot, mode: str, key: Qt.Key
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 10))
+    for x, y in [(30, 10), (40, 10), (40, 20), (40, 30)]:
+        _send_drag_move(canvas=canvas, x=x, y=y)
+    qtbot.keyPress(canvas, key)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(40, 30))
+
+    assert len(canvas.shapes) == 1
+    np.testing.assert_array_equal(
+        canvas.shapes[0].points, [[20, 10], [40, 10], [40, 30]]
+    )
+
+
+@pytest.mark.parametrize("key", [Qt.Key.Key_Return, Qt.Key.Key_Space])
+def test_cancelled_label_after_a_key_closes_a_held_stroke_prompts_once(
+    *, canvas: Canvas, qtbot: QtBot, key: Qt.Key
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="polygon")
+    label_prompts: list[None] = []
+
+    def cancel_label() -> None:
+        label_prompts.append(None)
+        canvas.undo_last_line()
+
+    canvas.new_shape.connect(cancel_label)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    for x, y in [(60, 20), (60, 40), (21, 21)]:
+        _send_drag_move(canvas=canvas, x=x, y=y)
+    qtbot.keyPress(canvas, key)
+
+    assert label_prompts == [None]
+    assert canvas._current is not None
+    assert canvas.shapes == []
+
+
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_drag_released_outside_the_image_keeps_its_clamped_end(
+    *, canvas: Canvas, qtbot: QtBot, mode: str
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    _send_drag_move(canvas=canvas, x=_WIDTH + 40, y=45)
+    qtbot.mouseRelease(
+        canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(_WIDTH + 40, 45)
+    )
+
+    assert canvas._current is not None
+    assert canvas._current.points == (QPointF(20, 20), QPointF(_WIDTH - 1, 45))
+
+
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_lost_release_ends_the_stroke_on_the_next_move(
+    *, canvas: Canvas, qtbot: QtBot, mode: str
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 10))
+    for x, y in [(30, 10), (40, 10), (40, 20), (40, 30)]:
+        _send_drag_move(canvas=canvas, x=x, y=y)
+    _send_drag_move(canvas=canvas, x=50, y=30, buttons=Qt.MouseButton.NoButton)
+
+    assert canvas._stroke_press is None
+    assert canvas._current is not None
+    assert canvas._current.points == (
+        QPointF(20, 10),
+        QPointF(40, 10),
+        QPointF(40, 30),
+    )
+
+
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_click_outside_the_image_adds_one_vertex(
+    *, canvas: Canvas, qtbot: QtBot, mode: str
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+    outside = QtCore.QPoint(_WIDTH + 20, _HEIGHT - 5)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=outside)
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=outside)
+
+    assert canvas._current is not None
+    assert len(canvas._current.points) == 2
+
+
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_live_drag_draws_a_line_without_vertex_markers(
+    *, canvas: Canvas, qtbot: QtBot, mode: str
+) -> None:
+    canvas.pixmap.fill(QtGui.QColor("white"))
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    _send_drag_move(canvas=canvas, x=20, y=10)
+    image = canvas.grab().toImage()
+    assert image.pixelColor(20, 6) == QtGui.QColor("white")
+    assert image.pixelColor(15, 10) != QtGui.QColor("white")
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 10))
+
+
+@pytest.mark.parametrize("mode", ["polygon", "linestrip"])
+def test_click_release_repaints_the_vertex_markers(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, mode: str
+) -> None:
+    canvas.set_editing(value=False, create_mode=mode)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+    updates: list[None] = []
+    monkeypatch.setattr(canvas, "update", lambda: updates.append(None))
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(10, 10))
+
+    assert canvas._draft_render_context(
+        selected=False, fill=False, highlight=None, rotation_highlight=None
+    ).show_vertices
+    assert updates
+
+
+def test_polygon_drag_shows_origin_close_target_and_release_closes(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    canvas.pixmap.fill(QtGui.QColor("black"))
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="polygon")
+    origin = QtCore.QPoint(20, 20)
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=origin)
+    for x, y in [(60, 20), (60, 40), (21, 21)]:
+        _send_drag_move(canvas=canvas, x=x, y=y)
+
+    assert canvas._highlight is not None
+    assert canvas._highlight.index == 0
+    assert canvas._line.points[1] == QPointF(origin)
+    assert canvas.grab().toImage().pixelColor(20, 12) == QtGui.QColor("white")
+
+    new_shape_emissions: list[None] = []
+    canvas.new_shape.connect(lambda: new_shape_emissions.append(None))
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(21, 21))
+    assert canvas._current is None
+    assert len(canvas.shapes) == 1
+    assert canvas.shapes[0].shape_type == "polygon"
+    assert canvas.shapes[0].closed
+    assert new_shape_emissions == [None]
+
+
+def test_polygon_origin_close_target_requires_three_points(*, canvas: Canvas) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="polygon")
+    canvas._current = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(20, 20), QPointF(60, 20)),
+        point_labels=(1, 1),
+    )
+    assert not canvas._cursor_should_snap_to_polygon_origin(pos=QPointF(21, 21))
+
+
+def test_cancelled_polygon_label_does_not_finalize_again_on_click_release(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    canvas.scale = 1.0
+    canvas.set_editing(value=False, create_mode="polygon")
+    canvas._current = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(20, 20), QPointF(60, 20), QPointF(60, 40)),
+        point_labels=(1, 1, 1),
+    )
+    canvas._line = _DraftShape(
+        shape_type="polygon",
+        points=(QPointF(60, 40), QPointF(20, 20)),
+        point_labels=(1, 1),
+    )
+    label_prompts: list[None] = []
+
+    def cancel_label() -> None:
+        label_prompts.append(None)
+        canvas.undo_last_line()
+
+    canvas.new_shape.connect(cancel_label)
+    qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(20, 20))
+
+    assert label_prompts == [None]
+    assert canvas._current is not None
+    assert canvas.shapes == []
 
 
 @pytest.mark.parametrize("mode", ["polygon", "linestrip"])
