@@ -9,7 +9,6 @@ from labelme._app import MainWindow
 from labelme._widgets._unique_label_qlist_widget import UniqueLabelQListWidget
 
 
-@pytest.mark.gui
 def test_unique_label_list_context_menu_on_in_use_item(
     *,
     annotated_win: MainWindow,
@@ -29,7 +28,6 @@ def test_unique_label_list_context_menu_on_in_use_item(
     assert not remove_action.isEnabled()
 
 
-@pytest.mark.gui
 def test_unique_label_list_context_menu_on_empty_area(
     *,
     qtbot: QtBot,
@@ -52,7 +50,6 @@ def test_unique_label_list_context_menu_on_empty_area(
     assert "Clear Unused Labels" in action_texts
 
 
-@pytest.mark.gui
 def test_remove_unused_label_action_removes_from_dock_and_dialog(
     *,
     annotated_win: MainWindow,
@@ -74,7 +71,6 @@ def test_remove_unused_label_action_removes_from_dock_and_dialog(
     assert "obsolete_label" not in win._label_dialog.label_history
 
 
-@pytest.mark.gui
 def test_delete_key_on_unique_label_list_removes_unused_label(
     *,
     qtbot: QtBot,
@@ -104,7 +100,6 @@ def test_delete_key_on_unique_label_list_removes_unused_label(
     assert "extra_tag" not in win._label_dialog.label_history
 
 
-@pytest.mark.gui
 @pytest.mark.parametrize("deselect", ["escape", "empty-click"])
 def test_removal_key_ignores_unselected_label(
     *,
@@ -143,7 +138,6 @@ def test_removal_key_ignores_unselected_label(
     assert "extra_tag" in win._label_dialog.label_history
 
 
-@pytest.mark.gui
 def test_delete_key_on_unique_label_list_in_use_shows_error(
     *,
     qtbot: QtBot,
@@ -170,7 +164,6 @@ def test_delete_key_on_unique_label_list_in_use_shows_error(
     assert unique_list.find_label_item(label="amber_kite") is not None
 
 
-@pytest.mark.gui
 def test_predefined_label_is_not_removable_from_the_label_list(
     *,
     qtbot: QtBot,
@@ -205,7 +198,6 @@ def test_predefined_label_is_not_removable_from_the_label_list(
     assert "predefined_unused" in win._label_dialog.label_history
 
 
-@pytest.mark.gui
 def test_clear_unused_labels_refreshes_shape_colors_once(
     *, annotated_win: MainWindow, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -221,7 +213,6 @@ def test_clear_unused_labels_refreshes_shape_colors_once(
     assert len(refreshes) == 1
 
 
-@pytest.mark.gui
 def test_clear_unused_labels_clears_only_unused_labels(
     *,
     annotated_win: MainWindow,
