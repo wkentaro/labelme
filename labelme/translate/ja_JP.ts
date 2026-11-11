@@ -1161,10 +1161,6 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>選択した図形はすでにこの種類です</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>直線、点、マスクはポリゴンに変換できません</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>向き付き矩形への変換には対応していません</translation>
     </message>
@@ -1177,10 +1173,6 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>点への変換には対応していません</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>マスクへの変換には対応していません</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>ポリゴンにするには、折れ線に3つ以上の点が必要です</translation>
     </message>
@@ -1191,6 +1183,10 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>面積のない図形にはバウンディングボックスがありません</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>画像内に面積のない図形は変換できません</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1337,6 +1333,10 @@ Expected location: {path}</source>
         <translation>このセッションの設定は --config で管理されています</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>直線と点はポリゴンに変換できません</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>直線と点は矩形に変換できません</translation>
     </message>
@@ -1347,6 +1347,10 @@ Expected location: {path}</source>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>折れ線に変換できるのはポリゴンと直線のみです</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>マスクに変換できるのはポリゴンのみです</translation>
     </message>
     <message>
         <source>Large Image</source>

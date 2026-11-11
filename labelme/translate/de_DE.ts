@@ -929,10 +929,6 @@
         <translation>Die ausgewählten Formen sind bereits von diesem Typ</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Linien, Punkte und Masken lassen sich nicht in Polygone umwandeln</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Umwandlung in orientierte Rechtecke wird nicht unterstützt</translation>
     </message>
@@ -943,10 +939,6 @@
     <message>
         <source>Converting to points isn’t supported</source>
         <translation>Umwandlung in Punkte wird nicht unterstützt</translation>
-    </message>
-    <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>Umwandlung in Masken wird nicht unterstützt</translation>
     </message>
     <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
@@ -1201,6 +1193,18 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Keine neuen „{query}“ gefunden</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Linien und Punkte lassen sich nicht in Polygone umwandeln</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Nur Polygone lassen sich in Masken umwandeln</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Eine Form ohne Fläche im Bild lässt sich nicht umwandeln</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

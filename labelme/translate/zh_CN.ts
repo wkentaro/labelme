@@ -1151,10 +1151,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>选中的形状已是此类型</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>无法将直线、点和掩码转换为多边形</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>不支持转换为有向矩形</translation>
     </message>
@@ -1167,10 +1163,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>不支持转换为点</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>不支持转换为掩码</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>折线至少需要 3 个点才能转换为多边形</translation>
     </message>
@@ -1181,6 +1173,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>没有面积的形状没有边界框</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>无法转换在图像中没有面积的形状</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1327,6 +1323,10 @@ Expected location: {path}</source>
         <translation>本次会话的设置通过 --config 管理</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>无法将直线和点转换为多边形</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>无法将直线和点转换为矩形</translation>
     </message>
@@ -1337,6 +1337,10 @@ Expected location: {path}</source>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>只能将多边形和直线转换为折线</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>只能将多边形转换为掩码</translation>
     </message>
     <message>
         <source>Large Image</source>

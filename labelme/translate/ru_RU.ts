@@ -1099,6 +1099,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Новых «{query}» не найдено</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Линии и точки нельзя преобразовать в полигоны</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Линии и точки нельзя преобразовать в прямоугольники</translation>
     </message>
@@ -1109,6 +1113,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>В ломаные можно преобразовать только полигоны и линии</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>В маски можно преобразовать только полигоны</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
@@ -1259,10 +1267,6 @@ Expected location: {path}</source>
         <translation>Выбранные фигуры уже этого типа</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Линии, точки и маски нельзя преобразовать в полигоны</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Преобразование в ориентированные прямоугольники не поддерживается</translation>
     </message>
@@ -1275,10 +1279,6 @@ Expected location: {path}</source>
         <translation>Преобразование в точки не поддерживается</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>Преобразование в маски не поддерживается</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Чтобы стать полигоном, ломаной нужно не менее 3 точек</translation>
     </message>
@@ -1289,6 +1289,10 @@ Expected location: {path}</source>
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>У фигуры без площади нет ограничивающей рамки</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Фигуру без площади на изображении нельзя преобразовать</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>

@@ -1151,10 +1151,6 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
         <translation>Les formes sélectionnées sont déjà de ce type</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Les lignes, points et masques ne peuvent pas être convertis en polygones</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>La conversion en rectangles orientés n’est pas prise en charge</translation>
     </message>
@@ -1167,10 +1163,6 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
         <translation>La conversion en points n’est pas prise en charge</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>La conversion en masques n’est pas prise en charge</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Une polyligne doit avoir au moins 3 points pour devenir un polygone</translation>
     </message>
@@ -1181,6 +1173,10 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>Une forme sans surface n’a pas de cadre de délimitation</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Une forme sans surface dans l’image ne peut pas être convertie</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1327,6 +1323,10 @@ Emplacement attendu : {path}</translation>
         <translation>Les réglages sont gérés via --config pour cette session</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Les lignes et les points ne peuvent pas être convertis en polygones</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Les lignes et les points ne peuvent pas être convertis en rectangles</translation>
     </message>
@@ -1337,6 +1337,10 @@ Emplacement attendu : {path}</translation>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>Seuls les polygones et les lignes peuvent être convertis en polylignes</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Seuls les polygones peuvent être convertis en masques</translation>
     </message>
     <message>
         <source>Large Image</source>

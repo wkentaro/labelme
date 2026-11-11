@@ -1151,10 +1151,6 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>선택한 도형은 이미 이 유형입니다</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>선, 점, 마스크는 다각형으로 변환할 수 없습니다</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>방향 있는 사각형으로의 변환은 지원되지 않습니다</translation>
     </message>
@@ -1167,10 +1163,6 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>점으로의 변환은 지원되지 않습니다</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>마스크로의 변환은 지원되지 않습니다</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>연결선을 다각형으로 만들려면 점이 3개 이상 필요합니다</translation>
     </message>
@@ -1181,6 +1173,10 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>면적이 없는 도형에는 경계 상자가 없습니다</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>이미지 안에 면적이 없는 도형은 변환할 수 없습니다</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1327,6 +1323,10 @@ Expected location: {path}</source>
         <translation>이 세션의 설정은 --config로 관리됩니다</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>선과 점은 다각형으로 변환할 수 없습니다</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>선과 점은 사각형으로 변환할 수 없습니다</translation>
     </message>
@@ -1337,6 +1337,10 @@ Expected location: {path}</source>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>다각형과 선만 연결선으로 변환할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>다각형만 마스크로 변환할 수 있습니다</translation>
     </message>
     <message>
         <source>Large Image</source>

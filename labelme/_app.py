@@ -2176,7 +2176,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._actions.merge.setToolTip(self._merge_tip(blocker=blocker))
         for target, convert_action in self._actions.convert.items():
             blocker = _shape.convert_blocker(
-                shapes=selected, target=target, image_size=self._convert_image_size()
+                shapes=selected,
+                target=target,
+                image_size=self._convert_image_size(target=target),
             )
             convert_action.setEnabled(not busy and blocker is None)
             convert_action.setChecked(blocker == "already_target")
@@ -2215,7 +2217,7 @@ class MainWindow(QtWidgets.QMainWindow):
             case "wrong_type":
                 return {
                     "polygon": self.tr(
-                        "Lines, points, and masks can’t be converted to polygons"
+                        "Lines and points can’t be converted to polygons"
                     ),
                     "rectangle": self.tr(
                         "Lines and points can’t be converted to rectangles"
@@ -2229,7 +2231,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     "linestrip": self.tr(
                         "Only polygons and lines can be converted to linestrips"
                     ),
-                    "mask": self.tr("Converting to masks isn’t supported"),
+                    "mask": self.tr("Only polygons can be converted to masks"),
                 }[target]
             case "too_few_points":
                 return self.tr(
@@ -2237,8 +2239,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             case "too_many_points":
                 return self.tr("A linestrip needs exactly 2 points to become a line")
-            case "no_area":
+            case "no_area" if target == "rectangle":
                 return self.tr("A shape with no area has no bounding box")
+            case "no_area":
+                return self.tr("A shape with no area in the image can’t be converted")
             case "locked":
                 return self.tr("Unlock the selected shapes to convert them")
 
@@ -2742,22 +2746,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self._commit_shapes(shapes=shapes)
         canvas.select_shapes(shapes=[merged])
 
-    def _convert_image_size(self) -> tuple[int, int] | None:
+    def _convert_image_size(self, *, target: ConvertTarget) -> tuple[int, int] | None:
         # New points stay inside the image unless out-of-bounds points are on.
-        if self._config["canvas"]["allow_out_of_bounds_points"]:
+        # A mask always does: pixels outside the image do not exist (ADR 0004).
+        if target != "mask" and self._config["canvas"]["allow_out_of_bounds_points"]:
             return None
         return (self._image.width(), self._image.height())
 
     def _convert_selected_shapes(self, *, target: ConvertTarget) -> None:
         canvas = self._canvas_widgets.canvas
         selected = list(canvas.selected_shapes)
-        image_size = self._convert_image_size()
+        image_size = self._convert_image_size(target=target)
         if _shape.convert_blocker(
             shapes=selected, target=target, image_size=image_size
         ):
             return
 
-        def convert(detail: int | None) -> dict[Shape, Shape]:
+        def convert(detail: int | None) -> dict[Shape, list[Shape]]:
             return {
                 s: _shape.convert_shape(
                     shape=s, target=target, image_size=image_size, detail=detail
@@ -2766,19 +2771,20 @@ class MainWindow(QtWidgets.QMainWindow):
                 if s.shape_type != target
             }
 
+        def preview(detail: int) -> None:
+            canvas.set_conversion_preview(
+                shapes=[c for shapes in convert(detail).values() for c in shapes]
+            )
+
         detail = None
         if _shape.conversion_needs_detail(shapes=selected, target=target):
             dialog = ConversionDetailDialog(
                 title=self.tr("Convert to Polygon"),
                 detail=self._conversion_detail,
-                on_detail_changed=lambda value: canvas.set_conversion_preview(
-                    shapes=list(convert(value).values())
-                ),
+                on_detail_changed=preview,
                 parent=self,
             )
-            canvas.set_conversion_preview(
-                shapes=list(convert(self._conversion_detail).values())
-            )
+            preview(self._conversion_detail)
             accepted = dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted
             canvas.set_conversion_preview(shapes=[])
             if not accepted:
@@ -2787,8 +2793,23 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
             detail = self._conversion_detail = dialog.detail
         converted = convert(detail)
-        self._commit_shapes(shapes=[converted.get(s, s) for s in canvas.shapes])
-        canvas.select_shapes(shapes=[converted.get(s, s) for s in selected])
+        # A mask split into several polygons keeps them together in a new
+        # Group, unless it already had one.
+        split: list[Shape] = []
+        for i, shapes in enumerate(converted.values()):
+            if len(shapes) > 1 and shapes[0].group_id is None:
+                for c in shapes:
+                    c.group_id = i
+                split.extend(shapes)
+        _automation.assign_available_group_ids(
+            shapes=split, existing_shapes=canvas.shapes
+        )
+        self._commit_shapes(
+            shapes=[c for s in canvas.shapes for c in converted.get(s, [s])]
+        )
+        canvas.select_shapes(
+            shapes=[c for s in selected for c in converted.get(s, [s])]
+        )
 
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []

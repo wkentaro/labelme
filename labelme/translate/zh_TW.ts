@@ -1151,10 +1151,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>選取的形狀已是此類型</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>無法將直線、點和遮罩轉換為多邊形</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>不支援轉換為有向矩形</translation>
     </message>
@@ -1167,10 +1163,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>不支援轉換為點</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>不支援轉換為遮罩</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>折線至少需要 3 個點才能轉換為多邊形</translation>
     </message>
@@ -1181,6 +1173,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>沒有面積的形狀沒有邊界框</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>無法轉換在影像中沒有面積的形狀</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1327,6 +1323,10 @@ Expected location: {path}</source>
         <translation>本次工作階段的設定由 --config 管理</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>無法將直線和點轉換為多邊形</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>無法將直線和點轉換為矩形</translation>
     </message>
@@ -1337,6 +1337,10 @@ Expected location: {path}</source>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>只能將多邊形和直線轉換為折線</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>只能將多邊形轉換為遮罩</translation>
     </message>
     <message>
         <source>Large Image</source>

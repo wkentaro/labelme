@@ -1151,10 +1151,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Τα επιλεγμένα σχήματα είναι ήδη αυτού του τύπου</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Οι γραμμές, τα σημεία και οι μάσκες δεν μετατρέπονται σε πολύγωνα</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Η μετατροπή σε προσανατολισμένα ορθογώνια δεν υποστηρίζεται</translation>
     </message>
@@ -1167,10 +1163,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Η μετατροπή σε σημεία δεν υποστηρίζεται</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>Η μετατροπή σε μάσκες δεν υποστηρίζεται</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Ένα LineStrip χρειάζεται τουλάχιστον 3 σημεία για να γίνει πολύγωνο</translation>
     </message>
@@ -1181,6 +1173,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>Ένα σχήμα χωρίς εμβαδόν δεν έχει πλαίσιο οριοθέτησης</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Ένα σχήμα χωρίς εμβαδόν μέσα στην εικόνα δεν μετατρέπεται</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1343,6 +1339,10 @@ Expected location: {path}</source>
         <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Οι γραμμές και τα σημεία δεν μετατρέπονται σε πολύγωνα</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Οι γραμμές και τα σημεία δεν μετατρέπονται σε ορθογώνια</translation>
     </message>
@@ -1353,6 +1353,10 @@ Expected location: {path}</source>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>Μόνο πολύγωνα και γραμμές μετατρέπονται σε LineStrip</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Μόνο πολύγωνα μετατρέπονται σε μάσκες</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

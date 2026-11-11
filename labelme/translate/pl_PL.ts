@@ -1151,10 +1151,6 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Zaznaczone kształty są już tego typu</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Linii, punktów i masek nie można konwertować na wielokąty</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Konwersja na prostokąty zorientowane nie jest obsługiwana</translation>
     </message>
@@ -1167,10 +1163,6 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Konwersja na punkty nie jest obsługiwana</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>Konwersja na maski nie jest obsługiwana</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Łamana musi mieć co najmniej 3 punkty, aby stać się wielokątem</translation>
     </message>
@@ -1181,6 +1173,10 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>Kształt bez pola powierzchni nie ma ramki ograniczającej</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Kształtu bez pola powierzchni na obrazie nie można konwertować</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1327,6 +1323,10 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Ustawienia są zarządzane przez --config w tej sesji</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Linii i punktów nie można konwertować na wielokąty</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Linii i punktów nie można konwertować na prostokąty</translation>
     </message>
@@ -1337,6 +1337,10 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>Na łamane można konwertować tylko wielokąty i linie</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Na maski można konwertować tylko wielokąty</translation>
     </message>
     <message>
         <source>Large Image</source>

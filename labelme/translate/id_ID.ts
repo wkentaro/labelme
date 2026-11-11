@@ -874,6 +874,10 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Keluaran mask tidak tersedia</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Garis dan titik tidak dapat diubah menjadi poligon</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Garis dan titik tidak dapat diubah menjadi persegi panjang</translation>
     </message>
@@ -884,6 +888,10 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>Hanya poligon dan garis yang dapat diubah menjadi garis patah</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Hanya poligon yang dapat diubah menjadi mask</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -1163,10 +1171,6 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Bentuk terpilih sudah berjenis ini</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Garis, titik, dan mask tidak dapat diubah menjadi poligon</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Mengubah menjadi persegi panjang berorientasi tidak didukung</translation>
     </message>
@@ -1179,10 +1183,6 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Mengubah menjadi titik tidak didukung</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>Mengubah menjadi mask tidak didukung</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Garis patah memerlukan minimal 3 titik untuk menjadi poligon</translation>
     </message>
@@ -1193,6 +1193,10 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>Bentuk tanpa luas tidak memiliki kotak pembatas</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Bentuk tanpa luas di dalam gambar tidak dapat diubah</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>

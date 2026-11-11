@@ -1151,10 +1151,6 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>De geselecteerde vormen zijn al van dit type</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Lijnen, punten en maskers kunnen niet worden omgezet naar polygonen</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Omzetten naar georiënteerde rechthoeken wordt niet ondersteund</translation>
     </message>
@@ -1167,10 +1163,6 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Omzetten naar punten wordt niet ondersteund</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>Omzetten naar maskers wordt niet ondersteund</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Een lijnstrip heeft minstens 3 punten nodig om een polygoon te worden</translation>
     </message>
@@ -1181,6 +1173,10 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>Een vorm zonder oppervlakte heeft geen begrenzingskader</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Een vorm zonder oppervlakte in de afbeelding kan niet worden omgezet</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1327,6 +1323,10 @@ Verwachte locatie: {path}</translation>
         <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Lijnen en punten kunnen niet worden omgezet naar polygonen</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Lijnen en punten kunnen niet worden omgezet naar rechthoeken</translation>
     </message>
@@ -1337,6 +1337,10 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>Alleen polygonen en lijnen kunnen worden omgezet naar lijnstrips</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Alleen polygonen kunnen worden omgezet naar maskers</translation>
     </message>
     <message>
         <source>Large Image</source>

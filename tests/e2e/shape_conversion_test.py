@@ -219,3 +219,56 @@ def test_convert_circle_asks_for_detail_and_previews(
     assert canvas.shapes[-1].shape_type == "circle"
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+def test_convert_mask_to_grouped_polygons_and_back(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    win, canvas = _open(
+        main_win=main_win, qtbot=qtbot, data_path=data_path, tmp_path=tmp_path
+    )
+    pixels = np.zeros((40, 80), dtype=bool)
+    pixels[5:35, 5:30] = True
+    pixels[5:35, 50:75] = True
+    mask = Shape(
+        label="cells",
+        shape_type="mask",
+        points=np.array([[100.0, 100.0], [179.0, 139.0]]),
+        mask=pixels,
+    )
+    win._commit_shapes(shapes=[*canvas.shapes, mask])
+    mask = canvas.shapes[-1]
+    canvas.select_shapes(shapes=[mask])
+    qtbot.wait(50)
+    polygon = win._actions.convert["polygon"]
+    assert polygon.text() == "Polygon…"
+
+    _poll_dialog(act=lambda dialog: dialog.accept())
+    polygon.trigger()
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+    halves = canvas.shapes[-2:]
+    assert [s.shape_type for s in halves] == ["polygon", "polygon"]
+    assert canvas.selected_shapes == halves
+    # The lands stay together in a Group no other shape has.
+    others = {s.group_id for s in canvas.shapes[:-2]}
+    assert halves[0].group_id == halves[1].group_id not in others | {None}
+
+    canvas.select_shapes(shapes=[halves[0]])
+    qtbot.wait(50)
+    win._actions.convert["mask"].trigger()
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+    assert canvas.shapes[-2].shape_type == "mask"
+    assert canvas.shapes[-2].mask is not None
+
+    win.undo_shape_edit()
+    win.undo_shape_edit()
+    qtbot.wait(50)
+    assert canvas.shapes[-1].shape_type == "mask"
+    assert canvas.shapes[-1].points.tolist() == [[100, 100], [179, 139]]
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)

@@ -1151,10 +1151,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Вибрані фігури вже цього типу</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Лінії, точки й маски не можна перетворити на багатокутники</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Перетворення на орієнтовані прямокутники не підтримується</translation>
     </message>
@@ -1167,10 +1163,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Перетворення на точки не підтримується</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>Перетворення на маски не підтримується</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Щоб стати багатокутником, LineStrip потребує щонайменше 3 точок</translation>
     </message>
@@ -1181,6 +1173,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>Фігура без площі не має обмежувальної рамки</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Фігуру без площі на зображенні не можна перетворити</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1343,6 +1339,10 @@ Expected location: {path}</source>
         <translation>Параметри керуються через --config для цього сеансу</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Лінії й точки не можна перетворити на багатокутники</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Лінії й точки не можна перетворити на прямокутники</translation>
     </message>
@@ -1353,6 +1353,10 @@ Expected location: {path}</source>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>На LineStrip можна перетворити лише багатокутники й лінії</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>На маски можна перетворити лише багатокутники</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

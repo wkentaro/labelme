@@ -1151,10 +1151,6 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Seçili şekiller zaten bu türde</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Çizgiler, noktalar ve maskeler çokgene dönüştürülemez</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Yönlü dikdörtgene dönüştürme desteklenmiyor</translation>
     </message>
@@ -1167,10 +1163,6 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Noktaya dönüştürme desteklenmiyor</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>Maskeye dönüştürme desteklenmiyor</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Bir çizgi şeridinin çokgen olması için en az 3 noktası olmalı</translation>
     </message>
@@ -1181,6 +1173,10 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>Alanı olmayan bir şeklin sınırlayıcı kutusu olmaz</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Görüntüde alanı olmayan bir şekil dönüştürülemez</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1327,6 +1323,10 @@ Beklenen konum: {path}</translation>
         <translation>Bu oturumda ayarlar --config ile yönetiliyor</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Çizgiler ve noktalar çokgene dönüştürülemez</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Çizgiler ve noktalar dikdörtgene dönüştürülemez</translation>
     </message>
@@ -1337,6 +1337,10 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>Yalnızca çokgenler ve çizgiler çizgi şeridine dönüştürülebilir</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Yalnızca çokgenler maskeye dönüştürülebilir</translation>
     </message>
     <message>
         <source>Large Image</source>

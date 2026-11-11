@@ -1151,10 +1151,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>شکل‌های انتخاب شده از قبل از همین نوع هستند</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>خط، نقطه و ماسک به چندضلعی تبدیل نمی‌شوند</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>تبدیل به مستطیل جهت‌دار پشتیبانی نمی‌شود</translation>
     </message>
@@ -1167,10 +1163,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>تبدیل به نقطه پشتیبانی نمی‌شود</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>تبدیل به ماسک پشتیبانی نمی‌شود</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>خط چندتکه‌ای برای تبدیل به چندضلعی دست‌کم ۳ نقطه لازم دارد</translation>
     </message>
@@ -1181,6 +1173,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>شکلی که مساحت ندارد کادر محدودکننده ندارد</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>شکلی که درون تصویر مساحت ندارد تبدیل نمی‌شود</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1327,6 +1323,10 @@ Expected location: {path}</source>
         <translation>تنظیمات این نشست از طریق --config مدیریت می‌شوند</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>خط و نقطه به چندضلعی تبدیل نمی‌شوند</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>خط و نقطه به مستطیل تبدیل نمی‌شوند</translation>
     </message>
@@ -1337,6 +1337,10 @@ Expected location: {path}</source>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>فقط چندضلعی‌ها و خط‌ها به خط چندتکه‌ای تبدیل می‌شوند</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>فقط چندضلعی‌ها به ماسک تبدیل می‌شوند</translation>
     </message>
     <message>
         <source>Large Image</source>

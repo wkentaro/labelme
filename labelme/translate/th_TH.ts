@@ -1152,10 +1152,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>รูปร่างที่เลือกเป็นประเภทนี้อยู่แล้ว</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>แปลงเส้น จุด และมาสก์เป็นหลายเหลี่ยมไม่ได้</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>ไม่รองรับการแปลงเป็นสี่เหลี่ยมมีทิศทาง</translation>
     </message>
@@ -1168,10 +1164,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>ไม่รองรับการแปลงเป็นจุด</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>ไม่รองรับการแปลงเป็นมาสก์</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>เส้นต่อเนื่องต้องมีอย่างน้อย 3 จุดจึงจะเป็นหลายเหลี่ยมได้</translation>
     </message>
@@ -1182,6 +1174,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>รูปร่างที่ไม่มีพื้นที่จะไม่มีกรอบล้อมรอบ</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>แปลงรูปร่างที่ไม่มีพื้นที่ในภาพไม่ได้</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1328,6 +1324,10 @@ Expected location: {path}</source>
         <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>แปลงเส้นและจุดเป็นหลายเหลี่ยมไม่ได้</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>แปลงเส้นและจุดเป็นสี่เหลี่ยมไม่ได้</translation>
     </message>
@@ -1338,6 +1338,10 @@ Expected location: {path}</source>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>แปลงเป็นเส้นต่อเนื่องได้เฉพาะหลายเหลี่ยมและเส้น</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>แปลงเป็นมาสก์ได้เฉพาะหลายเหลี่ยม</translation>
     </message>
     <message>
         <source>Large Image</source>

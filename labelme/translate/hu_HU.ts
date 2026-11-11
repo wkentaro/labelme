@@ -1151,10 +1151,6 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>A kijelölt alakzatok már ilyen típusúak</translation>
     </message>
     <message>
-        <source>Lines, points, and masks can’t be converted to polygons</source>
-        <translation>Vonalak, pontok és maszkok nem alakíthatók sokszöggé</translation>
-    </message>
-    <message>
         <source>Converting to oriented rectangles isn’t supported</source>
         <translation>Az irányított téglalappá alakítás nem támogatott</translation>
     </message>
@@ -1167,10 +1163,6 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>A ponttá alakítás nem támogatott</translation>
     </message>
     <message>
-        <source>Converting to masks isn’t supported</source>
-        <translation>A maszkká alakítás nem támogatott</translation>
-    </message>
-    <message>
         <source>A linestrip needs at least 3 points to become a polygon</source>
         <translation>Egy vonalláncnak legalább 3 pont kell ahhoz, hogy sokszöggé váljon</translation>
     </message>
@@ -1181,6 +1173,10 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
     <message>
         <source>A shape with no area has no bounding box</source>
         <translation>Egy terület nélküli alakzatnak nincs befoglaló téglalapja</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Egy a képen belül terület nélküli alakzat nem alakítható át</translation>
     </message>
     <message>
         <source>Unlock the selected shapes to convert them</source>
@@ -1327,6 +1323,10 @@ Várt hely: {path}</translation>
         <translation>A beállítások ebben a munkamenetben --config segítségével vannak kezelve</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Vonalak és pontok nem alakíthatók sokszöggé</translation>
+    </message>
+    <message>
         <source>Lines and points can’t be converted to rectangles</source>
         <translation>Vonalak és pontok nem alakíthatók téglalappá</translation>
     </message>
@@ -1337,6 +1337,10 @@ Várt hely: {path}</translation>
     <message>
         <source>Only polygons and lines can be converted to linestrips</source>
         <translation>Csak sokszögek és vonalak alakíthatók vonallánccá</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Csak sokszögek alakíthatók maszkká</translation>
     </message>
     <message>
         <source>Large Image</source>

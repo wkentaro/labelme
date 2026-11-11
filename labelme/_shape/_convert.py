@@ -35,18 +35,21 @@ ConvertBlocker = Literal[
 
 # Targets missing here are listed in the menu but not convertible yet.
 _SOURCES: Final[dict[ConvertTarget, frozenset[ShapeType]]] = {
-    "polygon": frozenset({"rectangle", "oriented_rectangle", "circle", "linestrip"}),
+    "polygon": frozenset(
+        {"rectangle", "oriented_rectangle", "circle", "linestrip", "mask"}
+    ),
     "rectangle": frozenset(
         {"polygon", "oriented_rectangle", "circle", "linestrip", "mask"}
     ),
     "line": frozenset({"linestrip"}),
     "linestrip": frozenset({"polygon", "line"}),
+    "mask": frozenset({"polygon"}),
 }
 
 # Routes with more than one possible result: the user picks a Polygon Detail.
 # The rest have one result, so they convert without asking.
 _DETAIL_ROUTES: Final[frozenset[tuple[ShapeType, ConvertTarget]]] = frozenset(
-    {("circle", "polygon")}
+    {("circle", "polygon"), ("mask", "polygon")}
 )
 
 
@@ -98,6 +101,23 @@ def convert_blocker(
         if s.shape_type == "circle"
     ):
         return "no_area"
+    if target == "polygon" and any(
+        not _mask_reaches_image(shape=s, image_size=image_size)
+        for s in sources
+        if s.shape_type == "mask"
+    ):
+        return "no_area"
+    # Geometry only: rasterizing here would run on every selection change.
+    if target == "mask" and any(
+        _mask_frame(shape=s, image_size=image_size) is None
+        or (
+            image_size is not None
+            and len(_clip_polygon(points=s.points, image_size=image_size))
+            < MIN_POLYGON_POINT_COUNT
+        )
+        for s in sources
+    ):
+        return "no_area"
     if any(s.locked for s in sources):
         return "locked"
     return None
@@ -109,9 +129,10 @@ def convert_shape(
     target: ConvertTarget,
     image_size: tuple[int, int] | None = None,
     detail: int | None = None,
-) -> Shape:
+) -> list[Shape]:
     # image_size (width, height) keeps new points inside the image, for when
     # out-of-bounds points are off (ADR 0004): a circle can overhang it.
+    # A mask becomes one polygon per land, so the result is a list.
     if convert_blocker(shapes=[shape], target=target, image_size=image_size):
         raise ValueError(f"cannot convert {shape.shape_type} to {target}")
     if detail is None and conversion_needs_detail(shapes=[shape], target=target):
@@ -119,6 +140,20 @@ def convert_shape(
     converted = shape.copy()
     converted.shape_type = target
     converted.mask = None
+    # A merged mask can be open; every converted kind draws closed.
+    converted.closed = True
+    if target == "mask":
+        origin, converted.mask = _rasterize_polygon(shape=shape, image_size=image_size)
+        height, width = converted.mask.shape
+        converted.points = np.array(
+            [origin, origin + [width - 1, height - 1]], dtype=np.float64
+        )
+        converted.point_labels = np.ones(len(converted.points), dtype=np.int_)
+        return [converted]
+    if shape.shape_type == "mask" and target == "polygon":
+        return _polygons_from_mask(
+            shape=shape, converted=converted, detail=detail, image_size=image_size
+        )
     if target == "rectangle":
         converted.points = _bounding_box(shape=shape, image_size=image_size)
     elif shape.shape_type == "rectangle":
@@ -150,9 +185,105 @@ def convert_shape(
         )
     else:
         # The rest keep every vertex in order, so they keep their labels too.
-        return converted
+        return [converted]
     converted.point_labels = np.ones(len(converted.points), dtype=np.int_)
-    return converted
+    return [converted]
+
+
+def _polygons_from_mask(
+    *,
+    shape: Shape,
+    converted: Shape,
+    detail: int | None,
+    image_size: tuple[int, int] | None,
+) -> list[Shape]:
+    assert detail is not None
+    # A detail that drops every land would delete the shape; its exact
+    # outline (detail 100) keeps it.
+    polygons: list[Shape] = []
+    for points in _mask_outlines(
+        shape=shape, detail=detail, image_size=image_size
+    ) or _mask_outlines(shape=shape, detail=100, image_size=image_size):
+        polygon = converted.copy()
+        polygon.points = points
+        polygon.point_labels = np.ones(len(points), dtype=np.int_)
+        polygons.append(polygon)
+    return polygons
+
+
+def _mask_outlines(
+    *, shape: Shape, detail: int, image_size: tuple[int, int] | None
+) -> list[npt.NDArray[np.float64]]:
+    # Deferred: _automation imports _shape, and owns Mask Polygonization.
+    from .._automation import compute_polygons_from_mask  # noqa: PLC0415
+
+    assert shape.mask is not None
+    outlines: list[npt.NDArray[np.float64]] = []
+    for outline in compute_polygons_from_mask(mask=shape.mask, detail=detail):
+        points = shape.points[0] + outline.astype(np.float64)
+        if image_size is not None:
+            points = _clip_polygon(points=points, image_size=image_size)
+        # Clipping leaves an outline beyond the image as a line on its border.
+        if len(points) >= MIN_POLYGON_POINT_COUNT and np.ptp(points, axis=0).all():
+            outlines.append(points)
+    return outlines
+
+
+def _mask_reaches_image(*, shape: Shape, image_size: tuple[int, int] | None) -> bool:
+    mask = shape.mask
+    if mask is None:
+        return False
+    if image_size is None:
+        return bool(mask.any())
+    xs = shape.points[0][0] + np.arange(mask.shape[1])
+    ys = shape.points[0][1] + np.arange(mask.shape[0])
+    width, height = image_size
+
+    def pixels_within(*, margin: float) -> npt.NDArray[np.bool_]:
+        rows = (ys >= -margin) & (ys < height + margin)
+        cols = (xs >= -margin) & (xs < width + margin)
+        return mask[rows][:, cols]
+
+    # A pixel centered inside the image always leaves its outline an area
+    # there, and an outline stays in the 1-pixel cells around its centers;
+    # only the pixels between are traced.
+    if pixels_within(margin=0).any():
+        return True
+    return bool(pixels_within(margin=1).any()) and bool(
+        _mask_outlines(shape=shape, detail=100, image_size=image_size)
+    )
+
+
+def _mask_frame(
+    *, shape: Shape, image_size: tuple[int, int] | None
+) -> tuple[int, int, int, int] | None:
+    # The mask's frame holds every pixel the polygon covers inside the image,
+    # which starts at 0 even when its size is not given; None when nothing is
+    # left.
+    xmin, ymin = np.maximum(np.floor(shape.points.min(axis=0)), 0).astype(np.int_)
+    xmax, ymax = np.ceil(shape.points.max(axis=0)).astype(np.int_)
+    if image_size is not None:
+        xmax, ymax = min(xmax, image_size[0] - 1), min(ymax, image_size[1] - 1)
+    if xmax < xmin or ymax < ymin:
+        return None
+    return int(xmin), int(ymin), int(xmax), int(ymax)
+
+
+def _rasterize_polygon(
+    *, shape: Shape, image_size: tuple[int, int] | None
+) -> tuple[npt.NDArray[np.int_], npt.NDArray[np.bool_]]:
+    # Deferred: _automation imports _shape, and owns rasterization.
+    from .._automation import rasterize_shape  # noqa: PLC0415
+
+    frame = _mask_frame(shape=shape, image_size=image_size)
+    assert frame is not None
+    xmin, ymin, xmax, ymax = frame
+    # Pillow's fill shifts with the polygon, so draw in image coordinates, as
+    # exporters do, then keep a copy of the frame alone.
+    canvas = rasterize_shape(
+        shape=shape, xmin=0, ymin=0, width=xmax + 1, height=ymax + 1
+    )
+    return np.array([xmin, ymin]), canvas[ymin:, xmin:].copy()
 
 
 def _bounding_box(
@@ -216,6 +347,8 @@ def _clip_polygon(
             # already kept, and adding it again would leave a hidden corner.
             if start_inside * end_inside < 0:
                 t = start_inside / (start_inside - end_inside)
-                clipped.append(start + t * (end - start))
-        points = np.array(clipped)
+                crossing = start + t * (end - start)
+                crossing[axis] = bound  # exactly, not a rounding error past it
+                clipped.append(crossing)
+        points = np.array(clipped).reshape(-1, 2)
     return points

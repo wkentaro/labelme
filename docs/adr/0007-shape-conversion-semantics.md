@@ -47,3 +47,7 @@ were made together, each against a real alternative:
   an ellipsis. This dialog collects an input, so it is not the warning dialog
   ruled out above. Its value is remembered apart from the AI Assist Setting,
   so tuning AI-Segment output never changes what Convert To produces.
+- A Conversion never deletes a Shape. When a Polygon Detail would omit every
+  land of a mask, the mask keeps its exact outline (detail 100) instead. Split
+  polygons keep the mask's Group when it had one, and otherwise share a new
+  one.
