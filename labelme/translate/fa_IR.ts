@@ -624,6 +624,46 @@
         <translation>ادغام شکل‌های ماسک انتخاب شده در یک شکل</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>تبدیل شکل‌های انتخاب شده به چندضلعی</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>جایگزینی چندضلعی‌های انتخاب شده با کادر محدودکنندهٔ آن‌ها</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>تبدیل شکل‌های انتخاب شده به مستطیل جهت‌دار</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>تبدیل شکل‌های انتخاب شده به دایره</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>تبدیل شکل‌های انتخاب شده به خط</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>تبدیل شکل‌های انتخاب شده به نقطه</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>باز کردن چندضلعی‌های انتخاب شده به خط چندتکه‌ای</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>ماسک</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>تبدیل شکل‌های انتخاب شده به ماسک</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>تبدیل به</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>قفل کردن شکل‌ها</translation>
     </message>
@@ -876,6 +916,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>خروجی ماسک در دسترس نیست</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>فقط چندضلعی‌ها به مستطیل تبدیل می‌شوند</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>برچسب نامعتبر &apos;{}&apos; با نوع اعتبارسنجی &apos;{}&apos;</translation>
     </message>
@@ -1082,6 +1126,50 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>فقط شکل‌های دارای برچسب یکسان ادغام می‌شوند</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>برای تبدیل، شکل‌هایی انتخاب کنید</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>شکل‌های انتخاب شده از قبل از همین نوع هستند</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>فقط مستطیل‌ها و خط‌های چندتکه‌ای به چندضلعی تبدیل می‌شوند</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>تبدیل به مستطیل جهت‌دار پشتیبانی نمی‌شود</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>تبدیل به دایره پشتیبانی نمی‌شود</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>تبدیل به خط پشتیبانی نمی‌شود</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>تبدیل به نقطه پشتیبانی نمی‌شود</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>فقط چندضلعی‌ها به خط چندتکه‌ای تبدیل می‌شوند</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>تبدیل به ماسک پشتیبانی نمی‌شود</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>خط چندتکه‌ای برای تبدیل به چندضلعی دست‌کم ۳ نقطه لازم دارد</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>برای تبدیل، قفل شکل‌های انتخاب شده را باز کنید</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

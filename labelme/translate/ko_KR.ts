@@ -624,6 +624,46 @@
         <translation>선택한 마스크 도형을 하나로 병합</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>선택한 도형을 다각형으로 변환</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>선택한 다각형을 경계 상자로 바꾸기</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>선택한 도형을 방향 있는 사각형으로 변환</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>선택한 도형을 원으로 변환</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>선택한 도형을 선으로 변환</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>선택한 도형을 점으로 변환</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>선택한 다각형을 열어 연결선으로 만들기</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>마스크</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>선택한 도형을 마스크로 변환</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>변환</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>도형 잠금</translation>
     </message>
@@ -876,6 +916,10 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>마스크 출력을 사용할 수 없음</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>다각형만 사각형으로 변환할 수 있습니다</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>검증 유형 &apos;{}&apos;에 대한 잘못된 레이블 &apos;{}&apos;</translation>
     </message>
@@ -1082,6 +1126,50 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>레이블이 같은 도형만 병합할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>변환할 도형을 선택하세요</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>선택한 도형은 이미 이 유형입니다</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>사각형과 연결선만 다각형으로 변환할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>방향 있는 사각형으로의 변환은 지원되지 않습니다</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>원으로의 변환은 지원되지 않습니다</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>선으로의 변환은 지원되지 않습니다</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>점으로의 변환은 지원되지 않습니다</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>다각형만 연결선으로 변환할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>마스크로의 변환은 지원되지 않습니다</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>연결선을 다각형으로 만들려면 점이 3개 이상 필요합니다</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>변환하려면 선택한 도형의 잠금을 해제하세요</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

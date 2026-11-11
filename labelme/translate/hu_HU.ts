@@ -640,6 +640,46 @@
         <translation>A kijelölt maszk alakzatok egyesítése eggyé</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>A kijelölt alakzatok átalakítása sokszöggé</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>A kijelölt sokszögek cseréje a befoglaló téglalapjukra</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>A kijelölt alakzatok átalakítása irányított téglalappá</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>A kijelölt alakzatok átalakítása körré</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>A kijelölt alakzatok átalakítása vonallá</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>A kijelölt alakzatok átalakítása ponttá</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>A kijelölt sokszögek felnyitása vonalláncokká</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maszk</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>A kijelölt alakzatok átalakítása maszkká</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Átalakítás</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Alakzatok zárolása</translation>
     </message>
@@ -884,6 +924,10 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>A maszk kimenet nem érhető el</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>Csak sokszögek alakíthatók téglalappá</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Érvénytelen címke &apos;{}&apos; &apos;{}&apos; validációs típussal</translation>
     </message>
@@ -1082,6 +1126,50 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>Csak azonos címkéjű alakzatok egyesíthetők</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>Jelöljön ki alakzatokat az átalakításhoz</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>A kijelölt alakzatok már ilyen típusúak</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>Csak téglalapok és vonalláncok alakíthatók sokszöggé</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Az irányított téglalappá alakítás nem támogatott</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>A körré alakítás nem támogatott</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>A vonallá alakítás nem támogatott</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>A ponttá alakítás nem támogatott</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>Csak sokszögek alakíthatók vonallánccá</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>A maszkká alakítás nem támogatott</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Egy vonalláncnak legalább 3 pont kell ahhoz, hogy sokszöggé váljon</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Az átalakításhoz oldja fel a kijelölt alakzatokat</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

@@ -624,6 +624,46 @@
         <translation>Seçili maske şekillerini tek şekilde birleştir</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Seçili şekilleri çokgene dönüştür</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>Seçili çokgenleri sınırlayıcı kutularıyla değiştir</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Seçili şekilleri yönlü dikdörtgene dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Seçili şekilleri daireye dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Seçili şekilleri çizgiye dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Seçili şekilleri noktaya dönüştür</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>Seçili çokgenleri açarak çizgi şeridine dönüştür</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maske</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Seçili şekilleri maskeye dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Dönüştür</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Şekilleri Kilitle</translation>
     </message>
@@ -876,6 +916,10 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Maske çıktısı kullanılamıyor</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>Yalnızca çokgenler dikdörtgene dönüştürülebilir</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>&apos;{}&apos; etiketi &apos;{}&apos; doğrulama türüne göre geçersiz</translation>
     </message>
@@ -1082,6 +1126,50 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>Yalnızca aynı etikete sahip şekiller birleştirilebilir</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>Dönüştürmek için şekil seçin</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Seçili şekiller zaten bu türde</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>Yalnızca dikdörtgenler ve çizgi şeritleri çokgene dönüştürülebilir</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Yönlü dikdörtgene dönüştürme desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Daireye dönüştürme desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>Çizgiye dönüştürme desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Noktaya dönüştürme desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>Yalnızca çokgenler çizgi şeridine dönüştürülebilir</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>Maskeye dönüştürme desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Bir çizgi şeridinin çokgen olması için en az 3 noktası olmalı</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Dönüştürmek için seçili şekillerin kilidini açın</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

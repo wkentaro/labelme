@@ -39,8 +39,8 @@ A set of Shapes sharing a common `group_id`, marking them as belonging together.
 _Avoid_: instance (it is only one application of grouping), cluster.
 
 **Shape Conversion**:
-Replacing a Shape's geometric kind (its `shape_type`) in place while keeping its identity — Label, Group, Shape Flags, and description. The UI verb is "Convert to…". A Conversion is either lossless (e.g. rectangle → polygon) or lossy (e.g. polygon → rectangle keeps only the bounding box); a lossy Conversion states what it discards at the point of use. Reverting relies on undo history, not on stored originals.
-_Avoid_: turn into, transform, cast, change type.
+Replacing a Shape's geometric kind (its `shape_type`) in place while keeping its identity — Label, Group, Shape Flags, and description. The UI verb is "Convert To", a submenu listing every Shape kind. A Conversion is either lossless (e.g. rectangle → polygon) or lossy (e.g. polygon → rectangle keeps only the bounding box); a lossy Conversion states what it discards at the point of use. Reverting relies on undo history, not on stored originals.
+_Avoid_: turn into (it changes how content is presented, while a Conversion rewrites the geometry the user drew), transform, cast, change type.
 
 **Mask Polygonization**:
 Deriving one or more Polygon Shapes from a Mask, either while creating an AI Assist proposal or during Shape Conversion. Polygon Shapes from separate lands share a Group; holes are not represented.

@@ -624,6 +624,46 @@
         <translation>将选中的掩码形状合并为一个</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>将选中的形状转换为多边形</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>将选中的多边形替换为其边界框</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>将选中的形状转换为有向矩形</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>将选中的形状转换为圆形</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>将选中的形状转换为直线</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>将选中的形状转换为点</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>将选中的多边形断开为折线</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>掩码</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>将选中的形状转换为掩码</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>转换为</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>锁定形状</translation>
     </message>
@@ -876,6 +916,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>掩膜输出不可用</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>只能将多边形转换为矩形</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>标签“{}”不符合“{}”验证类型</translation>
     </message>
@@ -1082,6 +1126,50 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>只能合并标签相同的形状</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>请选择要转换的形状</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>选中的形状已是此类型</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>只能将矩形和折线转换为多边形</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>不支持转换为有向矩形</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>不支持转换为圆形</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>不支持转换为直线</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>不支持转换为点</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>只能将多边形转换为折线</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>不支持转换为掩码</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>折线至少需要 3 个点才能转换为多边形</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>请先解锁选中的形状再转换</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

@@ -624,6 +624,46 @@
         <translation>Unisci le forme maschera selezionate in una</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Converti le forme selezionate in poligoni</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>Sostituisci i poligoni selezionati con i loro riquadri di delimitazione</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Converti le forme selezionate in rettangoli orientati</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Converti le forme selezionate in cerchi</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Converti le forme selezionate in linee</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Converti le forme selezionate in punti</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>Apri i poligoni selezionati in polilinee</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maschera</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Converti le forme selezionate in maschere</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Converti in</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Blocca forme</translation>
     </message>
@@ -876,6 +916,10 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
         <translation>Output maschera non disponibile</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>Si possono convertire in rettangoli solo poligoni</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Etichetta non valida &apos;{}&apos; con tipo di validazione &apos;{}&apos;</translation>
     </message>
@@ -1082,6 +1126,50 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>Si possono unire solo forme con la stessa etichetta</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>Seleziona le forme da convertire</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Le forme selezionate sono già di questo tipo</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>Si possono convertire in poligoni solo rettangoli e polilinee</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>La conversione in rettangoli orientati non è supportata</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>La conversione in cerchi non è supportata</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>La conversione in linee non è supportata</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>La conversione in punti non è supportata</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>Si possono convertire in polilinee solo poligoni</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>La conversione in maschere non è supportata</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Una polilinea richiede almeno 3 punti per diventare un poligono</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Sblocca le forme selezionate per convertirle</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

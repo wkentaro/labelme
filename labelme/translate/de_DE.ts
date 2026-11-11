@@ -640,6 +640,46 @@
         <translation>Ausgewählte Maskenformen zu einer zusammenführen</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Ausgewählte Formen in Polygone umwandeln</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>Ausgewählte Polygone durch ihre Begrenzungsrahmen ersetzen</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Ausgewählte Formen in orientierte Rechtecke umwandeln</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Ausgewählte Formen in Kreise umwandeln</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Ausgewählte Formen in Linien umwandeln</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Ausgewählte Formen in Punkte umwandeln</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>Ausgewählte Polygone zu Linienfolgen öffnen</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maske</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Ausgewählte Formen in Masken umwandeln</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Umwandeln in</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Formen sperren</translation>
     </message>
@@ -860,6 +900,50 @@
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>Nur Formen mit demselben Label lassen sich zusammenführen</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>Formen zum Umwandeln auswählen</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Die ausgewählten Formen sind bereits von diesem Typ</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>Nur Rechtecke und Linienfolgen lassen sich in Polygone umwandeln</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Umwandlung in orientierte Rechtecke wird nicht unterstützt</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Umwandlung in Kreise wird nicht unterstützt</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>Umwandlung in Linien wird nicht unterstützt</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Umwandlung in Punkte wird nicht unterstützt</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>Nur Polygone lassen sich in Linienfolgen umwandeln</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>Umwandlung in Masken wird nicht unterstützt</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Eine Linienfolge braucht mindestens 3 Punkte, um ein Polygon zu werden</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Ausgewählte Formen zum Umwandeln entsperren</translation>
     </message>
     <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
@@ -1086,6 +1170,10 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
     <message>
         <source>No new &apos;{query}&apos; found</source>
         <translation>Keine neuen „{query}“ gefunden</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>Nur Polygone lassen sich in Rechtecke umwandeln</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

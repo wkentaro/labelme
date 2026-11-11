@@ -625,6 +625,46 @@
         <translation>รวมรูปร่างมาสก์ที่เลือกเป็นรูปร่างเดียว</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นหลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>แทนที่หลายเหลี่ยมที่เลือกด้วยกรอบล้อมรอบ</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นสี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นวงกลม</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นเส้น</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นจุด</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>เปิดหลายเหลี่ยมที่เลือกเป็นเส้นต่อเนื่อง</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>มาสก์</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นมาสก์</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>แปลงเป็น</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>ล็อกรูปร่าง</translation>
     </message>
@@ -877,6 +917,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>ไม่สามารถสร้างเอาต์พุตมาสก์ได้</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>แปลงเป็นสี่เหลี่ยมได้เฉพาะหลายเหลี่ยม</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>เลเบล &apos;{}&apos; ไม่ถูกต้อง ประเภทการตรวจ &apos;{}&apos;</translation>
     </message>
@@ -1083,6 +1127,50 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>รวมได้เฉพาะรูปร่างที่มีเลเบลเดียวกัน</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>เลือกรูปร่างที่จะแปลง</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>รูปร่างที่เลือกเป็นประเภทนี้อยู่แล้ว</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>แปลงเป็นหลายเหลี่ยมได้เฉพาะสี่เหลี่ยมและเส้นต่อเนื่อง</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>ไม่รองรับการแปลงเป็นสี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>ไม่รองรับการแปลงเป็นวงกลม</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>ไม่รองรับการแปลงเป็นเส้น</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>ไม่รองรับการแปลงเป็นจุด</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>แปลงเป็นเส้นต่อเนื่องได้เฉพาะหลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>ไม่รองรับการแปลงเป็นมาสก์</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>เส้นต่อเนื่องต้องมีอย่างน้อย 3 จุดจึงจะเป็นหลายเหลี่ยมได้</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>ปลดล็อกรูปร่างที่เลือกเพื่อแปลง</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

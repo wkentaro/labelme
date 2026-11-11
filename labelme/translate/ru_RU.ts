@@ -624,6 +624,46 @@
         <translation>Объединить выбранные фигуры-маски в одну</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Преобразовать выбранные фигуры в полигоны</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>Заменить выбранные полигоны их ограничивающими рамками</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Преобразовать выбранные фигуры в ориентированные прямоугольники</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Преобразовать выбранные фигуры в окружности</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Преобразовать выбранные фигуры в линии</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Преобразовать выбранные фигуры в точки</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>Разомкнуть выбранные полигоны в ломаные</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Маска</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Преобразовать выбранные фигуры в маски</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Преобразовать в</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Заблокировать фигуры</translation>
     </message>
@@ -874,6 +914,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Mask Output Unavailable</source>
         <translation>Вывод маски недоступен</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>В прямоугольники можно преобразовать только полигоны</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -1178,6 +1222,50 @@ Expected location: {path}</source>
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>Объединять можно только фигуры с одинаковой меткой</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>Выберите фигуры для преобразования</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Выбранные фигуры уже этого типа</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>В полигоны можно преобразовать только прямоугольники и ломаные</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Преобразование в ориентированные прямоугольники не поддерживается</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Преобразование в окружности не поддерживается</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>Преобразование в линии не поддерживается</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Преобразование в точки не поддерживается</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>В ломаные можно преобразовать только полигоны</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>Преобразование в маски не поддерживается</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Чтобы стать полигоном, ломаной нужно не менее 3 точек</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Разблокируйте выбранные фигуры, чтобы преобразовать их</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

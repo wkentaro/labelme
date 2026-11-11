@@ -632,6 +632,46 @@
         <translation>選択したマスク図形を1つに結合</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>選択した図形をポリゴンに変換</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>選択したポリゴンをバウンディングボックスに置き換え</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>選択した図形を向き付き矩形に変換</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>選択した図形を円に変換</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>選択した図形を直線に変換</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>選択した図形を点に変換</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>選択したポリゴンを開いて折れ線にする</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>マスク</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>選択した図形をマスクに変換</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>変換</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>図形をロック</translation>
     </message>
@@ -886,6 +926,10 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
         <translation>マスク出力は利用できません</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>矩形に変換できるのはポリゴンのみです</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>ラベル &apos;{}&apos; は検証タイプ &apos;{}&apos; では無効です</translation>
     </message>
@@ -1092,6 +1136,50 @@ AI-Find All のモデルを &apos;SAM 3&apos; に切り替えるか、出力形�
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>結合できるのは同じラベルの図形のみです</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>変換する図形を選択してください</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>選択した図形はすでにこの種類です</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>ポリゴンに変換できるのは矩形と折れ線のみです</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>向き付き矩形への変換には対応していません</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>円への変換には対応していません</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>直線への変換には対応していません</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>点への変換には対応していません</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>折れ線に変換できるのはポリゴンのみです</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>マスクへの変換には対応していません</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>ポリゴンにするには、折れ線に3つ以上の点が必要です</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>変換するには、選択した図形のロックを解除してください</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

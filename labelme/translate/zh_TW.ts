@@ -624,6 +624,46 @@
         <translation>將選取的遮罩形狀合併為一個</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>將選取的形狀轉換為多邊形</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>將選取的多邊形替換為其邊界框</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>將選取的形狀轉換為有向矩形</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>將選取的形狀轉換為圓形</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>將選取的形狀轉換為直線</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>將選取的形狀轉換為點</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>將選取的多邊形斷開為折線</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>遮罩</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>將選取的形狀轉換為遮罩</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>轉換為</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>鎖定形狀</translation>
     </message>
@@ -876,6 +916,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>遮罩輸出無法使用</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>只能將多邊形轉換為矩形</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>標籤「{}」不符合「{}」驗證類型</translation>
     </message>
@@ -1082,6 +1126,50 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>只能合併標籤相同的形狀</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>請選取要轉換的形狀</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>選取的形狀已是此類型</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>只能將矩形和折線轉換為多邊形</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>不支援轉換為有向矩形</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>不支援轉換為圓形</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>不支援轉換為直線</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>不支援轉換為點</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>只能將多邊形轉換為折線</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>不支援轉換為遮罩</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>折線至少需要 3 個點才能轉換為多邊形</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>請先解鎖選取的形狀再轉換</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

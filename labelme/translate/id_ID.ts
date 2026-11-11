@@ -571,6 +571,46 @@
         <translation>Gabungkan bentuk mask terpilih menjadi satu</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Ubah bentuk terpilih menjadi poligon</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>Ganti poligon terpilih dengan kotak pembatasnya</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Ubah bentuk terpilih menjadi persegi panjang berorientasi</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Ubah bentuk terpilih menjadi lingkaran</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Ubah bentuk terpilih menjadi garis</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Ubah bentuk terpilih menjadi titik</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>Buka poligon terpilih menjadi garis patah</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Mask</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Ubah bentuk terpilih menjadi mask</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Ubah Menjadi</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Kunci Bentuk</translation>
     </message>
@@ -940,6 +980,10 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Tidak ada &apos;{query}&apos; baru yang ditemukan</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>Hanya poligon yang dapat diubah menjadi persegi panjang</translation>
+    </message>
+    <message>
         <source>Large image requires more memory</source>
         <translation>Gambar besar memerlukan lebih banyak memori</translation>
     </message>
@@ -1082,6 +1126,50 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>Hanya bentuk dengan label yang sama yang dapat digabungkan</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>Pilih bentuk untuk diubah</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Bentuk terpilih sudah berjenis ini</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>Hanya persegi panjang dan garis patah yang dapat diubah menjadi poligon</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Mengubah menjadi persegi panjang berorientasi tidak didukung</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Mengubah menjadi lingkaran tidak didukung</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>Mengubah menjadi garis tidak didukung</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Mengubah menjadi titik tidak didukung</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>Hanya poligon yang dapat diubah menjadi garis patah</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>Mengubah menjadi mask tidak didukung</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Garis patah memerlukan minimal 3 titik untuk menjadi poligon</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Buka kunci bentuk terpilih untuk mengubahnya</translation>
     </message>
     <message>
         <source>Remove from Label List</source>

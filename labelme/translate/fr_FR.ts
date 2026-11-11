@@ -624,6 +624,46 @@
         <translation>Fusionner les formes de masque sélectionnées en une seule</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Convertir les formes sélectionnées en polygones</translation>
+    </message>
+    <message>
+        <source>Replace the selected polygons with their bounding boxes</source>
+        <translation>Remplacer les polygones sélectionnés par leurs cadres de délimitation</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Convertir les formes sélectionnées en rectangles orientés</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Convertir les formes sélectionnées en cercles</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Convertir les formes sélectionnées en lignes</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Convertir les formes sélectionnées en points</translation>
+    </message>
+    <message>
+        <source>Open the selected polygons into linestrips</source>
+        <translation>Ouvrir les polygones sélectionnés en polylignes</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Masque</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Convertir les formes sélectionnées en masques</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Convertir en</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Verrouiller les formes</translation>
     </message>
@@ -876,6 +916,10 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
         <translation>Sortie de masque indisponible</translation>
     </message>
     <message>
+        <source>Only polygons can be converted to rectangles</source>
+        <translation>Seuls les polygones peuvent être convertis en rectangles</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Étiquette invalide &apos;{}&apos; avec le type de validation &apos;{}&apos;</translation>
     </message>
@@ -1082,6 +1126,50 @@ Changez le modèle AI-Find All pour &apos;SAM 3&apos;, ou définissez le format 
     <message>
         <source>Only shapes with the same label can be merged</source>
         <translation>Seules les formes portant la même étiquette peuvent être fusionnées</translation>
+    </message>
+    <message>
+        <source>Select shapes to convert</source>
+        <translation>Sélectionnez des formes à convertir</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Les formes sélectionnées sont déjà de ce type</translation>
+    </message>
+    <message>
+        <source>Only rectangles and linestrips can be converted to polygons</source>
+        <translation>Seuls les rectangles et les polylignes peuvent être convertis en polygones</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>La conversion en rectangles orientés n’est pas prise en charge</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>La conversion en cercles n’est pas prise en charge</translation>
+    </message>
+    <message>
+        <source>Converting to lines isn’t supported</source>
+        <translation>La conversion en lignes n’est pas prise en charge</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>La conversion en points n’est pas prise en charge</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to linestrips</source>
+        <translation>Seuls les polygones peuvent être convertis en polylignes</translation>
+    </message>
+    <message>
+        <source>Converting to masks isn’t supported</source>
+        <translation>La conversion en masques n’est pas prise en charge</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Une polyligne doit avoir au moins 3 points pour devenir un polygone</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Déverrouillez les formes sélectionnées pour les convertir</translation>
     </message>
     <message>
         <source>Remove from Label List</source>
