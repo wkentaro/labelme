@@ -1187,7 +1187,8 @@ def test_example_box_batch_skips_and_reports_like_a_query(
         pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(x, y))
         qtbot.mouseMove(canvas, pos=pos)
         qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
-    assert len(canvas._ai_find_all_draft) == 2
+    assert (draft := canvas._ai_find_all_draft) is not None
+    assert len(draft.shapes) == 2
 
     qtbot.keyClick(canvas, Qt.Key.Key_Return)
 
@@ -1250,7 +1251,8 @@ def test_run_with_an_example_box_draft_refines_it(
     assert [texts for texts, _ in sent] == [["visual"], ["visual"], ["person"]]
     assert [labels for _, labels in sent] == [[2, 3], [2, 3], [2, 3]]
     assert canvas.shapes == []
-    assert len(canvas._ai_find_all_draft) == 2
+    assert (draft := canvas._ai_find_all_draft) is not None
+    assert len(draft.shapes) == 2
     assert win.focusWidget() is canvas  # So Enter and Esc reach the draft.
 
     # A draft rerun reads "Finding…" on Run and names its query in the status
@@ -1284,7 +1286,8 @@ def test_run_with_an_example_box_draft_refines_it(
         ),
     )
     assert run_button.text() == ""
-    assert len(canvas._ai_find_all_draft) == 2
+    assert (draft := canvas._ai_find_all_draft) is not None
+    assert len(draft.shapes) == 2
 
 
 @pytest.mark.parametrize(("chosen", "labels"), [("dog", ["dog", "dog"]), (None, [])])
@@ -1344,7 +1347,8 @@ def test_enter_asks_once_for_the_draft_label(
         pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(x, y))
         qtbot.mouseMove(canvas, pos=pos)
         qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
-    assert len(canvas._ai_find_all_draft) == 2
+    assert (draft := canvas._ai_find_all_draft) is not None
+    assert len(draft.shapes) == 2
     assert texts == []  # The draft asks nothing until Enter.
 
     qtbot.keyClick(canvas, Qt.Key.Key_Return)

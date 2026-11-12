@@ -29,6 +29,7 @@ from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._widgets._canvas import _CREATE_MODE_TO_SHAPE_TYPE
 from labelme._widgets._canvas import Canvas
+from labelme._widgets._canvas import _AiFindAllDraft
 from labelme._widgets._canvas import _AiSegmentPress
 from labelme._widgets._canvas import _compute_intersection_edges_image
 from labelme._widgets._canvas import _compute_shapes_bounds
@@ -1360,6 +1361,19 @@ def test_slow_ai_segment_preview_ring_ends_on_leaving_ai_segment(
     qtbot.waitUntil(lambda: not canvas._ai_progress_timer.isActive(), timeout=1000)
 
 
+def _ai_find_all_draft(
+    *, shapes: list[Shape], points: list[list[float]], point_labels: list[int]
+) -> _AiFindAllDraft:
+    return _AiFindAllDraft(
+        points=np.array(points),
+        point_labels=np.array(point_labels),
+        shapes=shapes,
+        query="",
+        propose=Mock(),
+        output_format="polygon",
+    )
+
+
 def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
     *, canvas: Canvas
 ) -> None:
@@ -1367,11 +1381,13 @@ def test_ai_find_all_results_have_white_edge_and_examples_keep_line_color(
     # The chips would cover the probes.
     canvas._ai_suggestion_hint = lambda: None  # ty: ignore[invalid-assignment]
     canvas._ai_prompt_hint = lambda: None  # ty: ignore[invalid-assignment]
-    canvas._ai_find_all_draft = [
-        Shape(shape_type="rectangle", points=np.array([[10.0, 10.0], [40.0, 40.0]]))
-    ]
-    canvas._ai_find_all_points = np.array([[60.0, 10.0], [90.0, 40.0]])
-    canvas._ai_find_all_point_labels = np.array([2, 3])
+    canvas._ai_find_all_draft = _ai_find_all_draft(
+        shapes=[
+            Shape(shape_type="rectangle", points=np.array([[10.0, 10.0], [40.0, 40.0]]))
+        ],
+        points=[[60.0, 10.0], [90.0, 40.0]],
+        point_labels=[2, 3],
+    )
 
     image = canvas.grab().toImage()
 
@@ -1461,9 +1477,9 @@ def test_ai_find_all_example_boxes_are_dashed_and_counter_ones_red(
 
     monkeypatch.setattr("labelme._widgets._canvas.render_shape", record)
     canvas.set_editing(value=False, create_mode="ai_find_all")
-    canvas._ai_find_all_draft = []
-    canvas._ai_find_all_points = np.array([[60.0, 10.0], [90.0, 40.0]])
-    canvas._ai_find_all_point_labels = np.array([label, label + 1])
+    canvas._ai_find_all_draft = _ai_find_all_draft(
+        shapes=[], points=[[60.0, 10.0], [90.0, 40.0]], point_labels=[label, label + 1]
+    )
 
     canvas.grab()
 
@@ -4102,7 +4118,9 @@ def test_ai_find_all_box_applies_the_score_threshold(
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(5, 5))
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=QtCore.QPoint(15, 20))
 
-    assert len(canvas._ai_find_all_draft) == 1
+    assert (draft := canvas._ai_find_all_draft) is not None
+
+    assert len(draft.shapes) == 1
 
 
 def test_ai_box_sends_the_box_without_text(*, canvas: Canvas, qtbot: QtBot) -> None:
@@ -4229,7 +4247,8 @@ def test_ai_find_all_counter_example_reruns_with_every_box(*, canvas: Canvas) ->
     assert request.point_labels.tolist() == [2, 3, 4, 5]
     assert request.points.tolist() == [[5, 5], [15, 20], [40, 5], [50, 20]]
     assert canvas.shapes == []
-    assert len(canvas._ai_find_all_draft) == 2  # The latest run replaced the first.
+    assert (draft := canvas._ai_find_all_draft) is not None
+    assert len(draft.shapes) == 2  # The latest run replaced the first.
 
 
 def test_ai_find_all_takes_dragged_boxes(*, canvas: Canvas, qtbot: QtBot) -> None:
@@ -4403,7 +4422,8 @@ def test_ai_find_all_rerun_replaces_the_draft_with_the_current_query(
     assert request.point_labels is not None
     assert request.point_labels.tolist() == [2, 3]
     assert canvas.shapes == []
-    assert len(canvas._ai_find_all_draft) == 1
+    assert (draft := canvas._ai_find_all_draft) is not None
+    assert len(draft.shapes) == 1
 
 
 def test_ai_find_all_rerun_result_is_dropped_after_a_tool_switch(
@@ -4524,7 +4544,8 @@ def test_ai_find_all_hint_counts_the_results(*, canvas: Canvas) -> None:
     )
     assert _hint_texts(canvas=canvas) is None  # A box being drawn.
     canvas._current = None
-    canvas.set_ai_find_all_pending(shapes=canvas._ai_find_all_draft)
+    assert (draft := canvas._ai_find_all_draft) is not None
+    canvas.set_ai_find_all_pending(shapes=draft.shapes)
     assert _hint_texts(canvas=canvas) is None  # The label dialog is open.
 
 
@@ -4577,9 +4598,9 @@ def test_ai_hint_anchors_under_the_drawn_circle(*, canvas: Canvas, mode: str) ->
         )
         canvas._ai_segment_result = [circle]
     else:
-        canvas._ai_find_all_draft = [circle]
-        canvas._ai_find_all_points = np.array([[45.0, 15.0], [55.0, 25.0]])
-        canvas._ai_find_all_point_labels = np.array([2, 3])
+        canvas._ai_find_all_draft = _ai_find_all_draft(
+            shapes=[circle], points=[[45.0, 15.0], [55.0, 25.0]], point_labels=[2, 3]
+        )
 
     hint = canvas._ai_suggestion_hint()
 

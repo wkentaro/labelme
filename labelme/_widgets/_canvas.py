@@ -237,6 +237,20 @@ class _AiJob:
     query: str = ""
 
 
+@dataclasses.dataclass(frozen=True, eq=False)
+class _AiFindAllDraft:
+    """AI-Find All results not yet in shapes, with the prompts behind them."""
+
+    # Example boxes (labels 2, 3) and counter-examples (4, 5).
+    points: np.ndarray
+    point_labels: np.ndarray
+    shapes: list[Shape]
+    query: str
+    # Proposes the run again, with the settings it was shown with.
+    propose: Callable[..., _automation.AiAssistProposal]
+    output_format: _automation.AiOutputFormat
+
+
 _AI_PROGRESS_RADIUS: Final = 12
 
 
@@ -386,22 +400,12 @@ class Canvas(QtWidgets.QWidget):
     _ai_segment_preview_key: tuple[object, ...] | None
     # The AI-Segment press until its release.
     _ai_segment_press: _AiSegmentPress | None
-    # AI-Find All example boxes (labels 2, 3) and counter-examples (4, 5), and
-    # the draft results they produced, not yet in shapes.
-    _ai_find_all_points: np.ndarray
-    _ai_find_all_point_labels: np.ndarray
-    _ai_find_all_draft: list[Shape]
+    _ai_find_all_draft: _AiFindAllDraft | None
     # A batch waiting for its label, drawn like a draft under the dialog.
     _ai_find_all_pending: list[Shape]
     # What a Conversion would commit, drawn over the shapes it replaces while
     # its Polygon Detail is picked.
     _conversion_preview: list[Shape]
-    _ai_find_all_query: str
-    # Proposes the draft's run again, with the settings it was shown with.
-    _ai_find_all_run: (
-        tuple[Callable[..., _automation.AiAssistProposal], _automation.AiOutputFormat]
-        | None
-    )
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         self._epsilon = kwargs.pop("epsilon", 10.0)
@@ -723,28 +727,24 @@ class Canvas(QtWidgets.QWidget):
             if self._current is job.draft:
                 self._current = None
             self.busy_changed.emit()
-        self._ai_find_all_points = np.zeros((0, 2))
-        self._ai_find_all_point_labels = np.zeros((0,), dtype=np.int_)
-        self._ai_find_all_draft = []
-        self._ai_find_all_query = ""
-        self._ai_find_all_run = None
+        self._ai_find_all_draft = None
 
     @property
     def has_ai_find_all_draft(self) -> bool:
-        return len(self._ai_find_all_point_labels) > 0
+        return self._ai_find_all_draft is not None
 
     def _commit_ai_find_all_draft(self) -> None:
-        shapes, query, run = (
-            self._ai_find_all_draft,
-            self._ai_find_all_query,
-            self._ai_find_all_run,
-        )
-        if not shapes or run is None:
+        draft = self._ai_find_all_draft
+        if draft is None or not draft.shapes:
             self._discard_ai_find_all_draft()
             return
         # The draft stays on screen under the label dialog.
         self.ai_find_all_draft_committed.emit(
-            shapes, functools.partial(self._propose_ai_find_all_batch, *run), query
+            draft.shapes,
+            functools.partial(
+                self._propose_ai_find_all_batch, draft.propose, draft.output_format
+            ),
+            draft.query,
         )
         self._discard_ai_find_all_draft()  # Adding Shapes already dropped it.
 
@@ -1043,32 +1043,41 @@ class Canvas(QtWidgets.QWidget):
         except Exception as e:
             logger.opt(exception=e).error("AI inference failed")
             self._apply_ai_result(
-                job=ai_job, proposal=None, error=f"{type(e).__name__}: {e}"
+                job=ai_job,
+                proposal=None,
+                propose=None,
+                error=f"{type(e).__name__}: {e}",
             )
         else:
-            self._apply_ai_result(job=ai_job, proposal=proposal, error=None)
-            if ai_job.prompt_kind == "example_box":
-                self._ai_find_all_run = (
-                    self._ai_proposer(job=ai_job, annotations=cast(list, annotations)),
-                    self._ai_assist_session.output_format,
-                )
+            self._apply_ai_result(
+                job=ai_job,
+                proposal=proposal,
+                propose=self._ai_proposer(
+                    job=ai_job, annotations=cast(list, annotations)
+                ),
+                error=None,
+            )
 
     def _on_ai_job_failed(self, job: object, message: str, /) -> None:
         ai_job = self._take_ai_job(job=job)
         if ai_job is None:
             return
         logger.error("AI inference failed: {}", message)
-        self._apply_ai_result(job=ai_job, proposal=None, error=message)
+        self._apply_ai_result(job=ai_job, proposal=None, propose=None, error=message)
 
     def _apply_ai_result(
         self,
         *,
         job: _AiJob,
         proposal: _automation.AiAssistProposal | None,
+        # Proposes the result again, for an AI-Find All batch.
+        propose: Callable[..., _automation.AiAssistProposal] | None,
         error: str | None,
     ) -> None:
         if job.channel == "finalize":
-            self._finish_ai_finalize(job=job, proposal=proposal, error=error)
+            self._finish_ai_finalize(
+                job=job, proposal=proposal, propose=propose, error=error
+            )
         else:
             self._show_ai_segment_proposal(job=job, proposal=proposal, error=error)
 
@@ -2599,19 +2608,19 @@ class Canvas(QtWidgets.QWidget):
                 self._ai_click_items(),
             ]
         if self.create_mode == "ai_find_all":
+            draft = self._ai_find_all_draft
             if (
-                not self.has_ai_find_all_draft
+                draft is None
                 or self._current is not None
                 or self._ai_find_all_pending  # The label dialog is open.
             ):
                 return None
-            draft = self._ai_find_all_draft
             first = [discard]
-            if draft:
-                add = self.tr("Add %d") % len(draft)
+            if draft.shapes:
+                add = self.tr("Add %d") % len(draft.shapes)
                 first.insert(0, HintItem(add, key=RETURN_GLYPH))
-            points = [_drawn_corners(shape=s) for s in draft]
-            points.append(self._ai_find_all_points)
+            points = [_drawn_corners(shape=s) for s in draft.shapes]
+            points.append(draft.points)
             return _bounding_corners(points=points), [
                 first,
                 [
@@ -2767,7 +2776,8 @@ class Canvas(QtWidgets.QWidget):
             render_shape(painter=painter, shape=shape, context=context)
 
     def _draw_ai_find_all_layer(self, painter: QtGui.QPainter, /) -> None:
-        if not (self._ai_find_all_pending or self.has_ai_find_all_draft):
+        draft = self._ai_find_all_draft
+        if not (self._ai_find_all_pending or draft):
             return
         context = self._draft_render_context(
             selected=False, fill=True, highlight=None, rotation_highlight=None
@@ -2777,12 +2787,12 @@ class Canvas(QtWidgets.QWidget):
         # they stay dashed guides, red for a counter-example.
         # An example-box batch is also its draft, so it is drawn once.
         result_context = dataclasses.replace(context, selected=True)
-        for shape in self._ai_find_all_pending or self._ai_find_all_draft:
+        for shape in self._ai_find_all_pending or (draft.shapes if draft else []):
             render_shape(painter=painter, shape=shape, context=result_context)
-        if not self.has_ai_find_all_draft:
+        if draft is None:
             return
-        corners = self._ai_find_all_points.reshape(-1, 2, 2)
-        labels = self._ai_find_all_point_labels.reshape(-1, 2)[:, 0]
+        corners = draft.points.reshape(-1, 2, 2)
+        labels = draft.point_labels.reshape(-1, 2)[:, 0]
         for (p1, p2), label in zip(corners, labels, strict=True):
             is_counter = label == 4  # noqa: PLR2004 -- SAM negative box corner
             example = Shape(shape_type="rectangle", points=np.array([p1, p2]))
@@ -3037,17 +3047,22 @@ class Canvas(QtWidgets.QWidget):
         draft: _DraftShape | None,
     ) -> None:
         # Every example so far goes with the new box, so the draft reflects all.
+        shown = self._ai_find_all_draft
         self._submit_ai_job(
             channel="finalize",
             prompt_kind="example_box",
-            points=[*(QPointF(x, y) for x, y in self._ai_find_all_points), *box],
-            point_labels=[*self._ai_find_all_point_labels.tolist(), *box_labels],
+            points=[*(QPointF(x, y) for x, y in (shown.points if shown else ())), *box],
+            point_labels=[*(shown.point_labels.tolist() if shown else ()), *box_labels],
             draft=draft,
         )
 
     def rerun_ai_find_all_draft(self) -> None:
         # Run with a draft shown refines it with the current query.
-        if self._current is not None or self.is_ai_finalizing:
+        if (
+            self._ai_find_all_draft is None
+            or self._current is not None
+            or self.is_ai_finalizing
+        ):
             return
         if self._refuses_example_box():
             return
@@ -3060,6 +3075,7 @@ class Canvas(QtWidgets.QWidget):
         *,
         job: _AiJob,
         proposal: _automation.AiAssistProposal | None,
+        propose: Callable[..., _automation.AiAssistProposal] | None,
         error: str | None,
     ) -> None:
         if proposal is None:
@@ -3070,10 +3086,15 @@ class Canvas(QtWidgets.QWidget):
         self._ai_inference_failed = False
         if job.prompt_kind == "example_box":
             # Each example replaces the draft; Enter commits it, Esc discards it.
-            self._ai_find_all_points = job.points
-            self._ai_find_all_point_labels = job.point_labels
-            self._ai_find_all_draft = proposal.new_shapes
-            self._ai_find_all_query = job.query
+            assert propose is not None
+            self._ai_find_all_draft = _AiFindAllDraft(
+                points=job.points,
+                point_labels=job.point_labels,
+                shapes=proposal.new_shapes,
+                query=job.query,
+                propose=propose,
+                output_format=self._ai_assist_session.output_format,
+            )
             if not proposal.new_shapes and not proposal.matching_existing_shapes:
                 self.inference_produced_no_shapes.emit()
             self._cancel_current_shape()
