@@ -454,7 +454,10 @@ def main() -> None:
         QtCore.QLibraryInfo.path(QtCore.QLibraryInfo.LibraryPath.TranslationsPath),
     )
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyle("Fusion")  # for consistent appearance across platforms
+    # Windows 10's default style forces a light palette, so the dark theme
+    # needs Fusion there; elsewhere the platform's own style looks native.
+    if app.style().name() == "windowsvista":
+        app.setStyle("Fusion")
     apply_color_theme(theme=color_theme)
     app.setApplicationName(__appname__)
     # On macOS the window icon replaces the Dock icon, which needs Apple's
