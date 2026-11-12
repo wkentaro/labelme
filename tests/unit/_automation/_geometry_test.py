@@ -4,6 +4,7 @@ import math
 
 import numpy as np
 import pytest
+import scipy.ndimage
 import skimage
 from numpy.typing import NDArray
 
@@ -528,3 +529,16 @@ def test_circle_polygon_gains_vertices_with_detail() -> None:
 
     assert counts == sorted(counts)
     assert counts[0] < counts[-1]
+
+
+def test_compute_polygons_from_mask_skips_thickness_at_exact_outline(
+    *,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail(*_: object, **__: object) -> None:
+        raise AssertionError("detail 100 needs no thickness")
+
+    monkeypatch.setattr(scipy.ndimage, "label", fail)
+    mask = np.ones((5, 9), dtype=bool)
+
+    assert len(compute_polygons_from_mask(mask=mask, detail=100)) == 1

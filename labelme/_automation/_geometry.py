@@ -183,6 +183,8 @@ def _compute_mask_deviation(*, detail: int, mask: NDArray[np.bool_]) -> float:
     # A mask's outline is only accurate to half a pixel, so its stair steps go
     # whatever the shape's size: the floor ramps up to half a pixel by detail
     # 80 and is 0 at the exact outline (100).
+    if detail >= _DETAIL_MAX:
+        return 0.0
     pixel_floor = 0.5 * min(1.0, (_DETAIL_MAX - detail) / 20) ** 1.5
     return max(
         _compute_relative_deviation(detail=detail) * _compute_thickness(mask=mask),
