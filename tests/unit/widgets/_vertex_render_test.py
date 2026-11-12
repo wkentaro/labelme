@@ -238,3 +238,27 @@ def test_zero_point_size_draws_no_markers(
         expected = _render(shape=shape, context=context, ratio=1)
     actual = _render(shape=shape, context=context, ratio=1)
     assert np.max(np.abs(actual - expected)) <= 1
+
+
+def test_duplicate_vertices_paint_the_union_of_their_markers(
+    *, qapp: QApplication
+) -> None:
+    assert qapp is not None
+    shape = Shape(
+        points=np.array([[150, 150], [250, 150], [250, 250], [150, 150]]),
+        closed=True,
+    )
+    context = ShapeRenderContext(
+        scale=1,
+        palette=Palette.from_rgb(rgb=(240, 20, 40)),
+        point_size=8,
+        point_type="round",
+        selected=False,
+        fill=False,
+        highlight=None,
+        rotation_highlight=None,
+    )
+    pixels = _render(shape=shape, context=context, ratio=1).reshape(400, 400, 4)
+    # Each marker stands for one vertex, so overlaps stay covered instead of
+    # cancelling out under an even-odd fill.
+    assert tuple(pixels[148, 148, :3]) == (40, 20, 240)
