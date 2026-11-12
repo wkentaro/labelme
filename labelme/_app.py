@@ -302,6 +302,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _zoom_mode_label: QtWidgets.QLabel
     _zoom_mode_captions: dict[_ZoomMode, str]
     _docks: _DockWidgets
+    _flag_dock_wanted: bool
     _actions: _Actions
     _persistent_actions: dict[tuple[str, ...], QtGui.QAction]
     _menus: _Menus
@@ -1676,6 +1677,10 @@ class MainWindow(QtWidgets.QMainWindow):
             if self._config[config_key]["show"] is False:
                 dock_widget.setVisible(False)
             self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock_widget)
+        # What the user last chose for the Flags dock, kept while an empty
+        # list hides it.
+        self._flag_dock_wanted = not flag.isHidden()
+        flag.toggleViewAction().toggled.connect(self._on_flag_dock_toggled)
 
         return _DockWidgets(
             flag_dock=flag,
@@ -2691,6 +2696,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 else Qt.CheckState.Unchecked
             )
             widget.addItem(item)
+        if hasattr(self, "_docks"):
+            self._sync_flag_dock()
+
+    def _on_flag_dock_toggled(self, checked: bool, /) -> None:  # noqa: FBT001 -- QAction.toggled slot
+        # Hiding or minimizing the window toggles the dock too, which is not
+        # the user closing it.
+        if self.isVisible() and not self.isMinimized():
+            self._flag_dock_wanted = checked
+
+    def _sync_flag_dock(self, *, hide_empty: bool = True) -> None:
+        # An empty Flags dock only takes space, so it stays hidden until there
+        # are flags to show.
+        dock = self._docks.flag_dock
+        with QtCore.QSignalBlocker(dock.toggleViewAction()):
+            dock.setVisible(
+                self._flag_dock_wanted
+                and (not hide_empty or self._docks.flag_list.count() > 0)
+            )
 
     def _capture_save_request(self, *, label_path: str) -> SaveRequest:
         assert self._image_path
@@ -3734,6 +3757,28 @@ class MainWindow(QtWidgets.QMainWindow):
     def _reset_layout(self) -> None:
         self._window_state.remove(WINDOW_LAYOUT_KEY)
         self.restoreState(self._default_state)
+
+    @override
+    def saveState(self, /, version: int | None = 0) -> QtCore.QByteArray:
+        # Window state holds the Flags dock as the user left it, not as an
+        # empty list hid it.
+        self._sync_flag_dock(hide_empty=False)
+        state = super().saveState(version or 0)
+        self._sync_flag_dock()
+        return state
+
+    @override
+    def restoreState(
+        self,
+        state: QtCore.QByteArray | bytes | bytearray | memoryview,
+        /,
+        version: int | None = 0,
+    ) -> bool:
+        self._sync_flag_dock(hide_empty=False)
+        restored = super().restoreState(state, version or 0)
+        self._flag_dock_wanted = not self._docks.flag_dock.isHidden()
+        self._sync_flag_dock()
+        return restored
 
     @override
     def closeEvent(self, a0: QtGui.QCloseEvent, /) -> None:
