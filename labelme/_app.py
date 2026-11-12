@@ -119,6 +119,21 @@ class _OpenedFolder(NamedTuple):
     image_paths: tuple[str, ...]
 
 
+class _FileContents(NamedTuple):
+    # What an Annotation File holds, as a save writes it. A None path is an
+    # Image that has no file.
+    path: str | None
+    shapes: list[ShapeDict]
+    flags: dict[str, bool]
+
+
+class _SaveTarget(NamedTuple):
+    # Where a save that asks nothing writes the open document.
+    path: str
+    # The user chose path in a dialog that confirmed any overwrite.
+    overwrite_confirmed: bool
+
+
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
     FIT_SELECTION = enum.auto()
@@ -258,8 +273,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _label_list_menu_origin: QtCore.QPoint | None
     _large_image_confirmed: bool
     _save_revision: int
-    _auto_save_path: str | None
-    _chosen_save_path: str | None
+    _save_target: _SaveTarget | None
     _save_writer: SaveWriter
     _image_prefetcher: ImagePrefetcher
     _model_manager: ModelManager
@@ -275,11 +289,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _config_overrides: dict
 
     _is_changed: bool = False
-    # What an Annotation File holds, as a save writes it, to tell when Undo
-    # returns to it. None for an Image that has no file yet.
-    _file_path: str | None
-    _file_shapes: list[ShapeDict]
-    _file_flags: dict[str, bool]
+    # To tell when Undo returns to the file.
+    _file_contents: _FileContents
     _shape_clipboard: ShapeClipboard
     _zoom_mode: _ZoomMode
     _is_canvas_pointer_active: bool = False
@@ -417,11 +428,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
-        self._file_path = None
-        self._file_shapes = []
-        self._file_flags = {}
-        self._auto_save_path = None
-        self._chosen_save_path = None
+        self._file_contents = _FileContents(path=None, shapes=[], flags={})
+        self._save_target = None
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
         self._image_prefetcher = ImagePrefetcher()
@@ -1782,13 +1790,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # Where a save that asks nothing writes the open document. It never
         # replaces an existing Annotation File other than the one loaded.
         assert self._image_path is not None
-        if self._auto_save_path is not None:
-            return self._auto_save_path
         # Chosen once per document: after its own first write the disk no
         # longer tells a first copy from a file that was already there.
-        if self._chosen_save_path is None:
-            self._chosen_save_path = self._choose_save_destination()
-        return self._chosen_save_path
+        if self._save_target is None:
+            self._save_target = _SaveTarget(
+                path=self._choose_save_destination(), overwrite_confirmed=False
+            )
+        return self._save_target.path
+
+    def _known_save_destination(self) -> str | None:
+        # Like _save_destination, without choosing one.
+        if self._save_target is not None:
+            return self._save_target.path
+        return self._label_file_path
 
     def _choose_save_destination(self) -> str:
         assert self._image_path is not None
@@ -2152,8 +2166,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._announce(message=message)
 
     def reset_state(self) -> None:
-        self._auto_save_path = None
-        self._chosen_save_path = None
+        self._save_target = None
         self._docks.label_list.clear()
         self._load_flags(flags={}, widget=self._docks.flag_list)
         self._annotation = None
@@ -2177,10 +2190,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # over it as any edit.
         back_to_clean = (
             not self._save_writer.is_busy
-            and self._file_path
-            == (self._auto_save_path or self._chosen_save_path or self._label_file_path)
-            and self._read_flag_dock_states() == self._file_flags
-            and _saved_shapes_equal(a=canvas.shapes, b=self._file_shapes)
+            and self._file_contents.path == self._known_save_destination()
+            and self._read_flag_dock_states() == self._file_contents.flags
+            and _saved_shapes_equal(a=canvas.shapes, b=self._file_contents.shapes)
         )
         # Undoing a step that saves nothing, such as hiding a shape, leaves
         # the file as it was.
@@ -2706,7 +2718,10 @@ class MainWindow(QtWidgets.QMainWindow):
             # Save As confirms an overwrite in its dialog; no other save may
             # replace another Image's Annotation File.
             owner_image_path=(
-                None if label_path == self._auto_save_path else image_path
+                None
+                if self._save_target
+                == _SaveTarget(path=label_path, overwrite_confirmed=True)
+                else image_path
             ),
         )
 
@@ -2768,9 +2783,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _record_file_contents(self, *, request: SaveRequest) -> None:
         # Every successful write changes what the file holds.
-        self._file_path = request.filename
-        self._file_shapes = request.annotation.shapes
-        self._file_flags = request.annotation.flags
+        self._file_contents = _FileContents(
+            path=request.filename,
+            shapes=request.annotation.shapes,
+            flags=request.annotation.flags,
+        )
 
     def _insert_shapes(self, *, shapes: list[Shape]) -> None:
         # Committing reloads the shapes, which would discard an unfinished one.
@@ -3563,9 +3580,11 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._load_flags(flags=annotation.flags, widget=self._docks.flag_list)
         # The carried Shapes are not in this Image's file.
-        self._file_path = label_file_path
-        self._file_shapes = [] if carry_prev_shapes else self._shape_dicts()
-        self._file_flags = self._read_flag_dock_states()
+        self._file_contents = _FileContents(
+            path=label_file_path,
+            shapes=[] if carry_prev_shapes else self._shape_dicts(),
+            flags=self._read_flag_dock_states(),
+        )
         if carry_prev_shapes:
             self.mark_dirty()
         else:
@@ -3872,8 +3891,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self._opened_folder = previous_folder
             return False
-        self._auto_save_path = None
-        self._chosen_save_path = None
+        self._save_target = None
         self._refresh_file_list()
         return True
 
@@ -3895,7 +3913,11 @@ class MainWindow(QtWidgets.QMainWindow):
             # A first auto-save already owns a destination, even before it finishes.
             label_path = self._save_writer.get_latest_path()
             if label_path is None and (
-                self._auto_save_path is not None or self._label_file_path is not None
+                (
+                    self._save_target is not None
+                    and self._save_target.overwrite_confirmed
+                )
+                or self._label_file_path is not None
             ):
                 label_path = self._save_destination()
         if label_path is None:
@@ -3903,7 +3925,9 @@ class MainWindow(QtWidgets.QMainWindow):
             if label_path:
                 # The dialog confirmed any overwrite. Keep the chosen
                 # destination through failure, Retry, and later edits.
-                self._auto_save_path = label_path
+                self._save_target = _SaveTarget(
+                    path=label_path, overwrite_confirmed=True
+                )
 
         if not label_path:
             logger.warning("label_path={!r} is empty, so cannot save", label_path)
@@ -3913,10 +3937,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
-        default_path = _label_path.resolve_label_path(
-            image_path=self._file_list_image_path or self._image_path,
-            output_dir=self._opened_folder.output_dir,
-            root_prefix=self._opened_folder.root,
+        # Suggest where the document saves until the user picks elsewhere.
+        target = self._save_target
+        default_path = (
+            target.path
+            if target is not None and not target.overwrite_confirmed
+            else _label_path.resolve_label_path(
+                image_path=self._file_list_image_path or self._image_path,
+                output_dir=self._opened_folder.output_dir,
+                root_prefix=self._opened_folder.root,
+            )
         )
         # The dialog cannot preselect a file in a mirrored subfolder of the
         # Annotation Folder that does not exist yet.
@@ -4019,9 +4049,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.shape_backups.clear()
         self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
         # As an Image with no file.
-        self._file_path = None
-        self._file_shapes = []
-        self._file_flags = self._read_flag_dock_states()
+        self._file_contents = _FileContents(
+            path=None, shapes=[], flags=self._read_flag_dock_states()
+        )
         self.mark_clean()
         self._actions.delete_file.setEnabled(self.has_label_file())
 
@@ -4498,14 +4528,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
             self.mark_clean()
             opened_dir = file_or_dir
-            previous_label_path = (
-                self.current_label_file_path() if self._image_path else None
-            )
+            # A failed load keeps the previous image open beside the new
+            # folder's Images: the new Annotation Folder serves those Images,
+            # and the open image keeps saving where it did.
+            if self._image_path:
+                self._save_destination()
             output_dir, missing_output_dir = self._remembered_output_dir(
                 opened_dir=opened_dir
             )
             self._import_images_from_dir(root_dir=opened_dir, output_dir=output_dir)
-            loaded = False
             if self.image_list:
                 # Selecting the first row emits no change signal when it is
                 # already current (reopening the same directory), so drive the
@@ -4514,16 +4545,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 previous_item = file_list.currentItem()
                 with QtCore.QSignalBlocker(file_list):
                     file_list.setCurrentRow(0)
-                loaded = self._load_selected_image(
-                    file_list.currentItem(), previous_item
-                )
+                self._load_selected_image(file_list.currentItem(), previous_item)
                 file_list.repaint()
-            # A failed load keeps the previous image open beside the new
-            # folder's Images: the new Annotation Folder serves those Images,
-            # and the open image keeps saving where it did.
-            if not loaded and previous_label_path is not None:
-                self._label_file_path = previous_label_path
-                self._auto_save_path = previous_label_path
         else:
             opened_dir = str(Path(file_or_dir).parent)
             previous_folder = self._opened_folder
