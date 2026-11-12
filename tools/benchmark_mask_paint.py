@@ -13,18 +13,16 @@ from typing import Final
 from unittest.mock import patch
 
 import numpy as np
-import skimage.measure
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from labelme._app import MainWindow
 from labelme._shape import Shape
+from labelme._widgets._shape_render import ShapeRenderCache
 
 WINDOW_WIDTH: Final[int] = 1400
 WINDOW_HEIGHT: Final[int] = 1000
-CONTOUR_PAD: Final[int] = 1
-FILL_RGBA: Final[tuple[int, int, int, int]] = (0, 255, 0, 128)
 PERCENTILE: Final[int] = 95
 MS_PER_S: Final[int] = 1000
 
@@ -49,33 +47,16 @@ def _disc(*, size: int) -> np.ndarray:
     return (xs - center) ** 2 + (ys - center) ** 2 <= (size / 2 - 1) ** 2
 
 
-# The two blocks below replicate the fill and contour halves of
-# labelme/_widgets/_shape_render.py:_paint_mask, so each can be timed alone.
-def _fill_block(*, painter: QtGui.QPainter, mask: np.ndarray) -> None:
-    rgba = np.zeros(mask.shape + (4,), dtype=np.uint8)
-    rgba[mask] = FILL_RGBA
-    height, width = mask.shape
-    bitmap = QtGui.QImage(
-        rgba.data, width, height, 4 * width, QtGui.QImage.Format.Format_RGBA8888
-    )
-    painter.drawImage(QtCore.QRectF(0, 0, width, height), bitmap)
-
-
-def _contour_block(*, painter: QtGui.QPainter, mask: np.ndarray) -> None:
-    contour_path = QtGui.QPainterPath()
-    for contour in skimage.measure.find_contours(np.pad(mask, pad_width=CONTOUR_PAD)):
-        xy = contour[:, ::-1] - CONTOUR_PAD
-        contour_path.addPolygon(QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in xy]))
-    painter.drawPath(contour_path)
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--masks", type=int, default=50)
     parser.add_argument("--size", type=int, default=200)
     parser.add_argument("--image", type=int, default=2000)
     parser.add_argument("--samples", type=int, default=30)
+    parser.add_argument("--cache-bytes", type=int, default=64 * 1024 * 1024)
     args = parser.parse_args()
+    if args.cache_bytes < 0:
+        parser.error("--cache-bytes must be nonnegative")
     if min(args.masks, args.size, args.image, args.samples) < 1:
         parser.error("counts must be positive")
     if args.size > args.image:
@@ -101,7 +82,6 @@ def main() -> None:
         win.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
         win.show()
         app.processEvents()
-        mask = _disc(size=args.size)
         # Spread masks over a grid covering the image.
         span = args.image - args.size
         columns = max(int(np.ceil(np.sqrt(args.masks))), 1)
@@ -110,6 +90,11 @@ def main() -> None:
         for i in range(args.masks):
             x = int(i % columns * step)
             y = int(i // columns * step)
+            mask = _disc(size=args.size)
+            # Distinct masks prevent shared content from hiding cache pressure.
+            hole = max(args.size // 20, 1)
+            offset = args.size // 4 + i % max(args.size // 2, 1)
+            mask[offset : offset + hole, args.size // 2 : args.size // 2 + hole] = False
             shapes.append(
                 Shape(
                     label=f"mask-{i}",
@@ -117,7 +102,7 @@ def main() -> None:
                     points=np.array(
                         [[x, y], [x + args.size - 1, y + args.size - 1]], dtype=float
                     ),
-                    mask=mask.copy(),
+                    mask=mask,
                 )
             )
         win._load_shapes(shapes=shapes, replace=True)
@@ -125,21 +110,16 @@ def main() -> None:
         app.processEvents()
         canvas = win._canvas_widgets.canvas
         assert len(canvas.shapes) == args.masks
+        canvas._render_cache = ShapeRenderCache(max_bytes=args.cache_bytes)
+        canvas.repaint()
         repaint = _time_ms(func=canvas.repaint, samples=args.samples)
+        retained_bytes = canvas._render_cache._size_bytes
 
-        target = QtGui.QImage(
-            args.size, args.size, QtGui.QImage.Format.Format_ARGB32_Premultiplied
-        )
-        painter = QtGui.QPainter(target)
-        fill = _time_ms(
-            func=lambda: _fill_block(painter=painter, mask=mask),
-            samples=args.samples,
-        )
-        contour = _time_ms(
-            func=lambda: _contour_block(painter=painter, mask=mask),
-            samples=args.samples,
-        )
-        painter.end()
+        def cold_repaint() -> None:
+            canvas._render_cache.clear()
+            canvas.repaint()
+
+        cold = _time_ms(func=cold_repaint, samples=args.samples)
         print(
             json.dumps(
                 {
@@ -147,8 +127,8 @@ def main() -> None:
                     "qt": QtCore.qVersion(),
                     "scale": canvas.scale,
                     "full_repaint": repaint,
-                    "fill_block_one_mask": fill,
-                    "contour_block_one_mask": contour,
+                    "cold_repaint": cold,
+                    "cache_estimated_bytes": retained_bytes,
                 }
             )
         )
