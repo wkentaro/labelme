@@ -22,7 +22,9 @@ def _paint_combined_vertices(
     painter: QtGui.QPainter,
     vertices: list[tuple[QtCore.QRectF, str]],
     fill: QtGui.QColor,
+    points: object = None,
 ) -> None:
+    del points
     path = QtGui.QPainterPath()
     for rect, point_type in vertices:
         if point_type == "round":
@@ -78,7 +80,13 @@ def test_separated_vertex_pixels_match_combined_paths(
     ):
         expected = _render(shape=shape, context=context, ratio=ratio)
     actual = _render(shape=shape, context=context, ratio=ratio)
-    assert np.max(np.abs(actual - expected)) <= 1
+    difference = np.abs(actual - expected)
+    if state in ("selected", "near", "move"):
+        assert np.max(difference) <= 1
+    else:
+        # Idle markers are batched pen caps, which antialias edges slightly
+        # differently from ellipses and rectangles.
+        assert np.mean(np.all(difference <= 1, axis=-1)) >= 0.99
 
 
 @pytest.mark.parametrize("ratio", [1, 2])
@@ -137,3 +145,120 @@ def test_overlapping_translucent_draft_vertices_match_combined_paths(
         expected = _render(shape=shape, context=context, ratio=ratio)
     actual = _render(shape=shape, context=context, ratio=ratio)
     assert np.max(np.abs(actual - expected)) <= 1
+
+
+@pytest.mark.parametrize(
+    ("state", "batched"),
+    [
+        ("normal", True),
+        ("fill", True),
+        ("selected", False),
+        ("near", False),
+        ("contrast", False),
+    ],
+)
+def test_only_idle_vertices_are_batched(
+    *, qapp: QApplication, state: str, batched: bool
+) -> None:
+    assert qapp is not None
+    shape = Shape(points=np.array([[50, 50], [250, 50], [250, 250]]), closed=True)
+    palette = Palette.from_rgb(rgb=(240, 20, 40))
+    if state == "contrast":
+        palette = dataclasses.replace(palette, vertex_fill=QtGui.QColor(0, 0, 255))
+    context = ShapeRenderContext(
+        scale=1,
+        palette=palette,
+        point_size=8,
+        point_type="round",
+        selected=state == "selected",
+        fill=state == "fill",
+        highlight=VertexHighlight(index=0, mode="near") if state == "near" else None,
+        rotation_highlight=None,
+    )
+    with patch.object(
+        _shape_render,
+        "_paint_vertex_points",
+        wraps=_shape_render._paint_vertex_points,
+    ) as paint_vertex_points:
+        _render(shape=shape, context=context, ratio=1)
+    assert paint_vertex_points.called is batched
+
+
+@pytest.mark.parametrize("alpha", [0, 128])
+def test_translucent_vertex_fill_matches_combined_paths(
+    *, qapp: QApplication, alpha: int
+) -> None:
+    assert qapp is not None
+    shape = Shape(points=np.array([[50, 50], [250, 50], [250, 250]]), closed=True)
+    context = ShapeRenderContext(
+        scale=1,
+        palette=dataclasses.replace(
+            Palette.from_rgb(rgb=(240, 20, 40)),
+            vertex_fill=QtGui.QColor(240, 20, 40, alpha),
+        ),
+        point_size=8,
+        point_type="round",
+        selected=False,
+        fill=False,
+        highlight=None,
+        rotation_highlight=None,
+    )
+    with patch.object(
+        _shape_render, "_paint_filled_vertices", _paint_combined_vertices
+    ):
+        expected = _render(shape=shape, context=context, ratio=1)
+    actual = _render(shape=shape, context=context, ratio=1)
+    assert np.max(np.abs(actual - expected)) <= 1
+
+
+@pytest.mark.parametrize("shape_type", ["polygon", "circle"])
+def test_zero_point_size_draws_no_markers(
+    *, qapp: QApplication, shape_type: Literal["polygon", "circle"]
+) -> None:
+    assert qapp is not None
+    points = (
+        np.array([[50, 50], [250, 50], [250, 250]])
+        if shape_type == "polygon"
+        else np.array([[150, 150], [200, 150]])
+    )
+    shape = Shape(shape_type=shape_type, points=points, closed=True)
+    context = ShapeRenderContext(
+        scale=1,
+        palette=Palette.from_rgb(rgb=(240, 20, 40)),
+        point_size=0,
+        point_type="round",
+        selected=False,
+        fill=False,
+        highlight=None,
+        rotation_highlight=None,
+    )
+    with patch.object(
+        _shape_render, "_paint_filled_vertices", _paint_combined_vertices
+    ):
+        expected = _render(shape=shape, context=context, ratio=1)
+    actual = _render(shape=shape, context=context, ratio=1)
+    assert np.max(np.abs(actual - expected)) <= 1
+
+
+def test_duplicate_vertices_paint_the_union_of_their_markers(
+    *, qapp: QApplication
+) -> None:
+    assert qapp is not None
+    shape = Shape(
+        points=np.array([[150, 150], [250, 150], [250, 250], [150, 150]]),
+        closed=True,
+    )
+    context = ShapeRenderContext(
+        scale=1,
+        palette=Palette.from_rgb(rgb=(240, 20, 40)),
+        point_size=8,
+        point_type="round",
+        selected=False,
+        fill=False,
+        highlight=None,
+        rotation_highlight=None,
+    )
+    pixels = _render(shape=shape, context=context, ratio=1).reshape(400, 400, 4)
+    # Each marker stands for one vertex, so overlaps stay covered instead of
+    # cancelling out under an even-odd fill.
+    assert tuple(pixels[148, 148, :3]) == (40, 20, 240)
