@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 from typing import Final
 
 import numpy as np
@@ -9,6 +10,7 @@ from PySide6 import QtGui
 
 from labelme._shape import Shape
 from labelme._shape import ShapeType
+from labelme._widgets import _shape_render
 from labelme._widgets._shape_render import Palette
 from labelme._widgets._shape_render import ShapeRenderContext
 from labelme._widgets._shape_render import VertexHighlight
@@ -832,3 +834,51 @@ def test_mask_alignment_hit_extent() -> None:
     ]
     # The hit area matches the fill and the outline: 5.0 up to 6.0.
     assert (round(xs[0], 2), round(xs[-1], 2)) == (5.0, 5.95)
+
+
+@pytest.mark.parametrize("shape_type", ["point", "points"])
+def test_standalone_markers_stay_visible_without_editing_handles(
+    *, shape_type: ShapeType
+) -> None:
+    shape = Shape(shape_type=shape_type, points=np.array([[50.0, 50.0]]))
+    context = ShapeRenderContext(
+        scale=1,
+        palette=Palette.from_rgb(rgb=(0, 255, 0)),
+        point_size=8,
+        point_type="round",
+        selected=False,
+        fill=False,
+        highlight=None,
+        rotation_highlight=None,
+        show_vertices=False,
+    )
+    paths = _shape_render._build_shape_points_paths(shape=shape, context=context)
+    assert len(paths.vertices) == 1
+
+
+def test_idle_oriented_rectangle_preserves_direction_arrow() -> None:
+    shape = Shape(
+        shape_type="oriented_rectangle",
+        points=np.array([[20.0, 20.0], [100.0, 20.0], [100.0, 70.0], [20.0, 70.0]]),
+    )
+    context = ShapeRenderContext(
+        scale=1,
+        palette=Palette.from_rgb(rgb=(0, 255, 0)),
+        point_size=8,
+        point_type="round",
+        selected=False,
+        fill=False,
+        highlight=None,
+        rotation_highlight=None,
+        show_vertices=False,
+    )
+    idle = _shape_render._build_shape_points_paths(shape=shape, context=context)
+    active = _shape_render._build_shape_points_paths(
+        shape=shape, context=dataclasses.replace(context, show_vertices=True)
+    )
+    assert not idle.vertices
+    assert not idle.rotation_vertices
+    assert not idle.orientation_arrow.isEmpty()
+    assert idle.orientation_arrow == active.orientation_arrow
+    assert len(active.vertices) == 4
+    assert len(active.rotation_vertices) == 4

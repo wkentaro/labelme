@@ -18,6 +18,7 @@ from PySide6 import QtWidgets
 
 from labelme._app import MainWindow
 from labelme._shape import Shape
+from labelme._widgets._canvas import _Hover
 
 
 def main() -> None:
@@ -26,6 +27,9 @@ def main() -> None:
     parser.add_argument("--vertices", type=int, default=10000)
     parser.add_argument("--samples", type=int, default=20)
     parser.add_argument("--labels", type=int, default=5)
+    parser.add_argument(
+        "--active", choices=["idle", "selected", "hovered", "all"], default="idle"
+    )
     args = parser.parse_args()
     if min(args.shapes, args.vertices, args.samples, args.labels) < 1:
         parser.error("counts must be positive")
@@ -77,6 +81,12 @@ def main() -> None:
         for step in range(args.samples):
             started = time.perf_counter()
             win.undo_shape_edit()
+            if args.active in ("selected", "all"):
+                canvas.selected_shapes = (
+                    canvas.shapes if args.active == "all" else canvas.shapes[:1]
+                )
+            elif args.active == "hovered":
+                canvas._hover = _Hover(shape=canvas.shapes[0])
             app.processEvents()
             timings.append((time.perf_counter() - started) * 1000)
             assert canvas.shapes[0].points[0, 0] == (
