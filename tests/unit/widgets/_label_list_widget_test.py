@@ -119,6 +119,50 @@ def test_lock_leaves_the_swatch_column_in_place(*, widget: LabelListWidget) -> N
     assert swatch_xs(locked=True) == unlocked
 
 
+def test_swatch_uses_widget_aware_checkbox_layout(*, widget: LabelListWidget) -> None:
+    class InsetStyle(QtWidgets.QProxyStyle):
+        def subElementRect(
+            self,
+            element: QStyle.SubElement,
+            option: QtWidgets.QStyleOption,
+            target: QtWidgets.QWidget | None = None,
+            /,
+        ) -> QtCore.QRect:
+            rect = super().subElementRect(element, option, target or widget)
+            if target is widget:
+                if element == QStyle.SubElement.SE_ItemViewItemText:
+                    rect.translate(6, 0)
+                elif element == QStyle.SubElement.SE_ItemViewItemCheckIndicator:
+                    rect.translate(0, 2)
+            return rect
+
+    style = InsetStyle("Fusion")
+    style.setParent(widget)
+    widget.setStyle(style)
+    item = LabelListWidgetItem(shape=Shape(label="bottle"))
+    item.set_label(text="bottle", color=(0, 255, 0))
+    widget.add_item(item=item)
+    index = widget.model().index(0, 0)
+    delegate = widget.itemDelegate()
+    assert isinstance(delegate, QtWidgets.QStyledItemDelegate)
+    option = QtWidgets.QStyleOptionViewItem()
+    option.rect = QtCore.QRect(0, 0, 200, 24)
+    option.widget = widget
+    option.state = QStyle.StateFlag.State_Enabled
+    delegate.initStyleOption(option, index)
+
+    image = _paint_item(delegate=delegate, item=item.clone(), option=option)
+    pixels = _pixels_with_color(image=image, color=QtGui.QColor(0, 255, 0))
+    checkbox = style.subElementRect(
+        QStyle.SubElement.SE_ItemViewItemCheckIndicator, option, widget
+    )
+    text = style.subElementRect(QStyle.SubElement.SE_ItemViewItemText, option, widget)
+    assert min(point.x() for point in pixels) >= text.left()
+    ys = [point.y() for point in pixels]
+    center_y = (min(ys) + max(ys) + 1) / 2
+    assert center_y == pytest.approx(QtCore.QRectF(checkbox).center().y(), abs=0.5)
+
+
 def test_label_list_item_clone_preserves_color_swatch(
     *, widget: LabelListWidget
 ) -> None:

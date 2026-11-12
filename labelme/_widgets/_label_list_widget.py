@@ -88,7 +88,15 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
             opt.widget.style() if opt.widget else QtWidgets.QApplication.style()
         )
         text_rect = widget_style.subElementRect(
-            QStyle.SubElement.SE_ItemViewItemText, opt
+            QStyle.SubElement.SE_ItemViewItemText, opt, opt.widget
+        )
+        check_rect = widget_style.subElementRect(
+            QStyle.SubElement.SE_ItemViewItemCheckIndicator, opt, opt.widget
+        )
+        center_y = (
+            QtCore.QRectF(check_rect if check_rect.isValid() else text_rect)
+            .center()
+            .y()
         )
         text_margin = (
             widget_style.pixelMetric(
@@ -120,7 +128,7 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
         diameter = opt.fontMetrics.ascent() * 0.6
         center = QtCore.QPointF(
             text_rect.left() + text_margin + diameter / 2,
-            text_rect.center().y() + 0.5,
+            center_y,
         )
         ring = QtGui.QColor(opt.palette.color(QtGui.QPalette.ColorRole.Text))
         ring.setAlphaF(0.35)
@@ -134,11 +142,12 @@ class ColorSwatchDelegate(QtWidgets.QStyledItemDelegate):
         if not locked:
             return
         side = opt.fontMetrics.ascent()
+        row_top = opt.rect.top()
         _lock_icon().paint(
             painter,
             QtCore.QRect(
                 text_rect.left() + text_margin + slot,
-                text_rect.center().y() - side // 2,
+                row_top + round(center_y - row_top - side / 2),
                 side,
                 side,
             ),
