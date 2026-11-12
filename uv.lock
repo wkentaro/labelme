@@ -699,7 +699,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "gdown", specifier = ">=6.4,<7" },
+    { name = "gdown", specifier = ">=6.4,<6.5" },
     { name = "imgviz", specifier = ">=2.0.0" },
     { name = "loguru", specifier = ">=0.7" },
     { name = "matplotlib", specifier = ">=3.7" },
