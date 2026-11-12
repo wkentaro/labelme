@@ -356,6 +356,10 @@ class _ShapePaths:
     vertices: list[_Vertex] = dataclasses.field(default_factory=list)
     negative_vertices: list[_Vertex] = dataclasses.field(default_factory=list)
     rotation_vertices: list[_Vertex] = dataclasses.field(default_factory=list)
+    # Marker centers grouped by size and type, for batched painting.
+    vertex_points: dict[tuple[float, str], QtGui.QPolygonF] = dataclasses.field(
+        default_factory=dict
+    )
     orientation_arrow: QtGui.QPainterPath = dataclasses.field(
         default_factory=QtGui.QPainterPath
     )
@@ -390,6 +394,13 @@ def _paint_shape_points(
     paths = cache._get(key=key) if cache is not None and key is not None else None
     if paths is None:
         paths = _build_shape_points_paths(shape=shape, context=context)
+        for rect, point_type in paths.vertices:
+            # A zero-width pen is cosmetic in Qt and would still paint a dot.
+            if rect.isEmpty():
+                continue
+            paths.vertex_points.setdefault(
+                (rect.width(), point_type), QtGui.QPolygonF()
+            ).append(rect.center())
         if cache is not None and key is not None:
             cache._put(
                 key=key,
@@ -397,7 +408,7 @@ def _paint_shape_points(
                 size_bytes=paths.line.capacity() * 32
                 + sys.getsizeof(paths)
                 + sys.getsizeof(paths.vertices)
-                + len(paths.vertices) * 256,
+                + len(paths.vertices) * (256 + 16),
             )
     assert isinstance(paths, _ShapePaths)
 
@@ -409,6 +420,7 @@ def _paint_shape_points(
             fill=palette.hvertex_fill
             if context.highlight is not None
             else palette.vertex_fill,
+            points=paths.vertex_points,
         )
         _paint_filled_vertices(
             painter=painter,
@@ -452,6 +464,7 @@ def _paint_filled_vertices(
     painter: QtGui.QPainter,
     vertices: list[_Vertex],
     fill: QtGui.QColor,
+    points: dict[tuple[float, str], QtGui.QPolygonF] | None = None,
 ) -> None:
     # Independent translucent strokes accumulate opacity where markers overlap.
     # Keep their combined outline, and only split ordinary opaque strokes.
@@ -464,6 +477,12 @@ def _paint_filled_vertices(
         and painter.compositionMode()
         == QtGui.QPainter.CompositionMode.CompositionMode_SourceOver
     )
+    # Batching paints every outline before every fill, which would cover a
+    # translucent fill and hide a contrasting outline between overlapping
+    # markers. One opaque color for both looks the same either way.
+    if points is not None and draw_individually and fill == pen.color():
+        _paint_vertex_points(painter=painter, points=points, fill=fill)
+        return
     path = QtGui.QPainterPath()
     for rect, point_type in vertices:
         if point_type == "round":
@@ -478,6 +497,29 @@ def _paint_filled_vertices(
         painter.drawPath(path)
     # The shared fill retains the holes and highlights where markers overlap.
     painter.fillPath(path, fill)
+
+
+def _paint_vertex_points(
+    *,
+    painter: QtGui.QPainter,
+    points: dict[tuple[float, str], QtGui.QPolygonF],
+    fill: QtGui.QColor,
+) -> None:
+    # One wide capped pen paints all markers of a size in a single call, far
+    # cheaper than an ellipse each on dense Shapes.
+    pen = painter.pen()
+    for (size, point_type), centers in points.items():
+        cap = (
+            QtCore.Qt.PenCapStyle.RoundCap
+            if point_type == "round"
+            else QtCore.Qt.PenCapStyle.SquareCap
+        )
+        for color, width in ((pen.color(), size + pen.widthF()), (fill, size)):
+            marker = QtGui.QPen(color, width)
+            marker.setCapStyle(cap)
+            painter.setPen(marker)
+            painter.drawPoints(centers)
+    painter.setPen(pen)
 
 
 def _resolve_vertex_style(
