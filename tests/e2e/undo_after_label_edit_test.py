@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from ..conftest import close_or_pause
@@ -55,5 +56,40 @@ def test_undo_creation_keeps_earlier_label_edit(
     assert canvas.shapes[0].flags == edited_flags
     for shape, points in zip(canvas.shapes[1:], untouched_points, strict=True):
         assert np.array_equal(shape.points, points)
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+def test_undo_back_to_the_saved_state_clears_the_unsaved_mark(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.json"),
+        config_overrides=dict(auto_save=False),
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    for _ in range(2):
+        qtbot.keyPress(canvas, Qt.Key.Key_Right)
+        qtbot.keyRelease(canvas, Qt.Key.Key_Right)
+    assert win.windowTitle().endswith("*")
+    assert win._status_bar.save.text() == "Unsaved changes"
+
+    # One step back is still off the file; the second is the file itself.
+    win.undo_shape_edit()
+    assert win._is_changed
+    assert win.windowTitle().endswith("*")
+    win.undo_shape_edit()
+    assert not win._is_changed
+    assert not win._actions.save.isEnabled()
+    assert not win.windowTitle().endswith("*")
+    assert win._status_bar.save.text() == ""
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

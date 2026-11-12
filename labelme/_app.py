@@ -260,6 +260,10 @@ class MainWindow(QtWidgets.QMainWindow):
     _config_overrides: dict
 
     _is_changed: bool = False
+    # What the last save or load left in the file, to tell when Undo returns
+    # to it.
+    _clean_shapes: list[Shape]
+    _clean_flags: dict[str, bool]
     _shape_clipboard: ShapeClipboard
     _zoom_mode: _ZoomMode
     _is_canvas_pointer_active: bool = False
@@ -399,6 +403,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
+        self._clean_shapes = []
+        self._clean_flags = {}
         self._auto_save_path = None
         self._chosen_save_path = None
         self._save_writer = SaveWriter(parent=self)
@@ -1844,6 +1850,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def mark_clean(self) -> None:
         self._sync_edit_actions()
+        self._clean_shapes = [s.copy() for s in self._canvas_widgets.canvas.shapes]
+        self._clean_flags = self._read_flag_dock_states()
         self._is_changed = False
         self._actions.save.setEnabled(False)
         self.setWindowTitle(self._get_window_title(dirty=False))
@@ -2145,12 +2153,26 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas = self._canvas_widgets.canvas
         before = canvas.shapes
         canvas.restore_last_shape()
+        # Back where the file is, nothing is unsaved. A write still running
+        # may hold the step undone, so Undo then saves over it as any edit.
+        back_to_clean = (
+            not self._save_writer.is_busy
+            and self._read_flag_dock_states() == self._clean_flags
+            and _saved_shapes_equal(a=canvas.shapes, b=self._clean_shapes)
+        )
         # Undoing a step that saves nothing, such as hiding a shape, leaves
         # the file as it was.
         self._commit_shapes(
             shapes=canvas.shapes,
-            changed=not _saved_shapes_equal(a=before, b=canvas.shapes),
+            changed=not back_to_clean
+            and not _saved_shapes_equal(a=before, b=canvas.shapes),
         )
+        if back_to_clean:
+            # Neither the pending changes nor a failed save are left.
+            self._failed_save_path = None
+            self._status_bar.save.clear()
+            self._status_bar.retry.hide()
+            self.mark_clean()
 
     def tutorial(self) -> None:
         url = "https://github.com/wkentaro/labelme/tree/main/examples/tutorial"  # NOQA
