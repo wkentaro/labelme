@@ -19,6 +19,10 @@ from labelme import _locale
 from labelme._app import MainWindow
 from labelme._automation import InferenceRequest
 from labelme._automation import OsamWorker
+from labelme._model_manager import ModelManager
+
+_MODEL_NAME: Final = "efficientsam:10m"
+_TIMEOUT_S: Final = 600
 
 
 def _check_source_isolation(*, source_root: Path, package_path: Path) -> None:
@@ -72,11 +76,29 @@ def _check_application_starts() -> None:
         app.quit()
 
 
+def _check_model_download(*, app: QtCore.QCoreApplication) -> None:
+    manager = ModelManager()
+    deadline = time.monotonic() + _TIMEOUT_S
+    try:
+        manager.enqueue(model_name=_MODEL_NAME)
+        while manager.active is not None and time.monotonic() < deadline:
+            app.processEvents()
+            time.sleep(0.05)
+        if manager.active is not None:
+            raise RuntimeError(f"Model download timed out after {_TIMEOUT_S} s")
+        error = manager.errors.get(_MODEL_NAME)
+        if error is not None or not manager.is_ready(model_name=_MODEL_NAME):
+            raise RuntimeError(f"Model download failed: {error or 'weights missing'}")
+    finally:
+        manager.shutdown()
+
+
 def _check_ai_inference() -> None:
     # One real inference in the worker process: the spawned child must import
     # the installed package, and onnxruntime must load beside Qt on the
     # device osam picks. The smallest model (~40MB) keeps the download short.
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    _check_model_download(app=app)
     worker = OsamWorker()
     results: list[tuple[str, object]] = []
     worker.finished.connect(
@@ -89,15 +111,14 @@ def _check_ai_inference() -> None:
         channel="smoke",
         job="smoke",
         request=InferenceRequest(
-            model_name="efficientsam:10m",
+            model_name=_MODEL_NAME,
             image_id="smoke",
             image=image,
             points=np.array([[32.0, 32.0]], dtype=np.float32),
             point_labels=np.array([1]),
         ),
     )
-    TIMEOUT_S: Final = 600
-    deadline = time.monotonic() + TIMEOUT_S
+    deadline = time.monotonic() + _TIMEOUT_S
     try:
         while not results and time.monotonic() < deadline:
             app.processEvents()
@@ -105,7 +126,7 @@ def _check_ai_inference() -> None:
     finally:
         worker.shutdown()
     if not results:
-        raise RuntimeError(f"AI inference gave no result in {TIMEOUT_S} s")
+        raise RuntimeError(f"AI inference gave no result in {_TIMEOUT_S} s")
     kind, payload = results[0]
     if kind != "done" or not payload:
         raise RuntimeError(f"AI inference {kind}: {payload!r}")
