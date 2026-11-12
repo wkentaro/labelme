@@ -93,3 +93,54 @@ def test_undo_back_to_the_saved_state_clears_the_unsaved_mark(
     assert win._status_bar.save.text() == ""
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
+def test_undo_on_carried_shapes_keeps_them_unsaved(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.jpg"),
+        config_overrides={"keep_prev": True, "auto_save": False},
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert win._load_file(image_or_label_path=str(data_path / "raw/2011_000003.jpg"))
+    canvas = win._canvas_widgets.canvas
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    qtbot.keyClick(canvas, Qt.Key.Key_Right)
+
+    # Back to the carried Shapes, which this Image's file does not hold.
+    win.undo_shape_edit()
+
+    is_changed = win._is_changed
+    # A dirty window would block teardown on the Unsaved Changes dialog.
+    win.mark_clean()
+    assert is_changed
+
+
+def test_undo_to_what_a_late_save_wrote_is_clean(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path, tmp_path: Path
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.json"),
+        config_overrides=dict(auto_save=False),
+        output_dir=str(tmp_path),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    qtbot.keyClick(canvas, Qt.Key.Key_Right)
+    request = win._capture_save_request(label_path=win._save_destination())
+    written_revision = win._save_revision
+    qtbot.keyClick(canvas, Qt.Key.Key_Right)
+
+    # The write of the first nudge lands after the second one.
+    win._on_save_finished(request, written_revision, None)
+    states = [win._is_changed]
+    win.undo_shape_edit()
+    states.append(win._is_changed)
+    win.undo_shape_edit()
+    states.append(win._is_changed)
+    # A dirty window would block teardown on the Unsaved Changes dialog.
+    win.mark_clean()
+    # Back to the late write is clean; past it, to the loaded file, is not.
+    assert states == [True, False, True]
