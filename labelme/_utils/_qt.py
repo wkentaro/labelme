@@ -25,7 +25,33 @@ def apply_color_theme(*, theme: str) -> None:
         "dark": QtCore.Qt.ColorScheme.Dark,
     }
     scheme = SCHEME_BY_THEME.get(theme, QtCore.Qt.ColorScheme.Unknown)
-    QtGui.QGuiApplication.styleHints().setColorScheme(scheme)
+    hints = QtGui.QGuiApplication.styleHints()
+    # An empty palette clears an earlier fallback and resolves to the live system.
+    QtWidgets.QApplication.setPalette(QtGui.QPalette())
+    hints.setColorScheme(scheme)
+    if scheme == QtCore.Qt.ColorScheme.Unknown or hints.colorScheme() == scheme:
+        return
+
+    # Some platforms ignore setColorScheme; let Qt derive a complete palette.
+    dark = scheme == QtCore.Qt.ColorScheme.Dark
+    palette = QtGui.QPalette(QtGui.QColor("#353535" if dark else "#efefef"))
+    for role in (
+        QtGui.QPalette.ColorRole.Highlight,
+        QtGui.QPalette.ColorRole.HighlightedText,
+        QtGui.QPalette.ColorRole.Accent,
+    ):
+        palette.setBrush(role, QtWidgets.QApplication.palette().brush(role))
+    if dark:
+        palette.setColor(QtGui.QPalette.ColorRole.Link, QtGui.QColor("#66aaff"))
+        for role in (
+            QtGui.QPalette.ColorRole.WindowText,
+            QtGui.QPalette.ColorRole.Text,
+            QtGui.QPalette.ColorRole.ButtonText,
+        ):
+            palette.setColor(
+                QtGui.QPalette.ColorGroup.Disabled, role, QtGui.QColor("#808080")
+            )
+    QtWidgets.QApplication.setPalette(palette)
 
 
 class _TintedSvgIconEngine(QtGui.QIconEngine):

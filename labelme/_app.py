@@ -474,10 +474,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.populate_mode_actions()
 
-        # colorSchemeChanged fires while setColorScheme is still running, before
-        # the new palette is applied, so connect queued: _retheme runs on the next
-        # event loop pass, against the live palette.
-        QtGui.QGuiApplication.styleHints().colorSchemeChanged.connect(
+        # Palette changes include the fallback used when the platform ignores
+        # setColorScheme; queue the refresh until Qt has applied the palette.
+        app = QtGui.QGuiApplication.instance()
+        assert isinstance(app, QtGui.QGuiApplication)
+        app.paletteChanged.connect(
             self._retheme, QtCore.Qt.ConnectionType.QueuedConnection
         )
 
@@ -487,10 +488,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # their palette at polish time, leaving a palette(...) toolbar on the old
         # scheme).
         QtGui.QPixmapCache.clear()
-        app = QtWidgets.QApplication.instance()
-        if not isinstance(app, QtWidgets.QApplication):
-            return
-        for widget in app.allWidgets():
+        for widget in QtWidgets.QApplication.allWidgets():
             sheet = widget.styleSheet()
             # Only stylesheets with palette(...) references go stale on a scheme
             # change; re-applying just those avoids re-polishing composite widgets
@@ -4153,8 +4151,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _apply_to_live_widgets(self, *, key_path: tuple[str, ...]) -> None:
         if key_path == ("color_theme",):
-            # apply_color_theme -> setColorScheme emits colorSchemeChanged, which
-            # drives _retheme; no explicit refresh needed here.
             _utils.apply_color_theme(theme=self._config["color_theme"])
         elif key_path in self._persistent_actions:
             action = self._persistent_actions[key_path]
