@@ -27,6 +27,7 @@ from labelme._automation._ai_assist import AiAssistSession
 from labelme._config import load_config
 from labelme._shape import Shape
 from labelme._shape import ShapeType
+from labelme._widgets import _shape_render
 from labelme._widgets._canvas import _CREATE_MODE_TO_SHAPE_TYPE
 from labelme._widgets._canvas import Canvas
 from labelme._widgets._canvas import _AiFindAllDraft
@@ -4727,3 +4728,40 @@ def test_draft_palette_defaults_to_the_shipped_config(*, canvas: Canvas) -> None
     shape = load_config(config_file=None, config_overrides={})["shape"]
 
     assert canvas._draft_palette == Palette.from_shape_config(shape=shape)
+
+
+def test_mask_render_cache_survives_undo_reload_and_clears_on_reset(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    contours = Mock(wraps=_shape_render.find_mask_contours)
+    monkeypatch.setattr(_shape_render, "find_mask_contours", contours)
+    shape = Shape(
+        shape_type="mask",
+        points=np.array([[10, 10], [29, 29]], dtype=float),
+        mask=np.ones((20, 20), dtype=bool),
+    )
+    canvas.load_shapes(shapes=[shape])
+    canvas._dirty_rect = canvas.rect()
+
+    def paint() -> None:
+        image = QtGui.QImage(100, 50, QtGui.QImage.Format.Format_ARGB32)
+        image.fill(Qt.GlobalColor.white)
+        painter = QtGui.QPainter(image)
+        canvas._draw_committed_shapes_layer(painter)
+        painter.end()
+
+    paint()
+    assert contours.call_count == 1
+    assert shape.mask is not None
+    shape.mask[0, 0] = False
+    canvas.backup_shapes()
+    paint()
+    assert contours.call_count == 2
+    canvas.restore_last_shape()
+    canvas.load_shapes(shapes=canvas.shapes)
+    paint()
+    assert contours.call_count == 2
+    canvas.reset_state()
+    assert not canvas._render_cache._entries

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import collections
 import dataclasses
+import sys
 import typing
 from typing import Final
 from typing import Literal
@@ -107,8 +109,74 @@ _OUTLINE_WIDTH: Final[float] = 2.0
 NEGATIVE_RGB: Final[tuple[int, int, int]] = (255, 0, 0)
 
 
+class ShapeRenderCache:
+    max_bytes: int
+    _max_entries: int
+    _entries: collections.OrderedDict[
+        tuple[object, ...], tuple[QtGui.QImage | QtGui.QPainterPath, int]
+    ]
+    _size_bytes: int
+    _used: set[tuple[object, ...]]
+
+    def __init__(
+        self, *, max_bytes: int = 64 * 1024 * 1024, max_entries: int = 512
+    ) -> None:
+        self.max_bytes = max_bytes
+        self._max_entries = max_entries
+        self._entries = collections.OrderedDict()
+        self._size_bytes = 0
+        self._used = set()
+
+    def begin_paint(self) -> None:
+        self._used.clear()
+
+    def clear(self) -> None:
+        self._entries.clear()
+        self._used.clear()
+        self._size_bytes = 0
+
+    def _get(
+        self, *, key: tuple[object, ...]
+    ) -> QtGui.QImage | QtGui.QPainterPath | None:
+        entry = self._entries.get(key)
+        if entry is None:
+            return None
+        self._used.add(key)
+        self._entries.move_to_end(key)
+        return entry[0]
+
+    def _put(
+        self,
+        *,
+        key: tuple[object, ...],
+        value: QtGui.QImage | QtGui.QPainterPath,
+        size_bytes: int,
+    ) -> None:
+        # Qt allocations are estimated; include keys and conservative entry overhead.
+        size_bytes += sys.getsizeof(key) + sum(sys.getsizeof(v) for v in key) + 256
+        if size_bytes > self.max_bytes or self._max_entries < 1:
+            return
+        while (
+            self._size_bytes + size_bytes > self.max_bytes
+            or len(self._entries) >= self._max_entries
+        ):
+            # Protect this paint's residents so an oversized scene cannot thrash.
+            victim = next((k for k in self._entries if k not in self._used), None)
+            if victim is None:
+                return
+            _, removed_bytes = self._entries.pop(victim)
+            self._size_bytes -= removed_bytes
+        self._entries[key] = value, size_bytes
+        self._size_bytes += size_bytes
+        self._used.add(key)
+
+
 def render_shape(
-    *, painter: QtGui.QPainter, shape: Shape, context: ShapeRenderContext
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+    cache: ShapeRenderCache | None = None,
 ) -> None:
     if shape.mask is None and len(shape.points) == 0:
         return
@@ -122,7 +190,7 @@ def render_shape(
     )
 
     if shape.shape_type == "mask" and shape.mask is not None:
-        _paint_mask(painter=painter, shape=shape, context=context)
+        _paint_mask(painter=painter, shape=shape, context=context, cache=cache)
 
     if len(shape.points) > 0:
         _paint_shape_points(painter=painter, shape=shape, context=context)
@@ -194,26 +262,52 @@ def _label_text(*, label: str, group_id: int | None) -> str:
 
 
 def _paint_mask(
-    *, painter: QtGui.QPainter, shape: Shape, context: ShapeRenderContext
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+    cache: ShapeRenderCache | None,
 ) -> None:
     assert shape.mask is not None
-    origin = shape.points[0]
+    mask = shape.mask
+    origin = shape.points[0] * context.scale
+    # Avoid copying a large key for an asset that cannot fit even without overhead.
+    data = (
+        mask.tobytes()
+        if cache is not None
+        and (
+            (context.outline and mask.nbytes <= cache.max_bytes)
+            or (context.fill_mask and mask.nbytes * 5 <= cache.max_bytes)
+        )
+        else None
+    )
     if context.fill_mask:
         fill_color = (
             context.palette.select_fill if context.selected else context.palette.fill
+        ).getRgb()
+        fill_key = ("mask-fill", mask.shape, data, fill_color)
+        cache_fill = (
+            cache is not None
+            and data is not None
+            and mask.nbytes * 5 <= cache.max_bytes
         )
-        rgba = np.zeros(shape.mask.shape + (4,), dtype=np.uint8)
-        rgba[shape.mask] = fill_color.getRgb()
-        height, width = shape.mask.shape
-        # Wraps rgba without a copy; it stays alive until drawImage returns.
-        bitmap = QtGui.QImage(
-            rgba.data, width, height, 4 * width, QtGui.QImage.Format.Format_RGBA8888
-        )
-        top_left = origin * context.scale
+        bitmap = cache._get(key=fill_key) if cache is not None and cache_fill else None
+        if bitmap is None:
+            rgba = np.zeros(mask.shape + (4,), dtype=np.uint8)
+            rgba[mask] = fill_color
+            height, width = mask.shape
+            # Own the pixels so cached images outlive the temporary numpy array.
+            bitmap = QtGui.QImage(
+                rgba.data, width, height, 4 * width, QtGui.QImage.Format.Format_RGBA8888
+            ).copy()
+            if cache_fill:
+                assert cache is not None
+                cache._put(key=fill_key, value=bitmap, size_bytes=bitmap.sizeInBytes())
+        assert isinstance(bitmap, QtGui.QImage)
         painter.drawImage(
             QtCore.QRectF(
-                top_left[0],
-                top_left[1],
+                origin[0],
+                origin[1],
                 bitmap.width() * context.scale,
                 bitmap.height() * context.scale,
             ),
@@ -222,13 +316,27 @@ def _paint_mask(
     if not context.outline:
         return
 
-    contour_path = QtGui.QPainterPath()
-    for contour in find_mask_contours(mask=shape.mask):
-        # Image space, so the whole contour can be scaled together below.
-        xy = contour + origin
-        contour_path.addPolygon(QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in xy]))
+    outline_key = ("mask-outline", mask.shape, data)
+    contour_path = (
+        cache._get(key=outline_key) if cache is not None and data is not None else None
+    )
+    if contour_path is None:
+        contour_path = QtGui.QPainterPath()
+        for contour in find_mask_contours(mask=mask):
+            contour_path.addPolygon(
+                QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in contour])
+            )
+        if cache is not None and data is not None:
+            cache._put(
+                key=outline_key,
+                value=contour_path,
+                size_bytes=contour_path.capacity() * 32 + 128,
+            )
+    assert isinstance(contour_path, QtGui.QPainterPath)
     painter.drawPath(
-        QtGui.QTransform.fromScale(context.scale, context.scale).map(contour_path)
+        QtGui.QTransform(context.scale, 0, 0, context.scale, origin[0], origin[1]).map(
+            contour_path
+        )
     )
 
 

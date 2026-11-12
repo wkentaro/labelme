@@ -47,6 +47,7 @@ from ._hint_chip import paint_hint_chip
 from ._hint_chip import place_hint_chip
 from ._shape_render import NEGATIVE_RGB
 from ._shape_render import Palette
+from ._shape_render import ShapeRenderCache
 from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
 from ._shape_render import bounds as _shape_bounds
@@ -394,6 +395,7 @@ class Canvas(QtWidgets.QWidget):
     _point_type: Literal["square", "round"]
     _draft_palette: Palette
     _palette_cache: dict[str, Palette]
+    _render_cache: ShapeRenderCache
 
     _ai_assist_session: _automation.AiAssistSession
     _ai_suppress_existing_shape_matches: bool
@@ -447,6 +449,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_preview_timer.setSingleShot(True)
         self._ai_preview_timer.timeout.connect(self._refresh_ai_segment_preview)
         self._cursor = CursorRole.DEFAULT
+        self._render_cache = ShapeRenderCache()
         self.reset_state()
 
         # self._line represents:
@@ -2651,6 +2654,7 @@ class Canvas(QtWidgets.QWidget):
         return not self._should_constrain_to_pixmap(point=cursor)
 
     def _draw_committed_shapes_layer(self, painter: QtGui.QPainter, /) -> None:
+        self._render_cache.begin_paint()
         # Zoomed in, the scroll area shows a small part of the canvas, and a
         # partial repaint a smaller one still; skip the shapes outside it. An
         # unshown canvas (offscreen render) has no visible region, so it
@@ -2671,7 +2675,9 @@ class Canvas(QtWidgets.QWidget):
                 painter=painter, shape=shape, context=context, rect=visible_rect
             ):
                 continue
-            render_shape(painter=painter, shape=shape, context=context)
+            render_shape(
+                painter=painter, shape=shape, context=context, cache=self._render_cache
+            )
 
     def _draw_active_shape_layer(self, painter: QtGui.QPainter, /) -> None:
         if self.create_mode == "ai_segment":
@@ -3384,6 +3390,7 @@ class Canvas(QtWidgets.QWidget):
         QtWidgets.QApplication.restoreOverrideCursor()
 
     def reset_state(self) -> None:
+        self._render_cache.clear()
         self._ai_preview_timer.stop()
         self._ai_preview_job = None
         self._ai_result_job = None
