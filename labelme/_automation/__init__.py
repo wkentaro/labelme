@@ -2,6 +2,7 @@ from ._ai_assist import AiAssistProposal
 from ._ai_assist import AiAssistSession
 from ._geometry import compute_polygon_from_circle
 from ._geometry import compute_polygons_from_mask
+from ._geometry import find_mask_contours
 from ._geometry import shape_to_xyxy_bbox
 from ._osam_worker import InferenceRequest
 from ._osam_worker import OsamWorker
@@ -27,6 +28,7 @@ __all__ = [
     "assign_available_group_ids",
     "compute_polygon_from_circle",
     "compute_polygons_from_mask",
+    "find_mask_contours",
     "propose_shapes_from_texts",
     "rasterize_shape",
     "shape_to_xyxy_bbox",

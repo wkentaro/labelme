@@ -94,8 +94,5 @@ def image_extent(
         lo = np.minimum(lo, arrow.min(axis=0))
         hi = np.maximum(hi, arrow.max(axis=0))
     if shape.mask is not None:
-        # The contour is traced between pixel centers, half a pixel outside
-        # the mask's first row and column.
-        lo = np.minimum(lo, points[0] - 0.5)
         hi = np.maximum(hi, points[0] + shape.mask.shape[::-1])
     return lo, hi

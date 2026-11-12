@@ -776,8 +776,8 @@ def _painted_extent(*, fill_mask: bool, outline: bool) -> tuple[int, int, int, i
 @pytest.mark.usefixtures("qapp")
 def test_mask_alignment_fill_extent() -> None:
     left, top, right, bottom = _painted_extent(fill_mask=True, outline=False)
-    # Screen pixels, then image space: the fill spans 5.0 to 6.0, half an
-    # image pixel right of and below the outline and the hit area.
+    # Screen pixels, then image space: the fill spans 5.0 to 6.0, as the
+    # image pixel it covers does.
     assert (left, top, right, bottom) == (50, 50, 60, 60)
     assert [v / _ALIGNMENT_SCALE for v in (left, top, right, bottom)] == [
         5.0,
@@ -792,12 +792,12 @@ def test_mask_alignment_outline_extent() -> None:
     left, top, right, bottom = _painted_extent(fill_mask=False, outline=True)
     # The 2 px pen reaches 1 px beyond the path on every side; trim it to get
     # the path itself.
-    assert (left, top, right, bottom) == (44, 44, 56, 56)
+    assert (left, top, right, bottom) == (49, 49, 61, 61)
     pen_half = 1
     assert [
         (v + sign * pen_half) / _ALIGNMENT_SCALE
         for v, sign in ((left, 1), (top, 1), (right, -1), (bottom, -1))
-    ] == [4.5, 4.5, 5.5, 5.5]
+    ] == [5.0, 5.0, 6.0, 6.0]
 
 
 def test_mask_alignment_hit_extent() -> None:
@@ -813,5 +813,5 @@ def test_mask_alignment_hit_extent() -> None:
             epsilon=0.0,
         )
     ]
-    # The hit area matches the outline (4.5 to 5.5), not the fill (5.0 to 6.0).
-    assert (round(xs[0], 2), round(xs[-1], 2)) == (4.5, 5.5)
+    # The hit area matches the fill and the outline: 5.0 up to 6.0.
+    assert (round(xs[0], 2), round(xs[-1], 2)) == (5.0, 5.95)

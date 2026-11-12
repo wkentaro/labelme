@@ -89,7 +89,7 @@ def test_polygon_linestrip_keeps_vertices(
                     dtype=bool,
                 ),
             ),
-            [[11, 21], [13, 22]],
+            [[11, 21], [14, 23]],
         ),
     ],
     ids=["circle", "oriented-rectangle", "linestrip", "mask-hugs-pixels"],
@@ -515,7 +515,7 @@ def test_conversions_that_would_leave_nothing_are_blocked() -> None:
     corner_pixel[0, 0] = True
     mask = Shape(
         shape_type="mask",
-        points=np.array([[-0.4, -0.4], [0.6, 0.6]]),
+        points=np.array([[-1.0, -1.0], [0.0, 0.0]]),
         mask=corner_pixel,
     )
     on_border = _shape(shape_type="polygon", points=[[10, 2], [10, 3], [10, 4]])

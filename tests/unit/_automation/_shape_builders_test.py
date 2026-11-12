@@ -49,8 +49,8 @@ def test_shapes_from_detections_circle_with_mask_uses_centroid_and_area() -> Non
     )
 
     assert shape.shape_type == "circle"
-    expected_cx = 10 + 10
-    expected_cy = 20 + 15
+    expected_cx = 10 + 10.5
+    expected_cy = 20 + 15.5
     expected_radius = math.sqrt(21 * 31 / math.pi)
     assert shape.points[0][0] == pytest.approx(expected_cx)
     assert shape.points[0][1] == pytest.approx(expected_cy)
@@ -88,7 +88,7 @@ def test_shapes_from_detections_oriented_rectangle_with_mask_uses_min_area_rect(
     )
 
     assert shape.shape_type == "oriented_rectangle"
-    expected = [(10, 20), (30, 20), (30, 30), (10, 30)]
+    expected = [(10.5, 20.5), (30.5, 20.5), (30.5, 30.5), (10.5, 30.5)]
     for i, (x, y) in enumerate(expected):
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
@@ -139,7 +139,7 @@ def test_shapes_from_detections_oriented_rectangle_with_square_mask() -> None:
     )
 
     assert shape.shape_type == "oriented_rectangle"
-    expected = [(0, 0), (10, 0), (10, 10), (0, 10)]
+    expected = [(0.5, 0.5), (10.5, 0.5), (10.5, 10.5), (0.5, 10.5)]
     for i, (x, y) in enumerate(expected):
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
@@ -153,7 +153,7 @@ def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None
     )
 
     assert shape.shape_type == "oriented_rectangle"
-    expected = [(0, 0), (10, 0), (10, 10), (0, 10)]
+    expected = [(0.5, 0.5), (10.5, 0.5), (10.5, 10.5), (0.5, 10.5)]
     for i, (x, y) in enumerate(expected):
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 

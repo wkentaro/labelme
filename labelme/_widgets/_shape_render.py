@@ -7,10 +7,10 @@ from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
-import skimage.measure
 from PySide6 import QtCore
 from PySide6 import QtGui
 
+from .._automation import find_mask_contours
 from .._shape import CIRCLE_POINT_COUNT
 from .._shape import LINE_POINT_COUNT
 from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
@@ -222,14 +222,10 @@ def _paint_mask(
     if not context.outline:
         return
 
-    # Pad the mask so a True region touching its border still has a false
-    # ring to close a contour against; the pad offset is subtracted back out.
-    PAD: Final[int] = 1
     contour_path = QtGui.QPainterPath()
-    for contour in skimage.measure.find_contours(np.pad(shape.mask, pad_width=PAD)):
-        # skimage yields (row, col); flip to (x, y) and drop the pad, staying
-        # in image space so the whole contour can be scaled together below.
-        xy = contour[:, ::-1] - PAD + origin
+    for contour in find_mask_contours(mask=shape.mask):
+        # Image space, so the whole contour can be scaled together below.
+        xy = contour + origin
         contour_path.addPolygon(QtGui.QPolygonF([QtCore.QPointF(x, y) for x, y in xy]))
     painter.drawPath(
         QtGui.QTransform.fromScale(context.scale, context.scale).map(contour_path)
@@ -556,8 +552,7 @@ def _build_two_point_outline(*, shape: Shape) -> QtGui.QPainterPath:
 
 def _hits_mask_pixel(*, shape: Shape, point: npt.NDArray[np.float64]) -> bool:
     assert shape.mask is not None
-    row = int(round(float(point[1]) - float(shape.points[0][1])))
-    col = int(round(float(point[0]) - float(shape.points[0][0])))
+    col, row = np.floor(point - shape.points[0]).astype(int)
     if row < 0 or row >= shape.mask.shape[0] or col < 0 or col >= shape.mask.shape[1]:
         return False
     return bool(shape.mask[row, col])
