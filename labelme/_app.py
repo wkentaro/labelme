@@ -102,6 +102,14 @@ class _AiTextJob:
         return ", ".join(text.strip() for text in self.texts)
 
 
+class _AiStatus(NamedTuple):
+    # The AI job the status bar shows, when it started, and which of its
+    # "task" and slow stages were announced.
+    job: object
+    started_at: float
+    announced: frozenset[str]
+
+
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
     FIT_SELECTION = enum.auto()
@@ -248,9 +256,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _model_manager: ModelManager
     _osam_worker: _automation.OsamWorker
     _ai_text_job: _AiTextJob | None
-    _ai_status_job: object
-    _ai_status_started_at: float
-    _ai_status_announced: set[str]
+    _ai_status: _AiStatus
     _ai_status_timer: QtCore.QTimer
     _hidden_annotated_paths: set[str]
     _window_state: QtCore.QSettings
@@ -422,9 +428,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ai_text_job = None
         # Kept while idle, so a job retried on CPU keeps its clock and what
         # was announced for it.
-        self._ai_status_job = None
-        self._ai_status_started_at = 0.0
-        self._ai_status_announced = set()  # "task" and slow stages
+        self._ai_status = _AiStatus(job=None, started_at=0.0, announced=frozenset())
         self._ai_status_timer = QtCore.QTimer(self)
         self._ai_status_timer.setInterval(1000)
         self._ai_status_timer.timeout.connect(self._on_ai_activity_changed)
@@ -1993,18 +1997,20 @@ class MainWindow(QtWidgets.QMainWindow):
         if job is None:
             self._ai_status_timer.stop()
         else:
-            if job is not self._ai_status_job:
-                self._ai_status_job = job
-                self._ai_status_started_at = time.monotonic()
-                self._ai_status_announced = set()
+            if job is not self._ai_status.job:
+                self._ai_status = _AiStatus(
+                    job=job, started_at=time.monotonic(), announced=frozenset()
+                )
             # A detection is announced once as it starts, from text or a box,
             # and a slow stage once for any prompt; a fast Segment, never.
             kind = stage if stage in ("starting", "loading", "encoding") else "task"
-            if (detecting or kind != "task") and kind not in self._ai_status_announced:
-                self._ai_status_announced.add(kind)
+            if (detecting or kind != "task") and kind not in self._ai_status.announced:
+                self._ai_status = self._ai_status._replace(
+                    announced=self._ai_status.announced | {kind}
+                )
                 self._announce(message=text)
             self._ai_status_timer.start()  # restarts, so a tick follows a second
-            seconds = int(time.monotonic() - self._ai_status_started_at)
+            seconds = int(time.monotonic() - self._ai_status.started_at)
             ELAPSED_SHOWN_AFTER_S: Final = 3
             if seconds >= ELAPSED_SHOWN_AFTER_S:
                 text = self.tr("{status} · {seconds} s").format(
