@@ -1530,6 +1530,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         scroll_area.setWidget(canvas)
         scroll_area.setWidgetResizable(True)
         scroll_bars = {
@@ -3745,11 +3746,12 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _fit_window_scale(self) -> float:
-        FIT_WINDOW_SCROLLBAR_MARGIN: Final[float] = 2.0
-        viewport = self._canvas_widgets.scroll_area
+        # The scroll area's size rather than its viewport's, which shrinks while
+        # scroll bars show.
+        scroll_area = self._canvas_widgets.scroll_area
         pixmap = self._canvas_widgets.canvas.pixmap
-        available_w = viewport.width() - FIT_WINDOW_SCROLLBAR_MARGIN
-        available_h = viewport.height() - FIT_WINDOW_SCROLLBAR_MARGIN
+        available_w = scroll_area.width() - 2 * scroll_area.frameWidth()
+        available_h = scroll_area.height() - 2 * scroll_area.frameWidth()
         scale_by_width = available_w / pixmap.width()
         scale_by_height = available_h / pixmap.height()
         return min(scale_by_width, scale_by_height)

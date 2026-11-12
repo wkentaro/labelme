@@ -2432,6 +2432,10 @@ class Canvas(QtWidgets.QWidget):
         painter: QtGui.QPainter = self._painter
         painter.begin(self)
         try:
+            # A neutral backdrop a step darker than the window keeps the
+            # image's edges visible when the image itself is light.
+            window = self.palette().color(QtGui.QPalette.ColorRole.Window)
+            painter.fillRect(self._dirty_rect, window.darker(108))
             self._setup_world_transform(painter=painter)
             for layer in self._render_layers():
                 layer(painter)
