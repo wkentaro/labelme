@@ -16,6 +16,7 @@ import labelme._app
 import labelme._save_request
 import labelme._save_writer
 from labelme._app import MainWindow
+from labelme._app import _SaveTarget
 from labelme._save_request import SaveRequest
 from labelme._shape import Shape
 
@@ -419,7 +420,9 @@ def test_manual_save_action_supersedes_pending_edits_after_choosing_path(
     if action == "cancel_save_as":
         assert raw_win._save_writer.is_busy
         assert raw_win._is_changed
-        assert raw_win._auto_save_path is None
+        assert raw_win._save_target == _SaveTarget(
+            path=str(old_path), overwrite_confirmed=False
+        )
         qtbot.waitUntil(lambda: not raw_win._save_writer.is_busy)
 
     destination = new_path if action == "save_as" else old_path
@@ -434,7 +437,9 @@ def test_manual_save_action_supersedes_pending_edits_after_choosing_path(
     assert json.loads(destination.read_text())["shapes"][0]["points"][0][0] == 3
     if action == "save_as":
         assert json.loads(old_path.read_text())["shapes"][0]["points"][0][0] == 1
-        assert raw_win._auto_save_path == str(new_path)
+        assert raw_win._save_target == _SaveTarget(
+            path=str(new_path), overwrite_confirmed=True
+        )
     else:
         assert not new_path.exists()
     assert raw_win._label_file_path == str(destination)

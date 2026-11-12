@@ -7,6 +7,8 @@ import pytest
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._app import _SaveTarget
+
 from ..conftest import close_or_pause
 from .conftest import MainWinFactory
 from .conftest import draw_and_commit_polygon
@@ -160,8 +162,10 @@ def test_undo_after_a_failed_save_as_keeps_the_unsaved_mark(
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     qtbot.keyClick(canvas, Qt.Key.Key_Right)
     # Save As chose another file, and writing it failed.
-    win._auto_save_path = str(tmp_path / "other.json")
-    request = win._capture_save_request(label_path=win._auto_save_path)
+    win._save_target = _SaveTarget(
+        path=str(tmp_path / "other.json"), overwrite_confirmed=True
+    )
+    request = win._capture_save_request(label_path=win._save_target.path)
     win._on_save_finished(request, win._save_revision, OSError("disk full"))
 
     # Back to the loaded file's Shapes, which the chosen file does not hold.

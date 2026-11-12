@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
+from labelme._app import _SaveTarget
 
 from .conftest import MainWinFactory
 from .conftest import select_shape
@@ -112,7 +113,7 @@ def test_save_keeps_the_save_as_destination(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     _move_first_shape(qtbot=qtbot, win=win)
     # Save As records its choice here before writing; a failed write leaves it.
-    win._auto_save_path = str(chosen)
+    win._save_target = _SaveTarget(path=str(chosen), overwrite_confirmed=True)
 
     win._save_label_file(save_as=False)
 

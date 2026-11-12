@@ -127,6 +127,13 @@ class _FileContents(NamedTuple):
     flags: dict[str, bool]
 
 
+class _SaveTarget(NamedTuple):
+    # Where a save that asks nothing writes the open document.
+    path: str
+    # The user chose path in a dialog that confirmed any overwrite.
+    overwrite_confirmed: bool
+
+
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
     FIT_SELECTION = enum.auto()
@@ -266,8 +273,7 @@ class MainWindow(QtWidgets.QMainWindow):
     _label_list_menu_origin: QtCore.QPoint | None
     _large_image_confirmed: bool
     _save_revision: int
-    _auto_save_path: str | None
-    _chosen_save_path: str | None
+    _save_target: _SaveTarget | None
     _save_writer: SaveWriter
     _image_prefetcher: ImagePrefetcher
     _model_manager: ModelManager
@@ -423,8 +429,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
         self._file_contents = _FileContents(path=None, shapes=[], flags={})
-        self._auto_save_path = None
-        self._chosen_save_path = None
+        self._save_target = None
         self._save_writer = SaveWriter(parent=self)
         self._save_writer.finished.connect(self._on_save_finished)
         self._image_prefetcher = ImagePrefetcher()
@@ -1785,13 +1790,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # Where a save that asks nothing writes the open document. It never
         # replaces an existing Annotation File other than the one loaded.
         assert self._image_path is not None
-        if self._auto_save_path is not None:
-            return self._auto_save_path
         # Chosen once per document: after its own first write the disk no
         # longer tells a first copy from a file that was already there.
-        if self._chosen_save_path is None:
-            self._chosen_save_path = self._choose_save_destination()
-        return self._chosen_save_path
+        if self._save_target is None:
+            self._save_target = _SaveTarget(
+                path=self._choose_save_destination(), overwrite_confirmed=False
+            )
+        return self._save_target.path
+
+    def _known_save_destination(self) -> str | None:
+        # Like _save_destination, without choosing one.
+        if self._save_target is not None:
+            return self._save_target.path
+        return self._label_file_path
 
     def _choose_save_destination(self) -> str:
         assert self._image_path is not None
@@ -2155,8 +2166,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._announce(message=message)
 
     def reset_state(self) -> None:
-        self._auto_save_path = None
-        self._chosen_save_path = None
+        self._save_target = None
         self._docks.label_list.clear()
         self._load_flags(flags={}, widget=self._docks.flag_list)
         self._annotation = None
@@ -2180,8 +2190,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # over it as any edit.
         back_to_clean = (
             not self._save_writer.is_busy
-            and self._file_contents.path
-            == (self._auto_save_path or self._chosen_save_path or self._label_file_path)
+            and self._file_contents.path == self._known_save_destination()
             and self._read_flag_dock_states() == self._file_contents.flags
             and _saved_shapes_equal(a=canvas.shapes, b=self._file_contents.shapes)
         )
@@ -2709,7 +2718,10 @@ class MainWindow(QtWidgets.QMainWindow):
             # Save As confirms an overwrite in its dialog; no other save may
             # replace another Image's Annotation File.
             owner_image_path=(
-                None if label_path == self._auto_save_path else image_path
+                None
+                if self._save_target
+                == _SaveTarget(path=label_path, overwrite_confirmed=True)
+                else image_path
             ),
         )
 
@@ -3879,8 +3891,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ):
             self._opened_folder = previous_folder
             return False
-        self._auto_save_path = None
-        self._chosen_save_path = None
+        self._save_target = None
         self._refresh_file_list()
         return True
 
@@ -3902,7 +3913,11 @@ class MainWindow(QtWidgets.QMainWindow):
             # A first auto-save already owns a destination, even before it finishes.
             label_path = self._save_writer.get_latest_path()
             if label_path is None and (
-                self._auto_save_path is not None or self._label_file_path is not None
+                (
+                    self._save_target is not None
+                    and self._save_target.overwrite_confirmed
+                )
+                or self._label_file_path is not None
             ):
                 label_path = self._save_destination()
         if label_path is None:
@@ -3910,7 +3925,9 @@ class MainWindow(QtWidgets.QMainWindow):
             if label_path:
                 # The dialog confirmed any overwrite. Keep the chosen
                 # destination through failure, Retry, and later edits.
-                self._auto_save_path = label_path
+                self._save_target = _SaveTarget(
+                    path=label_path, overwrite_confirmed=True
+                )
 
         if not label_path:
             logger.warning("label_path={!r} is empty, so cannot save", label_path)
@@ -4530,7 +4547,9 @@ class MainWindow(QtWidgets.QMainWindow):
             # and the open image keeps saving where it did.
             if not loaded and previous_label_path is not None:
                 self._label_file_path = previous_label_path
-                self._auto_save_path = previous_label_path
+                self._save_target = _SaveTarget(
+                    path=previous_label_path, overwrite_confirmed=True
+                )
         else:
             opened_dir = str(Path(file_or_dir).parent)
             previous_folder = self._opened_folder
