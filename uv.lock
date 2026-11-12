@@ -706,7 +706,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2,<1.29" },
-    { name = "osam", specifier = ">=0.10.2,<0.11" },
+    { name = "osam", specifier = ">=0.10.3,<0.11" },
     { name = "osam", extras = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23') or sys_platform != 'darwin'" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
@@ -1131,7 +1131,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.10.2"
+version = "0.10.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1141,9 +1141,9 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/42/ad/778de534a41fee807623d9838497608a65878a0679bf9cf9de3e25a818c0/osam-0.10.2.tar.gz", hash = "sha256:8f5d476a74d9d130b0039582dd71d64430456b280d59949781435e1591489cef", size = 27559175, upload-time = "2026-11-06T02:24:03.793Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/27/70/41dd6409bbbfd62b1a2bee71456c525aaeb75f157bce1350ad487ba5a1af/osam-0.10.3.tar.gz", hash = "sha256:ae370c5fb4e0078dfc12a4a2b5033f252e5b70f3306c4cc8b92b4b0cf91bc390", size = 27560673, upload-time = "2026-11-12T08:22:50.861Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/2f/9c33fe039bfaf847e71b71b39e6c0e41809286393ab3b81a7e38cedae023/osam-0.10.2-py3-none-any.whl", hash = "sha256:4adb6d41d8ed75695e3c3d6856fdff23c07a29390b5d5087320976cbdab56f42", size = 1439995, upload-time = "2026-11-06T02:24:01.181Z" },
+    { url = "https://files.pythonhosted.org/packages/d2/e7/bffb4449d285a16395b26645c1a3a707136921156fbaeeaafe843a4cbbbf/osam-0.10.3-py3-none-any.whl", hash = "sha256:7cfa356a3157f921db9d079c4135264f9229b714456331906a17bc513381d9cf", size = 1440479, upload-time = "2026-11-12T08:22:48.738Z" },
 ]
 
 [package.optional-dependencies]
