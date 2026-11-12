@@ -125,7 +125,8 @@ def test_status_bar_names_the_stage_and_time_of_a_slow_prompt(
     announced.clear()
     assert show(job=text_job, stage=None, device=None) == "Finding all 'dog'…"
     assert show(stage="encoding") == "Preparing image…"
-    win._ai_status_started_at -= 4  # as if 4 seconds have passed
+    # As if 4 seconds have passed.
+    win._ai_status = win._ai_status._replace(started_at=win._ai_status.started_at - 4)
     assert show(stage="generating") == "Finding all 'dog'… · 4 s"
     assert show() == "Finding all 'dog'… · 4 s"  # a tick
     # A retry on CPU keeps the job's clock and repeats no announcement.
