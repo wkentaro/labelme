@@ -586,10 +586,8 @@ def _build_shape_points_paths(
     ):
         return paths
     for i in range(len(points)):
-        if (
-            shape.shape_type == "point"
-            or context.show_vertices
-            or (context.highlight is not None and context.highlight.index == i)
+        if context.show_vertices or (
+            context.highlight is not None and context.highlight.index == i
         ):
             _append_shape_vertex(
                 vertices=paths.vertices, shape=shape, context=context, vertex_index=i
@@ -599,16 +597,12 @@ def _build_shape_points_paths(
         and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
     ):
         for i in range(len(points)):
-            if context.show_vertices or (
-                context.rotation_highlight is not None
-                and context.rotation_highlight.index == i
-            ):
-                _append_shape_rotation_vertex(
-                    vertices=paths.rotation_vertices,
-                    shape=shape,
-                    context=context,
-                    vertex_index=i,
-                )
+            _append_shape_rotation_vertex(
+                vertices=paths.rotation_vertices,
+                shape=shape,
+                context=context,
+                vertex_index=i,
+            )
         _build_shape_oriented_rectangle_arrow_path(
             path=paths.orientation_arrow, shape=shape, scale=scale
         )
