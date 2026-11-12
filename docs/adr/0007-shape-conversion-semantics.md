@@ -10,8 +10,8 @@ were made together, each against a real alternative:
    parse and creates stale shadow geometry once the converted Shape is edited.
 2. **Mask Polygonization emits one polygon per 4-connected exterior land,
    sharing a Group when there is more than one.** A land is omitted when eroding
-   its hole-filled pixels by the boundary deviation leaves no area. A bounded
-   raster disk classifies every land without a full-image distance field. This
+   its hole-filled pixels by the boundary deviation leaves no area. A distance
+   field classifies every land at the same cost for any deviation. This
    removes small or thin lands consistently with Polygon Detail instead of
    introducing an unrelated area threshold. Keyholes were rejected because their
    visible

@@ -299,7 +299,7 @@ def test_circle_polygon_stays_inside_the_given_image() -> None:
     assert polygon.points.min() >= 0
     # The edges crossing x=0 end where they cross it, not at a clamped vertex.
     on_border = polygon.points[np.isclose(polygon.points[:, 0], 0)]
-    np.testing.assert_allclose(sorted(on_border[:, 1]), [37.0711, 62.9289], atol=1e-4)
+    np.testing.assert_allclose(sorted(on_border[:, 1]), [36.0183, 63.9817], atol=1e-4)
 
 
 def test_zero_radius_circle_has_no_polygon_even_unclipped() -> None:

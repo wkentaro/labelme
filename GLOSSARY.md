@@ -113,7 +113,7 @@ A shipped Setting offered for early use while its interaction contract or presen
 _Avoid_: beta feature, experimental option, beta setting.
 
 **Polygon Detail**:
-The 0–100 Setting that controls how closely Mask Polygonization follows a Mask boundary. Higher values retain more boundary detail, smaller lands, and Polygon Shape points; lower values produce smoother, simpler Polygon Shapes and omit lands whose area disappears within the same deviation.
+The 0–100 Setting that controls how closely a polygon follows the Shape it comes from, in Mask Polygonization and circle → polygon Shape Conversion. The allowed deviation is a fraction of the Shape's thickness (area / perimeter), so a value means the same at any Image resolution or Shape size (ADR 0010). Higher values retain more boundary detail, thinner lands, and Polygon Shape points; lower values produce smoother, simpler Polygon Shapes and omit lands much thinner than the Mask.
 _Avoid_: polygon quality, smoothness, simplification tolerance
 
 **Shape Color**:

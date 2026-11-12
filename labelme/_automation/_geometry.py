@@ -168,11 +168,66 @@ def _compute_signed_area(*, points: NDArray[np.float64]) -> float:
     )
 
 
-def _compute_polygon_deviation(*, detail: int) -> float:
-    # The curve reserves finer control near the detailed end, where small
-    # slider changes are most visible.
-    detail_loss = (_DETAIL_MAX - detail) / 20
-    return 0.5 * detail_loss**1.5
+def _compute_relative_deviation(*, detail: int) -> float:
+    # How far a polygon may stray from a shape, as a fraction of the shape's
+    # thickness (area / perimeter): the IoU a polygon loses grows with that
+    # fraction, so one detail keeps alike any image resolution or shape size.
+    # Past 0.15, a circle drops to an octagon (IoU 0.90); up to it, every
+    # shape tried keeps an IoU of 0.95 at detail 0. The curve reserves finer
+    # control near the detailed end, where small slider changes show most.
+    MAX_RELATIVE_DEVIATION: Final = 0.15
+    return MAX_RELATIVE_DEVIATION * ((_DETAIL_MAX - detail) / _DETAIL_MAX) ** 1.5
+
+
+def _compute_mask_deviation(*, detail: int, mask: NDArray[np.bool_]) -> float:
+    # A mask's outline is only accurate to half a pixel, so its stair steps go
+    # whatever the shape's size: the floor ramps up to half a pixel by detail
+    # 80 and is 0 at the exact outline (100).
+    if detail >= _DETAIL_MAX:
+        return 0.0
+    pixel_floor = 0.5 * min(1.0, (_DETAIL_MAX - detail) / 20) ** 1.5
+    return max(
+        _compute_relative_deviation(detail=detail) * _compute_thickness(mask=mask),
+        pixel_floor,
+    )
+
+
+def _compute_thickness(*, mask: NDArray[np.bool_]) -> float:
+    # Area / perimeter of each 4-connected land, weighted by area, so specks
+    # and pepper noise don't thin a mask out. Counted from pixels rather than
+    # traced, since the specks the filter drops can number in the tens of
+    # thousands: pixel edges overcount a boundary at random angles by 4 / pi.
+    import scipy.ndimage  # noqa: PLC0415 -- deferred: ~140ms, only AI output needs it
+
+    labels, _ = scipy.ndimage.label(mask)
+    areas = np.bincount(labels.ravel())[1:]
+    padded = np.pad(labels, pad_width=1)
+    # Neighboring pixels of two lands are never 4-adjacent, so each pixel edge
+    # where the label changes borders exactly one land.
+    edges = np.concatenate(
+        [
+            np.maximum(padded[:, 1:], padded[:, :-1])[padded[:, 1:] != padded[:, :-1]],
+            np.maximum(padded[1:], padded[:-1])[padded[1:] != padded[:-1]],
+        ]
+    )
+    perimeters = np.bincount(edges, minlength=len(areas) + 1)[1:] * np.pi / 4
+    return float((areas * areas / perimeters).sum() / areas.sum())
+
+
+def _find_outer_contours(*, mask: NDArray[np.bool_]) -> list[NDArray[np.float64]]:
+    # Pad so a region touching the image border still has a background ring to
+    # close its contour against; the resulting offset is removed below.
+    PAD: Final[int] = 1
+    contours = [
+        (contour - PAD)[:, ::-1]
+        for contour in skimage.measure.find_contours(
+            np.pad(mask, pad_width=PAD),
+            fully_connected="low",
+            positive_orientation="low",
+        )
+    ]
+    # Holes wind the other way; Polygon Shapes have no rings to hold them.
+    return [c for c in contours if _compute_signed_area(points=c) > 0]
 
 
 def _filter_lands_beyond_deviation(
@@ -187,19 +242,33 @@ def _filter_lands_beyond_deviation(
         structure=np.ones((3, 3), dtype=bool),
     )
     # Raster distances start at pixel centers, half a pixel inside the boundary.
+    # A pixel survives eroding by a disk of this radius when no background
+    # pixel lies within it; the padding is the background around the mask.
+    # Squared distances between pixel centers are whole numbers, so rounding
+    # recovers them exactly. A distance field costs the same at any radius,
+    # where an erosion grows with the disk.
     radius = deviation + 0.5
-    axis = np.arange(-np.ceil(radius), np.ceil(radius) + 1)
-    footprint = axis[:, np.newaxis] ** 2 + axis[np.newaxis, :] ** 2 <= radius**2
-    eroded = scipy.ndimage.binary_erosion(filled, structure=footprint)
+    # Under a pixel, the disk is the pixel itself and removes nothing.
+    if radius < 1:
+        return mask
+    squared = scipy.ndimage.distance_transform_edt(np.pad(filled, pad_width=1))
+    np.square(squared, out=squared)
+    np.rint(squared, out=squared)
+    eroded = squared[1:-1, 1:-1] > radius**2
     surviving_lands = scipy.ndimage.binary_propagation(eroded, mask=filled)
     return mask & surviving_lands
 
 
 def _simplify_contours(
-    *, contours: list[NDArray[np.float64]], detail: int, mask_shape: tuple[int, int]
+    *,
+    contours: list[NDArray[np.float64]],
+    deviation: float,
+    mask_shape: tuple[int, int],
 ) -> list[NDArray[np.float32]]:
     # Douglas-Peucker takes closed chains, ending where they start.
-    smoothed = [_smooth_contour(points=points, detail=detail) for points in contours]
+    smoothed = [
+        _smooth_contour(points=points, deviation=deviation) for points in contours
+    ]
     simplified = _approximate_polygons(
         chains=[np.vstack([points, points[0]]) for points, _ in smoothed],
         tolerances=[tolerance for _, tolerance in smoothed],
@@ -219,13 +288,12 @@ def _simplify_contours(
 
 
 def _smooth_contour(
-    *, points: NDArray[np.float64], detail: int
+    *, points: NDArray[np.float64], deviation: float
 ) -> tuple[NDArray[np.float64], float]:
     # Returns the smoothed points and the tolerance left to simplify them.
     if np.array_equal(points[0], points[-1]):
         points = points[:-1]
 
-    deviation = _compute_polygon_deviation(detail=detail)
     smoothing_sigma = deviation / 2
     simplification_tolerance = deviation
     if smoothing_sigma > 0:
@@ -330,20 +398,21 @@ def compute_polygon_from_circle(
     start_angle: float = 0.0,
 ) -> NDArray[np.float64]:
     # The same detail curve as masks: no edge strays further from the circle
-    # than the deviation a mask outline may have at this detail.
-    # At low detail a small circle still reads as round; past 360 vertices
-    # more edges no longer show.
-    MIN_VERTICES: Final = 8
+    # than a mask outline of the same thickness may, so the vertex count
+    # depends on the detail alone. 12 vertices keep an IoU of 0.95 (an
+    # octagon's is 0.90); past 360 more edges no longer show.
+    MIN_VERTICES: Final = 12
     MAX_VERTICES: Final = 360
     if not 0 <= detail <= _DETAIL_MAX:
         raise ValueError(f"detail must be between 0 and 100, got {detail}")
-    deviation = _compute_polygon_deviation(detail=detail)
-    if deviation <= 0:
+    # A circle's area / perimeter is half its radius, so the deviation over
+    # the radius is half the relative one.
+    relative = _compute_relative_deviation(detail=detail) / 2
+    if relative <= 0:
         count = MAX_VERTICES
     else:
         # An edge of a regular n-gon on the circle bulges r(1 - cos(pi/n)) in.
-        half_angle = np.arccos(max(1 - deviation / radius, -1.0))
-        count = int(np.ceil(np.pi / half_angle))
+        count = int(np.ceil(np.pi / np.arccos(1 - relative)))
     count = int(np.clip(count, MIN_VERTICES, MAX_VERTICES))
     angles = start_angle + 2 * np.pi * np.arange(count) / count
     return center + radius * np.stack([np.cos(angles), np.sin(angles)], axis=1)
@@ -358,26 +427,13 @@ def compute_polygons_from_mask(
         logger.warning("No contour found, so returning no polygons.")
         return []
 
-    # Pad so a region touching the image border still has a background ring to
-    # close its contour against; the resulting offset is removed below.
-    PAD: Final[int] = 1
-    deviation = _compute_polygon_deviation(detail=detail)
+    deviation = _compute_mask_deviation(detail=detail, mask=mask)
     if deviation > 0:
         mask = _filter_lands_beyond_deviation(mask=mask, deviation=deviation)
-    if not mask.any():
-        return []
-
-    contours = skimage.measure.find_contours(
-        np.pad(mask, pad_width=PAD),
-        fully_connected="low",
-        positive_orientation="low",
-    )
+        if not mask.any():
+            return []
     return _simplify_contours(
-        contours=[
-            points
-            for points in ((contour - PAD)[:, ::-1] for contour in contours)
-            if _compute_signed_area(points=points) > 0
-        ],
-        detail=detail,
+        contours=_find_outer_contours(mask=mask),
+        deviation=deviation,
         mask_shape=mask.shape,
     )

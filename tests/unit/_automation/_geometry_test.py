@@ -4,11 +4,14 @@ import math
 
 import numpy as np
 import pytest
+import scipy.ndimage
 import skimage
 from numpy.typing import NDArray
 
 from labelme._automation._geometry import _approximate_polygons
-from labelme._automation._geometry import _compute_polygon_deviation
+from labelme._automation._geometry import _compute_mask_deviation
+from labelme._automation._geometry import _compute_relative_deviation
+from labelme._automation._geometry import _filter_lands_beyond_deviation
 from labelme._automation._geometry import compute_circle_from_mask
 from labelme._automation._geometry import compute_oriented_rectangle_from_mask
 from labelme._automation._geometry import compute_polygon_from_circle
@@ -234,9 +237,7 @@ def test_compute_polygons_from_mask_returns_empty_for_empty_mask() -> None:
     assert polygons == []
 
 
-def test_compute_polygons_from_mask_drops_concave_land_with_too_little_clearance() -> (
-    None
-):
+def test_filter_lands_drops_concave_land_with_too_little_clearance() -> None:
     mask = np.array(
         [
             [True, True, True],
@@ -245,12 +246,10 @@ def test_compute_polygons_from_mask_drops_concave_land_with_too_little_clearance
         ]
     )
 
-    assert compute_polygons_from_mask(mask=mask, detail=75) == []
+    assert not _filter_lands_beyond_deviation(mask=mask, deviation=0.7).any()
 
 
-def test_compute_polygons_from_mask_drops_corner_land_with_too_little_clearance() -> (
-    None
-):
+def test_filter_lands_drops_corner_land_with_too_little_clearance() -> None:
     mask = np.array(
         [
             [True, True, True],
@@ -259,10 +258,10 @@ def test_compute_polygons_from_mask_drops_corner_land_with_too_little_clearance(
         ]
     )
 
-    assert compute_polygons_from_mask(mask=mask, detail=75) == []
+    assert not _filter_lands_beyond_deviation(mask=mask, deviation=0.7).any()
 
 
-def test_compute_polygons_from_mask_drops_land_at_exact_clearance_threshold() -> None:
+def test_filter_lands_drops_land_at_exact_clearance_threshold() -> None:
     mask = np.array(
         [
             [False, True, True, False],
@@ -272,7 +271,7 @@ def test_compute_polygons_from_mask_drops_land_at_exact_clearance_threshold() ->
         ]
     )
 
-    assert compute_polygons_from_mask(mask=mask, detail=60) == []
+    assert not _filter_lands_beyond_deviation(mask=mask, deviation=np.sqrt(2)).any()
 
 
 def test_compute_polygons_from_mask_traces_rectangle_extent_in_xy_order() -> None:
@@ -351,15 +350,45 @@ def test_compute_polygons_from_mask_keeps_tiny_land_at_large_coordinates() -> No
     assert len(polygons) == 1
 
 
-def test_compute_polygons_from_mask_drops_curved_land_within_deviation() -> None:
-    mask = np.zeros((50, 50), dtype=bool)
+def test_compute_polygons_from_mask_drops_thin_land_beside_a_thick_one() -> None:
+    # The deviation follows the mask's thickness, set by the square.
+    mask = np.zeros((50, 90), dtype=bool)
     mask[10:40, 10] = True
     mask[39, 10:40] = True
     mask[10:40, 39] = True
+    mask[10:40, 50:80] = True
+
+    [polygon] = compute_polygons_from_mask(mask=mask, detail=0)
+
+    assert polygon.min(axis=0)[0] > 45  # noqa: PLR2004 -- the square's left edge
+
+
+def test_compute_polygons_from_mask_keeps_a_lone_thin_land() -> None:
+    # A wire alone is the whole shape, so its own thickness sets the deviation.
+    mask = np.zeros((10, 200), dtype=bool)
+    mask[3:7, 5:195] = True
 
     polygons = compute_polygons_from_mask(mask=mask, detail=0)
 
-    assert polygons == []
+    assert len(polygons) == 1
+
+
+@pytest.mark.parametrize("detail", [0, 30, 50])
+def test_compute_polygons_from_mask_keeps_vertex_count_across_resolutions(
+    *, detail: int
+) -> None:
+    # The same shape drawn at 4x the resolution: detail measures the shape,
+    # not pixels.
+    mask = np.zeros((60, 120), dtype=bool)
+    mask[skimage.draw.ellipse(30, 60, 25, 50)] = True
+    large = np.zeros((240, 480), dtype=bool)
+    large[skimage.draw.ellipse(120, 240, 100, 200)] = True
+
+    [small_polygon] = compute_polygons_from_mask(mask=mask, detail=detail)
+    [large_polygon] = compute_polygons_from_mask(mask=large, detail=detail)
+
+    # A pixel deviation gave the large one about twice the vertices.
+    assert abs(len(small_polygon) - len(large_polygon)) <= 0.2 * len(small_polygon)
 
 
 def test_compute_polygons_from_mask_keeps_compact_land_beyond_deviation() -> None:
@@ -397,7 +426,8 @@ def test_compute_polygons_from_mask_keeps_boundary_error_within_deviation() -> N
         original_points[:, np.newaxis, :] - closest,
         axis=2,
     )
-    assert distances.min(axis=1).max() <= _compute_polygon_deviation(detail=0) + 0.001
+    deviation = _compute_mask_deviation(detail=0, mask=mask)
+    assert distances.min(axis=1).max() <= deviation + 0.001
 
 
 def test_compute_polygons_from_mask_keeps_half_pixel_boundary_at_image_edge() -> None:
@@ -480,14 +510,15 @@ def test_circle_polygon_stays_within_the_detail_deviation(detail: int) -> None:
 
     polygon = compute_polygon_from_circle(center=center, radius=30.0, detail=detail)
 
-    assert 8 <= len(polygon) <= 360
+    assert 12 <= len(polygon) <= 360
     np.testing.assert_allclose(np.linalg.norm(polygon - center, axis=1), 30.0)
     # Each edge's midpoint is where it strays furthest inside the circle.
     midpoints = (polygon + np.roll(polygon, -1, axis=0)) / 2
     sag = 30.0 - np.linalg.norm(midpoints - center, axis=1)
     # Between the vertex limits, the count follows the deviation.
-    if 8 < len(polygon) < 360:  # noqa: PLR2004 -- the vertex limits
-        assert sag.max() <= _compute_polygon_deviation(detail=detail) + 1e-6
+    if 12 < len(polygon) < 360:  # noqa: PLR2004 -- the vertex limits
+        deviation = _compute_relative_deviation(detail=detail) * 30.0 / 2
+        assert sag.max() <= deviation + 1e-6
 
 
 def test_circle_polygon_gains_vertices_with_detail() -> None:
@@ -498,3 +529,16 @@ def test_circle_polygon_gains_vertices_with_detail() -> None:
 
     assert counts == sorted(counts)
     assert counts[0] < counts[-1]
+
+
+def test_compute_polygons_from_mask_skips_thickness_at_exact_outline(
+    *,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail(*_: object, **__: object) -> None:
+        raise AssertionError("detail 100 needs no thickness")
+
+    monkeypatch.setattr(scipy.ndimage, "label", fail)
+    mask = np.ones((5, 9), dtype=bool)
+
+    assert len(compute_polygons_from_mask(mask=mask, detail=100)) == 1
