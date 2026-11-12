@@ -76,8 +76,8 @@ def compute_circle_from_mask(*, mask: NDArray[np.bool_]) -> Circle | None:
     # For elongated or sparse masks the resulting circle may be smaller than
     # the tightest enclosing one.
     return Circle(
-        cx=float(xs.mean()),
-        cy=float(ys.mean()),
+        cx=float(xs.mean()) + 0.5,
+        cy=float(ys.mean()) + 0.5,
         radius=float(np.sqrt(mask.sum() / np.pi)),
     )
 
@@ -91,7 +91,8 @@ def compute_oriented_rectangle_from_mask(
     ys, xs = np.nonzero(mask)
     if len(xs) < MIN_POLYGON_POINT_COUNT:
         return None
-    points = np.stack([xs, ys], axis=1).astype(np.float64)
+    # Pixel centers, as the image is drawn.
+    points = (np.stack([xs, ys], axis=1) + 0.5).astype(np.float64)
     import scipy.spatial  # noqa: PLC0415 -- deferred: ~160ms, only AI output needs it
 
     try:
@@ -214,20 +215,27 @@ def _compute_thickness(*, mask: NDArray[np.bool_]) -> float:
     return float((areas * areas / perimeters).sum() / areas.sum())
 
 
-def _find_outer_contours(*, mask: NDArray[np.bool_]) -> list[NDArray[np.float64]]:
-    # Pad so a region touching the image border still has a background ring to
-    # close its contour against; the resulting offset is removed below.
+def find_mask_contours(*, mask: NDArray[np.bool_]) -> list[NDArray[np.float64]]:
+    # Every outline and hole, in (x, y) on the image's pixel grid: pixel c
+    # spans c to c + 1, as the image is drawn. Pad so a region touching the
+    # border still has a background ring to close its contour against.
     PAD: Final[int] = 1
-    contours = [
-        (contour - PAD)[:, ::-1]
+    # skimage traces between pixel centers, half a pixel before the edges.
+    return [
+        (contour - PAD + 0.5)[:, ::-1]
         for contour in skimage.measure.find_contours(
             np.pad(mask, pad_width=PAD),
             fully_connected="low",
             positive_orientation="low",
         )
     ]
+
+
+def _find_outer_contours(*, mask: NDArray[np.bool_]) -> list[NDArray[np.float64]]:
     # Holes wind the other way; Polygon Shapes have no rings to hold them.
-    return [c for c in contours if _compute_signed_area(points=c) > 0]
+    return [
+        c for c in find_mask_contours(mask=mask) if _compute_signed_area(points=c) > 0
+    ]
 
 
 def _filter_lands_beyond_deviation(
@@ -263,7 +271,6 @@ def _simplify_contours(
     *,
     contours: list[NDArray[np.float64]],
     deviation: float,
-    mask_shape: tuple[int, int],
 ) -> list[NDArray[np.float32]]:
     # Douglas-Peucker takes closed chains, ending where they start.
     smoothed = [
@@ -273,12 +280,11 @@ def _simplify_contours(
         chains=[np.vstack([points, points[0]]) for points, _ in smoothed],
         tolerances=[tolerance for _, tolerance in smoothed],
     )
-    clipped = [
-        _clip_to_mask(points=chain[:-1], mask_shape=mask_shape) for chain in simplified
-    ]
+    # Smoothing averages points and simplifying keeps some, so the chains stay
+    # on the mask; this pass drops the collinear points simplifying left.
     collinear_free = _approximate_polygons(
-        chains=[np.vstack([points, points[0]]) for points in clipped],
-        tolerances=[_FLOAT32_EPS] * len(clipped),
+        chains=simplified,
+        tolerances=[_FLOAT32_EPS] * len(simplified),
     )
     return [
         chain[:-1].astype(np.float32)
@@ -318,15 +324,6 @@ def _smooth_contour(
         points = smoothed
         simplification_tolerance -= smoothing_shift
     return points, max(simplification_tolerance, _FLOAT32_EPS)
-
-
-def _clip_to_mask(
-    *, points: NDArray[np.float64], mask_shape: tuple[int, int]
-) -> NDArray[np.float64]:
-    # Clipping can stack vertices on the border; repeats are dropped.
-    points = np.clip(points, (0, 0), (mask_shape[1], mask_shape[0]))
-    keep = np.r_[True, np.any(np.diff(points, axis=0) != 0, axis=1)]
-    return points[keep]
 
 
 def _approximate_polygons(
@@ -435,5 +432,4 @@ def compute_polygons_from_mask(
     return _simplify_contours(
         contours=_find_outer_contours(mask=mask),
         deviation=deviation,
-        mask_shape=mask.shape,
     )

@@ -75,7 +75,11 @@ def _build_shapes_from_detection(
             detail=polygon_detail,
         )
         if detection.bbox is not None:
-            offset = np.array([detection.bbox[0], detection.bbox[1]], dtype=np.float32)
+            # The mask's own origin, as a Mask Shape places it, so its pixel
+            # edges stay inside the image.
+            offset = np.array(
+                round_bbox_to_int(bbox=detection.bbox)[:2], dtype=np.float32
+            )
             polygons = [polygon + offset for polygon in polygons]
         return [
             _build_shape(
@@ -148,7 +152,9 @@ def _oriented_rectangle_for_detection(
         corners = compute_oriented_rectangle_from_mask(mask=detection.mask)
         if corners is not None:
             offset_x, offset_y = (
-                detection.bbox[:2] if detection.bbox is not None else (0.0, 0.0)
+                round_bbox_to_int(bbox=detection.bbox)[:2]
+                if detection.bbox is not None
+                else (0, 0)
             )
             return corners + np.array([offset_x, offset_y], dtype=np.float32)
     if detection.bbox is not None:
@@ -185,7 +191,9 @@ def _circle_for_detection(*, detection: Detection) -> Circle | None:
         circle = compute_circle_from_mask(mask=detection.mask)
         if circle is not None:
             offset_x, offset_y = (
-                detection.bbox[:2] if detection.bbox is not None else (0.0, 0.0)
+                round_bbox_to_int(bbox=detection.bbox)[:2]
+                if detection.bbox is not None
+                else (0, 0)
             )
             return Circle(
                 cx=circle.cx + offset_x,

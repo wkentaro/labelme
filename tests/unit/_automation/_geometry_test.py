@@ -40,8 +40,8 @@ def test_compute_circle_from_mask_centroid_and_area_equivalent_radius() -> None:
     circle = compute_circle_from_mask(mask=mask)
 
     assert circle is not None
-    assert circle.cx == pytest.approx(1)
-    assert circle.cy == pytest.approx(1)
+    assert circle.cx == pytest.approx(1.5)
+    assert circle.cy == pytest.approx(1.5)
     assert circle.radius == pytest.approx(math.sqrt(9 / math.pi))
 
 
@@ -67,7 +67,7 @@ def test_compute_oriented_rectangle_from_mask_axis_aligned_wider_than_tall() -> 
 
     assert corners is not None
     expected = np.array(
-        [[0, 0], [20, 0], [20, 10], [0, 10]],
+        [[0.5, 0.5], [20.5, 0.5], [20.5, 10.5], [0.5, 10.5]],
         dtype=np.float32,
     )
     assert corners == pytest.approx(expected)
@@ -83,7 +83,7 @@ def test_compute_oriented_rectangle_from_mask_axis_aligned_taller_than_wide() ->
 
     assert corners is not None
     expected = np.array(
-        [[10, 0], [10, 20], [0, 20], [0, 0]],
+        [[10.5, 0.5], [10.5, 20.5], [0.5, 20.5], [0.5, 0.5]],
         dtype=np.float32,
     )
     assert corners == pytest.approx(expected)
@@ -121,7 +121,7 @@ def test_compute_oriented_rectangle_from_mask_square_mask_is_axis_aligned() -> N
 
     assert corners is not None
     expected = np.array(
-        [[0, 0], [10, 0], [10, 10], [0, 10]],
+        [[0.5, 0.5], [10.5, 0.5], [10.5, 10.5], [0.5, 10.5]],
         dtype=np.float32,
     )
     assert corners == pytest.approx(expected)
@@ -276,16 +276,16 @@ def test_filter_lands_drops_land_at_exact_clearance_threshold() -> None:
 
 def test_compute_polygons_from_mask_traces_rectangle_extent_in_xy_order() -> None:
     # Rows 1-3, cols 1-7 set. The result is xy-ordered, so the max extent is
-    # x=7.5, y=3.5 (a yx result would swap them, which the max assertion catches).
-    # The coordinates are the region's half-pixel boundary in image space:
-    # x in [0.5, 7.5], y in [0.5, 3.5].
+    # x=8, y=4 (a yx result would swap them, which the max assertion catches).
+    # The coordinates are the region's pixel edges in image space, where pixel
+    # c spans c to c + 1: x in [1, 8], y in [1, 4].
     mask = np.zeros((5, 9), dtype=bool)
     mask[1:4, 1:8] = True
 
     [polygon] = compute_polygons_from_mask(mask=mask, detail=100)
 
-    assert polygon.min(axis=0) == pytest.approx([0.5, 0.5], abs=0.001)
-    assert polygon.max(axis=0) == pytest.approx([7.5, 3.5], abs=0.001)
+    assert polygon.min(axis=0) == pytest.approx([1, 1], abs=0.001)
+    assert polygon.max(axis=0) == pytest.approx([8, 4], abs=0.001)
 
 
 def test_compute_polygons_from_mask_returns_every_disconnected_land() -> None:
@@ -304,7 +304,7 @@ def test_compute_polygons_from_mask_returns_every_disconnected_land() -> None:
     )
     np.testing.assert_allclose(
         extents,
-        [[[0.5, 0.5], [6.5, 4.5]], [[7.5, 5.5], [10.5, 8.5]]],
+        [[[1, 1], [7, 5]], [[8, 6], [11, 9]]],
         atol=0.001,
     )
 
@@ -409,7 +409,7 @@ def test_compute_polygons_from_mask_keeps_boundary_error_within_deviation() -> N
         fully_connected="low",
         positive_orientation="low",
     )
-    original_points = (contour - 1)[:, ::-1]
+    original_points = (contour - 1 + 0.5)[:, ::-1]
 
     [polygon] = compute_polygons_from_mask(mask=mask, detail=0)
 
@@ -430,18 +430,15 @@ def test_compute_polygons_from_mask_keeps_boundary_error_within_deviation() -> N
     assert distances.min(axis=1).max() <= deviation + 0.001
 
 
-def test_compute_polygons_from_mask_keeps_half_pixel_boundary_at_image_edge() -> None:
-    # A fully-set mask has no background border, so its contour is the outer
-    # half-pixel boundary: x in [-0.5, W-0.5], y in [-0.5, H-0.5]. The near side
-    # clips to 0, while the far side must clamp to mask size (W=9, H=5), not
-    # size-1, so it keeps its half-pixel offset (8.5, 4.5) instead of being
-    # pulled in by a pixel.
+def test_compute_polygons_from_mask_traces_pixel_edges_at_image_edge() -> None:
+    # A fully-set mask has no background border, so its contour runs along
+    # its outer pixel edges: x in [0, W], y in [0, H], with W=9, H=5.
     mask = np.ones((5, 9), dtype=bool)
 
     [polygon] = compute_polygons_from_mask(mask=mask, detail=100)
 
-    assert polygon.min(axis=0) == pytest.approx([0.0, 0.0])
-    assert polygon.max(axis=0) == pytest.approx([8.5, 4.5], abs=0.001)
+    assert polygon.min(axis=0) == pytest.approx([0.0, 0.0], abs=0.001)
+    assert polygon.max(axis=0) == pytest.approx([9.0, 5.0], abs=0.001)
     incoming = polygon - np.roll(polygon, shift=1, axis=0)
     outgoing = np.roll(polygon, shift=-1, axis=0) - polygon
     cross_products = incoming[:, 0] * outgoing[:, 1] - incoming[:, 1] * outgoing[:, 0]
@@ -498,7 +495,7 @@ def test_compute_oriented_rectangle_from_mask_l_shape_is_axis_aligned() -> None:
 
     assert corners is not None
     expected = np.array(
-        [[0, 0], [29, 0], [29, 19], [0, 19]],
+        [[0.5, 0.5], [29.5, 0.5], [29.5, 19.5], [0.5, 19.5]],
         dtype=np.float32,
     )
     assert corners == pytest.approx(expected)

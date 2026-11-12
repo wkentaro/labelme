@@ -49,8 +49,8 @@ def test_shapes_from_detections_circle_with_mask_uses_centroid_and_area() -> Non
     )
 
     assert shape.shape_type == "circle"
-    expected_cx = 10 + 10
-    expected_cy = 20 + 15
+    expected_cx = 10 + 10.5
+    expected_cy = 20 + 15.5
     expected_radius = math.sqrt(21 * 31 / math.pi)
     assert shape.points[0][0] == pytest.approx(expected_cx)
     assert shape.points[0][1] == pytest.approx(expected_cy)
@@ -88,7 +88,7 @@ def test_shapes_from_detections_oriented_rectangle_with_mask_uses_min_area_rect(
     )
 
     assert shape.shape_type == "oriented_rectangle"
-    expected = [(10, 20), (30, 20), (30, 30), (10, 30)]
+    expected = [(10.5, 20.5), (30.5, 20.5), (30.5, 30.5), (10.5, 30.5)]
     for i, (x, y) in enumerate(expected):
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
@@ -139,7 +139,7 @@ def test_shapes_from_detections_oriented_rectangle_with_square_mask() -> None:
     )
 
     assert shape.shape_type == "oriented_rectangle"
-    expected = [(0, 0), (10, 0), (10, 10), (0, 10)]
+    expected = [(0.5, 0.5), (10.5, 0.5), (10.5, 10.5), (0.5, 10.5)]
     for i, (x, y) in enumerate(expected):
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
@@ -153,7 +153,7 @@ def test_shapes_from_detections_oriented_rectangle_square_mask_no_bbox() -> None
     )
 
     assert shape.shape_type == "oriented_rectangle"
-    expected = [(0, 0), (10, 0), (10, 10), (0, 10)]
+    expected = [(0.5, 0.5), (10.5, 0.5), (10.5, 10.5), (0.5, 10.5)]
     for i, (x, y) in enumerate(expected):
         assert (shape.points[i][0], shape.points[i][1]) == pytest.approx((x, y))
 
@@ -208,6 +208,22 @@ def test_shapes_from_detections_polygon_with_mask_traces_contour() -> None:
 
     assert shape.shape_type == "polygon"
     assert len(shape.points) >= 3
+
+
+def test_shapes_from_detections_polygon_sits_on_the_mask_pixels() -> None:
+    # A fractional bbox origin rounds as the Mask Shape's does, so the polygon
+    # covers pixels 5 to 9 and stays inside a 10x10 image.
+    [shape] = shapes_from_detections(
+        detections=[
+            Detection(bbox=(5.25, 5.25, 9, 9), mask=np.ones((5, 5), dtype=bool))
+        ],
+        shape_type="polygon",
+        image_size=(10, 10),
+        polygon_detail=100,
+    )
+
+    assert shape.points.min(axis=0) == pytest.approx([5, 5])
+    assert shape.points.max(axis=0) == pytest.approx([10, 10])
 
 
 def test_shapes_from_detections_polygon_simplifies_pixel_stair_steps() -> None:

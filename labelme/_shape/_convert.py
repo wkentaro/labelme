@@ -235,8 +235,9 @@ def _mask_reaches_image(*, shape: Shape, image_size: tuple[int, int] | None) -> 
         return False
     if image_size is None:
         return bool(mask.any())
-    xs = shape.points[0][0] + np.arange(mask.shape[1])
-    ys = shape.points[0][1] + np.arange(mask.shape[0])
+    # Pixel centers: pixel c spans c to c + 1.
+    xs = shape.points[0][0] + np.arange(mask.shape[1]) + 0.5
+    ys = shape.points[0][1] + np.arange(mask.shape[0]) + 0.5
     width, height = image_size
 
     def pixels_within(*, margin: float) -> npt.NDArray[np.bool_]:
@@ -245,11 +246,11 @@ def _mask_reaches_image(*, shape: Shape, image_size: tuple[int, int] | None) -> 
         return mask[rows][:, cols]
 
     # A pixel centered inside the image always leaves its outline an area
-    # there, and an outline stays in the 1-pixel cells around its centers;
-    # only the pixels between are traced.
+    # there, and an outline stays in its pixels; only the pixels the border
+    # cuts are traced.
     if pixels_within(margin=0).any():
         return True
-    return bool(pixels_within(margin=1).any()) and bool(
+    return bool(pixels_within(margin=0.5).any()) and bool(
         _mask_outlines(shape=shape, detail=100, image_size=image_size)
     )
 
@@ -300,13 +301,14 @@ def _unclipped_bounding_box(*, shape: Shape) -> npt.NDArray[np.float64]:
         radius = np.linalg.norm(edge - center)
         return np.array([center - radius, center + radius])
     if shape.shape_type == "mask" and shape.mask is not None:
-        # The stored corners frame the array; the box hugs its pixels.
+        # The stored corners frame the array; the box hugs its pixels, and
+        # pixel c spans c to c + 1.
         (ys,) = np.nonzero(shape.mask.any(axis=1))
         (xs,) = np.nonzero(shape.mask.any(axis=0))
         if len(xs) == 0:
             return np.zeros((2, 2))
         origin = shape.points[0]
-        return origin + np.array([[xs[0], ys[0]], [xs[-1], ys[-1]]])
+        return origin + np.array([[xs[0], ys[0]], [xs[-1] + 1, ys[-1] + 1]])
     return np.array([shape.points.min(axis=0), shape.points.max(axis=0)])
 
 
