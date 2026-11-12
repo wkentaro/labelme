@@ -260,8 +260,9 @@ class MainWindow(QtWidgets.QMainWindow):
     _config_overrides: dict
 
     _is_changed: bool = False
-    # What the Annotation File holds, as a save writes it, to tell when Undo
-    # returns to it.
+    # What an Annotation File holds, as a save writes it, to tell when Undo
+    # returns to it. None for an Image that has no file yet.
+    _file_path: str | None
     _file_shapes: list[ShapeDict]
     _file_flags: dict[str, bool]
     _shape_clipboard: ShapeClipboard
@@ -403,6 +404,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
+        self._file_path = None
         self._file_shapes = []
         self._file_flags = {}
         self._auto_save_path = None
@@ -1823,10 +1825,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Older writes may finish after further edits; only the latest revision
         # can clear the dirty marker or replace its failure status, but every
         # write changes what the file holds.
-        if error is None and request.filename in (
-            self._auto_save_path,
-            self._chosen_save_path,
-        ):
+        if error is None:
+            self._file_path = request.filename
             self._file_shapes = request.annotation.shapes
             self._file_flags = request.annotation.flags
         if revision != self._save_revision:
@@ -1857,8 +1857,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def mark_clean(self) -> None:
         self._sync_edit_actions()
-        self._file_shapes = self._shape_dicts()
-        self._file_flags = self._read_flag_dock_states()
         self._is_changed = False
         self._actions.save.setEnabled(False)
         self.setWindowTitle(self._get_window_title(dirty=False))
@@ -2158,21 +2156,24 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def undo_shape_edit(self) -> None:
         canvas = self._canvas_widgets.canvas
-        before = [_shape_to_dict(shape=shape) for shape in canvas.shapes]
+        before = canvas.shapes
         canvas.restore_last_shape()
-        after = [_shape_to_dict(shape=shape) for shape in canvas.shapes]
-        # Back where the file is, nothing is unsaved. A write still running
-        # may hold the step undone, so Undo then saves over it as any edit.
+        # Back where the file the document saves to is, nothing is unsaved. A
+        # write still running may hold the step undone, so Undo then saves
+        # over it as any edit.
         back_to_clean = (
             not self._save_writer.is_busy
+            and self._file_path
+            == (self._auto_save_path or self._chosen_save_path or self._label_file_path)
             and self._read_flag_dock_states() == self._file_flags
-            and _shape_dicts_equal(a=after, b=self._file_shapes)
+            and _saved_shapes_equal(a=canvas.shapes, b=self._file_shapes)
         )
         # Undoing a step that saves nothing, such as hiding a shape, leaves
         # the file as it was.
         self._commit_shapes(
             shapes=canvas.shapes,
-            changed=not back_to_clean and not _shape_dicts_equal(a=before, b=after),
+            changed=not back_to_clean
+            and not _saved_shapes_equal(a=before, b=canvas.shapes),
         )
         if back_to_clean:
             # Neither the pending changes nor a failed save are left.
@@ -3540,10 +3541,11 @@ class MainWindow(QtWidgets.QMainWindow):
             shapes=prev_shapes if carry_prev_shapes else shapes, replace=True
         )
         self._load_flags(flags=annotation.flags, widget=self._docks.flag_list)
+        # The carried Shapes are not in this Image's file.
+        self._file_path = label_file_path
+        self._file_shapes = [] if carry_prev_shapes else self._shape_dicts()
+        self._file_flags = self._read_flag_dock_states()
         if carry_prev_shapes:
-            # The carried Shapes are not in this Image's file.
-            self._file_shapes = []
-            self._file_flags = self._read_flag_dock_states()
             self.mark_dirty()
         else:
             self.mark_clean()
@@ -4832,27 +4834,25 @@ def _file_list_item_path(*, item: QtWidgets.QListWidgetItem) -> str:
     return item.data(Qt.ItemDataRole.UserRole)
 
 
-def _saved_shapes_equal(*, a: list[Shape], b: list[Shape]) -> bool:
+def _saved_shapes_equal(*, a: list[Shape], b: list[Shape] | list[ShapeDict]) -> bool:
     # Compares what a save writes, so view state such as visibility is ignored.
-    return _shape_dicts_equal(
-        a=[_shape_to_dict(shape=shape) for shape in a],
-        b=[_shape_to_dict(shape=shape) for shape in b],
+    # Shape by Shape, so the first difference ends the comparison.
+    return len(a) == len(b) and all(
+        _shape_dicts_equal(
+            a=_shape_to_dict(shape=shape_a),
+            b=shape_b if isinstance(shape_b, dict) else _shape_to_dict(shape=shape_b),
+        )
+        for shape_a, shape_b in zip(a, b, strict=True)
     )
 
 
-def _shape_dicts_equal(*, a: list[ShapeDict], b: list[ShapeDict]) -> bool:
-    if len(a) != len(b):
+def _shape_dicts_equal(*, a: ShapeDict, b: ShapeDict) -> bool:
+    mask_a, mask_b = a["mask"], b["mask"]
+    if {**a, "mask": None} != {**b, "mask": None}:
         return False
-    for dict_a, dict_b in zip(a, b, strict=True):
-        mask_a, mask_b = dict_a["mask"], dict_b["mask"]
-        if {**dict_a, "mask": None} != {**dict_b, "mask": None}:
-            return False
-        if mask_a is None or mask_b is None:
-            if mask_a is not mask_b:
-                return False
-        elif not np.array_equal(mask_a, mask_b):
-            return False
-    return True
+    if mask_a is None or mask_b is None:
+        return mask_a is mask_b
+    return np.array_equal(mask_a, mask_b)
 
 
 def _shape_to_dict(*, shape: Shape) -> ShapeDict:
