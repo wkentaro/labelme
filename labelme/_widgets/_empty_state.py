@@ -43,23 +43,9 @@ class EmptyStateWidget(QtWidgets.QWidget):
         self._refresh_icon()
         content_layout.addWidget(icon)
 
-        heading = QtWidgets.QLabel(self.tr("Start annotating"))
-        heading.setObjectName("emptyStateHeading")
-        heading.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        heading_font = heading.font()
-        heading_font.setPointSizeF(max(heading_font.pointSizeF() * 1.5, 18))
-        heading_font.setWeight(QtGui.QFont.Weight.DemiBold)
-        heading.setFont(heading_font)
-        self.setAccessibleName(heading.text())
-        content_layout.addWidget(heading)
-
-        explanation = QtWidgets.QLabel(
-            self.tr("Open an image or a folder of images to begin.")
-        )
-        explanation.setObjectName("emptyStateExplanation")
-        explanation.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        explanation.setWordWrap(True)
-        content_layout.addWidget(explanation)
+        # The buttons say what to do, so the heading and explanation are left
+        # to screen readers.
+        self.setAccessibleName(self.tr("Start annotating"))
 
         buttons = QtWidgets.QHBoxLayout()
         buttons.setSpacing(8)
@@ -81,7 +67,8 @@ class EmptyStateWidget(QtWidgets.QWidget):
         drop_hint.setObjectName("emptyStateDropHint")
         drop_hint.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         content_layout.addWidget(drop_hint)
-        self.setAccessibleDescription(f"{explanation.text()} {drop_hint.text()}.")
+        explanation = self.tr("Open an image or a folder of images to begin.")
+        self.setAccessibleDescription(f"{explanation} {drop_hint.text()}.")
 
         layout.addWidget(content, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
         layout.addStretch()

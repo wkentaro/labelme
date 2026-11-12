@@ -54,6 +54,16 @@ class ToolBar(QtWidgets.QToolBar):
         if orientation == Qt.Orientation.Vertical:
             self.setStyleSheet(VERTICAL_SEPARATOR_STYLE)
 
+        if orientation == Qt.Orientation.Horizontal and any(
+            "\n" in action.iconText() for action in actions
+        ):
+            # Qt centers a button's icon and label as one block, so a one-line
+            # label drops its icon below its two-line neighbours'. An empty
+            # second line keeps every icon on one row.
+            for action in actions:
+                if action.iconText() and "\n" not in action.iconText():
+                    action.setIconText(action.iconText() + "\n")
+
         for action in actions:
             self.addAction(action)
 

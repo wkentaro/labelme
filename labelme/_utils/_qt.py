@@ -152,11 +152,12 @@ ONE_LINE_ICON_TEXT: Final = "one_line_icon_text"
 def _toolbar_label(*, text: str, wrap: bool = True) -> str:
     # Two lines at most, so no language's label grows the toolbar taller.
     # Toolbar labels name the command, so they drop the menu's ellipsis, and
-    # toolbar buttons don't use mnemonics, so the "(&O)" form that CJK
-    # translations use goes too. A translation without spaces (e.g. Japanese)
-    # marks its own break with "\n"; otherwise the break goes where the two
-    # lines come out closest in length, or at a slash.
+    # toolbar buttons don't use mnemonics, so their "&" markers and the "(&O)"
+    # form that CJK translations use go too. A translation without spaces
+    # (e.g. Japanese) marks its own break with "\n"; otherwise the break goes
+    # where the two lines come out closest in length, or at a slash.
     label = re.sub(r"\s*\(&\w\)", "", text).removesuffix("…")
+    label = re.sub(r"&(&?)", r"\1\1", label)
     if not wrap:
         return label.replace("\n", "")
     if "\n" in label:
