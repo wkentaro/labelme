@@ -374,7 +374,7 @@ class _FakeSession:
 
     def run(self, **kwargs: object) -> osam.types.GenerateResponse:
         self.calls.append(kwargs)
-        texts = kwargs["texts"]
+        texts = kwargs.get("texts") or []
         assert isinstance(texts, list)
         return osam.types.GenerateResponse(
             model="fake",
@@ -407,6 +407,37 @@ def test_run_sends_sam3_one_text_at_a_time(
     assert [a.text for a in annotations] == ["dog", "cat"]
     assert [call["texts"] for call in session.calls] == expected_batches
     assert all(call["image"] is _IMAGE for call in session.calls)
+
+
+@pytest.mark.parametrize(
+    ("texts", "sent"),
+    [
+        # SAM decoders read an integer as a pixel center.
+        (None, [[4.5, 6.5]]),
+        # SAM3 reads a box with text by its edges, as the canvas draws them.
+        (["dog"], [[5.0, 7.0]]),
+    ],
+)
+def test_run_sends_prompt_points_in_the_model_convention(
+    *, texts: list[str] | None, sent: list[list[float]]
+) -> None:
+    session = _FakeSession()
+    request = InferenceRequest(
+        model_name="sam3:latest",
+        image_id="img",
+        image=None,
+        points=np.array([[5.0, 7.0]]),
+        point_labels=np.array([1]),
+        texts=texts,
+    )
+
+    _osam_worker._run(
+        session=cast(OsamSession, session), request=request, image=_IMAGE, progress=None
+    )
+
+    [call] = session.calls
+    np.testing.assert_array_equal(call["points"], sent)
+    np.testing.assert_array_equal(request.points, [[5.0, 7.0]])
 
 
 class _OrtFail(Exception):

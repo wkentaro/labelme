@@ -143,7 +143,8 @@ def _is_point_inside_detection(
     if detection.bbox is None:
         return False
     xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
-    x, y = (int(round(coordinate)) for coordinate in point)
+    # The canvas spans pixel c from c to c + 1.
+    x, y = (int(np.floor(coordinate)) for coordinate in point)
     if not (xmin <= x <= xmax and ymin <= y <= ymax):
         return False
     if detection.mask is None:

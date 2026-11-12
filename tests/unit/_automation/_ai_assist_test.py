@@ -242,6 +242,18 @@ def test_point_inside_detection_uses_rounded_mask_origin() -> None:
     assert is_inside is True
 
 
+def test_point_inside_detection_reads_the_pixel_under_the_point() -> None:
+    # The canvas spans pixel c from c to c + 1, so 10.7 is still pixel 10.
+    mask = np.zeros((2, 2), dtype=bool)
+    mask[0, 0] = True
+    detection = Detection(bbox=(10, 20, 11, 21), mask=mask)
+
+    assert _is_point_inside_detection(detection=detection, point=np.array([10.7, 20.7]))
+    assert not _is_point_inside_detection(
+        detection=detection, point=np.array([11.0, 20.0])
+    )
+
+
 def test_point_prompt_reports_best_matching_existing_shape() -> None:
     response = osam.types.GenerateResponse(
         model="stub",

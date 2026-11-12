@@ -56,11 +56,17 @@ def _run(
     progress: ProgressCallback | None,
 ) -> list[osam.types.Annotation]:
     if request.texts is None or request.points is not None:
+        # The canvas spans pixel c from c to c + 1. SAM decoders read an
+        # integer as a pixel center, but SAM3 reads a box with text by its
+        # edges, as drawn.
+        points = request.points
+        if points is not None and request.texts is None:
+            points = points - 0.5
         # SAM3 finds every match for a box with text and one object without.
         return session.run(
             image=image,
             image_id=request.image_id,
-            points=request.points,
+            points=points,
             point_labels=request.point_labels,
             texts=request.texts,
             progress=progress,
