@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING
 from typing import Any
 from typing import Final
 from typing import Literal
+from typing import NamedTuple
 
 import numpy as np
 from loguru import logger
@@ -145,6 +146,15 @@ def _pump_in(connection: Connection, inbox: queue.SimpleQueue, /) -> None:
                 return
 
 
+class _WorkerProcess(NamedTuple):
+    process: BaseProcess
+    on_cpu: bool
+    outbox: queue.SimpleQueue  # carried to the worker by _pump_out
+    inbox: queue.SimpleQueue  # filled from the worker by _pump_in
+    # The image the worker holds, so a request for it is sent without one.
+    sent_image_id: str | None = None
+
+
 @dataclasses.dataclass
 class _Active:
     request_id: int
@@ -191,13 +201,9 @@ class OsamWorker(QtCore.QObject):
     _target: Callable[[Connection, Connection, str | None], None]
     _timeout_s: float
     _context: multiprocessing.context.SpawnContext
-    _process: BaseProcess | None
-    _outbox: queue.SimpleQueue | None
-    _inbox: queue.SimpleQueue
-    _sent_image_id: str | None
+    _worker: _WorkerProcess | None
     _device: Literal["auto", "cpu"]
     _fell_back: bool
-    _process_on_cpu: bool
     _pending: dict[object, tuple[object, InferenceRequest]]
     _active: _Active | None
     _request_ids: itertools.count[int]
@@ -218,13 +224,9 @@ class OsamWorker(QtCore.QObject):
         self._target = target
         self._timeout_s = timeout_s
         self._context = multiprocessing.get_context("spawn")
-        self._process = None
-        self._outbox = None
-        self._inbox = queue.SimpleQueue()
-        self._sent_image_id = None
+        self._worker = None
         self._device = "auto"
         self._fell_back = False
-        self._process_on_cpu = False
         self._pending = {}
         self._active = None
         self._request_ids = itertools.count()
@@ -301,21 +303,21 @@ class OsamWorker(QtCore.QObject):
             return
         channel = next(iter(self._pending))
         job, request = self._pending.pop(channel)
-        process = self._process
+        previous = self._worker
         try:
-            outbox = self._ensure_process()
+            worker = self._ensure_process()
             sent = request
-            if request.image_id == self._sent_image_id:
+            if request.image_id == worker.sent_image_id:
                 sent = dataclasses.replace(request, image=None)
             request_id = next(self._request_ids)
-            outbox.put(("run", request_id, sent))
+            worker.outbox.put(("run", request_id, sent))
         except Exception as error:
             logger.opt(exception=error).error("Failed to start AI inference")
             self._stop_process()
             self.failed.emit(job, f"{type(error).__name__}: {error}")
             self._start_next()
             return
-        self._sent_image_id = request.image_id
+        self._worker = worker._replace(sent_image_id=request.image_id)
         self._set_active(
             active=_Active(
                 request_id=request_id,
@@ -323,20 +325,19 @@ class OsamWorker(QtCore.QObject):
                 job=job,
                 request=request,
                 deadline=time.monotonic() + self._timeout_s,
-                device="cpu" if self._process_on_cpu else None,
-                stage="starting" if self._process is not process else None,
+                device="cpu" if worker.on_cpu else None,
+                stage="starting" if worker is not previous else None,
             )
         )
         self._timer.start()
 
-    def _ensure_process(self) -> queue.SimpleQueue:
+    def _ensure_process(self) -> _WorkerProcess:
         if (
-            self._process is not None
-            and self._process.is_alive()
-            and self._process_on_cpu == self._cpu_only
+            (worker := self._worker) is not None
+            and worker.process.is_alive()
+            and worker.on_cpu == self._cpu_only
         ):
-            assert self._outbox is not None
-            return self._outbox
+            return worker
         self._stop_process()
         child_requests, requests = self._context.Pipe(duplex=False)
         responses, child_responses = self._context.Pipe(duplex=False)
@@ -354,28 +355,29 @@ class OsamWorker(QtCore.QObject):
         finally:
             child_requests.close()
             child_responses.close()
-        self._process = process
-        self._process_on_cpu = self._cpu_only
-        self._outbox = queue.SimpleQueue()
-        self._inbox = queue.SimpleQueue()
+        # Kept before the pumps start, so a failure stops the process.
+        self._worker = worker = _WorkerProcess(
+            process=process,
+            on_cpu=self._cpu_only,
+            outbox=queue.SimpleQueue(),
+            inbox=queue.SimpleQueue(),
+        )
         threading.Thread(
-            target=_pump_out, args=(requests, self._outbox), daemon=True
+            target=_pump_out, args=(requests, worker.outbox), daemon=True
         ).start()
         threading.Thread(
-            target=_pump_in, args=(responses, self._inbox), daemon=True
+            target=_pump_in, args=(responses, worker.inbox), daemon=True
         ).start()
         logger.debug("Started AI worker process pid={}", process.pid)
-        return self._outbox
+        return worker
 
     def _stop_process(self) -> None:
         self._timer.stop()
-        self._sent_image_id = None
-        if self._outbox is not None:
-            self._outbox.put(None)  # closes the requests end, so serve returns
-            self._outbox = None
-        process, self._process = self._process, None
-        if process is None:
+        worker, self._worker = self._worker, None
+        if worker is None:
             return
+        worker.outbox.put(None)  # closes the requests end, so serve returns
+        process = worker.process
         process.join(timeout=0.1)
         if process.is_alive():
             process.kill()
@@ -423,9 +425,10 @@ class OsamWorker(QtCore.QObject):
             }
 
     def _receive(self, *, active: _Active) -> tuple[str, Any] | None:
-        assert self._process is not None
-        while not self._inbox.empty():  # the only reader, so no race
-            kind, request_id, payload = self._inbox.get_nowait()
+        worker = self._worker
+        assert worker is not None
+        while not worker.inbox.empty():  # the only reader, so no race
+            kind, request_id, payload = worker.inbox.get_nowait()
             if request_id != active.request_id:
                 continue
             if kind == "stage":
@@ -437,8 +440,8 @@ class OsamWorker(QtCore.QObject):
                 self.activity_changed.emit()
             else:
                 return kind, payload
-        if not self._process.is_alive():
-            error = f"AI worker exited with code {self._process.exitcode}"
+        if not worker.process.is_alive():
+            error = f"AI worker exited with code {worker.process.exitcode}"
         elif time.monotonic() > active.deadline:
             error = f"AI inference timed out after {self._timeout_s:.0f} s"
         else:
