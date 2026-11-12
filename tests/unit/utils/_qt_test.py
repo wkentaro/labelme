@@ -435,14 +435,15 @@ def test_new_action_drops_cjk_mnemonic_from_toolbar_label(*, qtbot: QtBot) -> No
 @pytest.mark.parametrize(
     ("text", "label"),
     [
-        ("&Save", "&Save"),
-        ("&Open File…", "&Open\nFile"),
-        ("&Brightness/Contrast…", "&Brightness\nContrast"),
-        ("&Delete Annotation File", "&Delete\nAnnotation File"),
+        ("&Save", "Save"),
+        ("&Open File…", "Open\nFile"),
+        ("&Brightness/Contrast…", "Brightness\nContrast"),
+        ("&Delete Annotation File", "Delete\nAnnotation File"),
         ("Supprimer le fichier d'annotations", "Supprimer le fichier\nd'annotations"),
         ("Hình ảnh Tiếp theo(&N)", "Hình ảnh\nTiếp theo"),
         ("Độ sáng/Độ tương phản(&B)…", "Độ sáng\nĐộ tương phản"),
         ("図形を\n編集", "図形を\n編集"),
+        ("Save && &Close", "Save &&\nClose"),
     ],
 )
 def test_toolbar_label_wraps_to_two_balanced_lines(*, text: str, label: str) -> None:
@@ -452,7 +453,7 @@ def test_toolbar_label_wraps_to_two_balanced_lines(*, text: str, label: str) -> 
 @pytest.mark.parametrize(
     ("text", "label"),
     [
-        ("&Open File…", "&Open File"),
+        ("&Open File…", "Open File"),
         ("Hình ảnh Tiếp theo(&N)", "Hình ảnh Tiếp theo"),
         ("図形を\n編集", "図形を編集"),
     ],

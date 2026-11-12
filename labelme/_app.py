@@ -1065,8 +1065,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self._zoom_mode_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._zoom_mode_label.setBuddy(zoom_widget)
         zoom_box_layout = QtWidgets.QVBoxLayout()
-        zoom_box_layout.addWidget(self._zoom_mode_label)
         zoom_box_layout.addLayout(zoom_row)
+        zoom_box_layout.addWidget(self._zoom_mode_label)
+        # No gap above the caption, so it shares a line with the first line
+        # of the toolbar's labels.
+        zoom_box_layout.setSpacing(0)
         zoom_widget_action = QtWidgets.QWidgetAction(image_actions)
         zoom_widget_action.setDefaultWidget(QtWidgets.QWidget())
         zoom_widget_action.defaultWidget().setLayout(zoom_box_layout)

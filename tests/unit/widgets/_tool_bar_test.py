@@ -279,6 +279,19 @@ def test_toolbar_horizontal_buttons_not_equalized(*, toolbar_h: ToolBar) -> None
         assert btn.minimumWidth() == 0
 
 
+def test_toolbar_horizontal_pads_one_line_labels_beside_two_line_ones(
+    *, qtbot: QtBot
+) -> None:
+    one_line = _make_action(text="Save")
+    two_lines = _make_action(text="Open")
+    two_lines.setIconText("Open\nFile")
+    toolbar = ToolBar(title="Test", actions=[one_line, two_lines])
+    qtbot.addWidget(toolbar)
+
+    assert one_line.iconText() == "Save\n"
+    assert two_lines.iconText() == "Open\nFile"
+
+
 # --- font scaling when font_base is provided ---
 
 
