@@ -110,6 +110,15 @@ class _AiStatus(NamedTuple):
     announced: frozenset[str]
 
 
+class _OpenedFolder(NamedTuple):
+    # The folder whose Images the Image List shows, with the Annotation Folder
+    # they use. A None root is no opened folder, as for an Annotation File
+    # opened directly.
+    root: str | None
+    output_dir: Path | None
+    image_paths: tuple[str, ...]
+
+
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
     FIT_SELECTION = enum.auto()
@@ -293,15 +302,13 @@ class MainWindow(QtWidgets.QMainWindow):
     _ai_text: AiTextToAnnotationWidget
     _ai_group: AiToolGroup
 
-    _output_dir_value: Path | None = None
+    _opened_folder_value: _OpenedFolder
     _image: QtGui.QImage
     _annotation: Annotation | None
     _label_file_path: str | None
     _failed_save_path: str | None
     _image_path: str | None
     _file_list_image_path: str | None
-    _loaded_image_paths: list[str]
-    _file_list_root_prefix: str | None
     _file_search_pattern: re.Pattern[str]
     _prev_image_path: str | None
     _viewport_states: dict[str, _ViewportState]
@@ -1371,7 +1378,11 @@ class MainWindow(QtWidgets.QMainWindow):
         file_or_dir: str | None,
         output_dir: str | None,
     ) -> None:
-        self._output_dir = Path(output_dir) if output_dir else None
+        self._opened_folder = _OpenedFolder(
+            root=None,
+            output_dir=Path(output_dir) if output_dir else None,
+            image_paths=(),
+        )
 
         self._image = QtGui.QImage()
         self._annotation = None
@@ -1379,12 +1390,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._failed_save_path = None
         self._image_path = None
         self._file_list_image_path = None
-        self._loaded_image_paths = []
         # Annotated images the search box hides, found when the list is
         # rebuilt and kept current by saves and deletions; the visible ones
         # are counted from their check marks.
         self._hidden_annotated_paths = set()
-        self._file_list_root_prefix = None
         self._file_search_pattern = re.compile("")
         self._prev_image_path = None
         self._viewport_states = {}
@@ -1443,13 +1452,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not file_or_dir:
             return
-        if self._output_dir is not None and not _label_file.is_label_file_path(
-            filename=file_or_dir
+        if (
+            self._opened_folder.output_dir is not None
+            and not _label_file.is_label_file_path(filename=file_or_dir)
         ):
             # --output replaces the folder's remembered Annotation Folder, so
             # opening the folder restores it like any other choice. It must
             # exist, or the restore would skip it as missing.
-            self._output_dir.mkdir(parents=True, exist_ok=True)
+            self._opened_folder.output_dir.mkdir(parents=True, exist_ok=True)
             self._remember_output_dir(
                 opened_dir=file_or_dir
                 if Path(file_or_dir).is_dir()
@@ -1784,14 +1794,14 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         resolved = _label_path.resolve_label_path(
             image_path=self._file_list_image_path or self._image_path,
-            output_dir=self._output_dir,
-            root_prefix=self._file_list_root_prefix,
+            output_dir=self._opened_folder.output_dir,
+            root_prefix=self._opened_folder.root,
         )
         if self._label_file_path is None:
             return resolved
         # The Annotation Folder takes the first copy of a file opened from
         # elsewhere.
-        if self._output_dir is not None and not Path(resolved).exists():
+        if self._opened_folder.output_dir is not None and not Path(resolved).exists():
             return resolved
         return self._label_file_path
 
@@ -3426,8 +3436,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if file_list_image_path is None
             else _label_path.find_label_path(
                 image_path=image_or_label_path,
-                output_dir=self._output_dir,
-                root_prefix=self._file_list_root_prefix,
+                output_dir=self._opened_folder.output_dir,
+                root_prefix=self._opened_folder.root,
                 cached=False,
             )
         )
@@ -3744,7 +3754,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # User Dialogs #
 
     def _get_neighbor_image_path(self, *, step: Literal[-1, 1]) -> str | None:
-        paths = self._loaded_image_paths
+        paths = self._opened_folder.image_paths
         current_path = self._file_list_image_path
         # Closing an Image retains its selected row as the navigation origin.
         if current_path is None and (item := self._docks.file_list.currentItem()):
@@ -3812,8 +3822,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def prompt_output_dir(self) -> None:
         default_output_dir: str
-        if self._output_dir is not None:
-            default_output_dir = str(self._output_dir)
+        if self._opened_folder.output_dir is not None:
+            default_output_dir = str(self._opened_folder.output_dir)
         elif self._image_path:
             default_output_dir = str(Path(self._image_path).parent)
         else:
@@ -3837,10 +3847,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._switch_output_dir(output_dir=Path(output_dir)):
             return
         self._docks.annotation_folder_footer.set_missing(missing=None)
-        assert self._file_list_root_prefix is not None
-        self._remember_output_dir(opened_dir=self._file_list_root_prefix)
+        assert self._opened_folder.root is not None
+        self._remember_output_dir(opened_dir=self._opened_folder.root)
         self.statusBar().showMessage(
-            self.tr("Annotation Folder: %s") % self._output_dir
+            self.tr("Annotation Folder: %s") % self._opened_folder.output_dir
         )
         self.statusBar().show()
 
@@ -3848,19 +3858,19 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue() or not self._switch_output_dir(output_dir=None):
             return
         self._docks.annotation_folder_footer.set_missing(missing=None)
-        if self._file_list_root_prefix is not None:
-            self._remember_output_dir(opened_dir=self._file_list_root_prefix)
+        if self._opened_folder.root is not None:
+            self._remember_output_dir(opened_dir=self._opened_folder.root)
 
     def _switch_output_dir(self, *, output_dir: Path | None) -> bool:
         # Reload the current image against the candidate directory and keep
         # the previous directory when that reload fails, so a bad candidate
         # never becomes the autosave target.
-        previous_output_dir = self._output_dir
-        self._output_dir = output_dir
+        previous_folder = self._opened_folder
+        self._opened_folder = previous_folder._replace(output_dir=output_dir)
         if self._file_list_image_path is not None and not self._load_file(
             image_or_label_path=self._file_list_image_path
         ):
-            self._output_dir = previous_output_dir
+            self._opened_folder = previous_folder
             return False
         self._auto_save_path = None
         self._chosen_save_path = None
@@ -3868,14 +3878,14 @@ class MainWindow(QtWidgets.QMainWindow):
         return True
 
     @property
-    def _output_dir(self) -> Path | None:
-        return self._output_dir_value
+    def _opened_folder(self) -> _OpenedFolder:
+        return self._opened_folder_value
 
-    @_output_dir.setter
-    def _output_dir(self, value: Path | None, /) -> None:
+    @_opened_folder.setter
+    def _opened_folder(self, value: _OpenedFolder, /) -> None:
         # The Annotation Folder footer mirrors every change, wherever it comes from.
-        self._output_dir_value = value
-        self._docks.annotation_folder_footer.set_folder(folder=value)
+        self._opened_folder_value = value
+        self._docks.annotation_folder_footer.set_folder(folder=value.output_dir)
 
     def _save_label_file(self, *, save_as: bool) -> None:
         assert not self._image.isNull(), "cannot save empty image"
@@ -3905,8 +3915,8 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         default_path = _label_path.resolve_label_path(
             image_path=self._file_list_image_path or self._image_path,
-            output_dir=self._output_dir,
-            root_prefix=self._file_list_root_prefix,
+            output_dir=self._opened_folder.output_dir,
+            root_prefix=self._opened_folder.root,
         )
         # The dialog cannot preselect a file in a mirrored subfolder of the
         # Annotation Folder that does not exist yet.
@@ -3939,8 +3949,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return self._label_file_path
         return _label_path.resolve_label_path(
             image_path=self._file_list_image_path or self._image_path,
-            output_dir=self._output_dir,
-            root_prefix=self._file_list_root_prefix,
+            output_dir=self._opened_folder.output_dir,
+            root_prefix=self._opened_folder.root,
         )
 
     def _confirm_deletion(self, *, message: str) -> bool:
@@ -4377,8 +4387,8 @@ class MainWindow(QtWidgets.QMainWindow):
         assert self._image_path is not None
         return self._label_file_path or _label_path.find_label_path(
             image_path=self._file_list_image_path or self._image_path,
-            output_dir=self._output_dir,
-            root_prefix=self._file_list_root_prefix,
+            output_dir=self._opened_folder.output_dir,
+            root_prefix=self._opened_folder.root,
             cached=False,
         )
 
@@ -4464,10 +4474,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
             # The Annotation Folder stays with the folder being closed; one
             # given with --output and no folder still applies.
-            if self._file_list_root_prefix is not None:
-                self._output_dir = None
-            self._loaded_image_paths = []
-            self._file_list_root_prefix = None
+            self._opened_folder = _OpenedFolder(
+                root=None,
+                output_dir=self._opened_folder.output_dir
+                if self._opened_folder.root is None
+                else None,
+                image_paths=(),
+            )
             self._refresh_file_list()
             self._docks.annotation_folder_footer.set_missing(missing=None)
             self._docks.file_dock.setEnabled(False)
@@ -4488,10 +4501,10 @@ class MainWindow(QtWidgets.QMainWindow):
             previous_label_path = (
                 self.current_label_file_path() if self._image_path else None
             )
-            missing_output_dir = self._restore_remembered_output_dir(
+            output_dir, missing_output_dir = self._remembered_output_dir(
                 opened_dir=opened_dir
             )
-            self._import_images_from_dir(root_dir=opened_dir)
+            self._import_images_from_dir(root_dir=opened_dir, output_dir=output_dir)
             loaded = False
             if self.image_list:
                 # Selecting the first row emits no change signal when it is
@@ -4513,21 +4526,21 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._auto_save_path = previous_label_path
         else:
             opened_dir = str(Path(file_or_dir).parent)
-            previous_output_dir = self._output_dir
-            previous_root_prefix = self._file_list_root_prefix
-            missing_output_dir = self._restore_remembered_output_dir(
+            previous_folder = self._opened_folder
+            output_dir, missing_output_dir = self._remembered_output_dir(
                 opened_dir=opened_dir
             )
             # The Annotation File mirrors the image's place under the folder
             # being opened, not the one being replaced.
-            self._file_list_root_prefix = opened_dir
+            self._opened_folder = previous_folder._replace(
+                root=opened_dir, output_dir=output_dir
+            )
             # Load before swapping the Image List, so a failed load leaves the
             # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
-                self._output_dir = previous_output_dir
-                self._file_list_root_prefix = previous_root_prefix
+                self._opened_folder = previous_folder
                 return
-            self._import_images_from_dir(root_dir=opened_dir)
+            self._import_images_from_dir(root_dir=opened_dir, output_dir=output_dir)
             # The load ran before the Image List knew the neighbors.
             self._prefetch_neighbors()
 
@@ -4540,16 +4553,17 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tr("Annotation Folder not found: %s") % missing_output_dir
             )
 
-    def _restore_remembered_output_dir(self, *, opened_dir: str) -> str | None:
+    def _remembered_output_dir(
+        self, *, opened_dir: str
+    ) -> tuple[Path | None, str | None]:
+        # The Annotation Folder to use, and a remembered one that is missing.
         remembered = self._remembered_output_dirs().get(os.path.abspath(opened_dir))
         # Report a missing folder to the caller but keep its entry: it may be
         # on a drive that is not mounted right now, and choosing another
         # folder replaces it.
         if remembered is not None and not Path(remembered).is_dir():
-            self._output_dir = None
-            return remembered
-        self._output_dir = Path(remembered) if remembered else None
-        return None
+            return None, remembered
+        return (Path(remembered) if remembered else None), None
 
     def _remembered_output_dirs(self) -> dict[str, str]:
         return cast(
@@ -4559,10 +4573,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def _remember_output_dir(self, *, opened_dir: str) -> None:
         folders = self._remembered_output_dirs()
         key = os.path.abspath(opened_dir)
-        if self._output_dir is None:
+        if self._opened_folder.output_dir is None:
             folders.pop(key, None)
         else:
-            folders[key] = os.path.abspath(self._output_dir)
+            folders[key] = os.path.abspath(self._opened_folder.output_dir)
         self._window_state.setValue(ANNOTATION_FOLDERS_KEY, folders)
 
     def _open_dir_with_dialog(self) -> None:
@@ -4598,7 +4612,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _new_image_files(self, *, image_files: list[str]) -> list[str]:
         extensions = _list_supported_image_extensions()
-        already_loaded = set(self._loaded_image_paths)
+        already_loaded = set(self._opened_folder.image_paths)
         return [
             path
             for path in image_files
@@ -4614,7 +4628,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if not image_files:
             return
 
-        self._loaded_image_paths.extend(image_files)
+        self._opened_folder = self._opened_folder._replace(
+            image_paths=(*self._opened_folder.image_paths, *image_files)
+        )
         self._refresh_file_list()
 
         visible_image_paths = self.image_list
@@ -4626,42 +4642,45 @@ class MainWindow(QtWidgets.QMainWindow):
                 self._docks.file_list.repaint()
                 return
 
-    def _import_images_from_dir(self, *, root_dir: str | None) -> None:
-        if not root_dir:
-            return
-
+    def _import_images_from_dir(
+        self, *, root_dir: str, output_dir: Path | None
+    ) -> None:
         self._docks.file_dock.setEnabled(True)
         self._docks.file_dock.setToolTip("")
 
         self._prev_opened_dir = root_dir
-        self._file_list_root_prefix = root_dir
-        self._loaded_image_paths = _scan_image_files(root_dir=root_dir)
+        self._opened_folder = _OpenedFolder(
+            root=root_dir,
+            output_dir=output_dir,
+            image_paths=tuple(_scan_image_files(root_dir=root_dir)),
+        )
         self._refresh_file_list()
 
     def _refresh_file_list(self) -> None:
         # The Annotation Folder is remembered per opened folder, so choosing
         # one needs a folder, and the footer has nothing to count without
         # images.
-        has_folder = self._file_list_root_prefix is not None
+        has_folder = self._opened_folder.root is not None
         self._actions.change_output_dir.setEnabled(has_folder)
         self._docks.annotation_folder_footer.setVisible(
-            has_folder and bool(self._loaded_image_paths)
+            has_folder and bool(self._opened_folder.image_paths)
         )
         # Once per path: the search, the headings and the rows all show it.
         labels = [
-            self._file_list_label(image_path=path) for path in self._loaded_image_paths
+            self._file_list_label(image_path=path)
+            for path in self._opened_folder.image_paths
         ]
         image_paths = []
         shown_labels = []
         self._hidden_annotated_paths = set()
-        for path, label in zip(self._loaded_image_paths, labels):
+        for path, label in zip(self._opened_folder.image_paths, labels):
             if self._file_search_pattern.search(label):
                 image_paths.append(path)
                 shown_labels.append(label)
             elif _label_path.has_label_file(
                 image_path=path,
-                output_dir=self._output_dir,
-                root_prefix=self._file_list_root_prefix,
+                output_dir=self._opened_folder.output_dir,
+                root_prefix=self._opened_folder.root,
             ):
                 self._hidden_annotated_paths.add(path)
 
@@ -4676,8 +4695,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     _make_image_list_item(
                         image_path=image_path,
                         label=label,
-                        output_dir=self._output_dir,
-                        root_prefix=self._file_list_root_prefix,
+                        output_dir=self._opened_folder.output_dir,
+                        root_prefix=self._opened_folder.root,
                     )
                 )
             if self._file_list_image_path in image_paths:
@@ -4709,21 +4728,21 @@ class MainWindow(QtWidgets.QMainWindow):
             ):
                 _set_annotated_check_state(
                     item=item,
-                    output_dir=self._output_dir,
-                    root_prefix=self._file_list_root_prefix,
+                    output_dir=self._opened_folder.output_dir,
+                    root_prefix=self._opened_folder.root,
                 )
 
         # Images hidden by the search box have no item, so keep the count's
         # record of them by the same rule.
-        for image_path in self._loaded_image_paths:
+        for image_path in self._opened_folder.image_paths:
             if _label_path.comparable_stem(
                 path=image_path
             ) not in stems or self._matches_file_search(image_path=image_path):
                 continue
             if _label_path.has_label_file(
                 image_path=image_path,
-                output_dir=self._output_dir,
-                root_prefix=self._file_list_root_prefix,
+                output_dir=self._opened_folder.output_dir,
+                root_prefix=self._opened_folder.root,
             ):
                 self._hidden_annotated_paths.add(image_path)
             else:
@@ -4738,7 +4757,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._docks.annotation_folder_footer.set_count(
             annotated=len(self._hidden_annotated_paths) + visible,
-            total=len(self._loaded_image_paths),
+            total=len(self._opened_folder.image_paths),
         )
 
     def _file_list_label(self, *, image_path: str) -> str:
@@ -4746,7 +4765,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Image List stays readable; the full path stays in the tooltip.
         # ImageListDelegate groups rows by this path's folder.
         relative = _label_path.relative_to_root(
-            path=image_path, root_prefix=self._file_list_root_prefix
+            path=image_path, root_prefix=self._opened_folder.root
         )
         return image_path if relative is None else relative
 

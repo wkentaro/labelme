@@ -102,7 +102,7 @@ def _verify_save_as(_win: MainWindow, paths: _Paths, /) -> bool:
 
 
 def _verify_change_output_dir(win: MainWindow, paths: _Paths, /) -> bool:
-    return win._output_dir == paths.new_output_dir
+    return win._opened_folder.output_dir == paths.new_output_dir
 
 
 @pytest.mark.parametrize(

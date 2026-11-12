@@ -691,7 +691,7 @@ def test_prompt_output_dir_rejects_corrupt_annotation(
     win.prompt_output_dir()
 
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
-    assert win._output_dir is None
+    assert win._opened_folder.output_dir is None
     assert win._annotation is annotation_before
     assert win._canvas_widgets.canvas.pixmap.cacheKey() == pixmap_cache_key_before
     assert win._label_file_path == str(current_image.with_suffix(".json"))
@@ -731,7 +731,7 @@ def test_prompt_output_dir_loads_candidate_before_committing(
     assert current_item.checkState() == Qt.CheckState.Unchecked
     win.prompt_output_dir()
 
-    assert win._output_dir == candidate_dir
+    assert win._opened_folder.output_dir == candidate_dir
     assert win._label_file_path == str(candidate_annotation)
     assert win._annotation is not None
     assert win._annotation.other_data["candidateMarker"] is True

@@ -43,20 +43,20 @@ def test_annotation_folder_is_restored_for_opened_folder(
     first = main_win(file_or_dir=images)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=first)
     first.prompt_output_dir()
-    assert first._output_dir == annotation_folder
+    assert first._opened_folder.output_dir == annotation_folder
     first.close()
 
     reopened = main_win(file_or_dir=images)
-    assert reopened._output_dir == annotation_folder
+    assert reopened._opened_folder.output_dir == annotation_folder
     reopened.close()
 
     # Opening an image opens its folder, so the same entry applies.
     image = main_win(file_or_dir=images / "2011_000003.jpg")
-    assert image._output_dir == annotation_folder
+    assert image._opened_folder.output_dir == annotation_folder
 
     # A folder without an entry keeps annotation files next to its images.
     image._load_from_file_or_dir(file_or_dir=str(data_path / "annotated"))
-    assert image._output_dir is None
+    assert image._opened_folder.output_dir is None
 
 
 def test_cli_output_wins_and_is_remembered(
@@ -76,11 +76,11 @@ def test_cli_output_wins_and_is_remembered(
     first.close()
 
     win = main_win(file_or_dir=images, output_dir=cli)
-    assert win._output_dir == cli
+    assert win._opened_folder.output_dir == cli
     win.close()
 
     reopened = main_win(file_or_dir=images)
-    assert reopened._output_dir == cli
+    assert reopened._opened_folder.output_dir == cli
 
 
 def test_cli_output_that_does_not_exist_yet_is_used(
@@ -92,7 +92,7 @@ def test_cli_output_that_does_not_exist_yet_is_used(
     cli = tmp_path / "new" / "annotations"
 
     win = main_win(file_or_dir=data_path / "raw", output_dir=cli)
-    assert win._output_dir == cli
+    assert win._opened_folder.output_dir == cli
     assert cli.is_dir()
 
 
@@ -110,7 +110,7 @@ def test_missing_annotation_folder_falls_back_next_to_images(
     first.close()
 
     win = main_win(file_or_dir=images)
-    assert win._output_dir is None
+    assert win._opened_folder.output_dir is None
     assert win.statusBar().currentMessage() == f"Annotation Folder not found: {missing}"
     # The entry stays so the folder is used again once it is back.
     assert win._window_state.value(ANNOTATION_FOLDERS_KEY) == {
@@ -159,7 +159,7 @@ def test_opened_annotation_file_leaves_the_folders_annotation_folder(
 
     win = main_win(file_or_dir=images, config_overrides=dict(auto_save=False))
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    assert win._output_dir == remembered
+    assert win._opened_folder.output_dir == remembered
 
     win._load_from_file_or_dir(file_or_dir=str(opened))
     canvas = win._canvas_widgets.canvas
@@ -184,11 +184,11 @@ def test_cli_output_stays_with_its_folder(
     cli.mkdir()
 
     win = main_win(file_or_dir=data_path / "raw", output_dir=cli)
-    assert win._output_dir == cli
+    assert win._opened_folder.output_dir == cli
 
     # Another folder opened in the same session uses its own entry.
     win._load_from_file_or_dir(file_or_dir=str(data_path / "annotated"))
-    assert win._output_dir is None
+    assert win._opened_folder.output_dir is None
     assert str(data_path / "annotated") not in win._remembered_output_dirs()
 
 
@@ -230,7 +230,7 @@ def test_failed_folder_open_keeps_each_image_on_its_own_annotation_folder(
     assert win.current_label_file_path() == str(
         first_folder / f"{Path(first_image).stem}.json"
     )
-    assert win._output_dir == second_folder
+    assert win._opened_folder.output_dir == second_folder
 
     win._load_from_file_or_dir(file_or_dir=str(second_images / "02-valid.jpg"))
     assert win.current_label_file_path() == str(second_folder / "02-valid.json")
@@ -268,7 +268,7 @@ def test_failed_parent_folder_open_keeps_open_subfolder_image_destination(
     win._load_from_file_or_dir(file_or_dir=str(parent))
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
     assert win._image_path == str(image)
-    assert win._output_dir == parent_folder
+    assert win._opened_folder.output_dir == parent_folder
     assert win.current_label_file_path() == str(sub_folder / "02-valid.json")
 
 
@@ -312,7 +312,7 @@ def test_unsaved_changes_save_before_the_annotation_folder_switches(
     # would default into the new folder's Annotation Folder.
     assert len(choices) == 1
     assert not save_dirs
-    assert win._output_dir == remembered
+    assert win._opened_folder.output_dir == remembered
 
 
 def _footer_text(*, win: MainWindow) -> str:
@@ -356,12 +356,12 @@ def test_annotation_folder_footer_follows_changes(
     assert set(_check_states(win=win)) == {Qt.CheckState.Checked}
 
     _menu_action(win=win, text="Change Annotation Folder…").trigger()
-    assert win._output_dir == annotation_folder
+    assert win._opened_folder.output_dir == annotation_folder
     assert _footer_text(win=win) == "0 of 3 annotated in annotations"
     assert set(_check_states(win=win)) == {Qt.CheckState.Unchecked}
 
     _menu_action(win=win, text="Next to Images").trigger()
-    assert win._output_dir is None
+    assert win._opened_folder.output_dir is None
     assert _footer_text(win=win) == "3 of 3 annotated · next to images"
     assert set(_check_states(win=win)) == {Qt.CheckState.Checked}
     assert win._window_state.value(ANNOTATION_FOLDERS_KEY) == {}
@@ -381,7 +381,7 @@ def test_next_to_images_keeps_annotation_folder_when_unsaved_changes_are_kept(
 
     _menu_action(win=win, text="Next to Images").trigger()
 
-    assert win._output_dir == tmp_path
+    assert win._opened_folder.output_dir == tmp_path
     assert not _menu_action(win=win, text="Next to Images").isChecked()
 
 
@@ -429,7 +429,7 @@ def test_missing_folder_warning_survives_a_refused_folder(
     _menu_action(win=win, text="Change Annotation Folder…").trigger()
 
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
-    assert win._output_dir is None
+    assert win._opened_folder.output_dir is None
     assert _footer_text(win=win) == "Not found: unmounted · next to images"
 
 
