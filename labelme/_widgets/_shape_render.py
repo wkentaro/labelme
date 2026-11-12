@@ -113,10 +113,10 @@ class ShapeRenderCache:
     max_bytes: int
     _max_entries: int
     _entries: collections.OrderedDict[
-        tuple[object, ...], tuple[QtGui.QImage | QtGui.QPainterPath, int]
+        tuple[object, ...], tuple[QtGui.QImage | QtGui.QPainterPath | _ShapePaths, int]
     ]
     _size_bytes: int
-    _used: set[tuple[object, ...]]
+    _used: set[int]
 
     def __init__(
         self, *, max_bytes: int = 64 * 1024 * 1024, max_entries: int = 512
@@ -137,11 +137,11 @@ class ShapeRenderCache:
 
     def _get(
         self, *, key: tuple[object, ...]
-    ) -> QtGui.QImage | QtGui.QPainterPath | None:
+    ) -> QtGui.QImage | QtGui.QPainterPath | _ShapePaths | None:
         entry = self._entries.get(key)
         if entry is None:
             return None
-        self._used.add(key)
+        self._used.add(id(entry[0]))
         self._entries.move_to_end(key)
         return entry[0]
 
@@ -149,7 +149,7 @@ class ShapeRenderCache:
         self,
         *,
         key: tuple[object, ...],
-        value: QtGui.QImage | QtGui.QPainterPath,
+        value: QtGui.QImage | QtGui.QPainterPath | _ShapePaths,
         size_bytes: int,
     ) -> None:
         # Qt allocations are estimated; include keys and conservative entry overhead.
@@ -161,14 +161,21 @@ class ShapeRenderCache:
             or len(self._entries) >= self._max_entries
         ):
             # Protect this paint's residents so an oversized scene cannot thrash.
-            victim = next((k for k in self._entries if k not in self._used), None)
+            victim = next(
+                (
+                    k
+                    for k, (asset, _) in self._entries.items()
+                    if id(asset) not in self._used
+                ),
+                None,
+            )
             if victim is None:
                 return
             _, removed_bytes = self._entries.pop(victim)
             self._size_bytes -= removed_bytes
         self._entries[key] = value, size_bytes
         self._size_bytes += size_bytes
-        self._used.add(key)
+        self._used.add(id(value))
 
 
 def render_shape(
@@ -193,7 +200,7 @@ def render_shape(
         _paint_mask(painter=painter, shape=shape, context=context, cache=cache)
 
     if len(shape.points) > 0:
-        _paint_shape_points(painter=painter, shape=shape, context=context)
+        _paint_shape_points(painter=painter, shape=shape, context=context, cache=cache)
 
     if context.show_label:
         _paint_label(painter=painter, shape=shape, context=context)
@@ -359,9 +366,40 @@ def _paint_shape_points(
     painter: QtGui.QPainter,
     shape: Shape,
     context: ShapeRenderContext,
+    cache: ShapeRenderCache | None,
 ) -> None:
     palette = context.palette
-    paths = _build_shape_points_paths(shape=shape, context=context)
+    key = None
+    if (
+        cache is not None
+        and shape.shape_type == "polygon"
+        and shape.points.nbytes <= cache.max_bytes
+    ):
+        key = (
+            "polygon",
+            shape.points.shape,
+            shape.points.dtype.str,
+            shape.points.tobytes(),
+            shape.closed,
+            context.scale,
+            context.point_size,
+            context.point_type,
+            context.highlight,
+            context.show_vertices,
+        )
+    paths = cache._get(key=key) if cache is not None and key is not None else None
+    if paths is None:
+        paths = _build_shape_points_paths(shape=shape, context=context)
+        if cache is not None and key is not None:
+            cache._put(
+                key=key,
+                value=paths,
+                size_bytes=paths.line.capacity() * 32
+                + sys.getsizeof(paths)
+                + sys.getsizeof(paths.vertices)
+                + len(paths.vertices) * 256,
+            )
+    assert isinstance(paths, _ShapePaths)
 
     if context.outline:
         painter.drawPath(paths.line)
@@ -548,8 +586,10 @@ def _build_shape_points_paths(
     ):
         return paths
     for i in range(len(points)):
-        if context.show_vertices or (
-            context.highlight is not None and context.highlight.index == i
+        if (
+            shape.shape_type == "point"
+            or context.show_vertices
+            or (context.highlight is not None and context.highlight.index == i)
         ):
             _append_shape_vertex(
                 vertices=paths.vertices, shape=shape, context=context, vertex_index=i
@@ -559,12 +599,16 @@ def _build_shape_points_paths(
         and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
     ):
         for i in range(len(points)):
-            _append_shape_rotation_vertex(
-                vertices=paths.rotation_vertices,
-                shape=shape,
-                context=context,
-                vertex_index=i,
-            )
+            if context.show_vertices or (
+                context.rotation_highlight is not None
+                and context.rotation_highlight.index == i
+            ):
+                _append_shape_rotation_vertex(
+                    vertices=paths.rotation_vertices,
+                    shape=shape,
+                    context=context,
+                    vertex_index=i,
+                )
         _build_shape_oriented_rectangle_arrow_path(
             path=paths.orientation_arrow, shape=shape, scale=scale
         )

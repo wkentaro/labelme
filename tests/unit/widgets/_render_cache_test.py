@@ -39,10 +39,18 @@ def _paint(
     shape: Shape,
     context: render.ShapeRenderContext,
     cache: render.ShapeRenderCache | None,
+    device_pixel_ratio: int = 1,
+    opacity: float = 1.0,
 ) -> QtGui.QImage:
-    image = QtGui.QImage(260, 220, QtGui.QImage.Format.Format_ARGB32)
+    image = QtGui.QImage(
+        260 * device_pixel_ratio,
+        220 * device_pixel_ratio,
+        QtGui.QImage.Format.Format_ARGB32,
+    )
+    image.setDevicePixelRatio(device_pixel_ratio)
     image.fill(QtCore.Qt.GlobalColor.white)
     painter = QtGui.QPainter(image)
+    painter.setOpacity(opacity)
     painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
     painter.setRenderHint(QtGui.QPainter.RenderHint.SmoothPixmapTransform)
     render.render_shape(painter=painter, shape=shape, context=context, cache=cache)
@@ -155,3 +163,123 @@ def test_oversized_masks_bypass_cache() -> None:
         shape=shape, context=_context(), cache=None
     )
     assert not cache._entries
+
+
+def _polygon() -> Shape:
+    return Shape(
+        points=np.array([[25.0, 25.0], [90.0, 25.0], [90.0, 90.0], [25.0, 90.0]]),
+        closed=True,
+    )
+
+
+def test_polygon_paths_reuse_content_across_copies_and_undo(
+    *,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    build = Mock(wraps=render._build_shape_points_paths)
+    monkeypatch.setattr(render, "_build_shape_points_paths", build)
+    cache = render.ShapeRenderCache()
+    shape = _polygon()
+    context = dataclasses.replace(_context(), show_vertices=False)
+    _paint(shape=shape, context=context, cache=cache)
+    original = shape.copy()
+    shape = shape.copy()
+    _paint(
+        shape=shape,
+        context=dataclasses.replace(context, selected=True, fill=True),
+        cache=cache,
+    )
+    assert build.call_count == 1
+    shape.move_vertex(i=0, pos=[28.0, 30.0])
+    _paint(shape=shape, context=context, cache=cache)
+    assert build.call_count == 2
+    _paint(shape=original.copy(), context=context, cache=cache)
+    assert build.call_count == 2
+    assert cache._size_bytes <= cache.max_bytes
+
+
+@pytest.mark.parametrize("scale", [0.447, 1.0, 2.5])
+@pytest.mark.parametrize("show_vertices", [False, True])
+@pytest.mark.parametrize(
+    "highlight",
+    [
+        None,
+        render.VertexHighlight(index=0, mode="near"),
+        render.VertexHighlight(index=1, mode="move"),
+    ],
+)
+def test_cached_polygon_matches_pixels_through_render_state_changes(
+    *,
+    scale: float,
+    show_vertices: bool,
+    highlight: render.VertexHighlight | None,
+) -> None:
+    cache = render.ShapeRenderCache()
+    shape = _polygon()
+    _paint(shape=shape, context=_context(), cache=cache)
+    context = dataclasses.replace(
+        _context(), scale=scale, show_vertices=show_vertices, highlight=highlight
+    )
+    for changes in (
+        {},
+        {"selected": True, "fill": True},
+        {"point_size": 12, "point_type": "square"},
+    ):
+        state = dataclasses.replace(context, **changes)
+        for _ in range(2):
+            cache.begin_paint()
+            assert _paint(shape=shape, context=state, cache=cache) == _paint(
+                shape=shape, context=state, cache=None
+            )
+    shape.closed = False
+    assert _paint(shape=shape, context=context, cache=cache) == _paint(
+        shape=shape, context=context, cache=None
+    )
+
+
+def test_oversized_polygon_bypasses_cache() -> None:
+    cache = render.ShapeRenderCache(max_bytes=1)
+    shape = _polygon()
+    assert _paint(shape=shape, context=_context(), cache=cache) == _paint(
+        shape=shape, context=_context(), cache=None
+    )
+    assert not cache._entries
+
+
+@pytest.mark.parametrize("device_pixel_ratio", [1, 2])
+def test_cached_overlapping_translucent_polygon_handles(
+    *, device_pixel_ratio: int
+) -> None:
+    shape = Shape(
+        points=np.array([[40.0, 40.0], [42.0, 40.0], [42.0, 42.0], [40.0, 42.0]]),
+        closed=True,
+    )
+    palette = dataclasses.replace(
+        _context().palette, line=QtGui.QColor(20, 80, 150, 128)
+    )
+    context = dataclasses.replace(
+        _context(),
+        palette=palette,
+        fill=True,
+        highlight=render.VertexHighlight(index=0, mode="near"),
+    )
+    cache = render.ShapeRenderCache()
+    expected = _paint(
+        shape=shape,
+        context=context,
+        cache=None,
+        device_pixel_ratio=device_pixel_ratio,
+        opacity=0.5,
+    )
+    for _ in range(2):
+        cache.begin_paint()
+        assert (
+            _paint(
+                shape=shape,
+                context=context,
+                cache=cache,
+                device_pixel_ratio=device_pixel_ratio,
+                opacity=0.5,
+            )
+            == expected
+        )
