@@ -210,6 +210,22 @@ def test_shapes_from_detections_polygon_with_mask_traces_contour() -> None:
     assert len(shape.points) >= 3
 
 
+def test_shapes_from_detections_polygon_sits_on_the_mask_pixels() -> None:
+    # A fractional bbox origin rounds as the Mask Shape's does, so the polygon
+    # covers pixels 5 to 9 and stays inside a 10x10 image.
+    [shape] = shapes_from_detections(
+        detections=[
+            Detection(bbox=(5.25, 5.25, 9, 9), mask=np.ones((5, 5), dtype=bool))
+        ],
+        shape_type="polygon",
+        image_size=(10, 10),
+        polygon_detail=100,
+    )
+
+    assert shape.points.min(axis=0) == pytest.approx([5, 5])
+    assert shape.points.max(axis=0) == pytest.approx([10, 10])
+
+
 def test_shapes_from_detections_polygon_simplifies_pixel_stair_steps() -> None:
     mask = np.zeros((100, 100), dtype=bool)
     mask[20:80, 30:70] = True
