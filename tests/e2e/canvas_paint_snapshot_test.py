@@ -30,7 +30,8 @@ pytestmark = pytest.mark.pixel_snapshot
 
 # Pinning canvas size, scale, and background decouples the snapshot from platform
 # window chrome. Reference pixels remain Linux-specific because Qt rendering can
-# differ across platforms. Linux defaults to the Fusion style.
+# differ across platforms. labelme.__main__.main() sets the Fusion style except
+# on Windows 11.
 _RENDER_WIDTH: Final[int] = 600
 _RENDER_HEIGHT: Final[int] = 450
 _BACKGROUND_COLOR: Final[QColor] = QColor(239, 239, 239)

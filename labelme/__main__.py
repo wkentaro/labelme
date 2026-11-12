@@ -454,9 +454,9 @@ def main() -> None:
         QtCore.QLibraryInfo.path(QtCore.QLibraryInfo.LibraryPath.TranslationsPath),
     )
     app = QtWidgets.QApplication(sys.argv)
-    # Windows 10's default style forces a light palette, so the dark theme
-    # needs Fusion there; elsewhere the platform's own style looks native.
-    if app.style().name() == "windowsvista":
+    # Only Windows 11's style looks current: Qt's macOS style draws dated lists
+    # and dock titles, and Windows 10's forces a light palette in dark mode.
+    if app.style().name() != "windows11":
         app.setStyle("Fusion")
     apply_color_theme(theme=color_theme)
     app.setApplicationName(__appname__)
