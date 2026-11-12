@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
+import pytest
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
@@ -189,6 +190,57 @@ def test_undo_to_discarded_shapes_keeps_the_unsaved_mark(
     qtbot.keyClick(canvas, Qt.Key.Key_Right)
 
     # Back to the discarded Shapes, which the file does not hold.
+    win.undo_shape_edit()
+
+    is_changed = win._is_changed
+    win.mark_clean()
+    assert is_changed
+
+
+def test_undo_past_a_manual_save_keeps_the_unsaved_mark(
+    *, main_win: MainWinFactory, qtbot: QtBot, data_path: Path
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.json"),
+        config_overrides=dict(auto_save=False),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    qtbot.keyClick(canvas, Qt.Key.Key_Right)
+    assert win.save_labels(label_path=win._save_destination())
+
+    # Back to the loaded Shapes, which the save replaced in the file.
+    win.undo_shape_edit()
+
+    is_changed = win._is_changed
+    # A dirty window would block teardown on the Unsaved Changes dialog.
+    win.mark_clean()
+    assert is_changed
+
+
+def test_undo_after_deleting_the_file_keeps_the_unsaved_mark(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    win = main_win(
+        file_or_dir=str(data_path / "annotated/2011_000003.json"),
+        config_overrides=dict(auto_save=False),
+    )
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    loaded = [shape.copy() for shape in canvas.shapes]
+    assert win.save_labels(label_path=win._save_destination())
+    monkeypatch.setattr(win, "_confirm_deletion", lambda **_kwargs: True)
+    win.delete_file()
+    # Pasting selects the pasted Shapes, and the nudge moves them all.
+    win._insert_shapes(shapes=loaded)
+    qtbot.keyClick(canvas, Qt.Key.Key_Right)
+
+    # Back to the Shapes of the deleted file, which no file holds.
     win.undo_shape_edit()
 
     is_changed = win._is_changed

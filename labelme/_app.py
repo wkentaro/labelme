@@ -1826,9 +1826,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # can clear the dirty marker or replace its failure status, but every
         # write changes what the file holds.
         if error is None:
-            self._file_path = request.filename
-            self._file_shapes = request.annotation.shapes
-            self._file_flags = request.annotation.flags
+            self._record_file_contents(request=request)
         if revision != self._save_revision:
             return
         if error is not None:
@@ -2748,8 +2746,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 message=self.tr("<b>%s</b>") % self._save_error_text(error=e),
             )
             return False
+        self._record_file_contents(request=request)
         self._record_saved_annotation(label_path=request.filename)
         return True
+
+    def _record_file_contents(self, *, request: SaveRequest) -> None:
+        # Every successful write changes what the file holds.
+        self._file_path = request.filename
+        self._file_shapes = request.annotation.shapes
+        self._file_flags = request.annotation.flags
 
     def _insert_shapes(self, *, shapes: list[Shape]) -> None:
         # Committing reloads the shapes, which would discard an unfinished one.
@@ -3997,6 +4002,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # stack with the empty state, keeping "top mirrors current" intact.
         self._canvas_widgets.canvas.shape_backups.clear()
         self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
+        # As an Image with no file.
+        self._file_path = None
+        self._file_shapes = []
+        self._file_flags = self._read_flag_dock_states()
         self.mark_clean()
         self._actions.delete_file.setEnabled(self.has_label_file())
 
