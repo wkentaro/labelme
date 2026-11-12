@@ -596,7 +596,6 @@ class Canvas(QtWidgets.QWidget):
             highlight=self._highlight if highlighted else None,
             rotation_highlight=self._rotation_highlight if highlighted else None,
             show_label=self._show_labels,
-            show_vertices=selected or highlighted,
         )
 
     def _draft_render_context(
