@@ -69,14 +69,15 @@ class _Pull(QtCore.QObject):
 
     model_name: str
     error: str | None
-    # Byte counts exceed a C++ int for multi-GiB weights, so pass them as objects.
-    progress = QtCore.Signal(str, object, object)
+    progress: tuple[str, int, int | None]
+    progress_changed = QtCore.Signal()
     finished = QtCore.Signal()
 
     def __init__(self, *, model_name: str, parent: QtCore.QObject) -> None:
         super().__init__(parent)
         self.model_name = model_name
         self.error: str | None = None
+        self.progress = ("", 0, None)
         self._completed = False
         self._stopped = False
         import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
@@ -182,7 +183,8 @@ class _Pull(QtCore.QObject):
             if message[0] == "progress":
                 if not self._stopped:
                     _, filename, done, total = message
-                    self.progress.emit(filename, done, total)
+                    self.progress = (filename, done, total)
+                    self.progress_changed.emit()
             elif message[0] == "error":
                 self.error = message[1]
             elif message[0] in {"cancelled", "done"}:
@@ -199,8 +201,6 @@ class ModelManager(QtCore.QObject):
     models: dict[str, str]
     errors: dict[str, str]
     queue: list[str]
-    active: str | None
-    progress: tuple[str, int, int | None]
 
     def __init__(self, *, parent: QtCore.QObject | None = None) -> None:
         super().__init__(parent)
@@ -210,10 +210,16 @@ class ModelManager(QtCore.QObject):
         } | dict(AI_TEXT_MODEL_OPTIONS)
         self.errors = {}
         self.queue = []
-        self.active = None
-        self.progress = ("", 0, None)
         self._pull = None
         self._closed = False
+
+    @property
+    def active(self) -> str | None:
+        return self._pull.model_name if self._pull is not None else None
+
+    @property
+    def progress(self) -> tuple[str, int, int | None]:
+        return self._pull.progress if self._pull is not None else ("", 0, None)
 
     def is_ready(self, *, model_name: str) -> bool:
         # Every writer verifies the hash before moving a file into the cache, so
@@ -255,17 +261,14 @@ class ModelManager(QtCore.QObject):
     def _start_next(self) -> None:
         if self._closed or self._pull is not None or not self.queue:
             return
-        self.active = self.queue.pop(0)
-        self.progress = ("", 0, None)
-        self._pull = _Pull(model_name=self.active, parent=self)
-        self._pull.progress.connect(self._on_progress)
+        self._pull = _Pull(model_name=self.queue.pop(0), parent=self)
+        self._pull.progress_changed.connect(self.progress_changed)
         self._pull.finished.connect(self._on_finished)
         try:
             self._pull.start()
         except Exception as error:
             pull = self._pull
             self._pull = None
-            self.active = None
             self.errors[pull.model_name] = str(error)
             pull.deleteLater()
             self.changed.emit()
@@ -273,19 +276,12 @@ class ModelManager(QtCore.QObject):
             return
         self.changed.emit()
 
-    def _on_progress(self, filename: str, done: object, total: object, /) -> None:
-        assert isinstance(done, int)
-        self.progress = (filename, done, total if isinstance(total, int) else None)
-        self.progress_changed.emit()
-
     def _on_finished(self) -> None:
         assert self._pull is not None
         pull = self._pull
         self._pull = None
-        if pull.model_name == self.active:
-            self.active = None
-            if pull.error is not None:
-                self.errors[pull.model_name] = pull.error
+        if pull.error is not None:
+            self.errors[pull.model_name] = pull.error
         pull.deleteLater()
         self.changed.emit()
         self._start_next()
@@ -298,7 +294,6 @@ class ModelManager(QtCore.QObject):
             self.errors[pull.model_name] = pull.error
             return False
         self._pull = None
-        self.active = None
         if pull.error is not None:
             self.errors[pull.model_name] = pull.error
         pull.deleteLater()
@@ -336,5 +331,4 @@ class ModelManager(QtCore.QObject):
             self._closed = False
             return False
         self.queue.clear()
-        self.active = None
         return True
