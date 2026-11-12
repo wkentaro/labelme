@@ -251,6 +251,14 @@ class LabelDialog(QtWidgets.QDialog):
         if watched is not self.edit or event.type() != QtCore.QEvent.Type.KeyPress:
             return super().eventFilter(watched, event)
         assert isinstance(event, QtGui.QKeyEvent)
+        if (
+            event.key() in (QtCore.Qt.Key.Key_Return, QtCore.Qt.Key.Key_Enter)
+            and self.edit.completer().completionMode()
+            == QtWidgets.QCompleter.CompletionMode.InlineCompletion
+        ):
+            # QLineEdit can retain an inline suggestion from an earlier popup.
+            self._ok_button.click()
+            return True
         actions = {
             QtCore.Qt.Key.Key_Up: QtWidgets.QAbstractItemView.CursorAction.MoveUp,
             QtCore.Qt.Key.Key_Down: QtWidgets.QAbstractItemView.CursorAction.MoveDown,

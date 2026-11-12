@@ -9,6 +9,71 @@ from pytestqt.qtbot import QtBot
 from labelme._widgets._label_dialog import LabelDialog
 
 
+@pytest.mark.parametrize("completion", ["startswith", "contains"])
+@pytest.mark.parametrize("text", ["cat", "ca", "unmatched"])
+@pytest.mark.parametrize("key", [QtCore.Qt.Key.Key_Return, QtCore.Qt.Key.Key_Enter])
+def test_return_accepts_prefill_after_typing_in_an_earlier_popup(
+    *, qtbot: QtBot, completion: str, text: str, key: QtCore.Qt.Key
+) -> None:
+    dialog = LabelDialog(labels=["cat", "cattle", "dog"], completion=completion)
+    qtbot.addWidget(dialog)
+
+    def type_previous_label() -> None:
+        dialog.edit.clear()
+        qtbot.keyClicks(dialog.edit, "dog")
+        dialog.accept()
+
+    QtCore.QTimer.singleShot(0, type_previous_label)
+    previous = dialog.popup(text="cat", move=False)
+    assert previous is not None and previous.label == "dog"
+    accepted: list[bool] = []
+
+    def accept_prefill() -> None:
+        try:
+            assert dialog.edit.text() == text
+            qtbot.keyClick(dialog.edit, key)
+            accepted.append(not dialog.isVisible())
+        finally:
+            if dialog.isVisible():
+                dialog.reject()
+
+    QtCore.QTimer.singleShot(0, accept_prefill)
+    entry = dialog.popup(text=text, move=False)
+    assert accepted == [True]
+    assert entry is not None and entry.label == text
+
+
+def test_return_accepts_clicked_label_over_an_earlier_inline_suggestion(
+    *, qtbot: QtBot
+) -> None:
+    dialog = LabelDialog(labels=["cat", "dog"])
+    qtbot.addWidget(dialog)
+    accepted: list[bool] = []
+
+    def choose_label() -> None:
+        try:
+            dialog.edit.clear()
+            qtbot.keyClicks(dialog.edit, "dog")
+            item = dialog.label_list.item(0)
+            assert item is not None
+            qtbot.mouseClick(
+                dialog.label_list.viewport(),
+                QtCore.Qt.MouseButton.LeftButton,
+                pos=dialog.label_list.visualItemRect(item).center(),
+            )
+            assert dialog.edit.text() == "cat"
+            qtbot.keyClick(dialog.edit, QtCore.Qt.Key.Key_Return)
+            accepted.append(not dialog.isVisible())
+        finally:
+            if dialog.isVisible():
+                dialog.reject()
+
+    QtCore.QTimer.singleShot(0, choose_label)
+    entry = dialog.popup(text="cat", move=False)
+    assert accepted == [True]
+    assert entry is not None and entry.label == "cat"
+
+
 @pytest.mark.parametrize(
     "modifier",
     [
