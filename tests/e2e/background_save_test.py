@@ -172,7 +172,7 @@ def test_transitions_wait_for_active_writer(
             QtWidgets.QFileDialog, "getExistingDirectory", lambda *_a, **_k: str(output)
         )
         raw_win.prompt_output_dir()
-        assert raw_win._output_dir == output
+        assert raw_win._opened_folder.output_dir == output
         assert json.loads(old_path.read_text())["shapes"][0]["points"][0][0] == 2
     assert not raw_win._save_writer.is_busy
 
