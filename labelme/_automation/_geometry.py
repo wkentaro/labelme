@@ -14,6 +14,7 @@ from .._shape import Shape
 
 # Highest value of the mask polygonization detail slider.
 _DETAIL_MAX: Final = 100
+_FLOAT32_EPS: Final = float(np.finfo(np.float32).eps)
 
 
 class Circle(NamedTuple):
@@ -194,13 +195,33 @@ def _filter_lands_beyond_deviation(
     return mask & surviving_lands
 
 
-def _simplify_contour(
-    *,
-    contour: NDArray[np.float64],
-    detail: int,
-    mask_shape: tuple[int, int],
-) -> NDArray[np.float32]:
-    points = contour[:, ::-1]
+def _simplify_contours(
+    *, contours: list[NDArray[np.float64]], detail: int, mask_shape: tuple[int, int]
+) -> list[NDArray[np.float32]]:
+    # Douglas-Peucker takes closed chains, ending where they start.
+    smoothed = [_smooth_contour(points=points, detail=detail) for points in contours]
+    simplified = _approximate_polygons(
+        chains=[np.vstack([points, points[0]]) for points, _ in smoothed],
+        tolerances=[tolerance for _, tolerance in smoothed],
+    )
+    clipped = [
+        _clip_to_mask(points=chain[:-1], mask_shape=mask_shape) for chain in simplified
+    ]
+    collinear_free = _approximate_polygons(
+        chains=[np.vstack([points, points[0]]) for points in clipped],
+        tolerances=[_FLOAT32_EPS] * len(clipped),
+    )
+    return [
+        chain[:-1].astype(np.float32)
+        for chain in collinear_free
+        if len(chain) - 1 >= MIN_POLYGON_POINT_COUNT
+    ]
+
+
+def _smooth_contour(
+    *, points: NDArray[np.float64], detail: int
+) -> tuple[NDArray[np.float64], float]:
+    # Returns the smoothed points and the tolerance left to simplify them.
     if np.array_equal(points[0], points[-1]):
         points = points[:-1]
 
@@ -228,26 +249,77 @@ def _simplify_contour(
             smoothing_shift = smoothing_budget
         points = smoothed
         simplification_tolerance -= smoothing_shift
+    return points, max(simplification_tolerance, _FLOAT32_EPS)
 
-    closed = np.vstack([points, points[0]])
-    simplified = skimage.measure.approximate_polygon(
-        coords=closed,
-        tolerance=max(simplification_tolerance, np.finfo(np.float32).eps),
-    )
-    if np.array_equal(simplified[0], simplified[-1]):
-        simplified = simplified[:-1]
-    simplified = np.clip(
-        simplified,
-        (0, 0),
-        (mask_shape[1], mask_shape[0]),
-    )
-    keep = np.r_[True, np.any(np.diff(simplified, axis=0) != 0, axis=1)]
-    simplified = simplified[keep]
-    simplified = skimage.measure.approximate_polygon(
-        coords=np.vstack([simplified, simplified[0]]),
-        tolerance=np.finfo(np.float32).eps,
-    )
-    return simplified[:-1].astype(np.float32)
+
+def _clip_to_mask(
+    *, points: NDArray[np.float64], mask_shape: tuple[int, int]
+) -> NDArray[np.float64]:
+    # Clipping can stack vertices on the border; repeats are dropped.
+    points = np.clip(points, (0, 0), (mask_shape[1], mask_shape[0]))
+    keep = np.r_[True, np.any(np.diff(points, axis=0) != 0, axis=1)]
+    return points[keep]
+
+
+def _approximate_polygons(
+    *, chains: list[NDArray[np.float64]], tolerances: list[float]
+) -> list[NDArray[np.float64]]:
+    # skimage.measure.approximate_polygon (Douglas-Peucker) on every chain at
+    # once, with its arithmetic: each round splits every open segment of
+    # every chain, so Python loops once per tree level, not once per vertex.
+    if not chains:
+        return []
+    lengths = np.array([len(chain) for chain in chains])
+    firsts = np.r_[0, np.cumsum(lengths)[:-1]]
+    coords = np.concatenate(chains)
+    keep = np.zeros(len(coords), dtype=bool)
+    starts, ends = firsts, firsts + lengths - 1
+    keep[starts] = keep[ends] = True
+    tols = np.asarray(tolerances, dtype=np.float64)
+    while True:
+        has_inside = ends - starts > 1
+        starts, ends, tols = starts[has_inside], ends[has_inside], tols[has_inside]
+        if len(starts) == 0:
+            break
+        counts = ends - starts - 1
+        offsets = np.r_[0, np.cumsum(counts)[:-1]]
+        segment = np.repeat(np.arange(len(starts)), counts)
+        index = starts[segment] + 1 + np.arange(len(segment)) - offsets[segment]
+        r0, c0 = coords[starts, 0], coords[starts, 1]
+        r1, c1 = coords[ends, 0], coords[ends, 1]
+        dr = r1 - r0
+        dc = c1 - c0
+        angle = -np.arctan2(dr, dc)
+        sin, cos = np.sin(angle), np.cos(angle)
+        distance = c0 * sin + r0 * cos
+        r, c = coords[index, 0], coords[index, 1]
+        dr0 = r - r0[segment]
+        dc0 = c - c0[segment]
+        dr1 = r - r1[segment]
+        dc1 = c - c1[segment]
+        segment_dr, segment_dc = dr[segment], dc[segment]
+        perp = (dr0 * segment_dr + dc0 * segment_dc > 0) & (
+            -dr1 * segment_dr - dc1 * segment_dc > 0
+        )
+        dists = np.where(
+            perp,
+            np.abs(r * cos[segment] + c * sin[segment] - distance[segment]),
+            np.minimum(np.sqrt(dc0**2 + dr0**2), np.sqrt(dc1**2 + dr1**2)),
+        )
+        farthest = np.maximum.reduceat(dists, offsets)
+        split = farthest > tols
+        # The first point at the largest distance, as np.argmax picks.
+        middles = np.minimum.reduceat(
+            np.where(dists == farthest[segment], index, len(coords)), offsets
+        )[split]
+        keep[middles] = True
+        starts = np.r_[starts[split], middles]
+        ends = np.r_[middles, ends[split]]
+        tols = np.r_[tols[split], tols[split]]
+    return [
+        coords[first : first + length][keep[first : first + length]]
+        for first, length in zip(firsts, lengths, strict=True)
+    ]
 
 
 def compute_polygon_from_circle(
@@ -300,17 +372,12 @@ def compute_polygons_from_mask(
         fully_connected="low",
         positive_orientation="low",
     )
-    polygons: list[NDArray[np.float32]] = []
-    for contour in contours:
-        contour = contour - PAD
-        raw_points = contour[:, ::-1]
-        if _compute_signed_area(points=raw_points) <= 0:
-            continue
-        polygon = _simplify_contour(
-            contour=contour,
-            detail=detail,
-            mask_shape=mask.shape,
-        )
-        if len(polygon) >= MIN_POLYGON_POINT_COUNT:
-            polygons.append(polygon)
-    return polygons
+    return _simplify_contours(
+        contours=[
+            points
+            for points in ((contour - PAD)[:, ::-1] for contour in contours)
+            if _compute_signed_area(points=points) > 0
+        ],
+        detail=detail,
+        mask_shape=mask.shape,
+    )

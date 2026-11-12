@@ -7,6 +7,7 @@ import pytest
 import skimage
 from numpy.typing import NDArray
 
+from labelme._automation._geometry import _approximate_polygons
 from labelme._automation._geometry import _compute_polygon_deviation
 from labelme._automation._geometry import compute_circle_from_mask
 from labelme._automation._geometry import compute_oriented_rectangle_from_mask
@@ -426,6 +427,24 @@ def test_compute_polygons_from_mask_detail_controls_point_count() -> None:
 
     assert len(maximum_detail) == 8
     assert len(balanced_detail) == 4
+
+
+def test_approximate_polygons_matches_skimage_on_each_chain() -> None:
+    # Staircases and curves, as traced and smoothed outlines are.
+    rng = np.random.default_rng(seed=0)
+    chains = [
+        np.cumsum(rng.integers(0, 2, size=(n, 2)), axis=0).astype(np.float64)
+        for n in (2, 3, 50, 400)
+    ] + [rng.normal(size=(n, 2)).cumsum(axis=0) for n in (5, 300)]
+    tolerances = [0.5, 1.0, float(np.finfo(np.float32).eps), 0.7, 2.0, 0.3]
+
+    approximated = _approximate_polygons(chains=chains, tolerances=tolerances)
+
+    for chain, tolerance, result in zip(chains, tolerances, approximated, strict=True):
+        expected = skimage.measure.approximate_polygon(
+            coords=chain, tolerance=tolerance
+        )
+        np.testing.assert_array_equal(result, expected)
 
 
 @pytest.mark.parametrize("detail", [-1, 101])
