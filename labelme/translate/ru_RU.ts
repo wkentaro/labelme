@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Детализация полигона</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Более гладко</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Больше деталей</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Преобразовать</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -472,6 +491,14 @@
         <translation>Создать копию выбранных фигур</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Заменить выбранные фигуры их ограничивающими рамками</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Преобразовать выбранные фигуры в ломаные</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Отменить последнюю нарисованную точку</translation>
     </message>
@@ -622,6 +649,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Объединить выбранные фигуры-маски в одну</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Преобразовать выбранные фигуры в полигоны</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Преобразовать выбранные фигуры в ориентированные прямоугольники</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Преобразовать выбранные фигуры в окружности</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Преобразовать выбранные фигуры в линии</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Преобразовать выбранные фигуры в точки</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Маска</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Преобразовать выбранные фигуры в маски</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Преобразовать в</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -1040,6 +1099,26 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Новых «{query}» не найдено</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Линии и точки нельзя преобразовать в полигоны</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Линии и точки нельзя преобразовать в прямоугольники</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>В линии можно преобразовать только ломаные</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>В ломаные можно преобразовать только полигоны и линии</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>В маски можно преобразовать только полигоны</translation>
+    </message>
+    <message>
         <source>Annotation Folder: %s</source>
         <translation>Папка аннотаций: %s</translation>
     </message>
@@ -1180,6 +1259,46 @@ Expected location: {path}</source>
         <translation>Объединять можно только фигуры с одинаковой меткой</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Выберите фигуры для преобразования</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Выбранные фигуры уже этого типа</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Преобразование в ориентированные прямоугольники не поддерживается</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Преобразование в окружности не поддерживается</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Преобразование в точки не поддерживается</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Чтобы стать полигоном, ломаной нужно не менее 3 точек</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Чтобы стать линией, ломаной нужно ровно 2 точки</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>У фигуры без площади нет ограничивающей рамки</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Фигуру без площади на изображении нельзя преобразовать</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Разблокируйте выбранные фигуры, чтобы преобразовать их</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Удалить из списка меток</translation>
     </message>
@@ -1202,6 +1321,10 @@ Expected location: {path}</source>
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Ошибка сохранения файла аннотаций</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Преобразовать в полигон</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>

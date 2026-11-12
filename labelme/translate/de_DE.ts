@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Polygondetails</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Glatter</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Mehr Details</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Umwandeln</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -476,6 +495,14 @@
         <translation>Duplikat der ausgewählten Formen erstellen</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Ausgewählte Formen durch ihre Begrenzungsrahmen ersetzen</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Ausgewählte Formen in Linienfolgen umwandeln</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Letzten gezeichneten Punkt rückgängig machen</translation>
     </message>
@@ -638,6 +665,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Ausgewählte Maskenformen zu einer zusammenführen</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Ausgewählte Formen in Polygone umwandeln</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Ausgewählte Formen in orientierte Rechtecke umwandeln</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Ausgewählte Formen in Kreise umwandeln</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Ausgewählte Formen in Linien umwandeln</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Ausgewählte Formen in Punkte umwandeln</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maske</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Ausgewählte Formen in Masken umwandeln</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Umwandeln in</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -862,6 +921,34 @@
         <translation>Nur Formen mit demselben Label lassen sich zusammenführen</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Formen zum Umwandeln auswählen</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Die ausgewählten Formen sind bereits von diesem Typ</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Umwandlung in orientierte Rechtecke wird nicht unterstützt</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Umwandlung in Kreise wird nicht unterstützt</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Umwandlung in Punkte wird nicht unterstützt</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Eine Linienfolge braucht mindestens 3 Punkte, um ein Polygon zu werden</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Ausgewählte Formen zum Umwandeln entsperren</translation>
+    </message>
+    <message>
         <source>Detects boxes only. Switch to Rectangle to use this model.</source>
         <translation>Erkennt nur Rahmen. Wechseln Sie zu „Rechteck“, um dieses Modell zu verwenden.</translation>
     </message>
@@ -922,6 +1009,26 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
     <message>
         <source>Mask Output Unavailable</source>
         <translation>Maskenausgabe nicht verfügbar</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Linien und Punkte lassen sich nicht in Rechtecke umwandeln</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Nur Linienfolgen lassen sich in Linien umwandeln</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Nur Polygone und Linien lassen sich in Linienfolgen umwandeln</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Eine Linienfolge braucht genau 2 Punkte, um eine Linie zu werden</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Eine Form ohne Fläche hat keinen Begrenzungsrahmen</translation>
     </message>
     <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
@@ -1088,6 +1195,18 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
         <translation>Keine neuen „{query}“ gefunden</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Linien und Punkte lassen sich nicht in Polygone umwandeln</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Nur Polygone lassen sich in Masken umwandeln</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Eine Form ohne Fläche im Bild lässt sich nicht umwandeln</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Aus Labelliste entfernen</translation>
     </message>
@@ -1110,6 +1229,10 @@ Wechseln Sie das AI-Find All-Modell zu &apos;SAM 3&apos; oder stellen Sie das Au
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fehler beim Speichern der Annotationsdatei</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>In Polygon umwandeln</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>

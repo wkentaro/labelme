@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>多边形细节</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>更平滑</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>更多细节</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>转换</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -472,6 +491,14 @@
         <translation>创建选中形状的副本</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>将选中的形状替换为其边界框</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>将选中的形状转换为折线</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>撤销上一个绘制的点</translation>
     </message>
@@ -622,6 +649,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>将选中的掩码形状合并为一个</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>将选中的形状转换为多边形</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>将选中的形状转换为有向矩形</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>将选中的形状转换为圆形</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>将选中的形状转换为直线</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>将选中的形状转换为点</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>掩码</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>将选中的形状转换为掩码</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>转换为</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -1084,6 +1143,46 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>只能合并标签相同的形状</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>请选择要转换的形状</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>选中的形状已是此类型</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>不支持转换为有向矩形</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>不支持转换为圆形</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>不支持转换为点</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>折线至少需要 3 个点才能转换为多边形</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>折线必须恰好有 2 个点才能转换为直线</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>没有面积的形状没有边界框</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>无法转换在图像中没有面积的形状</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>请先解锁选中的形状再转换</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>从标签列表中删除</translation>
     </message>
@@ -1106,6 +1205,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Error Saving Annotation File</source>
         <translation>保存标注文件时出错</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>转换为多边形</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1218,6 +1321,26 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>本次会话的设置通过 --config 管理</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>无法将直线和点转换为多边形</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>无法将直线和点转换为矩形</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>只能将折线转换为直线</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>只能将多边形和直线转换为折线</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>只能将多边形转换为掩码</translation>
     </message>
     <message>
         <source>Large Image</source>

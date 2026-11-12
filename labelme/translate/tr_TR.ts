@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Poligon ayrıntısı</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Daha yumuşak</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Daha fazla ayrıntı</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Dönüştür</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -472,6 +491,14 @@
         <translation>Seçili şekillerin kopyasını oluştur</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Seçili şekilleri sınırlayıcı kutularıyla değiştir</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Seçili şekilleri çizgi şeridine dönüştür</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Son çizilen noktayı geri al</translation>
     </message>
@@ -622,6 +649,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Seçili maske şekillerini tek şekilde birleştir</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Seçili şekilleri çokgene dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Seçili şekilleri yönlü dikdörtgene dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Seçili şekilleri daireye dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Seçili şekilleri çizgiye dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Seçili şekilleri noktaya dönüştür</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maske</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Seçili şekilleri maskeye dönüştür</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Dönüştür</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -1084,6 +1143,46 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>Yalnızca aynı etikete sahip şekiller birleştirilebilir</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Dönüştürmek için şekil seçin</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Seçili şekiller zaten bu türde</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Yönlü dikdörtgene dönüştürme desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Daireye dönüştürme desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Noktaya dönüştürme desteklenmiyor</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Bir çizgi şeridinin çokgen olması için en az 3 noktası olmalı</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Bir çizgi şeridinin çizgi olması için tam 2 noktası olmalı</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Alanı olmayan bir şeklin sınırlayıcı kutusu olmaz</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Görüntüde alanı olmayan bir şekil dönüştürülemez</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Dönüştürmek için seçili şekillerin kilidini açın</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Etiket Listesinden Kaldır</translation>
     </message>
@@ -1106,6 +1205,10 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Açıklama dosyası kaydedilirken hata oluştu</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Çokgene dönüştür</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1218,6 +1321,26 @@ Beklenen konum: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Bu oturumda ayarlar --config ile yönetiliyor</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Çizgiler ve noktalar çokgene dönüştürülemez</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Çizgiler ve noktalar dikdörtgene dönüştürülemez</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Yalnızca çizgi şeritleri çizgiye dönüştürülebilir</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Yalnızca çokgenler ve çizgiler çizgi şeridine dönüştürülebilir</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Yalnızca çokgenler maskeye dönüştürülebilir</translation>
     </message>
     <message>
         <source>Large Image</source>

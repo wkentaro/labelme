@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Szczegółowość wielokąta</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Gładszy</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Więcej szczegółów</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Konwertuj</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -472,6 +491,14 @@
         <translation>Utwórz duplikat zaznaczonych kształtów</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Zastąp zaznaczone kształty ich ramkami ograniczającymi</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Konwertuj zaznaczone kształty na łamane</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Cofnij ostatnio narysowany punkt</translation>
     </message>
@@ -622,6 +649,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Scal zaznaczone kształty maski w jeden</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Konwertuj zaznaczone kształty na wielokąty</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Konwertuj zaznaczone kształty na prostokąty zorientowane</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Konwertuj zaznaczone kształty na okręgi</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Konwertuj zaznaczone kształty na linie</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Konwertuj zaznaczone kształty na punkty</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maska</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Konwertuj zaznaczone kształty na maski</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Konwertuj na</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -1084,6 +1143,46 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
         <translation>Scalać można tylko kształty z tą samą etykietą</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Zaznacz kształty do konwersji</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Zaznaczone kształty są już tego typu</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Konwersja na prostokąty zorientowane nie jest obsługiwana</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Konwersja na okręgi nie jest obsługiwana</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Konwersja na punkty nie jest obsługiwana</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Łamana musi mieć co najmniej 3 punkty, aby stać się wielokątem</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Łamana musi mieć dokładnie 2 punkty, aby stać się linią</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Kształt bez pola powierzchni nie ma ramki ograniczającej</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Kształtu bez pola powierzchni na obrazie nie można konwertować</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Odblokuj zaznaczone kształty, aby je przekonwertować</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Usuń z listy etykiet</translation>
     </message>
@@ -1106,6 +1205,10 @@ Zmień model AI-Find All na &apos;SAM 3&apos; lub ustaw format wyjściowy na &ap
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Błąd zapisu pliku adnotacji</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Konwertuj na wielokąt</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1218,6 +1321,26 @@ Oczekiwana lokalizacja: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Ustawienia są zarządzane przez --config w tej sesji</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Linii i punktów nie można konwertować na wielokąty</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Linii i punktów nie można konwertować na prostokąty</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Na linie można konwertować tylko łamane</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Na łamane można konwertować tylko wielokąty i linie</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Na maski można konwertować tylko wielokąty</translation>
     </message>
     <message>
         <source>Large Image</source>

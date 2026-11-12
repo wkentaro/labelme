@@ -18,12 +18,13 @@ class IntegerSlider(QtWidgets.QWidget):
         minimum: int,
         maximum: int,
         value: int,
+        tracking: bool = False,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
         super().__init__(parent=parent)
         self._slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
         self._slider.setRange(minimum, maximum)
-        self._slider.setTracking(False)
+        self._slider.setTracking(tracking)
         self.setFocusProxy(self._slider)
         self._value_label = QtWidgets.QLabel()
         self._value_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)

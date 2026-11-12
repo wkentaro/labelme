@@ -386,6 +386,9 @@ class Canvas(QtWidgets.QWidget):
     _ai_find_all_draft: list[Shape]
     # A batch waiting for its label, drawn like a draft under the dialog.
     _ai_find_all_pending: list[Shape]
+    # What a Conversion would commit, drawn over the shapes it replaces while
+    # its Polygon Detail is picked.
+    _conversion_preview: list[Shape]
     _ai_find_all_query: str
     # Proposes the draft's run again, with the settings it was shown with.
     _ai_find_all_run: (
@@ -454,6 +457,7 @@ class Canvas(QtWidgets.QWidget):
         self._ai_progress_timer.timeout.connect(self._advance_ai_progress)
         self._clear_ai_find_all_draft()
         self._ai_find_all_pending = []
+        self._conversion_preview = []
         self.ensure_ai_model_ready = lambda _model_name: False
         self._ai_inference_failed = False
         self._ai_suppress_existing_shape_matches = False
@@ -752,6 +756,10 @@ class Canvas(QtWidgets.QWidget):
             shapes=shapes, existing_shapes=self.shapes
         )
         return shapes
+
+    def set_conversion_preview(self, *, shapes: list[Shape]) -> None:
+        self._conversion_preview = shapes
+        self.update()
 
     def set_ai_find_all_pending(self, *, shapes: list[Shape]) -> None:
         self._ai_find_all_pending = shapes
@@ -2478,6 +2486,7 @@ class Canvas(QtWidgets.QWidget):
             self._draw_committed_shapes_layer,
             self._draw_active_shape_layer,
             self._draw_preview_overlay_layer,
+            self._draw_conversion_preview_layer,
             self._draw_ai_find_all_layer,
             self._draw_ai_existing_match_layer,
             self._draw_ai_progress_layer,
@@ -2736,6 +2745,14 @@ class Canvas(QtWidgets.QWidget):
         )
         for preview in previews:
             render_shape(painter=painter, shape=preview, context=context)
+
+    def _draw_conversion_preview_layer(self, painter: QtGui.QPainter, /) -> None:
+        # The selected style, as the shapes being converted are selected.
+        context = self._draft_render_context(
+            selected=True, fill=True, highlight=None, rotation_highlight=None
+        )
+        for shape in self._conversion_preview:
+            render_shape(painter=painter, shape=shape, context=context)
 
     def _draw_ai_find_all_layer(self, painter: QtGui.QPainter, /) -> None:
         if not (self._ai_find_all_pending or self.has_ai_find_all_draft):

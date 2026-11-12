@@ -19,10 +19,16 @@ were made together, each against a real alternative:
    conflict with the goal of clean hand-editing. Holes are dropped until Polygon
    Shapes support explicit rings;
    largest-land-only was rejected as silent data loss.
-3. **With multiple Shapes selected, the Convert menu offers the intersection of
-   targets valid for every selected Shape and converts them all in one undoable
-   step.** Union-and-skip-invalid offers more entries but makes the outcome
-   ("converted 3, skipped 2") unpredictable.
+3. **The Convert menu lists every Shape kind and enables a target when each
+   selected Shape is either already that kind or convertible to it.** Shapes
+   already of the target kind stay as they are, so Select All can bring every
+   Shape to one kind in one undoable step; the kind the whole selection
+   already has is checked. Targets not supported yet, or not possible, stay
+   listed but dimmed with the reason, so the menu reads the same for any
+   selection. Union-and-skip-invalid was rejected because the outcome
+   ("converted 3, skipped 2") is unpredictable. Offering only the intersection
+   of targets was rejected because it hid a target that part of the selection
+   already has.
 
 ## Consequences
 
@@ -35,3 +41,13 @@ were made together, each against a real alternative:
   not a conversion.
 - Every conversion pushes its own undo snapshot; the snapshot guard that
   compares only point arrays would miss an in-place `shape_type` change.
+- A route with one possible result converts at once. A route with more than
+  one (circle → polygon, mask → polygon) first asks for a Polygon Detail in a
+  dialog that previews the result on the canvas, and its menu item ends with
+  an ellipsis. This dialog collects an input, so it is not the warning dialog
+  ruled out above. Its value is remembered apart from the AI Assist Setting,
+  so tuning AI-Segment output never changes what Convert To produces.
+- A Conversion never deletes a Shape. When a Polygon Detail would omit every
+  land of a mask, the mask keeps its exact outline (detail 100) instead. Split
+  polygons keep the mask's Group when it had one, and otherwise share a new
+  one.

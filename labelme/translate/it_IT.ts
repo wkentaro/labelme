@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Dettaglio poligono</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Più uniforme</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Più dettagli</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Converti</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -472,6 +491,14 @@
         <translation>Crea un duplicato dele forme selezionate</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Sostituisci le forme selezionate con i loro riquadri di delimitazione</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Converti le forme selezionate in polilinee</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Annulla l&apos;ultimo punto disegnato</translation>
     </message>
@@ -622,6 +649,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Unisci le forme maschera selezionate in una</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Converti le forme selezionate in poligoni</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Converti le forme selezionate in rettangoli orientati</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Converti le forme selezionate in cerchi</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Converti le forme selezionate in linee</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Converti le forme selezionate in punti</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Maschera</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Converti le forme selezionate in maschere</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Converti in</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -1084,6 +1143,46 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
         <translation>Si possono unire solo forme con la stessa etichetta</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Seleziona le forme da convertire</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Le forme selezionate sono già di questo tipo</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>La conversione in rettangoli orientati non è supportata</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>La conversione in cerchi non è supportata</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>La conversione in punti non è supportata</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Una polilinea richiede almeno 3 punti per diventare un poligono</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Una polilinea richiede esattamente 2 punti per diventare una linea</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Una forma senza area non ha un riquadro di delimitazione</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Una forma senza area nell’immagine non può essere convertita</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Sblocca le forme selezionate per convertirle</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Rimuovi dall&apos;elenco etichette</translation>
     </message>
@@ -1106,6 +1205,10 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Errore durante il salvataggio del file di annotazioni</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Converti in poligono</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1218,6 +1321,26 @@ Posizione prevista: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Le impostazioni sono gestite tramite --config per questa sessione</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Linee e punti non possono essere convertiti in poligoni</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Linee e punti non possono essere convertiti in rettangoli</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Si possono convertire in linee solo polilinee</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Si possono convertire in polilinee solo poligoni e linee</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Si possono convertire in maschere solo poligoni</translation>
     </message>
     <message>
         <source>Large Image</source>

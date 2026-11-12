@@ -193,7 +193,7 @@ def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:
     xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=bbox)
     width = xmax - xmin + 1
     height = ymax - ymin + 1
-    mask = _rasterize_shape(
+    mask = rasterize_shape(
         shape=shape, xmin=xmin, ymin=ymin, width=width, height=height
     )
     return _LocalMask(
@@ -203,7 +203,7 @@ def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:
     )
 
 
-def _rasterize_shape(
+def rasterize_shape(
     *, shape: Shape, xmin: int, ymin: int, width: int, height: int
 ) -> NDArray[np.bool_]:
     if shape.shape_type == "mask":

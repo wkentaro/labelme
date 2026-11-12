@@ -160,6 +160,7 @@ def test_checkable_menu_items_have_no_icon(*, main_win: MainWinFactory) -> None:
             *(a for _, a in win._actions.draw),
             win._actions.edit_mode,
             *win._ai_annotation._output_format_actions.values(),
+            *win._actions.convert.values(),
         )
     }
     found = {

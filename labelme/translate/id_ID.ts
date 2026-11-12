@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Detail poligon</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Lebih halus</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Lebih detail</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Ubah</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -571,6 +590,38 @@
         <translation>Gabungkan bentuk mask terpilih menjadi satu</translation>
     </message>
     <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Ubah bentuk terpilih menjadi poligon</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Ubah bentuk terpilih menjadi persegi panjang berorientasi</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Ubah bentuk terpilih menjadi lingkaran</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Ubah bentuk terpilih menjadi garis</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Ubah bentuk terpilih menjadi titik</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Mask</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Ubah bentuk terpilih menjadi mask</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Ubah Menjadi</translation>
+    </message>
+    <message>
         <source>Lock Shapes</source>
         <translation>Kunci Bentuk</translation>
     </message>
@@ -823,6 +874,26 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Keluaran mask tidak tersedia</translation>
     </message>
     <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Garis dan titik tidak dapat diubah menjadi poligon</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Garis dan titik tidak dapat diubah menjadi persegi panjang</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Hanya garis patah yang dapat diubah menjadi garis</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Hanya poligon dan garis yang dapat diubah menjadi garis patah</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Hanya poligon yang dapat diubah menjadi mask</translation>
+    </message>
+    <message>
         <source>Invalid label &apos;{}&apos; with validation type &apos;{}&apos;</source>
         <translation>Label &apos;{}&apos; tidak valid dengan tipe validasi &apos;{}&apos;</translation>
     </message>
@@ -1024,6 +1095,10 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Persegi Panjang</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Ganti bentuk terpilih dengan kotak pembatasnya</translation>
+    </message>
+    <message>
         <source>Circle</source>
         <translation>Lingkaran</translation>
     </message>
@@ -1038,6 +1113,10 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
     <message>
         <source>LineStrip</source>
         <translation>Garis Patah</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Ubah bentuk terpilih menjadi garis patah</translation>
     </message>
     <message>
         <source>Continue with Defaults</source>
@@ -1084,6 +1163,46 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
         <translation>Hanya bentuk dengan label yang sama yang dapat digabungkan</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Pilih bentuk untuk diubah</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Bentuk terpilih sudah berjenis ini</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Mengubah menjadi persegi panjang berorientasi tidak didukung</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Mengubah menjadi lingkaran tidak didukung</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Mengubah menjadi titik tidak didukung</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Garis patah memerlukan minimal 3 titik untuk menjadi poligon</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Garis patah memerlukan tepat 2 titik untuk menjadi garis</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Bentuk tanpa luas tidak memiliki kotak pembatas</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Bentuk tanpa luas di dalam gambar tidak dapat diubah</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Buka kunci bentuk terpilih untuk mengubahnya</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Hapus dari Daftar Label</translation>
     </message>
@@ -1106,6 +1225,10 @@ Ganti model AI-Find All ke &apos;SAM 3&apos;, atau atur format keluaran ke &apos
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Gagal menyimpan berkas anotasi</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Ubah Menjadi Poligon</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>

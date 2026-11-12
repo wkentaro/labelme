@@ -57,6 +57,8 @@ from ._label_file import LabelFileReadError
 from ._model_manager import ModelManager
 from ._save_request import SaveRequest
 from ._save_writer import SaveWriter
+from ._shape import ConvertBlocker
+from ._shape import ConvertTarget
 from ._shape import MergeBlocker
 from ._shape import Shape
 from ._shape import ShapeDict
@@ -69,6 +71,7 @@ from ._widgets import AiToolGroup
 from ._widgets import AnnotationFolderFooter
 from ._widgets import BrightnessContrastDialog
 from ._widgets import Canvas
+from ._widgets import ConversionDetailDialog
 from ._widgets import EmptyStateWidget
 from ._widgets import ImageListDelegate
 from ._widgets import LabelDialog
@@ -170,6 +173,7 @@ class _Actions(NamedTuple):
     paste: QtGui.QAction
     duplicate: QtGui.QAction
     merge: QtGui.QAction
+    convert: dict[ConvertTarget, QtGui.QAction]
     lock: QtGui.QAction
     undo_last_point: QtGui.QAction
     undo: QtGui.QAction
@@ -291,6 +295,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _prev_image_path: str | None
     _viewport_states: dict[str, _ViewportState]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
+    # The last Polygon Detail a Conversion used, apart from AI Assist's.
+    _conversion_detail: int
     _default_state: QtCore.QByteArray
 
     def __init__(
@@ -649,6 +655,82 @@ class MainWindow(QtWidgets.QMainWindow):
             tip=self.tr("Merge the selected mask shapes into one"),
             enabled=False,
         )
+        # Every kind is listed, checked when the selection already has it, so
+        # the menu reads the same for any selection.
+        convert: dict[ConvertTarget, QtGui.QAction] = {
+            "polygon": action(
+                text=self.tr("Polygon"),
+                slot=lambda: self._convert_selected_shapes(target="polygon"),
+                icon="polygon.svg",
+                tip=self.tr("Convert the selected shapes to polygons"),
+                checkable=True,
+                enabled=False,
+            ),
+            "rectangle": action(
+                text=self.tr("Rectangle"),
+                slot=lambda: self._convert_selected_shapes(target="rectangle"),
+                icon="rectangle.svg",
+                tip=self.tr("Replace the selected shapes with their bounding boxes"),
+                checkable=True,
+                enabled=False,
+            ),
+            "oriented_rectangle": action(
+                text=self.tr("Oriented Rectangle"),
+                slot=lambda: self._convert_selected_shapes(target="oriented_rectangle"),
+                icon="oriented_rectangle.svg",
+                tip=self.tr("Convert the selected shapes to oriented rectangles"),
+                checkable=True,
+                enabled=False,
+            ),
+            "circle": action(
+                text=self.tr("Circle"),
+                slot=lambda: self._convert_selected_shapes(target="circle"),
+                icon="circle.svg",
+                tip=self.tr("Convert the selected shapes to circles"),
+                checkable=True,
+                enabled=False,
+            ),
+            "line": action(
+                text=self.tr("Line"),
+                slot=lambda: self._convert_selected_shapes(target="line"),
+                icon="line.svg",
+                tip=self.tr("Convert the selected shapes to lines"),
+                checkable=True,
+                enabled=False,
+            ),
+            "point": action(
+                text=self.tr("Point"),
+                slot=lambda: self._convert_selected_shapes(target="point"),
+                icon="point.svg",
+                tip=self.tr("Convert the selected shapes to points"),
+                checkable=True,
+                enabled=False,
+            ),
+            "linestrip": action(
+                text=self.tr("LineStrip"),
+                slot=lambda: self._convert_selected_shapes(target="linestrip"),
+                icon="linestrip.svg",
+                tip=self.tr("Convert the selected shapes to linestrips"),
+                checkable=True,
+                enabled=False,
+            ),
+            "mask": action(
+                text=self.tr("Mask"),
+                slot=lambda: self._convert_selected_shapes(target="mask"),
+                icon="mask.svg",
+                tip=self.tr("Convert the selected shapes to masks"),
+                checkable=True,
+                enabled=False,
+            ),
+        }
+        # Parented to the window, so clearing a menu that lists it does not
+        # delete it.
+        convert_menu = QtWidgets.QMenu(self.tr("Convert To"), self)
+        convert_menu.setIcon(_utils.new_icon(name="phosphor/swap.svg"))
+        convert_menu.addActions(list(convert.values()))
+        # Lets a disabled item say why it is disabled, as the menus that list
+        # this one do.
+        convert_menu.setToolTipsVisible(True)
         lock = action(
             text=self.tr("Lock Shapes"),
             slot=self._toggle_selected_shapes_lock,
@@ -991,6 +1073,7 @@ class MainWindow(QtWidgets.QMainWindow):
             copy,
             delete,
             merge,
+            convert_menu.menuAction(),
             lock,
             separator(),
             add_point_to_edge,
@@ -1013,6 +1096,7 @@ class MainWindow(QtWidgets.QMainWindow):
             edit,
             delete,
             merge,
+            convert_menu.menuAction(),
             lock,
             remove_point,
             separator(),
@@ -1038,6 +1122,7 @@ class MainWindow(QtWidgets.QMainWindow):
             paste=paste,
             duplicate=duplicate,
             merge=merge,
+            convert=convert,
             lock=lock,
             undo_last_point=undo_last_point,
             undo=undo,
@@ -1292,6 +1377,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._prev_image_path = None
         self._viewport_states = {}
         self._brightness_contrast_values = {}
+        self._conversion_detail = 60
 
         if self._config["file_search"]:
             self._docks.file_search.setText(self._config["file_search"])
@@ -2088,6 +2174,21 @@ class MainWindow(QtWidgets.QMainWindow):
         # The tooltip is all a disabled menu item can show: Qt sends no status
         # tip for one on macOS or Fusion.
         self._actions.merge.setToolTip(self._merge_tip(blocker=blocker))
+        for target, convert_action in self._actions.convert.items():
+            blocker = _shape.convert_blocker(
+                shapes=selected,
+                target=target,
+                image_size=self._convert_image_size(target=target),
+            )
+            convert_action.setEnabled(not busy and blocker is None)
+            convert_action.setChecked(blocker == "already_target")
+            # An ellipsis says the item asks for a Polygon Detail first.
+            name = convert_action.text().removesuffix("…")
+            needs_detail = blocker is None and _shape.conversion_needs_detail(
+                shapes=selected, target=target
+            )
+            convert_action.setText(name + "…" if needs_detail else name)
+            convert_action.setToolTip(self._convert_tip(target=target, blocker=blocker))
 
     def _merge_tip(self, *, blocker: MergeBlocker | None) -> str:
         match blocker:
@@ -2102,6 +2203,48 @@ class MainWindow(QtWidgets.QMainWindow):
                 return self.tr("Unlock the selected shapes to merge them")
             case "mixed_labels":
                 return self.tr("Only shapes with the same label can be merged")
+
+    def _convert_tip(
+        self, *, target: ConvertTarget, blocker: ConvertBlocker | None
+    ) -> str:
+        match blocker:
+            case None:
+                return self._actions.convert[target].statusTip()
+            case "no_selection":
+                return self.tr("Select shapes to convert")
+            case "already_target":
+                return self.tr("The selected shapes are already this kind")
+            case "wrong_type":
+                return {
+                    "polygon": self.tr(
+                        "Lines and points can’t be converted to polygons"
+                    ),
+                    "rectangle": self.tr(
+                        "Lines and points can’t be converted to rectangles"
+                    ),
+                    "oriented_rectangle": self.tr(
+                        "Converting to oriented rectangles isn’t supported"
+                    ),
+                    "circle": self.tr("Converting to circles isn’t supported"),
+                    "line": self.tr("Only linestrips can be converted to lines"),
+                    "point": self.tr("Converting to points isn’t supported"),
+                    "linestrip": self.tr(
+                        "Only polygons and lines can be converted to linestrips"
+                    ),
+                    "mask": self.tr("Only polygons can be converted to masks"),
+                }[target]
+            case "too_few_points":
+                return self.tr(
+                    "A linestrip needs at least 3 points to become a polygon"
+                )
+            case "too_many_points":
+                return self.tr("A linestrip needs exactly 2 points to become a line")
+            case "no_area" if target == "rectangle":
+                return self.tr("A shape with no area has no bounding box")
+            case "no_area":
+                return self.tr("A shape with no area in the image can’t be converted")
+            case "locked":
+                return self.tr("Unlock the selected shapes to convert them")
 
     def _switch_canvas_mode(self, *, edit: bool, create_mode: str | None) -> None:
         self._canvas_widgets.canvas.set_editing(value=edit, create_mode=create_mode)
@@ -2602,6 +2745,71 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
         self._commit_shapes(shapes=shapes)
         canvas.select_shapes(shapes=[merged])
+
+    def _convert_image_size(self, *, target: ConvertTarget) -> tuple[int, int] | None:
+        # New points stay inside the image unless out-of-bounds points are on.
+        # A mask always does: pixels outside the image do not exist (ADR 0004).
+        if target != "mask" and self._config["canvas"]["allow_out_of_bounds_points"]:
+            return None
+        return (self._image.width(), self._image.height())
+
+    def _convert_selected_shapes(self, *, target: ConvertTarget) -> None:
+        canvas = self._canvas_widgets.canvas
+        selected = list(canvas.selected_shapes)
+        image_size = self._convert_image_size(target=target)
+        if _shape.convert_blocker(
+            shapes=selected, target=target, image_size=image_size
+        ):
+            return
+
+        def convert(detail: int | None) -> dict[Shape, list[Shape]]:
+            return {
+                s: _shape.convert_shape(
+                    shape=s, target=target, image_size=image_size, detail=detail
+                )
+                for s in selected
+                if s.shape_type != target
+            }
+
+        def preview(detail: int) -> None:
+            canvas.set_conversion_preview(
+                shapes=[c for shapes in convert(detail).values() for c in shapes]
+            )
+
+        detail = None
+        if _shape.conversion_needs_detail(shapes=selected, target=target):
+            dialog = ConversionDetailDialog(
+                title=self.tr("Convert to Polygon"),
+                detail=self._conversion_detail,
+                on_detail_changed=preview,
+                parent=self,
+            )
+            preview(self._conversion_detail)
+            accepted = dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted
+            canvas.set_conversion_preview(shapes=[])
+            if not accepted:
+                # Choosing the item checked it; the selection kept its kind.
+                self._sync_edit_actions()
+                return
+            detail = self._conversion_detail = dialog.detail
+        converted = convert(detail)
+        # A mask split into several polygons keeps them together in a new
+        # Group, unless it already had one.
+        split: list[Shape] = []
+        for i, shapes in enumerate(converted.values()):
+            if len(shapes) > 1 and shapes[0].group_id is None:
+                for c in shapes:
+                    c.group_id = i
+                split.extend(shapes)
+        _automation.assign_available_group_ids(
+            shapes=split, existing_shapes=canvas.shapes
+        )
+        self._commit_shapes(
+            shapes=[c for s in canvas.shapes for c in converted.get(s, [s])]
+        )
+        canvas.select_shapes(
+            shapes=[c for s in selected for c in converted.get(s, [s])]
+        )
 
     def _label_selection_changed(self) -> None:
         selected_shapes: list[Shape] = []
@@ -3877,6 +4085,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 value=self._config["canvas"]["allow_out_of_bounds_points"]
             )
             canvas.update()
+            # Whether a bounding box has area depends on clipping it.
+            self._sync_edit_actions()
         elif key_path[0] == "shape_color":
             self._refresh_shape_colors()
         elif key_path[0] == "labels":

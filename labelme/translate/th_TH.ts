@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>รายละเอียดโพลีกอน</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>เรียบขึ้น</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>รายละเอียดมากขึ้น</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>แปลง</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -473,6 +492,14 @@
         <translation>สร้างสำเนารูปร่างที่เลือก</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>แทนที่รูปร่างที่เลือกด้วยกรอบล้อมรอบ</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นเส้นต่อเนื่อง</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>ยกเลิกจุดที่วาดล่าสุด</translation>
     </message>
@@ -623,6 +650,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>รวมรูปร่างมาสก์ที่เลือกเป็นรูปร่างเดียว</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นหลายเหลี่ยม</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นสี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นวงกลม</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นเส้น</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นจุด</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>มาสก์</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>แปลงรูปร่างที่เลือกเป็นมาสก์</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>แปลงเป็น</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -1085,6 +1144,46 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>รวมได้เฉพาะรูปร่างที่มีเลเบลเดียวกัน</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>เลือกรูปร่างที่จะแปลง</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>รูปร่างที่เลือกเป็นประเภทนี้อยู่แล้ว</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>ไม่รองรับการแปลงเป็นสี่เหลี่ยมมีทิศทาง</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>ไม่รองรับการแปลงเป็นวงกลม</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>ไม่รองรับการแปลงเป็นจุด</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>เส้นต่อเนื่องต้องมีอย่างน้อย 3 จุดจึงจะเป็นหลายเหลี่ยมได้</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>เส้นต่อเนื่องต้องมี 2 จุดพอดีจึงจะเป็นเส้นได้</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>รูปร่างที่ไม่มีพื้นที่จะไม่มีกรอบล้อมรอบ</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>แปลงรูปร่างที่ไม่มีพื้นที่ในภาพไม่ได้</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>ปลดล็อกรูปร่างที่เลือกเพื่อแปลง</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>ลบออกจากรายการป้ายกำกับ</translation>
     </message>
@@ -1107,6 +1206,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Error Saving Annotation File</source>
         <translation>เกิดข้อผิดพลาดในการบันทึกไฟล์คำอธิบายประกอบ</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>แปลงเป็นหลายเหลี่ยม</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1219,6 +1322,26 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>การตั้งค่าถูกจัดการผ่าน --config สำหรับเซสชันนี้</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>แปลงเส้นและจุดเป็นหลายเหลี่ยมไม่ได้</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>แปลงเส้นและจุดเป็นสี่เหลี่ยมไม่ได้</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>แปลงเป็นเส้นได้เฉพาะเส้นต่อเนื่อง</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>แปลงเป็นเส้นต่อเนื่องได้เฉพาะหลายเหลี่ยมและเส้น</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>แปลงเป็นมาสก์ได้เฉพาะหลายเหลี่ยม</translation>
     </message>
     <message>
         <source>Large Image</source>

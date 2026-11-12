@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>폴리곤 세부 수준</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>더 부드럽게</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>더 자세하게</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>변환</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -472,6 +491,14 @@
         <translation>선택한 도형의 복사본 생성</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>선택한 도형을 경계 상자로 바꾸기</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>선택한 도형을 연결선으로 변환</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>마지막으로 그린 점 실행 취소</translation>
     </message>
@@ -622,6 +649,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>선택한 마스크 도형을 하나로 병합</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>선택한 도형을 다각형으로 변환</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>선택한 도형을 방향 있는 사각형으로 변환</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>선택한 도형을 원으로 변환</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>선택한 도형을 선으로 변환</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>선택한 도형을 점으로 변환</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>마스크</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>선택한 도형을 마스크로 변환</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>변환</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -1084,6 +1143,46 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>레이블이 같은 도형만 병합할 수 있습니다</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>변환할 도형을 선택하세요</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>선택한 도형은 이미 이 유형입니다</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>방향 있는 사각형으로의 변환은 지원되지 않습니다</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>원으로의 변환은 지원되지 않습니다</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>점으로의 변환은 지원되지 않습니다</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>연결선을 다각형으로 만들려면 점이 3개 이상 필요합니다</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>연결선을 선으로 만들려면 점이 정확히 2개여야 합니다</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>면적이 없는 도형에는 경계 상자가 없습니다</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>이미지 안에 면적이 없는 도형은 변환할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>변환하려면 선택한 도형의 잠금을 해제하세요</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>라벨 목록에서 제거</translation>
     </message>
@@ -1106,6 +1205,10 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
     <message>
         <source>Error Saving Annotation File</source>
         <translation>주석 파일 저장 오류</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>다각형으로 변환</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1218,6 +1321,26 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>이 세션의 설정은 --config로 관리됩니다</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>선과 점은 다각형으로 변환할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>선과 점은 사각형으로 변환할 수 없습니다</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>연결선만 선으로 변환할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>다각형과 선만 연결선으로 변환할 수 있습니다</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>다각형만 마스크로 변환할 수 있습니다</translation>
     </message>
     <message>
         <source>Large Image</source>

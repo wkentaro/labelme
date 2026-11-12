@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Polygoondetail</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Gladder</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Meer detail</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Omzetten</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -472,6 +491,14 @@
         <translation>Maak een duplicaat van de geselecteerde vormen</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Geselecteerde vormen vervangen door hun begrenzingskaders</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Geselecteerde vormen omzetten naar lijnstrips</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Laatste getekende punt ongedaan maken</translation>
     </message>
@@ -622,6 +649,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Geselecteerde maskervormen samenvoegen tot één</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Geselecteerde vormen omzetten naar polygonen</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Geselecteerde vormen omzetten naar georiënteerde rechthoeken</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Geselecteerde vormen omzetten naar cirkels</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Geselecteerde vormen omzetten naar lijnen</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Geselecteerde vormen omzetten naar punten</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Masker</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Geselecteerde vormen omzetten naar maskers</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Omzetten Naar</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -1084,6 +1143,46 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>Alleen vormen met hetzelfde label kunnen worden samengevoegd</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Selecteer vormen om om te zetten</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>De geselecteerde vormen zijn al van dit type</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Omzetten naar georiënteerde rechthoeken wordt niet ondersteund</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Omzetten naar cirkels wordt niet ondersteund</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Omzetten naar punten wordt niet ondersteund</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Een lijnstrip heeft minstens 3 punten nodig om een polygoon te worden</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Een lijnstrip heeft precies 2 punten nodig om een lijn te worden</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Een vorm zonder oppervlakte heeft geen begrenzingskader</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Een vorm zonder oppervlakte in de afbeelding kan niet worden omgezet</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Ontgrendel de geselecteerde vormen om ze om te zetten</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Verwijderen uit labellijst</translation>
     </message>
@@ -1106,6 +1205,10 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Fout bij opslaan van annotatiebestand</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Omzetten naar polygoon</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1218,6 +1321,26 @@ Verwachte locatie: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Instellingen worden voor deze sessie beheerd via --config</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Lijnen en punten kunnen niet worden omgezet naar polygonen</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Lijnen en punten kunnen niet worden omgezet naar rechthoeken</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Alleen lijnstrips kunnen worden omgezet naar lijnen</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Alleen polygonen en lijnen kunnen worden omgezet naar lijnstrips</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Alleen polygonen kunnen worden omgezet naar maskers</translation>
     </message>
     <message>
         <source>Large Image</source>

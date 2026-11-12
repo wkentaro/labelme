@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Деталізація полігона</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Плавніше</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Більше деталей</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Перетворити</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -406,6 +425,14 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Об&apos;єднати вибрані фігури-маски в одну</translation>
+    </message>
+    <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Замінити вибрані фігури їхніми обмежувальними рамками</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Перетворити вибрані фігури на LineStrip</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -646,6 +673,38 @@
         <source>Duplicate</source>
         <comment>toolbar</comment>
         <translation>Дублювати</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Перетворити вибрані фігури на багатокутники</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Перетворити вибрані фігури на орієнтовані прямокутники</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Перетворити вибрані фігури на кола</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Перетворити вибрані фігури на лінії</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Перетворити вибрані фігури на точки</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Маска</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Перетворити вибрані фігури на маски</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Перетворити на</translation>
     </message>
     <message>
         <source>Undo Last Point</source>
@@ -1084,6 +1143,46 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Об&apos;єднувати можна лише фігури з однаковою міткою</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Виберіть фігури для перетворення</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Вибрані фігури вже цього типу</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Перетворення на орієнтовані прямокутники не підтримується</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Перетворення на кола не підтримується</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Перетворення на точки не підтримується</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Щоб стати багатокутником, LineStrip потребує щонайменше 3 точок</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Щоб стати лінією, LineStrip потребує рівно 2 точок</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Фігура без площі не має обмежувальної рамки</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Фігуру без площі на зображенні не можна перетворити</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Розблокуйте вибрані фігури, щоб перетворити їх</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Видалити зі списку міток</translation>
     </message>
@@ -1102,6 +1201,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Invalid Label</source>
         <translation>Недійсна мітка</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Перетворити на багатокутник</translation>
     </message>
     <message>
         <source>%s can&apos;t use an example box. Choose SAM 3.</source>
@@ -1234,6 +1337,26 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Параметри керуються через --config для цього сеансу</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Лінії й точки не можна перетворити на багатокутники</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Лінії й точки не можна перетворити на прямокутники</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>На лінії можна перетворити лише LineStrip</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>На LineStrip можна перетворити лише багатокутники й лінії</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>На маски можна перетворити лише багатокутники</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>

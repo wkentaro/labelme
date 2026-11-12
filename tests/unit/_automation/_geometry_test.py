@@ -10,6 +10,7 @@ from numpy.typing import NDArray
 from labelme._automation._geometry import _compute_polygon_deviation
 from labelme._automation._geometry import compute_circle_from_mask
 from labelme._automation._geometry import compute_oriented_rectangle_from_mask
+from labelme._automation._geometry import compute_polygon_from_circle
 from labelme._automation._geometry import compute_polygons_from_mask
 from labelme._automation._geometry import round_bbox_to_int
 from labelme._automation._geometry import shape_to_xyxy_bbox
@@ -452,3 +453,29 @@ def test_compute_oriented_rectangle_from_mask_l_shape_is_axis_aligned() -> None:
         dtype=np.float32,
     )
     assert corners == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("detail", [0, 30, 60, 90, 99, 100])
+def test_circle_polygon_stays_within_the_detail_deviation(detail: int) -> None:
+    center = np.array([50.0, 40.0])
+
+    polygon = compute_polygon_from_circle(center=center, radius=30.0, detail=detail)
+
+    assert 8 <= len(polygon) <= 360
+    np.testing.assert_allclose(np.linalg.norm(polygon - center, axis=1), 30.0)
+    # Each edge's midpoint is where it strays furthest inside the circle.
+    midpoints = (polygon + np.roll(polygon, -1, axis=0)) / 2
+    sag = 30.0 - np.linalg.norm(midpoints - center, axis=1)
+    # Between the vertex limits, the count follows the deviation.
+    if 8 < len(polygon) < 360:  # noqa: PLR2004 -- the vertex limits
+        assert sag.max() <= _compute_polygon_deviation(detail=detail) + 1e-6
+
+
+def test_circle_polygon_gains_vertices_with_detail() -> None:
+    counts = [
+        len(compute_polygon_from_circle(center=np.zeros(2), radius=30.0, detail=d))
+        for d in (0, 30, 60, 90, 100)
+    ]
+
+    assert counts == sorted(counts)
+    assert counts[0] < counts[-1]

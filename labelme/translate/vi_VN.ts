@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Độ chi tiết đa giác</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Mượt hơn</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Chi tiết hơn</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Chuyển</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -472,6 +491,14 @@
         <translation>Tạo bản sao của các hình dạng đã chọn</translation>
     </message>
     <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Thay các hình dạng đã chọn bằng hộp giới hạn của chúng</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Chuyển các hình dạng đã chọn thành đường gấp khúc</translation>
+    </message>
+    <message>
         <source>Undo last drawn point</source>
         <translation>Hoàn tác điểm vẽ cuối cùng</translation>
     </message>
@@ -622,6 +649,38 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Gộp các hình dạng mask đã chọn thành một</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Chuyển các hình dạng đã chọn thành đa giác</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Chuyển các hình dạng đã chọn thành hình chữ nhật có hướng</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Chuyển các hình dạng đã chọn thành hình tròn</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Chuyển các hình dạng đã chọn thành đường thẳng</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Chuyển các hình dạng đã chọn thành điểm</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Mặt nạ</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Chuyển các hình dạng đã chọn thành mặt nạ</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Chuyển thành</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -1084,6 +1143,46 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Chỉ gộp được các hình dạng có cùng nhãn</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Chọn hình dạng để chuyển</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Các hình dạng đã chọn đã thuộc loại này</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Không hỗ trợ chuyển thành hình chữ nhật có hướng</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Không hỗ trợ chuyển thành hình tròn</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Không hỗ trợ chuyển thành điểm</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Đường gấp khúc cần ít nhất 3 điểm để thành đa giác</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Đường gấp khúc cần đúng 2 điểm để thành đường thẳng</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Hình dạng không có diện tích thì không có hộp giới hạn</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Không thể chuyển hình dạng không có diện tích trong ảnh</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Mở khóa các hình dạng đã chọn để chuyển</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Xóa khỏi danh sách nhãn</translation>
     </message>
@@ -1106,6 +1205,10 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
     <message>
         <source>Error Saving Annotation File</source>
         <translation>Lỗi khi lưu tệp chú thích</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Chuyển thành đa giác</translation>
     </message>
     <message>
         <source>Locating the image updates the annotation file to refer to it.</source>
@@ -1218,6 +1321,26 @@ Vị trí dự kiến: {path}</translation>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Cài đặt được quản lý qua --config trong phiên này</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Không thể chuyển đường thẳng và điểm thành đa giác</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Không thể chuyển đường thẳng và điểm thành hình chữ nhật</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Chỉ chuyển được đường gấp khúc thành đường thẳng</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Chỉ chuyển được đa giác và đường thẳng thành đường gấp khúc</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Chỉ chuyển được đa giác thành mặt nạ</translation>
     </message>
     <message>
         <source>Large Image</source>

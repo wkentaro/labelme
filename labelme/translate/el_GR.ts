@@ -300,6 +300,25 @@
     </message>
 </context>
 <context>
+    <name>ConversionDetailDialog</name>
+    <message>
+        <source>Polygon detail</source>
+        <translation>Λεπτομέρεια πολυγώνου</translation>
+    </message>
+    <message>
+        <source>Smoother</source>
+        <translation>Πιο ομαλό</translation>
+    </message>
+    <message>
+        <source>More detail</source>
+        <translation>Περισσότερη λεπτομέρεια</translation>
+    </message>
+    <message>
+        <source>Convert</source>
+        <translation>Μετατροπή</translation>
+    </message>
+</context>
+<context>
     <name>EmptyStateWidget</name>
     <message>
         <source>Start annotating</source>
@@ -406,6 +425,14 @@
     <message>
         <source>Merge the selected mask shapes into one</source>
         <translation>Συγχώνευση των επιλεγμένων σχημάτων μάσκας σε ένα</translation>
+    </message>
+    <message>
+        <source>Replace the selected shapes with their bounding boxes</source>
+        <translation>Αντικατάσταση των επιλεγμένων σχημάτων με τα πλαίσια οριοθέτησής τους</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to linestrips</source>
+        <translation>Μετατροπή των επιλεγμένων σχημάτων σε LineStrip</translation>
     </message>
     <message>
         <source>Lock Shapes</source>
@@ -646,6 +673,38 @@
         <source>Duplicate</source>
         <comment>toolbar</comment>
         <translation>Διπλότυπο</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to polygons</source>
+        <translation>Μετατροπή των επιλεγμένων σχημάτων σε πολύγωνα</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to oriented rectangles</source>
+        <translation>Μετατροπή των επιλεγμένων σχημάτων σε προσανατολισμένα ορθογώνια</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to circles</source>
+        <translation>Μετατροπή των επιλεγμένων σχημάτων σε κύκλους</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to lines</source>
+        <translation>Μετατροπή των επιλεγμένων σχημάτων σε γραμμές</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to points</source>
+        <translation>Μετατροπή των επιλεγμένων σχημάτων σε σημεία</translation>
+    </message>
+    <message>
+        <source>Mask</source>
+        <translation>Μάσκα</translation>
+    </message>
+    <message>
+        <source>Convert the selected shapes to masks</source>
+        <translation>Μετατροπή των επιλεγμένων σχημάτων σε μάσκες</translation>
+    </message>
+    <message>
+        <source>Convert To</source>
+        <translation>Μετατροπή σε</translation>
     </message>
     <message>
         <source>Undo Last Point</source>
@@ -1084,6 +1143,46 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Μόνο σχήματα με την ίδια ετικέτα συγχωνεύονται</translation>
     </message>
     <message>
+        <source>Select shapes to convert</source>
+        <translation>Επιλέξτε σχήματα για μετατροπή</translation>
+    </message>
+    <message>
+        <source>The selected shapes are already this kind</source>
+        <translation>Τα επιλεγμένα σχήματα είναι ήδη αυτού του τύπου</translation>
+    </message>
+    <message>
+        <source>Converting to oriented rectangles isn’t supported</source>
+        <translation>Η μετατροπή σε προσανατολισμένα ορθογώνια δεν υποστηρίζεται</translation>
+    </message>
+    <message>
+        <source>Converting to circles isn’t supported</source>
+        <translation>Η μετατροπή σε κύκλους δεν υποστηρίζεται</translation>
+    </message>
+    <message>
+        <source>Converting to points isn’t supported</source>
+        <translation>Η μετατροπή σε σημεία δεν υποστηρίζεται</translation>
+    </message>
+    <message>
+        <source>A linestrip needs at least 3 points to become a polygon</source>
+        <translation>Ένα LineStrip χρειάζεται τουλάχιστον 3 σημεία για να γίνει πολύγωνο</translation>
+    </message>
+    <message>
+        <source>A linestrip needs exactly 2 points to become a line</source>
+        <translation>Ένα LineStrip χρειάζεται ακριβώς 2 σημεία για να γίνει γραμμή</translation>
+    </message>
+    <message>
+        <source>A shape with no area has no bounding box</source>
+        <translation>Ένα σχήμα χωρίς εμβαδόν δεν έχει πλαίσιο οριοθέτησης</translation>
+    </message>
+    <message>
+        <source>A shape with no area in the image can’t be converted</source>
+        <translation>Ένα σχήμα χωρίς εμβαδόν μέσα στην εικόνα δεν μετατρέπεται</translation>
+    </message>
+    <message>
+        <source>Unlock the selected shapes to convert them</source>
+        <translation>Ξεκλειδώστε τα επιλεγμένα σχήματα για να τα μετατρέψετε</translation>
+    </message>
+    <message>
         <source>Remove from Label List</source>
         <translation>Αφαίρεση από τη λίστα ετικετών</translation>
     </message>
@@ -1102,6 +1201,10 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
     <message>
         <source>Invalid Label</source>
         <translation>Μη έγκυρη ετικέτα</translation>
+    </message>
+    <message>
+        <source>Convert to Polygon</source>
+        <translation>Μετατροπή σε πολύγωνο</translation>
     </message>
     <message>
         <source>%s can&apos;t use an example box. Choose SAM 3.</source>
@@ -1234,6 +1337,26 @@ Expected location: {path}</source>
     <message>
         <source>Settings are managed via --config for this session</source>
         <translation>Οι ρυθμίσεις διαχειρίζονται μέσω --config για αυτή την περίοδο λειτουργίας</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to polygons</source>
+        <translation>Οι γραμμές και τα σημεία δεν μετατρέπονται σε πολύγωνα</translation>
+    </message>
+    <message>
+        <source>Lines and points can’t be converted to rectangles</source>
+        <translation>Οι γραμμές και τα σημεία δεν μετατρέπονται σε ορθογώνια</translation>
+    </message>
+    <message>
+        <source>Only linestrips can be converted to lines</source>
+        <translation>Μόνο LineStrip μετατρέπονται σε γραμμές</translation>
+    </message>
+    <message>
+        <source>Only polygons and lines can be converted to linestrips</source>
+        <translation>Μόνο πολύγωνα και γραμμές μετατρέπονται σε LineStrip</translation>
+    </message>
+    <message>
+        <source>Only polygons can be converted to masks</source>
+        <translation>Μόνο πολύγωνα μετατρέπονται σε μάσκες</translation>
     </message>
     <message>
         <source>Annotation Folder: %s</source>
