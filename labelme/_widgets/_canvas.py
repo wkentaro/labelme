@@ -211,6 +211,15 @@ _CreateMode = Literal[
 ]
 
 
+@dataclasses.dataclass(frozen=True)
+class _AiSegmentPress:
+    pos: QPointF  # in the image
+    widget_pos: QPointF
+    modifiers: Qt.KeyboardModifier
+    # Past the drag distance, which draws a box, not a point.
+    dragging: bool = False
+
+
 @dataclasses.dataclass(frozen=True, eq=False)
 class _AiJob:
     """An AI Assist request in flight, with what its result applies to."""
@@ -375,10 +384,8 @@ class Canvas(QtWidgets.QWidget):
     # prediction.
     _ai_segment_preview: list[Shape] | None
     _ai_segment_preview_key: tuple[object, ...] | None
-    # The AI-Segment press until its release, as (image pos, widget pos,
-    # modifiers); moving past the drag distance draws a box, not a point.
-    _ai_segment_press: tuple[QPointF, QPointF, Qt.KeyboardModifier] | None
-    _ai_segment_dragging: bool
+    # The AI-Segment press until its release.
+    _ai_segment_press: _AiSegmentPress | None
     # AI-Find All example boxes (labels 2, 3) and counter-examples (4, 5), and
     # the draft results they produced, not yet in shapes.
     _ai_find_all_points: np.ndarray
@@ -630,6 +637,11 @@ class Canvas(QtWidgets.QWidget):
             or self._is_pointer_held
             or self.has_ai_find_all_draft
         )
+
+    @property
+    def _ai_segment_dragging(self) -> bool:
+        press = self._ai_segment_press
+        return press is not None and press.dragging
 
     @property
     def create_mode(self) -> _CreateMode:
@@ -1388,7 +1400,6 @@ class Canvas(QtWidgets.QWidget):
         if not event.buttons() & Qt.MouseButton.LeftButton:
             # The release went elsewhere, e.g. while a finalize blocked input.
             self._ai_segment_press = None
-            self._ai_segment_dragging = False
         if self._ai_segment_press is None:
             if self._should_constrain_to_pixmap(point=pos):
                 pos = _clamp_into_image(point=pos, image_size=self.pixmap.size())
@@ -1401,16 +1412,17 @@ class Canvas(QtWidgets.QWidget):
     def _drag_ai_segment(self, *, pos: QPointF, widget_pos: QPointF) -> None:
         press = self._ai_segment_press
         assert press is not None
-        if not self._ai_segment_dragging:
-            self._ai_segment_dragging = (
-                widget_pos - press[1]
-            ).manhattanLength() >= QtWidgets.QApplication.startDragDistance()
-        if not self._ai_segment_dragging:
-            return
+        if not press.dragging:
+            if (
+                widget_pos - press.widget_pos
+            ).manhattanLength() < QtWidgets.QApplication.startDragDistance():
+                return
+            press = dataclasses.replace(press, dragging=True)
+            self._ai_segment_press = press
         if self._should_constrain_to_pixmap(point=pos):
             pos = _clamp_into_image(point=pos, image_size=self.pixmap.size())
         self._line = _DraftShape(
-            shape_type="points", points=(press[0], pos), point_labels=_AI_BOX_LABELS
+            shape_type="points", points=(press.pos, pos), point_labels=_AI_BOX_LABELS
         )
 
     def _project_drawing_pos_into_image(self, *, pos: QPointF) -> QPointF:
@@ -1891,8 +1903,9 @@ class Canvas(QtWidgets.QWidget):
         ):
             return
         modifiers = event.modifiers()
-        self._ai_segment_press = (pos, event.position(), modifiers)
-        self._ai_segment_dragging = False
+        self._ai_segment_press = _AiSegmentPress(
+            pos=pos, widget_pos=event.position(), modifiers=modifiers
+        )
         # A release before the drag distance places this point.
         self._line = _ai_segment_point(pos=pos, modifiers=modifiers)
 
@@ -1906,7 +1919,6 @@ class Canvas(QtWidgets.QWidget):
             widget_pos=event.position(),
         )
         self._ai_segment_press = None
-        self._ai_segment_dragging = False
         draft = _with_ai_segment_input(
             draft=self._current or _DraftShape(shape_type="points"), line=self._line
         )
@@ -1916,7 +1928,7 @@ class Canvas(QtWidgets.QWidget):
             return
         self._current = draft
         self.busy_changed.emit()
-        if press[2] & Qt.KeyboardModifier.ControlModifier:
+        if press.modifiers & Qt.KeyboardModifier.ControlModifier:
             self._finalize()
             return
         self.update()
@@ -2577,7 +2589,7 @@ class Canvas(QtWidgets.QWidget):
             if (
                 current is None
                 or not self._ai_segment_result
-                or (self._ai_segment_dragging)
+                or self._ai_segment_dragging
             ):
                 return None
             points = [_drawn_corners(shape=s) for s in self._ai_segment_result]
@@ -3100,7 +3112,6 @@ class Canvas(QtWidgets.QWidget):
         self._stroke_press = None
         self._current = None
         self._ai_segment_press = None
-        self._ai_segment_dragging = False
         self._ai_finalize_job = None
         self._set_ai_existing_shape_highlights(shapes=[])
         self.busy_changed.emit()
@@ -3422,7 +3433,6 @@ class Canvas(QtWidgets.QWidget):
         self._ai_segment_preview = None
         self._ai_segment_preview_key = None
         self._ai_segment_press = None
-        self._ai_segment_dragging = False
         self._clear_ai_find_all_draft()
         self._release_cursor()
         self.pixmap = QtGui.QPixmap()

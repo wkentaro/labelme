@@ -29,6 +29,7 @@ from labelme._shape import Shape
 from labelme._shape import ShapeType
 from labelme._widgets._canvas import _CREATE_MODE_TO_SHAPE_TYPE
 from labelme._widgets._canvas import Canvas
+from labelme._widgets._canvas import _AiSegmentPress
 from labelme._widgets._canvas import _compute_intersection_edges_image
 from labelme._widgets._canvas import _compute_shapes_bounds
 from labelme._widgets._canvas import _draft_to_shape
@@ -4498,9 +4499,14 @@ def test_ai_segment_hint_shows_while_a_suggestion_waits(*, canvas: Canvas) -> No
         ["Click to include", "Click to exclude"],
     ]
 
-    canvas._ai_segment_dragging = True
+    canvas._ai_segment_press = _AiSegmentPress(
+        pos=QPointF(20, 20),
+        widget_pos=QPointF(20, 20),
+        modifiers=Qt.KeyboardModifier.NoModifier,
+        dragging=True,
+    )
     assert _hint_texts(canvas=canvas) is None
-    canvas._ai_segment_dragging = False
+    canvas._ai_segment_press = None
 
     canvas.set_editing(value=False, create_mode="polygon")
     assert _hint_texts(canvas=canvas) is None
