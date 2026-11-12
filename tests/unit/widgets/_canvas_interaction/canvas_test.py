@@ -192,7 +192,7 @@ def test_shape_hidden_while_hovered_stops_being_hover_interactive(
     canvas.mouseMoveEvent(
         _make_move_event(pos=_image_to_widget(canvas=canvas, img_x=25, img_y=25))
     )
-    assert canvas.hovered_shape is shape
+    assert canvas._hover.shape is shape
 
     canvas.set_shape_visible(shape=shape, value=False)
 
@@ -201,7 +201,7 @@ def test_shape_hidden_while_hovered_stops_being_hover_interactive(
         _make_move_event(pos=_image_to_widget(canvas=canvas, img_x=26, img_y=26))
     )
 
-    assert canvas.hovered_shape is None
+    assert canvas._hover.shape is None
     assert QtWidgets.QApplication.overrideCursor() is None
 
 
@@ -485,7 +485,7 @@ def test_vertex_hover_beyond_epsilon_screen_pixels_does_not_select_vertex(
     EPSILON: Final[float] = 10.0
 
     # A hover that is 12 SCREEN pixels from the vertex is outside epsilon=10
-    # and must NOT register as a vertex hit (_hovered_vertex stays None).
+    # and must NOT register as a vertex hit (_hover.vertex stays None).
     canvas = Canvas()
     canvas.pixmap = QtGui.QPixmap(_W, _H)
     canvas.resize(int(_W * scale), int(_H * scale))
@@ -503,7 +503,7 @@ def test_vertex_hover_beyond_epsilon_screen_pixels_does_not_select_vertex(
 
     canvas.mouseMoveEvent(_make_move_event(pos=pos))
 
-    assert canvas._hovered_vertex is None, (
+    assert canvas._hover.vertex is None, (
         f"scale={scale}: expected no vertex hit at 12 screen px from vertex "
         f"(image_offset={image_offset_px:.2f}px, epsilon={EPSILON})"
     )
@@ -535,7 +535,7 @@ def test_screen_pixel_hit_radius_is_constant_across_scale_levels(
 
         canvas.mouseMoveEvent(_make_move_event(pos=pos))
 
-        assert canvas._hovered_vertex is not None, (
+        assert canvas._hover.vertex is not None, (
             f"scale={scale}: vertex should be hit at {screen_offset_px} screen px "
             f"(image_offset={image_offset_px:.2f}px)"
         )

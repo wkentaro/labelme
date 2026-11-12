@@ -35,6 +35,7 @@ from labelme._widgets._canvas import _compute_intersection_edges_image
 from labelme._widgets._canvas import _compute_shapes_bounds
 from labelme._widgets._canvas import _draft_to_shape
 from labelme._widgets._canvas import _DraftShape
+from labelme._widgets._canvas import _Hover
 from labelme._widgets._canvas import _is_degenerate_draft
 from labelme._widgets._canvas import _is_out_of_image
 from labelme._widgets._canvas import _normalize_bbox_points
@@ -181,7 +182,7 @@ def test_drag_hovered_rotation_point_does_not_drift_on_repeated_drags(
     canvas.load_shapes(shapes=[shape])
 
     canvas._refresh_hover_state(pos=QPointF(50, 10))
-    assert canvas._hovered_rotation == 1
+    assert canvas._hover.rotation == 1
     canvas._capture_rotation_anchors()
 
     center_x, center_y = 50.0, 25.0
@@ -203,7 +204,7 @@ def _start_rotation_near_right_edge(*, canvas: Canvas) -> None:
     shape = _make_oriented_rectangle(corners=[(70, 5), (100, 5), (100, 45), (70, 45)])
     canvas.load_shapes(shapes=[shape])
     canvas._refresh_hover_state(pos=QPointF(85, 5))
-    assert canvas._hovered_rotation is not None
+    assert canvas._hover.rotation is not None
     canvas._capture_rotation_anchors()
 
 
@@ -949,20 +950,12 @@ def test_delete_selected_clears_highlights(*, canvas: Canvas) -> None:
 
 
 def _hover_first_vertex(*, canvas: Canvas, shape: Shape) -> None:
-    canvas._set_highlight(
-        hovered_shape=shape,
-        hovered_edge=None,
-        hovered_vertex=0,
-        hovered_rotation=None,
-    )
+    canvas._set_highlight(hover=_Hover(shape=shape, vertex=0))
 
 
 def _assert_no_hover(*, canvas: Canvas) -> None:
-    assert canvas.hovered_shape is None
-    assert canvas._hovered_vertex is None
-    assert canvas._last_hovered_shape is None
-    assert canvas._last_hovered_vertex is None
-    assert canvas._last_hovered_edge is None
+    assert canvas._hover == _Hover()
+    assert canvas._last_hover == _Hover()
 
 
 def test_movable_selected_shapes_skip_hidden(*, canvas: Canvas) -> None:
@@ -1018,8 +1011,8 @@ def test_deleting_another_shape_keeps_the_hover(*, canvas: Canvas) -> None:
 
     canvas.delete_selected()
 
-    assert canvas.hovered_shape is hovered
-    assert canvas._hovered_vertex == 0
+    assert canvas._hover.shape is hovered
+    assert canvas._hover.vertex == 0
 
 
 @dataclasses.dataclass
@@ -3008,8 +3001,7 @@ def test_add_point_to_edge_repaints(
 ) -> None:
     shape = _make_polygon()
     canvas.load_shapes(shapes=[shape])
-    canvas._last_hovered_shape = shape
-    canvas._last_hovered_edge = 0
+    canvas._last_hover = _Hover(shape=shape, edge=0)
     canvas._prev_move_point = QPointF(25, 10)
     update = Mock()
     monkeypatch.setattr(canvas, "update", update)
@@ -3026,8 +3018,7 @@ def test_remove_selected_point_repaints(
 ) -> None:
     shape = _make_polygon()
     canvas.load_shapes(shapes=[shape])
-    canvas._last_hovered_shape = shape
-    canvas._last_hovered_vertex = 1
+    canvas._last_hover = _Hover(shape=shape, vertex=1)
     update = Mock()
     monkeypatch.setattr(canvas, "update", update)
 
@@ -3062,9 +3053,8 @@ def test_reset_state_clears_view_offset(*, canvas: Canvas) -> None:
 def test_remove_selected_point_deselects_vertex(*, canvas: Canvas) -> None:
     shape = _make_polygon()
     canvas.load_shapes(shapes=[shape])
-    canvas._last_hovered_shape = shape
-    canvas._last_hovered_vertex = 1
-    canvas._hovered_vertex = 1
+    canvas._last_hover = _Hover(shape=shape, vertex=1)
+    canvas._hover = _Hover(shape=shape, vertex=1)
 
     canvas.remove_selected_point()
 
@@ -3076,8 +3066,7 @@ def test_remove_selected_point_deselects_vertex(*, canvas: Canvas) -> None:
 def test_remove_selected_point_is_its_own_undo_step(*, canvas: Canvas) -> None:
     canvas.load_shapes(shapes=[_make_polygon()])
     shape = canvas.shapes[0]
-    canvas._last_hovered_shape = shape
-    canvas._last_hovered_vertex = 1
+    canvas._last_hover = _Hover(shape=shape, vertex=1)
     moved = Mock()
     canvas.shape_moved.connect(moved)
 
@@ -3093,8 +3082,7 @@ def test_remove_selected_point_is_its_own_undo_step(*, canvas: Canvas) -> None:
 def test_load_shapes_forgets_the_last_hovered_shape(*, canvas: Canvas) -> None:
     shape = _make_polygon()
     canvas.load_shapes(shapes=[shape])
-    canvas._last_hovered_shape = shape
-    canvas._last_hovered_vertex = 1
+    canvas._last_hover = _Hover(shape=shape, vertex=1)
 
     canvas.load_shapes(shapes=[shape.copy()])
 
@@ -3462,7 +3450,7 @@ def test_hover_transitions_repaint(
         painted.append(
             tuple(
                 canvas._render_context(
-                    shape=shape, highlighted=shape is canvas.hovered_shape
+                    shape=shape, highlighted=shape is canvas._hover.shape
                 )
                 for shape in (polygon, rotated)
             )
@@ -3825,13 +3813,13 @@ def test_dragging_point_inside_box_commits_move(*, editing_canvas: Canvas) -> No
             canvas=canvas, kind=move, image_pos=QPointF(20, 20), buttons=no_button
         )
     )
-    assert canvas.hovered_shape is box
+    assert canvas._hover.shape is box
     canvas.mouseMoveEvent(
         _mouse_event(
             canvas=canvas, kind=move, image_pos=QPointF(40, 25), buttons=no_button
         )
     )
-    assert canvas.hovered_shape is point
+    assert canvas._hover.shape is point
     canvas.mousePressEvent(
         _mouse_event(
             canvas=canvas,
@@ -3881,8 +3869,8 @@ def test_click_on_rotation_handle_selects_its_shape(
             buttons=Qt.MouseButton.NoButton,
         )
     )
-    assert canvas.hovered_shape is rectangle
-    assert canvas._hovered_rotation is not None
+    assert canvas._hover.shape is rectangle
+    assert canvas._hover.rotation is not None
 
     event = _mouse_event(
         canvas=canvas,

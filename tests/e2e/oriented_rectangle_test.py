@@ -88,7 +88,7 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
     target_widget = image_to_widget_pos(canvas=canvas, image_pos=target)
     qtbot.mouseMove(canvas, pos=handle_widget)
     qtbot.wait(100)
-    assert canvas._hovered_rotation == 1
+    assert canvas._hover.rotation == 1
 
     drag_canvas(
         qtbot=qtbot,
@@ -149,7 +149,7 @@ def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
     start_widget = image_to_widget_pos(canvas=canvas, image_pos=moving_vertex)
     end_widget = image_to_widget_pos(canvas=canvas, image_pos=target_image_pos)
     hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=start_widget)
-    assert canvas._hovered_vertex == 2
+    assert canvas._hover.vertex == 2
     drag_canvas(
         qtbot=qtbot,
         canvas=canvas,

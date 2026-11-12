@@ -306,7 +306,7 @@ def test_linestrip_only_adds_points_on_drawn_edges(
     diagonal = (original[0] + original[-1]) / 2
     diagonal_pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(*diagonal))
     hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=diagonal_pos)
-    assert canvas._hovered_edge is None
+    assert canvas._hover.edge is None
     assert not raw_win._actions.add_point_to_edge.isEnabled()
     qtbot.mouseClick(
         canvas,
@@ -321,7 +321,7 @@ def test_linestrip_only_adds_points_on_drawn_edges(
     midpoint = (original[0] + original[1]) / 2
     edge_pos = image_to_widget_pos(canvas=canvas, image_pos=QPointF(*midpoint))
     hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=edge_pos)
-    assert canvas._hovered_edge == 1
+    assert canvas._hover.edge == 1
     assert raw_win._actions.add_point_to_edge.isEnabled()
     if via_action:
         raw_win._actions.add_point_to_edge.trigger()
@@ -951,7 +951,7 @@ def test_right_click_ignores_an_edge_hover_left_stale_by_a_zoom(
         win=annotated_win,
         image_pos=QPointF(*((shape.points[0] + shape.points[1]) / 2)),
     )
-    assert canvas._hovered_edge is not None
+    assert canvas._hover.edge is not None
     qtbot.mouseClick(canvas, Qt.MouseButton.RightButton, pos=pos)
     qtbot.wait(50)
 
@@ -973,7 +973,7 @@ def test_left_click_ignores_an_edge_hover_left_stale_by_a_zoom(
         win=annotated_win,
         image_pos=QPointF(*((shape.points[0] + shape.points[1]) / 2)),
     )
-    assert canvas._hovered_edge is not None
+    assert canvas._hover.edge is not None
 
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
     qtbot.wait(50)
@@ -1206,7 +1206,7 @@ def test_press_ignores_a_vertex_hover_left_stale_by_a_zoom(
     pos = _hover_then_zoom_off_every_shape(
         qtbot=qtbot, win=annotated_win, image_pos=QPointF(*points_before[0])
     )
-    assert canvas._hovered_vertex is not None
+    assert canvas._hover.vertex is not None
     qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=pos)
     qtbot.mouseMove(canvas, pos=pos + QPoint(30, 30))
     qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=pos + QPoint(30, 30))
