@@ -546,6 +546,9 @@ def _build_two_point_outline(*, shape: Shape) -> QtGui.QPainterPath:
         and len(shape.points) == RECTANGLE_POINT_COUNT
     ):
         corner, opposite = shape.points
+        if shape.mask is not None:
+            # The frame wraps the mask's pixels, which span c to c + 1.
+            opposite = corner + shape.mask.shape[::-1]
         path.addRect(_build_rect_between(corner=corner, opposite=opposite))
     return path
 
