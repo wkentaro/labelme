@@ -119,6 +119,14 @@ class _OpenedFolder(NamedTuple):
     image_paths: tuple[str, ...]
 
 
+class _FileContents(NamedTuple):
+    # What an Annotation File holds, as a save writes it. A None path is an
+    # Image that has no file.
+    path: str | None
+    shapes: list[ShapeDict]
+    flags: dict[str, bool]
+
+
 class _ZoomMode(enum.Enum):
     FIT_WINDOW = enum.auto()
     FIT_SELECTION = enum.auto()
@@ -275,11 +283,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _config_overrides: dict
 
     _is_changed: bool = False
-    # What an Annotation File holds, as a save writes it, to tell when Undo
-    # returns to it. None for an Image that has no file yet.
-    _file_path: str | None
-    _file_shapes: list[ShapeDict]
-    _file_flags: dict[str, bool]
+    # To tell when Undo returns to the file.
+    _file_contents: _FileContents
     _shape_clipboard: ShapeClipboard
     _zoom_mode: _ZoomMode
     _is_canvas_pointer_active: bool = False
@@ -417,9 +422,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._status_bar = self._setup_status_bar()
         self._save_revision = 0
-        self._file_path = None
-        self._file_shapes = []
-        self._file_flags = {}
+        self._file_contents = _FileContents(path=None, shapes=[], flags={})
         self._auto_save_path = None
         self._chosen_save_path = None
         self._save_writer = SaveWriter(parent=self)
@@ -2177,10 +2180,10 @@ class MainWindow(QtWidgets.QMainWindow):
         # over it as any edit.
         back_to_clean = (
             not self._save_writer.is_busy
-            and self._file_path
+            and self._file_contents.path
             == (self._auto_save_path or self._chosen_save_path or self._label_file_path)
-            and self._read_flag_dock_states() == self._file_flags
-            and _saved_shapes_equal(a=canvas.shapes, b=self._file_shapes)
+            and self._read_flag_dock_states() == self._file_contents.flags
+            and _saved_shapes_equal(a=canvas.shapes, b=self._file_contents.shapes)
         )
         # Undoing a step that saves nothing, such as hiding a shape, leaves
         # the file as it was.
@@ -2768,9 +2771,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _record_file_contents(self, *, request: SaveRequest) -> None:
         # Every successful write changes what the file holds.
-        self._file_path = request.filename
-        self._file_shapes = request.annotation.shapes
-        self._file_flags = request.annotation.flags
+        self._file_contents = _FileContents(
+            path=request.filename,
+            shapes=request.annotation.shapes,
+            flags=request.annotation.flags,
+        )
 
     def _insert_shapes(self, *, shapes: list[Shape]) -> None:
         # Committing reloads the shapes, which would discard an unfinished one.
@@ -3563,9 +3568,11 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self._load_flags(flags=annotation.flags, widget=self._docks.flag_list)
         # The carried Shapes are not in this Image's file.
-        self._file_path = label_file_path
-        self._file_shapes = [] if carry_prev_shapes else self._shape_dicts()
-        self._file_flags = self._read_flag_dock_states()
+        self._file_contents = _FileContents(
+            path=label_file_path,
+            shapes=[] if carry_prev_shapes else self._shape_dicts(),
+            flags=self._read_flag_dock_states(),
+        )
         if carry_prev_shapes:
             self.mark_dirty()
         else:
@@ -4019,9 +4026,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._canvas_widgets.canvas.shape_backups.clear()
         self._canvas_widgets.canvas.load_shapes(shapes=[], replace=True)
         # As an Image with no file.
-        self._file_path = None
-        self._file_shapes = []
-        self._file_flags = self._read_flag_dock_states()
+        self._file_contents = _FileContents(
+            path=None, shapes=[], flags=self._read_flag_dock_states()
+        )
         self.mark_clean()
         self._actions.delete_file.setEnabled(self.has_label_file())
 
