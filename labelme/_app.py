@@ -3937,10 +3937,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def prompt_save_file_path(self) -> str:
         assert self._image_path is not None
-        default_path = _label_path.resolve_label_path(
-            image_path=self._file_list_image_path or self._image_path,
-            output_dir=self._opened_folder.output_dir,
-            root_prefix=self._opened_folder.root,
+        # Suggest where the document saves until the user picks elsewhere.
+        target = self._save_target
+        default_path = (
+            target.path
+            if target is not None and not target.overwrite_confirmed
+            else _label_path.resolve_label_path(
+                image_path=self._file_list_image_path or self._image_path,
+                output_dir=self._opened_folder.output_dir,
+                root_prefix=self._opened_folder.root,
+            )
         )
         # The dialog cannot preselect a file in a mirrored subfolder of the
         # Annotation Folder that does not exist yet.
@@ -4522,14 +4528,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
             self.mark_clean()
             opened_dir = file_or_dir
-            previous_label_path = (
-                self.current_label_file_path() if self._image_path else None
-            )
+            # A failed load keeps the previous image open beside the new
+            # folder's Images: the new Annotation Folder serves those Images,
+            # and the open image keeps saving where it did.
+            if self._image_path:
+                self._save_destination()
             output_dir, missing_output_dir = self._remembered_output_dir(
                 opened_dir=opened_dir
             )
             self._import_images_from_dir(root_dir=opened_dir, output_dir=output_dir)
-            loaded = False
             if self.image_list:
                 # Selecting the first row emits no change signal when it is
                 # already current (reopening the same directory), so drive the
@@ -4538,18 +4545,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 previous_item = file_list.currentItem()
                 with QtCore.QSignalBlocker(file_list):
                     file_list.setCurrentRow(0)
-                loaded = self._load_selected_image(
-                    file_list.currentItem(), previous_item
-                )
+                self._load_selected_image(file_list.currentItem(), previous_item)
                 file_list.repaint()
-            # A failed load keeps the previous image open beside the new
-            # folder's Images: the new Annotation Folder serves those Images,
-            # and the open image keeps saving where it did.
-            if not loaded and previous_label_path is not None:
-                self._label_file_path = previous_label_path
-                self._save_target = _SaveTarget(
-                    path=previous_label_path, overwrite_confirmed=True
-                )
         else:
             opened_dir = str(Path(file_or_dir).parent)
             previous_folder = self._opened_folder

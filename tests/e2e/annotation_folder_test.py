@@ -199,6 +199,7 @@ def test_failed_folder_open_keeps_each_image_on_its_own_annotation_folder(
     data_path: Path,
     tmp_path: Path,
     critical_messages: list[str],
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     first_images = data_path / "raw"
     first_folder = tmp_path / "first-annotations"
@@ -227,13 +228,60 @@ def test_failed_folder_open_keeps_each_image_on_its_own_annotation_folder(
     win._load_from_file_or_dir(file_or_dir=str(second_images))
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
     assert win._image_path == first_image
-    assert win.current_label_file_path() == str(
+    assert win._known_save_destination() == str(
         first_folder / f"{Path(first_image).stem}.json"
     )
     assert win._opened_folder.output_dir == second_folder
+    # The first Save suggests the same file.
+    monkeypatch.setattr(
+        QtWidgets.QFileDialog,
+        "getSaveFileName",
+        lambda *_args, dir, **_kwargs: (dir, ""),
+    )
+    win._save_label_file(save_as=False)
+    assert (first_folder / f"{Path(first_image).stem}.json").exists()
 
     win._load_from_file_or_dir(file_or_dir=str(second_images / "02-valid.jpg"))
     assert win.current_label_file_path() == str(second_folder / "02-valid.json")
+
+
+def test_failed_folder_open_keeps_another_images_annotation_file(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+    critical_messages: list[str],
+) -> None:
+    first_images = tmp_path / "first"
+    first_images.mkdir()
+    image = data_path / "raw" / "2011_000006.jpg"
+    shutil.copyfile(src=image, dst=first_images / "a.jpg")
+    shutil.copyfile(src=image, dst=first_images / "a.png")
+    # Both of a.jpg's file names hold a.png's Annotation File.
+    foreign = {"version": "5.0.0", "imagePath": "a.png", "shapes": [], "flags": {}}
+    for name in ["a.json", "a.jpg.json"]:
+        (first_images / name).write_text(json.dumps(foreign))
+    second_images = tmp_path / "second"
+    second_images.mkdir()
+    (second_images / "broken.jpg").write_bytes(b"not an image")
+
+    win = main_win(file_or_dir=first_images)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert win._image_path == str(first_images / "a.jpg")
+    assert not win.has_label_file()
+
+    win._load_from_file_or_dir(file_or_dir=str(second_images))
+    qtbot.waitUntil(lambda: len(critical_messages) == 1)
+    assert win._image_path == str(first_images / "a.jpg")
+    assert not win.has_label_file()
+
+    win.mark_dirty()
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+    # A dirty window would block teardown on the Unsaved Changes dialog.
+    win.mark_clean()
+    for name in ["a.json", "a.jpg.json"]:
+        assert json.loads((first_images / name).read_text()) == foreign
 
 
 def test_failed_parent_folder_open_keeps_open_subfolder_image_destination(
@@ -269,7 +317,7 @@ def test_failed_parent_folder_open_keeps_open_subfolder_image_destination(
     qtbot.waitUntil(lambda: len(critical_messages) == 1)
     assert win._image_path == str(image)
     assert win._opened_folder.output_dir == parent_folder
-    assert win.current_label_file_path() == str(sub_folder / "02-valid.json")
+    assert win._known_save_destination() == str(sub_folder / "02-valid.json")
 
 
 def test_unsaved_changes_save_before_the_annotation_folder_switches(
