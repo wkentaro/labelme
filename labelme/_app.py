@@ -4462,6 +4462,10 @@ class MainWindow(QtWidgets.QMainWindow):
             # previous session and Image List untouched.
             if not self._load_file(image_or_label_path=file_or_dir):
                 return
+            # The Annotation Folder stays with the folder being closed; one
+            # given with --output and no folder still applies.
+            if self._file_list_root_prefix is not None:
+                self._output_dir = None
             self._loaded_image_paths = []
             self._file_list_root_prefix = None
             self._refresh_file_list()

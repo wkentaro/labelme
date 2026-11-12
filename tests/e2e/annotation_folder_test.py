@@ -15,6 +15,7 @@ from labelme._app import ANNOTATION_FOLDERS_KEY
 from labelme._app import MainWindow
 
 from .conftest import MainWinFactory
+from .conftest import select_shape
 from .conftest import show_window_and_wait_for_imagedata
 
 
@@ -137,6 +138,40 @@ def test_annotation_folder_menu_needs_an_opened_folder(
     win._load_from_file_or_dir(file_or_dir=str(label_file))
     assert not change.isEnabled()
     assert not footer.isVisibleTo(win)
+
+
+def test_opened_annotation_file_leaves_the_folders_annotation_folder(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    data_path: Path,
+    tmp_path: Path,
+) -> None:
+    images = data_path / "raw"
+    remembered = tmp_path / "remembered"
+    remembered.mkdir()
+    opened = data_path / "annotated" / "2011_000003.json"
+    opened_before = opened.read_bytes()
+
+    first = main_win()
+    first._window_state.setValue(ANNOTATION_FOLDERS_KEY, {str(images): str(remembered)})
+    first.close()
+
+    win = main_win(file_or_dir=images, config_overrides=dict(auto_save=False))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    assert win._output_dir == remembered
+
+    win._load_from_file_or_dir(file_or_dir=str(opened))
+    canvas = win._canvas_widgets.canvas
+    select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
+    qtbot.keyPress(canvas, Qt.Key.Key_Right)
+    qtbot.keyRelease(canvas, Qt.Key.Key_Right)
+    win._save_label_file(save_as=False)
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
+    win.mark_clean()
+
+    assert not (remembered / opened.name).exists()
+    assert opened.read_bytes() != opened_before
 
 
 def test_cli_output_stays_with_its_folder(
