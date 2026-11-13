@@ -5,6 +5,7 @@ from PySide6 import QtCore
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
+from labelme._model_manager import ModelManager
 from labelme._widgets._ai_assisted_annotation_widget import AiAssistedAnnotationWidget
 from labelme._widgets._ai_text_to_annotation_widget import AiTextToAnnotationWidget
 from labelme._widgets._ai_tool_group import AiToolGroup
@@ -214,6 +215,9 @@ def test_model_menu_shows_the_download_size_of_missing_models(
     group._detect._model_combo.set_available_models(
         available={"sam3:latest"}, downloading=set()
     )
+    manager = ModelManager()
+    manager.set_device(device="cpu")  # SAM 3's CPU files are the larger
+    group.set_download_sizes(sizes=manager.download_sizes())
 
     menu = group._model_button._build_menu()
     texts = _menu_texts(menu=menu)
