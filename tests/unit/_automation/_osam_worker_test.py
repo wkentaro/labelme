@@ -251,6 +251,22 @@ def test_release_stops_the_server_and_fails_the_jobs_it_drops(
     assert _results(worker=worker)[2][2]["client"] is not client
 
 
+def test_shutdown_does_not_wait_for_a_running_request(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    worker.submit(channel="x", job="running", request=_request(model_name="hang"))
+    qtbot.waitUntil(lambda: worker.stage == "generating", timeout=_WAIT_MS)
+    client = _client(worker=worker)
+
+    start = time.monotonic()
+    worker.shutdown()
+    assert time.monotonic() - start < 1  # not held up by the request
+    assert not client.closed
+
+    client.release.set()  # the request ends; the thread then closes it
+    qtbot.waitUntil(lambda: client.closed, timeout=_WAIT_MS)
+
+
 def test_release_does_not_wait_for_a_server_starting_up(
     *, worker: OsamWorker, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
 ) -> None:

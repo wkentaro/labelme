@@ -198,23 +198,30 @@ class OsamWorker(QtCore.QObject):
         jobs = [job for job, _ in self._pending.values()]
         if self._active is not None:
             jobs.insert(0, self._active.job)
-        self._stop()
+        self._drop_requests()
+        self._close_client()  # a running request fails, unreported
         for job in jobs:
             self.failed.emit(job, "AI worker stopped")
 
     def shutdown(self) -> None:
-        self._stop()
+        # Returns at once: the thread closes the server, which also exits
+        # with this process, so quitting never waits on a running request.
+        self._drop_requests()
         self._inbox.put(None)
 
-    def _stop(self) -> None:
+    def _drop_requests(self) -> None:
+        # The thread skips the dropped ones, and their results go unreported.
         self._pending.clear()
         with self._lock:
-            client, self._client = self._client, None
             self._first_live_id = next(self._request_ids)
-        if client is not None:
-            client[1].close()  # a running request fails, unreported
         if self._active is not None:
             self._set_active(active=None)
+
+    def _close_client(self) -> None:
+        with self._lock:
+            client, self._client = self._client, None
+        if client is not None:
+            client[1].close()
 
     def _set_active(self, *, active: _Active | None) -> None:
         self._active = active
@@ -262,6 +269,7 @@ class OsamWorker(QtCore.QObject):
                 )
             else:
                 self._reported.emit(request_id, "done", annotations)
+        self._close_client()
 
     def _report_stage(
         self, request_id: int, stage: WorkerStage, device: str | None, /
