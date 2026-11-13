@@ -42,8 +42,10 @@ class _ScriptedClient:
             for name in self.loaded
         ]
 
-    def load(self, *args: object, **_: object) -> None:
-        self.loaded.add(cast(str, args[0]))  # positional, as osam takes it
+    def load(self, *args: object, **_: object) -> osam.types.RunningModel:
+        name = cast(str, args[0])  # positional, as osam takes it
+        self.loaded.add(name)
+        return osam.types.RunningModel(name=name, device=self.device, expires_at=None)
 
     def segment(self, *args: object, **_: object) -> dict[str, object]:
         model = args[0]  # positional, as osam takes it
