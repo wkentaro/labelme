@@ -156,11 +156,6 @@ def find_ai_assist_model_option(*, model_name: str) -> _AiAssistModelOption | No
     return None
 
 
-def accepts_example_boxes(*, model_name: str) -> bool:
-    # YOLO-World detects from text only; SAM3 also takes example boxes.
-    return model_name.startswith("sam3:")
-
-
 # The AI device setting; "auto" lets osam pick one.
 Device = Literal["auto", "cpu"]
 
@@ -188,3 +183,9 @@ def osam_client(
 def model_info(*, client: osam.Client, name: str) -> osam.types.ModelInfo:
     [info] = [info for info in client.list() if info.name == name]
     return info
+
+
+def accepts_example_boxes(*, model_name: str) -> bool:
+    # Such as SAM3; YOLO-World detects from text only.
+    info = model_info(client=osam_client(device="auto"), name=model_name)
+    return "example_boxes" in info.prompt_kinds
