@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import threading
-from typing import TYPE_CHECKING
 from typing import Final
 
 from PySide6 import QtCore
@@ -11,9 +10,6 @@ from ._ai_models import AI_TEXT_MODEL_OPTIONS
 from ._ai_models import Device
 from ._ai_models import model_info
 from ._ai_models import osam_client
-
-if TYPE_CHECKING:
-    pass
 
 
 class _Pull(QtCore.QObject):
