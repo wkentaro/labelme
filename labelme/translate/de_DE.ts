@@ -893,14 +893,6 @@
         <translation>{model} wird geladen…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>Bild wird auf der CPU vorbereitet…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>Bild wird vorbereitet…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} s</translation>
     </message>

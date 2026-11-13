@@ -1111,14 +1111,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>Завантаження {model}…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>Підготовка зображення на CPU…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>Підготовка зображення…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} с</translation>
     </message>

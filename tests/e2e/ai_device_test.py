@@ -110,29 +110,20 @@ def test_status_bar_names_the_stage_and_time_of_a_slow_prompt(
     segment = object()
     assert show(job=segment, stage="starting") == "Starting AI…"
     assert show(stage="loading", model_name="sam2:latest") == "Loading SAM 2 Base+…"
-    assert show(stage="encoding", device="cpu") == "Preparing image on CPU…"
-    assert show(stage="generating") == "Segmenting on CPU…"
+    assert show(stage="generating", device="cpu") == "Segmenting on CPU…"
     # A warm Segment, such as each preview while the cursor moves, is silent.
     for _ in range(3):
         assert show(job=object(), stage=None) == "Segmenting on CPU…"
-    assert announced == [
-        "Starting AI…",
-        "Loading SAM 2 Base+…",
-        "Preparing image on CPU…",
-    ]
+    assert announced == ["Starting AI…", "Loading SAM 2 Base+…"]
 
-    # A detection on a warm worker announces its task once, around a stage.
+    # A detection announces its task once, around a stage.
     announced.clear()
     assert show(job=text_job, stage=None, device=None) == "Finding all 'dog'…"
-    assert show(stage="encoding") == "Preparing image…"
+    assert show(stage="loading") == "Loading SAM 2 Base+…"
     # As if 4 seconds have passed.
     win._ai_status = win._ai_status._replace(started_at=win._ai_status.started_at - 4)
     assert show(stage="generating") == "Finding all 'dog'… · 4 s"
     assert show() == "Finding all 'dog'… · 4 s"  # a tick
-    # A retry on CPU keeps the job's clock and repeats no announcement.
     assert show(job=None, stage=None) == ""
     assert not win._ai_status_timer.isActive()
-    assert show(job=text_job, stage="starting") == "Starting AI… · 4 s"
-    assert show(stage="encoding", device="cpu") == "Preparing image on CPU… · 4 s"
-    assert show(stage="generating") == "Finding all 'dog' on CPU… · 4 s"
-    assert announced == ["Finding all 'dog'…", "Preparing image…", "Starting AI…"]
+    assert announced == ["Finding all 'dog'…", "Loading SAM 2 Base+…"]

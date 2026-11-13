@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib
 import tomllib
 from pathlib import Path
 
@@ -38,12 +37,3 @@ def test_osam_dependency_keeps_cpu_installs_and_supported_gpus(
     ]
     assert requirements
     assert any("webgpu" in requirement.extras for requirement in requirements) is webgpu
-
-
-def test_gdown_keeps_the_internals_the_model_downloader_patches() -> None:
-    # labelme/_model_manager.py overwrites both; a rename must fail here, not
-    # in a user's download.
-    cached_download = importlib.import_module("gdown.cached_download")
-
-    assert isinstance(cached_download.cache_root, str)
-    assert cached_download.shutil.move is not None

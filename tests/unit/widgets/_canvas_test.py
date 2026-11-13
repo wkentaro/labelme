@@ -1687,50 +1687,16 @@ def test_load_pixmap_rearms_inference_failure_report(*, canvas: Canvas) -> None:
     assert canvas._ai_inference_failed is False
 
 
-def test_load_pixmap_defers_image_hash(
+def test_load_pixmap_defers_image_conversion(
     *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
     monkeypatch.setattr(
         pixmap, "toImage", Mock(side_effect=AssertionError("Image converted on load"))
     )
-    canvas._pixmap_rgb = (np.zeros((1, 1, 3), dtype=np.uint8), "1")
+    canvas._pixmap_rgb = np.zeros((1, 1, 3), dtype=np.uint8)
     canvas.load_pixmap(pixmap=pixmap)
     assert canvas._pixmap_rgb is None
-
-
-@pytest.mark.parametrize("change", ["pixels", "dimensions"])
-def test_ai_image_id_is_reused_after_reloading_image(
-    *, canvas: Canvas, change: str
-) -> None:
-    # The worker reuses its image embedding for a repeated image id.
-    first = QtGui.QImage(_WIDTH, _HEIGHT, QtGui.QImage.Format.Format_RGB32)
-    first.fill(Qt.GlobalColor.red)
-    second = QtGui.QImage(
-        _WIDTH if change == "pixels" else _HEIGHT,
-        _HEIGHT if change == "pixels" else _WIDTH,
-        QtGui.QImage.Format.Format_RGB32,
-    )
-    second.fill(Qt.GlobalColor.blue if change == "pixels" else Qt.GlobalColor.red)
-    keys: list[int] = []
-    for image in [first, second, first]:
-        # Fresh image data, as file navigation creates, rather than a shared pixmap.
-        pixmap = QtGui.QPixmap.fromImage(image.copy())
-        keys.append(pixmap.cacheKey())
-        canvas.reset_state()
-        canvas.load_pixmap(pixmap=pixmap)
-        canvas._submit_ai_job(
-            channel="preview",
-            prompt_kind="points",
-            points=[QPointF(10, 10)],
-            point_labels=[1],
-        )
-    first_id, second_id, reloaded_id = (
-        r.image_id for r in _worker(canvas=canvas).requests
-    )
-    assert second_id != first_id
-    assert reloaded_id == first_id
-    assert len(set(keys)) == 3
 
 
 def test_create_mode_switch_retypes_one_point_partial(*, canvas: Canvas) -> None:

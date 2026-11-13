@@ -326,7 +326,7 @@ class Canvas(QtWidgets.QWidget):
     get_ai_find_all_query: Callable[[], str]
 
     pixmap: QtGui.QPixmap
-    _pixmap_rgb: tuple[np.ndarray, str] | None
+    _pixmap_rgb: np.ndarray | None
     _cursor: CursorRole
     shapes: list[Shape]
     shape_context_menu: QtWidgets.QMenu
@@ -851,11 +851,9 @@ class Canvas(QtWidgets.QWidget):
         job = self._ai_finalize_job
         return job is not None and job.draft is self._current
 
-    def ai_image(self) -> tuple[np.ndarray, str]:
-        # The id names the image to the AI worker, which caches its embedding.
+    def ai_image(self) -> np.ndarray:
         if self._pixmap_rgb is None:
-            image: np.ndarray = _utils.img_qt_to_rgb_arr(img_qt=self.pixmap.toImage())
-            self._pixmap_rgb = (image, str(hash((image.shape, image.tobytes()))))
+            self._pixmap_rgb = _utils.img_qt_to_rgb_arr(img_qt=self.pixmap.toImage())
         return self._pixmap_rgb
 
     def _submit_ai_job(
@@ -869,7 +867,7 @@ class Canvas(QtWidgets.QWidget):
         preview_key: object = None,
     ) -> None:
         assert self._osam_worker is not None
-        image, image_id = self.ai_image()
+        image = self.ai_image()
         job = _AiJob(
             channel=channel,
             pixmap_key=self.pixmap.cacheKey(),
@@ -908,7 +906,6 @@ class Canvas(QtWidgets.QWidget):
             job=job,
             request=_automation.InferenceRequest(
                 model_name=self._get_mode_ai_model_name(),
-                image_id=image_id,
                 image=image,
                 points=job.points,
                 point_labels=job.point_labels,

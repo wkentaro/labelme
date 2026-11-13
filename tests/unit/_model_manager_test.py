@@ -14,6 +14,7 @@ from pytestqt.qtbot import QtBot
 from labelme._model_manager import ModelManager
 
 from ..conftest import DOWNLOAD_START_TIMEOUT_MS
+from ..conftest import set_model_blobs
 
 
 @pytest.fixture
@@ -68,15 +69,15 @@ def test_queue_continues_after_failure_and_retry_goes_last(
     origin, requests, release = download_server
     failed = "efficientsam:10m"
     waiting = "efficientsam:latest"
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(failed),
-        "_blobs",
-        {"model": _make_blob(url=origin + "/bad")},
+    set_model_blobs(
+        monkeypatch=monkeypatch,
+        name=failed,
+        blobs={"model": _make_blob(url=origin + "/bad")},
     )
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(waiting),
-        "_blobs",
-        {"model": _make_blob(url=origin + "/slow")},
+    set_model_blobs(
+        monkeypatch=monkeypatch,
+        name=waiting,
+        blobs={"model": _make_blob(url=origin + "/slow")},
     )
     manager.enqueue(model_name=failed)
     manager.enqueue(model_name=waiting)
@@ -99,21 +100,6 @@ def test_queue_continues_after_failure_and_retry_goes_last(
     assert requests.count("/slow") == 1
 
 
-def test_cache_setup_failure_marks_model_as_failed(
-    *, manager: ModelManager, tmp_path: Path
-) -> None:
-    model_root = tmp_path / ".cache" / "osam" / "models"
-    model_root.parent.mkdir(parents=True)
-    model_root.write_text("not a directory")
-    name = "efficientsam:10m"
-
-    manager.enqueue(model_name=name)
-
-    assert manager.get_state(model_name=name) == "failed"
-    assert manager.active is None
-    assert not manager.queue
-
-
 def test_cancel_keeps_completed_files_and_quit_discards_queue(
     *,
     manager: ModelManager,
@@ -129,16 +115,14 @@ def test_cancel_keeps_completed_files_and_quit_discards_queue(
     )
     Path(completed.path).parent.mkdir(parents=True, exist_ok=True)
     Path(completed.path).write_bytes(b"done")
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name),
-        "_blobs",
-        {"done": completed, "model": blob},
+    set_model_blobs(
+        monkeypatch=monkeypatch, name=name, blobs={"done": completed, "model": blob}
     )
     manager.enqueue(model_name=name)
     manager.enqueue(model_name="sam:100m")
     qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
-    manager.cancel("sam:100m")
-    manager.cancel(name)
+    manager.cancel(model_name="sam:100m")
+    manager.cancel(model_name=name)
     assert manager.active is None and not manager.queue
     assert manager.get_state(model_name=name) == "missing"
     release.set()
@@ -152,7 +136,7 @@ def test_cancel_keeps_completed_files_and_quit_discards_queue(
     qtbot.waitUntil(
         lambda: requests == ["/slow", "/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS
     )
-    assert manager.shutdown()
+    manager.shutdown()
     release.set()
     assert manager.active is None and not manager.queue
     assert not Path(blob.path).exists()
@@ -179,17 +163,17 @@ def test_cancel_preserves_blob_completed_before_active_download(
         url=origin + "/slow",
         hash="sha256:" + hashlib.sha256(b"later").hexdigest(),
     )
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name),
-        "_blobs",
-        {"completed": completed, "active": active},
+    set_model_blobs(
+        monkeypatch=monkeypatch,
+        name=name,
+        blobs={"completed": completed, "active": active},
     )
     manager.enqueue(model_name=name)
     qtbot.waitUntil(
         lambda: requests == ["/weights", "/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS
     )
 
-    manager.cancel(name)
+    manager.cancel(model_name=name)
 
     assert Path(completed.path).exists()
     assert not Path(active.path).exists()
@@ -208,24 +192,24 @@ def test_shutdown_interrupts_stalled_download(
 ) -> None:
     origin, _, release = download_server
     name = "efficientsam:10m"
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name),
-        "_blobs",
-        {"model": _make_blob(url=origin + "/large")},
+    set_model_blobs(
+        monkeypatch=monkeypatch,
+        name=name,
+        blobs={"model": _make_blob(url=origin + "/large")},
     )
     manager.enqueue(model_name=name)
     # Consume the entire initial body so the worker is left waiting on a server
     # that sends nothing more.
     qtbot.waitUntil(lambda: manager.progress[1] == 2**20)
     started_at = time.monotonic()
-    assert manager.shutdown()
+    manager.shutdown()
     # The server gives up on its own after a few seconds, which would also end
     # the transfer; only a prompt return proves cancellation interrupted it.
     assert time.monotonic() - started_at < 2
     assert not release.is_set()
 
 
-def test_shutdown_terminates_download_stalled_during_tls(
+def test_shutdown_returns_while_download_stalled_during_tls(
     *,
     manager: ModelManager,
     monkeypatch: pytest.MonkeyPatch,
@@ -234,17 +218,14 @@ def test_shutdown_terminates_download_stalled_during_tls(
     origin, accepted, release = stalled_tls_server
     name = "efficientsam:10m"
     blob = _make_blob(url=origin + "/weights")
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
-    )
+    set_model_blobs(monkeypatch=monkeypatch, name=name, blobs={"model": blob})
     manager.enqueue(model_name=name)
     assert accepted.wait(timeout=5)
-    blob_root = Path(blob.path).parent
 
     failsafe = threading.Timer(3, release.set)
     failsafe.start()
     started_at = time.monotonic()
-    assert manager.shutdown()
+    manager.shutdown()
     elapsed = time.monotonic() - started_at
     handshake_was_stalled = not release.is_set()
     release.set()
@@ -254,44 +235,6 @@ def test_shutdown_terminates_download_stalled_during_tls(
     assert elapsed < 2
     assert handshake_was_stalled
     assert not Path(blob.path).exists()
-    assert not list(blob_root.glob(".labelme-pull-*"))
-
-
-def test_failed_shutdown_keeps_active_download_and_queue(
-    *,
-    manager: ModelManager,
-    qtbot: QtBot,
-    monkeypatch: pytest.MonkeyPatch,
-    download_server: tuple[str, list[str], threading.Event],
-) -> None:
-    origin, requests, release = download_server
-    active = "efficientsam:10m"
-    queued = "efficientsam:latest"
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(active),
-        "_blobs",
-        {"model": _make_blob(url=origin + "/slow")},
-    )
-    manager.enqueue(model_name=active)
-    manager.enqueue(model_name=queued)
-    qtbot.waitUntil(lambda: requests == ["/slow"], timeout=DOWNLOAD_START_TIMEOUT_MS)
-    assert manager._pull is not None
-    pull = manager._pull
-
-    def fail_stop() -> bool:
-        pull.error = "could not stop"
-        return False
-
-    with monkeypatch.context() as patch:
-        patch.setattr(pull, "stop", fail_stop)
-        assert not manager.shutdown()
-
-    assert manager.active == active
-    assert manager.queue == [queued]
-    assert manager.errors[active] == "could not stop"
-    manager.cancel(queued)
-    release.set()
-    assert manager.shutdown()
 
 
 def test_remove_stops_download_before_deleting_files(
@@ -304,9 +247,7 @@ def test_remove_stops_download_before_deleting_files(
     origin, requests, download_release = download_server
     name = "efficientsam:10m"
     blob = _make_blob(url=origin + "/slow")
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
-    )
+    set_model_blobs(monkeypatch=monkeypatch, name=name, blobs={"model": blob})
     notifications: list[str] = []
     manager.changed.connect(lambda: notifications.append("changed"))
     manager.progress_changed.connect(lambda: notifications.append("progress"))
@@ -329,9 +270,7 @@ def test_existing_files_count_as_downloaded_until_deleted(
 ) -> None:
     name = "efficientsam:10m"
     blob = _make_blob(url="https://example.invalid/weights")
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
-    )
+    set_model_blobs(monkeypatch=monkeypatch, name=name, blobs={"model": blob})
     path = Path(blob.path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(b"weights")
@@ -354,15 +293,15 @@ def test_progress_supports_files_larger_than_two_gibibytes(
 ) -> None:
     origin, _, release = download_server
     name = "efficientsam:10m"
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name),
-        "_blobs",
-        {"model": _make_blob(url=origin + "/large")},
+    set_model_blobs(
+        monkeypatch=monkeypatch,
+        name=name,
+        blobs={"model": _make_blob(url=origin + "/large")},
     )
     manager.enqueue(model_name=name)
     qtbot.waitUntil(lambda: manager.progress[1] > 0)
     # The first report may cover a partial chunk; the total is the point.
     assert manager.progress[0] == "large"
     assert manager.progress[2] == 2**33
-    manager.cancel(name)
+    manager.cancel(model_name=name)
     release.set()

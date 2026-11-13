@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Final
+from typing import NamedTuple
 
 import numpy as np
 import osam
@@ -14,6 +15,10 @@ from labelme._automation._ai_assist import AiAssistSession
 from labelme._automation._ai_assist import _detections_from_annotations
 from labelme._automation._ai_assist import _is_point_inside_detection
 from labelme._shape import Shape
+
+
+class _Response(NamedTuple):
+    annotations: list[osam.types.Annotation]
 
 
 def _propose(
@@ -41,8 +46,7 @@ def _propose(
 
 
 def test_point_prompt_uses_best_answer() -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[
             osam.types.Annotation(
                 score=0.3,
@@ -101,8 +105,7 @@ def test_default_model_name_and_output_format() -> None:
 def test_polygon_detail_controls_ai_polygon_points() -> None:
     mask = np.zeros((100, 100), dtype=bool)
     mask[20:80, 30:70] = True
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[_annotation(score=0.9, bbox=(0, 0, 99, 99), mask=mask)],
     )
     session = AiAssistSession(polygon_detail=100)
@@ -129,8 +132,7 @@ def test_polygon_proposal_groups_disconnected_lands() -> None:
     mask = np.zeros((100, 100), dtype=bool)
     mask[10:40, 10:40] = True
     mask[60:90, 60:90] = True
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[_annotation(score=0.9, bbox=(0, 0, 99, 99), mask=mask)],
     )
 
@@ -255,8 +257,7 @@ def test_point_inside_detection_reads_the_pixel_under_the_point() -> None:
 
 
 def test_point_prompt_reports_best_matching_existing_shape() -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[
             _annotation(score=0.9, bbox=(20, 20, 30, 30), mask=None),
             _annotation(score=0.8, bbox=(0, 0, 10, 10), mask=None),
@@ -300,8 +301,7 @@ def test_point_prompt_reports_matching_existing_shape(
     existing_bbox: tuple[int, int, int, int],
     proposal_bbox: tuple[int, int, int, int],
 ) -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[_annotation(score=0.9, bbox=proposal_bbox, mask=None)],
     )
     existing = Shape(
@@ -326,8 +326,7 @@ def test_example_box_suppresses_only_proposals_matching_existing_shapes(
     *,
     existing_rectangle: Shape,
 ) -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[
             _annotation(score=0.9, bbox=(0, 0, 10, 10), mask=None),
             _annotation(score=0.8, bbox=(20, 20, 30, 30), mask=None),
@@ -355,8 +354,7 @@ def test_single_result_example_box_reports_matching_existing_shape(
     *,
     existing_rectangle: Shape,
 ) -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[_annotation(score=0.9, bbox=(0, 0, 10, 10), mask=None)],
     )
     session = AiAssistSession(model_name="sam3:latest", output_format="rectangle")

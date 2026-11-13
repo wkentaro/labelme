@@ -438,8 +438,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker = _automation.OsamWorker(parent=self)
         self._osam_worker.finished.connect(self._on_ai_text_finished)
         self._osam_worker.failed.connect(self._on_ai_text_failed)
+        self._osam_worker.not_pulled.connect(self._on_ai_model_not_pulled)
         self._osam_worker.activity_changed.connect(self._on_ai_activity_changed)
         self._osam_worker.set_device(device=self._config["ai"]["device"])
+        self._model_manager.set_device(device=self._config["ai"]["device"])
         self._canvas_widgets.canvas.set_osam_worker(worker=self._osam_worker)
         self._ai_text_job = None
         # Kept while idle, so a job retried on CPU keeps its clock and what
@@ -1940,7 +1942,7 @@ class MainWindow(QtWidgets.QMainWindow):
         model_name: str = self._ai_text.get_model_name()
         if not self._ensure_ai_model_ready(model_name):
             return
-        image, image_id = canvas.ai_image()
+        image = canvas.ai_image()
         job = _AiTextJob(
             pixmap_key=canvas.pixmap.cacheKey(),
             texts=texts,
@@ -1958,7 +1960,7 @@ class MainWindow(QtWidgets.QMainWindow):
             channel="text",
             job=job,
             request=_automation.InferenceRequest(
-                model_name=model_name, image_id=image_id, image=image, texts=texts
+                model_name=model_name, image=image, texts=texts
             ),
         )
 
@@ -2019,12 +2021,6 @@ class MainWindow(QtWidgets.QMainWindow):
             text = self.tr("Loading {model}…").format(
                 model=self._model_manager.models.get(model_name, model_name)
             )
-        elif stage == "encoding":
-            text = (
-                self.tr("Preparing image on CPU…")
-                if on_cpu
-                else self.tr("Preparing image…")
-            )
         if job is None:
             self._ai_status_timer.stop()
         else:
@@ -2034,7 +2030,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             # A detection is announced once as it starts, from text or a box,
             # and a slow stage once for any prompt; a fast Segment, never.
-            kind = stage if stage in ("starting", "loading", "encoding") else "task"
+            kind = stage if stage in ("starting", "loading") else "task"
             if (detecting or kind != "task") and kind not in self._ai_status.announced:
                 self._ai_status = self._ai_status._replace(
                     announced=self._ai_status.announced | {kind}
@@ -2055,6 +2051,12 @@ class MainWindow(QtWidgets.QMainWindow):
         event = QtGui.QAccessibleAnnouncementEvent(self._status_bar.ai, message)
         event.setPoliteness(QtGui.QAccessible.AnnouncementPoliteness.Polite)
         QtGui.QAccessible.updateAccessibility(event)
+
+    def _on_ai_model_not_pulled(self, device: str | None, /) -> None:
+        # After a fall back to the CPU, a model such as SAM 3 runs other files,
+        # so it shows as not downloaded until the Compute device changes.
+        if device == "cpu":
+            self._model_manager.set_device(device="cpu")
 
     def _on_ai_text_failed(self, job: object, message: str, /) -> None:
         if self._take_ai_text_job(job=job) is None:
@@ -3787,9 +3789,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             a0.ignore()
             return
-        if not self._model_manager.shutdown():
-            a0.ignore()
-            return
+        self._model_manager.shutdown()
         self._save_writer.shutdown()
         self._image_prefetcher.shutdown()
         self._osam_worker.shutdown()
@@ -4260,6 +4260,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         elif key_path == ("ai", "device"):
             self._osam_worker.set_device(device=self._config["ai"]["device"])
+            self._model_manager.set_device(device=self._config["ai"]["device"])
         elif key_path == ("ai", "suppress_existing_shape_matches"):
             self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
                 enabled=self._config["ai"]["suppress_existing_shape_matches"]

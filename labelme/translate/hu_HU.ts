@@ -1107,14 +1107,6 @@ Váltson az AI-Find All modelljénél &apos;SAM 3&apos;-re, vagy állítsa a kim
         <translation>{model} betöltése…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>Kép előkészítése a CPU-n…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>Kép előkészítése…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} mp</translation>
     </message>

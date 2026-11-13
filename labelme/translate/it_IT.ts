@@ -1107,14 +1107,6 @@ Cambia il modello di AI-Find All in &apos;SAM 3&apos; oppure imposta il formato 
         <translation>Caricamento di {model}…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>Preparazione dell’immagine sulla CPU…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>Preparazione dell’immagine…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} s</translation>
     </message>

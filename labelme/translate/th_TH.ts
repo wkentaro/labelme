@@ -1108,14 +1108,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>กำลังโหลด {model}…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>กำลังเตรียมภาพบน CPU…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>กำลังเตรียมภาพ…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} วินาที</translation>
     </message>

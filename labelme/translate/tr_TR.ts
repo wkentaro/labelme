@@ -1107,14 +1107,6 @@ AI-Find All modelini &apos;SAM 3&apos; olarak değiştirin veya çıktı biçimi
         <translation>{model} yükleniyor…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>Görüntü CPU üzerinde hazırlanıyor…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>Görüntü hazırlanıyor…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} sn</translation>
     </message>

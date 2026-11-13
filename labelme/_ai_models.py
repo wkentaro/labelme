@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import TYPE_CHECKING
 from typing import Final
+from typing import Literal
 from typing import cast
 
 from PySide6.QtCore import QT_TRANSLATE_NOOP
+
+if TYPE_CHECKING:
+    import osam
 
 
 @dataclasses.dataclass(frozen=True)
@@ -128,7 +133,8 @@ AI_TEXT_MODEL_OPTIONS: Final[tuple[tuple[str, str], ...]] = (
 # Text models that return boxes without masks.
 AI_TEXT_BOX_ONLY_MODELS: Final[frozenset[str]] = frozenset({"yoloworld:latest"})
 
-# Bytes each model downloads before its first use.
+# Bytes each model downloads before its first use, on the CPU; SAM3 downloads
+# half that for a GPU.
 AI_MODEL_DOWNLOAD_SIZES: Final[dict[str, int]] = {
     "efficientsam:10m": 41_365_489,
     "efficientsam:latest": 106_124_065,
@@ -138,7 +144,7 @@ AI_MODEL_DOWNLOAD_SIZES: Final[dict[str, int]] = {
     "sam2:small": 183_345_862,
     "sam2:latest": 326_727_239,
     "sam2:large": 909_984_581,
-    "sam3:latest": 3_621_579_145,
+    "sam3:latest": 3_664_204_623,
     "yoloworld:latest": 672_850_840,
 }
 
@@ -153,3 +159,32 @@ def find_ai_assist_model_option(*, model_name: str) -> _AiAssistModelOption | No
 def accepts_example_boxes(*, model_name: str) -> bool:
     # YOLO-World detects from text only; SAM3 also takes example boxes.
     return model_name.startswith("sam3:")
+
+
+# The AI device setting; "auto" lets osam pick one.
+Device = Literal["auto", "cpu"]
+
+
+def osam_client(
+    *,
+    device: Device,
+    in_process: bool = True,
+    max_loaded_models: int | None = None,
+    timeout: float | None = None,
+    auto_pull: bool = True,
+) -> osam.Client:
+    # In this process for listing, pulling and removing, which load no model.
+    import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
+
+    return osam.Client(
+        device=None if device == "auto" else device,
+        in_process=in_process,
+        max_loaded_models=max_loaded_models,
+        timeout=timeout,
+        auto_pull=auto_pull,
+    )
+
+
+def model_info(*, client: osam.Client, name: str) -> osam.types.ModelInfo:
+    [info] = [info for info in client.list() if info.name == name]
+    return info

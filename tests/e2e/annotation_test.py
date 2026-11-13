@@ -57,9 +57,10 @@ def prepare_efficient_sam_cache(
             cached_download, "download", wraps=cached_download.download
         ) as fetch,
     ):
-        model_type = osam.apis.get_model_type_by_name(_AI_MODEL)
-        model_type.pull()
-        assert model_type.get_size() is not None
+        with osam.Client(in_process=True) as client:
+            client.pull(_AI_MODEL)
+            [info] = [info for info in client.list() if info.name == _AI_MODEL]
+        assert info.size is not None
         fetch.reset_mock()
         yield model_cache
 

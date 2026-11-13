@@ -16,6 +16,7 @@ from labelme._widgets._models_widget import ModelsWidget
 from labelme._yaml import safe_load
 
 from ..conftest import DOWNLOAD_START_TIMEOUT_MS
+from ..conftest import set_model_blobs
 from .conftest import MainWinFactory
 
 
@@ -68,9 +69,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     blob = osam.types.Blob(
         url=origin + "/slow", hash="sha256:" + hashlib.sha256(b"weights").hexdigest()
     )
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
-    )
+    set_model_blobs(monkeypatch=monkeypatch, name=name, blobs={"model": blob})
     config = tmp_path / "config.yaml"
     config.write_text("ai:\n  default: sam3:latest\n  text_model: sam3:latest\n")
     win = main_win(config_file=config)
@@ -99,7 +98,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     )
     # The remembered choice is restored without running inference.
     assert assist.currentData() == text.currentData() == name
-    assert win._osam_worker._worker is None
+    assert win._osam_worker._client is None
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 
@@ -149,9 +148,7 @@ def test_delete_releases_loaded_session(
     )
     Path(blob.path).parent.mkdir(parents=True, exist_ok=True)
     Path(blob.path).write_bytes(content)
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
-    )
+    set_model_blobs(monkeypatch=monkeypatch, name=name, blobs={"model": blob})
     config = tmp_path / "config.yaml"
     config.write_text("ai:\n  default: sam3:latest\n  text_model: sam3:latest\n")
     win = main_win(config_file=config)
@@ -219,9 +216,7 @@ def test_failed_download_keeps_retry_visible_and_details_accessible(
     blob = osam.types.Blob(
         url=origin + "/bad", hash="sha256:" + hashlib.sha256(b"weights").hexdigest()
     )
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
-    )
+    set_model_blobs(monkeypatch=monkeypatch, name=name, blobs={"model": blob})
     win = main_win()
     win._open_models()
     dialog = win._models_dialog
@@ -308,9 +303,7 @@ def test_picker_downloads_and_selects_a_missing_model_in_place(
     blob = osam.types.Blob(
         url=origin + "/slow", hash="sha256:" + hashlib.sha256(b"weights").hexdigest()
     )
-    monkeypatch.setattr(
-        osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
-    )
+    set_model_blobs(monkeypatch=monkeypatch, name=name, blobs={"model": blob})
     config = tmp_path / "config.yaml"
     config.write_text("ai:\n  default: sam2:latest\n")
     win = main_win(config_file=config)
