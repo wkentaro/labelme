@@ -4,7 +4,6 @@ import builtins
 import gc
 import threading
 import time
-import warnings
 from collections.abc import Iterator
 from typing import Any
 from typing import Final
@@ -294,7 +293,11 @@ def test_release_does_not_wait_for_a_server_starting_up(
     assert _results(worker=worker) == [("error", "running", "AI worker stopped")]
 
 
-def test_runs_on_a_private_server(*, qtbot: QtBot) -> None:
+def test_runs_on_a_private_server(
+    *, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Even with OSAM_HOST set for the osam CLI; nothing listens there.
+    monkeypatch.setenv("OSAM_HOST", "127.0.0.1:1")
     worker = OsamWorker()
     failed: list[tuple[object, str]] = []
     worker.failed.connect(lambda job, m: failed.append((job, m)))
@@ -302,15 +305,11 @@ def test_runs_on_a_private_server(*, qtbot: QtBot) -> None:
         worker.submit(channel="x", job="job", request=_request(model_name="nope"))
         qtbot.waitUntil(lambda: bool(failed), timeout=_WAIT_MS)
     finally:
-        # ponytail: osam 0.11.3 leaves the server's stdout open on close;
-        # drop this once osam closes it.
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", ResourceWarning)
-            worker.shutdown()
-            for thread in threading.enumerate():
-                if thread.name == "osam-worker":
-                    thread.join(timeout=5)
-            gc.collect()
+        worker.shutdown()
+        for thread in threading.enumerate():
+            if thread.name == "osam-worker":
+                thread.join(timeout=5)
+        gc.collect()  # fails on a ResourceWarning if the server leaked a pipe
 
     [(job, message)] = failed
     assert job == "job"

@@ -746,7 +746,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2,<1.29" },
-    { name = "osam", specifier = ">=0.11.3,<0.12" },
+    { name = "osam", specifier = ">=0.11.5,<0.12" },
     { name = "osam", extras = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23') or sys_platform != 'darwin'" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
@@ -1183,7 +1183,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.11.3"
+version = "0.11.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1197,9 +1197,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a0/e1/eed04e2c9ee9317c72dae616b12cd39923ba80424256a620c31bd60f9d11/osam-0.11.3.tar.gz", hash = "sha256:dfebd54ce63d86309be0ce38cca3c8310db1ed3a7ad0ab110e753608c1689aed", size = 27631025, upload-time = "2026-11-13T08:39:35.536Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b0/65/e354ea4bfda1d9c58fb78eb3b09c0e4a049f9ca13424595aa2f37c00b446/osam-0.11.5.tar.gz", hash = "sha256:08afd8bf64c4f1895b992500d0c5d4518aec5f723dd61ac1b8a96e02963d86ba", size = 27634986, upload-time = "2026-11-13T11:56:32.44Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/84/40/f70102e0e7548a694e62e1792ae24c0f650fd26f0d6915234b9cbc608d6c/osam-0.11.3-py3-none-any.whl", hash = "sha256:55c30d5345ba34a9472cb2093d9acc1464745c9eeb36fef268c15533f38c4809", size = 1504621, upload-time = "2026-11-13T08:39:33.477Z" },
+    { url = "https://files.pythonhosted.org/packages/97/c8/550bd5da367575a3dc75efbf70234d187b6aad18edd180ba7b2630da3c22/osam-0.11.5-py3-none-any.whl", hash = "sha256:750fdda93a4550e0fe67601456cae12051c4ba5fd3359082670313223f68ac07", size = 1504839, upload-time = "2026-11-13T11:56:29.853Z" },
 ]
 
 [package.optional-dependencies]
