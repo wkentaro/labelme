@@ -82,16 +82,16 @@ def _run(
     progress: ProgressCallback,
 ) -> list[osam.types.Annotation]:
     model = request.model_name
-    devices = {running.name: running.device for running in client.ps()}
-    if model not in devices:
+    device = next((r.device for r in client.ps() if r.name == model), None)
+    if device is None:
         progress("loading", None)
         t_start = time.perf_counter()
-        client.load(model, keep_alive=-1)
+        running = client.load(model, keep_alive=-1)
         logger.info(
             "Loaded {!r} in {:.0f} ms", model, (time.perf_counter() - t_start) * 1000
         )
-        devices = {running.name: running.device for running in client.ps()}
-    progress("generating", devices.get(model))
+        device = None if running is None else running.device
+    progress("generating", device)
     t_start = time.perf_counter()
     annotations = client.segment(
         model, request.image, keep_alive=-1, **_segment_kwargs(request=request)

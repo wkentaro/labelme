@@ -133,21 +133,6 @@ AI_TEXT_MODEL_OPTIONS: Final[tuple[tuple[str, str], ...]] = (
 # Text models that return boxes without masks.
 AI_TEXT_BOX_ONLY_MODELS: Final[frozenset[str]] = frozenset({"yoloworld:latest"})
 
-# Bytes each model downloads before its first use, on the CPU; SAM3 downloads
-# half that for a GPU.
-AI_MODEL_DOWNLOAD_SIZES: Final[dict[str, int]] = {
-    "efficientsam:10m": 41_365_489,
-    "efficientsam:latest": 106_124_065,
-    "sam:100m": 108_571_344,
-    "sam:300m": 331_312_787,
-    "sam:latest": 664_987_190,
-    "sam2:small": 183_345_862,
-    "sam2:latest": 326_727_239,
-    "sam2:large": 909_984_581,
-    "sam3:latest": 3_664_204_623,
-    "yoloworld:latest": 672_850_840,
-}
-
 
 def find_ai_assist_model_option(*, model_name: str) -> _AiAssistModelOption | None:
     for option in AI_ASSIST_MODEL_OPTIONS:

@@ -128,6 +128,14 @@ class ModelManager(QtCore.QObject):
             is not None
         )
 
+    def download_sizes(self) -> dict[str, int]:
+        # Bytes each model downloads for this device before its first use.
+        return {
+            info.name: info.download_size
+            for info in osam_client(device=self._device).list()
+            if info.name in self.models and info.download_size is not None
+        }
+
     def get_state(self, *, model_name: str) -> str:
         if model_name in self.queue:
             return "queued"

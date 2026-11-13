@@ -422,7 +422,9 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         )
         self._ai_group = AiToolGroup(
-            assist=self._ai_annotation, detect=self._ai_text, parent=self
+            assist=self._ai_annotation,
+            detect=self._ai_text,
+            parent=self,
         )
 
         self._setup_toolbars()
@@ -4341,6 +4343,7 @@ class MainWindow(QtWidgets.QMainWindow):
             downloading.add(self._model_manager.active)
         for widget in (self._ai_annotation, self._ai_text):
             widget.set_available_models(available=available, downloading=downloading)
+        self._ai_group.set_download_sizes(sizes=self._model_manager.download_sizes())
         self._canvas_widgets.canvas.set_ai_model_name(
             model_name=self._ai_annotation.current_model_id
         )

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import Final
 from typing import override
 
@@ -8,7 +9,6 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._ai_models import AI_ASSIST_FOLDED_MODELS
-from .._ai_models import AI_MODEL_DOWNLOAD_SIZES
 from .._ai_models import AI_MODEL_TIERS
 from .._ai_models import AI_MODEL_TOOLTIPS
 from .._ai_models import AI_TEXT_BOX_ONLY_MODELS
@@ -58,10 +58,13 @@ class _ModelMenuButton(QtWidgets.QComboBox):
     """
 
     _pickers: tuple[tuple[str, ModelPicker], ...]
+    # Bytes each model downloads before its first use, on the current device.
+    _download_sizes: Mapping[str, int]
 
     def __init__(self, *, pickers: tuple[tuple[str, ModelPicker], ...]) -> None:
         super().__init__()
         self._pickers = pickers
+        self._download_sizes = {}
         self.addItem("")
         self.setSizeAdjustPolicy(
             QtWidgets.QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
@@ -121,7 +124,7 @@ class _ModelMenuButton(QtWidgets.QComboBox):
                 menu=menu,
                 folded=AI_ASSIST_FOLDED_MODELS,
                 notes=notes,
-                sizes=AI_MODEL_DOWNLOAD_SIZES,
+                sizes=self._download_sizes,
                 tips=tips,
             )
         menu.addSeparator()
@@ -199,6 +202,9 @@ class AiToolGroup(QtWidgets.QWidget):
         # Fixed, so a longer model name or a run's status never resizes the
         # toolbar; never narrower than a language's labels need.
         self.setFixedWidth(self.minimumSizeHint().width())
+
+    def set_download_sizes(self, *, sizes: Mapping[str, int]) -> None:
+        self._model_button._download_sizes = sizes
 
     def _make_options_button(self) -> _OptionsButton:
         # Settings changed once per project, not per click, so they stay out
