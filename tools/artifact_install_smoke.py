@@ -94,9 +94,9 @@ def _check_model_download(*, app: QtCore.QCoreApplication) -> None:
 
 
 def _check_ai_inference() -> None:
-    # One real inference in the worker process: the spawned child must import
-    # the installed package, and onnxruntime must load beside Qt on the
-    # device osam picks. The smallest model (~40MB) keeps the download short.
+    # One real inference on osam's private server: the server must start from
+    # the installed environment, and onnxruntime must load on the device osam
+    # picks. The smallest model (~40MB) keeps the download short.
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     _check_model_download(app=app)
     worker = OsamWorker()
@@ -112,7 +112,6 @@ def _check_ai_inference() -> None:
         job="smoke",
         request=InferenceRequest(
             model_name=_MODEL_NAME,
-            image_id="smoke",
             image=image,
             points=np.array([[32.0, 32.0]], dtype=np.float32),
             point_labels=np.array([1]),

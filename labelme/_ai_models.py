@@ -165,17 +165,23 @@ def accepts_example_boxes(*, model_name: str) -> bool:
 Device = Literal["auto", "cpu"]
 
 
-def osam_client(*, device: Device, max_loaded_models: int | None = None) -> osam.Client:
-    # In this process: listing, pulling and removing load no model. Loading
-    # downloads nothing; downloads go through ModelManager, which asks first
-    # and shows progress.
+def osam_client(
+    *,
+    device: Device,
+    in_process: bool = True,
+    max_loaded_models: int | None = None,
+    timeout: float | None = None,
+    auto_pull: bool = True,
+) -> osam.Client:
+    # In this process for listing, pulling and removing, which load no model.
     import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
     return osam.Client(
-        in_process=True,
         device=None if device == "auto" else device,
+        in_process=in_process,
         max_loaded_models=max_loaded_models,
-        auto_pull=False,
+        timeout=timeout,
+        auto_pull=auto_pull,
     )
 
 

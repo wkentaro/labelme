@@ -98,7 +98,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     )
     # The remembered choice is restored without running inference.
     assert assist.currentData() == text.currentData() == name
-    assert win._osam_worker._worker is None
+    assert win._osam_worker._client is None
     assert win._canvas_widgets.canvas.get_ai_model_name() == name
     assert win._ai_text.get_model_name() == name
 

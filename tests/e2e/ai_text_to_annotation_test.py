@@ -60,17 +60,11 @@ class _SessionClient:
         model, image = cast(tuple[str, np.ndarray], args)
         return _SESSIONS[model].run(image=image, **kwargs).annotations
 
-    def list(self) -> builtins.list[osam.types.ModelInfo]:
-        return osam.Client(in_process=True).list()
-
 
 def _run(*, request: InferenceRequest) -> list[osam.types.Annotation]:
-    assert request.image is not None
     return _osam_worker._run(
         client=cast(osam.Client, _SessionClient()),
         request=request,
-        image=request.image,
-        encoded={},
         progress=lambda *_: None,
     )
 
@@ -166,7 +160,6 @@ def _install_mock_session(
         self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
     ) -> None:
         del channel
-        assert request.image is not None
         try:
             annotations = _run(request=request)
         except Exception as e:
@@ -660,7 +653,6 @@ def _hold_text_results(
         self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
     ) -> None:
         del channel
-        assert request.image is not None
         held.append(
             (
                 self,
@@ -1181,7 +1173,6 @@ def test_example_box_batch_skips_and_reports_like_a_query(
         self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
     ) -> None:
         del channel
-        assert request.image is not None
         self.finished.emit(
             job,
             _run(request=request),
@@ -1248,7 +1239,6 @@ def test_run_with_an_example_box_draft_refines_it(
         self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
     ) -> None:
         del channel
-        assert request.image is not None
         self.finished.emit(
             job,
             _run(request=request),
@@ -1302,7 +1292,6 @@ def test_run_with_an_example_box_draft_refines_it(
     canvas.grab()
 
     (job, request), worker = held[0], win._osam_worker
-    assert request.image is not None
     worker._set_active(active=None)
     worker.finished.emit(
         job,
@@ -1339,7 +1328,6 @@ def test_enter_asks_once_for_the_draft_label(
         self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
     ) -> None:
         del channel
-        assert request.image is not None
         self.finished.emit(
             job,
             _run(request=request),

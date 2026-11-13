@@ -1942,7 +1942,7 @@ class MainWindow(QtWidgets.QMainWindow):
         model_name: str = self._ai_text.get_model_name()
         if not self._ensure_ai_model_ready(model_name):
             return
-        image, image_id = canvas.ai_image()
+        image = canvas.ai_image()
         job = _AiTextJob(
             pixmap_key=canvas.pixmap.cacheKey(),
             texts=texts,
@@ -1960,7 +1960,7 @@ class MainWindow(QtWidgets.QMainWindow):
             channel="text",
             job=job,
             request=_automation.InferenceRequest(
-                model_name=model_name, image_id=image_id, image=image, texts=texts
+                model_name=model_name, image=image, texts=texts
             ),
         )
 
@@ -2021,12 +2021,6 @@ class MainWindow(QtWidgets.QMainWindow):
             text = self.tr("Loading {model}…").format(
                 model=self._model_manager.models.get(model_name, model_name)
             )
-        elif stage == "encoding":
-            text = (
-                self.tr("Preparing image on CPU…")
-                if on_cpu
-                else self.tr("Preparing image…")
-            )
         if job is None:
             self._ai_status_timer.stop()
         else:
@@ -2036,7 +2030,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             # A detection is announced once as it starts, from text or a box,
             # and a slow stage once for any prompt; a fast Segment, never.
-            kind = stage if stage in ("starting", "loading", "encoding") else "task"
+            kind = stage if stage in ("starting", "loading") else "task"
             if (detecting or kind != "task") and kind not in self._ai_status.announced:
                 self._ai_status = self._ai_status._replace(
                     announced=self._ai_status.announced | {kind}
