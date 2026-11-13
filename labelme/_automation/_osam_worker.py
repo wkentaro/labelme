@@ -3,7 +3,6 @@ from __future__ import annotations
 import dataclasses
 import itertools
 import multiprocessing
-import os
 import queue
 import threading
 import time
@@ -22,14 +21,16 @@ from numpy.typing import NDArray
 from PySide6 import QtCore
 from PySide6 import QtWidgets
 
+from .._ai_models import Device
+from .._ai_models import model_info
+
 if TYPE_CHECKING:
     import osam
 
-    from ._osam_session import InferenceStage
-    from ._osam_session import OsamSession
-    from ._osam_session import ProgressCallback
-
-    WorkerStage = Literal["starting"] | InferenceStage
+InferenceStage = Literal["loading", "encoding", "generating"]
+WorkerStage = Literal["starting"] | InferenceStage
+# Called as each stage starts, with the model's device once it has loaded.
+ProgressCallback = Callable[[InferenceStage, str | None], None]
 
 # ponytail: one deadline covers spawning, loading and running, so a first run
 # that compiles a model counts as slow, not hung. Split it per stage if a
@@ -48,59 +49,96 @@ class InferenceRequest:
     texts: list[str] | None = None
 
 
+def _segment_kwargs(*, request: InferenceRequest) -> dict[str, Any]:
+    # The canvas's prompt as osam takes it: labels 0 and 1 are points and 2
+    # and 3 a box's corners, or, with texts, 2 and 3 an example box's and 4
+    # and 5 a counter-example's.
+    points = request.points
+    labels = request.point_labels
+    if request.texts is not None:
+        examples: dict[str, NDArray] = {}
+        if points is not None and labels is not None and len(points):
+            # Corners come in pairs; SAM3 reads the boxes by their edges, as
+            # drawn.
+            is_example = labels[::2] == 2  # noqa: PLR2004
+            examples = {
+                "example_boxes": points.reshape(-1, 4),
+                "example_box_labels": is_example.astype(int),
+            }
+        return {
+            "texts": request.texts,
+            **examples,
+            # Every candidate; the user's Score and IoU filter later.
+            "iou_threshold": 1.0,
+            "score_threshold": 0.01,
+            "max_annotations": 1000,
+        }
+    assert points is not None and labels is not None
+    # The canvas spans pixel c from c to c + 1, and SAM decoders read an
+    # integer as a pixel center.
+    points = points - 0.5
+    is_point = labels < 2  # noqa: PLR2004
+    return {
+        "points": points[is_point] if is_point.any() else None,
+        "point_labels": labels[is_point] if is_point.any() else None,
+        "box": points[~is_point].ravel() if (~is_point).any() else None,
+    }
+
+
 def _run(
     *,
-    session: OsamSession,
+    client: osam.Client,
     request: InferenceRequest,
     image: NDArray[np.uint8],
-    progress: ProgressCallback | None,
+    encoded: dict[str, str],
+    progress: ProgressCallback,
 ) -> list[osam.types.Annotation]:
-    if request.texts is None or request.points is not None:
-        # The canvas spans pixel c from c to c + 1. SAM decoders read an
-        # integer as a pixel center, but SAM3 reads a box with text by its
-        # edges, as drawn.
-        points = request.points
-        if points is not None and request.texts is None:
-            points = points - 0.5
-        # SAM3 finds every match for a box with text and one object without.
-        return session.run(
-            image=image,
-            image_id=request.image_id,
-            points=points,
-            point_labels=request.point_labels,
-            texts=request.texts,
-            progress=progress,
-        ).annotations
-    # ponytail: SAM3 reads only the first text of a prompt, so it runs once per
-    # text, reusing the cached image embedding. Drop this once osam's SAM3 takes
-    # several texts.
-    batches: list[list[str]] = (
-        [[text] for text in request.texts]
-        if request.model_name.startswith("sam3:")
-        else [request.texts]
+    # ponytail: encoded holds the image each model last segmented, a guess at
+    # osam's embedding cache for the progress label; a revisited image osam
+    # still holds shows as encoding. Ask osam if the label must be exact.
+    model = request.model_name
+    info = model_info(client=client, name=model)
+    devices = {running.name: running.device for running in client.ps()}
+    if model not in devices:
+        if info.size is None:
+            # Such as after a fall back to the CPU, for which some models
+            # download other files; osam would download them unasked.
+            raise RuntimeError(f"{model} is not downloaded for this device")
+        progress("loading", None)
+        client.load(model, keep_alive=-1)
+        devices = {running.name: running.device for running in client.ps()}
+    # Models that take points encode an image once for its prompts; the
+    # others run whole on each.
+    stage: InferenceStage = (
+        "encoding"
+        if "points" in info.prompt_kinds and encoded.get(model) != request.image_id
+        else "generating"
     )
-    return [
-        annotation
-        for texts in batches
-        for annotation in session.run(
-            image=image, image_id=request.image_id, texts=texts, progress=progress
-        ).annotations
-    ]
+    progress(stage, devices[model])
+    t_start = time.perf_counter()
+    annotations = client.segment(
+        model, image, keep_alive=-1, **_segment_kwargs(request=request)
+    )
+    encoded[model] = request.image_id
+    logger.info(
+        "Segmented with {!r} in {:.0f} ms",
+        model,
+        (time.perf_counter() - t_start) * 1000,
+    )
+    return annotations
 
 
-def serve(
-    requests: Connection, responses: Connection, providers: str | None, /
-) -> None:
+def serve(requests: Connection, responses: Connection, device: Device, /) -> None:
     # Answers each ("run", id, request) with ("stage", id, (stage, device)) as
     # each stage starts, the device once the model loads, then ("done", id,
     # annotations), or ("error" | "fault", id, message), where a fault comes
     # from ONNX Runtime and may be the device's.
-    from ._osam_session import get_osam_session  # noqa: PLC0415 -- child only
+    from .._ai_models import osam_client  # noqa: PLC0415 -- child only
 
-    if providers is not None:
-        os.environ["OSAM_ONNX_PROVIDERS"] = providers
+    client = osam_client(device=device, max_loaded_models=2)
     image: NDArray[np.uint8] | None = None
     image_id: str | None = None
+    encoded: dict[str, str] = {}
     while True:
         try:
             message = requests.recv()
@@ -112,11 +150,11 @@ def serve(
                 image, image_id = request.image, request.image_id
             if image is None or image_id != request.image_id:
                 raise RuntimeError(f"image {request.image_id!r} was never sent")
-            session = get_osam_session(model_name=request.model_name)
             annotations = _run(
-                session=session,
+                client=client,
                 request=request,
                 image=image,
+                encoded=encoded,
                 progress=lambda stage, device: responses.send(
                     ("stage", request_id, (stage, device))
                 ),
@@ -204,11 +242,11 @@ class OsamWorker(QtCore.QObject):
     device is set again.
     """
 
-    _target: Callable[[Connection, Connection, str | None], None]
+    _target: Callable[[Connection, Connection, Device], None]
     _timeout_s: float
     _context: multiprocessing.context.SpawnContext
     _worker: _WorkerProcess | None
-    _device: Literal["auto", "cpu"]
+    _device: Device
     _fell_back: bool
     _pending: dict[object, tuple[object, InferenceRequest]]
     _active: _Active | None
@@ -223,7 +261,7 @@ class OsamWorker(QtCore.QObject):
         self,
         *,
         parent: QtCore.QObject | None = None,
-        target: Callable[[Connection, Connection, str | None], None] = serve,
+        target: Callable[[Connection, Connection, Device], None] = serve,
         timeout_s: float = _TIMEOUT_S,
     ) -> None:
         super().__init__(parent)
@@ -274,7 +312,7 @@ class OsamWorker(QtCore.QObject):
     def model_name(self) -> str | None:
         return None if self._active is None else self._active.request.model_name
 
-    def set_device(self, *, device: Literal["auto", "cpu"]) -> None:
+    def set_device(self, *, device: Device) -> None:
         # The running job finishes where it is; the next one starts a worker
         # on this device. Choosing a device again retries the GPU.
         self._device = device
@@ -352,7 +390,7 @@ class OsamWorker(QtCore.QObject):
             args=(
                 child_requests,
                 child_responses,
-                "CPUExecutionProvider" if self._cpu_only else None,
+                "cpu" if self._cpu_only else self._device,
             ),
             daemon=True,
         )

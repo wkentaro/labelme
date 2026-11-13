@@ -188,7 +188,7 @@ def nms_bboxes(
     logger.debug(f"Input: num_boxes={len(boxes)}")
     import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
-    boxes, scores, labels, indices = osam.apis.non_maximum_suppression(
+    boxes, scores, labels, indices = osam.non_maximum_suppression(
         boxes=boxes,
         scores=scores_of_all_classes,
         iou_threshold=iou_threshold,

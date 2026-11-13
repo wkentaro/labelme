@@ -30,6 +30,8 @@ from labelme._app import MainWindow
 from labelme._widgets._canvas import Canvas
 from labelme._widgets._label_dialog import LabelDialog
 
+from ..conftest import set_model_blobs
+
 _DEFAULT_WINDOW_SIZE: Final = QSize(800, 600)
 
 
@@ -67,9 +69,7 @@ def cached_ai_models(*, session_home: Path, monkeypatch: pytest.MonkeyPatch) -> 
         )
         Path(blob.path).parent.mkdir(parents=True, exist_ok=True)
         Path(blob.path).write_bytes(content)
-        monkeypatch.setattr(
-            osam.apis.get_model_type_by_name(name), "_blobs", {"model": blob}
-        )
+        set_model_blobs(monkeypatch=monkeypatch, name=name, blobs={"model": blob})
 
 
 def image_to_widget_pos(*, canvas: Canvas, image_pos: QPointF) -> QPoint:

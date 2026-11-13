@@ -12,7 +12,9 @@ from pathlib import Path
 from typing import Final
 
 import imgviz
+import osam
 import pytest
+from osam import _registry
 from PySide6 import QtWidgets
 from PySide6.QtGui import QColor
 from PySide6.QtGui import QImageReader
@@ -22,7 +24,6 @@ from PySide6.QtWidgets import QWidget
 from pytestqt.qtbot import QtBot
 
 import labelme._image_codec
-from labelme._automation import _osam_session
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:  # noqa: GR005 -- pluggy calls hooks positionally
@@ -210,6 +211,12 @@ def download_server() -> Iterator[tuple[str, list[str], threading.Event]]:
     thread.join()
 
 
-@pytest.fixture(autouse=True)
-def _isolate_osam_sessions(*, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(_osam_session, "_SESSIONS", {})
+def set_model_blobs(
+    *, monkeypatch: pytest.MonkeyPatch, name: str, blobs: dict[str, osam.types.Blob]
+) -> None:
+    model_type = _registry.get_model_type_by_name(name=name)
+    monkeypatch.setattr(model_type, "_blobs", blobs)
+    # On every device, as SAM3 picks other files for each.
+    monkeypatch.setattr(
+        model_type, "_device_blobs", classmethod(lambda cls, **_: cls._blobs)
+    )

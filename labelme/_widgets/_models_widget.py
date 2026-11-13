@@ -10,13 +10,13 @@ from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
 from .._ai_models import find_ai_assist_model_option
+from .._ai_models import model_info
+from .._ai_models import osam_client
 from .._model_manager import ModelManager
 
 
 def license_link(*, model_name: str) -> str:
-    import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
-
-    metadata = osam.apis.get_model_metadata(model_name)
+    metadata = model_info(client=osam_client(device="auto"), name=model_name).metadata
     return (
         f'<a href="{html.escape(metadata.license_url, quote=True)}">'
         f"{html.escape(metadata.license_name)}</a>"
@@ -232,7 +232,7 @@ class ModelsWidget(QtWidgets.QWidget):
 
     def _download_or_cancel(self, *, model_name: str) -> None:
         if self._manager.get_state(model_name=model_name) in {"queued", "downloading"}:
-            self._manager.cancel(model_name)
+            self._manager.cancel(model_name=model_name)
         else:
             self._manager.enqueue(model_name=model_name)
 

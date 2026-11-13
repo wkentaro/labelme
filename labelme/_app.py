@@ -440,6 +440,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.failed.connect(self._on_ai_text_failed)
         self._osam_worker.activity_changed.connect(self._on_ai_activity_changed)
         self._osam_worker.set_device(device=self._config["ai"]["device"])
+        self._model_manager.set_device(device=self._config["ai"]["device"])
         self._canvas_widgets.canvas.set_osam_worker(worker=self._osam_worker)
         self._ai_text_job = None
         # Kept while idle, so a job retried on CPU keeps its clock and what
@@ -3787,9 +3788,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self._can_continue():
             a0.ignore()
             return
-        if not self._model_manager.shutdown():
-            a0.ignore()
-            return
+        self._model_manager.shutdown()
         self._save_writer.shutdown()
         self._image_prefetcher.shutdown()
         self._osam_worker.shutdown()
@@ -4260,6 +4259,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         elif key_path == ("ai", "device"):
             self._osam_worker.set_device(device=self._config["ai"]["device"])
+            self._model_manager.set_device(device=self._config["ai"]["device"])
         elif key_path == ("ai", "suppress_existing_shape_matches"):
             self._canvas_widgets.canvas.set_ai_existing_shape_suppression(
                 enabled=self._config["ai"]["suppress_existing_shape_matches"]

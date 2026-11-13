@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import builtins
+import dataclasses
 import multiprocessing
 import os
 import struct
@@ -9,7 +11,6 @@ from collections.abc import Iterator
 from multiprocessing.connection import Connection
 from typing import Any
 from typing import Final
-from typing import cast
 
 import numpy as np
 import osam
@@ -18,8 +19,6 @@ from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
 from labelme._automation import _osam_worker
-from labelme._automation._osam_session import OsamSession
-from labelme._automation._osam_session import ProgressCallback
 from labelme._automation._osam_worker import InferenceRequest
 from labelme._automation._osam_worker import OsamWorker
 
@@ -28,11 +27,11 @@ _WAIT_MS: Final = 30_000
 
 
 def _scripted_serve(
-    requests: Connection, responses: Connection, providers: str | None, /
+    requests: Connection, responses: Connection, device: str, /
 ) -> None:
     # Spawned in the worker: the model name scripts how the request goes. A
     # "gpu-" model runs on WebGPU and fails there unless the worker is on CPU.
-    cpu_only = providers is not None
+    cpu_only = device == "cpu"
     while True:
         try:
             _, request_id, request = requests.recv()
@@ -72,11 +71,9 @@ def _scripted_serve(
         responses.send(("done", request_id, result))
 
 
-def _late_serve(
-    requests: Connection, responses: Connection, providers: str | None, /
-) -> None:
+def _late_serve(requests: Connection, responses: Connection, device: str, /) -> None:
     time.sleep(1)  # a worker still importing reads nothing yet
-    _scripted_serve(requests, responses, providers)
+    _scripted_serve(requests, responses, device)
 
 
 def _request(*, model_name: str = "ok", image_id: str = "img") -> InferenceRequest:
@@ -366,78 +363,59 @@ def test_release_fails_the_jobs_it_drops(*, worker: OsamWorker, qtbot: QtBot) ->
     assert _results(worker=worker)[2][:2] == ("done", "later")
 
 
-class _FakeSession:
-    calls: list[dict[str, object]]
-
-    def __init__(self) -> None:
-        self.calls = []
-
-    def run(self, **kwargs: object) -> osam.types.GenerateResponse:
-        self.calls.append(kwargs)
-        texts = kwargs.get("texts") or []
-        assert isinstance(texts, list)
-        return osam.types.GenerateResponse(
-            model="fake",
-            annotations=[osam.types.Annotation(text=str(t), score=1.0) for t in texts],
-        )
-
-
 @pytest.mark.parametrize(
-    ("model_name", "expected_batches"),
-    [
-        ("sam3:latest", [["dog"], ["cat"]]),
-        ("yoloworld:latest", [["dog", "cat"]]),
-    ],
-)
-def test_run_sends_sam3_one_text_at_a_time(
-    *,
-    model_name: str,
-    expected_batches: list[list[str]],
-) -> None:
-    # SAM3 reads only the first text of a prompt; YOLO-World takes them all.
-    session = _FakeSession()
-    request = InferenceRequest(
-        model_name=model_name, image_id="img", image=None, texts=["dog", "cat"]
-    )
-
-    annotations = _osam_worker._run(
-        session=cast(OsamSession, session), request=request, image=_IMAGE, progress=None
-    )
-
-    assert [a.text for a in annotations] == ["dog", "cat"]
-    assert [call["texts"] for call in session.calls] == expected_batches
-    assert all(call["image"] is _IMAGE for call in session.calls)
-
-
-@pytest.mark.parametrize(
-    ("texts", "sent"),
+    ("points", "point_labels", "texts", "expected"),
     [
         # SAM decoders read an integer as a pixel center.
-        (None, [[4.5, 6.5]]),
-        # SAM3 reads a box with text by its edges, as the canvas draws them.
-        (["dog"], [[5.0, 7.0]]),
+        (
+            [[5, 7], [1, 1], [9, 9]],
+            [1, 2, 3],
+            None,
+            {"points": [[4.5, 6.5]], "point_labels": [1], "box": [0.5, 0.5, 8.5, 8.5]},
+        ),
+        (
+            [[5, 7]],
+            [0],
+            None,
+            {"points": [[4.5, 6.5]], "point_labels": [0], "box": None},
+        ),
+        # SAM3 reads an example box by its edges, as the canvas draws them.
+        (
+            [[1, 1], [9, 9], [2, 2], [3, 3]],
+            [2, 3, 4, 5],
+            ["visual"],
+            {
+                "texts": ["visual"],
+                "example_boxes": [[1, 1, 9, 9], [2, 2, 3, 3]],
+                "example_box_labels": [1, 0],
+            },
+        ),
+        ([], [], ["dog", "cat"], {"texts": ["dog", "cat"]}),
     ],
 )
-def test_run_sends_prompt_points_in_the_model_convention(
-    *, texts: list[str] | None, sent: list[list[float]]
+def test_segment_kwargs_translate_the_canvas_prompt(
+    *,
+    points: list[list[float]],
+    point_labels: list[int],
+    texts: list[str] | None,
+    expected: dict[str, object],
 ) -> None:
-    session = _FakeSession()
     request = InferenceRequest(
         model_name="sam3:latest",
         image_id="img",
         image=None,
-        points=np.array([[5.0, 7.0]]),
-        point_labels=np.array([1]),
+        points=np.array(points, dtype=float),
+        point_labels=np.array(point_labels, dtype=int),
         texts=texts,
     )
 
-    _osam_worker._run(
-        session=cast(OsamSession, session), request=request, image=_IMAGE, progress=None
-    )
+    kwargs = _osam_worker._segment_kwargs(request=request)
 
-    [call] = session.calls
-    np.testing.assert_array_equal(call["points"], sent)
-    np.testing.assert_array_equal(request.points, [[5.0, 7.0]])
+    for key, value in expected.items():
+        if value is None:
+            assert kwargs[key] is None
+        else:
+            np.testing.assert_array_equal(kwargs[key], value)
 
 
 class _OrtFail(Exception):
@@ -447,20 +425,22 @@ class _OrtFail(Exception):
 _OrtFail.__module__ = "onnxruntime.capi.onnxruntime_pybind11_state"
 
 
-class _FailingSession:
+class _FailingClient:
     _error: Exception
-
-    device = "webgpu"
 
     def __init__(self, error: Exception, /) -> None:
         self._error = error
 
-    def run(
-        self, *, progress: ProgressCallback | None = None, **_: object
-    ) -> osam.types.GenerateResponse:
-        assert progress is not None
-        progress("generating", self.device)
+    def ps(self) -> builtins.list[osam.types.RunningModel]:
+        return [
+            osam.types.RunningModel(name="sam:100m", device="webgpu", expires_at=None)
+        ]
+
+    def segment(self, *_: object, **__: object) -> builtins.list[osam.types.Annotation]:
         raise self._error
+
+    def list(self) -> builtins.list[osam.types.ModelInfo]:
+        return osam.Client(in_process=True).list()
 
 
 @pytest.mark.parametrize(
@@ -472,15 +452,25 @@ def test_serve_reports_onnx_runtime_errors_as_faults(
 ) -> None:
     # A fault may be the device's, so the worker retries it on CPU.
     monkeypatch.setattr(
-        "labelme._automation._osam_session.get_osam_session",
-        lambda **_: _FailingSession(error),
+        "labelme._ai_models.osam_client", lambda **_: _FailingClient(error)
     )
     requests, to_serve = multiprocessing.Pipe(duplex=False)
     from_serve, responses = multiprocessing.Pipe(duplex=False)
-    to_serve.send(("run", 7, _request()))
+    to_serve.send(
+        (
+            "run",
+            7,
+            dataclasses.replace(
+                _request(),
+                model_name="sam:100m",
+                points=np.array([[0.0, 0.0]]),
+                point_labels=np.array([1]),
+            ),
+        )
+    )
     to_serve.close()
 
-    _osam_worker.serve(requests, responses, None)
+    _osam_worker.serve(requests, responses, "auto")
 
-    assert from_serve.recv() == ("stage", 7, ("generating", "webgpu"))
+    assert from_serve.recv() == ("stage", 7, ("encoding", "webgpu"))
     assert from_serve.recv()[:2] == (kind, 7)

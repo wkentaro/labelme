@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import builtins
 import functools
 from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
+from typing import Any
 from typing import Final
+from typing import NamedTuple
+from typing import cast
 from unittest.mock import MagicMock
 
 import numpy as np
@@ -19,7 +23,6 @@ from pytestqt.qtbot import QtBot
 from labelme._automation import AiOutputFormat
 from labelme._automation import InferenceRequest
 from labelme._automation import OsamWorker
-from labelme._automation import _osam_session
 from labelme._automation import _osam_worker
 from labelme._shape import Shape
 from labelme._widgets._label_dialog import LabelDialog
@@ -31,6 +34,46 @@ from .conftest import MainWinFactory
 from .conftest import click_canvas_fraction
 from .conftest import image_to_widget_pos
 from .conftest import show_window_and_wait_for_imagedata
+
+
+class _Response(NamedTuple):
+    annotations: list[osam.types.Annotation]
+
+
+# The mock sessions tests answer with, by model name.
+_SESSIONS: Final[dict[str, Any]] = {}
+
+
+class _SessionClient:
+    # The worker's osam client, with every model loaded and segment answered
+    # by the model's mock session.
+    def ps(self) -> builtins.list[osam.types.RunningModel]:
+        return [
+            osam.types.RunningModel(name=name, device="cpu", expires_at=None)
+            for name in _SESSIONS
+        ]
+
+    def segment(
+        self, *args: object, **kwargs: object
+    ) -> builtins.list[osam.types.Annotation]:
+        # Positional, as osam.Client.segment takes them.
+        model, image = cast(tuple[str, np.ndarray], args)
+        return _SESSIONS[model].run(image=image, **kwargs).annotations
+
+    def list(self) -> builtins.list[osam.types.ModelInfo]:
+        return osam.Client(in_process=True).list()
+
+
+def _run(*, request: InferenceRequest) -> list[osam.types.Annotation]:
+    assert request.image is not None
+    return _osam_worker._run(
+        client=cast(osam.Client, _SessionClient()),
+        request=request,
+        image=request.image,
+        encoded={},
+        progress=lambda *_: None,
+    )
+
 
 if TYPE_CHECKING:
     from labelme._app import MainWindow
@@ -65,7 +108,7 @@ def _make_response(
     scores: list[float],
     label_indices: list[int],
     with_masks: bool,
-) -> osam.types.GenerateResponse:
+) -> _Response:
     annotations = []
     for (xmin, ymin, xmax, ymax), score, label_idx in zip(
         boxes, scores, label_indices, strict=True
@@ -83,12 +126,10 @@ def _make_response(
                 mask=mask,
             )
         )
-    return osam.types.GenerateResponse(model=_AI_TEXT_MODEL, annotations=annotations)
+    return _Response(annotations=annotations)
 
 
-def _make_person_response(
-    *, texts: list[str], with_masks: bool
-) -> osam.types.GenerateResponse:
+def _make_person_response(*, texts: list[str], with_masks: bool) -> _Response:
     person_idx = texts.index("person")
     return _make_response(
         texts=texts,
@@ -99,7 +140,7 @@ def _make_person_response(
     )
 
 
-def _make_edge_crossing_response(*, texts: list[str]) -> osam.types.GenerateResponse:
+def _make_edge_crossing_response(*, texts: list[str]) -> _Response:
     return _make_response(
         texts=texts,
         boxes=[(-10, 30, 50, 100)],
@@ -112,13 +153,13 @@ def _make_edge_crossing_response(*, texts: list[str]) -> osam.types.GenerateResp
 def _install_mock_session(
     *,
     monkeypatch: pytest.MonkeyPatch,
-    response_fn: Callable[..., osam.types.GenerateResponse],
+    response_fn: Callable[..., _Response],
 ) -> None:
     mock_session = MagicMock()
     mock_session.run = MagicMock(
         side_effect=lambda **kw: response_fn(texts=kw["texts"])
     )
-    monkeypatch.setitem(_osam_session._SESSIONS, _AI_TEXT_MODEL, mock_session)
+    monkeypatch.setitem(_SESSIONS, _AI_TEXT_MODEL, mock_session)
 
     # Runs the request in this process, where the mock session lives.
     def submit(
@@ -127,12 +168,7 @@ def _install_mock_session(
         del channel
         assert request.image is not None
         try:
-            annotations = _osam_worker._run(
-                session=_osam_session.get_osam_session(model_name=request.model_name),
-                request=request,
-                image=request.image,
-                progress=None,
-            )
+            annotations = _run(request=request)
         except Exception as e:
             self.failed.emit(job, f"{type(e).__name__}: {e}")
         else:
@@ -223,7 +259,7 @@ def test_text_prompt_creates_shapes(
     create_mode: str,
     expected_shape_type: AiOutputFormat,
     text: str,
-    response_fn: Callable[..., osam.types.GenerateResponse],
+    response_fn: Callable[..., _Response],
     expected_labels: set[str],
 ) -> None:
     input_file = str(data_path / "raw/2011_000003.jpg")
@@ -439,7 +475,7 @@ def test_query_runs_from_another_tool(
 ) -> None:
     sent: list[list[str]] = []
 
-    def respond(*, texts: list[str]) -> osam.types.GenerateResponse:
+    def respond(*, texts: list[str]) -> _Response:
         sent.append(texts)
         return _make_person_response(texts=texts, with_masks=True)
 
@@ -514,7 +550,7 @@ def test_text_prompt_error_preserves_annotation(
     previous_shapes = canvas.shapes[:]
     assert previous_shapes
 
-    def _raise(**_: object) -> osam.types.GenerateResponse:
+    def _raise(**_: object) -> _Response:
         raise RuntimeError("boom")
 
     _install_mock_session(
@@ -629,14 +665,7 @@ def _hold_text_results(
             (
                 self,
                 job,
-                _osam_worker._run(
-                    session=_osam_session.get_osam_session(
-                        model_name=request.model_name
-                    ),
-                    request=request,
-                    image=request.image,
-                    progress=None,
-                ),
+                _run(request=request),
             )
         )
 
@@ -902,7 +931,7 @@ def test_text_prompt_is_one_concept(
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
     sent: list[list[str]] = []
 
-    def respond(*, texts: list[str]) -> osam.types.GenerateResponse:
+    def respond(*, texts: list[str]) -> _Response:
         sent.append(texts)
         return _make_response(
             texts=texts,
@@ -1146,7 +1175,7 @@ def test_example_box_batch_skips_and_reports_like_a_query(
             texts=["person"], with_masks=False
         )
     )
-    monkeypatch.setitem(_osam_session._SESSIONS, "sam3:latest", session)
+    monkeypatch.setitem(_SESSIONS, "sam3:latest", session)
 
     def submit(
         self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
@@ -1155,9 +1184,7 @@ def test_example_box_batch_skips_and_reports_like_a_query(
         assert request.image is not None
         self.finished.emit(
             job,
-            _osam_worker._run(
-                session=session, request=request, image=request.image, progress=None
-            ),
+            _run(request=request),
         )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
@@ -1208,14 +1235,14 @@ def test_run_with_an_example_box_draft_refines_it(
     sent: list[tuple[list[str], list[int]]] = []
 
     def respond(
-        *, texts: list[str], point_labels: np.ndarray, **_: object
-    ) -> osam.types.GenerateResponse:
-        sent.append((texts, point_labels.tolist()))
+        *, texts: list[str], example_box_labels: np.ndarray, **_: object
+    ) -> _Response:
+        sent.append((texts, example_box_labels.tolist()))
         return _make_person_response(texts=["person"], with_masks=False)
 
     session = MagicMock()
     session.run = MagicMock(side_effect=respond)
-    monkeypatch.setitem(_osam_session._SESSIONS, "sam3:latest", session)
+    monkeypatch.setitem(_SESSIONS, "sam3:latest", session)
 
     def submit(
         self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
@@ -1224,9 +1251,7 @@ def test_run_with_an_example_box_draft_refines_it(
         assert request.image is not None
         self.finished.emit(
             job,
-            _osam_worker._run(
-                session=session, request=request, image=request.image, progress=None
-            ),
+            _run(request=request),
         )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)
@@ -1249,7 +1274,7 @@ def test_run_with_an_example_box_draft_refines_it(
     win._submit_ai_prompt()
 
     assert [texts for texts, _ in sent] == [["visual"], ["visual"], ["person"]]
-    assert [labels for _, labels in sent] == [[2, 3], [2, 3], [2, 3]]
+    assert [labels for _, labels in sent] == [[1], [1], [1]]
     assert canvas.shapes == []
     assert (draft := canvas._ai_find_all_draft) is not None
     assert len(draft.shapes) == 2
@@ -1281,9 +1306,7 @@ def test_run_with_an_example_box_draft_refines_it(
     worker._set_active(active=None)
     worker.finished.emit(
         job,
-        _osam_worker._run(
-            session=session, request=request, image=request.image, progress=None
-        ),
+        _run(request=request),
     )
     assert run_button.text() == ""
     assert (draft := canvas._ai_find_all_draft) is not None
@@ -1310,7 +1333,7 @@ def test_enter_asks_once_for_the_draft_label(
             with_masks=False,
         )
     )
-    monkeypatch.setitem(_osam_session._SESSIONS, "sam3:latest", session)
+    monkeypatch.setitem(_SESSIONS, "sam3:latest", session)
 
     def submit(
         self: OsamWorker, *, channel: object, job: object, request: InferenceRequest
@@ -1319,9 +1342,7 @@ def test_enter_asks_once_for_the_draft_label(
         assert request.image is not None
         self.finished.emit(
             job,
-            _osam_worker._run(
-                session=session, request=request, image=request.image, progress=None
-            ),
+            _run(request=request),
         )
 
     monkeypatch.setattr(OsamWorker, "submit", submit)

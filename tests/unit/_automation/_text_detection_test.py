@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from typing import NamedTuple
 
 import numpy as np
 import osam
@@ -14,6 +15,10 @@ from labelme._automation._text_detection import propose_shapes_from_texts
 from labelme._shape import Shape
 
 
+class _Response(NamedTuple):
+    annotations: list[osam.types.Annotation]
+
+
 def _make_annotation(*, with_mask: bool) -> osam.types.Annotation:
     return osam.types.Annotation(
         text="cat",
@@ -25,14 +30,13 @@ def _make_annotation(*, with_mask: bool) -> osam.types.Annotation:
 
 def _get_bboxes(
     *,
-    response: osam.types.GenerateResponse,
+    response: _Response,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[NDArray[np.bool_]] | None]:
     return get_bboxes_from_texts(annotations=response.annotations, texts=["cat"])
 
 
 def test_collects_masks_when_every_annotation_has_one() -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[
             _make_annotation(with_mask=True),
             _make_annotation(with_mask=True),
@@ -46,8 +50,7 @@ def test_collects_masks_when_every_annotation_has_one() -> None:
 
 
 def test_masks_is_none_when_no_annotation_has_one() -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[
             _make_annotation(with_mask=False),
             _make_annotation(with_mask=False),
@@ -60,8 +63,7 @@ def test_masks_is_none_when_no_annotation_has_one() -> None:
 
 
 def test_raises_value_error_when_a_later_mask_is_missing() -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[
             _make_annotation(with_mask=True),
             _make_annotation(with_mask=False),
@@ -73,8 +75,7 @@ def test_raises_value_error_when_a_later_mask_is_missing() -> None:
 
 
 def test_raises_value_error_when_bounding_box_is_missing() -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[
             osam.types.Annotation(text="cat", score=0.9, bounding_box=None, mask=None),
         ],
@@ -85,8 +86,7 @@ def test_raises_value_error_when_bounding_box_is_missing() -> None:
 
 
 def test_raises_value_error_when_text_is_not_in_the_prompt() -> None:
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[
             osam.types.Annotation(
                 text="dog",
@@ -138,9 +138,7 @@ def test_nms_bboxes_scatters_scores_into_one_hot_class_matrix(
         keep = np.array([0], dtype=np.int64)
         return boxes[keep], scores[keep], np.array([0], dtype=np.int64), keep
 
-    monkeypatch.setattr(
-        osam.apis, "non_maximum_suppression", fake_non_maximum_suppression
-    )
+    monkeypatch.setattr(osam, "non_maximum_suppression", fake_non_maximum_suppression)
 
     boxes = np.array([[0, 0, 1, 1], [1, 1, 2, 2]], dtype=np.float32)
     scores = np.array([0.8, 0.6], dtype=np.float32)
@@ -168,8 +166,7 @@ def test_nms_bboxes_scatters_scores_into_one_hot_class_matrix(
 def test_text_proposal_keeps_mask_and_score_alignment_after_suppression() -> None:
     masks = [np.ones((4, 4), dtype=bool) for _ in range(3)]
     masks[1][0, 0] = False
-    response = osam.types.GenerateResponse(
-        model="stub",
+    response = _Response(
         annotations=[
             osam.types.Annotation(
                 text="cat",
