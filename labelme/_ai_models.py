@@ -166,13 +166,16 @@ Device = Literal["auto", "cpu"]
 
 
 def osam_client(*, device: Device, max_loaded_models: int | None = None) -> osam.Client:
-    # In this process: listing, pulling and removing load no model.
+    # In this process: listing, pulling and removing load no model. Loading
+    # downloads nothing; downloads go through ModelManager, which asks first
+    # and shows progress.
     import osam  # noqa: PLC0415 -- deferred: ~250ms off importing labelme._app
 
     return osam.Client(
         in_process=True,
         device=None if device == "auto" else device,
         max_loaded_models=max_loaded_models,
+        auto_pull=False,
     )
 
 

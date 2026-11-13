@@ -438,6 +438,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker = _automation.OsamWorker(parent=self)
         self._osam_worker.finished.connect(self._on_ai_text_finished)
         self._osam_worker.failed.connect(self._on_ai_text_failed)
+        self._osam_worker.not_pulled.connect(self._on_ai_model_not_pulled)
         self._osam_worker.activity_changed.connect(self._on_ai_activity_changed)
         self._osam_worker.set_device(device=self._config["ai"]["device"])
         self._model_manager.set_device(device=self._config["ai"]["device"])
@@ -2056,6 +2057,12 @@ class MainWindow(QtWidgets.QMainWindow):
         event = QtGui.QAccessibleAnnouncementEvent(self._status_bar.ai, message)
         event.setPoliteness(QtGui.QAccessible.AnnouncementPoliteness.Polite)
         QtGui.QAccessible.updateAccessibility(event)
+
+    def _on_ai_model_not_pulled(self, device: str | None, /) -> None:
+        # After a fall back to the CPU, a model such as SAM 3 runs other files,
+        # so it shows as not downloaded until the Compute device changes.
+        if device == "cpu":
+            self._model_manager.set_device(device="cpu")
 
     def _on_ai_text_failed(self, job: object, message: str, /) -> None:
         if self._take_ai_text_job(job=job) is None:

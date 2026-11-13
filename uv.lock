@@ -746,7 +746,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2,<1.29" },
-    { name = "osam", specifier = ">=0.11.1,<0.12" },
+    { name = "osam", specifier = ">=0.11.3,<0.12" },
     { name = "osam", extras = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23') or sys_platform != 'darwin'" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
@@ -1183,7 +1183,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.11.1"
+version = "0.11.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1197,9 +1197,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/39/f0/439315137aaa8786db74836974485a2a8ba199d1d8aa4260b54b2440af20/osam-0.11.1.tar.gz", hash = "sha256:ab0ee7d08add19f91550d0cd9d6c37949eca14a395016ad6b3e3503c4fd4b620", size = 27628574, upload-time = "2026-11-13T04:13:42.592Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a0/e1/eed04e2c9ee9317c72dae616b12cd39923ba80424256a620c31bd60f9d11/osam-0.11.3.tar.gz", hash = "sha256:dfebd54ce63d86309be0ce38cca3c8310db1ed3a7ad0ab110e753608c1689aed", size = 27631025, upload-time = "2026-11-13T08:39:35.536Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/49/e2/de68a23673d9da614061ae9bbdff7d01b7606db6362f8433efab3c759677/osam-0.11.1-py3-none-any.whl", hash = "sha256:286ab725c4118e555be28c171d90fd9f3be17771f36d0f5a70848ac3a6b2d7a8", size = 1503342, upload-time = "2026-11-13T04:13:40.806Z" },
+    { url = "https://files.pythonhosted.org/packages/84/40/f70102e0e7548a694e62e1792ae24c0f650fd26f0d6915234b9cbc608d6c/osam-0.11.3-py3-none-any.whl", hash = "sha256:55c30d5345ba34a9472cb2093d9acc1464745c9eeb36fef268c15533f38c4809", size = 1504621, upload-time = "2026-11-13T08:39:33.477Z" },
 ]
 
 [package.optional-dependencies]

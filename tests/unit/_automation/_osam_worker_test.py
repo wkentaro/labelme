@@ -63,6 +63,9 @@ def _scripted_serve(
         if request.model_name == "error":
             responses.send(("error", request_id, "ValueError: bad prompt"))
             continue
+        if request.model_name == "not-pulled":
+            responses.send(("not_pulled", request_id, ("not pulled for cpu", "cpu")))
+            continue
         result = {
             "pid": os.getpid(),
             "sent_image": request.image is not None,
@@ -139,6 +142,18 @@ def test_reports_a_model_error_and_keeps_the_worker(
     (_, _, first), bad, (_, _, after) = _results(worker=worker)
     assert bad == ("error", "bad", "ValueError: bad prompt")
     assert after["pid"] == first["pid"]
+
+
+def test_reports_a_model_not_pulled_for_the_device(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    not_pulled: list[object] = []
+    worker.not_pulled.connect(not_pulled.append)
+    worker.submit(channel="x", job="job", request=_request(model_name="not-pulled"))
+    _wait_for(qtbot=qtbot, worker=worker, count=1)
+
+    assert not_pulled == ["cpu"]
+    assert _results(worker=worker) == [("error", "job", "not pulled for cpu")]
 
 
 @pytest.mark.parametrize(
@@ -445,7 +460,11 @@ class _FailingClient:
 
 @pytest.mark.parametrize(
     ("error", "kind"),
-    [(_OrtFail("device lost"), "fault"), (ValueError("bad prompt"), "error")],
+    [
+        (_OrtFail("device lost"), "fault"),
+        (ValueError("bad prompt"), "error"),
+        (osam.types.NotPulledError(model="sam:100m", device="cpu"), "not_pulled"),
+    ],
 )
 def test_serve_reports_onnx_runtime_errors_as_faults(
     *, monkeypatch: pytest.MonkeyPatch, error: Exception, kind: str

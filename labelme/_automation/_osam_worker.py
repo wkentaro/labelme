@@ -100,10 +100,6 @@ def _run(
     info = model_info(client=client, name=model)
     devices = {running.name: running.device for running in client.ps()}
     if model not in devices:
-        if info.size is None:
-            # Such as after a fall back to the CPU, for which some models
-            # download other files; osam would download them unasked.
-            raise RuntimeError(f"{model} is not downloaded for this device")
         progress("loading", None)
         client.load(model, keep_alive=-1)
         devices = {running.name: running.device for running in client.ps()}
@@ -131,8 +127,11 @@ def _run(
 def serve(requests: Connection, responses: Connection, device: Device, /) -> None:
     # Answers each ("run", id, request) with ("stage", id, (stage, device)) as
     # each stage starts, the device once the model loads, then ("done", id,
-    # annotations), or ("error" | "fault", id, message), where a fault comes
-    # from ONNX Runtime and may be the device's.
+    # annotations), ("error" | "fault", id, message), where a fault comes
+    # from ONNX Runtime and may be the device's, or ("not_pulled", id,
+    # (message, device)) for a model whose files for device aren't on disk.
+    from osam.types import NotPulledError  # noqa: PLC0415 -- child only
+
     from .._ai_models import osam_client  # noqa: PLC0415 -- child only
 
     client = osam_client(device=device, max_loaded_models=2)
@@ -159,6 +158,9 @@ def serve(requests: Connection, responses: Connection, device: Device, /) -> Non
                     ("stage", request_id, (stage, device))
                 ),
             )
+        except NotPulledError as error:
+            logger.warning("AI inference failed: {}", error)
+            responses.send(("not_pulled", request_id, (str(error), error.device)))
         except Exception as error:
             logger.opt(exception=error).error("AI inference failed")
             kind = (
@@ -255,6 +257,9 @@ class OsamWorker(QtCore.QObject):
 
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
+    # Before failing the job: the model's files for the device, None for the
+    # one osam picks, aren't on disk, such as the CPU's after a fall back.
+    not_pulled = QtCore.Signal(object)  # device
     activity_changed = QtCore.Signal()  # job, queued, stage or device changed
 
     def __init__(
@@ -448,6 +453,10 @@ class OsamWorker(QtCore.QObject):
             self.finished.emit(active.job, payload)
         elif kind == "fault" and active.device != "cpu":
             self._fall_back_to_cpu(active=active, error=payload)
+        elif kind == "not_pulled":
+            message, device = payload
+            self.not_pulled.emit(device)
+            self.failed.emit(active.job, message)
         else:
             self.failed.emit(active.job, payload)
         self._start_next()
