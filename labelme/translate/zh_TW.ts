@@ -1107,14 +1107,6 @@ Switch the AI-Find All model to &apos;SAM 3&apos;, or set the output format to &
         <translation>正在載入 {model}…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>正在 CPU 上準備影像…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>正在準備影像…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} 秒</translation>
     </message>

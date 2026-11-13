@@ -1107,14 +1107,6 @@ AI-Find All 모델을 &apos;SAM 3&apos;(으)로 변경하거나 출력 형식을
         <translation>{model} 불러오는 중…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>CPU에서 이미지 준비 중…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>이미지 준비 중…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds}초</translation>
     </message>

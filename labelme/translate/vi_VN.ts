@@ -1107,14 +1107,6 @@ Chuyển mô hình AI-Find All sang &apos;SAM 3&apos;, hoặc đặt định d�
         <translation>Đang tải {model}…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>Đang chuẩn bị ảnh trên CPU…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>Đang chuẩn bị ảnh…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} giây</translation>
     </message>

@@ -1231,14 +1231,6 @@ Expected location: {path}</source>
         <translation>Загрузка {model}…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>Подготовка изображения на CPU…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>Подготовка изображения…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} с</translation>
     </message>

@@ -1107,14 +1107,6 @@ Wijzig het AI-Find All-model naar &apos;SAM 3&apos; of stel het uitvoerformaat i
         <translation>{model} laden…</translation>
     </message>
     <message>
-        <source>Preparing image on CPU…</source>
-        <translation>Afbeelding voorbereiden op CPU…</translation>
-    </message>
-    <message>
-        <source>Preparing image…</source>
-        <translation>Afbeelding voorbereiden…</translation>
-    </message>
-    <message>
         <source>{status} · {seconds} s</source>
         <translation>{status} · {seconds} s</translation>
     </message>
