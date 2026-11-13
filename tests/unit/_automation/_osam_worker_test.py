@@ -3,6 +3,7 @@ from __future__ import annotations
 import builtins
 import gc
 import threading
+import time
 import warnings
 from collections.abc import Iterator
 from typing import Any
@@ -248,6 +249,33 @@ def test_release_stops_the_server_and_fails_the_jobs_it_drops(
     _wait_for(qtbot=qtbot, worker=worker, count=3)
     assert _results(worker=worker)[2][:2] == ("done", "later")
     assert _results(worker=worker)[2][2]["client"] is not client
+
+
+def test_release_does_not_wait_for_a_server_starting_up(
+    *, worker: OsamWorker, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    started = threading.Event()
+    go_on = threading.Event()
+    clients: list[_ScriptedClient] = []
+
+    def slow_client(*, device: str, **_: object) -> _ScriptedClient:
+        started.set()
+        go_on.wait(timeout=5)
+        clients.append(_ScriptedClient(device=device))
+        return clients[-1]
+
+    monkeypatch.setattr(_osam_worker, "osam_client", slow_client)
+    worker.submit(channel="x", job="running", request=_request())
+    assert started.wait(timeout=_WAIT_MS / 1000)
+
+    start = time.monotonic()
+    worker.release()
+    assert time.monotonic() - start < 1  # not held up by the startup
+    go_on.set()
+
+    qtbot.waitUntil(lambda: bool(clients) and clients[0].closed, timeout=_WAIT_MS)
+    assert worker._client is None
+    assert _results(worker=worker) == [("error", "running", "AI worker stopped")]
 
 
 def test_runs_on_a_private_server(*, qtbot: QtBot) -> None:

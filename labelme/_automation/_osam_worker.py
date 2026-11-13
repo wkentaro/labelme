@@ -280,30 +280,32 @@ class OsamWorker(QtCore.QObject):
         # per stage if a real hang needs faster detection.
         TIMEOUT_S: Final = 600.0
 
-        # Locked while a server starts, so release waits to close it.
         with self._lock:
             if request_id < self._first_live_id:
                 return None
-            if self._client is not None and self._client[0] != device:
-                self._client[1].close()
-                self._client = None
-            if self._client is None:
-                progress("starting", None)
-                self._client = (
-                    device,
-                    # A private server: a crash or a 500 restarts it and
-                    # retries once, and a timeout restarts it. Loading
-                    # downloads nothing; downloads go through ModelManager,
-                    # which asks first and shows progress.
-                    osam_client(
-                        device=device,
-                        in_process=False,
-                        max_loaded_models=2,
-                        timeout=TIMEOUT_S,
-                        auto_pull=False,
-                    ),
-                )
-            return self._client[1]
+            if self._client is not None and self._client[0] == device:
+                return self._client[1]
+            stale, self._client = self._client, None
+        if stale is not None:
+            stale[1].close()
+        progress("starting", None)
+        # Started unlocked, so release never waits on a server starting up.
+        # A private server: a crash or a 500 restarts it and retries once, and
+        # a timeout restarts it. Loading downloads nothing; downloads go
+        # through ModelManager, which asks first and shows progress.
+        client = osam_client(
+            device=device,
+            in_process=False,
+            max_loaded_models=2,
+            timeout=TIMEOUT_S,
+            auto_pull=False,
+        )
+        with self._lock:
+            if request_id >= self._first_live_id:
+                self._client = (device, client)
+                return client
+        client.close()  # released while it started
+        return None
 
     def _on_reported(self, request_id: int, kind: str, payload: object, /) -> None:
         active = self._active
