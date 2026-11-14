@@ -271,6 +271,25 @@ def test_unload_waits_for_the_running_request_and_keeps_the_server(
     assert worker._client is not None and _client(worker=worker) is client
 
 
+def test_shutdown_deletes_a_model_waiting_on_the_running_request(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    worker.submit(channel="x", job="running", request=_request(model_name="hang"))
+    qtbot.waitUntil(lambda: worker.stage == "generating", timeout=_WAIT_MS)
+    unloaded: list[str] = []
+    worker.unloaded.connect(unloaded.append)
+    worker.unload(model_name="hang")
+
+    worker.shutdown()
+
+    assert unloaded == ["hang"]
+    client = _client(worker=worker)
+    client.release.set()
+    qtbot.waitUntil(lambda: client.closed, timeout=_WAIT_MS)
+    qtbot.wait(50)  # the thread's own report comes too late to delete again
+    assert unloaded == ["hang"]
+
+
 def test_shutdown_does_not_wait_for_a_running_request(
     *, worker: OsamWorker, qtbot: QtBot
 ) -> None:

@@ -215,6 +215,11 @@ class OsamWorker(QtCore.QObject):
         if self._active is not None:
             self._set_active(active=None)  # its result goes unreported
         self._inbox.put(None)
+        # A delete still waiting on the running request goes now, as the
+        # thread's report would come too late. ponytail: Windows can refuse
+        # to delete files the server holds open; the error then shows.
+        for model_name in list(self._removing):
+            self._on_unloaded(model_name)
 
     def _set_active(self, *, active: _Active | None) -> None:
         self._active = active
@@ -274,6 +279,8 @@ class OsamWorker(QtCore.QObject):
         self._unloaded.emit(model_name)
 
     def _on_unloaded(self, model_name: str, /) -> None:
+        if model_name not in self._removing:
+            return  # deleted at shutdown
         self.unloaded.emit(model_name)
         self._removing.discard(model_name)
 
