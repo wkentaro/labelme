@@ -441,6 +441,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.finished.connect(self._on_ai_text_finished)
         self._osam_worker.failed.connect(self._on_ai_text_failed)
         self._osam_worker.not_pulled.connect(self._on_ai_model_not_pulled)
+        self._osam_worker.unloaded.connect(
+            lambda name: self._model_manager.remove(model_name=name)
+        )
         self._osam_worker.activity_changed.connect(self._on_ai_activity_changed)
         self._osam_worker.set_device(device=self._config["ai"]["device"])
         self._model_manager.set_device(device=self._config["ai"]["device"])
@@ -4392,12 +4395,11 @@ class MainWindow(QtWidgets.QMainWindow):
         for key_path, value in overrides:
             self._set_setting_value(key_path=key_path, value=value)
             self._sync_setting_controls(key_path=key_path)
-        # The worker holds the model's files open; stopping it lets them go.
-        self._osam_worker.release()
         if self._canvas_widgets.canvas.get_ai_model_name() == model_name:
             self._canvas_widgets.canvas.set_ai_model_name(model_name="")
-
-        self._model_manager.remove(model_name=model_name)
+        # The worker's server holds the model's files open, so they go once
+        # it unloads the model.
+        self._osam_worker.unload(model_name=model_name)
 
     def _open_models(self) -> None:
         if self._models_dialog is None:

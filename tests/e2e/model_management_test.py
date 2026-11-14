@@ -111,7 +111,7 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert settings is not None
     win._open_models()
     models._rows[name][2].click()
-    assert not Path(blob.path).exists()
+    qtbot.waitUntil(lambda: not Path(blob.path).exists())
     for key in ("default", "text_model"):
         editor = settings._editors[("ai", key)]
         assert isinstance(editor, QtWidgets.QComboBox)
@@ -131,9 +131,10 @@ def test_download_does_not_select_and_delete_clears_both_sam3_choices(
     assert requests == ["/slow"]
 
 
-def test_delete_releases_loaded_session(
+def test_delete_unloads_the_model_first(
     *,
     main_win: MainWinFactory,
+    qtbot: QtBot,
     tmp_path: Path,
     session_home: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -155,12 +156,16 @@ def test_delete_releases_loaded_session(
     canvas = win._canvas_widgets.canvas
     canvas.load_shapes(shapes=[Shape(label="cat")])
 
-    # The worker holds the model's files open, so it stops before they go.
-    blob_existed_at_release: list[bool] = []
+    # The worker's server holds the model's files open, so it unloads the
+    # model before they go.
+    unloaded: list[tuple[str, bool]] = []
     monkeypatch.setattr(
         win._osam_worker,
-        "release",
-        lambda: blob_existed_at_release.append(Path(blob.path).exists()),
+        "_unload",
+        lambda *, model_name: (
+            unloaded.append((model_name, Path(blob.path).exists())),
+            win._osam_worker.unloaded.emit(model_name),
+        ),
     )
 
     monkeypatch.setattr(ModelsWidget, "_confirm_delete", lambda *_args, **_kwargs: True)
@@ -171,8 +176,8 @@ def test_delete_releases_loaded_session(
     assert models is not None
     models._rows[name][2].click()
 
-    assert blob_existed_at_release == [True]
-    assert not Path(blob.path).exists()
+    qtbot.waitUntil(lambda: not Path(blob.path).exists())
+    assert unloaded == [(name, True)]
     assert win._ai_text.get_model_name() == ""
     assert canvas.get_ai_model_name() == ""
     assert [shape.label for shape in canvas.shapes] == ["cat"]

@@ -87,6 +87,7 @@ class ModelManager(QtCore.QObject):
 
     changed = QtCore.Signal()
     progress_changed = QtCore.Signal()
+    remove_failed = QtCore.Signal(str)  # message
 
     models: dict[str, str]
     errors: dict[str, str]
@@ -207,6 +208,8 @@ class ModelManager(QtCore.QObject):
             self._stop_active_pull()
         try:
             osam_client(device=self._device).remove(model_name)
+        except OSError as error:
+            self.remove_failed.emit(str(error))
         finally:
             self.errors.pop(model_name, None)
             self.changed.emit()

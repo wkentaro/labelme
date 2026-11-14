@@ -126,18 +126,17 @@ class OsamWorker(QtCore.QObject):
     _pending: dict[object, tuple[object, InferenceRequest]]
     _active: _Active | None
     _request_ids: itertools.count[int]
-    _inbox: queue.SimpleQueue[tuple[int, Device, InferenceRequest] | None]
-    # The thread's client and its device, which release closes from the UI,
-    # and the first request id it still runs.
-    _lock: threading.Lock
-    _client: tuple[Device, osam.Client] | None
-    _first_live_id: int
+    # A request, a model name to unload, or None to stop.
+    _inbox: queue.SimpleQueue[tuple[int, Device, InferenceRequest] | str | None]
+    _client: tuple[Device, osam.Client] | None  # the thread's only
 
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
     # Before failing the job: the model's files for the device, None for the
     # one osam picks, aren't on disk, such as the CPU's after a fall back.
     not_pulled = QtCore.Signal(object)  # device
+    # The worker's server no longer holds the model's files.
+    unloaded = QtCore.Signal(str)  # model name
     activity_changed = QtCore.Signal()  # job, queued, stage or device changed
     # From the thread, so queued: request id, kind, payload.
     _reported = QtCore.Signal(int, str, object)
@@ -149,9 +148,7 @@ class OsamWorker(QtCore.QObject):
         self._active = None
         self._request_ids = itertools.count()
         self._inbox = queue.SimpleQueue()
-        self._lock = threading.Lock()
         self._client = None
-        self._first_live_id = 0
         self._reported.connect(self._on_reported)
         threading.Thread(target=self._serve, name="osam-worker", daemon=True).start()
 
@@ -192,36 +189,23 @@ class OsamWorker(QtCore.QObject):
         # on this device.
         self._device = device
 
-    def release(self) -> None:
-        # Stops the server, freeing every model it loaded; the next submit
-        # starts another. Jobs it drops fail, so no caller waits for them.
-        jobs = [job for job, _ in self._pending.values()]
-        if self._active is not None:
-            jobs.insert(0, self._active.job)
-        self._drop_requests()
-        self._close_client()  # a running request fails, unreported
-        for job in jobs:
-            self.failed.emit(job, "AI worker stopped")
+    def unload(self, *, model_name: str) -> None:
+        # Unloads the model once the running request ends, keeping the server
+        # and its other models, then emits unloaded. Its requests that have
+        # not started fail.
+        for channel, (job, request) in list(self._pending.items()):
+            if request.model_name == model_name:
+                del self._pending[channel]
+                self.failed.emit(job, "AI model removed")
+        self._inbox.put(model_name)
 
     def shutdown(self) -> None:
         # Returns at once: the thread closes the server, which also exits
         # with this process, so quitting never waits on a running request.
-        self._drop_requests()
-        self._inbox.put(None)
-
-    def _drop_requests(self) -> None:
-        # The thread skips the dropped ones, and their results go unreported.
         self._pending.clear()
-        with self._lock:
-            self._first_live_id = next(self._request_ids)
         if self._active is not None:
-            self._set_active(active=None)
-
-    def _close_client(self) -> None:
-        with self._lock:
-            client, self._client = self._client, None
-        if client is not None:
-            client[1].close()
+            self._set_active(active=None)  # its result goes unreported
+        self._inbox.put(None)
 
     def _set_active(self, *, active: _Active | None) -> None:
         self._active = active
@@ -244,14 +228,13 @@ class OsamWorker(QtCore.QObject):
         from osam import ResponseError  # noqa: PLC0415 -- deferred
 
         while (item := self._inbox.get()) is not None:
+            if isinstance(item, str):
+                self._unload(model_name=item)
+                continue
             request_id, device, request = item
             progress = functools.partial(self._report_stage, request_id)
             try:
-                client = self._client_for(
-                    request_id=request_id, device=device, progress=progress
-                )
-                if client is None:
-                    continue  # released
+                client = self._client_for(device=device, progress=progress)
                 annotations = _run(client=client, request=request, progress=progress)
             except Exception as error:
                 if (
@@ -269,35 +252,35 @@ class OsamWorker(QtCore.QObject):
                 )
             else:
                 self._reported.emit(request_id, "done", annotations)
-        self._close_client()
+        if self._client is not None:
+            self._client[1].close()
+
+    def _unload(self, *, model_name: str) -> None:
+        try:
+            if self._client is not None:
+                self._client[1].load(model_name, keep_alive=0)
+        except Exception:
+            # A server that failed holds no files either.
+            logger.exception("Failed to unload {!r}", model_name)
+        self.unloaded.emit(model_name)
 
     def _report_stage(
         self, request_id: int, stage: WorkerStage, device: str | None, /
     ) -> None:
         self._reported.emit(request_id, "stage", (stage, device))
 
-    def _client_for(
-        self,
-        *,
-        request_id: int,
-        device: Device,
-        progress: ProgressCallback,
-    ) -> osam.Client | None:
+    def _client_for(self, *, device: Device, progress: ProgressCallback) -> osam.Client:
         # ponytail: one timeout covers each of loading and running, so a
         # first run that compiles a model counts as slow, not hung. Split it
         # per stage if a real hang needs faster detection.
         TIMEOUT_S: Final = 600.0
 
-        with self._lock:
-            if request_id < self._first_live_id:
-                return None
-            if self._client is not None and self._client[0] == device:
+        if self._client is not None:
+            if self._client[0] == device:
                 return self._client[1]
-            stale, self._client = self._client, None
-        if stale is not None:
-            stale[1].close()
+            self._client[1].close()
+            self._client = None
         progress("starting", None)
-        # Started unlocked, so release never waits on a server starting up.
         # A private server: a crash or a 500 restarts it and retries once, and
         # a timeout restarts it. Loading downloads nothing; downloads go
         # through ModelManager, which asks first and shows progress.
@@ -308,17 +291,13 @@ class OsamWorker(QtCore.QObject):
             timeout=TIMEOUT_S,
             auto_pull=False,
         )
-        with self._lock:
-            if request_id >= self._first_live_id:
-                self._client = (device, client)
-                return client
-        client.close()  # released while it started
-        return None
+        self._client = (device, client)
+        return client
 
     def _on_reported(self, request_id: int, kind: str, payload: object, /) -> None:
         active = self._active
         if active is None or active.request_id != request_id:
-            return  # released
+            return  # shut down
         if kind == "stage":
             active.stage, active.device = cast(tuple[WorkerStage, str | None], payload)
             self.activity_changed.emit()
