@@ -1488,6 +1488,10 @@ Expected location: {path}</source>
         <translation>Ошибка</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Удаление…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>В очереди · позиция {position}</translation>
     </message>

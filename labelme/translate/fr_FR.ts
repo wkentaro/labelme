@@ -1488,6 +1488,10 @@ Emplacement attendu : {path}</translation>
         <translation>Échec</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Suppression…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>En attente · position {position}</translation>
     </message>

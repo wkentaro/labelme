@@ -55,6 +55,7 @@ class ModelsWidget(QtWidgets.QWidget):
         super().__init__()
         self._manager = manager
         self._remove_model = remove_model
+        manager.remove_failed.connect(self._on_remove_failed)
         self._links = {}
         self._rows = {}
         layout = QtWidgets.QVBoxLayout(self)
@@ -184,6 +185,7 @@ class ModelsWidget(QtWidgets.QWidget):
             "missing": self.tr("Not downloaded"),
             "downloaded": self.tr("Downloaded"),
             "failed": self.tr("Failed"),
+            "deleting": self.tr("Deleting…"),
         }
         for name, (status, download, remove, details) in self._rows.items():
             state = manager.get_state(model_name=name)
@@ -204,7 +206,7 @@ class ModelsWidget(QtWidgets.QWidget):
                 if state == "failed"
                 else self.tr("Download")
             )
-            download.setEnabled(state != "downloaded")
+            download.setEnabled(state not in {"downloaded", "deleting"})
             download.setAccessibleName(f"{download.text()} {manager.models[name]}")
             remove.setEnabled(state == "downloaded")
 
@@ -265,13 +267,13 @@ class ModelsWidget(QtWidgets.QWidget):
         message.exec()
         return message.clickedButton() is delete
 
+    def _on_remove_failed(self, message: str, /) -> None:
+        QtWidgets.QMessageBox.warning(self, self.tr("Delete Model"), message)
+
     def _delete(self, *, model_name: str) -> None:
         if not self._confirm_delete(model_name=model_name):
             return
-        try:
-            self._remove_model(model_name)
-        except OSError as error:
-            QtWidgets.QMessageBox.warning(self, self.tr("Delete Model"), str(error))
+        self._remove_model(model_name)
 
 
 class ModelsDialog(QtWidgets.QDialog):

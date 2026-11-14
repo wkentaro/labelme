@@ -1488,6 +1488,10 @@ Verwachte locatie: {path}</translation>
         <translation>Mislukt</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Verwijderen…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>In wachtrij · positie {position}</translation>
     </message>

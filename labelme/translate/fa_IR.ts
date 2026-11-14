@@ -1488,6 +1488,10 @@ Expected location: {path}</source>
         <translation>ناموفق</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>در حال حذف…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>در صف · جایگاه {position}</translation>
     </message>

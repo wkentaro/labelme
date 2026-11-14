@@ -1488,6 +1488,10 @@ Vị trí dự kiến: {path}</translation>
         <translation>Thất bại</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Đang xóa…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>Đang chờ · vị trí {position}</translation>
     </message>

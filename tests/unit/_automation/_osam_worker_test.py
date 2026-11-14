@@ -42,9 +42,12 @@ class _ScriptedClient:
             for name in self.loaded
         ]
 
-    def load(self, *args: object, **_: object) -> osam.types.RunningModel:
+    def load(self, *args: object, **kwargs: object) -> osam.types.RunningModel:
         name = cast(str, args[0])  # positional, as osam takes it
-        self.loaded.add(name)
+        if kwargs.get("keep_alive") == 0:
+            self.loaded.discard(name)
+        else:
+            self.loaded.add(name)
         return osam.types.RunningModel(name=name, device=self.device, expires_at=None)
 
     def segment(self, *args: object, **_: object) -> dict[str, object]:
@@ -220,7 +223,9 @@ def test_reports_the_stages_and_device_of_its_own_request(
     assert worker.model_name is None
 
 
-def test_reports_a_job_queued_behind_the_running_one(*, worker: OsamWorker) -> None:
+def test_reports_a_job_queued_behind_the_running_one(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
     worker.submit(channel="x", job="running", request=_request(model_name="hang"))
     seen: list[bool] = []
     worker.activity_changed.connect(lambda: seen.append(worker.job is not None))
@@ -228,28 +233,61 @@ def test_reports_a_job_queued_behind_the_running_one(*, worker: OsamWorker) -> N
     worker.submit(channel="y", job="queued", request=_request())
 
     assert seen == [True]
-    worker.release()
+    qtbot.waitUntil(lambda: worker.stage == "generating", timeout=_WAIT_MS)
+    _client(worker=worker).release.set()
 
 
-def test_release_stops_the_server_and_fails_the_jobs_it_drops(
+def test_unload_waits_for_the_running_request_and_keeps_the_server(
     *, worker: OsamWorker, qtbot: QtBot
 ) -> None:
     worker.submit(channel="x", job="running", request=_request(model_name="hang"))
     qtbot.waitUntil(lambda: worker.stage == "generating", timeout=_WAIT_MS)
-    worker.submit(channel="y", job="waiting", request=_request())
+    worker.submit(channel="y", job="removed", request=_request(model_name="hang"))
+    worker.submit(channel="z", job="other", request=_request())
     client = _client(worker=worker)
+    unloaded: list[tuple[str, set[str]]] = []
 
-    worker.release()
+    worker.unloaded.connect(lambda name: unloaded.append((name, set(client.loaded))))
+    worker.unload(model_name="hang")
+    # Until the files go, it can't load again.
+    worker.submit(channel="y", job="reloaded", request=_request(model_name="hang"))
 
-    assert client.closed
     assert _results(worker=worker) == [
-        ("error", "running", "AI worker stopped"),
-        ("error", "waiting", "AI worker stopped"),
+        ("error", "removed", "AI model removed"),
+        ("error", "reloaded", "AI model removed"),
     ]
-    worker.submit(channel="x", job="later", request=_request())
-    _wait_for(qtbot=qtbot, worker=worker, count=3)
-    assert _results(worker=worker)[2][:2] == ("done", "later")
-    assert _results(worker=worker)[2][2]["client"] is not client
+    assert not unloaded
+    client.release.set()
+    qtbot.waitUntil(lambda: bool(unloaded), timeout=_WAIT_MS)
+    ((name, loaded),) = unloaded
+    assert name == "hang" and "hang" not in loaded
+    worker.submit(channel="y", job="after", request=_request(model_name="hang"))
+    _wait_for(qtbot=qtbot, worker=worker, count=5)
+    assert [r[:2] for r in _results(worker=worker)[2:]] == [
+        ("done", "running"),
+        ("done", "other"),
+        ("done", "after"),
+    ]
+    assert worker._client is not None and _client(worker=worker) is client
+
+
+def test_shutdown_deletes_a_model_waiting_on_the_running_request(
+    *, worker: OsamWorker, qtbot: QtBot
+) -> None:
+    worker.submit(channel="x", job="running", request=_request(model_name="hang"))
+    qtbot.waitUntil(lambda: worker.stage == "generating", timeout=_WAIT_MS)
+    unloaded: list[str] = []
+    worker.unloaded.connect(unloaded.append)
+    worker.unload(model_name="hang")
+
+    worker.shutdown()
+
+    assert unloaded == ["hang"]
+    client = _client(worker=worker)
+    client.release.set()
+    qtbot.waitUntil(lambda: client.closed, timeout=_WAIT_MS)
+    qtbot.wait(50)  # the thread's own report comes too late to delete again
+    assert unloaded == ["hang"]
 
 
 def test_shutdown_does_not_wait_for_a_running_request(
@@ -266,33 +304,6 @@ def test_shutdown_does_not_wait_for_a_running_request(
 
     client.release.set()  # the request ends; the thread then closes it
     qtbot.waitUntil(lambda: client.closed, timeout=_WAIT_MS)
-
-
-def test_release_does_not_wait_for_a_server_starting_up(
-    *, worker: OsamWorker, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    started = threading.Event()
-    go_on = threading.Event()
-    clients: list[_ScriptedClient] = []
-
-    def slow_client(*, device: str, **_: object) -> _ScriptedClient:
-        started.set()
-        go_on.wait(timeout=5)
-        clients.append(_ScriptedClient(device=device))
-        return clients[-1]
-
-    monkeypatch.setattr(_osam_worker, "osam_client", slow_client)
-    worker.submit(channel="x", job="running", request=_request())
-    assert started.wait(timeout=_WAIT_MS / 1000)
-
-    start = time.monotonic()
-    worker.release()
-    assert time.monotonic() - start < 1  # not held up by the startup
-    go_on.set()
-
-    qtbot.waitUntil(lambda: bool(clients) and clients[0].closed, timeout=_WAIT_MS)
-    assert worker._client is None
-    assert _results(worker=worker) == [("error", "running", "AI worker stopped")]
 
 
 def test_runs_on_a_private_server(

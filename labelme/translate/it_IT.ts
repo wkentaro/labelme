@@ -1488,6 +1488,10 @@ Posizione prevista: {path}</translation>
         <translation>Non riuscito</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Eliminazione…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>In coda · posizione {position}</translation>
     </message>

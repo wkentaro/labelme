@@ -278,6 +278,12 @@ def test_existing_files_count_as_downloaded_until_deleted(
     assert manager.get_state(model_name=name) == "downloaded"
     manager.enqueue(model_name=name)
     assert manager.active is None
+    # Unusable while its files wait to be deleted.
+    manager.start_removing(model_name=name)
+    assert manager.get_state(model_name=name) == "deleting"
+    assert not manager.is_ready(model_name=name)
+    manager.enqueue(model_name=name)
+    assert manager.active is None and not manager.queue
     manager.remove(model_name=name)
     assert not path.exists()
     assert manager.get_state(model_name=name) == "missing"

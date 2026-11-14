@@ -1488,6 +1488,10 @@ Várt hely: {path}</translation>
         <translation>Sikertelen</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Törlés…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>Várólistán · {position}. hely</translation>
     </message>

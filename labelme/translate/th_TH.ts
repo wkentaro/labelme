@@ -1489,6 +1489,10 @@ Expected location: {path}</source>
         <translation>ล้มเหลว</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>กำลังลบ…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>อยู่ในคิว · ลำดับที่ {position}</translation>
     </message>

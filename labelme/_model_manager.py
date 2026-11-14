@@ -87,10 +87,12 @@ class ModelManager(QtCore.QObject):
 
     changed = QtCore.Signal()
     progress_changed = QtCore.Signal()
+    remove_failed = QtCore.Signal(str)  # message
 
     models: dict[str, str]
     errors: dict[str, str]
     queue: list[str]
+    removing: set[str]  # unusable while their files wait to be deleted
 
     def __init__(self, *, parent: QtCore.QObject | None = None) -> None:
         super().__init__(parent)
@@ -100,6 +102,7 @@ class ModelManager(QtCore.QObject):
         } | dict(AI_TEXT_MODEL_OPTIONS)
         self.errors = {}
         self.queue = []
+        self.removing = set()
         self._pull = None
         self._closed = False
         self._device = "auto"
@@ -121,7 +124,7 @@ class ModelManager(QtCore.QObject):
     def is_ready(self, *, model_name: str) -> bool:
         # osam verifies each file before moving it into place, so presence is
         # enough; a file corrupted later fails the check on load.
-        if model_name not in self.models:
+        if model_name not in self.models or model_name in self.removing:
             return False
         return (
             model_info(client=osam_client(device=self._device), name=model_name).size
@@ -137,6 +140,8 @@ class ModelManager(QtCore.QObject):
         }
 
     def get_state(self, *, model_name: str) -> str:
+        if model_name in self.removing:
+            return "deleting"
         if model_name in self.queue:
             return "queued"
         if model_name == self.active:
@@ -154,6 +159,7 @@ class ModelManager(QtCore.QObject):
         if (
             self._closed
             or model_name not in self.models
+            or model_name in self.removing
             or self.is_ready(model_name=model_name)
         ):
             return
@@ -200,6 +206,11 @@ class ModelManager(QtCore.QObject):
             self.changed.emit()
             self._start_next()
 
+    def start_removing(self, *, model_name: str) -> None:
+        # remove deletes its files later, once nothing holds them open.
+        self.removing.add(model_name)
+        self.changed.emit()
+
     def remove(self, *, model_name: str) -> None:
         if model_name in self.queue:
             self.queue.remove(model_name)
@@ -207,7 +218,10 @@ class ModelManager(QtCore.QObject):
             self._stop_active_pull()
         try:
             osam_client(device=self._device).remove(model_name)
+        except OSError as error:
+            self.remove_failed.emit(str(error))
         finally:
+            self.removing.discard(model_name)
             self.errors.pop(model_name, None)
             self.changed.emit()
             self._start_next()
