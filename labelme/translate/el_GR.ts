@@ -1488,6 +1488,10 @@ Expected location: {path}</source>
         <translation>Αποτυχία</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Διαγραφή…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>Σε αναμονή · θέση {position}</translation>
     </message>

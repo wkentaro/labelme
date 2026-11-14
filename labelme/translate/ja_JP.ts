@@ -1498,6 +1498,10 @@ Expected location: {path}</source>
         <translation>失敗</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>削除中…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>待機中 · {position} 番目</translation>
     </message>

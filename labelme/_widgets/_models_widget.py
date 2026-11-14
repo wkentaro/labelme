@@ -185,6 +185,7 @@ class ModelsWidget(QtWidgets.QWidget):
             "missing": self.tr("Not downloaded"),
             "downloaded": self.tr("Downloaded"),
             "failed": self.tr("Failed"),
+            "deleting": self.tr("Deleting…"),
         }
         for name, (status, download, remove, details) in self._rows.items():
             state = manager.get_state(model_name=name)
@@ -205,7 +206,7 @@ class ModelsWidget(QtWidgets.QWidget):
                 if state == "failed"
                 else self.tr("Download")
             )
-            download.setEnabled(state != "downloaded")
+            download.setEnabled(state not in {"downloaded", "deleting"})
             download.setAccessibleName(f"{download.text()} {manager.models[name]}")
             remove.setEnabled(state == "downloaded")
 

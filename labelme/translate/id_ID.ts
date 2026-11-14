@@ -1488,6 +1488,10 @@ Lokasi yang diharapkan: {path}</translation>
         <translation>Gagal</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Menghapus…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>Dalam antrean · posisi {position}</translation>
     </message>

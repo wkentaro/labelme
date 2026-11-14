@@ -1488,6 +1488,10 @@ Erwarteter Speicherort: {path}</translation>
         <translation>Fehlgeschlagen</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Wird gelöscht…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>In Warteschlange · Position {position}</translation>
     </message>

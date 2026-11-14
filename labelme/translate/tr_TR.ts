@@ -1488,6 +1488,10 @@ Beklenen konum: {path}</translation>
         <translation>Başarısız</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Siliniyor…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>Sırada · konum {position}</translation>
     </message>

@@ -1488,6 +1488,10 @@ Ubicación esperada: {path}</translation>
         <translation>Error</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Eliminando…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>En cola · posición {position}</translation>
     </message>

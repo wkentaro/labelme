@@ -4399,6 +4399,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self._canvas_widgets.canvas.set_ai_model_name(model_name="")
         # The worker's server holds the model's files open, so they go once
         # it unloads the model.
+        self._model_manager.start_removing(model_name=model_name)
         self._osam_worker.unload(model_name=model_name)
 
     def _open_models(self) -> None:

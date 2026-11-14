@@ -1488,6 +1488,10 @@ Oczekiwana lokalizacja: {path}</translation>
         <translation>Niepowodzenie</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Usuwanie…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>W kolejce · pozycja {position}</translation>
     </message>

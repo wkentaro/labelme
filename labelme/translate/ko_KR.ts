@@ -1488,6 +1488,10 @@ Expected location: {path}</source>
         <translation>실패</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>삭제 중…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>대기 중 · 순서 {position}</translation>
     </message>

@@ -1488,6 +1488,10 @@ Local esperado: {path}</translation>
         <translation>Falhou</translation>
     </message>
     <message>
+        <source>Deleting…</source>
+        <translation>Excluindo…</translation>
+    </message>
+    <message>
         <source>Queued · position {position}</source>
         <translation>Na fila · posição {position}</translation>
     </message>
