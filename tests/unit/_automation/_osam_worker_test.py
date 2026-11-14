@@ -249,17 +249,24 @@ def test_unload_waits_for_the_running_request_and_keeps_the_server(
 
     worker.unloaded.connect(lambda name: unloaded.append((name, set(client.loaded))))
     worker.unload(model_name="hang")
+    # Until the files go, it can't load again.
+    worker.submit(channel="y", job="reloaded", request=_request(model_name="hang"))
 
-    assert _results(worker=worker) == [("error", "removed", "AI model removed")]
+    assert _results(worker=worker) == [
+        ("error", "removed", "AI model removed"),
+        ("error", "reloaded", "AI model removed"),
+    ]
     assert not unloaded
     client.release.set()
     qtbot.waitUntil(lambda: bool(unloaded), timeout=_WAIT_MS)
     ((name, loaded),) = unloaded
     assert name == "hang" and "hang" not in loaded
-    _wait_for(qtbot=qtbot, worker=worker, count=3)
-    assert [r[:2] for r in _results(worker=worker)[1:]] == [
+    worker.submit(channel="y", job="after", request=_request(model_name="hang"))
+    _wait_for(qtbot=qtbot, worker=worker, count=5)
+    assert [r[:2] for r in _results(worker=worker)[2:]] == [
         ("done", "running"),
         ("done", "other"),
+        ("done", "after"),
     ]
     assert worker._client is not None and _client(worker=worker) is client
 

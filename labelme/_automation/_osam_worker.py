@@ -129,17 +129,20 @@ class OsamWorker(QtCore.QObject):
     # A request, a model name to unload, or None to stop.
     _inbox: queue.SimpleQueue[tuple[int, Device, InferenceRequest] | str | None]
     _client: tuple[Device, osam.Client] | None  # the thread's only
+    _removing: set[str]  # unloading until unloaded's slots delete the files
 
     finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
     failed = QtCore.Signal(object, str)  # job, message
     # Before failing the job: the model's files for the device, None for the
     # one osam picks, aren't on disk, such as the CPU's after a fall back.
     not_pulled = QtCore.Signal(object)  # device
-    # The worker's server no longer holds the model's files.
+    # The worker's server no longer holds the model's files; a slot deletes
+    # them, and requests for the model fail until it returns.
     unloaded = QtCore.Signal(str)  # model name
     activity_changed = QtCore.Signal()  # job, queued, stage or device changed
     # From the thread, so queued: request id, kind, payload.
     _reported = QtCore.Signal(int, str, object)
+    _unloaded = QtCore.Signal(str)
 
     def __init__(self, *, parent: QtCore.QObject | None = None) -> None:
         super().__init__(parent)
@@ -149,13 +152,18 @@ class OsamWorker(QtCore.QObject):
         self._request_ids = itertools.count()
         self._inbox = queue.SimpleQueue()
         self._client = None
+        self._removing = set()
         self._reported.connect(self._on_reported)
+        self._unloaded.connect(self._on_unloaded)
         threading.Thread(target=self._serve, name="osam-worker", daemon=True).start()
 
     def submit(
         self, *, channel: object, job: object, request: InferenceRequest
     ) -> None:
         self._pending.pop(channel, None)
+        if request.model_name in self._removing:
+            self.failed.emit(job, "AI model removed")
+            return
         self._pending[channel] = (job, request)
         self._start_next()
         if channel in self._pending:
@@ -197,6 +205,7 @@ class OsamWorker(QtCore.QObject):
             if request.model_name == model_name:
                 del self._pending[channel]
                 self.failed.emit(job, "AI model removed")
+        self._removing.add(model_name)
         self._inbox.put(model_name)
 
     def shutdown(self) -> None:
@@ -262,7 +271,11 @@ class OsamWorker(QtCore.QObject):
         except Exception:
             # A server that failed holds no files either.
             logger.exception("Failed to unload {!r}", model_name)
+        self._unloaded.emit(model_name)
+
+    def _on_unloaded(self, model_name: str, /) -> None:
         self.unloaded.emit(model_name)
+        self._removing.discard(model_name)
 
     def _report_stage(
         self, request_id: int, stage: WorkerStage, device: str | None, /
