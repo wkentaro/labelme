@@ -49,7 +49,9 @@ def stalled_tls_server() -> Iterator[tuple[str, threading.Event, threading.Event
             release.wait(timeout=10)
 
     server = socketserver.ThreadingTCPServer(("127.0.0.1", 0), Handler)
-    thread = threading.Thread(target=server.serve_forever)
+    thread = threading.Thread(
+        target=server.serve_forever, kwargs={"poll_interval": 0.01}
+    )
     thread.start()
     yield f"https://127.0.0.1:{server.server_address[1]}", accepted, release
     release.set()
