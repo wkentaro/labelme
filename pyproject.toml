@@ -114,6 +114,7 @@ filterwarnings = [
   "error::pytest.PytestUnraisableExceptionWarning",
 ]
 qt_api = "pyside6"
+testpaths = ["tests"]
 markers = [
   "network: mark a test that accesses an external network service.",
   "pixel_snapshot: mark a test that compares rendering against a stored pixel snapshot.",

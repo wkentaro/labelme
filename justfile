@@ -27,9 +27,9 @@ format:
     git ls-files "*.md" | xargs uv run mdformat
     git ls-files "*.yml" "*.yaml" | xargs uv run yamlfix
 
-# Run tests
-test args=env("PYTEST_ARGS", "--numprocesses=auto"):
-    uv run pytest -v tests/ {{ args }}
+# Run tests (e.g. just test tests/unit/_shape_test.py)
+test *args:
+    uv run pytest -v --numprocesses=auto {{ env("PYTEST_ARGS", "") }} "$@"
 
 # Regenerate the translation catalogs
 update_translate:
@@ -52,7 +52,7 @@ benchmark_mask_paint *args:
     QT_QPA_PLATFORM=offscreen uv run python -m tools.benchmark_mask_paint "$@"
 
 # Run tests with coverage
-coverage: (test "--numprocesses=auto --cov=labelme --cov-report=term-missing")
+coverage: (test "--cov=labelme" "--cov-report=term-missing")
 
 # Prepare a release
 [script]
