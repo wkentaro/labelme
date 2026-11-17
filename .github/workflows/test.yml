@@ -68,6 +68,7 @@ jobs:
         shell: bash
         env:
           MPLBACKEND: agg
+          PYTEST_ARGS: -v
         run: |
           if [ "$RUNNER_OS" = Linux ]; then
             xvfb-run -a just test
@@ -136,5 +137,6 @@ jobs:
         shell: bash
         env:
           MPLBACKEND: agg
+          PYTEST_ARGS: -v
         run: |-
           xvfb-run -a just test -m network --numprocesses=1
