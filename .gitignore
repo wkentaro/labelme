@@ -7,6 +7,7 @@
 # Test / lint caches
 /.cache/
 /.coverage
+/.hypothesis/
 /.pytest_cache/
 
 # OS / IDE
