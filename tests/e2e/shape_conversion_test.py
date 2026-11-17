@@ -151,15 +151,17 @@ def test_out_of_bounds_setting_refreshes_convert_actions(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-def _poll_dialog(*, act: Callable[[ConversionDetailDialog], None]) -> None:
+def _poll_dialog(
+    *, win: MainWindow, act: Callable[[ConversionDetailDialog], None]
+) -> None:
     def _poll() -> None:
         dialog = QtWidgets.QApplication.activeModalWidget()
         if not isinstance(dialog, ConversionDetailDialog):
-            QtCore.QTimer.singleShot(50, _poll)
+            QtCore.QTimer.singleShot(50, win, _poll)
             return
         act(dialog)
 
-    QtCore.QTimer.singleShot(0, _poll)
+    QtCore.QTimer.singleShot(0, win, _poll)
 
 
 def test_convert_circle_asks_for_detail_and_previews(
@@ -199,14 +201,14 @@ def test_convert_circle_asks_for_detail_and_previews(
         slider.setSliderDown(False)
         dialog.reject()
 
-    _poll_dialog(act=cancel)
+    _poll_dialog(win=win, act=cancel)
     polygon.trigger()
     assert previews == [1, True]
     assert canvas._conversion_preview == []
     assert canvas.shapes[-1] is circle
     assert [t for t, a in win._actions.convert.items() if a.isChecked()] == ["circle"]
 
-    _poll_dialog(act=lambda dialog: dialog.accept())
+    _poll_dialog(win=win, act=lambda dialog: dialog.accept())
     polygon.trigger()
     qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     converted = canvas.shapes[-1]
@@ -248,7 +250,7 @@ def test_convert_mask_to_grouped_polygons_and_back(
     polygon = win._actions.convert["polygon"]
     assert polygon.text() == "Polygon…"
 
-    _poll_dialog(act=lambda dialog: dialog.accept())
+    _poll_dialog(win=win, act=lambda dialog: dialog.accept())
     polygon.trigger()
     qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     halves = canvas.shapes[-2:]

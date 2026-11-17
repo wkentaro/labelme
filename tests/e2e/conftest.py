@@ -282,11 +282,11 @@ def schedule_on_dialog(
 ) -> None:
     def _poll() -> None:
         if not label_dialog.isVisible():
-            QTimer.singleShot(50, _poll)
+            QTimer.singleShot(50, label_dialog, _poll)
             return
         action()
 
-    QTimer.singleShot(0, _poll)
+    QTimer.singleShot(0, label_dialog, _poll)
 
 
 def submit_label_dialog(
