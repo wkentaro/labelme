@@ -137,4 +137,4 @@ jobs:
         env:
           MPLBACKEND: agg
         run: |-
-          xvfb-run -a just test "-m network --numprocesses=1"
+          xvfb-run -a just test -m network --numprocesses=1

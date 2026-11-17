@@ -4,6 +4,10 @@
 
 Record user-facing changes to the packaged application as towncrier fragments, following `changelog.d/README.md`; never edit `CHANGELOG.md` directly. Changes confined to `examples/`, or documentation-only changes such as the README or `docs/`, are outside the changelog's scope. Prefix `**Breaking:**` for changes that bump the major version.
 
+## Tests
+
+While editing, run the narrowest tests that cover the change with `just test <path>` or `just test <path>::<test_name>`. Before opening or updating a pull request, run the whole suite with `just test`.
+
 ## Agent skills
 
 ### Issue tracker
