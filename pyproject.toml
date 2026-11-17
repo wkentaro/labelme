@@ -78,6 +78,7 @@ dev = [
   "towncrier>=24.8",
   "gruff>=0.2.5",
   "packaging>=26.1",
+  "hypothesis>=6.170.15",
 ]
 
 [project.scripts]
