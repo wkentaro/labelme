@@ -46,7 +46,6 @@ def test_ctrl_arrow_selects_neighbor_shape(
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=shape_index)
 
     qtbot.keyClick(canvas, key, modifier=Qt.KeyboardModifier.ControlModifier)
-    qtbot.wait(50)
 
     assert _selected_labels(win=annotated_win) == [expected_label]
     (item,) = annotated_win._docks.label_list.selected_items()
@@ -87,7 +86,6 @@ def test_ctrl_arrow_starts_from_top_left_shape(
     qtbot.keyClick(
         canvas, Qt.Key.Key_Down, modifier=Qt.KeyboardModifier.ControlModifier
     )
-    qtbot.wait(50)
 
     assert _selected_labels(win=annotated_win) == ["amber_kite"]
 
@@ -107,7 +105,6 @@ def test_ctrl_arrow_skips_hidden_shapes(
         item for item in annotated_win._docks.label_list if item.shape() is red_triangle
     )
     item.setCheckState(Qt.CheckState.Unchecked)
-    qtbot.wait(50)
     assert not red_triangle.visible
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=GREEN_HEXAGON)

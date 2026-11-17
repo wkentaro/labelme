@@ -35,21 +35,17 @@ def test_window_geometry_persists_across_sessions(
 
     win1 = main_win(size=None)
     win1.show()
-    qtbot.wait(100)
 
     win1.resize(_RESIZE_W, _RESIZE_H)
     win1.move(_MOVE_X, _MOVE_Y)
-    qtbot.wait(100)
 
     saved_size = win1.size()
     saved_pos = win1.pos()
 
     win1.close()
-    qtbot.wait(100)
 
     win2 = main_win(size=None)
     win2.show()
-    qtbot.wait(100)
 
     restored_size = win2.size()
     restored_pos = win2.pos()
@@ -90,7 +86,6 @@ def test_cancelled_close_keeps_persisted_window_state(
 
     win.resize(_RESIZE_W, _RESIZE_H)
     win.move(_MOVE_X, _MOVE_Y)
-    qtbot.wait(100)
     assert win.size() != PERSISTED_SIZE
     assert win.pos() != PERSISTED_POSITION
 

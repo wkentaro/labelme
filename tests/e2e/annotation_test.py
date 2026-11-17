@@ -358,7 +358,6 @@ def test_annotate_shape_types(
         )
 
     win._switch_canvas_mode(edit=False, create_mode=create_mode)
-    qtbot.wait(50)
 
     def click(
         xy: tuple[float, float],
@@ -366,9 +365,7 @@ def test_annotate_shape_types(
     ) -> None:
         pos = to_pos(xy)
         qtbot.mouseMove(canvas, pos=pos)
-        qtbot.wait(50)
         qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, modifier, pos=pos)
-        qtbot.wait(50)
 
     # AI-Segment draws its box by dragging, then Enter finishes.
     drag_box = create_mode == "ai_segment" and bool(setup_clicks)
@@ -380,7 +377,6 @@ def test_annotate_shape_types(
             return
         label_timer.stop()
         qtbot.keyClicks(win._label_dialog.edit, label)
-        qtbot.wait(50)
         qtbot.keyClick(win._label_dialog.edit, Qt.Key.Key_Enter)
 
     label_timer = QTimer(win)

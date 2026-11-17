@@ -224,9 +224,7 @@ def hover_widget_pos(*, qtbot: QtBot, canvas: Canvas, pos: QPoint) -> None:
     # click that landed on the same pixel. Nudging to (0, 0) first guarantees
     # the second move is treated as fresh.
     qtbot.mouseMove(canvas, pos=QPoint(0, 0))
-    qtbot.wait(50)
     qtbot.mouseMove(canvas, pos=pos)
-    qtbot.wait(50)
 
 
 def click_canvas_fraction(
@@ -243,9 +241,7 @@ def click_canvas_fraction(
     image_pos = QPointF(pixmap.width() * xy[0], pixmap.height() * xy[1])
     pos = image_to_widget_pos(canvas=canvas, image_pos=image_pos)
     qtbot.mouseMove(canvas, pos=pos)
-    qtbot.wait(50)
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, modifier, pos=pos)
-    qtbot.wait(50)
 
 
 def drag_canvas(
@@ -258,7 +254,6 @@ def drag_canvas(
     modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
 ) -> None:
     qtbot.mousePress(canvas, button, modifier, pos=start)
-    qtbot.wait(50)
     # qtbot.mouseMove does not carry button state, so send a raw event
     global_pos = QPointF(canvas.mapToGlobal(end))
     move_event = QtGui.QMouseEvent(
@@ -270,9 +265,7 @@ def drag_canvas(
         modifier,
     )
     QApplication.sendEvent(canvas, move_event)
-    qtbot.wait(50)
     qtbot.mouseRelease(canvas, button, modifier, pos=end)
-    qtbot.wait(50)
 
 
 def schedule_on_dialog(
@@ -298,7 +291,6 @@ def submit_label_dialog(
     def _action() -> None:
         label_dialog.edit.clear()
         qtbot.keyClicks(label_dialog.edit, label)
-        qtbot.wait(50)
         qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
     schedule_on_dialog(label_dialog=label_dialog, action=_action)
@@ -312,7 +304,6 @@ def draw_triangle(
 ) -> None:
     canvas = win._canvas_widgets.canvas
     win._switch_canvas_mode(edit=False, create_mode="polygon")
-    qtbot.wait(50)
     for xy in vertices:
         click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
 
@@ -347,9 +338,7 @@ def select_shape(*, qtbot: QtBot, canvas: Canvas, shape_index: int = 0) -> None:
     centroid = QPointF(float(points[:, 0].mean()), float(points[:, 1].mean()))
     pos = image_to_widget_pos(canvas=canvas, image_pos=centroid)
     qtbot.mouseMove(canvas, pos=pos)
-    qtbot.wait(50)
     qtbot.mouseClick(canvas, Qt.MouseButton.LeftButton, pos=pos)
-    qtbot.wait(50)
     assert len(canvas.selected_shapes) == 1
 
 

@@ -53,7 +53,6 @@ def test_undo_creation_keeps_earlier_label_edit(
 
     # Undo must remove only the new shape; the earlier edit stays.
     win.undo_shape_edit()
-    qtbot.wait(50)
     assert len(canvas.shapes) == num_shapes
     assert canvas.shapes[0].label == "person"
     assert canvas.shapes[0].flags == edited_flags

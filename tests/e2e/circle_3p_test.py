@@ -31,7 +31,6 @@ def test_draw_circle_3p_end_to_end(
 ) -> None:
     canvas: Canvas = raw_win._canvas_widgets.canvas
     dict(raw_win._actions.draw)["circle_3p"].trigger()
-    qtbot.wait(50)
 
     label = "apple"
     submit_label_dialog(qtbot=qtbot, label_dialog=raw_win._label_dialog, label=label)

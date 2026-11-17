@@ -3,8 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Final
 
+from PySide6.QtCore import QEvent
 from PySide6.QtCore import QPointF
 from PySide6.QtCore import QTimer
+from PySide6.QtWidgets import QApplication
 from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
@@ -78,7 +80,7 @@ def test_pointer_coordinates_stay_put_as_other_status_changes(
     status_bar.stats.set_position(x=422, y=616)
 
     def stats_right_edge() -> int:
-        qtbot.wait(50)  # the status bar lays out its widgets on the next pass
+        QApplication.sendPostedEvents(None, QEvent.Type.LayoutRequest)
         return status_bar.stats.geometry().right()
 
     edge = stats_right_edge()

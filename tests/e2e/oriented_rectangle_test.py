@@ -47,7 +47,6 @@ def _draw_oriented_rectangle(
 ) -> None:
     canvas: Canvas = win._canvas_widgets.canvas
     win._switch_canvas_mode(edit=False, create_mode="oriented_rectangle")
-    qtbot.wait(50)
     submit_label_dialog(qtbot=qtbot, label_dialog=win._label_dialog, label=label)
     for xy in clicks:
         click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
@@ -73,7 +72,6 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
     original_edges = _edge_lengths(points=shape.points)
 
     raw_win._switch_canvas_mode(edit=True, create_mode=None)
-    qtbot.wait(50)
 
     p0, p1 = original_points[0], original_points[1]
     handle = QPointF((p0.x() + p1.x()) / 2, (p0.y() + p1.y()) / 2)
@@ -87,7 +85,6 @@ def test_drag_rotation_handle_rotates_oriented_rectangle(
     handle_widget = image_to_widget_pos(canvas=canvas, image_pos=handle)
     target_widget = image_to_widget_pos(canvas=canvas, image_pos=target)
     qtbot.mouseMove(canvas, pos=handle_widget)
-    qtbot.wait(100)
     assert canvas._hover.rotation == 1
 
     drag_canvas(
@@ -137,7 +134,6 @@ def test_drag_vertex_out_of_pixmap_clips_oriented_rectangle(
     shape = next(s for s in canvas.shapes if s.label == "rect")
 
     raw_win._switch_canvas_mode(edit=True, create_mode=None)
-    qtbot.wait(50)
 
     original_points = [QPointF(float(p[0]), float(p[1])) for p in shape.points]
     moving_vertex = QPointF(float(shape.points[2][0]), float(shape.points[2][1]))
@@ -195,7 +191,6 @@ def test_oriented_rectangle_disallows_add_and_remove_point(
     num_points = len(shape.points)
 
     raw_win._switch_canvas_mode(edit=True, create_mode=None)
-    qtbot.wait(50)
 
     # Hovering over an edge midpoint enables `add_point_to_edge` for polygons,
     # but oriented_rectangle's `can_add_point()` is False so the canvas must
@@ -223,7 +218,6 @@ def test_oriented_rectangle_disallows_add_and_remove_point(
         Qt.KeyboardModifier.AltModifier | Qt.KeyboardModifier.ShiftModifier,
         pos=vertex_widget,
     )
-    qtbot.wait(50)
     assert len(shape.points) == num_points
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)

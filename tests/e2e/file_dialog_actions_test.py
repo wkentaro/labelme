@@ -157,7 +157,6 @@ def test_action_via_qfile_dialog(
     )
 
     trigger(loaded_win)
-    qtbot.wait(100)
 
     assert verify(loaded_win, paths)
 

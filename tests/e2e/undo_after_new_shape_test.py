@@ -50,7 +50,6 @@ def test_undo_creation_keeps_earlier_group_id_and_description(
 
     # Undo must remove only the second shape; the first keeps its metadata.
     win.undo_shape_edit()
-    qtbot.wait(50)
     assert len(canvas.shapes) == num_shapes + 1
     assert canvas.shapes[-1].group_id == 7
     assert canvas.shapes[-1].description == "first"

@@ -28,7 +28,6 @@ def test_toggle_all_shapes(
         assert shape.visible
 
     annotated_win.toggle_shape_visibility(value=False)
-    qtbot.wait(50)
 
     for item in label_list:
         assert item.checkState() == Qt.CheckState.Unchecked
@@ -36,7 +35,6 @@ def test_toggle_all_shapes(
         assert not shape.visible
 
     annotated_win.toggle_shape_visibility(value=True)
-    qtbot.wait(50)
 
     for item in label_list:
         assert item.checkState() == Qt.CheckState.Checked
@@ -86,11 +84,9 @@ def test_toggle_individual_shape(
     assert first_shape.visible
 
     first_item.setCheckState(Qt.CheckState.Unchecked)
-    qtbot.wait(50)
     assert not first_shape.visible
 
     first_item.setCheckState(Qt.CheckState.Checked)
-    qtbot.wait(50)
     assert first_shape.visible
 
     close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
@@ -109,14 +105,12 @@ def test_visibility_preserved_when_undoing_unrelated_edit(
 
     hidden_index = 1
     label_list[hidden_index].setCheckState(Qt.CheckState.Unchecked)
-    qtbot.wait(50)
     assert not canvas.shapes[hidden_index].visible
 
     canvas.shapes[0].points[0] += [5.0, 5.0]
     canvas.backup_shapes()
 
     annotated_win.undo_shape_edit()
-    qtbot.wait(50)
 
     assert len(canvas.shapes) == 5
     for i, shape in enumerate(canvas.shapes):
@@ -143,12 +137,10 @@ def test_undo_recovers_accidental_hide(
     hidden_index = 1
 
     label_list[hidden_index].setCheckState(Qt.CheckState.Unchecked)
-    qtbot.wait(50)
     assert not canvas.shapes[hidden_index].visible
     assert annotated_win._actions.undo.isEnabled()
 
     annotated_win._actions.undo.trigger()
-    qtbot.wait(50)
 
     assert len(canvas.shapes) == 5
     for i, shape in enumerate(canvas.shapes):
@@ -197,13 +189,11 @@ def test_multi_select_toggle_propagates(
     label_list.clearSelection()
     for i in selected_indices:
         label_list.select_item(item=label_list[i])
-    qtbot.wait(50)
     assert {item for item in label_list.selected_items()} == {
         label_list[i] for i in selected_indices
     }
 
     label_list[selected_indices[1]].setCheckState(Qt.CheckState.Unchecked)
-    qtbot.wait(50)
 
     for i in range(len(canvas.shapes)):
         if i in selected_indices:
@@ -214,7 +204,6 @@ def test_multi_select_toggle_propagates(
             assert label_list[i].checkState() == Qt.CheckState.Checked
 
     annotated_win._actions.undo.trigger()
-    qtbot.wait(50)
 
     for i in range(len(canvas.shapes)):
         assert canvas.shapes[i].visible
@@ -238,13 +227,11 @@ def test_multi_select_preserves_selection_after_checkbox_click(
     label_list.clearSelection()
     for i in selected_indices:
         label_list.select_item(item=label_list[i])
-    qtbot.wait(50)
 
     target_index = label_list._model.indexFromItem(label_list[selected_indices[1]])
     rect = label_list.visualRect(target_index)
     checkbox_pos = QPoint(rect.left() + 5, rect.center().y())
     qtbot.mouseClick(label_list.viewport(), Qt.MouseButton.LeftButton, pos=checkbox_pos)
-    qtbot.wait(50)
 
     assert {item for item in label_list.selected_items()} == {
         label_list[i] for i in selected_indices
@@ -270,13 +257,11 @@ def test_multi_select_collapses_on_row_body_click(
     label_list.clearSelection()
     for i in selected_indices:
         label_list.select_item(item=label_list[i])
-    qtbot.wait(50)
 
     target_index = label_list._model.indexFromItem(label_list[clicked_index])
     rect = label_list.visualRect(target_index)
     row_body_pos = QPoint(rect.center().x(), rect.center().y())
     qtbot.mouseClick(label_list.viewport(), Qt.MouseButton.LeftButton, pos=row_body_pos)
-    qtbot.wait(50)
 
     assert {item for item in label_list.selected_items()} == {label_list[clicked_index]}
 
@@ -292,12 +277,10 @@ def test_select_all_skips_hidden_shape(
     label_list = annotated_win._docks.label_list
     hidden_index = 1
     label_list[hidden_index].setCheckState(Qt.CheckState.Unchecked)
-    qtbot.wait(50)
     assert not canvas.shapes[hidden_index].visible
     annotated_win._actions.edit_mode.trigger()
 
     qtbot.keyClick(canvas, Qt.Key.Key_A, modifier=Qt.KeyboardModifier.ControlModifier)
-    qtbot.wait(50)
 
     assert len(canvas.selected_shapes) == len(canvas.shapes) - 1
     assert all(shape.visible for shape in canvas.selected_shapes)

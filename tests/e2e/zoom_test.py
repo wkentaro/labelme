@@ -969,7 +969,7 @@ def test_fit_selection_keeps_view_while_dragging_new_selection(
         start=start,
         end=start + QPoint(20, 10),
     )
-    qtbot.wait(50)
+    qtbot.waitUntil(lambda: not _win._is_canvas_pointer_active)
 
     assert canvas.selected_shapes == [shape]
     assert not np.array_equal(shape.points, points_before)

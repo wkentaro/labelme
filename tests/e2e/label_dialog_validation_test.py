@@ -54,7 +54,6 @@ def test_blank_input_keeps_dialog_open(
     def _try_blank_then_cancel() -> None:
         label_dialog.edit.clear()
         qtbot.keyClick(label_dialog, Qt.Key.Key_Return)
-        qtbot.wait(50)
         if label_dialog.isVisible():
             dialog_stayed_open.append(True)
         qtbot.keyClick(label_dialog, Qt.Key.Key_Escape)
@@ -96,7 +95,6 @@ def test_validate_label_exact_rejects_unknown_label(
     def _enter_unknown_label() -> None:
         label_dialog.edit.clear()
         qtbot.keyClicks(label_dialog.edit, "tiger")
-        qtbot.wait(50)
         qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
     _draw_triangle(qtbot=qtbot, win=win)
@@ -131,7 +129,6 @@ def test_arrow_keys_in_label_edit_navigate_label_list(
         # pressed in the line edit advances the list to row 1.
         label_dialog.label_list.setCurrentRow(0)
         qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Down)
-        qtbot.wait(50)
         item = label_dialog.label_list.currentItem()
         if item is not None:
             after_down.append(item.text())
@@ -208,7 +205,6 @@ def test_label_completer_autocompletes_typed_prefix(
         # only "p"-prefixed label.
         label_dialog.edit.clear()
         qtbot.keyClick(label_dialog.edit, Qt.Key.Key_P)
-        qtbot.wait(50)
         completion.append(label_dialog.edit.completer().currentCompletion())
         qtbot.keyClick(label_dialog, Qt.Key.Key_Escape)
 
@@ -246,7 +242,6 @@ def test_trailing_whitespace_label_is_stripped(
     def _enter_trailing_space_label() -> None:
         label_dialog.edit.clear()
         qtbot.keyClicks(label_dialog.edit, "cat  ")
-        qtbot.wait(50)
         qtbot.keyClick(label_dialog.edit, Qt.Key.Key_Enter)
 
     schedule_on_dialog(label_dialog=label_dialog, action=_enter_trailing_space_label)
