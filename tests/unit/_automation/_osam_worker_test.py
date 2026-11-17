@@ -311,6 +311,7 @@ def test_runs_on_a_private_server(
 ) -> None:
     # Even with OSAM_HOST set for the osam CLI; nothing listens there.
     monkeypatch.setenv("OSAM_HOST", "127.0.0.1:1")
+    before = set(threading.enumerate())
     worker = OsamWorker()
     failed: list[tuple[object, str]] = []
     worker.failed.connect(lambda job, m: failed.append((job, m)))
@@ -319,7 +320,7 @@ def test_runs_on_a_private_server(
         qtbot.waitUntil(lambda: bool(failed), timeout=_WAIT_MS)
     finally:
         worker.shutdown()
-        for thread in threading.enumerate():
+        for thread in set(threading.enumerate()) - before:
             if thread.name == "osam-worker":
                 thread.join(timeout=5)
         gc.collect()  # fails on a ResourceWarning if the server leaked a pipe
