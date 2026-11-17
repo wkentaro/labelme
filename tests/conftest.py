@@ -18,6 +18,7 @@ from osam import _registry
 from PySide6 import QtWidgets
 from PySide6.QtCore import QEvent
 from PySide6.QtGui import QColor
+from PySide6.QtGui import QCursor
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtGui import QImageReader
 from PySide6.QtTest import QTest
@@ -74,6 +75,12 @@ def _release_held_mouse_buttons() -> Iterator[None]:
     yield
     for button in QGuiApplication.mouseButtons():
         QTest.mouseRelease(QWidget(), button)
+
+
+@pytest.fixture(autouse=True)
+def _park_cursor_off_screen() -> None:
+    if QGuiApplication.platformName() == "offscreen":
+        QCursor.setPos(-1000, -1000)
 
 
 @pytest.fixture()
