@@ -16,6 +16,7 @@ import osam
 import pytest
 from osam import _registry
 from PySide6 import QtWidgets
+from PySide6.QtCore import QEvent
 from PySide6.QtGui import QColor
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtGui import QImageReader
@@ -59,6 +60,13 @@ def pytest_configure(config: pytest.Config) -> None:  # noqa: GR005 -- pluggy ca
         # A desktop theme such as gtk3 changes fonts and key handling, so
         # offscreen runs would differ from CI.
         os.environ.pop("QT_QPA_PLATFORMTHEME", None)
+
+
+@pytest.fixture(autouse=True)
+def _delete_closed_widgets() -> Iterator[None]:
+    yield
+    if QApplication.instance() is not None:
+        QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
 
 
 @pytest.fixture(autouse=True)
