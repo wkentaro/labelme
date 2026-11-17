@@ -17,7 +17,9 @@ import pytest
 from osam import _registry
 from PySide6 import QtWidgets
 from PySide6.QtGui import QColor
+from PySide6.QtGui import QGuiApplication
 from PySide6.QtGui import QImageReader
+from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QColorDialog
 from PySide6.QtWidgets import QWidget
@@ -57,6 +59,13 @@ def pytest_configure(config: pytest.Config) -> None:  # noqa: GR005 -- pluggy ca
         # A desktop theme such as gtk3 changes fonts and key handling, so
         # offscreen runs would differ from CI.
         os.environ.pop("QT_QPA_PLATFORMTHEME", None)
+
+
+@pytest.fixture(autouse=True)
+def _release_held_mouse_buttons() -> Iterator[None]:
+    yield
+    for button in QGuiApplication.mouseButtons():
+        QTest.mouseRelease(QWidget(), button)
 
 
 @pytest.fixture()
