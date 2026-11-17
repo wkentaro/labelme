@@ -286,6 +286,7 @@ def test_editor_arrow_then_immediate_return_survives_save_and_reopen(
     )
     saved = tmp_path / "2011_000003.json"
     qtbot.waitUntil(saved.exists)
+    qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     assert json.loads(saved.read_text())["shapes"][0]["label"] == "dog"
     assert win._load_file(image_or_label_path=str(saved))
     assert [shape.label for shape in win._canvas_widgets.canvas.shapes] == ["dog"]
