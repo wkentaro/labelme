@@ -212,7 +212,8 @@ def main_win(
 
     for win in created:
         try:
-            win.close()
+            win.mark_clean()
+            assert win.close(), "a vetoed close leaves the window's workers running"
         except RuntimeError:
             pass
 
