@@ -425,9 +425,9 @@ def test_next_to_images_keeps_annotation_folder_when_unsaved_changes_are_kept(
 ) -> None:
     win = main_win(file_or_dir=data_path / "raw", output_dir=tmp_path)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
-    monkeypatch.setattr(win, "_can_continue", lambda: False)
-
-    _menu_action(win=win, text="Next to Images").trigger()
+    with monkeypatch.context() as patch:
+        patch.setattr(win, "_can_continue", lambda: False)
+        _menu_action(win=win, text="Next to Images").trigger()
 
     assert win._opened_folder.output_dir == tmp_path
     assert not _menu_action(win=win, text="Next to Images").isChecked()
