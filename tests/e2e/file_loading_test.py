@@ -99,14 +99,11 @@ def test_MainWindow_open_dir(
     assert win._docks.file_list.currentRow() == 0
 
     win._open_prev_image()
-    qtbot.wait(100)
     assert Path(win._image_path).name == first_image_name
 
     win._open_next_image()
-    qtbot.wait(100)
     assert Path(win._image_path).name == second_image_name
     win._open_prev_image()
-    qtbot.wait(100)
     assert Path(win._image_path).name == first_image_name
 
     win._open_next_image()

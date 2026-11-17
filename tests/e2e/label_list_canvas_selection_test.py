@@ -35,7 +35,6 @@ def _draw_polygon(
         (0.5, 0.5),
     ]
     win._switch_canvas_mode(edit=False, create_mode="polygon")
-    qtbot.wait(50)
 
     for xy in POLYGON_XY:
         click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)

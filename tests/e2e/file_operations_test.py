@@ -76,7 +76,6 @@ def test_close_file(
     set_fit_mode(annotated_win)
     annotated_win.close_file()
     annotated_win.resize(annotated_win.width() + 50, annotated_win.height() + 50)
-    qtbot.wait(50)
 
     assert not annotated_win._canvas_widgets.canvas.isEnabled()
     assert annotated_win._annotation is None
@@ -150,7 +149,6 @@ def test_delete_label_file(
 
     monkeypatch.setattr(win, "_confirm_deletion", _confirm)
     win.delete_file()
-    qtbot.wait(50)
 
     assert messages == ['Delete "2011_000003.json"? You can\'t undo this.']
     assert not label_file.exists()
@@ -214,7 +212,6 @@ def test_delete_label_file_keeps_image(
 
     monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_file()
-    qtbot.wait(50)
 
     # The annotations are cleared, but the image stays on the canvas.
     assert not canvas.pixmap.isNull()
@@ -292,7 +289,6 @@ def test_delete_file_respects_output_dir(
 
     monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_file()
-    qtbot.wait(50)
 
     assert not saved_path.exists()
     assert not image_adjacent_path.exists()
@@ -342,12 +338,10 @@ def test_undo_after_delete_file_does_not_restore_shapes(
     win._switch_canvas_mode(edit=True, create_mode=None)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     win.delete_selected_shapes()
-    qtbot.wait(50)
     assert canvas.can_restore_shape
     assert win._actions.undo.isEnabled()
 
     win.delete_file()
-    qtbot.wait(50)
     assert canvas.shapes == []
 
     # Undo must not resurrect the annotations of the file removed from disk.

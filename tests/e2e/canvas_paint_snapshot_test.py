@@ -35,7 +35,6 @@ pytestmark = pytest.mark.pixel_snapshot
 _RENDER_WIDTH: Final[int] = 600
 _RENDER_HEIGHT: Final[int] = 450
 _BACKGROUND_COLOR: Final[QColor] = QColor(239, 239, 239)
-_PAINT_SETTLE_MS: Final[int] = 100
 
 _TRIANGLE_FRACTIONS: Final[tuple[tuple[float, float], ...]] = (
     (0.2, 0.2),
@@ -44,13 +43,12 @@ _TRIANGLE_FRACTIONS: Final[tuple[tuple[float, float], ...]] = (
 )
 
 
-def _pin_canvas_for_snapshot(*, qtbot: QtBot, canvas: Canvas) -> None:
+def _pin_canvas_for_snapshot(*, canvas: Canvas) -> None:
     RENDER_SCALE: Final[float] = 1.0
 
     canvas.setFixedSize(_RENDER_WIDTH, _RENDER_HEIGHT)
     canvas.scale = RENDER_SCALE
     canvas.update()
-    qtbot.wait(_PAINT_SETTLE_MS)
 
 
 def _render_canvas_offscreen(*, canvas: Canvas) -> QImage:
@@ -143,7 +141,7 @@ def test_snapshot_empty_canvas(
 ) -> None:
     canvas = raw_win._canvas_widgets.canvas
     assert len(canvas.shapes) == 0
-    _pin_canvas_for_snapshot(qtbot=qtbot, canvas=canvas)
+    _pin_canvas_for_snapshot(canvas=canvas)
 
     _check_or_update_snapshot(
         canvas=canvas,
@@ -165,7 +163,7 @@ def test_snapshot_shapes_unselected(
     canvas = annotated_win._canvas_widgets.canvas
     assert len(canvas.shapes) > 0
     assert len(canvas.selected_shapes) == 0
-    _pin_canvas_for_snapshot(qtbot=qtbot, canvas=canvas)
+    _pin_canvas_for_snapshot(canvas=canvas)
 
     _check_or_update_snapshot(
         canvas=canvas,
@@ -186,10 +184,9 @@ def test_snapshot_one_polygon_selected(
 ) -> None:
     canvas = annotated_win._canvas_widgets.canvas
     assert len(canvas.shapes) > 0
-    _pin_canvas_for_snapshot(qtbot=qtbot, canvas=canvas)
+    _pin_canvas_for_snapshot(canvas=canvas)
 
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
-    qtbot.wait(_PAINT_SETTLE_MS)
 
     _check_or_update_snapshot(
         canvas=canvas,
@@ -208,15 +205,12 @@ def test_snapshot_polygon_mid_draw(
     update_snapshots: bool,
     pause: bool,
 ) -> None:
-    MODE_SWITCH_SETTLE_MS: Final[int] = 50
-
     canvas = raw_win._canvas_widgets.canvas
     pixmap = canvas.pixmap
     assert pixmap is not None
-    _pin_canvas_for_snapshot(qtbot=qtbot, canvas=canvas)
+    _pin_canvas_for_snapshot(canvas=canvas)
 
     raw_win._switch_canvas_mode(edit=False, create_mode="polygon")
-    qtbot.wait(MODE_SWITCH_SETTLE_MS)
 
     for xy in _TRIANGLE_FRACTIONS[:2]:
         click_canvas_fraction(qtbot=qtbot, canvas=canvas, xy=xy)
@@ -228,7 +222,6 @@ def test_snapshot_polygon_mid_draw(
     cursor_image_pos = QPointF(pixmap.width() * fx, pixmap.height() * fy)
     cursor_pos = image_to_widget_pos(canvas=canvas, image_pos=cursor_image_pos)
     qtbot.mouseMove(canvas, pos=cursor_pos)
-    qtbot.wait(_PAINT_SETTLE_MS)
 
     _check_or_update_snapshot(
         canvas=canvas,
@@ -238,7 +231,6 @@ def test_snapshot_polygon_mid_draw(
 
     # Cancel the in-progress shape; without this close_or_pause triggers a dialog.
     qtbot.keyPress(canvas, Qt.Key.Key_Escape)
-    qtbot.wait(MODE_SWITCH_SETTLE_MS)
     assert canvas._current is None
 
     close_or_pause(qtbot=qtbot, widget=raw_win, pause=pause)
@@ -256,7 +248,7 @@ def test_snapshot_after_polygon_commit(
     # must be cleared from the paint surface.
     canvas = raw_win._canvas_widgets.canvas
     assert len(canvas.shapes) == 0
-    _pin_canvas_for_snapshot(qtbot=qtbot, canvas=canvas)
+    _pin_canvas_for_snapshot(canvas=canvas)
 
     draw_and_commit_polygon(
         qtbot=qtbot,
@@ -266,7 +258,6 @@ def test_snapshot_after_polygon_commit(
     )
     assert len(canvas.shapes) == 1
     assert canvas._current is None
-    qtbot.wait(_PAINT_SETTLE_MS)
 
     _check_or_update_snapshot(
         canvas=canvas,

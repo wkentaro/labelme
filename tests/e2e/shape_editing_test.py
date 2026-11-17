@@ -51,11 +51,9 @@ def _delete_selected_shape(
     *,
     win: MainWindow,
     monkeypatch: pytest.MonkeyPatch,
-    qtbot: QtBot,
 ) -> None:
     monkeypatch.setattr(win, "_confirm_deletion", lambda *_args, **_kwargs: True)
     win.delete_selected_shapes()
-    qtbot.wait(50)
 
 
 def test_select_shape(
@@ -99,7 +97,6 @@ def test_copy_paste_shape(
 
     win._actions.copy.trigger()
     win._actions.paste.trigger()
-    qtbot.wait(50)
 
     assert len(canvas.shapes) == num_shapes_before + 1
     assert canvas.shapes[-1].label == original_label
@@ -129,7 +126,6 @@ def test_duplicate_shape(
     num_shapes_before = len(canvas.shapes)
 
     win._actions.duplicate.trigger()
-    qtbot.wait(50)
 
     assert len(canvas.shapes) == num_shapes_before + 1
 
@@ -196,7 +192,6 @@ def test_merge_mask_shapes(
     assert len(canvas.shapes) == 2
 
     canvas.select_shapes(shapes=list(canvas.shapes))
-    qtbot.wait(50)
     assert win._actions.merge.isEnabled()
 
     win._actions.merge.trigger()
@@ -225,7 +220,6 @@ def test_merge_mask_shapes(
     assert not win._actions.merge.isEnabled()
 
     win.undo_shape_edit()
-    qtbot.wait(50)
     assert len(canvas.shapes) == 2
     assert [s.points[0].tolist() for s in canvas.shapes] == [
         [100 + coordinate_offset, 100 + coordinate_offset],
@@ -260,7 +254,6 @@ def test_disabled_merge_action_says_why(
     assert merge.toolTip() == "Select at least two mask shapes to merge"
 
     canvas.select_shapes(shapes=canvas.shapes[:2])
-    qtbot.wait(50)
     assert not merge.isEnabled()
     assert merge.toolTip() == "Only mask shapes can be merged"
 
@@ -284,7 +277,7 @@ def test_delete_shape(
         output_dir=str(tmp_path),
     )
 
-    _delete_selected_shape(win=win, monkeypatch=monkeypatch, qtbot=qtbot)
+    _delete_selected_shape(win=win, monkeypatch=monkeypatch)
 
     assert len(canvas.shapes) == 4
 
@@ -311,11 +304,10 @@ def test_delete_undo_shape(
         output_dir=str(tmp_path),
     )
 
-    _delete_selected_shape(win=win, monkeypatch=monkeypatch, qtbot=qtbot)
+    _delete_selected_shape(win=win, monkeypatch=monkeypatch)
     assert len(canvas.shapes) == 4
 
     win.undo_shape_edit()
-    qtbot.wait(50)
     assert len(canvas.shapes) == 5
     assert canvas.shapes[0].label == "amber_kite"
 
@@ -350,7 +342,6 @@ def test_reorder_label_list_is_one_undo_step(
             Qt.KeyboardModifier.NoModifier,
         )
     )
-    qtbot.wait(50)
 
     assert [s.label for s in canvas.shapes] == labels_before[1:] + labels_before[:1]
     assert [item.shape() for item in label_list] == canvas.shapes
@@ -364,7 +355,6 @@ def test_reorder_label_list_is_one_undo_step(
     assert annotated_win._actions.undo.isEnabled()
 
     annotated_win._actions.undo.trigger()
-    qtbot.wait(50)
     assert [s.label for s in canvas.shapes] == labels_before
     assert [item.shape() for item in label_list] == canvas.shapes
     assert not annotated_win._actions.undo.isEnabled()

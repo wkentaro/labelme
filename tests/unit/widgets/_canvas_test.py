@@ -3406,9 +3406,6 @@ def test_hover_transitions_repaint(
     canvas.load_shapes(shapes=[polygon, rotated])
     # Keep the desktop pointer from overwriting the scripted hover targets.
     canvas.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-    canvas.show()
-    qtbot.waitExposed(canvas)
-    qtbot.wait(20)
     painted = []
     paint_event = canvas.paintEvent
 
@@ -3424,6 +3421,9 @@ def test_hover_transitions_repaint(
         )
 
     monkeypatch.setattr(canvas, "paintEvent", record_paint)
+    canvas.show()
+    qtbot.waitExposed(canvas)
+    qtbot.waitUntil(lambda: bool(painted))
     for point, shape_index, vertex, rotation in [
         (QPointF(10, 10), 0, 0, None),
         (QPointF(25, 10), 0, None, None),

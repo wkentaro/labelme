@@ -100,15 +100,11 @@ def test_image_navigation_while_selecting_shape(
     point = QPoint(250, 200)
     qtbot.mouseMove(win._canvas_widgets.canvas, pos=point)
     qtbot.mouseClick(win._canvas_widgets.canvas, Qt.MouseButton.LeftButton, pos=point)
-    qtbot.wait(100)
 
     qtbot.mouseClick(win._docks.file_list, Qt.MouseButton.LeftButton)
-    qtbot.wait(100)
 
     qtbot.keyClick(win._docks.file_list, Qt.Key.Key_Down)
-    qtbot.wait(100)
     qtbot.keyClick(win._canvas_widgets.canvas, Qt.Key.Key_Down)
-    qtbot.wait(100)
     # }}
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)

@@ -81,9 +81,7 @@ def test_auto_save_on_shape_move(
     original_center = QPointF(_shape_bounds(shape=canvas.selected_shapes[0]).center())
 
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
-    qtbot.wait(50)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
-    qtbot.wait(50)
 
     new_center = _shape_bounds(shape=canvas.selected_shapes[0]).center()
     assert abs((new_center.x() - original_center.x()) - 5.0) < 1.0
@@ -170,9 +168,7 @@ def test_auto_save_on_undo(
     original_points = [(float(x), float(y)) for x, y in original_shape.points]
 
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
-    qtbot.wait(50)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
-    qtbot.wait(50)
     qtbot.waitUntil(label_file.exists)
 
     _auto_save_win.undo_shape_edit()
@@ -279,7 +275,6 @@ def test_failed_auto_save_keeps_annotation_dirty_and_allows_manual_retry(
 
     canvas = _raw_auto_save_win._canvas_widgets.canvas
     _raw_auto_save_win._switch_canvas_mode(edit=True, create_mode=None)
-    qtbot.wait(50)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)
@@ -367,7 +362,6 @@ def test_failed_auto_save_stays_nonmodal_after_target_changes(
 
     canvas = _raw_auto_save_win._canvas_widgets.canvas
     _raw_auto_save_win._switch_canvas_mode(edit=True, create_mode=None)
-    qtbot.wait(50)
     select_shape(qtbot=qtbot, canvas=canvas, shape_index=0)
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
     qtbot.keyRelease(canvas, Qt.Key.Key_Right)

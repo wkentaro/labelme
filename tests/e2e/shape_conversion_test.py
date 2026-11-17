@@ -45,7 +45,6 @@ def test_convert_mixed_selection_to_rectangles_and_undo(
     kite, box, hexagon = canvas.shapes[:3]
     # The rectangle already has the target kind, so it stays as it is.
     canvas.select_shapes(shapes=[kite, box, hexagon])
-    qtbot.wait(50)
     assert win._actions.convert["rectangle"].isEnabled()
 
     win._actions.convert["rectangle"].trigger()
@@ -70,7 +69,6 @@ def test_convert_mixed_selection_to_rectangles_and_undo(
     ]
 
     win.undo_shape_edit()
-    qtbot.wait(50)
     assert [s.shape_type for s in canvas.shapes[:3]] == [
         "polygon",
         "rectangle",
@@ -104,7 +102,6 @@ def test_convert_menu_lists_every_kind_and_enables_valid_ones(
         assert submenu.toolTipsVisible()
 
     canvas.select_shapes(shapes=[canvas.shapes[1]])
-    qtbot.wait(50)
     assert [t for t, a in convert.items() if a.isEnabled()] == ["polygon"]
     assert [t for t, a in convert.items() if a.isChecked()] == ["rectangle"]
     assert convert["linestrip"].toolTip() == (
@@ -114,7 +111,6 @@ def test_convert_menu_lists_every_kind_and_enables_valid_ones(
 
     canvas.shapes[1].locked = True
     canvas.select_shapes(shapes=[canvas.shapes[1]])
-    qtbot.wait(50)
     assert not convert["polygon"].isEnabled()
     assert convert["polygon"].toolTip() == "Unlock the selected shapes to convert them"
 
@@ -139,7 +135,6 @@ def test_out_of_bounds_setting_refreshes_convert_actions(
     )
     win._commit_shapes(shapes=[*canvas.shapes, outside])
     canvas.select_shapes(shapes=[canvas.shapes[-1]])
-    qtbot.wait(50)
     rectangle = win._actions.convert["rectangle"]
     assert not rectangle.isEnabled()
 
@@ -151,15 +146,17 @@ def test_out_of_bounds_setting_refreshes_convert_actions(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
-def _poll_dialog(*, act: Callable[[ConversionDetailDialog], None]) -> None:
+def _poll_dialog(
+    *, win: MainWindow, act: Callable[[ConversionDetailDialog], None]
+) -> None:
     def _poll() -> None:
         dialog = QtWidgets.QApplication.activeModalWidget()
         if not isinstance(dialog, ConversionDetailDialog):
-            QtCore.QTimer.singleShot(50, _poll)
+            QtCore.QTimer.singleShot(50, win, _poll)
             return
         act(dialog)
 
-    QtCore.QTimer.singleShot(0, _poll)
+    QtCore.QTimer.singleShot(0, win, _poll)
 
 
 def test_convert_circle_asks_for_detail_and_previews(
@@ -181,7 +178,6 @@ def test_convert_circle_asks_for_detail_and_previews(
     win._commit_shapes(shapes=[*canvas.shapes, circle])
     circle = canvas.shapes[-1]
     canvas.select_shapes(shapes=[circle])
-    qtbot.wait(50)
     polygon = win._actions.convert["polygon"]
     assert polygon.isEnabled()
     assert polygon.text() == "Polygon…"
@@ -199,14 +195,14 @@ def test_convert_circle_asks_for_detail_and_previews(
         slider.setSliderDown(False)
         dialog.reject()
 
-    _poll_dialog(act=cancel)
+    _poll_dialog(win=win, act=cancel)
     polygon.trigger()
     assert previews == [1, True]
     assert canvas._conversion_preview == []
     assert canvas.shapes[-1] is circle
     assert [t for t, a in win._actions.convert.items() if a.isChecked()] == ["circle"]
 
-    _poll_dialog(act=lambda dialog: dialog.accept())
+    _poll_dialog(win=win, act=lambda dialog: dialog.accept())
     polygon.trigger()
     qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     converted = canvas.shapes[-1]
@@ -215,7 +211,6 @@ def test_convert_circle_asks_for_detail_and_previews(
     assert polygon.text() == "Polygon"
 
     win.undo_shape_edit()
-    qtbot.wait(50)
     assert canvas.shapes[-1].shape_type == "circle"
 
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
@@ -244,11 +239,10 @@ def test_convert_mask_to_grouped_polygons_and_back(
     win._commit_shapes(shapes=[*canvas.shapes, mask])
     mask = canvas.shapes[-1]
     canvas.select_shapes(shapes=[mask])
-    qtbot.wait(50)
     polygon = win._actions.convert["polygon"]
     assert polygon.text() == "Polygon…"
 
-    _poll_dialog(act=lambda dialog: dialog.accept())
+    _poll_dialog(win=win, act=lambda dialog: dialog.accept())
     polygon.trigger()
     qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     halves = canvas.shapes[-2:]
@@ -259,7 +253,6 @@ def test_convert_mask_to_grouped_polygons_and_back(
     assert halves[0].group_id == halves[1].group_id not in others | {None}
 
     canvas.select_shapes(shapes=[halves[0]])
-    qtbot.wait(50)
     win._actions.convert["mask"].trigger()
     qtbot.waitUntil(lambda: not win._save_writer.is_busy)
     assert canvas.shapes[-2].shape_type == "mask"
@@ -267,7 +260,6 @@ def test_convert_mask_to_grouped_polygons_and_back(
 
     win.undo_shape_edit()
     win.undo_shape_edit()
-    qtbot.wait(50)
     assert canvas.shapes[-1].shape_type == "mask"
     assert canvas.shapes[-1].points.tolist() == [[100, 100], [179, 139]]
 

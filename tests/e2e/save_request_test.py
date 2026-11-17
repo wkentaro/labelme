@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-from pytestqt.qtbot import QtBot
 
 from labelme._app import MainWindow
 from labelme._label_file import read_label_file
@@ -12,7 +11,7 @@ from labelme._shape import Shape
 
 
 def test_save_request_owns_mutable_annotation_data(
-    *, raw_win: MainWindow, tmp_path: Path, qtbot: QtBot
+    *, raw_win: MainWindow, tmp_path: Path
 ) -> None:
     win = raw_win
     win._actions.save_auto.setChecked(False)
@@ -43,4 +42,3 @@ def test_save_request_owns_mutable_annotation_data(
     assert restored.shapes[0]["other_data"] == {"custom": [1]}
     assert restored.other_data["custom"] == [2]
     win.mark_clean()
-    qtbot.wait(1)

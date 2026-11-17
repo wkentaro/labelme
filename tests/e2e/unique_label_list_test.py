@@ -32,12 +32,10 @@ def test_unique_label_list_context_menu_on_in_use_item(
 
 def test_unique_label_list_context_menu_on_empty_area(
     *,
-    qtbot: QtBot,
     annotated_win: MainWindow,
 ) -> None:
     win = annotated_win
     win.resize(1000, 1000)
-    qtbot.wait(50)
     unique_list: UniqueLabelQListWidget = win._docks.unique_label_list
     last_item = unique_list.item(unique_list.count() - 1)
     assert last_item is not None
@@ -263,7 +261,7 @@ def test_deleting_a_labels_last_shape_dims_it_for_clear_unused(
     ]
     item = unique_list.find_label_item(label="amber_kite")
     assert item is not None
-    qtbot.wait(10)  # let the load's deferred refresh run
+    qtbot.waitUntil(lambda: item.data(_UNUSED_ROLE) is not None)
     assert not item.data(_UNUSED_ROLE)
     assert not clear_unused.isEnabled()
 
