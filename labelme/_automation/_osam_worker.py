@@ -14,12 +14,15 @@ from typing import Literal
 from typing import cast
 
 import numpy as np
+import PIL.Image
 from loguru import logger
 from numpy.typing import NDArray
 from PySide6 import QtCore
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 from .._ai_models import Device
+from .._ai_models import model_info
 from .._ai_models import osam_client
 
 if TYPE_CHECKING:
@@ -33,10 +36,32 @@ ProgressCallback = Callable[[WorkerStage, str | None], None]
 @dataclasses.dataclass(frozen=True)
 class InferenceRequest:
     model_name: str
-    image: NDArray[np.uint8]
+    image: QtGui.QImage
     points: NDArray[np.floating] | None = None
     point_labels: NDArray[np.intp] | None = None
     texts: list[str] | None = None
+
+
+@dataclasses.dataclass(frozen=True)
+class InferenceResult:
+    annotations: list[osam.types.Annotation]
+    scale_to_image: tuple[float, float]
+
+
+def _model_image(*, image: QtGui.QImage, size: tuple[int, int]) -> NDArray[np.uint8]:
+    image = image.convertToFormat(QtGui.QImage.Format.Format_RGB32)
+    bgrx = PIL.Image.frombuffer(
+        "RGBX",
+        (image.width(), image.height()),
+        image.constBits(),  # ty: ignore[invalid-argument-type]
+        "raw",
+        "RGBX",
+        image.bytesPerLine(),
+        1,
+    )
+    if bgrx.size != size:
+        bgrx = bgrx.resize(size, PIL.Image.Resampling.BILINEAR)
+    return np.ascontiguousarray(np.asarray(bgrx)[:, :, 2::-1])
 
 
 def _segment_kwargs(*, request: InferenceRequest) -> dict[str, Any]:
@@ -80,7 +105,8 @@ def _run(
     client: osam.Client,
     request: InferenceRequest,
     progress: ProgressCallback,
-) -> list[osam.types.Annotation]:
+    cache: dict[tuple[int, tuple[int, int]], NDArray[np.uint8]],
+) -> InferenceResult:
     model = request.model_name
     device = next((r.device for r in client.ps() if r.name == model), None)
     if device is None:
@@ -93,15 +119,35 @@ def _run(
         device = None if running is None else running.device
     progress("generating", device)
     t_start = time.perf_counter()
+    info = model_info(client=client, name=model)
+    width, height = request.image.width(), request.image.height()
+    input_height, input_width = info.input_shape(height=height, width=width)
+    sent_size = (
+        (width, height)
+        if width <= input_width and height <= input_height
+        else (input_width, input_height)
+    )
+    if request.points is not None:
+        request = dataclasses.replace(
+            request,
+            points=request.points * [sent_size[0] / width, sent_size[1] / height],
+        )
+    key = (request.image.cacheKey(), sent_size)
+    if key not in cache:
+        cache.clear()
+        cache[key] = _model_image(image=request.image, size=sent_size)
     annotations = client.segment(
-        model, request.image, keep_alive=-1, **_segment_kwargs(request=request)
+        model, cache[key], keep_alive=-1, **_segment_kwargs(request=request)
     )
     logger.info(
         "Segmented with {!r} in {:.0f} ms",
         model,
         (time.perf_counter() - t_start) * 1000,
     )
-    return annotations
+    return InferenceResult(
+        annotations=annotations,
+        scale_to_image=(width / sent_size[0], height / sent_size[1]),
+    )
 
 
 @dataclasses.dataclass
@@ -129,9 +175,10 @@ class OsamWorker(QtCore.QObject):
     # A request, a model name to unload, or None to stop.
     _inbox: queue.SimpleQueue[tuple[int, Device, InferenceRequest] | str | None]
     _client: tuple[Device, osam.Client] | None  # the thread's only
+    _sent_images: dict[tuple[int, tuple[int, int]], NDArray[np.uint8]]
     _removing: set[str]  # unloading until unloaded's slots delete the files
 
-    finished = QtCore.Signal(object, object)  # job, list[osam.types.Annotation]
+    finished = QtCore.Signal(object, InferenceResult)
     failed = QtCore.Signal(object, str)  # job, message
     # Before failing the job: the model's files for the device, None for the
     # one osam picks, aren't on disk, such as the CPU's after a fall back.
@@ -152,6 +199,7 @@ class OsamWorker(QtCore.QObject):
         self._request_ids = itertools.count()
         self._inbox = queue.SimpleQueue()
         self._client = None
+        self._sent_images = {}
         self._removing = set()
         self._reported.connect(self._on_reported)
         self._unloaded.connect(self._on_unloaded)
@@ -249,7 +297,12 @@ class OsamWorker(QtCore.QObject):
             progress = functools.partial(self._report_stage, request_id)
             try:
                 client = self._client_for(device=device, progress=progress)
-                annotations = _run(client=client, request=request, progress=progress)
+                result = _run(
+                    client=client,
+                    request=request,
+                    progress=progress,
+                    cache=self._sent_images,
+                )
             except Exception as error:
                 if (
                     isinstance(error, ResponseError)
@@ -265,7 +318,7 @@ class OsamWorker(QtCore.QObject):
                     request_id, "error", f"{type(error).__name__}: {error}"
                 )
             else:
-                self._reported.emit(request_id, "done", annotations)
+                self._reported.emit(request_id, "done", result)
         if self._client is not None:
             self._client[1].close()
 

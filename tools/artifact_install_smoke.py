@@ -102,11 +102,12 @@ def _check_ai_inference() -> None:
     worker = OsamWorker()
     results: list[tuple[str, object]] = []
     worker.finished.connect(
-        lambda _, annotations: results.append(("done", annotations))
+        lambda _, result: results.append(("done", result.annotations))
     )
     worker.failed.connect(lambda _, message: results.append(("failed", message)))
-    image = np.zeros((64, 64, 3), dtype=np.uint8)
-    image[16:48, 16:48] = 255
+    image = QtGui.QImage(64, 64, QtGui.QImage.Format.Format_RGB32)
+    image.fill(QtCore.Qt.GlobalColor.black)
+    QtGui.QPainter(image).fillRect(16, 16, 32, 32, QtCore.Qt.GlobalColor.white)
     worker.submit(
         channel="smoke",
         job="smoke",

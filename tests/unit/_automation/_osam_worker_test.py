@@ -11,7 +11,9 @@ from typing import cast
 
 import numpy as np
 import osam
+import PIL.Image
 import pytest
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
 
@@ -19,7 +21,7 @@ from labelme._automation import _osam_worker
 from labelme._automation._osam_worker import InferenceRequest
 from labelme._automation._osam_worker import OsamWorker
 
-_IMAGE: Final = np.zeros((2, 3, 3), dtype=np.uint8)
+_IMAGE: Final = QtGui.QImage(3, 2, QtGui.QImage.Format.Format_RGB32)
 _WAIT_MS: Final = 30_000
 
 
@@ -39,6 +41,14 @@ class _ScriptedClient:
     def ps(self) -> builtins.list[osam.types.RunningModel]:
         return [
             osam.types.RunningModel(name=name, device=self.device, expires_at=None)
+            for name in self.loaded
+        ]
+
+    def list(self) -> builtins.list[osam.types.ModelInfo]:
+        return [
+            osam.types.ModelInfo.model_construct(
+                name=name, input_size=1024, input_resize="fit"
+            )
             for name in self.loaded
         ]
 
@@ -140,7 +150,7 @@ def test_reports_a_model_error_and_keeps_the_server(
 
     (_, _, first), bad, (_, _, after) = _results(worker=worker)
     assert bad == ("error", "bad", "ValueError: bad prompt")
-    assert after["client"] is first["client"]
+    assert after.annotations["client"] is first.annotations["client"]
 
 
 def test_reports_a_model_not_pulled_for_the_device(
@@ -193,8 +203,8 @@ def test_set_device_starts_a_server_for_the_next_job(
     _wait_for(qtbot=qtbot, worker=worker, count=2)
 
     (_, _, on_gpu), (_, _, on_cpu) = _results(worker=worker)
-    assert on_gpu["client"].closed
-    assert on_cpu["client"].device == "cpu"
+    assert on_gpu.annotations["client"].closed
+    assert on_cpu.annotations["client"].device == "cpu"
 
 
 def test_reports_the_stages_and_device_of_its_own_request(
@@ -382,3 +392,87 @@ def test_segment_kwargs_translate_the_canvas_prompt(
             assert kwargs[key] is None
         else:
             np.testing.assert_array_equal(kwargs[key], value)
+
+
+class _StretchingClient:
+    images: builtins.list[np.ndarray]
+    kwargs: builtins.list[dict[str, object]]
+
+    def __init__(self) -> None:
+        self.images = []
+        self.kwargs = []
+
+    def ps(self) -> builtins.list[osam.types.RunningModel]:
+        return [osam.types.RunningModel(name="m", device="cpu", expires_at=None)]
+
+    def list(self) -> builtins.list[osam.types.ModelInfo]:
+        return [
+            osam.types.ModelInfo.model_construct(
+                name="m", input_size=8, input_resize="stretch"
+            )
+        ]
+
+    def segment(
+        self, *args: object, **kwargs: object
+    ) -> builtins.list[osam.types.Annotation]:
+        _, image = cast(tuple[str, np.ndarray], args)
+        self.images.append(image)
+        self.kwargs.append(kwargs)
+        return [
+            osam.types.Annotation(
+                bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=7, ymax=7),
+                mask=np.eye(8, dtype=bool),
+                score=0.9,
+            )
+        ]
+
+
+def test_run_sends_a_large_image_at_the_model_resolution() -> None:
+    image = QtGui.QImage(32, 16, QtGui.QImage.Format.Format_RGB32)
+    image.fill(QtGui.QColor(10, 20, 30))
+    client = _StretchingClient()
+    request = InferenceRequest(
+        model_name="m",
+        image=image,
+        points=np.array([[16.5, 8.5]]),
+        point_labels=np.array([1]),
+    )
+    cache: dict[Any, np.ndarray] = {}
+
+    results = [
+        _osam_worker._run(
+            client=cast(osam.Client, client),
+            request=request,
+            progress=lambda *_: None,
+            cache=cache,
+        )
+        for _ in range(2)
+    ]
+
+    assert client.images[0].shape == (8, 8, 3)
+    assert client.images[0][0, 0].tolist() == [10, 20, 30]
+    assert client.images[1] is client.images[0]
+    np.testing.assert_allclose(
+        cast(np.ndarray, client.kwargs[0]["points"]), [[3.625, 3.75]]
+    )
+    (annotation,) = results[0].annotations
+    assert annotation.mask is not None
+    np.testing.assert_array_equal(annotation.mask, np.eye(8, dtype=bool))
+    assert results[0].scale_to_image == (4.0, 2.0)
+
+
+def test_model_image_resizes_as_pillow_resizes_rgb() -> None:
+    rng = np.random.default_rng(0)
+    rgb = rng.integers(0, 256, size=(37, 53, 3), dtype=np.uint8)
+    image = QtGui.QImage(
+        np.ascontiguousarray(rgb).tobytes(),
+        53,
+        37,
+        53 * 3,
+        QtGui.QImage.Format.Format_RGB888,
+    ).convertToFormat(QtGui.QImage.Format.Format_RGB32)
+
+    actual = _osam_worker._model_image(image=image, size=(20, 14))
+
+    expected = PIL.Image.fromarray(rgb).resize((20, 14), PIL.Image.Resampling.BILINEAR)
+    np.testing.assert_array_equal(actual, np.asarray(expected))
