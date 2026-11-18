@@ -11,6 +11,7 @@ from numpy.typing import NDArray
 from .._shape import Shape
 from ._geometry import round_bbox_to_int
 from ._geometry import shape_to_xyxy_bbox
+from ._scaling import scale_shape
 from ._shape_builders import Detection
 
 
@@ -83,13 +84,20 @@ def match_detections_to_existing_shapes(
     detections: list[Detection],
     existing_shapes: list[Shape],
     iou_threshold: float = 0.5,
+    scale_to_image: tuple[float, float] = (1.0, 1.0),
 ) -> _ExistingShapeMatchResult:
     if not detections:
         return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
+    shrink = (1 / scale_to_image[0], 1 / scale_to_image[1])
     existing_shape_masks = [
         (shape, local_mask)
         for shape in existing_shapes
-        if (local_mask := _local_mask_from_shape(shape=shape)) is not None
+        if (
+            local_mask := _local_mask_from_shape(
+                shape=scale_shape(shape=shape, factor=shrink)
+            )
+        )
+        is not None
     ]
     if not existing_shape_masks:
         return _ExistingShapeMatchResult(

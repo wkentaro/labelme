@@ -447,3 +447,62 @@ def test_example_box_covered_candidate_does_not_hide_a_new_one(
 
     (shape,) = proposal.new_shapes
     np.testing.assert_array_equal(shape.points, [[5, 0], [15, 10]])
+
+
+@pytest.mark.parametrize(
+    ("output_format", "expected_bounds"),
+    [
+        ("mask", [[8, 8], [23, 23]]),
+        ("rectangle", [[8, 8], [23, 23]]),
+        pytest.param("polygon", [[8, 8], [24, 24]], id="polygon-pixel-edges"),
+    ],
+)
+def test_shapes_from_a_shrunk_image_scale_to_the_image(
+    *, output_format: _ai_assist.AiOutputFormat, expected_bounds: list[list[int]]
+) -> None:
+    proposal = AiAssistSession(
+        output_format=output_format, polygon_detail=0
+    ).propose_shapes(
+        annotations=[
+            _annotation(score=0.9, bbox=(2, 2, 5, 5), mask=np.ones((4, 4), bool))
+        ],
+        prompt_kind="points",
+        points=np.array([[12.0, 12.0]]),
+        point_labels=np.array([1]),
+        existing_shapes=[],
+        image_size=(40, 40),
+        score_threshold=0.0,
+        iou_threshold=0.5,
+        scale_to_image=(4.0, 4.0),
+    )
+
+    (shape,) = proposal.new_shapes
+    np.testing.assert_allclose(
+        [shape.points.min(axis=0), shape.points.max(axis=0)],
+        expected_bounds,
+        atol=0.01,
+    )
+    if output_format == "mask":
+        assert shape.mask is not None
+        assert shape.mask.shape == (16, 16)
+
+
+def test_a_shrunk_image_matches_the_existing_shape_it_covers() -> None:
+    existing = Shape(
+        shape_type="rectangle",
+        points=np.array([[8, 8], [23, 23]], dtype=np.float64),
+    )
+
+    proposal = AiAssistSession(output_format="rectangle").propose_shapes(
+        annotations=[_annotation(score=0.9, bbox=(2, 2, 5, 5), mask=None)],
+        prompt_kind="points",
+        points=np.array([[12.0, 12.0]]),
+        point_labels=np.array([1]),
+        existing_shapes=[existing],
+        score_threshold=0.0,
+        iou_threshold=0.5,
+        scale_to_image=(4.0, 4.0),
+    )
+
+    assert proposal.new_shapes == []
+    assert proposal.matching_existing_shapes == [existing]
