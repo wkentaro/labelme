@@ -46,6 +46,26 @@ def test_scale_shape_resizes_a_mask_to_its_scaled_extent() -> None:
     assert mask.mask.shape == (2, 2)
 
 
+def test_scale_shape_samples_a_mask_where_the_image_is_sampled() -> None:
+    def mask_shape(*, xmin: int, width: int) -> Shape:
+        mask = np.zeros((1, width), dtype=bool)
+        mask[0, 14 - xmin : 17 - xmin] = True
+        return Shape(
+            shape_type="mask",
+            points=np.array([[xmin, 0], [xmin + width - 1, 0]], dtype=np.float64),
+            mask=mask,
+        )
+
+    padded = scale_shape(shape=mask_shape(xmin=0, width=18), factor=(0.1, 0.1))
+    tight = scale_shape(shape=mask_shape(xmin=14, width=3), factor=(0.1, 0.1))
+
+    np.testing.assert_array_equal(padded.points, [[0, 0], [1, 0]])
+    np.testing.assert_array_equal(tight.points, [[1, 0], [1, 0]])
+    assert padded.mask is not None and tight.mask is not None
+    assert padded.mask.tolist() == [[False, True]]
+    assert tight.mask.tolist() == [[True]]
+
+
 def test_scale_shape_stretches_a_circle_into_an_ellipse() -> None:
     circle = Shape(
         shape_type="circle",

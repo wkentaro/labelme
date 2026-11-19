@@ -4,7 +4,6 @@ import copy
 import math
 
 import numpy as np
-import PIL.Image
 from numpy.typing import NDArray
 
 from .._shape import Shape
@@ -42,9 +41,11 @@ def scale_bbox(
     )
 
 
-def resize_mask(*, mask: NDArray[np.bool_], size: tuple[int, int]) -> NDArray[np.bool_]:
-    image = PIL.Image.fromarray(mask)
-    return np.asarray(image.resize(size, PIL.Image.Resampling.NEAREST))
+def _grid_sources(
+    *, first: int, start: int, end: int, length: int, factor: float
+) -> NDArray[np.intp]:
+    sources = np.floor((np.arange(start, end + 1) + 0.5) / factor).astype(np.intp)
+    return np.clip(sources - first, 0, length - 1)
 
 
 def scale_shape(*, shape: Shape, factor: tuple[float, float]) -> Shape:
@@ -58,7 +59,13 @@ def scale_shape(*, shape: Shape, factor: tuple[float, float]) -> Shape:
             box=(xmin, ymin, xmin + width - 1, ymin + height - 1), factor=factor
         )
         scaled.points = np.array([[x0, y0], [x1, y1]], dtype=np.float64)
-        scaled.mask = resize_mask(mask=shape.mask, size=(x1 - x0 + 1, y1 - y0 + 1))
+        rows = _grid_sources(
+            first=ymin, start=y0, end=y1, length=height, factor=factor[1]
+        )
+        columns = _grid_sources(
+            first=xmin, start=x0, end=x1, length=width, factor=factor[0]
+        )
+        scaled.mask = shape.mask[np.ix_(rows, columns)]
         return scaled
     if shape.shape_type == "rectangle" and len(shape.points) == 2:  # noqa: PLR2004
         xmin, ymin, xmax, ymax = scale_bbox(
