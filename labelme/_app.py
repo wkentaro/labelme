@@ -4695,7 +4695,7 @@ class MainWindow(QtWidgets.QMainWindow):
         already_loaded = set(self._opened_folder.image_paths)
         return [
             path
-            for path in image_files
+            for path in dict.fromkeys(image_files)
             if path not in already_loaded and path.lower().endswith(extensions)
         ]
 
