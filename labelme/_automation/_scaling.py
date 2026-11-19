@@ -57,6 +57,8 @@ def scale_bbox(
 def _scale_mask_axis(
     *, mask: NDArray[np.bool_], first: int, factor: Fraction, axis: int
 ) -> NDArray[np.bool_]:
+    if factor == 1:
+        return mask
     last = first + mask.shape[axis] - 1
     if factor <= 1:
         sent_first, sent_last = _scale_pixel_span(first=first, last=last, factor=factor)
