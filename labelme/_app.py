@@ -110,13 +110,22 @@ class _AiStatus(NamedTuple):
     announced: frozenset[str]
 
 
-class _OpenedFolder(NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class _OpenedFolder:
     # The folder whose Images the Image List shows, with the Annotation Folder
     # they use. A None root is no opened folder, as for an Annotation File
     # opened directly.
     root: str | None
     output_dir: Path | None
     image_paths: tuple[str, ...]
+
+    @functools.cached_property
+    def image_paths_by_comparable_stem(self) -> dict[str, list[str]]:
+        paths_by_stem: dict[str, list[str]] = {}
+        for image_path in self.image_paths:
+            stem = _label_path.comparable_stem(path=image_path)
+            paths_by_stem.setdefault(stem, []).append(image_path)
+        return paths_by_stem
 
 
 class _FileContents(NamedTuple):
@@ -281,7 +290,8 @@ class MainWindow(QtWidgets.QMainWindow):
     _ai_text_job: _AiTextJob | None
     _ai_status: _AiStatus
     _ai_status_timer: QtCore.QTimer
-    _hidden_annotated_paths: set[str]
+    _annotated_paths: set[str]
+    _image_list_items: dict[str, QtWidgets.QListWidgetItem]
     _window_state: QtCore.QSettings
 
     _config_file: Path | None
@@ -1407,10 +1417,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._failed_save_path = None
         self._image_path = None
         self._file_list_image_path = None
-        # Annotated images the search box hides, found when the list is
-        # rebuilt and kept current by saves and deletions; the visible ones
-        # are counted from their check marks.
-        self._hidden_annotated_paths = set()
+        self._annotated_paths = set()
+        self._image_list_items = {}
         self._file_search_pattern = re.compile("")
         self._prev_image_path = None
         self._viewport_states = {}
@@ -3942,7 +3950,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # the previous directory when that reload fails, so a bad candidate
         # never becomes the autosave target.
         previous_folder = self._opened_folder
-        self._opened_folder = previous_folder._replace(output_dir=output_dir)
+        self._opened_folder = dataclasses.replace(
+            previous_folder, output_dir=output_dir
+        )
         if self._file_list_image_path is not None and not self._load_file(
             image_or_label_path=self._file_list_image_path
         ):
@@ -4612,8 +4622,8 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             # The Annotation File mirrors the image's place under the folder
             # being opened, not the one being replaced.
-            self._opened_folder = previous_folder._replace(
-                root=opened_dir, output_dir=output_dir
+            self._opened_folder = dataclasses.replace(
+                previous_folder, root=opened_dir, output_dir=output_dir
             )
             # Load before swapping the Image List, so a failed load leaves the
             # previous session and Image List untouched.
@@ -4683,12 +4693,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @property
     def image_list(self) -> list[str]:
-        lst = []
-        for i in range(self._docks.file_list.count()):
-            item = self._docks.file_list.item(i)
-            assert item
-            lst.append(_file_list_item_path(item=item))
-        return lst
+        return list(self._image_list_items)
 
     def _new_image_files(self, *, image_files: list[str]) -> list[str]:
         extensions = _list_supported_image_extensions()
@@ -4708,8 +4713,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if not image_files:
             return
 
-        self._opened_folder = self._opened_folder._replace(
-            image_paths=(*self._opened_folder.image_paths, *image_files)
+        self._opened_folder = dataclasses.replace(
+            self._opened_folder,
+            image_paths=(*self._opened_folder.image_paths, *image_files),
         )
         self._refresh_file_list()
 
@@ -4752,17 +4758,17 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
         image_paths = []
         shown_labels = []
-        self._hidden_annotated_paths = set()
+        self._annotated_paths = set()
         for path, label in zip(self._opened_folder.image_paths, labels):
-            if self._file_search_pattern.search(label):
-                image_paths.append(path)
-                shown_labels.append(label)
-            elif _label_path.has_label_file(
+            if _label_path.has_label_file(
                 image_path=path,
                 output_dir=self._opened_folder.output_dir,
                 root_prefix=self._opened_folder.root,
             ):
-                self._hidden_annotated_paths.add(path)
+                self._annotated_paths.add(path)
+            if self._file_search_pattern.search(label):
+                image_paths.append(path)
+                shown_labels.append(label)
 
         file_list = self._docks.file_list
         # Decided from every loaded Image, so headings don't come and go while
@@ -4770,15 +4776,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.file_list_delegate.set_labels(labels=labels)
         with QtCore.QSignalBlocker(file_list):
             file_list.clear()
+            self._image_list_items = {}
             for image_path, label in zip(image_paths, shown_labels):
-                file_list.addItem(
-                    _make_image_list_item(
-                        image_path=image_path,
-                        label=label,
-                        output_dir=self._opened_folder.output_dir,
-                        root_prefix=self._opened_folder.root,
-                    )
+                item = _make_image_list_item(
+                    image_path=image_path,
+                    label=label,
+                    annotated=image_path in self._annotated_paths,
                 )
+                file_list.addItem(item)
+                self._image_list_items[image_path] = item
             if self._file_list_image_path in image_paths:
                 file_list.setCurrentRow(image_paths.index(self._file_list_image_path))
 
@@ -4794,49 +4800,29 @@ class MainWindow(QtWidgets.QMainWindow):
         # list is rebuilt. Drop the filter if that matters.
         # An extension-qualified x.png.json belongs to an Image with stem x
         # (see _label_path._label_path_candidates).
+        paths_by_stem = self._opened_folder.image_paths_by_comparable_stem
         stems = {
             _label_path.comparable_stem(path=label_path),
             _label_path.comparable_stem(path=Path(label_path).stem),
         }
-        file_list = self._docks.file_list
-        for row in range(file_list.count()):
-            item = file_list.item(row)
-            assert item
-            if (
-                _label_path.comparable_stem(path=_file_list_item_path(item=item))
-                in stems
-            ):
-                _set_annotated_check_state(
-                    item=item,
+        for stem in stems:
+            for image_path in paths_by_stem.get(stem, ()):
+                annotated = _label_path.has_label_file(
+                    image_path=image_path,
                     output_dir=self._opened_folder.output_dir,
                     root_prefix=self._opened_folder.root,
                 )
-
-        # Images hidden by the search box have no item, so keep the count's
-        # record of them by the same rule.
-        for image_path in self._opened_folder.image_paths:
-            if _label_path.comparable_stem(
-                path=image_path
-            ) not in stems or self._matches_file_search(image_path=image_path):
-                continue
-            if _label_path.has_label_file(
-                image_path=image_path,
-                output_dir=self._opened_folder.output_dir,
-                root_prefix=self._opened_folder.root,
-            ):
-                self._hidden_annotated_paths.add(image_path)
-            else:
-                self._hidden_annotated_paths.discard(image_path)
+                if annotated:
+                    self._annotated_paths.add(image_path)
+                else:
+                    self._annotated_paths.discard(image_path)
+                if item := self._image_list_items.get(image_path):
+                    item.setCheckState(_annotated_check_state(annotated=annotated))
         self._update_annotated_count()
 
     def _update_annotated_count(self) -> None:
-        file_list = self._docks.file_list
-        visible = sum(
-            file_list.item(row).checkState() == Qt.CheckState.Checked
-            for row in range(file_list.count())
-        )
         self._docks.annotation_folder_footer.set_count(
-            annotated=len(self._hidden_annotated_paths) + visible,
+            annotated=len(self._annotated_paths),
             total=len(self._opened_folder.image_paths),
         )
 
@@ -4922,30 +4908,18 @@ def _format_window_title(
 
 
 def _make_image_list_item(
-    *, image_path: str, label: str, output_dir: Path | None, root_prefix: str | None
+    *, image_path: str, label: str, annotated: bool
 ) -> QtWidgets.QListWidgetItem:
     item = QtWidgets.QListWidgetItem(label)
     item.setData(Qt.ItemDataRole.UserRole, image_path)
     item.setToolTip(os.path.abspath(image_path))
     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-    _set_annotated_check_state(
-        item=item, output_dir=output_dir, root_prefix=root_prefix
-    )
+    item.setCheckState(_annotated_check_state(annotated=annotated))
     return item
 
 
-def _set_annotated_check_state(
-    *,
-    item: QtWidgets.QListWidgetItem,
-    output_dir: Path | None,
-    root_prefix: str | None,
-) -> None:
-    has_label = _label_path.has_label_file(
-        image_path=_file_list_item_path(item=item),
-        output_dir=output_dir,
-        root_prefix=root_prefix,
-    )
-    item.setCheckState(Qt.CheckState.Checked if has_label else Qt.CheckState.Unchecked)
+def _annotated_check_state(*, annotated: bool) -> Qt.CheckState:
+    return Qt.CheckState.Checked if annotated else Qt.CheckState.Unchecked
 
 
 def _file_list_item_path(*, item: QtWidgets.QListWidgetItem) -> str:
