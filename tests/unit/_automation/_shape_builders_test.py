@@ -10,8 +10,12 @@ from numpy.typing import NDArray
 from labelme._automation import MASK_REQUIRED_SHAPE_TYPES
 from labelme._automation import AiOutputFormat
 from labelme._automation import Detection
+from labelme._automation import _shape_builders
 from labelme._automation import assign_available_group_ids
 from labelme._automation import shapes_from_detections
+from labelme._automation._geometry import compute_circle_from_mask
+from labelme._automation._geometry import compute_oriented_rectangle_from_mask
+from labelme._automation._geometry import compute_polygons_from_mask
 from labelme._shape import Shape
 
 from ...mask_utils import shape_to_mask
@@ -380,3 +384,75 @@ def test_assign_available_group_ids_avoids_existing_ids() -> None:
     assign_available_group_ids(shapes=new_shapes, existing_shapes=existing)
 
     assert [shape.group_id for shape in new_shapes] == [6, 6, 7, None]
+
+
+@pytest.mark.parametrize("shape_type", ["polygon", "circle", "oriented_rectangle"])
+def test_shapes_from_detections_outlines_a_large_mask_as_its_every_pixel(
+    shape_type: AiOutputFormat,
+) -> None:
+    height, width = 1800, 2400
+    ys, xs = np.ogrid[:height, :width]
+    mask = ((ys - 900) / 700) ** 2 + ((xs - 1200) / 1100) ** 2 < 1
+    origin = np.array([1000, 2000])
+    exact_points = {
+        "polygon": compute_polygons_from_mask(mask=mask)[0],
+        "circle": [
+            [circle.cx, circle.cy],
+            [circle.cx + circle.radius, circle.cy],
+        ]
+        if (circle := compute_circle_from_mask(mask=mask))
+        else None,
+        "oriented_rectangle": compute_oriented_rectangle_from_mask(mask=mask),
+    }[shape_type]
+
+    [shape] = shapes_from_detections(
+        detections=[Detection(bbox=(1000, 2000, 3399, 3799), mask=mask)],
+        shape_type=shape_type,
+    )
+
+    outline = shape_to_mask(
+        img_shape=(height, width),
+        points=(shape.points - origin).tolist(),
+        shape_type=shape_type,
+    )
+    assert exact_points is not None
+    exact = shape_to_mask(
+        img_shape=(height, width),
+        points=np.asarray(exact_points).tolist(),
+        shape_type=shape_type,
+    )
+    assert (outline & exact).sum() / (outline | exact).sum() > 0.99  # noqa: PLR2004
+
+
+def test_shapes_from_detections_keeps_a_sampled_polygon_on_its_mask() -> None:
+    mask = np.ones((2051, 2051), dtype=bool)
+
+    [shape] = shapes_from_detections(
+        detections=[Detection(bbox=(0, 0, 2050, 2050), mask=mask)],
+        shape_type="polygon",
+        image_size=(2051, 2051),
+        polygon_detail=100,
+    )
+
+    assert shape.points.min() >= 0
+    assert shape.points.max() <= 2051  # noqa: PLR2004
+
+
+@pytest.mark.parametrize(
+    ("max_shift", "expected"),
+    [
+        (1, [(0, 10), (10, 0), (20, 10), (10, 20)]),
+        (0, [(0, 0), (19.6, 0), (19.6, 20), (0, 20)]),
+    ],
+)
+def test_fit_oriented_rectangle_shifts_a_sampling_overshoot_into_the_image(
+    max_shift: int, expected: list[tuple[float, float]]
+) -> None:
+    corners = np.array([(-0.4, 10), (9.6, 0), (19.6, 10), (9.6, 20)], np.float32)
+
+    fitted = _shape_builders._fit_oriented_rectangle_to_image(
+        corners=corners, image_size=(30, 30), max_shift=max_shift
+    )
+
+    assert fitted is not None
+    np.testing.assert_allclose(fitted, expected, atol=1e-5)

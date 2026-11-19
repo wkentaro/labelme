@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import typing
 from dataclasses import dataclass
 from typing import Final
@@ -70,17 +71,15 @@ def _build_shapes_from_detection(
     if shape_type == "polygon":
         if detection.mask is None:
             return []
-        polygons = compute_polygons_from_mask(
-            mask=detection.mask,
-            detail=polygon_detail,
-        )
-        if detection.bbox is not None:
-            # The mask's own origin, as a Mask Shape places it, so its pixel
-            # edges stay inside the image.
-            offset = np.array(
-                round_bbox_to_int(bbox=detection.bbox)[:2], dtype=np.float32
+        outline_mask, step = _outline_mask(mask=detection.mask)
+        origin = np.array(_mask_origin(detection=detection), dtype=np.float32)
+        polygons = [
+            np.minimum(polygon * step, detection.mask.shape[::-1]) + origin
+            for polygon in compute_polygons_from_mask(
+                mask=outline_mask,
+                detail=polygon_detail,
             )
-            polygons = [polygon + offset for polygon in polygons]
+        ]
         return [
             _build_shape(
                 shape_type="polygon",
@@ -124,11 +123,12 @@ def _build_shapes_from_detection(
             )
         ]
     if shape_type == "oriented_rectangle":
-        corners = _oriented_rectangle_for_detection(detection=detection)
+        corners, step = _oriented_rectangle_for_detection(detection=detection)
         if corners is not None and image_size is not None:
             corners = _fit_oriented_rectangle_to_image(
                 corners=corners,
                 image_size=image_size,
+                max_shift=step - 1,
             )
         if corners is None:
             return []
@@ -144,34 +144,44 @@ def _build_shapes_from_detection(
     raise ValueError(f"Unsupported shape_type: {shape_type!r}")
 
 
+def _mask_origin(*, detection: Detection) -> tuple[int, int]:
+    if detection.bbox is None:
+        return 0, 0
+    xmin, ymin, _, _ = round_bbox_to_int(bbox=detection.bbox)
+    return xmin, ymin
+
+
 def _oriented_rectangle_for_detection(
     *,
     detection: Detection,
-) -> NDArray[np.float32] | None:
+) -> tuple[NDArray[np.float32] | None, int]:
     if detection.mask is not None:
-        corners = compute_oriented_rectangle_from_mask(mask=detection.mask)
+        outline_mask, step = _outline_mask(mask=detection.mask)
+        corners = compute_oriented_rectangle_from_mask(mask=outline_mask)
         if corners is not None:
-            offset_x, offset_y = (
-                round_bbox_to_int(bbox=detection.bbox)[:2]
-                if detection.bbox is not None
-                else (0, 0)
-            )
-            return corners + np.array([offset_x, offset_y], dtype=np.float32)
+            origin = np.array(_mask_origin(detection=detection), dtype=np.float32)
+            return corners * step + origin, step
     if detection.bbox is not None:
         xmin, ymin, xmax, ymax = detection.bbox
         return np.array(
             [[xmin, ymin], [xmax, ymin], [xmax, ymax], [xmin, ymax]],
             dtype=np.float32,
-        )
-    return None
+        ), 1
+    return None, 1
 
 
 def _fit_oriented_rectangle_to_image(
     *,
     corners: NDArray[np.float32],
     image_size: tuple[int, int],
+    max_shift: float,
 ) -> NDArray[np.float32] | None:
     size = np.asarray(image_size, dtype=np.float32)
+    shift = np.maximum(-corners.min(axis=0), 0) - np.maximum(
+        corners.max(axis=0) - size, 0
+    )
+    if (np.abs(shift) <= max_shift).all():
+        corners = corners + shift
     if (corners >= 0).all() and (corners <= size).all():
         return corners
     # Clipping individual vertices would produce a quadrilateral that the
@@ -188,17 +198,14 @@ def _fit_oriented_rectangle_to_image(
 
 def _circle_for_detection(*, detection: Detection) -> Circle | None:
     if detection.mask is not None:
-        circle = compute_circle_from_mask(mask=detection.mask)
+        outline_mask, step = _outline_mask(mask=detection.mask)
+        circle = compute_circle_from_mask(mask=outline_mask)
         if circle is not None:
-            offset_x, offset_y = (
-                round_bbox_to_int(bbox=detection.bbox)[:2]
-                if detection.bbox is not None
-                else (0, 0)
-            )
+            offset_x, offset_y = _mask_origin(detection=detection)
             return Circle(
-                cx=circle.cx + offset_x,
-                cy=circle.cy + offset_y,
-                radius=circle.radius,
+                cx=circle.cx * step + offset_x,
+                cy=circle.cy * step + offset_y,
+                radius=circle.radius * step,
             )
     if detection.bbox is not None:
         # Inscribed in bbox when no usable mask is available.
@@ -207,6 +214,12 @@ def _circle_for_detection(*, detection: Detection) -> Circle | None:
         if radius > 0:
             return Circle(cx=(xmin + xmax) / 2, cy=(ymin + ymax) / 2, radius=radius)
     return None
+
+
+def _outline_mask(*, mask: NDArray[np.bool_]) -> tuple[NDArray[np.bool_], int]:
+    MAX_PIXELS: Final = 1 << 20
+    step = math.ceil(math.sqrt(mask.size / MAX_PIXELS))
+    return np.ascontiguousarray(mask[step // 2 :: step, step // 2 :: step]), step
 
 
 # Output formats that drop a bbox-only detection. Deriving this from the same
