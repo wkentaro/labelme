@@ -17,7 +17,8 @@ from labelme._shape import Shape
         ((5, 5, 5, 5), (0.1, 0.1), (0, 0, 0, 0)),
         ((-1, -1, -1, -1), (0.25, 0.25), (-1, -1, -1, -1)),
         ((0, 1023, 1023, 1023), (1.0, 0.5), (0, 511, 1023, 511)),
-        ((3, 1, 6, 1), (0.5, 1.5), (1, 1, 2, 2)),
+        ((3, 1, 6, 1), (0.5, 1.5), (1, 1, 3, 2)),
+        ((2, 0, 2, 0), (0.25, 1.0), (0, 0, 0, 0)),
     ],
 )
 def test_scale_pixel_box_maps_whole_pixels(
@@ -65,6 +66,43 @@ def test_scale_shape_samples_a_mask_where_the_image_is_sampled() -> None:
     assert padded.mask is not None and tight.mask is not None
     assert padded.mask.tolist() == [[False, True]]
     assert tight.mask.tolist() == [[True]]
+
+
+def _mask_shape(*, xmin: int, ymin: int, mask: list[list[bool]]) -> Shape:
+    array = np.array(mask, dtype=bool)
+    height, width = array.shape
+    return Shape(
+        shape_type="mask",
+        points=np.array(
+            [[xmin, ymin], [xmin + width - 1, ymin + height - 1]], dtype=np.float64
+        ),
+        mask=array,
+    )
+
+
+def test_scale_shape_shrinks_a_speck_the_same_however_it_is_padded() -> None:
+    tight = scale_shape(
+        shape=_mask_shape(xmin=3, ymin=0, mask=[[True]]), factor=(0.25, 0.25)
+    )
+    padded = scale_shape(
+        shape=_mask_shape(xmin=2, ymin=0, mask=[[False, True]]), factor=(0.25, 0.25)
+    )
+
+    for scaled in (tight, padded):
+        assert scaled.mask is not None and scaled.mask.tolist() == [[True]]
+        np.testing.assert_array_equal(scaled.points, [[0, 0], [0, 0]])
+
+
+def test_scale_shape_keeps_every_stripe_of_a_shrunk_mask() -> None:
+    stripes = [[True], [False], [False], [False], [True]]
+
+    scaled = scale_shape(
+        shape=_mask_shape(xmin=0, ymin=2, mask=stripes), factor=(1.0, 0.5)
+    )
+
+    assert scaled.mask is not None
+    assert scaled.mask.tolist() == [[True], [False], [True]]
+    np.testing.assert_array_equal(scaled.points, [[0, 1], [0, 3]])
 
 
 def test_scale_shape_stretches_a_circle_into_an_ellipse() -> None:
