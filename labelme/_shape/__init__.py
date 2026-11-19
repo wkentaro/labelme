@@ -4,6 +4,7 @@ from ._convert import conversion_needs_detail
 from ._convert import convert_blocker
 from ._convert import convert_shape
 from ._hit_testing import image_extent
+from ._hit_testing import mask_shape_box
 from ._hit_testing import nearest_edge_index
 from ._hit_testing import nearest_rotation_point_index
 from ._hit_testing import nearest_vertex_index
@@ -46,6 +47,7 @@ __all__ = [
     "convert_shape",
     "get_rotation_handle",
     "image_extent",
+    "mask_shape_box",
     "merge_blocker",
     "merge_masks",
     "nearest_edge_index",

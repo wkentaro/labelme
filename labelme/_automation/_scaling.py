@@ -9,8 +9,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from .._shape import Shape
+from .._shape import mask_shape_box
 from ._geometry import compute_polygon_from_circle
-from ._geometry import mask_shape_box
 
 _HALF: Final = Fraction(1, 2)
 

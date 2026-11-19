@@ -69,6 +69,22 @@ def test_merge_rounds_non_integer_bbox_like_ai_assist() -> None:
     np.testing.assert_array_equal(merged.mask, expected)
 
 
+def test_merge_places_a_mask_at_its_first_point() -> None:
+    swapped = Shape(
+        label="cat",
+        shape_type="mask",
+        mask=np.ones((1, 1), dtype=bool),
+        points=np.array([[12.5, 20], [9.5, 20]]),
+    )
+    far = _full_mask(xmin=0, ymin=20, size=1, label="cat")
+
+    merged = merge_masks(shapes=[swapped, far])
+
+    assert merged.points.tolist() == [[0, 20], [13, 20]]
+    assert merged.mask is not None
+    assert np.flatnonzero(merged.mask[0]).tolist() == [0, 13]
+
+
 def test_merge_takes_identity_from_first_shape() -> None:
     a = _full_mask(xmin=0, ymin=0, size=2, label="cat")
     a.group_id = 7

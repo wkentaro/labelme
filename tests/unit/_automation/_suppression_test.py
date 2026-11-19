@@ -469,3 +469,18 @@ def test_saved_match_covers_only_its_own_sent_column() -> None:
     )
 
     assert result.new_detections == [neighbor]
+
+
+def test_mask_shape_with_swapped_corners_covers_its_first_point() -> None:
+    mask = Shape(
+        shape_type="mask",
+        points=np.array([[12.5, 20], [9.5, 20]], dtype=np.float64),
+        mask=np.ones((1, 1), dtype=bool),
+    )
+    drawn = Detection(bbox=(13, 20, 13, 20), mask=np.ones((1, 1), bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[drawn], existing_shapes=[mask]
+    )
+
+    assert result.matching_shapes == [mask]

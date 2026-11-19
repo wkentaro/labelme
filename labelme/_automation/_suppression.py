@@ -9,7 +9,7 @@ import PIL.ImageDraw
 from numpy.typing import NDArray
 
 from .._shape import Shape
-from ._geometry import mask_shape_box
+from .._shape import mask_shape_box
 from ._geometry import round_bbox_to_int
 from ._geometry import shape_to_xyxy_bbox
 from ._scaling import UNSCALED
