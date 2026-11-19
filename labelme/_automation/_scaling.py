@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
-import PIL.Image
 from numpy.typing import NDArray
 
 from .._shape import Shape
@@ -59,8 +58,10 @@ def scale_pixel_box(
 
 
 def resize_mask(*, mask: NDArray[np.bool_], size: tuple[int, int]) -> NDArray[np.bool_]:
-    image = PIL.Image.fromarray(mask)
-    return np.asarray(image.resize(size, PIL.Image.Resampling.NEAREST))
+    width, height = size
+    rows = (2 * np.arange(height) + 1) * mask.shape[0] // (2 * height)
+    columns = (2 * np.arange(width) + 1) * mask.shape[1] // (2 * width)
+    return mask[np.ix_(rows, columns)]
 
 
 def scale_shape(*, shape: Shape, factor: tuple[float, float]) -> Shape:
