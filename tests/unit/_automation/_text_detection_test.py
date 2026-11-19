@@ -456,9 +456,14 @@ def test_text_proposal_keeps_apart_matches_that_meet_only_at_the_sent_size(
     ]
 
 
+@pytest.mark.parametrize("sent_size", [(40, 10), (400, 100)])
 @pytest.mark.parametrize(("dog_x", "kept_x"), [(300, [0, 200]), (200, [0])])
 def test_text_proposal_for_a_label_builds_no_match_again(
-    *, monkeypatch: pytest.MonkeyPatch, dog_x: int, kept_x: list[int]
+    *,
+    monkeypatch: pytest.MonkeyPatch,
+    sent_size: tuple[int, int],
+    dog_x: int,
+    kept_x: list[int],
 ) -> None:
     enlarged: list[int] = []
     enlarge = AtImageSize.mask
@@ -488,7 +493,7 @@ def test_text_proposal_for_a_label_builds_no_match_again(
         score_threshold=0.5,
         image_size=(400, 100),
         polygon_detail=80,
-        sent_size=(40, 10),
+        sent_size=sent_size,
         original_size=(400, 100),
         built={},
     )

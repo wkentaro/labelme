@@ -171,8 +171,6 @@ def compare_at_sent_size(
             annotation.model_copy(update={"bounding_box": small, "mask": mask})
         )
         at_image_size.append(
-            None
-            if sent_size == original_size
-            else AtImageSize(annotation=annotation, image_size=original_size)
+            AtImageSize(annotation=annotation, image_size=original_size)
         )
     return compared, at_image_size, shrink
