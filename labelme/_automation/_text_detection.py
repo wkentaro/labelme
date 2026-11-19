@@ -9,7 +9,6 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._scaling import compare_at_sent_size
-from ._scaling import enlarge_survivors
 from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
 from ._shape_builders import Detection
 from ._shape_builders import assign_available_group_ids
@@ -39,6 +38,7 @@ def propose_shapes_from_texts(
     suppressed_by: str | None = None,
     sent_size: tuple[int, int] | None = None,
     original_size: tuple[int, int] | None = None,
+    built: dict[int, list[Shape]] | None = None,
 ) -> list[Shape]:
     # suppressed_by: the label the results will take, when it isn't their
     # text; only existing Shapes with that label suppress them.
@@ -126,10 +126,11 @@ def propose_shapes_from_texts(
         iou_threshold=iou_threshold,
     )
     shapes = shapes_from_detections(
-        detections=enlarge_survivors(detections=detections, shape_type=shape_type),
+        detections=detections,
         shape_type=shape_type,
         image_size=image_size,
         polygon_detail=polygon_detail,
+        built=built,
     )
     assign_available_group_ids(
         shapes=shapes,

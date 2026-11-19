@@ -2112,6 +2112,7 @@ class MainWindow(QtWidgets.QMainWindow):
             polygon_detail=self._config["mask_polygonization"]["detail"],
             sent_size=result.sent_size,
             original_size=result.original_size,
+            built={},
         )
         try:
             # Ignores existing Shapes: which ones cover the batch depends on
@@ -2166,16 +2167,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if entry is None:
             return []  # Cancelled: the batch is never added.
         # "black dog" saved as "dog": skip what "dog" Shapes cover.
-        if any(
-            shape.label == entry.label and shape.shape_type == candidates[0].shape_type
-            for shape in canvas.shapes
-        ):
-            shapes = propose_for_label(entry.label)
-        else:
-            shapes = candidates
-            _automation.assign_available_group_ids(
-                shapes=shapes, existing_shapes=canvas.shapes
-            )
+        shapes = propose_for_label(entry.label)
         self._report_ai_find_all_result(shapes=shapes, name=entry.label)
         if not shapes:
             return []

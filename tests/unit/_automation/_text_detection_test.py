@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import json
 from typing import NamedTuple
 
@@ -8,6 +9,7 @@ import osam
 import pytest
 from numpy.typing import NDArray
 
+from labelme._automation._scaling import AtImageSize
 from labelme._automation._text_detection import MaskOutputUnavailableError
 from labelme._automation._text_detection import get_bboxes_from_texts
 from labelme._automation._text_detection import nms_bboxes
@@ -452,3 +454,56 @@ def test_text_proposal_keeps_apart_matches_that_meet_only_at_the_sent_size(
         [[0, 0], [4, 9]],
         [[5, 0], [9, 9]],
     ]
+
+
+@pytest.mark.parametrize(("dog_x", "kept_x"), [(300, [0, 200]), (200, [0])])
+def test_text_proposal_for_a_label_builds_no_match_again(
+    *, monkeypatch: pytest.MonkeyPatch, dog_x: int, kept_x: list[int]
+) -> None:
+    enlarged: list[int] = []
+    enlarge = AtImageSize.mask
+
+    def mask(self: AtImageSize) -> NDArray[np.bool_] | None:
+        enlarged.append(self.bbox[0])
+        return enlarge(self)
+
+    monkeypatch.setattr(AtImageSize, "mask", mask)
+
+    def scored(*, score: float, xmin: int) -> osam.types.Annotation:
+        return osam.types.Annotation(
+            text="black dog",
+            score=score,
+            bounding_box=osam.types.BoundingBox(
+                xmin=xmin, ymin=0, xmax=xmin + 99, ymax=99
+            ),
+            mask_scores=np.full((10, 40), 255, dtype=np.uint8),
+        )
+
+    propose = functools.partial(
+        propose_shapes_from_texts,
+        annotations=[scored(score=0.9, xmin=0), scored(score=0.8, xmin=200)],
+        texts=["black dog"],
+        shape_type="polygon",
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(400, 100),
+        polygon_detail=80,
+        sent_size=(40, 10),
+        original_size=(400, 100),
+        built={},
+    )
+    candidates = propose(existing_shapes=[])
+    dog = Shape(
+        label="dog",
+        shape_type="polygon",
+        points=np.array(
+            [[dog_x, 0], [dog_x + 99, 0], [dog_x + 99, 99], [dog_x, 99]],
+            dtype=np.float64,
+        ),
+    )
+
+    shapes = propose(existing_shapes=[dog], suppressed_by="dog")
+
+    assert enlarged == [0, 200]
+    assert [round(shape.points[:, 0].min()) for shape in shapes] == kept_x
+    assert all(any(shape is c for c in candidates) for shape in shapes)

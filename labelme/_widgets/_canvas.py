@@ -995,12 +995,16 @@ class Canvas(QtWidgets.QWidget):
             image_size=job.image_size,
             sent_size=result.sent_size,
             original_size=result.original_size,
+            built={},
         )
 
     def _propose_ai_shapes(
-        self, *, job: _AiJob, result: _automation.InferenceResult
+        self,
+        *,
+        job: _AiJob,
+        propose: Callable[..., _automation.AiAssistProposal],
     ) -> _automation.AiAssistProposal:
-        proposal = self._ai_proposer(job=job, result=result)(
+        proposal = propose(
             # AI-Find All skips covered objects once its batch has a label.
             existing_shapes=(
                 self.shapes
@@ -1043,8 +1047,9 @@ class Canvas(QtWidgets.QWidget):
         ai_job = self._take_ai_job(job=job)
         if ai_job is None:
             return
+        propose = self._ai_proposer(job=ai_job, result=result)
         try:
-            proposal = self._propose_ai_shapes(job=ai_job, result=result)
+            proposal = self._propose_ai_shapes(job=ai_job, propose=propose)
         except Exception as e:
             logger.opt(exception=e).error("AI inference failed")
             self._apply_ai_result(
@@ -1057,7 +1062,7 @@ class Canvas(QtWidgets.QWidget):
             self._apply_ai_result(
                 job=ai_job,
                 proposal=proposal,
-                propose=self._ai_proposer(job=ai_job, result=result),
+                propose=propose,
                 error=None,
             )
 

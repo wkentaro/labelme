@@ -11,7 +11,6 @@ from .._shape import Shape
 from ._geometry import round_bbox_to_int
 from ._scaling import AtImageSize
 from ._scaling import compare_at_sent_size
-from ._scaling import enlarge_survivors
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
 from ._suppression import match_detections_to_existing_shapes
@@ -58,6 +57,7 @@ class AiAssistSession:
         iou_threshold: float,
         sent_size: tuple[int, int] | None = None,
         original_size: tuple[int, int] | None = None,
+        built: dict[int, list[Shape]] | None = None,
     ) -> AiAssistProposal:
         compared, at_image_size, shrink = compare_at_sent_size(
             annotations=annotations, sent_size=sent_size, original_size=original_size
@@ -109,12 +109,11 @@ class AiAssistSession:
         )
         return AiAssistProposal(
             new_shapes=shapes_from_detections(
-                detections=enlarge_survivors(
-                    detections=new_detections, shape_type=self.output_format
-                ),
+                detections=new_detections,
                 shape_type=self.output_format,
                 image_size=image_size,
                 polygon_detail=self.polygon_detail,
+                built=built,
             ),
             matching_existing_shapes=matches.matching_shapes,
         )

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import math
 import typing
 from collections.abc import Iterable
@@ -245,16 +246,31 @@ def shapes_from_detections(
     shape_type: AiOutputFormat,
     image_size: tuple[int, int] | None = None,
     polygon_detail: int = _DEFAULT_POLYGON_DETAIL,
+    built: dict[int, list[Shape]] | None = None,
 ) -> list[Shape]:
     shapes: list[Shape] = []
     next_group_id = 1
+    memo = {} if built is None else built
     for detection in detections:
-        detection_shapes = _build_shapes_from_detection(
-            detection=detection,
-            shape_type=shape_type,
-            image_size=image_size,
-            polygon_detail=polygon_detail,
-        )
+        source = detection.at_image_size
+        key = None if source is None else id(source.annotation)
+        if key in memo:
+            detection_shapes = memo[key]
+        else:
+            if source is not None:
+                detection = dataclasses.replace(
+                    detection,
+                    bbox=source.bbox,
+                    mask=None if shape_type == "rectangle" else source.mask(),
+                )
+            detection_shapes = _build_shapes_from_detection(
+                detection=detection,
+                shape_type=shape_type,
+                image_size=image_size,
+                polygon_detail=polygon_detail,
+            )
+            if key is not None:
+                memo[key] = detection_shapes
         if len(detection_shapes) > 1:
             for shape in detection_shapes:
                 shape.group_id = next_group_id

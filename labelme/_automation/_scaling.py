@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import copy
-import dataclasses
 import math
-from collections.abc import Iterator
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -14,12 +12,9 @@ from .._shape import Shape
 from .._shape import mask_shape_box
 from ._geometry import compute_polygon_from_circle
 from ._geometry import round_bbox_to_int
-from ._types import AiOutputFormat
 
 if TYPE_CHECKING:
     import osam
-
-    from ._shape_builders import Detection
 
 
 @dataclass(frozen=True, eq=False)
@@ -152,17 +147,3 @@ def compare_at_sent_size(
             else AtImageSize(annotation=annotation, image_size=original_size)
         )
     return compared, at_image_size, shrink
-
-
-def enlarge_survivors(
-    *, detections: list[Detection], shape_type: AiOutputFormat
-) -> Iterator[Detection]:
-    for detection in detections:
-        if detection.at_image_size is None:
-            yield detection
-            continue
-        yield dataclasses.replace(
-            detection,
-            bbox=detection.at_image_size.bbox,
-            mask=None if shape_type == "rectangle" else detection.at_image_size.mask(),
-        )
