@@ -25,7 +25,6 @@ from labelme._automation import InferenceRequest
 from labelme._automation import InferenceResult
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._automation._ai_assist import AiAssistSession
-from labelme._automation._scaling import UNSCALED
 from labelme._config import load_config
 from labelme._shape import Shape
 from labelme._shape import ShapeType
@@ -81,7 +80,7 @@ class _InlineOsamWorker(QtCore.QObject):
             self.finished.emit(job, self._result())
 
     def _result(self) -> InferenceResult:
-        return InferenceResult(annotations=self.annotations, scale_to_image=UNSCALED)
+        return InferenceResult(annotations=self.annotations)
 
     def resume(self) -> None:
         self.paused = False

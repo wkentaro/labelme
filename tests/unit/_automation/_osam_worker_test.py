@@ -453,12 +453,12 @@ def test_run_sends_a_large_image_at_the_model_resolution() -> None:
     assert client.images[0][0, 0].tolist() == [10, 20, 30]
     assert client.images[1] is client.images[0]
     np.testing.assert_allclose(
-        cast(np.ndarray, client.kwargs[0]["points"]), [[3.625, 3.75]]
+        cast(np.ndarray, client.kwargs[0]["points"]), [[16.0, 8.0]]
     )
+    assert client.kwargs[0]["original_size"] == (32, 16)
     (annotation,) = results[0].annotations
     assert annotation.mask is not None
     np.testing.assert_array_equal(annotation.mask, np.eye(8, dtype=bool))
-    assert results[0].scale_to_image == (4.0, 2.0)
 
 
 def test_model_image_resizes_as_pillow_resizes_rgb() -> None:

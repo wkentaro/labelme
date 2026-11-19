@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import math
 import typing
-from fractions import Fraction
 
 import numpy as np
 import pytest
@@ -27,16 +26,6 @@ def test_shapes_from_detections_rectangle_uses_bbox() -> None:
     assert shape.shape_type == "rectangle"
     assert (shape.points[0][0], shape.points[0][1]) == pytest.approx((10, 20))
     assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((30, 50))
-
-
-def test_shapes_from_detections_keeps_a_fractional_rectangle_when_scaling() -> None:
-    [shape] = shapes_from_detections(
-        detections=[Detection(bbox=(10.4, 20.4, 30.4, 50.4))],
-        shape_type="rectangle",
-        scale_to_image=(Fraction(4), Fraction(2)),
-    )
-
-    np.testing.assert_allclose(shape.points, [[41.6, 40.8], [124.6, 101.8]])
 
 
 def test_shapes_from_detections_rectangle_without_bbox_is_dropped() -> None:
@@ -391,77 +380,3 @@ def test_assign_available_group_ids_avoids_existing_ids() -> None:
     assign_available_group_ids(shapes=new_shapes, existing_shapes=existing)
 
     assert [shape.group_id for shape in new_shapes] == [6, 6, 7, None]
-
-
-def test_shapes_from_detections_keeps_a_one_row_mask_in_a_stretched_image() -> None:
-    (shape,) = shapes_from_detections(
-        detections=[Detection(bbox=(0, 0, 1023, 0), mask=np.ones((1, 1024), bool))],
-        shape_type="oriented_rectangle",
-        image_size=(4096, 2),
-        scale_to_image=(Fraction(4), Fraction(2)),
-    )
-
-    (expected,) = shapes_from_detections(
-        detections=[Detection(bbox=(0, 0, 4095, 1), mask=np.ones((2, 4096), bool))],
-        shape_type="oriented_rectangle",
-        image_size=(4096, 2),
-    )
-    np.testing.assert_allclose(
-        [shape.points.min(axis=0), shape.points.max(axis=0)],
-        [expected.points.min(axis=0), expected.points.max(axis=0)],
-    )
-
-
-def test_shapes_from_detections_scales_a_circle_area_to_the_image() -> None:
-    (shape,) = shapes_from_detections(
-        detections=[Detection(bbox=(2, 2, 5, 5), mask=np.ones((4, 4), bool))],
-        shape_type="circle",
-        image_size=(40, 20),
-        scale_to_image=(Fraction(4), Fraction(2)),
-    )
-
-    np.testing.assert_allclose(shape.points[0], [16, 8])
-    radius = float(np.linalg.norm(shape.points[1] - shape.points[0]))
-    assert math.pi * radius**2 == pytest.approx(16 * 4 * 2)
-
-
-@pytest.mark.parametrize("length", [2, 16])
-def test_shapes_from_detections_fits_a_scaled_one_pixel_diagonal(length: int) -> None:
-    mask = np.eye(length, dtype=bool)
-
-    (shape,) = shapes_from_detections(
-        detections=[Detection(bbox=(16, 16, 15 + length, 15 + length), mask=mask)],
-        shape_type="oriented_rectangle",
-        image_size=(192, 192),
-        scale_to_image=(Fraction(4), Fraction(4)),
-    )
-
-    (expected,) = shapes_from_detections(
-        detections=[
-            Detection(
-                bbox=(64, 64, 63 + 4 * length, 63 + 4 * length),
-                mask=np.kron(mask, np.ones((4, 4), bool)).astype(bool),
-            )
-        ],
-        shape_type="oriented_rectangle",
-        image_size=(192, 192),
-    )
-    np.testing.assert_allclose(
-        sorted(shape.points.tolist()), sorted(expected.points.tolist()), atol=1e-4
-    )
-
-
-def test_shapes_from_detections_fits_an_unscaled_oriented_rectangle_as_before() -> None:
-    mask = np.array(
-        [[1, 1, 0, 0], [1, 0, 0, 0], [1, 1, 1, 0], [1, 0, 0, 0]], dtype=bool
-    )
-
-    (shape,) = shapes_from_detections(
-        detections=[Detection(bbox=(0, 0, 3, 3), mask=mask)],
-        shape_type="oriented_rectangle",
-        image_size=(4, 4),
-    )
-
-    np.testing.assert_allclose(
-        shape.points, [[2.5, 0.5], [2.5, 3.5], [0.5, 3.5], [0.5, 0.5]]
-    )

@@ -9,8 +9,6 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._geometry import round_bbox_to_int
-from ._scaling import UNSCALED
-from ._scaling import Scale
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
 from ._suppression import match_detections_to_existing_shapes
@@ -55,9 +53,7 @@ class AiAssistSession:
         image_size: tuple[int, int] | None = None,
         score_threshold: float,
         iou_threshold: float,
-        scale_to_image: Scale = UNSCALED,
     ) -> AiAssistProposal:
-        points = points / np.asarray(scale_to_image, dtype=np.float64)
         detections = [
             detection
             for detection in _detections_from_annotations(annotations=annotations)
@@ -94,7 +90,6 @@ class AiAssistSession:
         matches = match_detections_to_existing_shapes(
             detections=detections,
             existing_shapes=existing_shapes,
-            scale_to_image=scale_to_image,
         )
         new_detections = suppress_detections_greedy(
             detections=matches.new_detections,
@@ -106,7 +101,6 @@ class AiAssistSession:
                 shape_type=self.output_format,
                 image_size=image_size,
                 polygon_detail=self.polygon_detail,
-                scale_to_image=scale_to_image,
             ),
             matching_existing_shapes=matches.matching_shapes,
         )

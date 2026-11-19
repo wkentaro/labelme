@@ -7,7 +7,6 @@ import queue
 import threading
 import time
 from collections.abc import Callable
-from fractions import Fraction
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Final
@@ -25,7 +24,6 @@ from PySide6 import QtWidgets
 from .._ai_models import Device
 from .._ai_models import model_info
 from .._ai_models import osam_client
-from ._scaling import Scale
 
 if TYPE_CHECKING:
     import osam
@@ -47,7 +45,6 @@ class InferenceRequest:
 @dataclasses.dataclass(frozen=True)
 class InferenceResult:
     annotations: list[osam.types.Annotation]
-    scale_to_image: Scale
 
 
 def _model_image(*, image: QtGui.QImage, size: tuple[int, int]) -> NDArray[np.uint8]:
@@ -129,27 +126,23 @@ def _run(
         if width <= input_width and height <= input_height
         else (input_width, input_height)
     )
-    if request.points is not None:
-        request = dataclasses.replace(
-            request,
-            points=request.points * [sent_size[0] / width, sent_size[1] / height],
-        )
     key = (request.image.cacheKey(), sent_size)
     if key not in cache:
         cache.clear()
         cache[key] = _model_image(image=request.image, size=sent_size)
     annotations = client.segment(
-        model, cache[key], keep_alive=-1, **_segment_kwargs(request=request)
+        model,
+        cache[key],
+        original_size=(width, height),
+        keep_alive=-1,
+        **_segment_kwargs(request=request),
     )
     logger.info(
         "Segmented with {!r} in {:.0f} ms",
         model,
         (time.perf_counter() - t_start) * 1000,
     )
-    return InferenceResult(
-        annotations=annotations,
-        scale_to_image=(Fraction(width, sent_size[0]), Fraction(height, sent_size[1])),
-    )
+    return InferenceResult(annotations=annotations)
 
 
 @dataclasses.dataclass
