@@ -3,7 +3,6 @@ from __future__ import annotations
 import dataclasses
 import math
 import typing
-from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Final
 
@@ -245,7 +244,7 @@ MASK_REQUIRED_SHAPE_TYPES: Final[frozenset[AiOutputFormat]] = frozenset(
 
 def shapes_from_detections(
     *,
-    detections: Iterable[Detection],
+    detections: list[Detection],
     shape_type: AiOutputFormat,
     image_size: tuple[int, int] | None = None,
     polygon_detail: int = _DEFAULT_POLYGON_DETAIL,
