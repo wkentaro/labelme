@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import weakref
 from collections.abc import Callable
 from fractions import Fraction
 
@@ -7,6 +8,7 @@ import numpy as np
 import pytest
 
 from labelme._automation import Detection
+from labelme._automation import _suppression
 from labelme._automation import shapes_from_detections
 from labelme._automation._suppression import match_detections_to_existing_shapes
 from labelme._automation._suppression import suppress_detections_greedy
@@ -486,3 +488,117 @@ def test_mask_shape_with_swapped_corners_covers_its_first_point() -> None:
     )
 
     assert result.matching_shapes == [mask]
+
+
+def test_overlapping_rasterizes_each_nearby_shape_once_and_alone(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    near = [
+        Shape(
+            shape_type="rectangle",
+            points=np.array([(0, 0), (size, size)], dtype=np.float64),
+        )
+        for size in (1000, 2000)
+    ]
+    far = Shape(
+        shape_type="rectangle",
+        points=np.array([(5000, 5000), (20000, 20000)], dtype=np.float64),
+    )
+    rasterized: list[Shape] = []
+    alive: list[weakref.ref[np.ndarray]] = []
+    held_at_each_call: list[int] = []
+    rasterize_shape = _suppression.rasterize_shape
+
+    def spy(*, shape: Shape, **kwargs: int) -> np.ndarray:
+        held_at_each_call.append(sum(ref() is not None for ref in alive))
+        rasterized.append(shape)
+        mask = rasterize_shape(shape=shape, **kwargs)
+        alive.append(weakref.ref(mask))
+        return mask
+
+    monkeypatch.setattr(_suppression, "rasterize_shape", spy)
+    detection = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=np.ones((11, 11), bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection, detection], existing_shapes=[*near, far]
+    )
+
+    assert result.matching_shapes == [near[0]]
+    assert rasterized == near
+    assert held_at_each_call == [0, 0]
+
+
+def test_overlapping_finds_a_mask_shape_by_its_stored_extent() -> None:
+    existing = Shape(
+        shape_type="mask",
+        points=np.array([(11.5, 21.5), (14.5, 24.5)], dtype=np.float64),
+        mask=np.ones((4, 4), dtype=bool),
+    )
+    corner_pixel = Detection(
+        bbox=(15.0, 25.0, 15.0, 25.0), mask=np.ones((1, 1), dtype=bool)
+    )
+
+    result = match_detections_to_existing_shapes(
+        detections=[corner_pixel], existing_shapes=[existing]
+    )
+
+    assert result.new_detections == []
+    assert result.matching_shapes == [existing]
+
+
+@pytest.mark.parametrize(
+    "existing_shapes",
+    [
+        [],
+        [
+            Shape(
+                shape_type="rectangle",
+                points=np.array([(100, 100), (110, 110)], dtype=np.float64),
+            )
+        ],
+    ],
+    ids=["none", "far"],
+)
+def test_overlapping_skips_the_detection_mask_without_a_nearby_shape(
+    monkeypatch: pytest.MonkeyPatch, existing_shapes: list[Shape]
+) -> None:
+    def fail(**_: Detection) -> None:
+        raise AssertionError("built a detection mask")
+
+    monkeypatch.setattr(_suppression, "_local_mask_from_detection", fail)
+    detection = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=np.ones((11, 11), bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection], existing_shapes=existing_shapes
+    )
+
+    assert result.new_detections == [detection]
+
+
+@pytest.mark.parametrize(
+    "detection",
+    [
+        Detection(bbox=(11.0, 0.0, 20.0, 10.0), mask=np.ones((11, 10), bool)),
+        Detection(
+            bbox=(0.0, 0.0, 10.0, 10.0),
+            mask=np.add(*np.indices((11, 11))) > 10,
+        ),
+    ],
+    ids=["adjacent", "same-box-disjoint-mask"],
+)
+def test_overlapping_keeps_a_disjoint_detection_at_zero_iou_threshold(
+    detection: Detection,
+) -> None:
+    rows, cols = np.indices((11, 11))
+    existing = Shape(
+        shape_type="mask",
+        points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        mask=rows + cols <= 10,
+    )
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection], existing_shapes=[existing], iou_threshold=0.0
+    )
+
+    assert result.new_detections == [detection]
+    assert result.matching_shapes == []

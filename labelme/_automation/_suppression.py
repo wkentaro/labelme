@@ -87,42 +87,66 @@ def match_detections_to_existing_shapes(
 ) -> _ExistingShapeMatchResult:
     if not detections:
         return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
-    existing_shape_masks = [
-        (shape, local_mask)
+    existing_shape_extents = [
+        (shape, extent)
         for shape in existing_shapes
-        if (local_mask := _local_mask_from_shape(shape=shape)) is not None
+        if (extent := _shape_extent(shape=shape)) is not None
     ]
-    if not existing_shape_masks:
-        return _ExistingShapeMatchResult(
-            new_detections=detections[:],
-            matching_shapes=[],
-        )
-
-    kept: list[Detection] = []
-    matching_shapes: list[Shape] = []
-    for detection in detections:
-        if detection.bbox is None:
-            kept.append(detection)
+    detection_extents = [
+        (index, round_bbox_to_int(bbox=detection.bbox))
+        for index, detection in enumerate(detections)
+        if detection.bbox is not None
+    ]
+    detection_masks: dict[int, _LocalMask] = {}
+    matches: dict[int, list[tuple[Shape, _MaskOverlap]]] = {}
+    for shape, extent in existing_shape_extents:
+        nearby = [
+            index
+            for index, detection_extent in detection_extents
+            if _extents_intersect(a=detection_extent, b=extent)
+        ]
+        if not nearby:
             continue
-        new_local = _local_mask_from_detection(detection=detection)
-        matches: list[tuple[Shape, _MaskOverlap]] = []
-        for shape, existing_mask in existing_shape_masks:
-            overlap = _compute_mask_overlap(a=new_local, b=existing_mask)
-            if _is_redundant_overlap(
+        for index in nearby:
+            if index not in detection_masks:
+                detection_masks[index] = _local_mask_from_detection(
+                    detection=detections[index]
+                )
+        overlaps = _overlaps_with_shape(
+            shape=shape,
+            extent=extent,
+            detection_masks=[detection_masks[index] for index in nearby],
+        )
+        for index, overlap in zip(nearby, overlaps, strict=True):
+            if overlap.iou > 0 and _is_redundant_overlap(
                 overlap=overlap,
                 iou_threshold=iou_threshold,
             ):
-                matches.append((shape, overlap))
-        if not matches:
+                matches.setdefault(index, []).append((shape, overlap))
+
+    kept: list[Detection] = []
+    matching_shapes: list[Shape] = []
+    for index, detection in enumerate(detections):
+        if index not in matches:
             kept.append(detection)
             continue
-        matching_shape, _ = max(matches, key=lambda match: match[1].iou)
+        matching_shape, _ = max(matches[index], key=lambda match: match[1].iou)
         if all(shape is not matching_shape for shape in matching_shapes):
             matching_shapes.append(matching_shape)
     return _ExistingShapeMatchResult(
         new_detections=kept,
         matching_shapes=matching_shapes,
     )
+
+
+def _overlaps_with_shape(
+    *,
+    shape: Shape,
+    extent: tuple[int, int, int, int],
+    detection_masks: list[_LocalMask],
+) -> list[_MaskOverlap]:
+    existing_mask = _local_mask_from_shape(shape=shape, extent=extent)
+    return [_compute_mask_overlap(a=mask, b=existing_mask) for mask in detection_masks]
 
 
 def _is_redundant_overlap(
@@ -168,7 +192,7 @@ def _local_mask_from_detection(*, detection: Detection) -> _LocalMask:
     )
 
 
-def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:
+def _shape_extent(*, shape: Shape) -> tuple[int, int, int, int] | None:
     # Skip non-bbox shapes (point/line/linestrip) so callers can pass
     # canvas.shapes unfiltered.
     if shape.shape_type not in (
@@ -185,18 +209,30 @@ def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:
     if shape.shape_type == "mask" and shape.mask is not None:
         # Corners rounded one by one can resize a mask moved by half a pixel;
         # its stored extent cannot.
-        stored = shape.mask.astype(np.bool_, copy=False)
-        return _LocalMask(
-            mask=stored,
-            origin_xy=mask_shape_box(shape=shape)[:2],
-            area=int(np.count_nonzero(stored)),
+        return mask_shape_box(shape=shape)
+    return round_bbox_to_int(bbox=bbox)
+
+
+def _extents_intersect(
+    *, a: tuple[int, int, int, int], b: tuple[int, int, int, int]
+) -> bool:
+    return a[0] <= b[2] and b[0] <= a[2] and a[1] <= b[3] and b[1] <= a[3]
+
+
+def _local_mask_from_shape(
+    *, shape: Shape, extent: tuple[int, int, int, int]
+) -> _LocalMask:
+    xmin, ymin, xmax, ymax = extent
+    if shape.shape_type == "mask" and shape.mask is not None:
+        mask = shape.mask.astype(np.bool_, copy=False)
+    else:
+        mask = rasterize_shape(
+            shape=shape,
+            xmin=xmin,
+            ymin=ymin,
+            width=xmax - xmin + 1,
+            height=ymax - ymin + 1,
         )
-    xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=bbox)
-    width = xmax - xmin + 1
-    height = ymax - ymin + 1
-    mask = rasterize_shape(
-        shape=shape, xmin=xmin, ymin=ymin, width=width, height=height
-    )
     return _LocalMask(
         mask=mask,
         origin_xy=(xmin, ymin),
