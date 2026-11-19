@@ -62,7 +62,7 @@ class AiAssistSession:
         compared, at_image_size, shrink = compare_at_sent_size(
             annotations=annotations, sent_size=sent_size, original_size=original_size
         )
-        points = points * np.asarray(shrink)
+        points = points * np.asarray(shrink, dtype=np.float64)
         detections = [
             detection
             for detection in _detections_from_annotations(

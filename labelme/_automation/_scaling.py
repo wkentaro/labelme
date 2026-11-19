@@ -3,7 +3,9 @@ from __future__ import annotations
 import copy
 import math
 from dataclasses import dataclass
+from fractions import Fraction
 from typing import TYPE_CHECKING
+from typing import Final
 
 import numpy as np
 from numpy.typing import NDArray
@@ -12,6 +14,11 @@ from .._shape import Shape
 from .._shape import mask_shape_box
 from ._geometry import compute_polygon_from_circle
 from ._geometry import round_bbox_to_int
+
+_HALF: Final = Fraction(1, 2)
+
+Scale = tuple[Fraction, Fraction]
+UNSCALED: Final[Scale] = (Fraction(1), Fraction(1))
 
 if TYPE_CHECKING:
     import osam
@@ -39,15 +46,20 @@ class AtImageSize:
         )
 
 
-def _scale_pixel_span(*, first: int, last: int, factor: float) -> tuple[int, int]:
-    start, end = round(first * factor), round((last + 1) * factor) - 1
-    if start > end:
-        start = end = math.floor((first + last + 1) / 2 * factor)
-    return start, end
+def _scale_pixel_span(*, first: int, last: int, factor: Fraction) -> tuple[int, int]:
+    if factor <= 1:
+        return (
+            math.floor((first + _HALF) * factor),
+            math.floor((last + _HALF) * factor),
+        )
+    return (
+        math.ceil(first * factor - _HALF),
+        math.ceil((last + 1) * factor - _HALF) - 1,
+    )
 
 
 def scale_pixel_box(
-    *, box: tuple[int, int, int, int], factor: tuple[float, float]
+    *, box: tuple[int, int, int, int], factor: Scale
 ) -> tuple[int, int, int, int]:
     xmin, ymin, xmax, ymax = box
     x0, x1 = _scale_pixel_span(first=xmin, last=xmax, factor=factor[0])
@@ -55,32 +67,42 @@ def scale_pixel_box(
     return x0, y0, x1, y1
 
 
-def _grid_sources(
-    *, first: int, start: int, end: int, length: int, factor: float
-) -> NDArray[np.intp]:
-    sources = np.floor((np.arange(start, end + 1) + 0.5) / factor).astype(np.intp)
-    return np.clip(sources - first, 0, length - 1)
+def _scale_mask_axis(
+    *, mask: NDArray[np.bool_], first: int, factor: Fraction, axis: int
+) -> NDArray[np.bool_]:
+    if factor == 1:
+        return mask
+    last = first + mask.shape[axis] - 1
+    if factor <= 1:
+        sent_first, sent_last = _scale_pixel_span(first=first, last=last, factor=factor)
+        runs = [
+            max(first, _scale_pixel_span(first=sent, last=sent, factor=1 / factor)[0])
+            - first
+            for sent in range(sent_first, sent_last + 1)
+        ]
+        return np.logical_or.reduceat(mask, runs, axis=axis)
+    sent_starts = [
+        _scale_pixel_span(first=source, last=source, factor=factor)[0]
+        for source in range(first, last + 2)
+    ]
+    return np.repeat(mask, np.diff(sent_starts), axis=axis)
 
 
 def scale_mask(
     *,
     mask: NDArray[np.bool_],
     box: tuple[int, int, int, int],
-    factor: tuple[float, float],
+    factor: Scale,
 ) -> tuple[tuple[int, int, int, int], NDArray[np.bool_]]:
-    scaled_box = x0, y0, x1, y1 = scale_pixel_box(box=box, factor=factor)
-    height, width = mask.shape
-    rows = _grid_sources(
-        first=box[1], start=y0, end=y1, length=height, factor=factor[1]
-    )
-    columns = _grid_sources(
-        first=box[0], start=x0, end=x1, length=width, factor=factor[0]
-    )
-    return scaled_box, mask[np.ix_(rows, columns)]
+    for first, axis_factor, axis in sorted(
+        [(box[1], factor[1], 0), (box[0], factor[0], 1)], key=lambda step: step[1]
+    ):
+        mask = _scale_mask_axis(mask=mask, first=first, factor=axis_factor, axis=axis)
+    return scale_pixel_box(box=box, factor=factor), mask
 
 
-def scale_shape(*, shape: Shape, factor: tuple[float, float]) -> Shape:
-    if factor == (1.0, 1.0):
+def scale_shape(*, shape: Shape, factor: Scale) -> Shape:
+    if factor == UNSCALED:
         return shape
     scaled = copy.copy(shape)
     if shape.shape_type == "mask" and shape.mask is not None:
@@ -98,14 +120,18 @@ def scale_shape(*, shape: Shape, factor: tuple[float, float]) -> Shape:
         )
         scaled.points = np.array([[x0, y0], [x1, y1]], dtype=np.float64)
         return scaled
+    stretch = np.asarray(factor, dtype=np.float64)
     if shape.shape_type == "circle" and len(shape.points) == 2:  # noqa: PLR2004
         center, edge = shape.points
         scaled.shape_type = "polygon"
-        scaled.points = compute_polygon_from_circle(
-            center=center, radius=float(np.linalg.norm(edge - center)), detail=100
-        ) * np.asarray(factor)
+        scaled.points = (
+            compute_polygon_from_circle(
+                center=center, radius=float(np.linalg.norm(edge - center)), detail=100
+            )
+            * stretch
+        )
         return scaled
-    scaled.points = shape.points * np.asarray(factor)
+    scaled.points = shape.points * stretch
     return scaled
 
 
@@ -114,10 +140,13 @@ def compare_at_sent_size(
     annotations: list[osam.types.Annotation],
     sent_size: tuple[int, int] | None,
     original_size: tuple[int, int] | None,
-) -> tuple[list[osam.types.Annotation], list[AtImageSize | None], tuple[float, float]]:
+) -> tuple[list[osam.types.Annotation], list[AtImageSize | None], Scale]:
     if sent_size is None or original_size is None:
-        return annotations, [None] * len(annotations), (1.0, 1.0)
-    shrink = (sent_size[0] / original_size[0], sent_size[1] / original_size[1])
+        return annotations, [None] * len(annotations), UNSCALED
+    shrink = (
+        Fraction(sent_size[0], original_size[0]),
+        Fraction(sent_size[1], original_size[1]),
+    )
     compared: list[osam.types.Annotation] = []
     at_image_size: list[AtImageSize | None] = []
     for annotation in annotations:

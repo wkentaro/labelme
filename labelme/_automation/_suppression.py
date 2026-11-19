@@ -13,6 +13,8 @@ from .._shape import Shape
 from .._shape import mask_shape_box
 from ._geometry import round_bbox_to_int
 from ._geometry import shape_to_xyxy_bbox
+from ._scaling import UNSCALED
+from ._scaling import Scale
 from ._scaling import scale_pixel_box
 from ._scaling import scale_shape
 from ._shape_builders import Detection
@@ -95,7 +97,7 @@ def match_detections_to_existing_shapes(
     detections: list[Detection],
     existing_shapes: list[Shape],
     iou_threshold: float = 0.5,
-    shrink: tuple[float, float] = (1.0, 1.0),
+    shrink: Scale = UNSCALED,
 ) -> _ExistingShapeMatchResult:
     if not detections:
         return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
@@ -126,7 +128,7 @@ def match_detections_to_existing_shapes(
                 )
         overlaps = _overlaps_with_shape(
             shape=scale_shape(shape=shape, factor=shrink),
-            image_extent=None if shrink == (1.0, 1.0) else extent,
+            image_extent=None if shrink == UNSCALED else extent,
             detection_masks=[detection_masks[index] for index in nearby],
         )
         for index, overlap in zip(nearby, overlaps, strict=True):
@@ -242,7 +244,7 @@ def _shape_extent(*, shape: Shape) -> tuple[int, int, int, int] | None:
 
 
 def _scaled_extent(
-    *, shape: Shape, extent: tuple[int, int, int, int], factor: tuple[float, float]
+    *, shape: Shape, extent: tuple[int, int, int, int], factor: Scale
 ) -> tuple[int, int, int, int]:
     if shape.shape_type == "mask":
         return scale_pixel_box(box=extent, factor=factor)

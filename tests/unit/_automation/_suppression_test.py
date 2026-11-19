@@ -451,7 +451,7 @@ def test_shrunk_speck_covers_a_match_however_it_is_padded(
             Detection(bbox=(column, 0, column, 0), mask=np.ones((1, 1), dtype=bool))
         ],
         existing_shapes=[speck],
-        scale_to_image=(Fraction(scale), Fraction(scale)),
+        shrink=(1 / Fraction(scale), 1 / Fraction(scale)),
     )
 
     assert result.new_detections == []
@@ -459,17 +459,18 @@ def test_shrunk_speck_covers_a_match_however_it_is_padded(
 
 
 def test_saved_match_covers_only_its_own_sent_column() -> None:
-    scale = (Fraction(1025, 1024), Fraction(1))
-    [saved] = shapes_from_detections(
-        detections=[Detection(bbox=(512, 0, 512, 0), mask=np.ones((1, 1), bool))],
+    saved = Shape(
         shape_type="mask",
-        scale_to_image=scale,
+        points=np.array([[512, 0], [513, 0]], dtype=np.float64),
+        mask=np.ones((1, 2), dtype=bool),
     )
     neighbor = Detection(bbox=(511, 0, 511, 0), mask=np.ones((1, 1), bool))
     same = Detection(bbox=(512, 0, 512, 0), mask=np.ones((1, 1), bool))
 
     result = match_detections_to_existing_shapes(
-        detections=[neighbor, same], existing_shapes=[saved], scale_to_image=scale
+        detections=[neighbor, same],
+        existing_shapes=[saved],
+        shrink=(Fraction(1024, 1025), Fraction(1)),
     )
 
     assert result.new_detections == [neighbor]
@@ -654,7 +655,9 @@ def test_shrunk_polygon_covers_a_detection_on_its_last_column() -> None:
     detection = Detection(bbox=(10.0, 0.0, 10.0, 10.0), mask=np.ones((11, 1), bool))
 
     result = match_detections_to_existing_shapes(
-        detections=[detection], existing_shapes=[polygon], shrink=(0.1, 0.1)
+        detections=[detection],
+        existing_shapes=[polygon],
+        shrink=(Fraction(1, 10), Fraction(1, 10)),
     )
 
     assert result.matching_shapes == [polygon]
@@ -672,7 +675,9 @@ def test_shrunk_polygon_near_a_detection_by_its_shrunk_vertices() -> None:
     detection = Detection(bbox=(15.0, 0.0, 15.0, 9.0), mask=np.ones((10, 1), bool))
 
     result = match_detections_to_existing_shapes(
-        detections=[detection], existing_shapes=[polygon], shrink=(0.1, 0.1)
+        detections=[detection],
+        existing_shapes=[polygon],
+        shrink=(Fraction(1, 10), Fraction(1, 10)),
     )
 
     assert result.matching_shapes == [polygon]
@@ -688,7 +693,9 @@ def test_shrunk_mask_shape_near_a_detection_by_its_rounded_origin() -> None:
     detection = Detection(bbox=(16.0, 0.0, 16.0, 0.0), mask=np.ones((1, 1), bool))
 
     result = match_detections_to_existing_shapes(
-        detections=[detection], existing_shapes=[mask_shape], shrink=(0.1, 0.1)
+        detections=[detection],
+        existing_shapes=[mask_shape],
+        shrink=(Fraction(1, 10), Fraction(1, 10)),
     )
 
     assert result.matching_shapes == [mask_shape]
@@ -702,7 +709,9 @@ def test_shrunk_rectangle_covers_a_detection_by_its_rounded_edge() -> None:
     detection = Detection(bbox=(10.0, 0.0, 10.0, 0.0), mask=np.ones((1, 1), bool))
 
     result = match_detections_to_existing_shapes(
-        detections=[detection], existing_shapes=[rectangle], shrink=(0.1, 0.1)
+        detections=[detection],
+        existing_shapes=[rectangle],
+        shrink=(Fraction(1, 10), Fraction(1, 10)),
     )
 
     assert result.matching_shapes == [rectangle]

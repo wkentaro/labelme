@@ -507,3 +507,30 @@ def test_text_proposal_for_a_label_builds_no_match_again(
     assert enlarged == [0, 200]
     assert [round(shape.points[:, 0].min()) for shape in shapes] == kept_x
     assert all(any(shape is c for c in candidates) for shape in shapes)
+
+
+def test_text_proposal_skips_a_match_saved_from_its_own_scores() -> None:
+    scores = np.repeat(np.array([[120], [153], [0]], dtype=np.uint8), 3, axis=1)
+    propose = functools.partial(
+        propose_shapes_from_texts,
+        annotations=[
+            osam.types.Annotation(
+                text="cat",
+                score=0.9,
+                bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=5, ymax=5),
+                mask_scores=scores,
+            )
+        ],
+        texts=["cat"],
+        shape_type="mask",
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(6, 6),
+        polygon_detail=80,
+        sent_size=(3, 3),
+        original_size=(6, 6),
+    )
+    (saved,) = propose(existing_shapes=[])
+    saved.label = "cat"
+
+    assert propose(existing_shapes=[saved]) == []
