@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from fractions import Fraction
+
 import numpy as np
 import pytest
 
+from labelme._automation._scaling import Scale
 from labelme._automation._scaling import scale_bbox
 from labelme._automation._scaling import scale_pixel_box
 from labelme._automation._scaling import scale_shape
@@ -12,19 +15,19 @@ from labelme._shape import Shape
 @pytest.mark.parametrize(
     ("box", "factor", "expected"),
     [
-        ((0, 0, 0, 0), (4.0, 2.0), (0, 0, 3, 1)),
-        ((8, 4, 23, 11), (0.25, 0.5), (2, 2, 5, 5)),
-        ((5, 5, 5, 5), (0.1, 0.1), (0, 0, 0, 0)),
-        ((-1, -1, -1, -1), (0.25, 0.25), (-1, -1, -1, -1)),
-        ((0, 1023, 1023, 1023), (1.0, 0.5), (0, 511, 1023, 511)),
-        ((3, 1, 6, 1), (0.5, 1.5), (1, 1, 3, 2)),
-        ((2, 0, 2, 0), (0.25, 1.0), (0, 0, 0, 0)),
+        ((0, 0, 0, 0), (Fraction(4), Fraction(2)), (0, 0, 3, 1)),
+        ((8, 4, 23, 11), (Fraction(1, 4), Fraction(1, 2)), (2, 2, 5, 5)),
+        ((5, 5, 5, 5), (Fraction(1, 10), Fraction(1, 10)), (0, 0, 0, 0)),
+        ((-1, -1, -1, -1), (Fraction(1, 4), Fraction(1, 4)), (-1, -1, -1, -1)),
+        ((0, 1023, 1023, 1023), (Fraction(1), Fraction(1, 2)), (0, 511, 1023, 511)),
+        ((3, 1, 6, 1), (Fraction(1, 2), Fraction(3, 2)), (1, 1, 3, 2)),
+        ((2, 0, 2, 0), (Fraction(1, 4), Fraction(1)), (0, 0, 0, 0)),
     ],
 )
 def test_scale_pixel_box_maps_whole_pixels(
     *,
     box: tuple[int, int, int, int],
-    factor: tuple[float, float],
+    factor: Scale,
     expected: tuple[int, int, int, int],
 ) -> None:
     assert scale_pixel_box(box=box, factor=factor) == expected
@@ -37,7 +40,7 @@ def test_scale_shape_resizes_a_mask_to_its_scaled_extent() -> None:
         mask=np.array([[True, False], [False, False]]),
     )
 
-    scaled = scale_shape(shape=mask, factor=(2.0, 2.0))
+    scaled = scale_shape(shape=mask, factor=(Fraction(2), Fraction(2)))
 
     np.testing.assert_array_equal(scaled.points, [[2, 2], [5, 5]])
     assert scaled.mask is not None
@@ -58,8 +61,12 @@ def test_scale_shape_samples_a_mask_where_the_image_is_sampled() -> None:
             mask=mask,
         )
 
-    padded = scale_shape(shape=mask_shape(xmin=0, width=18), factor=(0.1, 0.1))
-    tight = scale_shape(shape=mask_shape(xmin=14, width=3), factor=(0.1, 0.1))
+    padded = scale_shape(
+        shape=mask_shape(xmin=0, width=18), factor=(Fraction(1, 10), Fraction(1, 10))
+    )
+    tight = scale_shape(
+        shape=mask_shape(xmin=14, width=3), factor=(Fraction(1, 10), Fraction(1, 10))
+    )
 
     np.testing.assert_array_equal(padded.points, [[0, 0], [1, 0]])
     np.testing.assert_array_equal(tight.points, [[1, 0], [1, 0]])
@@ -80,13 +87,15 @@ def _mask_shape(*, xmin: int, ymin: int, mask: list[list[bool]]) -> Shape:
     )
 
 
-@pytest.mark.parametrize("factor", [66_060_359 / 1008, 1008 / 66_060_359])
+@pytest.mark.parametrize(
+    "factor", [Fraction(66_060_359, 1008), Fraction(1008, 66_060_359)]
+)
 def test_scale_shape_scales_a_mask_the_same_however_it_is_padded(
-    factor: float,
+    factor: Fraction,
 ) -> None:
     def foreground_columns(*, mask: list[list[bool]]) -> list[int]:
         scaled = scale_shape(
-            shape=_mask_shape(xmin=503, ymin=0, mask=mask), factor=(factor, 1.0)
+            shape=_mask_shape(xmin=503, ymin=0, mask=mask), factor=(factor, Fraction(1))
         )
         assert scaled.mask is not None
         return (np.flatnonzero(scaled.mask[0]) + int(scaled.points[0, 0])).tolist()
@@ -98,7 +107,8 @@ def test_scale_shape_keeps_every_stripe_of_a_shrunk_mask() -> None:
     stripes = [[True], [False], [False], [False], [True]]
 
     scaled = scale_shape(
-        shape=_mask_shape(xmin=0, ymin=2, mask=stripes), factor=(1.0, 0.5)
+        shape=_mask_shape(xmin=0, ymin=2, mask=stripes),
+        factor=(Fraction(1), Fraction(1, 2)),
     )
 
     assert scaled.mask is not None
@@ -112,7 +122,7 @@ def test_scale_shape_stretches_a_circle_into_an_ellipse() -> None:
         points=np.array([[40, 40], [48, 40]], dtype=np.float64),
     )
 
-    scaled = scale_shape(shape=circle, factor=(0.5, 0.25))
+    scaled = scale_shape(shape=circle, factor=(Fraction(1, 2), Fraction(1, 4)))
 
     assert scaled.shape_type == "polygon"
     np.testing.assert_allclose(
@@ -130,7 +140,7 @@ def test_scale_shape_keeps_every_mask_pixel_when_enlarging() -> None:
         mask=mask,
     )
 
-    scaled = scale_shape(shape=shape, factor=(1.2, 1.2))
+    scaled = scale_shape(shape=shape, factor=(Fraction(6, 5), Fraction(6, 5)))
 
     assert scaled.mask is not None
     assert scaled.mask.shape == (6, 6)
@@ -140,18 +150,24 @@ def test_scale_shape_keeps_every_mask_pixel_when_enlarging() -> None:
 
 def test_scale_shape_shrinks_a_rectangle_back_to_its_detection() -> None:
     bbox = (10.49, 20.49, 14.49, 24.49)
-    xmin, ymin, xmax, ymax = scale_bbox(bbox=bbox, factor=(1.2, 1.2))
+    xmin, ymin, xmax, ymax = scale_bbox(
+        bbox=bbox, factor=(Fraction(6, 5), Fraction(6, 5))
+    )
     rectangle = Shape(
         shape_type="rectangle",
         points=np.array([[xmin, ymin], [xmax, ymax]], dtype=np.float64),
     )
 
-    shrunk = scale_shape(shape=rectangle, factor=(1 / 1.2, 1 / 1.2))
+    shrunk = scale_shape(
+        shape=rectangle, factor=(1 / Fraction(6, 5), 1 / Fraction(6, 5))
+    )
 
     np.testing.assert_allclose(shrunk.points, [bbox[:2], bbox[2:]])
 
 
 def test_scale_bbox_keeps_a_shrunk_box_from_inverting() -> None:
-    xmin, ymin, xmax, ymax = scale_bbox(bbox=(100, 100, 101, 101), factor=(0.25, 0.25))
+    xmin, ymin, xmax, ymax = scale_bbox(
+        bbox=(100, 100, 101, 101), factor=(Fraction(1, 4), Fraction(1, 4))
+    )
 
     assert (xmax, ymax) >= (xmin, ymin)

@@ -36,6 +36,13 @@ def round_bbox_to_int(
     )
 
 
+def mask_shape_box(*, shape: Shape) -> tuple[int, int, int, int]:
+    assert shape.mask is not None
+    xmin, ymin = (int(v) for v in np.floor(shape.points.min(axis=0) + 0.5))
+    height, width = shape.mask.shape
+    return xmin, ymin, xmin + width - 1, ymin + height - 1
+
+
 def shape_to_xyxy_bbox(*, shape: Shape) -> NDArray[np.float32] | None:
     # None means a supported shape is mid-draw (too few points); shape types
     # with no bbox interpretation raise ValueError.

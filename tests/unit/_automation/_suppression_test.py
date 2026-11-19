@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from fractions import Fraction
 
 import numpy as np
 import pytest
@@ -337,7 +338,7 @@ def test_overlapping_accepts_mask_shape_moved_by_half_a_pixel() -> None:
         points=np.array([(10.5, 20.5), (13.5, 23.5)], dtype=np.float64),
         mask=np.ones((4, 4), dtype=bool),
     )
-    covered = Detection(bbox=(10.0, 20.0, 13.0, 23.0), mask=np.ones((4, 4), dtype=bool))
+    covered = Detection(bbox=(11.0, 21.0, 14.0, 24.0), mask=np.ones((4, 4), dtype=bool))
     elsewhere = Detection(
         bbox=(40.0, 40.0, 43.0, 43.0), mask=np.ones((4, 4), dtype=bool)
     )
@@ -423,16 +424,18 @@ def test_overlapping_skips_existing_shape_without_bbox_interpretation(
 
 
 @pytest.mark.parametrize(
-    ("xmin", "mask", "scale"),
+    ("xmin", "mask", "scale", "column"),
     [
-        (14, [True] * 3, 10.0),
-        (0, [False] * 14 + [True] * 3 + [False], 10.0),
-        (3.5, [True], 4.0),
-        (2.5, [False, True], 4.0),
+        (14, [True] * 3, 10, 1),
+        (0, [False] * 14 + [True] * 3 + [False], 10, 1),
+        (3.5, [True], 4, 1),
+        (2.5, [False, True], 4, 1),
+        (3.5, [True], 1, 4),
+        (2.5, [False, True], 1, 4),
     ],
 )
 def test_shrunk_speck_covers_a_match_however_it_is_padded(
-    xmin: float, mask: list[bool], scale: float
+    xmin: float, mask: list[bool], scale: int, column: int
 ) -> None:
     speck = Shape(
         shape_type="mask",
@@ -441,10 +444,28 @@ def test_shrunk_speck_covers_a_match_however_it_is_padded(
     )
 
     result = match_detections_to_existing_shapes(
-        detections=[Detection(bbox=(1, 0, 1, 0), mask=np.ones((1, 1), dtype=bool))],
+        detections=[
+            Detection(bbox=(column, 0, column, 0), mask=np.ones((1, 1), dtype=bool))
+        ],
         existing_shapes=[speck],
-        scale_to_image=(scale, scale),
+        scale_to_image=(Fraction(scale), Fraction(scale)),
     )
 
     assert result.new_detections == []
     assert result.matching_shapes == [speck]
+
+
+def test_saved_match_covers_only_its_own_sent_column() -> None:
+    scale = (Fraction(1025, 1024), Fraction(1))
+    [saved] = shapes_from_detections(
+        detections=[Detection(bbox=(512, 0, 512, 0), mask=np.ones((1, 1), bool))],
+        shape_type="mask",
+        scale_to_image=scale,
+    )
+    neighbor = Detection(bbox=(511, 0, 511, 0), mask=np.ones((1, 1), bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[neighbor], existing_shapes=[saved], scale_to_image=scale
+    )
+
+    assert result.new_detections == [neighbor]

@@ -10,8 +10,12 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._geometry import compute_polygon_from_circle
+from ._geometry import mask_shape_box
 
 _HALF: Final = Fraction(1, 2)
+
+Scale = tuple[Fraction, Fraction]
+UNSCALED: Final[Scale] = (Fraction(1), Fraction(1))
 
 
 def _scale_pixel_span(*, first: int, last: int, factor: Fraction) -> tuple[int, int]:
@@ -27,21 +31,21 @@ def _scale_pixel_span(*, first: int, last: int, factor: Fraction) -> tuple[int, 
 
 
 def scale_pixel_box(
-    *, box: tuple[int, int, int, int], factor: tuple[float, float]
+    *, box: tuple[int, int, int, int], factor: Scale
 ) -> tuple[int, int, int, int]:
     xmin, ymin, xmax, ymax = box
-    x0, x1 = _scale_pixel_span(first=xmin, last=xmax, factor=Fraction(factor[0]))
-    y0, y1 = _scale_pixel_span(first=ymin, last=ymax, factor=Fraction(factor[1]))
+    x0, x1 = _scale_pixel_span(first=xmin, last=xmax, factor=factor[0])
+    y0, y1 = _scale_pixel_span(first=ymin, last=ymax, factor=factor[1])
     return x0, y0, x1, y1
 
 
 def scale_bbox(
-    *, bbox: tuple[float, float, float, float], factor: tuple[float, float]
+    *, bbox: tuple[float, float, float, float], factor: Scale
 ) -> tuple[float, float, float, float]:
-    if factor == (1.0, 1.0):
+    if factor == UNSCALED:
         return bbox
     xmin, ymin, xmax, ymax = bbox
-    scale_x, scale_y = factor
+    scale_x, scale_y = float(factor[0]), float(factor[1])
     return (
         xmin * scale_x,
         ymin * scale_y,
@@ -51,35 +55,32 @@ def scale_bbox(
 
 
 def _scale_mask_axis(
-    *, mask: NDArray[np.bool_], first: int, factor: float, axis: int
+    *, mask: NDArray[np.bool_], first: int, factor: Fraction, axis: int
 ) -> NDArray[np.bool_]:
-    exact = Fraction(factor)
     last = first + mask.shape[axis] - 1
-    if exact <= 1:
-        sent_first, sent_last = _scale_pixel_span(first=first, last=last, factor=exact)
+    if factor <= 1:
+        sent_first, sent_last = _scale_pixel_span(first=first, last=last, factor=factor)
         runs = [
-            max(first, _scale_pixel_span(first=sent, last=sent, factor=1 / exact)[0])
+            max(first, _scale_pixel_span(first=sent, last=sent, factor=1 / factor)[0])
             - first
             for sent in range(sent_first, sent_last + 1)
         ]
         return np.logical_or.reduceat(mask, runs, axis=axis)
     sent_starts = [
-        _scale_pixel_span(first=source, last=source, factor=exact)[0]
+        _scale_pixel_span(first=source, last=source, factor=factor)[0]
         for source in range(first, last + 2)
     ]
     return np.repeat(mask, np.diff(sent_starts), axis=axis)
 
 
-def scale_shape(*, shape: Shape, factor: tuple[float, float]) -> Shape:
-    if factor == (1.0, 1.0):
+def scale_shape(*, shape: Shape, factor: Scale) -> Shape:
+    if factor == UNSCALED:
         return shape
     scaled = copy.copy(shape)
     if shape.shape_type == "mask" and shape.mask is not None:
-        xmin, ymin = np.floor(shape.points.min(axis=0) + 0.5).astype(int)
-        height, width = shape.mask.shape
-        x0, y0, x1, y1 = scale_pixel_box(
-            box=(xmin, ymin, xmin + width - 1, ymin + height - 1), factor=factor
-        )
+        box = mask_shape_box(shape=shape)
+        xmin, ymin = box[:2]
+        x0, y0, x1, y1 = scale_pixel_box(box=box, factor=factor)
         scaled.points = np.array([[x0, y0], [x1, y1]], dtype=np.float64)
         mask = shape.mask
         for first, axis_factor, axis in sorted(
@@ -96,12 +97,16 @@ def scale_shape(*, shape: Shape, factor: tuple[float, float]) -> Shape:
         )
         scaled.points = np.array([[xmin, ymin], [xmax, ymax]], dtype=np.float64)
         return scaled
+    stretch = np.asarray(factor, dtype=np.float64)
     if shape.shape_type == "circle" and len(shape.points) == 2:  # noqa: PLR2004
         center, edge = shape.points
         scaled.shape_type = "polygon"
-        scaled.points = compute_polygon_from_circle(
-            center=center, radius=float(np.linalg.norm(edge - center)), detail=100
-        ) * np.asarray(factor)
+        scaled.points = (
+            compute_polygon_from_circle(
+                center=center, radius=float(np.linalg.norm(edge - center)), detail=100
+            )
+            * stretch
+        )
         return scaled
-    scaled.points = shape.points * np.asarray(factor)
+    scaled.points = shape.points * stretch
     return scaled
