@@ -463,12 +463,14 @@ def test_saved_match_covers_only_its_own_sent_column() -> None:
         scale_to_image=scale,
     )
     neighbor = Detection(bbox=(511, 0, 511, 0), mask=np.ones((1, 1), bool))
+    same = Detection(bbox=(512, 0, 512, 0), mask=np.ones((1, 1), bool))
 
     result = match_detections_to_existing_shapes(
-        detections=[neighbor], existing_shapes=[saved], scale_to_image=scale
+        detections=[neighbor, same], existing_shapes=[saved], scale_to_image=scale
     )
 
     assert result.new_detections == [neighbor]
+    assert result.matching_shapes == [saved]
 
 
 def test_mask_shape_with_swapped_corners_covers_its_first_point() -> None:
