@@ -246,13 +246,9 @@ def _scaled_extent(
 ) -> tuple[int, int, int, int]:
     if shape.shape_type == "mask":
         return scale_pixel_box(box=extent, factor=factor)
-    if shape.shape_type == "rectangle":
-        scaled = _shape_extent(shape=scale_shape(shape=shape, factor=factor))
-        assert scaled is not None
-        return scaled
-    bbox = shape_to_xyxy_bbox(shape=shape)
-    assert bbox is not None
-    return round_bbox_to_int(bbox=bbox * np.tile(factor, 2))
+    scaled = _shape_extent(shape=scale_shape(shape=shape, factor=factor))
+    assert scaled is not None
+    return scaled
 
 
 def _extents_intersect(
