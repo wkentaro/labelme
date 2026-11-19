@@ -10,6 +10,7 @@ import pytest
 from numpy.typing import NDArray
 
 from labelme._automation._scaling import AtImageSize
+from labelme._automation._scaling import Scale
 from labelme._automation._text_detection import MaskOutputUnavailableError
 from labelme._automation._text_detection import get_bboxes_from_texts
 from labelme._automation._text_detection import nms_bboxes
@@ -454,6 +455,44 @@ def test_text_proposal_keeps_apart_matches_that_meet_only_at_the_sent_size(
         [[0, 0], [4, 9]],
         [[5, 0], [9, 9]],
     ]
+
+
+def test_text_proposal_renders_no_match_apart_from_a_shape_in_the_image(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    pooled: list[int] = []
+    pool = AtImageSize.pooled_mask
+
+    def pooled_mask(self: AtImageSize, *, factor: Scale) -> NDArray[np.bool_]:
+        pooled.append(self.bbox[0])
+        return pool(self, factor=factor)
+
+    monkeypatch.setattr(AtImageSize, "pooled_mask", pooled_mask)
+    cat = Shape(label="cat", shape_type="rectangle")
+    cat.points = np.array([[0, 0], [4, 9]], dtype=np.float64)
+
+    shapes = propose_shapes_from_texts(
+        annotations=[
+            osam.types.Annotation(
+                text="cat",
+                score=0.9,
+                bounding_box=osam.types.BoundingBox(xmin=5, ymin=0, xmax=9, ymax=9),
+                mask_scores=np.full((10, 40), 255, dtype=np.uint8),
+            )
+        ],
+        texts=["cat"],
+        shape_type="rectangle",
+        existing_shapes=[cat],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(400, 100),
+        polygon_detail=80,
+        sent_size=(40, 10),
+        original_size=(400, 100),
+    )
+
+    assert pooled == []
+    assert [shape.points.tolist() for shape in shapes] == [[[5, 0], [9, 9]]]
 
 
 @pytest.mark.parametrize("sent_size", [(40, 10), (400, 100)])
