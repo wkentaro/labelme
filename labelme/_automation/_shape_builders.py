@@ -223,7 +223,10 @@ def _circle_for_detection(*, detection: Detection) -> Circle | None:
 def _outline_mask(*, mask: NDArray[np.bool_]) -> tuple[NDArray[np.bool_], int]:
     MAX_PIXELS: Final = 1 << 20
     step = math.ceil(math.sqrt(mask.size / MAX_PIXELS))
-    return np.ascontiguousarray(mask[step // 2 :: step, step // 2 :: step]), step
+    if step == 1:
+        return np.ascontiguousarray(mask), step
+    rows = np.logical_or.reduceat(mask, np.arange(0, mask.shape[0], step), axis=0)
+    return np.logical_or.reduceat(rows, np.arange(0, mask.shape[1], step), axis=1), step
 
 
 # Output formats that drop a bbox-only detection. Deriving this from the same
