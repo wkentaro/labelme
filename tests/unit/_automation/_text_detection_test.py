@@ -373,3 +373,79 @@ def test_text_proposal_uses_the_configured_existing_shape_iou(
     )
 
     assert len(shapes) == count
+
+
+def test_text_proposal_compares_scored_matches_small_and_enlarges_the_kept_ones() -> (
+    None
+):
+    def scored(*, score: float, xmin: int, columns: slice) -> osam.types.Annotation:
+        mask_scores = np.zeros((8, 40), dtype=np.uint8)
+        mask_scores[:, columns] = 255
+        return osam.types.Annotation(
+            text="cat",
+            score=score,
+            bounding_box=osam.types.BoundingBox(
+                xmin=xmin, ymin=0, xmax=xmin + 1999, ymax=799
+            ),
+            mask_scores=mask_scores,
+        )
+
+    existing = Shape(
+        label="cat",
+        shape_type="mask",
+        points=np.array([[2000, 0], [3999, 799]], dtype=np.float64),
+        mask=np.ones((800, 2000), dtype=bool),
+    )
+
+    shapes = propose_shapes_from_texts(
+        annotations=[
+            scored(score=0.9, xmin=0, columns=slice(0, 20)),
+            scored(score=0.8, xmin=0, columns=slice(0, 20)),
+            scored(score=0.7, xmin=2000, columns=slice(20, 40)),
+        ],
+        texts=["cat"],
+        shape_type="mask",
+        existing_shapes=[existing],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(4000, 800),
+        polygon_detail=80,
+        sent_size=(400, 80),
+        original_size=(4000, 800),
+    )
+
+    (shape,) = shapes
+    np.testing.assert_array_equal(shape.points, [[0, 0], [1999, 799]])
+    assert shape.mask is not None and shape.mask.shape == (800, 2000)
+    assert shape.mask.all()
+
+
+def test_text_proposal_keeps_apart_matches_that_meet_only_at_the_sent_size() -> None:
+    def scored(*, score: float, xmin: int, xmax: int) -> osam.types.Annotation:
+        return osam.types.Annotation(
+            text="cat",
+            score=score,
+            bounding_box=osam.types.BoundingBox(xmin=xmin, ymin=0, xmax=xmax, ymax=9),
+            mask_scores=np.full((10, 40), 255, dtype=np.uint8),
+        )
+
+    shapes = propose_shapes_from_texts(
+        annotations=[
+            scored(score=0.9, xmin=0, xmax=4),
+            scored(score=0.8, xmin=5, xmax=9),
+        ],
+        texts=["cat"],
+        shape_type="rectangle",
+        existing_shapes=[],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(400, 100),
+        polygon_detail=80,
+        sent_size=(40, 10),
+        original_size=(400, 100),
+    )
+
+    assert [shape.points.tolist() for shape in shapes] == [
+        [[0, 0], [4, 9]],
+        [[5, 0], [9, 9]],
+    ]

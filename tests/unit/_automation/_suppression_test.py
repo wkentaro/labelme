@@ -644,3 +644,32 @@ def test_overlapping_keeps_a_disjoint_detection_at_zero_iou_threshold(
 
     assert result.new_detections == [detection]
     assert result.matching_shapes == []
+
+
+def test_shrunk_polygon_covers_a_detection_on_its_last_column() -> None:
+    polygon = Shape(
+        shape_type="polygon",
+        points=np.array([(0, 0), (100, 0), (100, 100), (0, 100)], dtype=np.float64),
+    )
+    detection = Detection(bbox=(10.0, 0.0, 10.0, 10.0), mask=np.ones((11, 1), bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection], existing_shapes=[polygon], shrink=(0.1, 0.1)
+    )
+
+    assert result.matching_shapes == [polygon]
+    assert result.new_detections == []
+
+
+def test_shrunk_rectangle_covers_a_detection_by_its_rounded_edge() -> None:
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([(105.4999999, 0), (129, 9)], dtype=np.float64),
+    )
+    detection = Detection(bbox=(10.0, 0.0, 10.0, 0.0), mask=np.ones((1, 1), bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection], existing_shapes=[rectangle], shrink=(0.1, 0.1)
+    )
+
+    assert result.matching_shapes == [rectangle]

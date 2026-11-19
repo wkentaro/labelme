@@ -456,6 +456,7 @@ def test_run_sends_a_large_image_at_the_model_resolution() -> None:
         cast(np.ndarray, client.kwargs[0]["points"]), [[16.0, 8.0]]
     )
     assert client.kwargs[0]["original_size"] == (32, 16)
+    assert (results[0].sent_size, results[0].original_size) == ((8, 8), (32, 16))
     (annotation,) = results[0].annotations
     assert annotation.mask is not None
     np.testing.assert_array_equal(annotation.mask, np.eye(8, dtype=bool))
@@ -484,3 +485,11 @@ def test_segment_kwargs_drop_text_candidates_below_the_score() -> None:
     )
 
     assert _osam_worker._segment_kwargs(request=request)["score_threshold"] == 0.4  # noqa: PLR2004
+
+
+def test_segment_kwargs_ask_text_matches_for_scores_not_masks() -> None:
+    request = InferenceRequest(model_name="sam3:latest", image=_IMAGE, texts=["dog"])
+
+    kwargs = _osam_worker._segment_kwargs(request=request)
+
+    assert (kwargs["include_masks"], kwargs["include_mask_scores"]) == (False, True)

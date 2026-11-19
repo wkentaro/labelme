@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import typing
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Final
 
@@ -16,6 +17,7 @@ from ._geometry import compute_circle_from_mask
 from ._geometry import compute_oriented_rectangle_from_mask
 from ._geometry import compute_polygons_from_mask
 from ._geometry import round_bbox_to_int
+from ._scaling import AtImageSize
 from ._types import AiOutputFormat
 
 _DEFAULT_POLYGON_DETAIL: Final[int] = 60
@@ -28,6 +30,7 @@ class Detection:
     label: str | None = None
     description: str | None = None
     score: float = 0.0
+    at_image_size: AtImageSize | None = None
 
 
 def _build_shape(
@@ -238,7 +241,7 @@ MASK_REQUIRED_SHAPE_TYPES: Final[frozenset[AiOutputFormat]] = frozenset(
 
 def shapes_from_detections(
     *,
-    detections: list[Detection],
+    detections: Iterable[Detection],
     shape_type: AiOutputFormat,
     image_size: tuple[int, int] | None = None,
     polygon_detail: int = _DEFAULT_POLYGON_DETAIL,
@@ -257,6 +260,7 @@ def shapes_from_detections(
                 shape.group_id = next_group_id
             next_group_id += 1
         shapes.extend(detection_shapes)
+        del detection
     return shapes
 
 

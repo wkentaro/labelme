@@ -8,6 +8,8 @@ from loguru import logger
 from numpy.typing import NDArray
 
 from .._shape import Shape
+from ._scaling import compare_at_sent_size
+from ._scaling import enlarge_survivors
 from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
 from ._shape_builders import Detection
 from ._shape_builders import assign_available_group_ids
@@ -35,9 +37,14 @@ def propose_shapes_from_texts(
     image_size: tuple[int, int] | None,
     polygon_detail: int,
     suppressed_by: str | None = None,
+    sent_size: tuple[int, int] | None = None,
+    original_size: tuple[int, int] | None = None,
 ) -> list[Shape]:
     # suppressed_by: the label the results will take, when it isn't their
     # text; only existing Shapes with that label suppress them.
+    annotations, at_image_size, shrink = compare_at_sent_size(
+        annotations=annotations, sent_size=sent_size, original_size=original_size
+    )
     boxes, scores, labels, masks = get_bboxes_from_texts(
         annotations=annotations, texts=texts
     )
@@ -58,6 +65,7 @@ def propose_shapes_from_texts(
                     float(boxes[i, 3]),
                 ),
                 mask=None if masks is None else masks[i],
+                at_image_size=at_image_size[i],
             )
             for i in indices
         ]
@@ -70,15 +78,22 @@ def propose_shapes_from_texts(
                 and shape.label == (text if suppressed_by is None else suppressed_by)
             ],
             iou_threshold=iou_threshold,
+            shrink=shrink,
         )
         new_ids = {id(detection) for detection in matches.new_detections}
         is_new[indices] = [id(detection) in new_ids for detection in candidates]
-    boxes, scores, labels = boxes[is_new], scores[is_new], labels[is_new]
-    if masks is not None:
-        masks = [mask for mask, keep in zip(masks, is_new) if keep]
+    image_boxes = np.array(
+        [
+            box if enlarge is None else enlarge.bbox
+            for box, enlarge in zip(boxes, at_image_size, strict=True)
+        ],
+        dtype=np.float32,
+    ).reshape(-1, 4)
+    kept = np.flatnonzero(is_new)
+    scores, labels = scores[kept], labels[kept]
 
-    boxes, scores, labels, indices = nms_bboxes(
-        boxes=boxes,
+    _, scores, labels, indices = nms_bboxes(
+        boxes=image_boxes[kept],
         scores=scores,
         labels=labels,
         iou_threshold=iou_threshold,
@@ -86,26 +101,24 @@ def propose_shapes_from_texts(
         max_num_detections=100,
     )
 
-    if masks is None:
-        masks = [None] * len(boxes)
-    else:
-        masks = [masks[i] for i in indices]
+    kept = kept[indices]
     del indices
 
     detections: list[Detection] = []
-    for box, score, label, mask in zip(boxes, scores, labels, masks):
+    for score, label, i in zip(scores, labels, kept, strict=True):
         text = texts[label]
         detections.append(
             Detection(
                 bbox=(
-                    float(box[0]),
-                    float(box[1]),
-                    float(box[2]),
-                    float(box[3]),
+                    float(boxes[i, 0]),
+                    float(boxes[i, 1]),
+                    float(boxes[i, 2]),
+                    float(boxes[i, 3]),
                 ),
-                mask=mask,
+                mask=None if masks is None else masks[i],
                 label=text,
                 description=json.dumps(dict(score=score.item(), text=text)),
+                at_image_size=at_image_size[i],
             )
         )
     detections = suppress_detections_greedy(
@@ -113,7 +126,7 @@ def propose_shapes_from_texts(
         iou_threshold=iou_threshold,
     )
     shapes = shapes_from_detections(
-        detections=detections,
+        detections=enlarge_survivors(detections=detections, shape_type=shape_type),
         shape_type=shape_type,
         image_size=image_size,
         polygon_detail=polygon_detail,

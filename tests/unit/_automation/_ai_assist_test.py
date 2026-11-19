@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import tracemalloc
 from typing import Final
 from typing import NamedTuple
 
@@ -170,7 +171,7 @@ def existing_rectangle() -> Shape:
 
 
 def test_detections_from_annotations_empty_returns_empty() -> None:
-    assert _detections_from_annotations(annotations=[]) == []
+    assert _detections_from_annotations(annotations=[], at_image_size=[]) == []
 
 
 def test_detections_from_annotations_sorts_by_score_descending() -> None:
@@ -179,7 +180,8 @@ def test_detections_from_annotations_sorts_by_score_descending() -> None:
             _annotation(score=0.2, bbox=(0, 0, 1, 1), mask=None),
             _annotation(score=0.9, bbox=(2, 2, 3, 3), mask=None),
             _annotation(score=0.5, bbox=(4, 4, 5, 5), mask=None),
-        ]
+        ],
+        at_image_size=[None] * 3,
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -194,7 +196,8 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
         annotations=[
             _annotation(score=None, bbox=(0, 0, 1, 1), mask=None),
             _annotation(score=0.5, bbox=(2, 2, 3, 3), mask=None),
-        ]
+        ],
+        at_image_size=[None] * 2,
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -205,7 +208,8 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
 
 def test_detections_from_annotations_flattens_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
-        annotations=[_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)]
+        annotations=[_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)],
+        at_image_size=[None] * 1,
     )
 
     assert detection.bbox == (1, 2, 3, 4)
@@ -213,7 +217,8 @@ def test_detections_from_annotations_flattens_bounding_box() -> None:
 
 def test_detections_from_annotations_keeps_bbox_none_without_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
-        annotations=[_annotation(score=0.5, bbox=None, mask=None)]
+        annotations=[_annotation(score=0.5, bbox=None, mask=None)],
+        at_image_size=[None] * 1,
     )
 
     assert detection.bbox is None
@@ -225,7 +230,8 @@ def test_detections_from_annotations_passes_mask_through() -> None:
     mask[0, 0] = True
 
     (detection,) = _detections_from_annotations(
-        annotations=[_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)]
+        annotations=[_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)],
+        at_image_size=[None] * 1,
     )
 
     np.testing.assert_array_equal(detection.mask, mask)
@@ -447,3 +453,86 @@ def test_example_box_covered_candidate_does_not_hide_a_new_one(
 
     (shape,) = proposal.new_shapes
     np.testing.assert_array_equal(shape.points, [[5, 0], [15, 10]])
+
+
+def _scored_annotation(
+    *, score: float, bbox: tuple[int, int, int, int], columns: slice
+) -> osam.types.Annotation:
+    mask_scores = np.zeros((8, 40), dtype=np.uint8)
+    mask_scores[:, columns] = 255
+    return osam.types.Annotation(
+        score=score,
+        bounding_box=osam.types.BoundingBox(
+            xmin=bbox[0], ymin=bbox[1], xmax=bbox[2], ymax=bbox[3]
+        ),
+        mask_scores=mask_scores,
+    )
+
+
+def test_example_box_compares_scored_matches_small_and_enlarges_the_kept_ones() -> None:
+    left = (0, 0, 1999, 799)
+    right = (2000, 0, 3999, 799)
+    existing = Shape(
+        shape_type="rectangle",
+        points=np.array([[2000, 0], [3999, 799]], dtype=np.float64),
+    )
+
+    proposal = AiAssistSession(output_format="mask").propose_shapes(
+        annotations=[
+            _scored_annotation(score=0.9, bbox=left, columns=slice(0, 20)),
+            _scored_annotation(score=0.8, bbox=left, columns=slice(0, 20)),
+            _scored_annotation(score=0.7, bbox=right, columns=slice(20, 40)),
+        ],
+        prompt_kind="example_box",
+        points=np.zeros((2, 2)),
+        point_labels=np.array([2, 3]),
+        existing_shapes=[existing],
+        image_size=(4000, 800),
+        score_threshold=0.0,
+        iou_threshold=0.5,
+        sent_size=(400, 80),
+        original_size=(4000, 800),
+    )
+
+    (shape,) = proposal.new_shapes
+    assert shape.mask is not None and shape.mask.shape == (800, 2000)
+    assert shape.mask.all()
+    assert proposal.matching_existing_shapes == [existing]
+
+
+def _polygon_proposal_peak_bytes(*, count: int, object_size: int) -> int:
+    annotations = [
+        _scored_annotation(
+            score=1 - i / 10,
+            bbox=(i * object_size, 0, (i + 1) * object_size - 1, object_size - 1),
+            columns=slice(i * 4, i * 4 + 4),
+        )
+        for i in range(count)
+    ]
+    tracemalloc.start()
+    proposal = AiAssistSession(output_format="polygon").propose_shapes(
+        annotations=annotations,
+        prompt_kind="example_box",
+        points=np.zeros((2, 2)),
+        point_labels=np.array([2, 3]),
+        existing_shapes=[],
+        image_size=(10 * object_size, object_size),
+        score_threshold=0.0,
+        iou_threshold=0.5,
+        sent_size=(400, 40),
+        original_size=(10 * object_size, object_size),
+    )
+    _, peak_bytes = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    assert len(proposal.new_shapes) == count
+    return peak_bytes
+
+
+def test_example_box_holds_one_enlarged_mask_at_a_time() -> None:
+    object_size = 4000
+    _polygon_proposal_peak_bytes(count=1, object_size=object_size)
+
+    one = _polygon_proposal_peak_bytes(count=1, object_size=object_size)
+    ten = _polygon_proposal_peak_bytes(count=10, object_size=object_size)
+
+    assert ten < one + object_size**2 // 2

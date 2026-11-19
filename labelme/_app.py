@@ -2110,6 +2110,8 @@ class MainWindow(QtWidgets.QMainWindow):
             score_threshold=text_job.score_threshold,
             image_size=text_job.image_size,
             polygon_detail=self._config["mask_polygonization"]["detail"],
+            sent_size=result.sent_size,
+            original_size=result.original_size,
         )
         try:
             # Ignores existing Shapes: which ones cover the batch depends on

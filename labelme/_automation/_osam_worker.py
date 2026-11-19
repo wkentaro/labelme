@@ -46,6 +46,8 @@ class InferenceRequest:
 @dataclasses.dataclass(frozen=True)
 class InferenceResult:
     annotations: list[osam.types.Annotation]
+    sent_size: tuple[int, int]
+    original_size: tuple[int, int]
 
 
 def _model_image(*, image: QtGui.QImage, size: tuple[int, int]) -> NDArray[np.uint8]:
@@ -86,6 +88,8 @@ def _segment_kwargs(*, request: InferenceRequest) -> dict[str, Any]:
             "iou_threshold": 1.0,
             "score_threshold": request.score_threshold,
             "max_annotations": 1000,
+            "include_masks": False,
+            "include_mask_scores": True,
         }
     assert points is not None and labels is not None
     # The canvas spans pixel c from c to c + 1, and SAM decoders read an
@@ -120,9 +124,10 @@ def _run(
     t_start = time.perf_counter()
     info = model_info(client=client, name=model)
     width, height = request.image.width(), request.image.height()
+    original_size = (width, height)
     input_height, input_width = info.input_shape(height=height, width=width)
     sent_size = (
-        (width, height)
+        original_size
         if width <= input_width and height <= input_height
         else (input_width, input_height)
     )
@@ -133,7 +138,7 @@ def _run(
     annotations = client.segment(
         model,
         cache[key],
-        original_size=(width, height),
+        original_size=original_size,
         keep_alive=-1,
         **_segment_kwargs(request=request),
     )
@@ -142,7 +147,9 @@ def _run(
         model,
         (time.perf_counter() - t_start) * 1000,
     )
-    return InferenceResult(annotations=annotations)
+    return InferenceResult(
+        annotations=annotations, sent_size=sent_size, original_size=original_size
+    )
 
 
 @dataclasses.dataclass

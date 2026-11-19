@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 from dataclasses import dataclass
 from typing import Final
 
@@ -12,6 +13,8 @@ from .._shape import Shape
 from .._shape import mask_shape_box
 from ._geometry import round_bbox_to_int
 from ._geometry import shape_to_xyxy_bbox
+from ._scaling import scale_pixel_box
+from ._scaling import scale_shape
 from ._shape_builders import Detection
 
 
@@ -22,6 +25,7 @@ class _LocalMask:
     mask: NDArray[np.bool_] | None
     extent: tuple[int, int, int, int]
     area: int
+    image_extent: tuple[int, int, int, int] | None = None
 
 
 def _box_local_mask(*, extent: tuple[int, int, int, int]) -> _LocalMask:
@@ -91,11 +95,12 @@ def match_detections_to_existing_shapes(
     detections: list[Detection],
     existing_shapes: list[Shape],
     iou_threshold: float = 0.5,
+    shrink: tuple[float, float] = (1.0, 1.0),
 ) -> _ExistingShapeMatchResult:
     if not detections:
         return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
     existing_shape_extents = [
-        (shape, extent)
+        (shape, extent, _scaled_extent(shape=shape, extent=extent, factor=shrink))
         for shape in existing_shapes
         if (extent := _shape_extent(shape=shape)) is not None
     ]
@@ -106,11 +111,11 @@ def match_detections_to_existing_shapes(
     ]
     detection_masks: dict[int, _LocalMask] = {}
     best_matches: dict[int, tuple[Shape, float]] = {}
-    for shape, extent in existing_shape_extents:
+    for shape, extent, scaled_extent in existing_shape_extents:
         nearby = [
             index
             for index, detection_extent in detection_extents
-            if _extents_intersect(a=detection_extent, b=extent)
+            if _extents_intersect(a=detection_extent, b=scaled_extent)
         ]
         if not nearby:
             continue
@@ -120,8 +125,8 @@ def match_detections_to_existing_shapes(
                     detection=detections[index]
                 )
         overlaps = _overlaps_with_shape(
-            shape=shape,
-            extent=extent,
+            shape=scale_shape(shape=shape, factor=shrink),
+            image_extent=None if shrink == (1.0, 1.0) else extent,
             detection_masks=[detection_masks[index] for index in nearby],
         )
         for index, overlap in zip(nearby, overlaps, strict=True):
@@ -149,10 +154,14 @@ def match_detections_to_existing_shapes(
 def _overlaps_with_shape(
     *,
     shape: Shape,
-    extent: tuple[int, int, int, int],
+    image_extent: tuple[int, int, int, int] | None,
     detection_masks: list[_LocalMask],
 ) -> list[_MaskOverlap]:
-    existing_mask = _local_mask_from_shape(shape=shape, extent=extent)
+    if (extent := _shape_extent(shape=shape)) is None:
+        return [_MaskOverlap(iou=0.0, containment=0.0)] * len(detection_masks)
+    existing_mask = dataclasses.replace(
+        _local_mask_from_shape(shape=shape, extent=extent), image_extent=image_extent
+    )
     return [_compute_mask_overlap(a=mask, b=existing_mask) for mask in detection_masks]
 
 
@@ -168,6 +177,12 @@ def _is_redundant_overlap(
 
 
 def _compute_mask_overlap(*, a: _LocalMask, b: _LocalMask) -> _MaskOverlap:
+    if (
+        a.image_extent is not None
+        and b.image_extent is not None
+        and not _extents_intersect(a=a.image_extent, b=b.image_extent)
+    ):
+        return _MaskOverlap(iou=0.0, containment=0.0)
     intersection = _compute_mask_intersection_area(a=a, b=b)
     if intersection == 0:
         return _MaskOverlap(iou=0.0, containment=0.0)
@@ -177,6 +192,13 @@ def _compute_mask_overlap(*, a: _LocalMask, b: _LocalMask) -> _MaskOverlap:
 
 
 def _local_mask_from_detection(*, detection: Detection) -> _LocalMask:
+    local = _local_mask_at_bbox(detection=detection)
+    if detection.at_image_size is None:
+        return local
+    return dataclasses.replace(local, image_extent=detection.at_image_size.bbox)
+
+
+def _local_mask_at_bbox(*, detection: Detection) -> _LocalMask:
     assert detection.bbox is not None
     extent = round_bbox_to_int(bbox=detection.bbox)
     if detection.mask is None:
@@ -217,6 +239,20 @@ def _shape_extent(*, shape: Shape) -> tuple[int, int, int, int] | None:
         # its stored extent cannot.
         return mask_shape_box(shape=shape)
     return round_bbox_to_int(bbox=bbox)
+
+
+def _scaled_extent(
+    *, shape: Shape, extent: tuple[int, int, int, int], factor: tuple[float, float]
+) -> tuple[int, int, int, int]:
+    if shape.shape_type == "mask":
+        return scale_pixel_box(box=extent, factor=factor)
+    if shape.shape_type == "rectangle":
+        scaled = _shape_extent(shape=scale_shape(shape=shape, factor=factor))
+        assert scaled is not None
+        return scaled
+    bbox = shape_to_xyxy_bbox(shape=shape)
+    assert bbox is not None
+    return round_bbox_to_int(bbox=bbox * np.tile(factor, 2))
 
 
 def _extents_intersect(

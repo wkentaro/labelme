@@ -9,6 +9,9 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._geometry import round_bbox_to_int
+from ._scaling import AtImageSize
+from ._scaling import compare_at_sent_size
+from ._scaling import enlarge_survivors
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
 from ._suppression import match_detections_to_existing_shapes
@@ -53,10 +56,17 @@ class AiAssistSession:
         image_size: tuple[int, int] | None = None,
         score_threshold: float,
         iou_threshold: float,
+        sent_size: tuple[int, int] | None = None,
+        original_size: tuple[int, int] | None = None,
     ) -> AiAssistProposal:
+        compared, at_image_size, shrink = compare_at_sent_size(
+            annotations=annotations, sent_size=sent_size, original_size=original_size
+        )
         detections = [
             detection
-            for detection in _detections_from_annotations(annotations=annotations)
+            for detection in _detections_from_annotations(
+                annotations=compared, at_image_size=at_image_size
+            )
             if detection.score >= score_threshold
         ]
         if prompt_kind == "box" and detections:
@@ -90,6 +100,7 @@ class AiAssistSession:
         matches = match_detections_to_existing_shapes(
             detections=detections,
             existing_shapes=existing_shapes,
+            shrink=shrink,
         )
         new_detections = suppress_detections_greedy(
             detections=matches.new_detections,
@@ -97,7 +108,9 @@ class AiAssistSession:
         )
         return AiAssistProposal(
             new_shapes=shapes_from_detections(
-                detections=new_detections,
+                detections=enlarge_survivors(
+                    detections=new_detections, shape_type=self.output_format
+                ),
                 shape_type=self.output_format,
                 image_size=image_size,
                 polygon_detail=self.polygon_detail,
@@ -155,17 +168,18 @@ def _is_point_inside_detection(
 def _detections_from_annotations(
     *,
     annotations: list[osam.types.Annotation],
+    at_image_size: list[AtImageSize | None],
 ) -> list[Detection]:
     if not annotations:
         logger.warning("No annotations returned")
         return []
     sorted_annotations = sorted(
-        annotations,
-        key=lambda a: a.score if a.score is not None else 0,
+        zip(annotations, at_image_size, strict=True),
+        key=lambda pair: pair[0].score if pair[0].score is not None else 0,
         reverse=True,
     )
     detections: list[Detection] = []
-    for annotation in sorted_annotations:
+    for annotation, enlarge in sorted_annotations:
         bbox: tuple[float, float, float, float] | None = None
         if annotation.bounding_box is not None:
             bb = annotation.bounding_box
@@ -175,6 +189,7 @@ def _detections_from_annotations(
                 bbox=bbox,
                 mask=annotation.mask,
                 score=annotation.score if annotation.score is not None else 0.0,
+                at_image_size=enlarge,
             )
         )
     return detections
