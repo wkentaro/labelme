@@ -11,7 +11,8 @@ from ._geometry import compute_polygon_from_circle
 
 
 def _scale_pixel_span(*, first: int, last: int, factor: float) -> tuple[int, int]:
-    start, end = round(first * factor), round((last + 1) * factor) - 1
+    start = math.ceil(first * factor - 0.5)
+    end = math.ceil((last + 1) * factor - 0.5) - 1
     if start > end:
         start = end = math.floor((first + last + 1) / 2 * factor)
     return start, end
