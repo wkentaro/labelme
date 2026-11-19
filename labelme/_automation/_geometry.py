@@ -180,7 +180,9 @@ def _compute_relative_deviation(*, detail: int) -> float:
     return MAX_RELATIVE_DEVIATION * ((_DETAIL_MAX - detail) / _DETAIL_MAX) ** 1.5
 
 
-def _compute_mask_deviation(*, detail: int, mask: NDArray[np.bool_]) -> float:
+def _compute_mask_deviation(
+    *, detail: int, mask: NDArray[np.bool_], pixel_size: int
+) -> float:
     # A mask's outline is only accurate to half a pixel, so its stair steps go
     # whatever the shape's size: the floor ramps up to half a pixel by detail
     # 80 and is 0 at the exact outline (100).
@@ -189,7 +191,7 @@ def _compute_mask_deviation(*, detail: int, mask: NDArray[np.bool_]) -> float:
     pixel_floor = 0.5 * min(1.0, (_DETAIL_MAX - detail) / 20) ** 1.5
     return max(
         _compute_relative_deviation(detail=detail) * _compute_thickness(mask=mask),
-        pixel_floor,
+        pixel_floor / pixel_size,
     )
 
 
@@ -416,7 +418,7 @@ def compute_polygon_from_circle(
 
 
 def compute_polygons_from_mask(
-    *, mask: NDArray[np.bool_], detail: int = 60
+    *, mask: NDArray[np.bool_], detail: int = 60, pixel_size: int = 1
 ) -> list[NDArray[np.float32]]:
     if not 0 <= detail <= _DETAIL_MAX:
         raise ValueError(f"detail must be between 0 and 100, got {detail}")
@@ -424,7 +426,7 @@ def compute_polygons_from_mask(
         logger.warning("No contour found, so returning no polygons.")
         return []
 
-    deviation = _compute_mask_deviation(detail=detail, mask=mask)
+    deviation = _compute_mask_deviation(detail=detail, mask=mask, pixel_size=pixel_size)
     if deviation > 0:
         mask = _filter_lands_beyond_deviation(mask=mask, deviation=deviation)
         if not mask.any():

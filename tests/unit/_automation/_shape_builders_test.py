@@ -458,9 +458,12 @@ def test_fit_oriented_rectangle_shifts_a_sampling_overshoot_into_the_image(
     np.testing.assert_allclose(fitted, expected, atol=1e-5)
 
 
-def test_polygon_outlines_a_band_that_sampling_every_other_row_misses() -> None:
+@pytest.mark.parametrize("bottom", [13, 15])
+def test_polygon_outlines_a_band_that_sampling_every_other_row_misses(
+    bottom: int,
+) -> None:
     mask = np.zeros((1024, 1025), dtype=bool)
-    mask[10:15] = True
+    mask[10:bottom] = True
 
     [shape] = shapes_from_detections(
         detections=[Detection(bbox=(0, 0, 1024, 1023), mask=mask)],

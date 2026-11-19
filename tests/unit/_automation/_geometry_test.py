@@ -426,7 +426,7 @@ def test_compute_polygons_from_mask_keeps_boundary_error_within_deviation() -> N
         original_points[:, np.newaxis, :] - closest,
         axis=2,
     )
-    deviation = _compute_mask_deviation(detail=0, mask=mask)
+    deviation = _compute_mask_deviation(detail=0, mask=mask, pixel_size=1)
     assert distances.min(axis=1).max() <= deviation + 0.001
 
 

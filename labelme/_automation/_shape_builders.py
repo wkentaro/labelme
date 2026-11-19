@@ -81,6 +81,7 @@ def _build_shapes_from_detection(
             for polygon in compute_polygons_from_mask(
                 mask=outline_mask,
                 detail=polygon_detail,
+                pixel_size=step,
             )
         ]
         return [
