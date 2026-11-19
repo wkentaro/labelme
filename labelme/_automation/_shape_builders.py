@@ -162,6 +162,9 @@ def _oriented_rectangle_for_detection(
     if detection.mask is not None:
         outline_mask, step = _outline_mask(mask=detection.mask)
         corners = compute_oriented_rectangle_from_mask(mask=outline_mask)
+        if corners is None and step > 1:
+            corners = compute_oriented_rectangle_from_mask(mask=detection.mask)
+            step = 1
         if corners is not None:
             origin = np.array(_mask_origin(detection=detection), dtype=np.float32)
             return corners * step + origin, step

@@ -471,3 +471,18 @@ def test_polygon_outlines_a_band_that_sampling_every_other_row_misses(
     )
 
     assert 10 <= shape.points[:, 1].min() < shape.points[:, 1].max() <= 16
+
+
+def test_oriented_rectangle_fits_a_diagonal_whose_blocks_line_up() -> None:
+    mask = np.zeros((1026, 1026), dtype=bool)
+    diagonal = np.arange(0, 1026, 2)
+    mask[diagonal, diagonal] = True
+    mask[diagonal + 1, diagonal] = True
+
+    [shape] = shapes_from_detections(
+        detections=[Detection(bbox=(100, 100, 1125, 1125), mask=mask)],
+        shape_type="oriented_rectangle",
+    )
+
+    sides = np.linalg.norm(np.diff(shape.points[:3], axis=0), axis=1)
+    assert sides.min() < 2
