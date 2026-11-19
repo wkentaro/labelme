@@ -4069,6 +4069,7 @@ def test_ai_find_all_box_applies_the_score_threshold(
     assert (draft := canvas._ai_find_all_draft) is not None
 
     assert len(draft.shapes) == 1
+    assert _worker(canvas=canvas).requests[0].score_threshold == 0.5  # noqa: PLR2004
 
 
 def test_ai_box_sends_the_box_without_text(*, canvas: Canvas, qtbot: QtBot) -> None:

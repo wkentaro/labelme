@@ -236,6 +236,7 @@ class _AiJob:
     preview_key: object = None
     # The AI-Find All query sent with an example box; it labels the results.
     query: str = ""
+    find_all_thresholds: tuple[float, float] = (0.0, 0.5)
 
 
 @dataclasses.dataclass(frozen=True, eq=False)
@@ -875,6 +876,11 @@ class Canvas(QtWidgets.QWidget):
             draft=draft,
             preview_key=preview_key,
             query=self.get_ai_find_all_query() if prompt_kind == "example_box" else "",
+            find_all_thresholds=(
+                self.get_ai_find_all_thresholds()
+                if prompt_kind == "example_box"
+                else (0.0, 0.5)
+            ),
         )
         # Only placed prompts ring: a preview is a guess that the next one
         # replaces. A result that replaces one still running keeps the clock,
@@ -907,6 +913,7 @@ class Canvas(QtWidgets.QWidget):
                 texts=(
                     [job.query or "visual"] if prompt_kind == "example_box" else None
                 ),
+                score_threshold=job.find_all_thresholds[0],
             ),
         )
 
@@ -971,12 +978,7 @@ class Canvas(QtWidgets.QWidget):
         self, *, job: _AiJob, result: _automation.InferenceResult
     ) -> Callable[..., _automation.AiAssistProposal]:
         # Takes existing_shapes; the settings are fixed as they are now.
-        thresholds = (
-            self.get_ai_find_all_thresholds()
-            if job.prompt_kind == "example_box"
-            # AI-Segment proposals ignore the AI-Find All thresholds.
-            else (0.0, 0.5)
-        )
+        thresholds = job.find_all_thresholds
         session = copy.copy(self._ai_assist_session)
         if job.channel == "preview":
             # The guess only shows which object a click picks, so it skips

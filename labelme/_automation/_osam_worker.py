@@ -40,6 +40,7 @@ class InferenceRequest:
     points: NDArray[np.floating] | None = None
     point_labels: NDArray[np.intp] | None = None
     texts: list[str] | None = None
+    score_threshold: float = 0.01
 
 
 @dataclasses.dataclass(frozen=True)
@@ -82,9 +83,8 @@ def _segment_kwargs(*, request: InferenceRequest) -> dict[str, Any]:
         return {
             "texts": request.texts,
             **examples,
-            # Every candidate; the user's Score and IoU filter later.
             "iou_threshold": 1.0,
-            "score_threshold": 0.01,
+            "score_threshold": request.score_threshold,
             "max_annotations": 1000,
         }
     assert points is not None and labels is not None

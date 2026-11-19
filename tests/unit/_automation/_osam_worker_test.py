@@ -476,3 +476,11 @@ def test_model_image_resizes_as_pillow_resizes_rgb() -> None:
 
     expected = PIL.Image.fromarray(rgb).resize((20, 14), PIL.Image.Resampling.BILINEAR)
     np.testing.assert_array_equal(actual, np.asarray(expected))
+
+
+def test_segment_kwargs_drop_text_candidates_below_the_score() -> None:
+    request = InferenceRequest(
+        model_name="sam3:latest", image=_IMAGE, texts=["dog"], score_threshold=0.4
+    )
+
+    assert _osam_worker._segment_kwargs(request=request)["score_threshold"] == 0.4  # noqa: PLR2004

@@ -1976,6 +1976,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 model_name=model_name,
                 image=canvas.pixmap.toImage(),
                 texts=texts,
+                score_threshold=job.score_threshold,
             ),
         )
 
