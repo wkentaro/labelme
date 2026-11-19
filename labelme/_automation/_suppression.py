@@ -237,8 +237,6 @@ def _shape_extent(*, shape: Shape) -> tuple[int, int, int, int] | None:
     if bbox is None:
         return None
     if shape.shape_type == "mask" and shape.mask is not None:
-        # Corners rounded one by one can resize a mask moved by half a pixel;
-        # its stored extent cannot.
         return mask_shape_box(shape=shape)
     return round_bbox_to_int(bbox=bbox)
 

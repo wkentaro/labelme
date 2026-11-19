@@ -554,6 +554,38 @@ def test_point_prompt_compares_full_size_masks_at_the_sent_size(
     assert raster_sizes and max(h * w for h, w in raster_sizes) <= 11 * 11
 
 
+def test_point_prompt_meets_a_padded_mask_shape_on_the_same_grid() -> None:
+    padded = np.zeros((1, 18), dtype=bool)
+    padded[0, 14:17] = True
+    existing = Shape(
+        shape_type="mask",
+        points=np.array([[0, 0], [17, 0]], dtype=np.float64),
+        mask=padded,
+    )
+
+    proposal = AiAssistSession(output_format="mask").propose_shapes(
+        annotations=[
+            osam.types.Annotation(
+                score=0.9,
+                bounding_box=osam.types.BoundingBox(xmin=14, ymin=0, xmax=16, ymax=0),
+                mask=np.ones((1, 3), dtype=bool),
+            )
+        ],
+        prompt_kind="points",
+        points=np.array([[15.5, 0.5]]),
+        point_labels=np.array([1]),
+        existing_shapes=[existing],
+        image_size=(20, 1),
+        score_threshold=0.0,
+        iou_threshold=0.5,
+        sent_size=(2, 1),
+        original_size=(20, 1),
+    )
+
+    assert proposal.new_shapes == []
+    assert proposal.matching_existing_shapes == [existing]
+
+
 def _polygon_proposal_peak_bytes(*, count: int, object_size: int) -> int:
     annotations = [
         _scored_annotation(

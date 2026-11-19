@@ -679,6 +679,21 @@ def test_shrunk_polygon_near_a_detection_by_its_shrunk_vertices() -> None:
     assert result.new_detections == []
 
 
+def test_shrunk_mask_shape_near_a_detection_by_its_rounded_origin() -> None:
+    mask_shape = Shape(
+        shape_type="mask",
+        points=np.array([(154.500001, 0), (164.500001, 0)], dtype=np.float64),
+        mask=np.ones((1, 11), dtype=bool),
+    )
+    detection = Detection(bbox=(16.0, 0.0, 16.0, 0.0), mask=np.ones((1, 1), bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection], existing_shapes=[mask_shape], shrink=(0.1, 0.1)
+    )
+
+    assert result.matching_shapes == [mask_shape]
+
+
 def test_shrunk_rectangle_covers_a_detection_by_its_rounded_edge() -> None:
     rectangle = Shape(
         shape_type="rectangle",
