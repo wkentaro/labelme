@@ -3,9 +3,12 @@ from __future__ import annotations
 from fractions import Fraction
 
 import numpy as np
+import osam
 import pytest
 
+from labelme._automation._scaling import AtImageSize
 from labelme._automation._scaling import Scale
+from labelme._automation._scaling import scale_mask
 from labelme._automation._scaling import scale_pixel_box
 from labelme._automation._scaling import scale_shape
 from labelme._shape import Shape
@@ -164,3 +167,36 @@ def test_scale_shape_shrinks_a_rectangle_like_a_detection_box(
         shrunk.points.ravel(),
         scale_pixel_box(box=box, factor=(Fraction(1, 10), Fraction(1, 4))),
     )
+
+
+@pytest.mark.parametrize(
+    ("image_size", "sent_size", "box"),
+    [
+        ((4099, 4099), (1025, 1025), (1, 2, 4097, 4090)),
+        ((10000, 504), (1008, 1008), (1, 2, 9997, 501)),
+    ],
+)
+def test_pooled_mask_matches_pooling_the_mask_at_image_size(
+    image_size: tuple[int, int],
+    sent_size: tuple[int, int],
+    box: tuple[int, int, int, int],
+) -> None:
+    at_image_size = AtImageSize(
+        annotation=osam.types.Annotation(
+            bounding_box=osam.types.BoundingBox(
+                xmin=box[0], ymin=box[1], xmax=box[2], ymax=box[3]
+            ),
+            mask_scores=np.random.default_rng(0).integers(0, 256, (64, 64), np.uint8),
+        ),
+        image_size=image_size,
+    )
+    shrink = (
+        Fraction(sent_size[0], image_size[0]),
+        Fraction(sent_size[1], image_size[1]),
+    )
+    saved = at_image_size.mask()
+    assert saved is not None
+
+    _, expected = scale_mask(mask=saved, box=box, factor=shrink)
+
+    np.testing.assert_array_equal(at_image_size.pooled_mask(factor=shrink), expected)

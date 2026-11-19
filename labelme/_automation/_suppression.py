@@ -124,7 +124,7 @@ def match_detections_to_existing_shapes(
         for index in nearby:
             if index not in detection_masks:
                 detection_masks[index] = _local_mask_from_detection(
-                    detection=detections[index]
+                    detection=_as_saved(detection=detections[index], shrink=shrink)
                 )
         overlaps = _overlaps_with_shape(
             shape=scale_shape(shape=shape, factor=shrink),
@@ -151,6 +151,13 @@ def match_detections_to_existing_shapes(
         new_detections=kept,
         matching_shapes=matching_shapes,
     )
+
+
+def _as_saved(*, detection: Detection, shrink: Scale) -> Detection:
+    source = detection.at_image_size
+    if source is None or shrink == UNSCALED or source.annotation.mask_scores is None:
+        return detection
+    return dataclasses.replace(detection, mask=source.pooled_mask(factor=shrink))
 
 
 def _overlaps_with_shape(

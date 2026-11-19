@@ -514,15 +514,25 @@ def test_text_proposal_for_a_label_builds_no_match_again(
     assert all(any(shape is c for c in candidates) for shape in shapes)
 
 
-def test_text_proposal_skips_a_match_saved_from_its_own_scores() -> None:
+@pytest.mark.parametrize(
+    ("size", "box"),
+    [(6, (0, 0, 5, 5)), (12, (0, 2, 11, 3))],
+    ids=["whole", "cropped"],
+)
+def test_text_proposal_skips_a_match_saved_from_its_own_scores(
+    size: int, box: tuple[int, int, int, int]
+) -> None:
     scores = np.repeat(np.array([[120], [153], [0]], dtype=np.uint8), 3, axis=1)
+    xmin, ymin, xmax, ymax = box
     propose = functools.partial(
         propose_shapes_from_texts,
         annotations=[
             osam.types.Annotation(
                 text="cat",
                 score=0.9,
-                bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=5, ymax=5),
+                bounding_box=osam.types.BoundingBox(
+                    xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax
+                ),
                 mask_scores=scores,
             )
         ],
@@ -530,10 +540,10 @@ def test_text_proposal_skips_a_match_saved_from_its_own_scores() -> None:
         shape_type="mask",
         iou_threshold=0.5,
         score_threshold=0.5,
-        image_size=(6, 6),
+        image_size=(size, size),
         polygon_detail=80,
         sent_size=(3, 3),
-        original_size=(6, 6),
+        original_size=(size, size),
     )
     (saved,) = propose(existing_shapes=[])
     saved.label = "cat"

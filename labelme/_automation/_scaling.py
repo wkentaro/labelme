@@ -39,8 +39,43 @@ class AtImageSize:
         assert self.annotation.bounding_box is not None
         if self.annotation.mask_scores is None:
             return self.annotation.mask
+        return self._render(bounding_box=self.annotation.bounding_box)
+
+    def pooled_mask(self, *, factor: Scale) -> NDArray[np.bool_]:
+        STRIP_PIXELS: Final = 1 << 22
+        bb = self.annotation.bounding_box
+        assert bb is not None
+        width = bb.xmax - bb.xmin + 1
+        if factor[1] < 1:
+            sent_ymin, sent_ymax = _scale_pixel_span(
+                first=bb.ymin, last=bb.ymax, factor=factor[1]
+            )
+            step = max(1, STRIP_PIXELS // (width * math.ceil(1 / factor[1])))
+            spans = [
+                _scale_pixel_span(
+                    first=top, last=min(top + step - 1, sent_ymax), factor=1 / factor[1]
+                )
+                for top in range(sent_ymin, sent_ymax + 1, step)
+            ]
+        else:
+            step = max(1, STRIP_PIXELS // width)
+            spans = [(top, top + step - 1) for top in range(bb.ymin, bb.ymax + 1, step)]
+        strips = []
+        for top, bottom in spans:
+            top, bottom = max(top, bb.ymin), min(bottom, bb.ymax)
+            _, strip = scale_mask(
+                mask=self._render(
+                    bounding_box=bb.model_copy(update={"ymin": top, "ymax": bottom})
+                ),
+                box=(bb.xmin, top, bb.xmax, bottom),
+                factor=factor,
+            )
+            strips.append(strip)
+        return np.concatenate(strips)
+
+    def _render(self, *, bounding_box: osam.types.BoundingBox) -> NDArray[np.bool_]:
         return self.annotation.mask_from_scores(
-            bounding_box=self.annotation.bounding_box,
+            bounding_box=bounding_box,
             height=self.image_size[1],
             width=self.image_size[0],
         )
