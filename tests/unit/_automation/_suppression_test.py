@@ -553,6 +553,23 @@ def test_overlapping_measures_boxes_without_a_box_sized_raster() -> None:
     assert peak_bytes < 1_000_000
 
 
+def test_overlapping_keeps_the_first_of_equally_matching_shapes() -> None:
+    shapes = [
+        Shape(
+            shape_type="rectangle",
+            points=np.array([(0, 0), (10, 10)], dtype=np.float64),
+        )
+        for _ in range(2)
+    ]
+    detection = Detection(bbox=(0.0, 0.0, 10.0, 10.0), mask=np.ones((11, 11), bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection], existing_shapes=shapes
+    )
+
+    assert result.matching_shapes == [shapes[0]]
+
+
 def test_overlapping_finds_a_mask_shape_by_its_stored_extent() -> None:
     existing = Shape(
         shape_type="mask",

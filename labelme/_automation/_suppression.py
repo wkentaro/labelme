@@ -105,7 +105,7 @@ def match_detections_to_existing_shapes(
         if detection.bbox is not None
     ]
     detection_masks: dict[int, _LocalMask] = {}
-    matches: dict[int, list[tuple[Shape, _MaskOverlap]]] = {}
+    best_matches: dict[int, tuple[Shape, float]] = {}
     for shape, extent in existing_shape_extents:
         nearby = [
             index
@@ -125,19 +125,19 @@ def match_detections_to_existing_shapes(
             detection_masks=[detection_masks[index] for index in nearby],
         )
         for index, overlap in zip(nearby, overlaps, strict=True):
-            if overlap.iou > 0 and _is_redundant_overlap(
-                overlap=overlap,
-                iou_threshold=iou_threshold,
+            if (
+                _is_redundant_overlap(overlap=overlap, iou_threshold=iou_threshold)
+                and overlap.iou > best_matches.get(index, (None, 0.0))[1]
             ):
-                matches.setdefault(index, []).append((shape, overlap))
+                best_matches[index] = (shape, overlap.iou)
 
     kept: list[Detection] = []
     matching_shapes: list[Shape] = []
     for index, detection in enumerate(detections):
-        if index not in matches:
+        if index not in best_matches:
             kept.append(detection)
             continue
-        matching_shape, _ = max(matches[index], key=lambda match: match[1].iou)
+        matching_shape, _ = best_matches[index]
         if all(shape is not matching_shape for shape in matching_shapes):
             matching_shapes.append(matching_shape)
     return _ExistingShapeMatchResult(
