@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import json
 import os
 import shutil
@@ -11,6 +12,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme import _label_path
 from labelme._app import ANNOTATION_FOLDERS_KEY
 from labelme._app import MainWindow
 
@@ -612,6 +614,58 @@ def test_footer_recounts_once_per_save(
     (out / "frame.json").write_text("{}")
     win._refresh_image_list_checkmarks(label_path=str(out / "frame.json"))
     assert counts == [(3, 3)]
+
+
+class _HashCountingPaths(tuple[str, ...]):
+    hashes = 0
+
+    def __hash__(self) -> int:
+        type(self).hashes += 1
+        return super().__hash__()
+
+
+def test_save_rechecks_only_images_sharing_its_stem(
+    *,
+    main_win: MainWinFactory,
+    data_path: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    images = tmp_path / "images"
+    images.mkdir()
+    for name in ("a", "b", "c", "d"):
+        shutil.copy(data_path / "raw" / "2011_000003.jpg", images / f"{name}.jpg")
+    win = main_win(file_or_dir=images)
+    win._opened_folder = dataclasses.replace(
+        win._opened_folder,
+        image_paths=_HashCountingPaths(win._opened_folder.image_paths),
+    )
+    (images / "a.json").write_text("{}")
+    win._refresh_image_list_checkmarks(label_path=str(images / "a.json"))
+    _HashCountingPaths.hashes = 0
+    stems: list[str] = []
+    checked: list[str] = []
+    comparable_stem = _label_path.comparable_stem
+    has_label_file = _label_path.has_label_file
+    monkeypatch.setattr(
+        _label_path,
+        "comparable_stem",
+        lambda *, path: stems.append(path) or comparable_stem(path=path),
+    )
+    monkeypatch.setattr(
+        _label_path,
+        "has_label_file",
+        lambda **kwargs: (
+            checked.append(kwargs["image_path"]) or has_label_file(**kwargs)
+        ),
+    )
+
+    (images / "b.json").write_text("{}")
+    win._refresh_image_list_checkmarks(label_path=str(images / "b.json"))
+
+    assert len(stems) == 2  # noqa: PLR2004
+    assert checked == [str(images / "b.jpg")]
+    assert _HashCountingPaths.hashes == 0
 
 
 def test_images_sharing_a_stem_keep_their_own_annotation_files(

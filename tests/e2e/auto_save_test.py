@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import json
 from pathlib import Path
 from typing import Final
@@ -371,8 +372,8 @@ def test_failed_auto_save_stays_nonmodal_after_target_changes(
 
     new_output_dir = tmp_path / "new-output"
     new_output_dir.mkdir()
-    _raw_auto_save_win._opened_folder = _raw_auto_save_win._opened_folder._replace(
-        output_dir=new_output_dir
+    _raw_auto_save_win._opened_folder = dataclasses.replace(
+        _raw_auto_save_win._opened_folder, output_dir=new_output_dir
     )
 
     qtbot.keyPress(canvas, Qt.Key.Key_Right)
