@@ -3,6 +3,7 @@ from ._ai_text_to_annotation_widget import AiTextToAnnotationWidget
 from ._ai_tool_group import AiToolGroup
 from ._annotation_folder_footer import AnnotationFolderFooter
 from ._brightness_contrast_dialog import BrightnessContrastDialog
+from ._brightness_contrast_dialog import adjust_brightness_contrast
 from ._canvas import Canvas
 from ._conversion_detail_dialog import ConversionDetailDialog
 from ._empty_state import EmptyStateWidget
@@ -51,6 +52,7 @@ __all__ = [
     "ToolBar",
     "UniqueLabelQListWidget",
     "ZoomWidget",
+    "adjust_brightness_contrast",
     "format_shape_label",
     "license_link",
     "license_notice",
