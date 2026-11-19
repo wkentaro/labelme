@@ -19,9 +19,16 @@ from ._shape_builders import Detection
 # dataclass __eq__ (which calls bool() on the result) would raise ValueError.
 @dataclass(frozen=True, eq=False)
 class _LocalMask:
-    mask: NDArray[np.bool_]
-    origin_xy: tuple[int, int]
+    mask: NDArray[np.bool_] | None
+    extent: tuple[int, int, int, int]
     area: int
+
+
+def _box_local_mask(*, extent: tuple[int, int, int, int]) -> _LocalMask:
+    xmin, ymin, xmax, ymax = extent
+    return _LocalMask(
+        mask=None, extent=extent, area=(xmax - xmin + 1) * (ymax - ymin + 1)
+    )
 
 
 @dataclass(frozen=True)
@@ -171,11 +178,10 @@ def _compute_mask_overlap(*, a: _LocalMask, b: _LocalMask) -> _MaskOverlap:
 
 def _local_mask_from_detection(*, detection: Detection) -> _LocalMask:
     assert detection.bbox is not None
-    xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
+    extent = round_bbox_to_int(bbox=detection.bbox)
     if detection.mask is None:
-        h, w = ymax - ymin + 1, xmax - xmin + 1
-        mask = np.ones((h, w), dtype=np.bool_)
-        return _LocalMask(mask=mask, origin_xy=(xmin, ymin), area=h * w)
+        return _box_local_mask(extent=extent)
+    xmin, ymin, xmax, ymax = extent
     # Mask geometry below assumes mask covers exactly the bbox-derived extent
     # (matching the OSAM Annotation contract). Reject inconsistent shapes loudly
     # so a future non-OSAM caller doesn't silently produce wrong IoU values.
@@ -187,7 +193,7 @@ def _local_mask_from_detection(*, detection: Detection) -> _LocalMask:
         )
     return _LocalMask(
         mask=detection.mask,
-        origin_xy=(xmin, ymin),
+        extent=extent,
         area=int(np.count_nonzero(detection.mask)),
     )
 
@@ -225,6 +231,8 @@ def _local_mask_from_shape(
     xmin, ymin, xmax, ymax = extent
     if shape.shape_type == "mask" and shape.mask is not None:
         mask = shape.mask.astype(np.bool_, copy=False)
+    elif shape.shape_type in ("rectangle", "mask"):
+        return _box_local_mask(extent=extent)
     else:
         mask = rasterize_shape(
             shape=shape,
@@ -233,21 +241,12 @@ def _local_mask_from_shape(
             width=xmax - xmin + 1,
             height=ymax - ymin + 1,
         )
-    return _LocalMask(
-        mask=mask,
-        origin_xy=(xmin, ymin),
-        area=int(np.count_nonzero(mask)),
-    )
+    return _LocalMask(mask=mask, extent=extent, area=int(np.count_nonzero(mask)))
 
 
 def rasterize_shape(
     *, shape: Shape, xmin: int, ymin: int, width: int, height: int
 ) -> NDArray[np.bool_]:
-    if shape.shape_type == "mask":
-        # A mask Shape with an array is measured by its caller.
-        return np.ones((height, width), dtype=np.bool_)
-    if shape.shape_type == "rectangle":
-        return np.ones((height, width), dtype=np.bool_)
     if shape.shape_type == "circle":
         center, edge = shape.points
         cx_local = center[0] - xmin
@@ -275,26 +274,22 @@ def rasterize_shape(
 
 
 def _compute_mask_intersection_area(*, a: _LocalMask, b: _LocalMask) -> int:
-    # bbox endpoints are inclusive pixel coords (mask width = xmax - xmin + 1),
-    # so xmin + w is the exclusive x-upper-bound used for clipping.
-    a_xmin, a_ymin = a.origin_xy
-    b_xmin, b_ymin = b.origin_xy
-    a_h, a_w = a.mask.shape
-    b_h, b_w = b.mask.shape
-
-    inter_xmin = max(a_xmin, b_xmin)
-    inter_ymin = max(a_ymin, b_ymin)
-    inter_xmax = min(a_xmin + a_w, b_xmin + b_w)
-    inter_ymax = min(a_ymin + a_h, b_ymin + b_h)
-    if inter_xmax <= inter_xmin or inter_ymax <= inter_ymin:
+    xmin = max(a.extent[0], b.extent[0])
+    ymin = max(a.extent[1], b.extent[1])
+    xmax = min(a.extent[2], b.extent[2])
+    ymax = min(a.extent[3], b.extent[3])
+    if xmax < xmin or ymax < ymin:
         return 0
-
-    sub_a = a.mask[
-        inter_ymin - a_ymin : inter_ymax - a_ymin,
-        inter_xmin - a_xmin : inter_xmax - a_xmin,
+    windows = [
+        local.mask[
+            ymin - local.extent[1] : ymax - local.extent[1] + 1,
+            xmin - local.extent[0] : xmax - local.extent[0] + 1,
+        ]
+        for local in (a, b)
+        if local.mask is not None
     ]
-    sub_b = b.mask[
-        inter_ymin - b_ymin : inter_ymax - b_ymin,
-        inter_xmin - b_xmin : inter_xmax - b_xmin,
-    ]
-    return int(np.count_nonzero(sub_a & sub_b))
+    if not windows:
+        return (xmax - xmin + 1) * (ymax - ymin + 1)
+    if len(windows) == 1:
+        return int(np.count_nonzero(windows[0]))
+    return int(np.count_nonzero(windows[0] & windows[1]))

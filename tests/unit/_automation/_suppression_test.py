@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import tracemalloc
 import weakref
 from collections.abc import Callable
 from fractions import Fraction
@@ -493,17 +494,17 @@ def test_mask_shape_with_swapped_corners_covers_its_first_point() -> None:
 def test_overlapping_rasterizes_each_nearby_shape_once_and_alone(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    near = [
-        Shape(
-            shape_type="rectangle",
-            points=np.array([(0, 0), (size, size)], dtype=np.float64),
+    def square(*, start: int, end: int) -> Shape:
+        return Shape(
+            shape_type="polygon",
+            points=np.array(
+                [(start, start), (end, start), (end, end), (start, end)],
+                dtype=np.float64,
+            ),
         )
-        for size in (1000, 2000)
-    ]
-    far = Shape(
-        shape_type="rectangle",
-        points=np.array([(5000, 5000), (20000, 20000)], dtype=np.float64),
-    )
+
+    near = [square(start=0, end=size) for size in (1000, 2000)]
+    far = square(start=5000, end=20000)
     rasterized: list[Shape] = []
     alive: list[weakref.ref[np.ndarray]] = []
     held_at_each_call: list[int] = []
@@ -526,6 +527,30 @@ def test_overlapping_rasterizes_each_nearby_shape_once_and_alone(
     assert result.matching_shapes == [near[0]]
     assert rasterized == near
     assert held_at_each_call == [0, 0]
+
+
+def test_overlapping_measures_boxes_without_a_box_sized_raster() -> None:
+    existing = Shape(
+        shape_type="rectangle",
+        points=np.array([(0, 0), (19999, 14999)], dtype=np.float64),
+    )
+    boxes = [
+        Detection(bbox=(0.0, 0.0, 19999.0, 14999.0), mask=None),
+        Detection(bbox=(10000.0, 0.0, 29999.0, 14999.0), mask=None),
+    ]
+
+    tracemalloc.start()
+    result = match_detections_to_existing_shapes(
+        detections=boxes, existing_shapes=[existing], iou_threshold=0.5
+    )
+    kept = suppress_detections_greedy(detections=boxes, iou_threshold=0.3)
+    _, peak_bytes = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+
+    assert result.new_detections == [boxes[1]]
+    assert result.matching_shapes == [existing]
+    assert kept == [boxes[0]]
+    assert peak_bytes < 1_000_000
 
 
 def test_overlapping_finds_a_mask_shape_by_its_stored_extent() -> None:
