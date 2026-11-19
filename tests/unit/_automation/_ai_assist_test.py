@@ -11,6 +11,7 @@ from numpy.typing import NDArray
 
 from labelme._automation import Detection
 from labelme._automation import _ai_assist
+from labelme._automation import _suppression
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._automation._ai_assist import AiAssistSession
 from labelme._automation._ai_assist import _detections_from_annotations
@@ -498,6 +499,59 @@ def test_example_box_compares_scored_matches_small_and_enlarges_the_kept_ones() 
     assert shape.mask is not None and shape.mask.shape == (800, 2000)
     assert shape.mask.all()
     assert proposal.matching_existing_shapes == [existing]
+
+
+def test_point_prompt_compares_full_size_masks_at_the_sent_size(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def half(*, score: float, xmin: int) -> osam.types.Annotation:
+        return osam.types.Annotation(
+            score=score,
+            bounding_box=osam.types.BoundingBox(
+                xmin=xmin, ymin=0, xmax=xmin + 499, ymax=999
+            ),
+            mask=np.ones((1000, 500), dtype=bool),
+        )
+
+    existing = Shape(
+        shape_type="polygon",
+        points=np.array(
+            [(500, 0), (1000, 0), (1000, 1000), (500, 1000)], dtype=np.float64
+        ),
+    )
+    raster_sizes: list[tuple[int, int]] = []
+    rasterize = _suppression.rasterize_shape
+
+    def spy(
+        *, shape: Shape, xmin: int, ymin: int, width: int, height: int
+    ) -> NDArray[np.bool_]:
+        raster_sizes.append((height, width))
+        return rasterize(shape=shape, xmin=xmin, ymin=ymin, width=width, height=height)
+
+    monkeypatch.setattr(_suppression, "rasterize_shape", spy)
+
+    def propose(existing_shapes: list[Shape]) -> AiAssistProposal:
+        return AiAssistSession(output_format="mask").propose_shapes(
+            annotations=[half(score=0.9, xmin=0), half(score=0.8, xmin=500)],
+            prompt_kind="points",
+            points=np.array([[900.5, 500.5]]),
+            point_labels=np.array([1]),
+            existing_shapes=existing_shapes,
+            image_size=(1000, 1000),
+            score_threshold=0.0,
+            iou_threshold=0.5,
+            sent_size=(10, 10),
+            original_size=(1000, 1000),
+        )
+
+    (shape,) = propose(existing_shapes=[]).new_shapes
+    assert shape.mask is not None and shape.mask.shape == (1000, 500)
+    assert shape.points.min(axis=0).tolist() == [500, 0]
+
+    covered = propose(existing_shapes=[existing])
+    assert covered.new_shapes == []
+    assert covered.matching_existing_shapes == [existing]
+    assert raster_sizes and max(h * w for h, w in raster_sizes) <= 11 * 11
 
 
 def _polygon_proposal_peak_bytes(*, count: int, object_size: int) -> int:

@@ -32,8 +32,10 @@ class AtImageSize:
         assert bb is not None
         return bb.xmin, bb.ymin, bb.xmax, bb.ymax
 
-    def mask(self) -> NDArray[np.bool_]:
+    def mask(self) -> NDArray[np.bool_] | None:
         assert self.annotation.bounding_box is not None
+        if self.annotation.mask_scores is None:
+            return self.annotation.mask
         return self.annotation.mask_from_scores(
             bounding_box=self.annotation.bounding_box,
             height=self.image_size[1],
@@ -103,18 +105,14 @@ def compare_at_sent_size(
     sent_size: tuple[int, int] | None,
     original_size: tuple[int, int] | None,
 ) -> tuple[list[osam.types.Annotation], list[AtImageSize | None], tuple[float, float]]:
-    if (
-        sent_size is None
-        or original_size is None
-        or not any(annotation.mask_scores is not None for annotation in annotations)
-    ):
+    if sent_size is None or original_size is None:
         return annotations, [None] * len(annotations), (1.0, 1.0)
     shrink = (sent_size[0] / original_size[0], sent_size[1] / original_size[1])
     compared: list[osam.types.Annotation] = []
     at_image_size: list[AtImageSize | None] = []
     for annotation in annotations:
-        if annotation.mask_scores is None or annotation.bounding_box is None:
-            raise ValueError("an annotation has no scores or box to shrink")
+        if annotation.bounding_box is None:
+            raise ValueError("an annotation has no box to shrink")
         bb = annotation.bounding_box
         xmin, ymin, xmax, ymax = scale_pixel_box(
             box=(bb.xmin, bb.ymin, bb.xmax, bb.ymax), factor=shrink
@@ -122,15 +120,18 @@ def compare_at_sent_size(
         small = bb.model_copy(
             update={"xmin": xmin, "ymin": ymin, "xmax": xmax, "ymax": ymax}
         )
-        compared.append(
-            annotation.model_copy(
-                update={
-                    "bounding_box": small,
-                    "mask": annotation.mask_from_scores(
-                        bounding_box=small, height=sent_size[1], width=sent_size[0]
-                    ),
-                }
+        if annotation.mask_scores is not None:
+            mask = annotation.mask_from_scores(
+                bounding_box=small, height=sent_size[1], width=sent_size[0]
             )
+        elif annotation.mask is None or sent_size == original_size:
+            mask = annotation.mask
+        else:
+            mask = resize_mask(
+                mask=annotation.mask, size=(xmax - xmin + 1, ymax - ymin + 1)
+            )
+        compared.append(
+            annotation.model_copy(update={"bounding_box": small, "mask": mask})
         )
         at_image_size.append(
             None
