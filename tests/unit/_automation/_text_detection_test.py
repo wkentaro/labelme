@@ -420,7 +420,10 @@ def test_text_proposal_compares_scored_matches_small_and_enlarges_the_kept_ones(
     assert shape.mask.all()
 
 
-def test_text_proposal_keeps_apart_matches_that_meet_only_at_the_sent_size() -> None:
+@pytest.mark.parametrize("iou_threshold", [0.5, 0.0])
+def test_text_proposal_keeps_apart_matches_that_meet_only_at_the_sent_size(
+    iou_threshold: float,
+) -> None:
     def scored(*, score: float, xmin: int, xmax: int) -> osam.types.Annotation:
         return osam.types.Annotation(
             text="cat",
@@ -437,7 +440,7 @@ def test_text_proposal_keeps_apart_matches_that_meet_only_at_the_sent_size() -> 
         texts=["cat"],
         shape_type="rectangle",
         existing_shapes=[],
-        iou_threshold=0.5,
+        iou_threshold=iou_threshold,
         score_threshold=0.5,
         image_size=(400, 100),
         polygon_detail=80,

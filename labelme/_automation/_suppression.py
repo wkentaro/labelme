@@ -173,7 +173,9 @@ def _is_redundant_overlap(
     # Containment (intersection-over-smaller) catches nested masks whose IoU
     # is too low for the IoU check (e.g. tree-cluster swallowing a single tree).
     CONTAINMENT_THRESHOLD: Final[float] = 0.85
-    return overlap.iou >= iou_threshold or overlap.containment >= CONTAINMENT_THRESHOLD
+    return overlap.iou > 0 and (
+        overlap.iou >= iou_threshold or overlap.containment >= CONTAINMENT_THRESHOLD
+    )
 
 
 def _compute_mask_overlap(*, a: _LocalMask, b: _LocalMask) -> _MaskOverlap:
