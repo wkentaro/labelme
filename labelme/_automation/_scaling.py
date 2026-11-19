@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import math
+from fractions import Fraction
 from typing import Final
 
 import numpy as np
@@ -10,18 +11,18 @@ from numpy.typing import NDArray
 from .._shape import Shape
 from ._geometry import compute_polygon_from_circle
 
-_GRID_EDGE: Final[float] = 1e-9
+_HALF: Final = Fraction(1, 2)
 
 
-def _scale_pixel_span(*, first: int, last: int, factor: float) -> tuple[int, int]:
+def _scale_pixel_span(*, first: int, last: int, factor: Fraction) -> tuple[int, int]:
     if factor <= 1:
         return (
-            math.floor((first + 0.5) * factor + _GRID_EDGE),
-            math.floor((last + 0.5) * factor + _GRID_EDGE),
+            math.floor((first + _HALF) * factor),
+            math.floor((last + _HALF) * factor),
         )
     return (
-        math.ceil(first * factor - 0.5 - _GRID_EDGE),
-        math.ceil((last + 1) * factor - 0.5 - _GRID_EDGE) - 1,
+        math.ceil(first * factor - _HALF),
+        math.ceil((last + 1) * factor - _HALF) - 1,
     )
 
 
@@ -29,8 +30,8 @@ def scale_pixel_box(
     *, box: tuple[int, int, int, int], factor: tuple[float, float]
 ) -> tuple[int, int, int, int]:
     xmin, ymin, xmax, ymax = box
-    x0, x1 = _scale_pixel_span(first=xmin, last=xmax, factor=factor[0])
-    y0, y1 = _scale_pixel_span(first=ymin, last=ymax, factor=factor[1])
+    x0, x1 = _scale_pixel_span(first=xmin, last=xmax, factor=Fraction(factor[0]))
+    y0, y1 = _scale_pixel_span(first=ymin, last=ymax, factor=Fraction(factor[1]))
     return x0, y0, x1, y1
 
 
@@ -50,24 +51,23 @@ def scale_bbox(
 
 
 def _scale_mask_axis(
-    mask: NDArray[np.bool_],
-    *,
-    first: int,
-    start: int,
-    end: int,
-    factor: float,
-    axis: int,
+    *, mask: NDArray[np.bool_], first: int, factor: float, axis: int
 ) -> NDArray[np.bool_]:
-    length = mask.shape[axis]
-    if factor <= 1:
-        sent = np.floor((np.arange(first, first + length) + 0.5) * factor + _GRID_EDGE)
-        return np.logical_or.reduceat(
-            mask, np.flatnonzero(np.diff(sent, prepend=sent[0] - 1)), axis=axis
-        )
-    sources = np.floor((np.arange(start, end + 1) + 0.5) / factor + _GRID_EDGE)
-    return np.take(
-        mask, np.clip(sources.astype(np.intp) - first, 0, length - 1), axis=axis
-    )
+    exact = Fraction(factor)
+    last = first + mask.shape[axis] - 1
+    if exact <= 1:
+        sent_first, sent_last = _scale_pixel_span(first=first, last=last, factor=exact)
+        runs = [
+            max(first, _scale_pixel_span(first=sent, last=sent, factor=1 / exact)[0])
+            - first
+            for sent in range(sent_first, sent_last + 1)
+        ]
+        return np.logical_or.reduceat(mask, runs, axis=axis)
+    sent_starts = [
+        _scale_pixel_span(first=source, last=source, factor=exact)[0]
+        for source in range(first, last + 2)
+    ]
+    return np.repeat(mask, np.diff(sent_starts), axis=axis)
 
 
 def scale_shape(*, shape: Shape, factor: tuple[float, float]) -> Shape:
@@ -75,18 +75,20 @@ def scale_shape(*, shape: Shape, factor: tuple[float, float]) -> Shape:
         return shape
     scaled = copy.copy(shape)
     if shape.shape_type == "mask" and shape.mask is not None:
-        xmin, ymin = np.round(shape.points.min(axis=0)).astype(int)
+        xmin, ymin = np.floor(shape.points.min(axis=0) + 0.5).astype(int)
         height, width = shape.mask.shape
         x0, y0, x1, y1 = scale_pixel_box(
             box=(xmin, ymin, xmin + width - 1, ymin + height - 1), factor=factor
         )
         scaled.points = np.array([[x0, y0], [x1, y1]], dtype=np.float64)
-        rows = _scale_mask_axis(
-            shape.mask, first=ymin, start=y0, end=y1, factor=factor[1], axis=0
-        )
-        scaled.mask = _scale_mask_axis(
-            rows, first=xmin, start=x0, end=x1, factor=factor[0], axis=1
-        )
+        mask = shape.mask
+        for first, axis_factor, axis in sorted(
+            [(ymin, factor[1], 0), (xmin, factor[0], 1)], key=lambda step: step[1]
+        ):
+            mask = _scale_mask_axis(
+                mask=mask, first=first, factor=axis_factor, axis=axis
+            )
+        scaled.mask = mask
         return scaled
     if shape.shape_type == "rectangle" and len(shape.points) == 2:  # noqa: PLR2004
         xmin, ymin, xmax, ymax = scale_bbox(

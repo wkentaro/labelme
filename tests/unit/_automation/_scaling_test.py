@@ -80,17 +80,18 @@ def _mask_shape(*, xmin: int, ymin: int, mask: list[list[bool]]) -> Shape:
     )
 
 
-def test_scale_shape_shrinks_a_speck_the_same_however_it_is_padded() -> None:
-    tight = scale_shape(
-        shape=_mask_shape(xmin=3, ymin=0, mask=[[True]]), factor=(0.25, 0.25)
-    )
-    padded = scale_shape(
-        shape=_mask_shape(xmin=2, ymin=0, mask=[[False, True]]), factor=(0.25, 0.25)
-    )
+@pytest.mark.parametrize("factor", [66_060_359 / 1008, 1008 / 66_060_359])
+def test_scale_shape_scales_a_mask_the_same_however_it_is_padded(
+    factor: float,
+) -> None:
+    def foreground_columns(*, mask: list[list[bool]]) -> list[int]:
+        scaled = scale_shape(
+            shape=_mask_shape(xmin=503, ymin=0, mask=mask), factor=(factor, 1.0)
+        )
+        assert scaled.mask is not None
+        return (np.flatnonzero(scaled.mask[0]) + int(scaled.points[0, 0])).tolist()
 
-    for scaled in (tight, padded):
-        assert scaled.mask is not None and scaled.mask.tolist() == [[True]]
-        np.testing.assert_array_equal(scaled.points, [[0, 0], [0, 0]])
+    assert foreground_columns(mask=[[True]]) == foreground_columns(mask=[[True, False]])
 
 
 def test_scale_shape_keeps_every_stripe_of_a_shrunk_mask() -> None:

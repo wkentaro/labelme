@@ -422,20 +422,28 @@ def test_overlapping_skips_existing_shape_without_bbox_interpretation(
     assert result.matching_shapes == []
 
 
-@pytest.mark.parametrize("padding", [0, 1])
-def test_shrunk_speck_covers_a_match_however_it_is_padded(padding: int) -> None:
-    mask = np.zeros((1, 1 + padding), dtype=bool)
-    mask[0, -1] = True
+@pytest.mark.parametrize(
+    ("xmin", "mask", "scale"),
+    [
+        (14, [True] * 3, 10.0),
+        (0, [False] * 14 + [True] * 3 + [False], 10.0),
+        (3.5, [True], 4.0),
+        (2.5, [False, True], 4.0),
+    ],
+)
+def test_shrunk_speck_covers_a_match_however_it_is_padded(
+    xmin: float, mask: list[bool], scale: float
+) -> None:
     speck = Shape(
         shape_type="mask",
-        points=np.array([[3 - padding, 0], [3, 0]], dtype=np.float64),
-        mask=mask,
+        points=np.array([[xmin, 0], [xmin + len(mask) - 1, 0]], dtype=np.float64),
+        mask=np.array([mask], dtype=bool),
     )
 
     result = match_detections_to_existing_shapes(
-        detections=[Detection(bbox=(0, 0, 0, 0), mask=np.ones((1, 1), dtype=bool))],
+        detections=[Detection(bbox=(1, 0, 1, 0), mask=np.ones((1, 1), dtype=bool))],
         existing_shapes=[speck],
-        scale_to_image=(4.0, 4.0),
+        scale_to_image=(scale, scale),
     )
 
     assert result.new_detections == []
