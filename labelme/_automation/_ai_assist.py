@@ -53,7 +53,9 @@ class AiAssistSession:
         image_size: tuple[int, int] | None = None,
         score_threshold: float,
         iou_threshold: float,
+        scale_to_image: tuple[float, float] = (1.0, 1.0),
     ) -> AiAssistProposal:
+        points = points / np.asarray(scale_to_image)
         detections = [
             detection
             for detection in _detections_from_annotations(annotations=annotations)
@@ -90,6 +92,7 @@ class AiAssistSession:
         matches = match_detections_to_existing_shapes(
             detections=detections,
             existing_shapes=existing_shapes,
+            scale_to_image=scale_to_image,
         )
         new_detections = suppress_detections_greedy(
             detections=matches.new_detections,
@@ -101,6 +104,7 @@ class AiAssistSession:
                 shape_type=self.output_format,
                 image_size=image_size,
                 polygon_detail=self.polygon_detail,
+                scale_to_image=scale_to_image,
             ),
             matching_existing_shapes=matches.matching_shapes,
         )

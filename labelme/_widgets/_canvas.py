@@ -326,7 +326,6 @@ class Canvas(QtWidgets.QWidget):
     get_ai_find_all_query: Callable[[], str]
 
     pixmap: QtGui.QPixmap
-    _pixmap_rgb: np.ndarray | None
     _cursor: CursorRole
     shapes: list[Shape]
     shape_context_menu: QtWidgets.QMenu
@@ -851,11 +850,6 @@ class Canvas(QtWidgets.QWidget):
         job = self._ai_finalize_job
         return job is not None and job.draft is self._current
 
-    def ai_image(self) -> np.ndarray:
-        if self._pixmap_rgb is None:
-            self._pixmap_rgb = _utils.img_qt_to_rgb_arr(img_qt=self.pixmap.toImage())
-        return self._pixmap_rgb
-
     def _submit_ai_job(
         self,
         *,
@@ -867,7 +861,6 @@ class Canvas(QtWidgets.QWidget):
         preview_key: object = None,
     ) -> None:
         assert self._osam_worker is not None
-        image = self.ai_image()
         job = _AiJob(
             channel=channel,
             pixmap_key=self.pixmap.cacheKey(),
@@ -877,7 +870,7 @@ class Canvas(QtWidgets.QWidget):
             image_size=(
                 None
                 if self._allow_out_of_bounds_points
-                else (image.shape[1], image.shape[0])
+                else (self.pixmap.width(), self.pixmap.height())
             ),
             draft=draft,
             preview_key=preview_key,
@@ -906,7 +899,7 @@ class Canvas(QtWidgets.QWidget):
             job=job,
             request=_automation.InferenceRequest(
                 model_name=self._get_mode_ai_model_name(),
-                image=image,
+                image=self.pixmap.toImage(),
                 points=job.points,
                 point_labels=job.point_labels,
                 # A box with text finds every match; "visual" is SAM3's word
@@ -975,7 +968,7 @@ class Canvas(QtWidgets.QWidget):
             self.update(rect)
 
     def _ai_proposer(
-        self, *, job: _AiJob, annotations: list[Any]
+        self, *, job: _AiJob, result: _automation.InferenceResult
     ) -> Callable[..., _automation.AiAssistProposal]:
         # Takes existing_shapes; the settings are fixed as they are now.
         thresholds = (
@@ -993,17 +986,18 @@ class Canvas(QtWidgets.QWidget):
             session.propose_shapes,
             score_threshold=thresholds[0],
             iou_threshold=thresholds[1],
-            annotations=annotations,
+            annotations=result.annotations,
             prompt_kind=job.prompt_kind,
             points=job.points,
             point_labels=job.point_labels,
             image_size=job.image_size,
+            scale_to_image=result.scale_to_image,
         )
 
     def _propose_ai_shapes(
-        self, *, job: _AiJob, annotations: list[Any]
+        self, *, job: _AiJob, result: _automation.InferenceResult
     ) -> _automation.AiAssistProposal:
-        proposal = self._ai_proposer(job=job, annotations=annotations)(
+        proposal = self._ai_proposer(job=job, result=result)(
             # AI-Find All skips covered objects once its batch has a label.
             existing_shapes=(
                 self.shapes
@@ -1040,14 +1034,14 @@ class Canvas(QtWidgets.QWidget):
             return None
         return job if self._is_current_ai_segment_job(job=job) else None
 
-    def _on_ai_job_finished(self, job: object, annotations: object, /) -> None:
+    def _on_ai_job_finished(
+        self, job: object, result: _automation.InferenceResult, /
+    ) -> None:
         ai_job = self._take_ai_job(job=job)
         if ai_job is None:
             return
         try:
-            proposal = self._propose_ai_shapes(
-                job=ai_job, annotations=cast(list, annotations)
-            )
+            proposal = self._propose_ai_shapes(job=ai_job, result=result)
         except Exception as e:
             logger.opt(exception=e).error("AI inference failed")
             self._apply_ai_result(
@@ -1060,9 +1054,7 @@ class Canvas(QtWidgets.QWidget):
             self._apply_ai_result(
                 job=ai_job,
                 proposal=proposal,
-                propose=self._ai_proposer(
-                    job=ai_job, annotations=cast(list, annotations)
-                ),
+                propose=self._ai_proposer(job=ai_job, result=result),
                 error=None,
             )
 
@@ -3349,7 +3341,6 @@ class Canvas(QtWidgets.QWidget):
     def load_pixmap(self, *, pixmap: QtGui.QPixmap, clear_shapes: bool = True) -> None:
         self.pixmap = pixmap
         self._drag_anchor = None
-        self._pixmap_rgb = None
         # A new image is a fresh inference context that should surface its own
         # first failure rather than staying muted by the prior image's latch.
         self._ai_inference_failed = False
@@ -3404,7 +3395,6 @@ class Canvas(QtWidgets.QWidget):
         self._clear_ai_find_all_draft()
         self._release_cursor()
         self.pixmap = QtGui.QPixmap()
-        self._pixmap_rgb = None
         self._drag_anchor = None
         self._stroke_press = None
         self.shapes = []

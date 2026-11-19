@@ -85,16 +85,23 @@ def compute_circle_from_mask(*, mask: NDArray[np.bool_]) -> Circle | None:
 def compute_oriented_rectangle_from_mask(
     *,
     mask: NDArray[np.bool_],
+    scale: tuple[float, float] = (1.0, 1.0),
 ) -> NDArray[np.float32] | None:
     if not mask.any():
         return None
     ys, xs = np.nonzero(mask)
-    if len(xs) < MIN_POLYGON_POINT_COUNT:
-        return None
-    # Pixel centers, as the image is drawn.
-    points = (np.stack([xs, ys], axis=1) + 0.5).astype(np.float64)
     import scipy.spatial  # noqa: PLC0415 -- deferred: ~160ms, only AI output needs it
 
+    # Pixel centers, as the image is drawn.
+    points = (np.stack([xs, ys], axis=1) + 0.5).astype(np.float64)
+    if scale != (1.0, 1.0):
+        try:
+            points = points[scipy.spatial.ConvexHull(points=points).vertices]
+        except scipy.spatial.QhullError:
+            pass
+        half_block = (np.asarray(scale, dtype=np.float64) - 1) / 2
+        corners = half_block * [[-1, -1], [1, -1], [1, 1], [-1, 1]]
+        points = ((points * scale)[:, None, :] + corners).reshape(-1, 2)
     try:
         # Qhull returns 2D hull vertices in CCW order, which the rotating
         # calipers loop below relies on for the right-handed perpendicular.

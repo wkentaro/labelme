@@ -5,6 +5,7 @@ from ._geometry import compute_polygons_from_mask
 from ._geometry import find_mask_contours
 from ._geometry import shape_to_xyxy_bbox
 from ._osam_worker import InferenceRequest
+from ._osam_worker import InferenceResult
 from ._osam_worker import OsamWorker
 from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
 from ._shape_builders import Detection
@@ -24,6 +25,7 @@ __all__ = [
     "AiPromptKind",
     "Detection",
     "InferenceRequest",
+    "InferenceResult",
     "OsamWorker",
     "assign_available_group_ids",
     "compute_polygon_from_circle",

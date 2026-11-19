@@ -23,16 +23,6 @@ def img_qt_to_arr(*, img_qt: QtGui.QImage) -> NDArray[np.uint8]:
     return rows[:, : w * channels].reshape((h, w, channels))
 
 
-def img_qt_to_rgb_arr(*, img_qt: QtGui.QImage) -> NDArray[np.uint8]:
-    # The raw-memory conversion above yields BGRA on little-endian for the
-    # 32-bit formats Qt loads images as; force RGB888 first (byte-order
-    # defined on every platform) so callers that feed vision models get
-    # true RGB.
-    return img_qt_to_arr(
-        img_qt=img_qt.convertToFormat(QtGui.QImage.Format.Format_RGB888)
-    )
-
-
 class ImageDecodeRequirement(NamedTuple):
     width: int
     height: int

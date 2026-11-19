@@ -35,6 +35,7 @@ def propose_shapes_from_texts(
     image_size: tuple[int, int] | None,
     polygon_detail: int,
     suppressed_by: str | None = None,
+    scale_to_image: tuple[float, float] = (1.0, 1.0),
 ) -> list[Shape]:
     # suppressed_by: the label the results will take, when it isn't their
     # text; only existing Shapes with that label suppress them.
@@ -70,6 +71,7 @@ def propose_shapes_from_texts(
                 and shape.label == (text if suppressed_by is None else suppressed_by)
             ],
             iou_threshold=iou_threshold,
+            scale_to_image=scale_to_image,
         )
         new_ids = {id(detection) for detection in matches.new_detections}
         is_new[indices] = [id(detection) in new_ids for detection in candidates]
@@ -117,6 +119,7 @@ def propose_shapes_from_texts(
         shape_type=shape_type,
         image_size=image_size,
         polygon_detail=polygon_detail,
+        scale_to_image=scale_to_image,
     )
     assign_available_group_ids(
         shapes=shapes,

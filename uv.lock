@@ -828,7 +828,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2,<1.29" },
-    { name = "osam", specifier = ">=0.11.8,<0.12" },
+    { name = "osam", specifier = ">=0.12,<0.13" },
     { name = "osam", extras = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23') or sys_platform != 'darwin'" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
@@ -1266,7 +1266,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.11.8"
+version = "0.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1280,9 +1280,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/32/c1/3b9a0fbd832acece58c2b28f3b10b7c42a8dc47eae40424cf06185af3b39/osam-0.11.8.tar.gz", hash = "sha256:92fa1bc291b4e9b04bd617471f72900ad11e788424c68006080665ae3e277c04", size = 27637753, upload-time = "2026-11-14T08:36:43.63Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c8/7b/83142c85ad8e92992b24b530157e1c683dbfc2d6d63cc76f3fafa3a733ad/osam-0.12.0.tar.gz", hash = "sha256:7c33b816c86393232dd3b9a8e333a4b8edf1275d932635b09184daf892a4ed96", size = 27640109, upload-time = "2026-11-19T01:59:06.023Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fc/b4/6dc43ee78265acb7ef11e1d8cad8ed9d5350126a82592cc4e0f91bbce534/osam-0.11.8-py3-none-any.whl", hash = "sha256:958c6dcb3abb1207d51e04343998df9c7eb221b054e0506bf9bb62b84c986545", size = 1506043, upload-time = "2026-11-14T08:36:41.06Z" },
+    { url = "https://files.pythonhosted.org/packages/e4/5c/1b55309ea80ca62cb00b6ed81c7dda4d26e36df9b2aac5df3c3a911cd9bd/osam-0.12.0-py3-none-any.whl", hash = "sha256:30a160ff0f868738fbb2a9c92360ef4e25ae4048ad54635aba50f019fab7b072", size = 1506589, upload-time = "2026-11-19T01:59:04.121Z" },
 ]
 
 [package.optional-dependencies]

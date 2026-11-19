@@ -1947,7 +1947,6 @@ class MainWindow(QtWidgets.QMainWindow):
         model_name: str = self._ai_text.get_model_name()
         if not self._ensure_ai_model_ready(model_name):
             return
-        image = canvas.ai_image()
         job = _AiTextJob(
             pixmap_key=canvas.pixmap.cacheKey(),
             texts=texts,
@@ -1965,7 +1964,9 @@ class MainWindow(QtWidgets.QMainWindow):
             channel="text",
             job=job,
             request=_automation.InferenceRequest(
-                model_name=model_name, image=image, texts=texts
+                model_name=model_name,
+                image=canvas.pixmap.toImage(),
+                texts=texts,
             ),
         )
 
@@ -2069,7 +2070,9 @@ class MainWindow(QtWidgets.QMainWindow):
         logger.error("AI text inference failed: {}", message)
         self._on_inference_failed(message)
 
-    def _on_ai_text_finished(self, job: object, annotations: object, /) -> None:
+    def _on_ai_text_finished(
+        self, job: object, result: _automation.InferenceResult, /
+    ) -> None:
         # A result lands whenever inference ends. Applied mid-draw, mid-drag
         # or under a dialog, its Shapes would split that action's Undo
         # snapshot or join the Shapes being labeled, so it waits. The worker
@@ -2081,7 +2084,7 @@ class MainWindow(QtWidgets.QMainWindow):
             QtCore.QTimer.singleShot(
                 100,
                 self,
-                functools.partial(self._on_ai_text_finished, job, annotations),
+                functools.partial(self._on_ai_text_finished, job, result),
             )
             return
         text_job = self._take_ai_text_job(job=job)
@@ -2089,7 +2092,8 @@ class MainWindow(QtWidgets.QMainWindow):
             return
         propose = functools.partial(
             _automation.propose_shapes_from_texts,
-            annotations=cast(list, annotations),
+            annotations=result.annotations,
+            scale_to_image=result.scale_to_image,
             texts=text_job.texts,
             shape_type=text_job.shape_type,
             existing_shapes=self._canvas_widgets.canvas.shapes,

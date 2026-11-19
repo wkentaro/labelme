@@ -20,8 +20,10 @@ from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
+from labelme._ai_models import osam_client
 from labelme._automation import AiOutputFormat
 from labelme._automation import InferenceRequest
+from labelme._automation import InferenceResult
 from labelme._automation import OsamWorker
 from labelme._automation import _osam_worker
 from labelme._shape import Shape
@@ -53,6 +55,9 @@ class _SessionClient:
             for name in _SESSIONS
         ]
 
+    def list(self) -> builtins.list[osam.types.ModelInfo]:
+        return osam_client(device="auto").list()
+
     def segment(
         self, *args: object, **kwargs: object
     ) -> builtins.list[osam.types.Annotation]:
@@ -61,11 +66,12 @@ class _SessionClient:
         return _SESSIONS[model].run(image=image, **kwargs).annotations
 
 
-def _run(*, request: InferenceRequest) -> list[osam.types.Annotation]:
+def _run(*, request: InferenceRequest) -> InferenceResult:
     return _osam_worker._run(
         client=cast(osam.Client, _SessionClient()),
         request=request,
         progress=lambda *_: None,
+        cache={},
     )
 
 

@@ -22,6 +22,7 @@ from pytestqt.qtbot import QtBot
 
 import labelme
 from labelme._automation import InferenceRequest
+from labelme._automation import InferenceResult
 from labelme._automation._ai_assist import AiAssistProposal
 from labelme._automation._ai_assist import AiAssistSession
 from labelme._config import load_config
@@ -76,13 +77,16 @@ class _InlineOsamWorker(QtCore.QObject):
         if self.paused:
             self._held.append((channel, job))
         else:
-            self.finished.emit(job, self.annotations)
+            self.finished.emit(job, self._result())
+
+    def _result(self) -> InferenceResult:
+        return InferenceResult(annotations=self.annotations, scale_to_image=(1.0, 1.0))
 
     def resume(self) -> None:
         self.paused = False
         held, self._held = self._held, []
         for _, job in held:
-            self.finished.emit(job, self.annotations)
+            self.finished.emit(job, self._result())
 
     def cancel(self, *, channel: object) -> None:
         self._held = [(c, j) for c, j in self._held if c != channel]
@@ -145,16 +149,17 @@ def test_transform_widget_point_to_image(
     assert actual.y() == pytest.approx(image_point.y())
 
 
-def test_ai_job_passes_rgb_image_to_model(*, canvas: Canvas) -> None:
+def test_ai_job_passes_the_shown_image_to_model(*, canvas: Canvas) -> None:
     canvas.pixmap.fill(QtGui.QColor(10, 20, 30))
 
-    canvas._submit_ai_job(
-        channel="preview", prompt_kind="points", points=[], point_labels=[]
-    )
+    for _ in range(2):
+        canvas._submit_ai_job(
+            channel="preview", prompt_kind="points", points=[], point_labels=[]
+        )
 
-    (request,) = _worker(canvas=canvas).requests
-    assert request.image is not None
-    np.testing.assert_array_equal(request.image[0, 0], [10, 20, 30])
+    first, second = _worker(canvas=canvas).requests
+    assert first.image.pixelColor(0, 0) == QtGui.QColor(10, 20, 30)
+    assert first.image.cacheKey() == second.image.cacheKey()
 
 
 def _make_oriented_rectangle(*, corners: list[tuple[float, float]]) -> Shape:
@@ -1685,18 +1690,6 @@ def test_load_pixmap_rearms_inference_failure_report(*, canvas: Canvas) -> None:
     canvas._ai_inference_failed = True
     canvas.load_pixmap(pixmap=QtGui.QPixmap(_WIDTH, _HEIGHT))
     assert canvas._ai_inference_failed is False
-
-
-def test_load_pixmap_defers_image_conversion(
-    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
-    monkeypatch.setattr(
-        pixmap, "toImage", Mock(side_effect=AssertionError("Image converted on load"))
-    )
-    canvas._pixmap_rgb = np.zeros((1, 1, 3), dtype=np.uint8)
-    canvas.load_pixmap(pixmap=pixmap)
-    assert canvas._pixmap_rgb is None
 
 
 def test_create_mode_switch_retypes_one_point_partial(*, canvas: Canvas) -> None:

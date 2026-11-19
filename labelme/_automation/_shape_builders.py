@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import typing
 from dataclasses import dataclass
 from typing import Final
@@ -15,6 +16,8 @@ from ._geometry import compute_circle_from_mask
 from ._geometry import compute_oriented_rectangle_from_mask
 from ._geometry import compute_polygons_from_mask
 from ._geometry import round_bbox_to_int
+from ._scaling import scale_bbox
+from ._scaling import scale_shape
 from ._types import AiOutputFormat
 
 _DEFAULT_POLYGON_DETAIL: Final[int] = 60
@@ -36,8 +39,9 @@ def _build_shape(
     mask: NDArray[np.bool_] | None,
     label: str | None,
     description: str | None,
+    scale: tuple[float, float] = (1.0, 1.0),
 ) -> Shape:
-    return Shape(
+    shape = Shape(
         label=label,
         shape_type=shape_type,
         mask=mask,
@@ -45,6 +49,7 @@ def _build_shape(
         points=np.asarray(points, dtype=np.float64),
         closed=True,
     )
+    return scale_shape(shape=shape, factor=scale)
 
 
 def _build_shapes_from_detection(
@@ -53,11 +58,12 @@ def _build_shapes_from_detection(
     shape_type: AiOutputFormat,
     image_size: tuple[int, int] | None,
     polygon_detail: int,
+    scale_to_image: tuple[float, float],
 ) -> list[Shape]:
     if shape_type == "rectangle":
         if detection.bbox is None:
             return []
-        xmin, ymin, xmax, ymax = detection.bbox
+        xmin, ymin, xmax, ymax = scale_bbox(bbox=detection.bbox, factor=scale_to_image)
         return [
             _build_shape(
                 shape_type="rectangle",
@@ -88,6 +94,7 @@ def _build_shapes_from_detection(
                 mask=None,
                 label=detection.label,
                 description=detection.description,
+                scale=scale_to_image,
             )
             for polygon in polygons
             if len(polygon) >= MIN_POLYGON_POINT_COUNT
@@ -105,10 +112,13 @@ def _build_shapes_from_detection(
                 mask=detection.mask,
                 label=detection.label,
                 description=detection.description,
+                scale=scale_to_image,
             )
         ]
     if shape_type == "circle":
-        circle = _circle_for_detection(detection=detection)
+        circle = _circle_for_detection(
+            detection=detection, scale_to_image=scale_to_image
+        )
         if circle is None:
             return []
         return [
@@ -124,7 +134,9 @@ def _build_shapes_from_detection(
             )
         ]
     if shape_type == "oriented_rectangle":
-        corners = _oriented_rectangle_for_detection(detection=detection)
+        corners = _oriented_rectangle_for_detection(
+            detection=detection, scale_to_image=scale_to_image
+        )
         if corners is not None and image_size is not None:
             corners = _fit_oriented_rectangle_to_image(
                 corners=corners,
@@ -144,21 +156,28 @@ def _build_shapes_from_detection(
     raise ValueError(f"Unsupported shape_type: {shape_type!r}")
 
 
+def _mask_origin(*, detection: Detection) -> tuple[int, int]:
+    if detection.bbox is None:
+        return 0, 0
+    xmin, ymin, _, _ = round_bbox_to_int(bbox=detection.bbox)
+    return xmin, ymin
+
+
 def _oriented_rectangle_for_detection(
     *,
     detection: Detection,
+    scale_to_image: tuple[float, float],
 ) -> NDArray[np.float32] | None:
     if detection.mask is not None:
-        corners = compute_oriented_rectangle_from_mask(mask=detection.mask)
+        corners = compute_oriented_rectangle_from_mask(
+            mask=detection.mask, scale=scale_to_image
+        )
         if corners is not None:
-            offset_x, offset_y = (
-                round_bbox_to_int(bbox=detection.bbox)[:2]
-                if detection.bbox is not None
-                else (0, 0)
+            return corners + np.multiply(
+                _mask_origin(detection=detection), scale_to_image, dtype=np.float32
             )
-            return corners + np.array([offset_x, offset_y], dtype=np.float32)
     if detection.bbox is not None:
-        xmin, ymin, xmax, ymax = detection.bbox
+        xmin, ymin, xmax, ymax = scale_bbox(bbox=detection.bbox, factor=scale_to_image)
         return np.array(
             [[xmin, ymin], [xmax, ymin], [xmax, ymax], [xmin, ymax]],
             dtype=np.float32,
@@ -186,23 +205,22 @@ def _fit_oriented_rectangle_to_image(
     )
 
 
-def _circle_for_detection(*, detection: Detection) -> Circle | None:
+def _circle_for_detection(
+    *, detection: Detection, scale_to_image: tuple[float, float]
+) -> Circle | None:
     if detection.mask is not None:
         circle = compute_circle_from_mask(mask=detection.mask)
         if circle is not None:
-            offset_x, offset_y = (
-                round_bbox_to_int(bbox=detection.bbox)[:2]
-                if detection.bbox is not None
-                else (0, 0)
-            )
+            offset_x, offset_y = _mask_origin(detection=detection)
+            scale_x, scale_y = scale_to_image
             return Circle(
-                cx=circle.cx + offset_x,
-                cy=circle.cy + offset_y,
-                radius=circle.radius,
+                cx=(circle.cx + offset_x) * scale_x,
+                cy=(circle.cy + offset_y) * scale_y,
+                radius=circle.radius * math.sqrt(scale_x * scale_y),
             )
     if detection.bbox is not None:
         # Inscribed in bbox when no usable mask is available.
-        xmin, ymin, xmax, ymax = detection.bbox
+        xmin, ymin, xmax, ymax = scale_bbox(bbox=detection.bbox, factor=scale_to_image)
         radius = min(xmax - xmin, ymax - ymin) / 2
         if radius > 0:
             return Circle(cx=(xmin + xmax) / 2, cy=(ymin + ymax) / 2, radius=radius)
@@ -219,6 +237,7 @@ MASK_REQUIRED_SHAPE_TYPES: Final[frozenset[AiOutputFormat]] = frozenset(
         shape_type=shape_type,
         image_size=None,
         polygon_detail=_DEFAULT_POLYGON_DETAIL,
+        scale_to_image=(1.0, 1.0),
     )
 )
 
@@ -229,6 +248,7 @@ def shapes_from_detections(
     shape_type: AiOutputFormat,
     image_size: tuple[int, int] | None = None,
     polygon_detail: int = _DEFAULT_POLYGON_DETAIL,
+    scale_to_image: tuple[float, float] = (1.0, 1.0),
 ) -> list[Shape]:
     shapes: list[Shape] = []
     next_group_id = 1
@@ -238,6 +258,7 @@ def shapes_from_detections(
             shape_type=shape_type,
             image_size=image_size,
             polygon_detail=polygon_detail,
+            scale_to_image=scale_to_image,
         )
         if len(detection_shapes) > 1:
             for shape in detection_shapes:
