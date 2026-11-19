@@ -86,6 +86,7 @@ from ._widgets import StatusStats
 from ._widgets import ToolBar
 from ._widgets import UniqueLabelQListWidget
 from ._widgets import ZoomWidget
+from ._widgets import adjust_brightness_contrast
 
 
 @dataclasses.dataclass(frozen=True, eq=False)
@@ -3234,20 +3235,28 @@ class MainWindow(QtWidgets.QMainWindow):
             contrast,
         )
         assert self._annotation is not None
-        dialog = BrightnessContrastDialog(
-            img=_image_codec.img_data_to_pil(img_data=self._annotation.image_data),
-            callback=self._on_brightness_contrast_changed,
-            brightness=brightness,
-            contrast=contrast,
-            parent=self,
-        )
-
         if is_initial_load:
-            dialog.apply()
+            self._on_brightness_contrast_changed(
+                adjust_brightness_contrast(
+                    img=_image_codec.img_data_to_pil(
+                        img_data=self._annotation.image_data
+                    ),
+                    brightness=brightness,
+                    contrast=contrast,
+                )
+            )
         else:
+            dialog = BrightnessContrastDialog(
+                img=_image_codec.img_data_to_pil(img_data=self._annotation.image_data),
+                callback=self._on_brightness_contrast_changed,
+                brightness=brightness,
+                contrast=contrast,
+                parent=self,
+            )
             dialog.exec()
             brightness = dialog.slider_brightness.value()
             contrast = dialog.slider_contrast.value()
+            dialog.deleteLater()
 
         self._brightness_contrast_values[self._image_path] = (brightness, contrast)
         logger.debug(
