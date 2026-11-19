@@ -1139,6 +1139,53 @@ def test_one_dialog_labels_an_example_box_batch(
     assert len(canvas.shape_backups) == backups + (1 if labels else 0)
 
 
+@pytest.mark.parametrize("covered", [False, True])
+def test_find_all_batch_is_proposed_again_only_when_a_shape_can_cover_it(
+    *,
+    main_win: MainWinFactory,
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    data_path: Path,
+    covered: bool,
+) -> None:
+    win = main_win(file_or_dir=str(data_path / "raw/2011_000003.jpg"))
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    canvas = win._canvas_widgets.canvas
+    if covered:
+        canvas.load_shapes(
+            shapes=[
+                Shape(
+                    label="dog",
+                    shape_type="rectangle",
+                    points=np.array([(100.0, 100.0), (110.0, 110.0)]),
+                )
+            ],
+            replace=False,
+        )
+    monkeypatch.setattr(
+        win._label_dialog,
+        "popup",
+        lambda **_: LabelDialogEntry(
+            label="dog", flags={}, group_id=None, description=""
+        ),
+    )
+    win._switch_canvas_mode(edit=False, create_mode="ai_find_all")
+    draft = [
+        Shape(shape_type="rectangle", points=np.array([(x, 0.0), (x + 10, 10.0)]))
+        for x in (0.0, 20.0)
+    ]
+    proposed: list[str] = []
+
+    def propose(label: str) -> list[Shape]:
+        proposed.append(label)
+        return draft
+
+    canvas.ai_find_all_draft_committed.emit(draft, propose, "black dog")
+
+    assert proposed == (["dog"] if covered else [])
+    assert all(any(s is shape for s in canvas.shapes) for shape in draft)
+
+
 @pytest.mark.parametrize(
     ("existing", "message"), [(0, "Found 2 new 'dog'"), (2, "No new 'dog' found")]
 )
