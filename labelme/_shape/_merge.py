@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import math
 from typing import Literal
 
 import numpy as np
@@ -34,10 +35,10 @@ def _round_bbox_to_int(*, shape: Shape) -> tuple[int, int, int, int]:
     # same pixel grid as the Mask Shapes AI Assist produces.
     (xmin, ymin), (xmax, ymax) = shape.points
     return (
-        int(round(float(xmin))),
-        int(round(float(ymin))),
-        int(round(float(xmax))),
-        int(round(float(ymax))),
+        math.floor(xmin + 0.5),
+        math.floor(ymin + 0.5),
+        math.floor(xmax + 0.5),
+        math.floor(ymax + 0.5),
     )
 
 
