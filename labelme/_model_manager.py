@@ -33,7 +33,9 @@ def _pull_model(
     cached_download.cache_root = str(cache_root)
     # Verified downloads are staged on the destination filesystem, so an
     # uncooperative worker cannot expose a partially published model file.
-    cached_download.shutil.move = os.replace  # ty: ignore[invalid-assignment]
+    # A worker here is defined as a process that is responsible for downloading and caching the model files.
+    if hasattr(cached_download, "shutil"): 
+        cached_download.shutil.move = os.replace  # ty: ignore[invalid-assignment]
 
     def report_progress(filename: str, done: int, total: int | None) -> None:
         connection.send(("progress", filename, done, total))
