@@ -8,6 +8,8 @@ from loguru import logger
 from numpy.typing import NDArray
 
 from .._shape import Shape
+from ._scaling import UNSCALED
+from ._scaling import Scale
 from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
 from ._shape_builders import Detection
 from ._shape_builders import assign_available_group_ids
@@ -35,7 +37,7 @@ def propose_shapes_from_texts(
     image_size: tuple[int, int] | None,
     polygon_detail: int,
     suppressed_by: str | None = None,
-    scale_to_image: tuple[float, float] = (1.0, 1.0),
+    scale_to_image: Scale = UNSCALED,
 ) -> list[Shape]:
     # suppressed_by: the label the results will take, when it isn't their
     # text; only existing Shapes with that label suppress them.

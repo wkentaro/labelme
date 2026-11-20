@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from fractions import Fraction
 from typing import Final
 from typing import NamedTuple
 
@@ -473,7 +474,7 @@ def test_shapes_from_a_shrunk_image_scale_to_the_image(
         image_size=(40, 40),
         score_threshold=0.0,
         iou_threshold=0.5,
-        scale_to_image=(4.0, 4.0),
+        scale_to_image=(Fraction(4), Fraction(4)),
     )
 
     (shape,) = proposal.new_shapes
@@ -501,7 +502,7 @@ def test_a_shrunk_image_matches_the_existing_shape_it_covers() -> None:
         existing_shapes=[existing],
         score_threshold=0.0,
         iou_threshold=0.5,
-        scale_to_image=(4.0, 4.0),
+        scale_to_image=(Fraction(4), Fraction(4)),
     )
 
     assert proposal.new_shapes == []

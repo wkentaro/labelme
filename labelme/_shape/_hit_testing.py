@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 import numpy as np
 import numpy.typing as npt
 
@@ -96,3 +98,10 @@ def image_extent(
     if shape.mask is not None:
         hi = np.maximum(hi, points[0] + shape.mask.shape[::-1])
     return lo, hi
+
+
+def mask_shape_box(*, shape: Shape) -> tuple[int, int, int, int]:
+    assert shape.mask is not None
+    xmin, ymin = (math.floor(v + 0.5) for v in shape.points[0])
+    height, width = shape.mask.shape
+    return xmin, ymin, xmin + width - 1, ymin + height - 1

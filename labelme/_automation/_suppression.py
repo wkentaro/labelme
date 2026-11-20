@@ -9,8 +9,11 @@ import PIL.ImageDraw
 from numpy.typing import NDArray
 
 from .._shape import Shape
+from .._shape import mask_shape_box
 from ._geometry import round_bbox_to_int
 from ._geometry import shape_to_xyxy_bbox
+from ._scaling import UNSCALED
+from ._scaling import Scale
 from ._scaling import scale_shape
 from ._shape_builders import Detection
 
@@ -84,7 +87,7 @@ def match_detections_to_existing_shapes(
     detections: list[Detection],
     existing_shapes: list[Shape],
     iou_threshold: float = 0.5,
-    scale_to_image: tuple[float, float] = (1.0, 1.0),
+    scale_to_image: Scale = UNSCALED,
 ) -> _ExistingShapeMatchResult:
     if not detections:
         return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
@@ -195,7 +198,7 @@ def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:
         stored = shape.mask.astype(np.bool_, copy=False)
         return _LocalMask(
             mask=stored,
-            origin_xy=(int(round(float(bbox[0]))), int(round(float(bbox[1])))),
+            origin_xy=mask_shape_box(shape=shape)[:2],
             area=int(np.count_nonzero(stored)),
         )
     xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=bbox)

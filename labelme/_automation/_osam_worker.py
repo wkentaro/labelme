@@ -7,6 +7,7 @@ import queue
 import threading
 import time
 from collections.abc import Callable
+from fractions import Fraction
 from typing import TYPE_CHECKING
 from typing import Any
 from typing import Final
@@ -24,6 +25,7 @@ from PySide6 import QtWidgets
 from .._ai_models import Device
 from .._ai_models import model_info
 from .._ai_models import osam_client
+from ._scaling import Scale
 
 if TYPE_CHECKING:
     import osam
@@ -45,7 +47,7 @@ class InferenceRequest:
 @dataclasses.dataclass(frozen=True)
 class InferenceResult:
     annotations: list[osam.types.Annotation]
-    scale_to_image: tuple[float, float]
+    scale_to_image: Scale
 
 
 def _model_image(*, image: QtGui.QImage, size: tuple[int, int]) -> NDArray[np.uint8]:
@@ -146,7 +148,7 @@ def _run(
     )
     return InferenceResult(
         annotations=annotations,
-        scale_to_image=(width / sent_size[0], height / sent_size[1]),
+        scale_to_image=(Fraction(width, sent_size[0]), Fraction(height, sent_size[1])),
     )
 
 

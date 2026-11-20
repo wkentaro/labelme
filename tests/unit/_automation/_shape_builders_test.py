@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import typing
+from fractions import Fraction
 
 import numpy as np
 import pytest
@@ -32,7 +33,7 @@ def test_shapes_from_detections_keeps_a_fractional_rectangle_when_scaling() -> N
     [shape] = shapes_from_detections(
         detections=[Detection(bbox=(10.4, 20.4, 30.4, 50.4))],
         shape_type="rectangle",
-        scale_to_image=(4.0, 2.0),
+        scale_to_image=(Fraction(4), Fraction(2)),
     )
 
     np.testing.assert_allclose(shape.points, [[41.6, 40.8], [124.6, 101.8]])
@@ -397,7 +398,7 @@ def test_shapes_from_detections_keeps_a_one_row_mask_in_a_stretched_image() -> N
         detections=[Detection(bbox=(0, 0, 1023, 0), mask=np.ones((1, 1024), bool))],
         shape_type="oriented_rectangle",
         image_size=(4096, 2),
-        scale_to_image=(4.0, 2.0),
+        scale_to_image=(Fraction(4), Fraction(2)),
     )
 
     (expected,) = shapes_from_detections(
@@ -416,7 +417,7 @@ def test_shapes_from_detections_scales_a_circle_area_to_the_image() -> None:
         detections=[Detection(bbox=(2, 2, 5, 5), mask=np.ones((4, 4), bool))],
         shape_type="circle",
         image_size=(40, 20),
-        scale_to_image=(4.0, 2.0),
+        scale_to_image=(Fraction(4), Fraction(2)),
     )
 
     np.testing.assert_allclose(shape.points[0], [16, 8])
@@ -432,7 +433,7 @@ def test_shapes_from_detections_fits_a_scaled_one_pixel_diagonal(length: int) ->
         detections=[Detection(bbox=(16, 16, 15 + length, 15 + length), mask=mask)],
         shape_type="oriented_rectangle",
         image_size=(192, 192),
-        scale_to_image=(4.0, 4.0),
+        scale_to_image=(Fraction(4), Fraction(4)),
     )
 
     (expected,) = shapes_from_detections(

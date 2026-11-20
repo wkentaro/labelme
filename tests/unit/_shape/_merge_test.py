@@ -57,17 +57,32 @@ def test_merge_nested_masks_keeps_outer_bbox() -> None:
 
 
 def test_merge_rounds_non_integer_bbox_like_ai_assist() -> None:
-    # Ties go to even, as int(round(x)) does: 0.5 -> 0, 2.5 -> 2, 1.5 -> 2.
     a = _full_mask(xmin=0.5, ymin=1.5, size=2, label="cat")
     b = _full_mask(xmin=2.5, ymin=0.5, size=2, label="cat")
 
     merged = merge_masks(shapes=[a, b])
 
-    assert merged.points.tolist() == [[0, 0], [4, 3]]
-    expected = np.zeros((4, 5), dtype=bool)
-    expected[2:4, 0:2] = True
+    assert merged.points.tolist() == [[1, 1], [4, 3]]
+    expected = np.zeros((3, 4), dtype=bool)
+    expected[1:3, 0:2] = True
     expected[0:2, 2:4] = True
     np.testing.assert_array_equal(merged.mask, expected)
+
+
+def test_merge_places_a_mask_at_its_first_point() -> None:
+    swapped = Shape(
+        label="cat",
+        shape_type="mask",
+        mask=np.ones((1, 1), dtype=bool),
+        points=np.array([[12.5, 20], [9.5, 20]]),
+    )
+    far = _full_mask(xmin=0, ymin=20, size=1, label="cat")
+
+    merged = merge_masks(shapes=[swapped, far])
+
+    assert merged.points.tolist() == [[0, 20], [13, 20]]
+    assert merged.mask is not None
+    assert np.flatnonzero(merged.mask[0]).tolist() == [0, 13]
 
 
 def test_merge_takes_identity_from_first_shape() -> None:
