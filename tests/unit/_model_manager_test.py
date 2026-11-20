@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import importlib
+import multiprocessing
 import hashlib
 import socketserver
 import threading
@@ -12,6 +14,7 @@ import pytest
 from pytestqt.qtbot import QtBot
 
 from labelme._model_manager import ModelManager
+from labelme._model_manager import _pull_model
 
 from ..conftest import DOWNLOAD_START_TIMEOUT_MS
 
@@ -365,3 +368,35 @@ def test_progress_supports_files_larger_than_two_gibibytes(
     assert manager.progress[2] == 2**33
     manager.cancel(name)
     release.set()
+        
+        
+def test_pull_model_succeeds_without_cached_download_shutil(
+    *,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    download_server: tuple[str, list[str], threading.Event],
+) -> None:
+    origin, requests, _ = download_server
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+    monkeypatch.setenv("OSAM_BLOB_ENDPOINT", "direct")
+    # Remove cached_download.shutil to simulate an environment where it is not available.
+    cached_download = importlib.import_module("gdown.cached_download")
+    monkeypatch.delattr(cached_download, "shutil", raising=False)
+
+    blob = _make_blob(url=origin + "/weights")
+    cancel = multiprocessing.Event()
+    parent_conn, child_conn = multiprocessing.Pipe(duplex=False)
+
+    _pull_model({"model": blob}, tmp_path / "cache", cancel, child_conn)
+
+    messages: list[tuple[object, ...]] = []
+    while parent_conn.poll():
+        try:
+            messages.append(parent_conn.recv())
+        except EOFError:
+            break
+    parent_conn.close()
+
+    assert requests == ["/weights"]
+    assert messages[-1] == ("done",)
