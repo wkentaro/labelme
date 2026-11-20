@@ -179,6 +179,10 @@ class OsamWorker(QtCore.QObject):
     _client: tuple[Device, osam.Client] | None  # the thread's only
     _sent_images: dict[tuple[int, tuple[int, int]], NDArray[np.uint8]]
     _removing: set[str]  # unloading until unloaded's slots delete the files
+    # Once shut down, the owner may delete this object, so the thread drops
+    # its reports; the lock keeps a report from racing the delete.
+    _shut_down: bool
+    _report_lock: threading.Lock
 
     finished = QtCore.Signal(object, InferenceResult)
     failed = QtCore.Signal(object, str)  # job, message
@@ -203,6 +207,8 @@ class OsamWorker(QtCore.QObject):
         self._client = None
         self._sent_images = {}
         self._removing = set()
+        self._shut_down = False
+        self._report_lock = threading.Lock()
         self._reported.connect(self._on_reported)
         self._unloaded.connect(self._on_unloaded)
         threading.Thread(target=self._serve, name="osam-worker", daemon=True).start()
@@ -261,6 +267,8 @@ class OsamWorker(QtCore.QObject):
     def shutdown(self) -> None:
         # Returns at once: the thread closes the server, which also exits
         # with this process, so quitting never waits on a running request.
+        with self._report_lock:
+            self._shut_down = True
         self._pending.clear()
         if self._active is not None:
             self._set_active(active=None)  # its result goes unreported
@@ -306,21 +314,19 @@ class OsamWorker(QtCore.QObject):
                     cache=self._sent_images,
                 )
             except Exception as error:
+                if self._shut_down:
+                    continue  # its failure goes unreported, like its result
                 if (
                     isinstance(error, ResponseError)
                     and error.code == "model_not_pulled"
                 ):
                     logger.warning("AI inference failed: {}", error)
-                    self._reported.emit(
-                        request_id, "not_pulled", (str(error), error.device)
-                    )
+                    self._report(request_id, "not_pulled", (str(error), error.device))
                     continue
                 logger.opt(exception=error).error("AI inference failed")
-                self._reported.emit(
-                    request_id, "error", f"{type(error).__name__}: {error}"
-                )
+                self._report(request_id, "error", f"{type(error).__name__}: {error}")
             else:
-                self._reported.emit(request_id, "done", result)
+                self._report(request_id, "done", result)
         if self._client is not None:
             self._client[1].close()
 
@@ -331,7 +337,9 @@ class OsamWorker(QtCore.QObject):
         except Exception:
             # A server that failed holds no files either.
             logger.exception("Failed to unload {!r}", model_name)
-        self._unloaded.emit(model_name)
+        with self._report_lock:
+            if not self._shut_down:
+                self._unloaded.emit(model_name)
 
     def _on_unloaded(self, model_name: str, /) -> None:
         if model_name not in self._removing:
@@ -342,7 +350,12 @@ class OsamWorker(QtCore.QObject):
     def _report_stage(
         self, request_id: int, stage: WorkerStage, device: str | None, /
     ) -> None:
-        self._reported.emit(request_id, "stage", (stage, device))
+        self._report(request_id, "stage", (stage, device))
+
+    def _report(self, request_id: int, kind: str, payload: object, /) -> None:
+        with self._report_lock:
+            if not self._shut_down:
+                self._reported.emit(request_id, kind, payload)
 
     def _client_for(self, *, device: Device, progress: ProgressCallback) -> osam.Client:
         # ponytail: one timeout covers each of loading and running, so a
