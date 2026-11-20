@@ -42,6 +42,9 @@ dependencies = [
 ]
 dynamic = ["readme", "version"]
 
+[project.optional-dependencies]
+dicom = ["pydicom>=2.4.0", "SimpleITK>=2.3.0"]
+
 [tool.hatch.metadata.hooks.fancy-pypi-readme]
 content-type = "text/markdown"
 fragments = [{ path = "README.md" }]
@@ -79,6 +82,8 @@ dev = [
   "gruff>=0.2.5",
   "packaging>=26.1",
   "hypothesis>=6.170.15",
+  "pydicom>=2.4.0",
+  "SimpleITK>=2.3.0",
 ]
 
 [project.scripts]

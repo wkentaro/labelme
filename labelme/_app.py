@@ -38,6 +38,7 @@ from labelme import __version__
 from . import _ai_models
 from . import _automation
 from . import _config
+from . import _dicom
 from . import _image_codec
 from . import _label_file
 from . import _label_flags
@@ -336,6 +337,9 @@ class MainWindow(QtWidgets.QMainWindow):
     _prev_image_path: str | None
     _viewport_states: dict[str, _ViewportState]
     _brightness_contrast_values: dict[str, tuple[int | None, int | None]]
+    _dicom_session: _dicom.DicomSessionData | None
+    _dicom_view_states: dict[str, tuple[float, float, bool, str]]
+    _last_mouse_pos: QtCore.QPointF | None
     # The last Polygon Detail a Conversion used, apart from AI Assist's.
     _conversion_detail: int
     _default_state: QtCore.QByteArray
@@ -1424,6 +1428,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._prev_image_path = None
         self._viewport_states = {}
         self._brightness_contrast_values = {}
+        self._dicom_session = None
+        self._dicom_view_states = {}
+        self._last_mouse_pos = None
         self._conversion_detail = 60
 
         if self._config["file_search"]:
@@ -2197,6 +2204,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._docks.label_list.clear()
         self._load_flags(flags={}, widget=self._docks.flag_list)
         self._annotation = None
+        self._dicom_session = None
         self._image = QtGui.QImage()
         self._image_path = None
         self._file_list_image_path = None
@@ -2745,6 +2753,16 @@ class MainWindow(QtWidgets.QMainWindow):
         has_image_file = Path(image_path).is_file() and image_path.lower().endswith(
             _list_supported_image_extensions()
         )
+        other_data = copy.deepcopy(self._annotation.other_data)
+        if self._dicom_session is not None:
+            other_data["dicom"] = self._dicom_session.to_other_data()
+            self._annotation.other_data["dicom"] = copy.deepcopy(other_data["dicom"])
+        is_dicom = _dicom.is_dicom_file(filename=image_path)
+        save_image_data = (
+            False
+            if (is_dicom and has_image_file)
+            else (self._config["with_image_data"] or not has_image_file)
+        )
         return SaveRequest(
             filename=label_path,
             annotation=Annotation(
@@ -2755,11 +2773,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 image_data=self._annotation.image_data,
                 shapes=self._shape_dicts(),
                 flags=self._read_flag_dock_states(),
-                other_data=copy.deepcopy(self._annotation.other_data),
+                other_data=other_data,
             ),
             image_height=self._image.height(),
             image_width=self._image.width(),
-            save_image_data=self._config["with_image_data"] or not has_image_file,
+            save_image_data=save_image_data,
             # Save As confirms an overwrite in its dialog; no other save may
             # replace another Image's Annotation File.
             owner_image_path=(
@@ -3213,6 +3231,62 @@ class MainWindow(QtWidgets.QMainWindow):
             pixmap=QtGui.QPixmap.fromImage(qimage), clear_shapes=False
         )
 
+    def _on_dicom_window_changed(
+        self,
+        window_center: float,
+        window_width: float,
+        is_inverted: bool,  # noqa: FBT001 -- callback positional signature
+        preset_name: str,
+        /,
+    ) -> None:
+        if self._dicom_session is not None:
+            self._dicom_session.window_center = window_center
+            self._dicom_session.window_width = window_width
+            self._dicom_session.is_inverted = is_inverted
+            self._dicom_session.preset_name = preset_name
+            if self._annotation is not None:
+                self._annotation.other_data["dicom"] = (
+                    self._dicom_session.to_other_data()
+                )
+        if self._image_path is not None:
+            self._dicom_view_states[self._image_path] = (
+                window_center,
+                window_width,
+                is_inverted,
+                preset_name,
+            )
+
+    def create_brightness_contrast_dialog(self) -> BrightnessContrastDialog:
+        assert self._annotation is not None
+        if self._dicom_session is not None:
+            auto_wc, auto_ww = self._dicom_session.default_auto_window()
+            return BrightnessContrastDialog(
+                img=_image_codec.img_data_to_pil(img_data=self._annotation.image_data),
+                callback=self._on_brightness_contrast_changed,
+                hu_array=self._dicom_session.hu_array,
+                window_center=self._dicom_session.window_center,
+                window_width=self._dicom_session.window_width,
+                invert=self._dicom_session.is_inverted,
+                preset_name=self._dicom_session.preset_name,
+                default_window_center=auto_wc,
+                default_window_width=auto_ww,
+                default_invert=self._dicom_session.default_is_inverted(),
+                on_dicom_window_changed=self._on_dicom_window_changed,
+                parent=self,
+            )
+        brightness, contrast = (
+            self._brightness_contrast_values.get(self._image_path, (None, None))
+            if self._image_path is not None
+            else (None, None)
+        )
+        return BrightnessContrastDialog(
+            img=_image_codec.img_data_to_pil(img_data=self._annotation.image_data),
+            callback=self._on_brightness_contrast_changed,
+            brightness=brightness,
+            contrast=contrast,
+            parent=self,
+        )
+
     def open_brightness_contrast_dialog(
         self,
         _value: bool,  # noqa: FBT001 -- QAction.triggered slot
@@ -3222,6 +3296,53 @@ class MainWindow(QtWidgets.QMainWindow):
     ) -> None:
         if self._image_path is None:
             logger.warning("image_path is None, cannot set brightness/contrast")
+            return
+
+        if self._dicom_session is not None:
+            session = self._dicom_session
+            if is_initial_load:
+                keep_prev = (
+                    self._config["keep_prev_brightness_contrast"]
+                    or self._actions.toggle_keep_prev_brightness_contrast.isChecked()
+                )
+                has_saved_view = (
+                    self._label_file_path is not None
+                    and self._annotation is not None
+                    and isinstance(self._annotation.other_data.get("dicom"), dict)
+                    and isinstance(
+                        self._annotation.other_data["dicom"].get("viewState"), dict
+                    )
+                )
+                if (
+                    not has_saved_view
+                    and keep_prev
+                    and self._prev_image_path is not None
+                    and self._prev_image_path in self._dicom_view_states
+                ):
+                    wc, ww, inv, preset = self._dicom_view_states[self._prev_image_path]
+                    session.window_center = wc
+                    session.window_width = ww
+                    session.is_inverted = inv
+                    session.preset_name = preset
+                elif not has_saved_view and self._image_path in self._dicom_view_states:
+                    wc, ww, inv, preset = self._dicom_view_states[self._image_path]
+                    session.window_center = wc
+                    session.window_width = ww
+                    session.is_inverted = inv
+                    session.preset_name = preset
+
+            dialog = self.create_brightness_contrast_dialog()
+            if is_initial_load:
+                dialog.apply()
+            else:
+                dialog.exec()
+            self._on_dicom_window_changed(
+                dialog.window_center,
+                dialog.window_width,
+                dialog.is_inverted,
+                dialog.preset_name,
+            )
+            dialog.deleteLater()
             return
 
         brightness: int | None
@@ -3608,10 +3729,31 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # The replacement session is fully staged; only now replace the
         # current one.
+        dicom_session: _dicom.DicomSessionData | None = None
+        if _dicom.is_dicom_file(filename=image_path) and Path(image_path).is_file():
+            try:
+                dicom_session = _dicom.load_dicom_session(filename=image_path)
+            except OSError as e:
+                self._show_file_open_error(
+                    path=image_or_label_path, file_kind="image", exc=e, extra=None
+                )
+                return False
+            saved_dicom = (
+                annotation.other_data.get("dicom")
+                if label_file_path is not None
+                else None
+            )
+            if isinstance(saved_dicom, dict) and isinstance(
+                saved_dicom.get("viewState"), dict
+            ):
+                dicom_session.apply_view_state(view_state=saved_dicom["viewState"])
+            annotation.other_data["dicom"] = dicom_session.to_other_data()
+
         self._remember_current_viewport()
         self.reset_state()
         self._canvas_widgets.canvas.setEnabled(False)
         self._annotation = annotation
+        self._dicom_session = dicom_session
         self._image_path = image_path
         self._file_list_image_path = file_list_image_path
         self._label_file_path = label_file_path
@@ -3677,6 +3819,8 @@ class MainWindow(QtWidgets.QMainWindow):
             False,  # noqa: FBT003 -- placeholder for the Qt triggered flag
             is_initial_load=True,
         )
+        if self._last_mouse_pos is not None and self._status_bar.stats.text():
+            self._update_status_stats(self._last_mouse_pos)
         self._actions.image.setEnabled(True)
         self._sync_navigation_actions()
         self._prefetch_neighbors()
@@ -4852,7 +4996,19 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
     def _update_status_stats(self, mouse_pos: QtCore.QPointF, /) -> None:
-        self._status_bar.stats.set_position(x=mouse_pos.x(), y=mouse_pos.y())
+        self._last_mouse_pos = mouse_pos
+        intensity_text = (
+            None
+            if self._dicom_session is None
+            else self._dicom_session.format_intensity_at(
+                x=mouse_pos.x(), y=mouse_pos.y()
+            )
+        )
+        self._status_bar.stats.set_position(
+            x=mouse_pos.x(),
+            y=mouse_pos.y(),
+            intensity_text=intensity_text,
+        )
 
 
 def _shapes_from_dicts(
@@ -5031,6 +5187,7 @@ def _list_supported_image_extensions() -> tuple[str, ...]:
     }
     if PIL.features.check_codec("jpg_2000"):
         extensions.update((".jp2", ".jpx", ".j2k", ".j2c"))
+    extensions.update(_dicom.DICOM_EXTENSIONS)
     return tuple(sorted(extensions))
 
 

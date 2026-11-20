@@ -26,6 +26,7 @@ from numpy.typing import NDArray
 
 from labelme import __version__
 
+from . import _dicom
 from . import _image_codec
 from ._shape import ShapeDict
 from ._shape import ShapeType
@@ -365,11 +366,13 @@ def _read_image_file(*, filename: str, max_decode_mb: int | None) -> bytes:
                     # A 16-bit PGM decodes to 32-bit integers, which PNG
                     # cannot hold.
                     oriented = oriented.convert("I;16")
-                # JPEG holds 8 bits per channel; PNG keeps 16-bit integers.
+                # JPEG holds 8 bits per channel; PNG keeps 16-bit integers
+                # and preserves exact 8-bit VOI LUT values for DICOM slices.
                 is_high_depth = oriented.mode.startswith("I")
+                is_dicom = _dicom.is_dicom_file(filename=filename)
                 fmt = (
                     "PNG"
-                    if has_transparency or is_jpeg2000 or is_high_depth
+                    if has_transparency or is_jpeg2000 or is_high_depth or is_dicom
                     else "JPEG"
                 )
                 if fmt == "JPEG" and oriented.mode == "P":
@@ -441,8 +444,12 @@ def read_label_file(
             # The caller knows where the Image is; the recorded path is stale.
             raw["imagePath"] = image_path_override
         image_path = _image_path_from_raw(raw=raw)
-        if raw["imageData"] is None:
-            resolved_image_path = str(Path(filename).parent / image_path)
+        resolved_image_path = str(Path(filename).parent / image_path)
+        is_existing_dicom = (
+            _dicom.is_dicom_file(filename=resolved_image_path)
+            and Path(resolved_image_path).is_file()
+        )
+        if raw["imageData"] is None or is_existing_dicom:
             try:
                 image_data = read_image_file(
                     filename=resolved_image_path, max_decode_mb=max_decode_mb
@@ -497,8 +504,15 @@ def write_label_file(
     save_image_data: bool,
 ) -> None:
     try:
+        resolved_source = (
+            Path(filename).parent / PureWindowsPath(annotation.image_path).as_posix()
+        )
+        is_existing_dicom = (
+            _dicom.is_dicom_file(filename=annotation.image_path)
+            and resolved_source.is_file()
+        )
         image_data_b64: str | None = None
-        if save_image_data:
+        if save_image_data and not is_existing_dicom:
             _check_image_dimensions(
                 image_data=annotation.image_data,
                 expected_height=image_height,
@@ -609,6 +623,9 @@ def _check_decodable(*, width: int, height: int, max_decode_mb: int | None) -> N
 def _imread(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
     DISPLAYABLE_MODES: Final = {"1", "L", "P", "RGB", "RGBA", "LA", "PA"}
 
+    if _dicom.is_dicom_file(filename=filename):
+        return _imread_dicom(filename=filename, max_decode_mb=max_decode_mb)
+
     ext: str = Path(filename).suffix.lower()
     image_pil: PIL.Image.Image | None = None
     try:
@@ -634,6 +651,16 @@ def _imread(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
         if ext in (".tif", ".tiff"):
             return _imread_tiff(filename=filename, max_decode_mb=max_decode_mb)
         raise
+
+
+def _imread_dicom(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
+    width, height = _dicom.read_dicom_dimensions(filename=filename)
+    _check_decodable(
+        width=width,
+        height=height,
+        max_decode_mb=max_decode_mb,
+    )
+    return _dicom.imread_dicom(filename=filename)
 
 
 def _imread_tiff(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image:
