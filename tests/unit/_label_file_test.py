@@ -16,6 +16,8 @@ from numpy.typing import NDArray
 from labelme._label_file import Annotation
 from labelme._label_file import LabelFileReadError
 from labelme._label_file import LabelFileWriteError
+from labelme._label_file import ImageNotFoundError
+from labelme._label_file import LabelFileError
 from labelme._label_file import _check_image_dimensions
 from labelme._label_file import _dump_shape_to_json_obj
 from labelme._label_file import _load_shape_json_obj
@@ -1046,3 +1048,44 @@ def test_read_label_file_image_path_reports_unreadable_files(*, tmp_path: Path) 
         path.write_text(text)
         with pytest.raises(LabelFileReadError):
             read_label_file_image_path(filename=str(path))
+
+
+@pytest.mark.parametrize(
+    "corrupted_content",
+    [
+        "{bad json",
+        "",
+        '{"imagePath": "test.jpg", "shapes": [',
+    ],
+    ids=["truncated_object", "empty_file", "truncated_shapes_list"],
+)
+def test_read_label_file_raises_on_corrupted_json(
+    *, tmp_path: Path, corrupted_content: str
+) -> None:
+    bad_json = tmp_path / "corrupted.json"
+    bad_json.write_text(corrupted_content, encoding="utf-8")
+
+    with pytest.raises(LabelFileReadError) as exc_info:
+        read_label_file(filename=str(bad_json))
+
+    assert isinstance(exc_info.value, LabelFileError)
+
+
+def test_read_label_file_raises_when_referenced_image_is_missing(
+    *, tmp_path: Path
+) -> None:
+    json_path = tmp_path / "missing_image.json"
+    _dump_json(
+        path=json_path,
+        raw={
+            "imagePath": "does_not_exist.jpg",
+            "imageData": None,
+            "shapes": [],
+        },
+    )
+
+    with pytest.raises(ImageNotFoundError) as exc_info:
+        read_label_file(filename=str(json_path))
+
+    assert isinstance(exc_info.value, LabelFileError)
+    assert "does_not_exist.jpg" in exc_info.value.image_path
