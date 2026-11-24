@@ -52,8 +52,6 @@ def propose_shapes_from_texts(
     saved_as_mask = shape_type == "mask"
     mask_logits = [
         MaskLogits.from_annotation(annotation=annotation, sent_size=sent_size)
-        if shape_type == "mask"
-        else None
         for annotation in annotations
     ]
     above_cutoff = scores > np.float32(score_threshold)

@@ -172,12 +172,7 @@ def existing_rectangle() -> Shape:
 
 
 def test_detections_from_annotations_empty_returns_empty() -> None:
-    assert (
-        _detections_from_annotations(
-            annotations=[], sent_size=(100, 100), keeps_logits=True
-        )
-        == []
-    )
+    assert _detections_from_annotations(annotations=[], sent_size=(100, 100)) == []
 
 
 def test_detections_from_annotations_sorts_by_score_descending() -> None:
@@ -188,7 +183,6 @@ def test_detections_from_annotations_sorts_by_score_descending() -> None:
             _annotation(score=0.5, bbox=(4, 4, 5, 5), mask=None),
         ],
         sent_size=(100, 100),
-        keeps_logits=True,
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -205,7 +199,6 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
             _annotation(score=0.5, bbox=(2, 2, 3, 3), mask=None),
         ],
         sent_size=(100, 100),
-        keeps_logits=True,
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -218,7 +211,6 @@ def test_detections_from_annotations_flattens_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
         annotations=[_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)],
         sent_size=(100, 100),
-        keeps_logits=True,
     )
 
     assert detection.bbox == (1, 2, 3, 4)
@@ -228,7 +220,6 @@ def test_detections_from_annotations_keeps_bbox_none_without_bounding_box() -> N
     (detection,) = _detections_from_annotations(
         annotations=[_annotation(score=0.5, bbox=None, mask=None)],
         sent_size=(100, 100),
-        keeps_logits=True,
     )
 
     assert detection.bbox is None
@@ -242,7 +233,6 @@ def test_detections_from_annotations_passes_mask_through() -> None:
     (detection,) = _detections_from_annotations(
         annotations=[_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)],
         sent_size=(100, 100),
-        keeps_logits=True,
     )
 
     np.testing.assert_array_equal(detection.mask, mask)
@@ -569,4 +559,55 @@ def test_a_proposal_shown_as_masks_adds_what_the_output_format_adds(
     )
     assert [shape.shape_type for shape in propose(shown_as_mask=True).new_shapes] == (
         ["mask"] * new_count
+    )
+
+
+@pytest.mark.parametrize(
+    ("existing_column", "new_count"),
+    [
+        pytest.param(5, 0, id="over-the-sent-mask"),
+        pytest.param(6, 1, id="over-the-mask-drawn-from-logits"),
+    ],
+)
+def test_a_guess_drawn_from_logits_adds_what_the_rectangle_click_adds(
+    *, existing_column: int, new_count: int
+) -> None:
+    one_logit = 256
+    annotation = osam.types.Annotation(
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=5, ymin=0, xmax=5, ymax=62),
+        mask=np.ones((63, 1), dtype=bool),
+        mask_logits=np.array(
+            [[32768 - 100 * one_logit, 32768 + one_logit, 32768, 0]], dtype=np.uint16
+        ),
+        mask_logits_box=(4.0, 0.0, 8.0, 63.0),
+    )
+    existing = Shape(
+        shape_type="mask",
+        points=np.array([[existing_column, 0], [existing_column, 64]]),
+        mask=np.ones((65, 1), dtype=bool),
+    )
+    session = AiAssistSession(output_format="rectangle")
+
+    def propose(*, shown_as_mask: bool) -> AiAssistProposal:
+        return session.propose_shapes(
+            annotations=[annotation],
+            prompt_kind="points",
+            points=np.array([[5.5, 30.0]]),
+            point_labels=np.array([1]),
+            existing_shapes=[existing],
+            score_threshold=0.0,
+            iou_threshold=0.5,
+            scale_to_image=(Fraction(65, 63), Fraction(65, 63)),
+            sent_size=(63, 63),
+            shown_as_mask=shown_as_mask,
+        )
+
+    click, guess = propose(shown_as_mask=False), propose(shown_as_mask=True)
+
+    assert [shape.shape_type for shape in click.new_shapes] == (
+        ["rectangle"] * new_count
+    )
+    assert [shape.points.tolist() for shape in guess.new_shapes] == (
+        [[[6, 0], [6, 64]]] * new_count
     )
