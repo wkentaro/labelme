@@ -2851,8 +2851,9 @@ class Canvas(QtWidgets.QWidget):
             self.pixmap.cacheKey(),
             tuple(self.shapes),
         )
-        # The guess is always a mask (see _ai_proposer), so only the result
-        # depends on the output format and polygon detail.
+        # The guess is always a mask (see _ai_proposer). Only whether the
+        # output is one changes what it matches, so the rest of the output
+        # format and the polygon detail belong to the result alone.
         result_key = (
             current,
             self._ai_assist_session.output_format,
@@ -2871,7 +2872,12 @@ class Canvas(QtWidgets.QWidget):
                     **_ai_segment_prompt(draft=current),
                     preview_key=result_key,
                 )
-        key = (current, self._line, *settings)
+        key = (
+            current,
+            self._line,
+            self._ai_assist_session.output_format == "mask",
+            *settings,
+        )
         if key == self._ai_segment_preview_key:
             return
         self._ai_segment_preview_key = key
