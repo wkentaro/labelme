@@ -119,6 +119,9 @@ def match_detections_to_existing_shapes(
             matching_shapes=[],
         )
 
+    apart_can_match = _is_redundant_overlap(
+        overlap=_MaskOverlap(iou=0.0, containment=0.0), iou_threshold=iou_threshold
+    )
     kept: list[Detection] = []
     matching_shapes: list[Shape] = []
     for detection in detections:
@@ -129,6 +132,7 @@ def match_detections_to_existing_shapes(
             (shape, existing_mask)
             for shape, existing_mask in existing_shape_masks
             if not saved_as_mask
+            or apart_can_match
             or _can_touch(
                 detection=detection,
                 existing=existing_mask,

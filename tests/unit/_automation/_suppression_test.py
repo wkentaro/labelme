@@ -812,3 +812,28 @@ def test_rivals_drawn_from_logits_are_compared_by_their_saved_pixels() -> None:
 
     assert kept_after(rival=sent_on_column_6) == [drawn_on_column_6]
     assert kept_after(rival=sent_on_column_5) == [drawn_on_column_6, sent_on_column_5]
+
+
+def test_an_iou_threshold_of_zero_matches_a_shape_the_logits_cannot_reach() -> None:
+    far = Shape(
+        shape_type="mask",
+        points=np.array([[400, 0], [403, 3]]),
+        mask=np.ones((4, 4), dtype=bool),
+    )
+    detection = Detection(
+        bbox=(0.0, 0.0, 1.0, 1.0),
+        mask=np.ones((2, 2), dtype=bool),
+        mask_logits=MaskLogits(
+            cells=np.full((2, 2), 40000, np.uint16), box=(0, 0, 2, 2), clip=(0, 0, 2, 2)
+        ),
+    )
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection],
+        existing_shapes=[far],
+        iou_threshold=0.0,
+        scale_to_image=(Fraction(4), Fraction(4)),
+        saved_as_mask=True,
+    )
+
+    assert result.matching_shapes == [far]
