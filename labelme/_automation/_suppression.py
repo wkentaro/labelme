@@ -17,8 +17,11 @@ from ._geometry import shape_to_xyxy_bbox
 from ._scaling import UNSCALED
 from ._scaling import Scale
 from ._scaling import scale_mask
+from ._scaling import scale_pixel_box
 from ._scaling import scale_shape
 from ._shape_builders import Detection
+
+_PixelBox = tuple[int, int, int, int]
 
 
 # eq=False: numpy arrays don't reduce to a scalar bool, so the auto-generated
@@ -103,17 +106,12 @@ def match_detections_to_existing_shapes(
     if not detections:
         return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
     shrink = (1 / scale_to_image[0], 1 / scale_to_image[1])
-    existing_shape_masks = [
-        (shape, local_mask)
+    existing_shape_boxes = [
+        (shape, box)
         for shape in existing_shapes
-        if (
-            local_mask := _local_mask_from_shape(
-                shape=scale_shape(shape=shape, factor=shrink)
-            )
-        )
-        is not None
+        if (box := _pixel_box_on_sent_image(shape=shape, shrink=shrink)) is not None
     ]
-    if not existing_shape_masks:
+    if not existing_shape_boxes:
         return _ExistingShapeMatchResult(
             new_detections=detections[:],
             matching_shapes=[],
@@ -122,22 +120,22 @@ def match_detections_to_existing_shapes(
     apart_can_match = _is_redundant_overlap(
         overlap=_MaskOverlap(iou=0.0, containment=0.0), iou_threshold=iou_threshold
     )
+    existing_masks: dict[int, _LocalMask] = {}
     kept: list[Detection] = []
     matching_shapes: list[Shape] = []
     for detection in detections:
         if detection.bbox is None:
             kept.append(detection)
             continue
+        reach = _reach_on_sent_image(
+            detection=detection,
+            scale_to_image=scale_to_image,
+            saved_as_mask=saved_as_mask,
+        )
         touched = [
-            (shape, existing_mask)
-            for shape, existing_mask in existing_shape_masks
-            if not saved_as_mask
-            or apart_can_match
-            or _can_touch(
-                detection=detection,
-                existing=existing_mask,
-                scale_to_image=scale_to_image,
-            )
+            index
+            for index, (_, box) in enumerate(existing_shape_boxes)
+            if apart_can_match or reach is None or _share_a_pixel(a=reach, b=box)
         ]
         if not touched:
             kept.append(detection)
@@ -148,8 +146,13 @@ def match_detections_to_existing_shapes(
             saved_as_mask=saved_as_mask,
         )
         matches: list[tuple[Shape, _MaskOverlap]] = []
-        for shape, existing_mask in touched:
-            overlap = _compute_mask_overlap(a=new_local, b=existing_mask)
+        for index in touched:
+            shape, _ = existing_shape_boxes[index]
+            if index not in existing_masks:
+                existing_masks[index] = _local_mask_from_shape(
+                    shape=scale_shape(shape=shape, factor=shrink)
+                )
+            overlap = _compute_mask_overlap(a=new_local, b=existing_masks[index])
             if _is_redundant_overlap(
                 overlap=overlap,
                 iou_threshold=iou_threshold,
@@ -187,20 +190,20 @@ def _compute_mask_overlap(*, a: _LocalMask, b: _LocalMask) -> _MaskOverlap:
     return _MaskOverlap(iou=iou, containment=containment)
 
 
-def _can_touch(
-    *, detection: Detection, existing: _LocalMask, scale_to_image: Scale
-) -> bool:
-    bound = (
-        None
-        if detection.mask_logits is None
-        else detection.mask_logits.footprint_bound(scale=scale_to_image)
-    )
-    if bound is None:
-        return True
-    x0, y0 = existing.origin_xy
-    height, width = existing.mask.shape
-    xmin, ymin, xmax, ymax = bound
-    return xmin < x0 + width and xmax > x0 and ymin < y0 + height and ymax > y0
+def _reach_on_sent_image(
+    *, detection: Detection, scale_to_image: Scale, saved_as_mask: bool
+) -> _PixelBox | None:
+    assert detection.bbox is not None
+    sent_mask_box = round_bbox_to_int(bbox=detection.bbox)
+    if not saved_as_mask:
+        return sent_mask_box
+    if detection.mask_logits is not None:
+        return detection.mask_logits.footprint_bound(scale=scale_to_image)
+    return sent_mask_box if min(scale_to_image) >= 1 else None
+
+
+def _share_a_pixel(*, a: _PixelBox, b: _PixelBox) -> bool:
+    return a[0] <= b[2] and b[0] <= a[2] and a[1] <= b[3] and b[1] <= a[3]
 
 
 def _local_mask_from_detection(
@@ -250,7 +253,14 @@ def _mask_shape_pixels_on_sent_image(
     return mask, box[:2]
 
 
-def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:
+def _pixel_box_on_sent_image(*, shape: Shape, shrink: Scale) -> _PixelBox | None:
+    if shape.shape_type == "mask" and shape.mask is not None:
+        box = _pixel_box(shape=shape)
+        return None if box is None else scale_pixel_box(box=box, factor=shrink)
+    return _pixel_box(shape=scale_shape(shape=shape, factor=shrink))
+
+
+def _pixel_box(*, shape: Shape) -> _PixelBox | None:
     # Skip non-bbox shapes (point/line/linestrip) so callers can pass
     # canvas.shapes unfiltered.
     if shape.shape_type not in (
@@ -267,22 +277,26 @@ def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:
     if shape.shape_type == "mask" and shape.mask is not None:
         # Corners rounded one by one can resize a mask moved by half a pixel;
         # its stored extent cannot.
-        stored = shape.mask.astype(np.bool_, copy=False)
-        return _LocalMask(
-            mask=stored,
-            origin_xy=mask_shape_box(shape=shape)[:2],
-            area=int(np.count_nonzero(stored)),
+        return mask_shape_box(shape=shape)
+    return round_bbox_to_int(bbox=bbox)
+
+
+def _local_mask_from_shape(*, shape: Shape) -> _LocalMask:
+    box = _pixel_box(shape=shape)
+    assert box is not None
+    xmin, ymin, xmax, ymax = box
+    if shape.shape_type == "mask" and shape.mask is not None:
+        mask = shape.mask.astype(np.bool_, copy=False)
+    else:
+        mask = rasterize_shape(
+            shape=shape,
+            xmin=xmin,
+            ymin=ymin,
+            width=xmax - xmin + 1,
+            height=ymax - ymin + 1,
         )
-    xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=bbox)
-    width = xmax - xmin + 1
-    height = ymax - ymin + 1
-    mask = rasterize_shape(
-        shape=shape, xmin=xmin, ymin=ymin, width=width, height=height
-    )
     return _LocalMask(
-        mask=mask,
-        origin_xy=(xmin, ymin),
-        area=int(np.count_nonzero(mask)),
+        mask=mask, origin_xy=(xmin, ymin), area=int(np.count_nonzero(mask))
     )
 
 

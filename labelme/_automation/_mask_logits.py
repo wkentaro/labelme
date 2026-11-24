@@ -88,7 +88,12 @@ class MaskLogits:
         if min(scale) < 1:
             return None
         xmin, ymin, xmax, ymax = self.reach
-        return math.floor(xmin), math.floor(ymin), math.ceil(xmax), math.ceil(ymax)
+        return (
+            math.floor(xmin),
+            math.floor(ymin),
+            math.ceil(xmax) - 1,
+            math.ceil(ymax) - 1,
+        )
 
     def holds(self, *, pixel: tuple[int, int], scale: Scale) -> bool:
         (left, cell_x, toward_right), (top, cell_y, toward_below) = self._axes(

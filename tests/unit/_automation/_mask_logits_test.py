@@ -196,8 +196,8 @@ def test_footprint_is_the_drawn_mask_scaled_back_to_the_sent_image(
         (height, width), (left, top) = footprint[0].shape, footprint[1]
         assert bound[0] <= left
         assert bound[1] <= top
-        assert left + width <= bound[2]
-        assert top + height <= bound[3]
+        assert left + width - 1 <= bound[2]
+        assert top + height - 1 <= bound[3]
 
 
 def test_footprint_is_none_without_a_pixel_above_zero() -> None:

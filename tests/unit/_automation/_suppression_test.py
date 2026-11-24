@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 
 from labelme._automation import Detection
+from labelme._automation import _suppression
 from labelme._automation import shapes_from_detections
 from labelme._automation._mask_logits import MaskLogits
 from labelme._automation._scaling import Scale
@@ -814,7 +815,10 @@ def test_rivals_drawn_from_logits_are_compared_by_their_saved_pixels() -> None:
     assert kept_after(rival=sent_on_column_5) == [drawn_on_column_6, sent_on_column_5]
 
 
-def test_an_iou_threshold_of_zero_matches_a_shape_the_logits_cannot_reach() -> None:
+@pytest.mark.parametrize("saved_as_mask", [False, True])
+def test_an_iou_threshold_of_zero_matches_a_shape_out_of_reach(
+    *, saved_as_mask: bool
+) -> None:
     far = Shape(
         shape_type="mask",
         points=np.array([[400, 0], [403, 3]]),
@@ -833,7 +837,42 @@ def test_an_iou_threshold_of_zero_matches_a_shape_the_logits_cannot_reach() -> N
         existing_shapes=[far],
         iou_threshold=0.0,
         scale_to_image=(Fraction(4), Fraction(4)),
-        saved_as_mask=True,
+        saved_as_mask=saved_as_mask,
     )
 
     assert result.matching_shapes == [far]
+
+
+@pytest.mark.parametrize("saved_as_mask", [False, True])
+def test_overlapping_scales_down_only_the_mask_shapes_a_detection_can_reach(
+    monkeypatch: pytest.MonkeyPatch, *, saved_as_mask: bool
+) -> None:
+    def mask_shape_at(x: int) -> Shape:
+        return Shape(
+            shape_type="mask",
+            points=np.array([[x, 8], [x + 7, 15]]),
+            mask=np.ones((8, 8), dtype=bool),
+        )
+
+    near, far = mask_shape_at(8), mask_shape_at(80)
+    scaled: list[Shape] = []
+
+    def spy(*, shape: Shape, factor: Scale) -> Shape:
+        scaled.append(shape)
+        return scale_shape(shape=shape, factor=factor)
+
+    monkeypatch.setattr(_suppression, "scale_shape", spy)
+
+    result = match_detections_to_existing_shapes(
+        detections=[
+            Detection(bbox=(2, 2, 3, 3), mask=np.ones((2, 2), dtype=bool)),
+            Detection(bbox=(2, 2, 3, 3), mask=np.ones((2, 2), dtype=bool)),
+        ],
+        existing_shapes=[far, near],
+        scale_to_image=(Fraction(4), Fraction(4)),
+        saved_as_mask=saved_as_mask,
+    )
+
+    assert result.new_detections == []
+    assert result.matching_shapes == [near]
+    assert scaled == [near]
