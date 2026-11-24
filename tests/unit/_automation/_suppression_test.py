@@ -590,6 +590,25 @@ def test_overlapping_keeps_a_candidate_whose_sent_mask_has_no_rows() -> None:
     assert result.new_detections == [no_rows]
 
 
+def test_overlapping_keeps_a_candidate_beside_a_mask_far_off_the_image() -> None:
+    candidate = _one_sent_row(row=3)
+
+    result = match_detections_to_existing_shapes(
+        detections=[candidate],
+        existing_shapes=[
+            Shape(
+                shape_type="mask",
+                points=np.array([[-(2.0**63), 0.0], [-(2.0**63) + 2, 0.0]]),
+                mask=np.ones((1, 3), dtype=bool),
+            )
+        ],
+        scale_to_image=_WIDER_AND_SHORTER,
+        saved_as_mask=True,
+    )
+
+    assert result.new_detections == [candidate]
+
+
 @pytest.mark.parametrize(
     ("second_row", "saved_as_mask", "kept_count"),
     [

@@ -175,7 +175,7 @@ def test_scale_bbox_keeps_a_shrunk_box_from_inverting() -> None:
     assert (xmax, ymax) >= (xmin, ymin)
 
 
-@pytest.mark.parametrize("first", [-40, -4_575_085_335_741_506])
+@pytest.mark.parametrize("first", [-40, -4_575_085_335_741_506, -(2**63)])
 @pytest.mark.parametrize(
     "factor",
     [
@@ -191,9 +191,9 @@ def test_first_pixels_centered_from_starts_where_an_enlarged_span_does(
 ) -> None:
     count = 1140
 
-    assert _first_pixels_centered_from(
-        first=first, count=count, factor=factor
-    ).tolist() == [
+    start, steps = _first_pixels_centered_from(first=first, count=count, factor=factor)
+
+    assert [start + step for step in steps.tolist()] == [
         _scale_pixel_span(first=edge, last=edge, factor=factor)[0]
         for edge in range(first, first + count)
     ]
