@@ -6,12 +6,14 @@ from typing import Final
 
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 
 from labelme._automation import Detection
 from labelme._automation import _suppression
 from labelme._automation import shapes_from_detections
 from labelme._automation._mask_logits import MaskLogits
 from labelme._automation._scaling import Scale
+from labelme._automation._scaling import scale_mask
 from labelme._automation._scaling import scale_shape
 from labelme._automation._suppression import _local_mask_from_detection
 from labelme._automation._suppression import match_detections_to_existing_shapes
@@ -855,13 +857,15 @@ def test_overlapping_scales_down_only_the_mask_shapes_a_detection_can_reach(
         )
 
     near, far = mask_shape_at(8), mask_shape_at(80)
-    scaled: list[Shape] = []
+    scaled: list[NDArray[np.bool_]] = []
 
-    def spy(*, shape: Shape, factor: Scale) -> Shape:
-        scaled.append(shape)
-        return scale_shape(shape=shape, factor=factor)
+    def spy(
+        *, mask: NDArray[np.bool_], origin: tuple[int, int], factor: Scale
+    ) -> tuple[NDArray[np.bool_], tuple[int, int, int, int]]:
+        scaled.append(mask)
+        return scale_mask(mask=mask, origin=origin, factor=factor)
 
-    monkeypatch.setattr(_suppression, "scale_shape", spy)
+    monkeypatch.setattr(_suppression, "scale_mask", spy)
 
     result = match_detections_to_existing_shapes(
         detections=[
@@ -875,20 +879,28 @@ def test_overlapping_scales_down_only_the_mask_shapes_a_detection_can_reach(
 
     assert result.new_detections == []
     assert result.matching_shapes == [near]
-    assert scaled == [near]
+    assert sum(mask is near.mask for mask in scaled) == 1
+    assert not any(mask is far.mask for mask in scaled)
 
 
-def test_overlapping_scales_a_reached_circle_down_once(
+def test_overlapping_scales_and_boxes_a_reached_circle_once(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     circle = Shape(shape_type="circle", points=np.array([[12.0, 12.0], [16.0, 12.0]]))
     scaled: list[Shape] = []
+    boxed: list[Shape] = []
 
-    def spy(*, shape: Shape, factor: Scale) -> Shape:
+    def scale_spy(*, shape: Shape, factor: Scale) -> Shape:
         scaled.append(shape)
         return scale_shape(shape=shape, factor=factor)
 
-    monkeypatch.setattr(_suppression, "scale_shape", spy)
+    def box_spy(*, shape: Shape) -> tuple[int, int, int, int] | None:
+        boxed.append(shape)
+        return pixel_box(shape=shape)
+
+    pixel_box = _suppression._pixel_box
+    monkeypatch.setattr(_suppression, "scale_shape", scale_spy)
+    monkeypatch.setattr(_suppression, "_pixel_box", box_spy)
 
     result = match_detections_to_existing_shapes(
         detections=[Detection(bbox=(2, 2, 3, 3), mask=np.ones((2, 2), dtype=bool))],
@@ -898,3 +910,4 @@ def test_overlapping_scales_a_reached_circle_down_once(
 
     assert result.matching_shapes == [circle]
     assert scaled == [circle]
+    assert len(boxed) == 1

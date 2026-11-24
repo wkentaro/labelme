@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass
 from fractions import Fraction
 from typing import Final
@@ -147,11 +148,12 @@ def match_detections_to_existing_shapes(
         )
         matches: list[tuple[Shape, _MaskOverlap]] = []
         for index in touched:
-            shape, _, scaled = existing[index]
+            shape, box, draw = existing[index]
             if index not in existing_masks:
-                if scaled is None:
-                    scaled = scale_shape(shape=shape, factor=shrink)
-                existing_masks[index] = _local_mask_from_shape(shape=scaled)
+                mask = draw().astype(np.bool_, copy=False)
+                existing_masks[index] = _LocalMask(
+                    mask=mask, origin_xy=box[:2], area=int(np.count_nonzero(mask))
+                )
             overlap = _compute_mask_overlap(a=new_local, b=existing_masks[index])
             if _is_redundant_overlap(
                 overlap=overlap,
@@ -255,14 +257,27 @@ def _mask_shape_pixels_on_sent_image(
 
 def _boxed_on_sent_image(
     *, shape: Shape, shrink: Scale
-) -> tuple[_PixelBox, Shape | None] | None:
-    # A Mask Shape is scaled only once a candidate reaches its box.
+) -> tuple[_PixelBox, Callable[[], NDArray[np.bool_]]] | None:
     if shape.shape_type == "mask" and shape.mask is not None:
         box = _pixel_box(shape=shape)
-        return None if box is None else (scale_pixel_box(box=box, factor=shrink), None)
+        if box is None:
+            return None
+        mask, origin = shape.mask, box[:2]
+        return scale_pixel_box(box=box, factor=shrink), lambda: scale_mask(
+            mask=mask, origin=origin, factor=shrink
+        )[0]
     scaled = scale_shape(shape=shape, factor=shrink)
     box = _pixel_box(shape=scaled)
-    return None if box is None else (box, scaled)
+    if box is None:
+        return None
+    xmin, ymin, xmax, ymax = box
+    return box, lambda: rasterize_shape(
+        shape=scaled,
+        xmin=xmin,
+        ymin=ymin,
+        width=xmax - xmin + 1,
+        height=ymax - ymin + 1,
+    )
 
 
 def _pixel_box(*, shape: Shape) -> _PixelBox | None:
@@ -284,25 +299,6 @@ def _pixel_box(*, shape: Shape) -> _PixelBox | None:
         # its stored extent cannot.
         return mask_shape_box(shape=shape)
     return round_bbox_to_int(bbox=bbox)
-
-
-def _local_mask_from_shape(*, shape: Shape) -> _LocalMask:
-    box = _pixel_box(shape=shape)
-    assert box is not None
-    xmin, ymin, xmax, ymax = box
-    if shape.shape_type == "mask" and shape.mask is not None:
-        mask = shape.mask.astype(np.bool_, copy=False)
-    else:
-        mask = rasterize_shape(
-            shape=shape,
-            xmin=xmin,
-            ymin=ymin,
-            width=xmax - xmin + 1,
-            height=ymax - ymin + 1,
-        )
-    return _LocalMask(
-        mask=mask, origin_xy=(xmin, ymin), area=int(np.count_nonzero(mask))
-    )
 
 
 def rasterize_shape(
