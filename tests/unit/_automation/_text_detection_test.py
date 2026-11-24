@@ -3,12 +3,14 @@ from __future__ import annotations
 import json
 from fractions import Fraction
 from typing import NamedTuple
+from unittest import mock
 
 import numpy as np
 import osam
 import pytest
 from numpy.typing import NDArray
 
+from labelme._automation import _text_detection
 from labelme._automation._text_detection import MaskOutputUnavailableError
 from labelme._automation._text_detection import get_bboxes_from_texts
 from labelme._automation._text_detection import nms_bboxes
@@ -400,3 +402,45 @@ def test_text_proposal_drops_a_mask_saved_onto_the_pixels_of_a_kept_one() -> Non
     )
 
     assert [shape.points.tolist() for shape in shapes] == [[[0, 1], [99, 1]]]
+
+
+def test_text_proposal_matches_only_candidates_above_the_score_cutoff(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    cutoff = np.float32(0.5)
+    scores = [
+        np.nextafter(cutoff, np.float32(0)),
+        cutoff,
+        np.nextafter(cutoff, np.float32(1)),
+    ]
+    annotations = [
+        osam.types.Annotation(
+            text="cat",
+            score=float(score),
+            bounding_box=osam.types.BoundingBox(xmin=x, ymin=0, xmax=x + 3, ymax=3),
+            mask=np.ones((4, 4), dtype=bool),
+        )
+        for x, score in zip([0, 10, 20], scores)
+    ]
+    match = mock.Mock(wraps=_text_detection.match_detections_to_existing_shapes)
+    monkeypatch.setattr(_text_detection, "match_detections_to_existing_shapes", match)
+
+    shapes = propose_shapes_from_texts(
+        annotations=annotations,
+        texts=["cat"],
+        shape_type="mask",
+        existing_shapes=[],
+        iou_threshold=0.5,
+        score_threshold=float(cutoff),
+        image_size=(30, 30),
+        polygon_detail=80,
+    )
+
+    matched = [
+        detection.bbox
+        for call in match.call_args_list
+        for detection in call.kwargs["detections"]
+    ]
+    assert matched == [(20.0, 0.0, 23.0, 3.0)]
+    (shape,) = shapes
+    np.testing.assert_array_equal(shape.points, [[20, 0], [23, 3]])

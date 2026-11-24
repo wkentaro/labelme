@@ -48,11 +48,12 @@ def propose_shapes_from_texts(
         raise MaskOutputUnavailableError(f"{shape_type!r} requires model masks")
 
     saved_as_mask = shape_type == "mask"
+    above_cutoff = scores > np.float32(score_threshold)
     # Use the same mask overlap as example boxes; a polygon part can cover an
     # occluded object even when its bounding box is much smaller.
     is_new = np.zeros(len(boxes), dtype=bool)
     for label, text in enumerate(texts):
-        indices = np.flatnonzero(labels == label)
+        indices = np.flatnonzero(above_cutoff & (labels == label))
         candidates = [
             Detection(
                 bbox=(
