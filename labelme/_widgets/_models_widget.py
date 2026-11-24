@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 from typing import override
 
 from PySide6 import QtCore
@@ -10,13 +11,13 @@ from PySide6 import QtWidgets
 
 from .._ai_models import AI_TEXT_MODEL_OPTIONS
 from .._ai_models import find_ai_assist_model_option
-from .._ai_models import model_info
-from .._ai_models import osam_client
 from .._model_manager import ModelManager
 
+if TYPE_CHECKING:
+    import osam
 
-def license_link(*, model_name: str) -> str:
-    metadata = model_info(client=osam_client(device="auto"), name=model_name).metadata
+
+def license_link(*, metadata: osam.types.ModelMetadata) -> str:
     return (
         f'<a href="{html.escape(metadata.license_url, quote=True)}">'
         f"{html.escape(metadata.license_name)}</a>"
@@ -84,6 +85,7 @@ class ModelsWidget(QtWidgets.QWidget):
         heading.setFont(heading_font)
         layout.addWidget(heading)
         layout.addSpacing(4)
+        catalog = manager.catalog()
         all_models = [name for name in manager.models if name not in recommendations]
         for model_index, name in enumerate([*recommendations, *all_models]):
             if model_index == len(recommendations):
@@ -118,7 +120,7 @@ class ModelsWidget(QtWidgets.QWidget):
             row_layout.addWidget(QtWidgets.QLabel(" · ".join(capabilities)), 2, 0, 1, 2)
             license_label = QtWidgets.QLabel(
                 self.tr("License: {license}").format(
-                    license=license_link(model_name=name)
+                    license=license_link(metadata=catalog[name].metadata)
                 )
             )
             license_label.setWordWrap(True)
@@ -181,6 +183,7 @@ class ModelsWidget(QtWidgets.QWidget):
 
     def refresh(self) -> None:
         manager = self._manager
+        catalog = manager.catalog()
         labels = {
             "missing": self.tr("Not downloaded"),
             "downloaded": self.tr("Downloaded"),
@@ -188,7 +191,7 @@ class ModelsWidget(QtWidgets.QWidget):
             "deleting": self.tr("Deleting…"),
         }
         for name, (status, download, remove, details) in self._rows.items():
-            state = manager.get_state(model_name=name)
+            state = manager.get_state(model_name=name, catalog=catalog)
             if state == "queued":
                 text = self.tr("Queued · position {position}").format(
                     position=manager.queue.index(name) + 1

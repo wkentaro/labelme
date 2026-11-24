@@ -4359,10 +4359,11 @@ class MainWindow(QtWidgets.QMainWindow):
         return False
 
     def _refresh_model_availability(self) -> None:
+        catalog = self._model_manager.catalog()
         available = {
             name
             for name in self._model_manager.models
-            if self._model_manager.is_ready(model_name=name)
+            if self._model_manager.is_ready(model_name=name, catalog=catalog)
         }
         downloading = set(self._model_manager.queue)
         if self._model_manager.active is not None:
@@ -4390,9 +4391,9 @@ class MainWindow(QtWidgets.QMainWindow):
             message.setTextInteractionFlags(
                 Qt.TextInteractionFlag.TextBrowserInteraction
             )
-            message.setText(
-                f"{html.escape(notice)}<br><br>{_widgets.license_link(model_name=model_name)}"
-            )
+            info = self._model_manager.get_model_info(model_name=model_name)
+            link = _widgets.license_link(metadata=info.metadata)
+            message.setText(f"{html.escape(notice)}<br><br>{link}")
             download = message.addButton(
                 self.tr("Download"), QtWidgets.QMessageBox.ButtonRole.AcceptRole
             )
@@ -4426,13 +4427,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._osam_worker.unload(model_name=model_name)
 
     def _open_models(self) -> None:
+        self._model_manager.refresh()
         if self._models_dialog is None:
             self._models_dialog = ModelsDialog(
                 manager=self._model_manager,
                 remove_model=self._remove_ai_model,
                 parent=self,
             )
-        self._model_manager.refresh()
         self._models_dialog.show()
         self._models_dialog.raise_()
         self._models_dialog.activateWindow()

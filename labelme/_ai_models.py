@@ -166,6 +166,9 @@ def osam_client(
 
 
 def model_info(*, client: osam.Client, name: str) -> osam.types.ModelInfo:
+    # osam 0.12.0 exposes model information through list().
+    if (show := getattr(client, "show", None)) is not None:
+        return show(name)
     [info] = [info for info in client.list() if info.name == name]
     return info
 

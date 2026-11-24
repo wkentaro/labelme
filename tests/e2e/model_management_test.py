@@ -189,13 +189,23 @@ def test_delete_unloads_the_model_first(
 
 
 def test_file_menu_opens_models_outside_settings_and_tabs_into_controls(
-    *, main_win: MainWinFactory, qtbot: QtBot
+    *, main_win: MainWinFactory, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     win = main_win()
+    list_models = osam.Client.list
+    catalog_reads = 0
+
+    def count_catalog_reads(client: osam.Client) -> list[osam.types.ModelInfo]:
+        nonlocal catalog_reads
+        catalog_reads += 1
+        return list_models(client)
+
+    monkeypatch.setattr(osam.Client, "list", count_catalog_reads)
     action = next(
         action for action in win._menus.file.actions() if action.text() == "AI Models…"
     )
     action.trigger()
+    assert catalog_reads == 1
     dialog = win._models_dialog
     assert dialog is not None
     assert win._settings_dialog is None
@@ -207,6 +217,9 @@ def test_file_menu_opens_models_outside_settings_and_tabs_into_controls(
     assert focused is not None and models.isAncestorOf(focused)
     viewport = dialog._scroll_area.viewport()
     assert viewport.rect().contains(focused.mapTo(viewport, focused.rect().center()))
+    dialog.close()
+    action.trigger()
+    assert catalog_reads == 2
 
 
 def test_failed_download_keeps_retry_visible_and_details_accessible(
