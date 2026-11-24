@@ -30,6 +30,15 @@ def _scale_pixel_span(*, first: int, last: int, factor: Fraction) -> tuple[int, 
     )
 
 
+def _first_pixels_centered_from(
+    *, edges: NDArray[np.int64], factor: Fraction
+) -> NDArray[np.int64]:
+    # ceil(edge * factor - 1/2) in whole numbers, as an enlarged span starts.
+    return -(
+        (factor.denominator - 2 * edges * factor.numerator) // (2 * factor.denominator)
+    )
+
+
 def scale_pixel_box(
     *, box: tuple[int, int, int, int], factor: Scale
 ) -> tuple[int, int, int, int]:
@@ -62,16 +71,16 @@ def _scale_mask_axis(
     last = first + mask.shape[axis] - 1
     if factor <= 1:
         sent_first, sent_last = _scale_pixel_span(first=first, last=last, factor=factor)
-        runs = [
-            max(first, _scale_pixel_span(first=sent, last=sent, factor=1 / factor)[0])
-            - first
-            for sent in range(sent_first, sent_last + 1)
-        ]
-        return np.logical_or.reduceat(mask, runs, axis=axis)
-    sent_starts = [
-        _scale_pixel_span(first=source, last=source, factor=factor)[0]
-        for source in range(first, last + 2)
-    ]
+        starts = _first_pixels_centered_from(
+            edges=np.arange(sent_first, sent_last + 1, dtype=np.int64),
+            factor=1 / factor,
+        )
+        return np.logical_or.reduceat(
+            mask, np.maximum(starts, first) - first, axis=axis
+        )
+    sent_starts = _first_pixels_centered_from(
+        edges=np.arange(first, last + 2, dtype=np.int64), factor=factor
+    )
     return np.repeat(mask, np.diff(sent_starts), axis=axis)
 
 
