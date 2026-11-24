@@ -75,23 +75,30 @@ def _scale_mask_axis(
     return np.repeat(mask, np.diff(sent_starts), axis=axis)
 
 
+def scale_mask(
+    *, mask: NDArray[np.bool_], origin: tuple[int, int], factor: Scale
+) -> tuple[NDArray[np.bool_], tuple[int, int, int, int]]:
+    xmin, ymin = origin
+    height, width = mask.shape
+    box = scale_pixel_box(
+        box=(xmin, ymin, xmin + width - 1, ymin + height - 1), factor=factor
+    )
+    for first, axis_factor, axis in sorted(
+        [(ymin, factor[1], 0), (xmin, factor[0], 1)], key=lambda step: step[1]
+    ):
+        mask = _scale_mask_axis(mask=mask, first=first, factor=axis_factor, axis=axis)
+    return mask, box
+
+
 def scale_shape(*, shape: Shape, factor: Scale) -> Shape:
     if factor == UNSCALED:
         return shape
     scaled = copy.copy(shape)
     if shape.shape_type == "mask" and shape.mask is not None:
-        box = mask_shape_box(shape=shape)
-        xmin, ymin = box[:2]
-        x0, y0, x1, y1 = scale_pixel_box(box=box, factor=factor)
+        scaled.mask, (x0, y0, x1, y1) = scale_mask(
+            mask=shape.mask, origin=mask_shape_box(shape=shape)[:2], factor=factor
+        )
         scaled.points = np.array([[x0, y0], [x1, y1]], dtype=np.float64)
-        mask = shape.mask
-        for first, axis_factor, axis in sorted(
-            [(ymin, factor[1], 0), (xmin, factor[0], 1)], key=lambda step: step[1]
-        ):
-            mask = _scale_mask_axis(
-                mask=mask, first=first, factor=axis_factor, axis=axis
-            )
-        scaled.mask = mask
         return scaled
     if shape.shape_type == "rectangle" and len(shape.points) == 2:  # noqa: PLR2004
         xmin, ymin, xmax, ymax = scale_bbox(
