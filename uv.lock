@@ -828,7 +828,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=7.1.0" },
     { name = "numpy", specifier = ">=1.24" },
     { name = "onnxruntime", specifier = ">=1.23.2,<1.29" },
-    { name = "osam", specifier = ">=0.12,<0.13" },
+    { name = "osam", specifier = ">=0.12.1,<0.13" },
     { name = "osam", extras = ["webgpu"], marker = "(platform_machine == 'arm64' and platform_release >= '23') or sys_platform != 'darwin'" },
     { name = "pillow", specifier = ">=2.8" },
     { name = "pyside6", specifier = ">=6.8" },
@@ -1266,7 +1266,7 @@ wheels = [
 
 [[package]]
 name = "osam"
-version = "0.12.0"
+version = "0.12.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1280,9 +1280,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c8/7b/83142c85ad8e92992b24b530157e1c683dbfc2d6d63cc76f3fafa3a733ad/osam-0.12.0.tar.gz", hash = "sha256:7c33b816c86393232dd3b9a8e333a4b8edf1275d932635b09184daf892a4ed96", size = 27640109, upload-time = "2026-11-19T01:59:06.023Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2c/5b/fd0b377353d41e7b0106606cf6e019c29d8e033d89c10fd1c395a39390d2/osam-0.12.1.tar.gz", hash = "sha256:935dcd60ae9c73b4160f75ccc670e933a76ad7b2e57601edde21bb87ed8e8867", size = 27654471, upload-time = "2026-11-24T10:18:03.044Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e4/5c/1b55309ea80ca62cb00b6ed81c7dda4d26e36df9b2aac5df3c3a911cd9bd/osam-0.12.0-py3-none-any.whl", hash = "sha256:30a160ff0f868738fbb2a9c92360ef4e25ae4048ad54635aba50f019fab7b072", size = 1506589, upload-time = "2026-11-19T01:59:04.121Z" },
+    { url = "https://files.pythonhosted.org/packages/ab/24/55338fd14fad9531cb563d3eb539e3d731b15c2b4952f5e08af0a49e5d1b/osam-0.12.1-py3-none-any.whl", hash = "sha256:07f298c359e00acbc7c86f7fb985ada3168b0a59adffed6362c807b3c5425fa5", size = 1510642, upload-time = "2026-11-24T10:18:00.704Z" },
 ]
 
 [package.optional-dependencies]
