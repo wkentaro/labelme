@@ -368,3 +368,49 @@ def test_draws_nothing_sees_a_pixel_among_on_cells_without_sampling_an_edge(
     monkeypatch.setattr(_mask_logits, "_lerp", no_sampling)
 
     assert not logits.draws_nothing(scale=(Fraction(4), Fraction(4)))
+
+
+def test_draws_nothing_stops_at_the_first_edge_band_that_draws_a_pixel(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    one_logit = 256
+    cells = np.full((8, 8), 32768 - 20 * one_logit, dtype=np.uint16)
+    cells[:, 3] = 32768 + 20 * one_logit
+    logits = MaskLogits(cells=cells, box=(0, 0, 8, 8), clip=(0, 0, 8, 8))
+    lerp = _mask_logits._lerp
+    sampled = []
+
+    def counting(**kwargs: NDArray[np.float64]) -> NDArray[np.float64]:
+        sampled.append(None)
+        return lerp(**kwargs)
+
+    monkeypatch.setattr(_mask_logits, "_lerp", counting)
+
+    assert not logits.draws_nothing(scale=(Fraction(4), Fraction(4)))
+    assert not logits.draws_nothing(scale=(Fraction(4), Fraction(4)))
+    lerps_per_band = 2
+    assert len(sampled) == lerps_per_band
+
+
+def test_draw_takes_the_word_that_nothing_is_drawn(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    one_logit = 256
+    cells = np.full((8, 8), 32768 - 20 * one_logit, dtype=np.uint16)
+    cells[3, 3] = 32768 + 20 * one_logit
+    logits = MaskLogits(cells=cells, box=(0, 0, 8, 8), clip=(0, 0, 8, 8))
+    scale = (Fraction(1, 2), Fraction(1, 2))
+    lerp = _mask_logits._lerp
+    sampled = []
+
+    def counting(**kwargs: NDArray[np.float64]) -> NDArray[np.float64]:
+        sampled.append(None)
+        return lerp(**kwargs)
+
+    monkeypatch.setattr(_mask_logits, "_lerp", counting)
+
+    assert logits.draws_nothing(scale=scale)
+    edge_rows, lerps_per_band = 2, 2
+    assert len(sampled) == edge_rows * lerps_per_band
+    assert logits.draw(scale=scale) is None
+    assert len(sampled) == edge_rows * lerps_per_band

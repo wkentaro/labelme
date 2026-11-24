@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import dataclasses
 import math
+from collections.abc import Iterable
+from collections.abc import Iterator
 from fractions import Fraction
 from typing import TYPE_CHECKING
 from typing import Final
@@ -21,6 +23,8 @@ Box = tuple[float, float, float, float]
 
 _ZERO_LOGIT: Final = 32768
 
+_EdgeBand = tuple[slice, NDArray[np.int64], NDArray[np.bool_]]
+
 
 @dataclasses.dataclass(frozen=True)
 class _Sampled:
@@ -29,7 +33,7 @@ class _Sampled:
     cell_x: NDArray[np.int64]
     cell_y: NDArray[np.int64]
     among_on_cells: NDArray[np.bool_]
-    edge_bands: list[tuple[slice, NDArray[np.int64], NDArray[np.bool_]]]
+    edge_bands: list[_EdgeBand]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -46,6 +50,9 @@ class MaskLogits:
     box: Box
     clip: Box
     _sampled: dict[Scale, _Sampled | None] = dataclasses.field(
+        default_factory=dict, init=False, repr=False, compare=False
+    )
+    _draws_at: dict[Scale, bool] = dataclasses.field(
         default_factory=dict, init=False, repr=False, compare=False
     )
 
@@ -100,14 +107,17 @@ class MaskLogits:
         )
 
     def draws_nothing(self, *, scale: Scale) -> bool:
-        (_, cell_x, _), (_, cell_y, _) = self._axes(scale=scale)
-        among_on_cells, _ = self._cells_by_surroundings()
-        return (
-            not _fills_a_pixel(
-                among_on_cells=among_on_cells, cell_x=cell_x, cell_y=cell_y
+        if scale not in self._draws_at:
+            axes = self._axes(scale=scale)
+            (_, cell_x, _), (_, cell_y, _) = axes
+            among_on_cells, on_the_edge = self._cells_by_surroundings()
+            self._draws_at[scale] = _draws_a_pixel(
+                among_on_cells=among_on_cells,
+                cell_x=cell_x,
+                cell_y=cell_y,
+                edge_bands=self._edge_bands(axes=axes, on_the_edge=on_the_edge),
             )
-            and self._sample(scale=scale) is None
-        )
+        return not self._draws_at[scale]
 
     def draw(self, *, scale: Scale) -> tuple[NDArray[np.bool_], tuple[int, int]] | None:
         sampled = self._sample(scale=scale)
@@ -184,40 +194,19 @@ class MaskLogits:
     def _sample(self, *, scale: Scale) -> _Sampled | None:
         if scale in self._sampled:
             return self._sampled[scale]
-        rows, columns = self.cells.shape
-        (left, cell_x, toward_right), (top, cell_y, toward_below) = self._axes(
-            scale=scale
-        )
-        if not len(cell_x) or not len(cell_y):
+        axes = self._axes(scale=scale)
+        (left, cell_x, _), (top, cell_y, _) = axes
+        if self._draws_at.get(scale) is False or not len(cell_x) or not len(cell_y):
             self._sampled[scale] = None
             return None
-        below, right = _next_cells(count=rows), _next_cells(count=columns)
         among_on_cells, on_the_edge = self._cells_by_surroundings()
-        logits = self.cells.astype(np.float64)
-        tops = np.searchsorted(cell_y, np.arange(rows + 1))
-        edge_bands = []
-        for row in np.flatnonzero(on_the_edge.any(axis=1)):
-            ys = slice(int(tops[row]), int(tops[row + 1]))
-            xs = np.flatnonzero(on_the_edge[row][cell_x])
-            band = _lerp(
-                a=logits[row], b=logits[below[row]], toward_b=toward_below[ys, None]
-            )
-            lefts = cell_x[xs]
-            edge_bands.append(
-                (
-                    ys,
-                    xs,
-                    _lerp(
-                        a=band[:, lefts],
-                        b=band[:, right[lefts]],
-                        toward_b=toward_right[xs],
-                    )
-                    > _ZERO_LOGIT,
-                )
-            )
-        if not _fills_a_pixel(
-            among_on_cells=among_on_cells, cell_x=cell_x, cell_y=cell_y
-        ) and not any(on.any() for _, _, on in edge_bands):
+        edge_bands = list(self._edge_bands(axes=axes, on_the_edge=on_the_edge))
+        if not _draws_a_pixel(
+            among_on_cells=among_on_cells,
+            cell_x=cell_x,
+            cell_y=cell_y,
+            edge_bands=edge_bands,
+        ):
             self._sampled[scale] = None
             return None
         self._sampled[scale] = _Sampled(
@@ -229,6 +218,30 @@ class MaskLogits:
             edge_bands=edge_bands,
         )
         return self._sampled[scale]
+
+    def _edge_bands(
+        self, *, axes: tuple[_Axis, _Axis], on_the_edge: NDArray[np.bool_]
+    ) -> Iterator[_EdgeBand]:
+        (_, cell_x, toward_right), (_, cell_y, toward_below) = axes
+        rows, columns = self.cells.shape
+        below, right = _next_cells(count=rows), _next_cells(count=columns)
+        logits = self.cells.astype(np.float64)
+        tops = np.searchsorted(cell_y, np.arange(rows + 1))
+        for row in np.flatnonzero(on_the_edge.any(axis=1)):
+            ys = slice(int(tops[row]), int(tops[row + 1]))
+            xs = np.flatnonzero(on_the_edge[row][cell_x])
+            band = _lerp(
+                a=logits[row], b=logits[below[row]], toward_b=toward_below[ys, None]
+            )
+            lefts = cell_x[xs]
+            yield (
+                ys,
+                xs,
+                _lerp(
+                    a=band[:, lefts], b=band[:, right[lefts]], toward_b=toward_right[xs]
+                )
+                > _ZERO_LOGIT,
+            )
 
     def _cells_by_surroundings(self) -> tuple[NDArray[np.bool_], NDArray[np.bool_]]:
         rows, columns = self.cells.shape
@@ -266,18 +279,21 @@ def _next_cells(*, count: int) -> NDArray[np.int64]:
     return np.minimum(np.arange(count) + 1, count - 1)
 
 
-def _fills_a_pixel(
+def _draws_a_pixel(
     *,
     among_on_cells: NDArray[np.bool_],
     cell_x: NDArray[np.int64],
     cell_y: NDArray[np.int64],
+    edge_bands: Iterable[_EdgeBand],
 ) -> bool:
     rows, columns = among_on_cells.shape
     with_pixels = np.ix_(
         np.bincount(cell_y, minlength=rows) > 0,
         np.bincount(cell_x, minlength=columns) > 0,
     )
-    return bool(among_on_cells[with_pixels].any())
+    return bool(among_on_cells[with_pixels].any()) or any(
+        on.any() for _, _, on in edge_bands
+    )
 
 
 def _grouped_to_sent(
