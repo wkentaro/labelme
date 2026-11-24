@@ -139,7 +139,11 @@ def _run(
         cache.clear()
         cache[key] = _model_image(image=request.image, size=sent_size)
     annotations = client.segment(
-        model, cache[key], keep_alive=-1, **_segment_kwargs(request=request)
+        model,
+        cache[key],
+        keep_alive=-1,
+        include_mask_logits=sent_size != (width, height),
+        **_segment_kwargs(request=request),
     )
     logger.info(
         "Segmented with {!r} in {:.0f} ms",

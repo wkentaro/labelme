@@ -210,6 +210,49 @@ def test_text_proposal_keeps_mask_and_score_alignment_after_suppression() -> Non
     np.testing.assert_array_equal(existing.points, [[20, 0], [23, 3]])
 
 
+def test_text_proposal_draws_the_kept_mask_from_its_own_logits() -> None:
+    off, on = 0, 65535
+    cells = [
+        np.full((2, 2), on, dtype=np.uint16),
+        np.array([[off, on], [off, on]], dtype=np.uint16),
+        np.full((2, 2), on, dtype=np.uint16),
+    ]
+    response = _Response(
+        annotations=[
+            osam.types.Annotation(
+                text="cat",
+                score=score,
+                bounding_box=osam.types.BoundingBox(xmin=x, ymin=0, xmax=x + 3, ymax=3),
+                mask=np.ones((4, 4), dtype=bool),
+                mask_logits=logits,
+                mask_logits_box=(x - 2.0, 0.0, x + 4.0, 4.0),
+            )
+            for x, score, logits in zip([2, 12, 22], [0.2, 0.9, 0.8], cells)
+        ],
+    )
+    existing = Shape(
+        label="cat",
+        shape_type="mask",
+        points=np.array([[44, 0], [51, 7]]),
+        mask=np.ones((8, 8), dtype=bool),
+    )
+
+    (shape,) = propose_shapes_from_texts(
+        annotations=response.annotations,
+        texts=["cat"],
+        shape_type="mask",
+        existing_shapes=[existing],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(60, 60),
+        polygon_detail=80,
+        scale_to_image=(Fraction(2), Fraction(2)),
+    )
+
+    np.testing.assert_array_equal(shape.points, [[26, 0], [31, 7]])
+    np.testing.assert_array_equal(shape.mask, np.ones((8, 6), dtype=bool))
+
+
 def test_text_proposal_rejects_maskless_detections_for_mask_output() -> None:
     with pytest.raises(MaskOutputUnavailableError, match="requires model masks"):
         propose_shapes_from_texts(

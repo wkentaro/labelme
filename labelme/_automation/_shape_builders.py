@@ -16,6 +16,7 @@ from ._geometry import compute_circle_from_mask
 from ._geometry import compute_oriented_rectangle_from_mask
 from ._geometry import compute_polygons_from_mask
 from ._geometry import round_bbox_to_int
+from ._mask_logits import MaskLogits
 from ._scaling import UNSCALED
 from ._scaling import Scale
 from ._scaling import scale_bbox
@@ -29,6 +30,7 @@ _DEFAULT_POLYGON_DETAIL: Final[int] = 60
 class Detection:
     bbox: tuple[float, float, float, float] | None = None
     mask: NDArray[np.bool_] | None = None
+    mask_logits: MaskLogits | None = None
     label: str | None = None
     description: str | None = None
     score: float = 0.0
@@ -104,17 +106,29 @@ def _build_shapes_from_detection(
     if shape_type == "mask":
         if detection.bbox is None or detection.mask is None:
             return []
-        if not detection.mask.any():
-            return []
-        xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
+        if detection.mask_logits is None:
+            if not detection.mask.any():
+                return []
+            mask = detection.mask
+            xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
+            scale = scale_to_image
+        else:
+            drawn = detection.mask_logits.draw(
+                scale=scale_to_image, image_size=image_size
+            )
+            if drawn is None:
+                return []
+            mask, (xmin, ymin) = drawn
+            xmax, ymax = xmin + mask.shape[1] - 1, ymin + mask.shape[0] - 1
+            scale = UNSCALED
         return [
             _build_shape(
                 shape_type="mask",
                 points=[[xmin, ymin], [xmax, ymax]],
-                mask=detection.mask,
+                mask=mask,
                 label=detection.label,
                 description=detection.description,
-                scale=scale_to_image,
+                scale=scale,
             )
         ]
     if shape_type == "circle":

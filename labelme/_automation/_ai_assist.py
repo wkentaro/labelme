@@ -9,6 +9,7 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._geometry import round_bbox_to_int
+from ._mask_logits import MaskLogits
 from ._scaling import UNSCALED
 from ._scaling import Scale
 from ._shape_builders import Detection
@@ -185,6 +186,7 @@ def _detections_from_annotations(
             Detection(
                 bbox=bbox,
                 mask=annotation.mask,
+                mask_logits=MaskLogits.from_annotation(annotation=annotation),
                 score=annotation.score if annotation.score is not None else 0.0,
             )
         )
