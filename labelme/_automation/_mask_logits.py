@@ -100,11 +100,9 @@ class MaskLogits:
         rows, columns = self.cells.shape
         x, y = cell_x[column], cell_y[row]
         right, below = min(x + 1, columns - 1), min(y + 1, rows - 1)
-        around = self.cells[np.ix_([y, below], [x, right])].astype(np.float64)
+        around = _signed(cells=self.cells[np.ix_([y, below], [x, right])])
         band = _lerp(a=around[0], b=around[1], toward_b=toward_below[row])
-        return bool(
-            _lerp(a=band[0], b=band[1], toward_b=toward_right[column]) > _ZERO_LOGIT
-        )
+        return bool(_lerp(a=band[0], b=band[1], toward_b=toward_right[column]) > 0)
 
     def draws_nothing(self, *, scale: Scale) -> bool:
         if scale not in self._draws_at:
@@ -225,7 +223,7 @@ class MaskLogits:
         (_, cell_x, toward_right), (_, cell_y, toward_below) = axes
         rows, columns = self.cells.shape
         below, right = _next_cells(count=rows), _next_cells(count=columns)
-        logits = self.cells.astype(np.float64)
+        logits = _signed(cells=self.cells)
         tops = np.searchsorted(cell_y, np.arange(rows + 1))
         for row in np.flatnonzero(on_the_edge.any(axis=1)):
             ys = slice(int(tops[row]), int(tops[row + 1]))
@@ -240,7 +238,7 @@ class MaskLogits:
                 _lerp(
                     a=band[:, lefts], b=band[:, right[lefts]], toward_b=toward_right[xs]
                 )
-                > _ZERO_LOGIT,
+                > 0,
             )
 
     def _cells_by_surroundings(self) -> tuple[NDArray[np.bool_], NDArray[np.bool_]]:
@@ -334,6 +332,10 @@ def _pixels_on_cells(
     )
     cell = np.floor(position).astype(np.int64)
     return first_pixel, cell, position - cell
+
+
+def _signed(*, cells: NDArray[np.uint16]) -> NDArray[np.float64]:
+    return cells.astype(np.float64) - _ZERO_LOGIT
 
 
 def _lerp(

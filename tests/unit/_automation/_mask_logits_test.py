@@ -25,7 +25,7 @@ def _sampled_at_every_pixel(
     rows, columns = logits.cells.shape
     xmin, ymin, xmax, ymax = logits.box
     clip = logits.clip
-    cells = logits.cells.astype(np.float64)
+    cells = logits.cells.astype(np.float64) - 32768
 
     def axis(
         *, size: int, factor: Fraction, start: float, stop: float, count: int
@@ -46,7 +46,7 @@ def _sampled_at_every_pixel(
     value = band[:, x0] * (1 - wx) + band[:, x1] * wx
     in_x = (max(xmin, clip[0]) <= xs) & (xs < min(xmax, clip[2]))
     in_y = (max(ymin, clip[1]) <= ys) & (ys < min(ymax, clip[3]))
-    return (value > 32768) & in_y[:, None] & in_x
+    return (value > 0) & in_y[:, None] & in_x
 
 
 def _on_canvas(
@@ -300,6 +300,16 @@ def test_draw_keeps_a_pixel_that_float32_rounds_onto_zero() -> None:
     assert drawn is not None
     mask, (x, _) = drawn
     assert (x, x + mask.shape[1] - 1) == (6120, 6216)
+
+
+def test_a_pixel_whose_sample_is_exactly_zero_is_left_out() -> None:
+    cells = np.full((256, 256), 30720, dtype=np.uint16)
+    cells[127:129, 127:129] = [[6880, 58656], [9413, 56123]]
+    logits = MaskLogits(cells=cells, box=(0, 0, 1024, 1024), clip=(0, 0, 1024, 1024))
+    scale = (Fraction(101, 1024), Fraction(2049, 1024))
+
+    assert not logits.holds(pixel=(50, 1022), scale=scale)
+    assert logits.draw(scale=scale) is None
 
 
 def test_from_annotation_keeps_the_mask_inside_the_sent_image() -> None:
