@@ -172,7 +172,12 @@ def existing_rectangle() -> Shape:
 
 
 def test_detections_from_annotations_empty_returns_empty() -> None:
-    assert _detections_from_annotations(annotations=[], sent_size=(100, 100)) == []
+    assert (
+        _detections_from_annotations(
+            annotations=[], sent_size=(100, 100), keeps_logits=True
+        )
+        == []
+    )
 
 
 def test_detections_from_annotations_sorts_by_score_descending() -> None:
@@ -183,6 +188,7 @@ def test_detections_from_annotations_sorts_by_score_descending() -> None:
             _annotation(score=0.5, bbox=(4, 4, 5, 5), mask=None),
         ],
         sent_size=(100, 100),
+        keeps_logits=True,
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -199,6 +205,7 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
             _annotation(score=0.5, bbox=(2, 2, 3, 3), mask=None),
         ],
         sent_size=(100, 100),
+        keeps_logits=True,
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -211,6 +218,7 @@ def test_detections_from_annotations_flattens_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
         annotations=[_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)],
         sent_size=(100, 100),
+        keeps_logits=True,
     )
 
     assert detection.bbox == (1, 2, 3, 4)
@@ -220,6 +228,7 @@ def test_detections_from_annotations_keeps_bbox_none_without_bounding_box() -> N
     (detection,) = _detections_from_annotations(
         annotations=[_annotation(score=0.5, bbox=None, mask=None)],
         sent_size=(100, 100),
+        keeps_logits=True,
     )
 
     assert detection.bbox is None
@@ -233,6 +242,7 @@ def test_detections_from_annotations_passes_mask_through() -> None:
     (detection,) = _detections_from_annotations(
         annotations=[_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)],
         sent_size=(100, 100),
+        keeps_logits=True,
     )
 
     np.testing.assert_array_equal(detection.mask, mask)

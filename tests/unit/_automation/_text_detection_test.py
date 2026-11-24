@@ -255,6 +255,39 @@ def test_text_proposal_draws_the_kept_mask_from_its_own_logits() -> None:
     np.testing.assert_array_equal(shape.mask, np.ones((8, 6), dtype=bool))
 
 
+def test_text_proposal_adds_nothing_when_run_again_over_its_own_mask() -> None:
+    one_logit = 256
+    annotation = osam.types.Annotation(
+        text="cat",
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=5, ymin=0, xmax=6, ymax=62),
+        mask=np.tile([True, False], (63, 1)),
+        mask_logits=np.array(
+            [[32768 - 100 * one_logit, 32768 + one_logit, 32768, 0]], dtype=np.uint16
+        ),
+        mask_logits_box=(4.0, 0.0, 8.0, 63.0),
+    )
+
+    def propose(existing_shapes: list[Shape]) -> list[Shape]:
+        return propose_shapes_from_texts(
+            annotations=[annotation],
+            texts=["cat"],
+            shape_type="mask",
+            existing_shapes=existing_shapes,
+            iou_threshold=0.5,
+            score_threshold=0.5,
+            image_size=(65, 65),
+            polygon_detail=80,
+            scale_to_image=(Fraction(65, 63), Fraction(65, 63)),
+            sent_size=(63, 63),
+        )
+
+    first = propose([])
+
+    assert [shape.points.tolist() for shape in first] == [[[6, 0], [6, 64]]]
+    assert propose(first) == []
+
+
 def test_text_proposal_rejects_maskless_detections_for_mask_output() -> None:
     with pytest.raises(MaskOutputUnavailableError, match="requires model masks"):
         propose_shapes_from_texts(

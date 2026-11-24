@@ -9,6 +9,7 @@ import pytest
 
 from labelme._automation import Detection
 from labelme._automation import shapes_from_detections
+from labelme._automation._mask_logits import MaskLogits
 from labelme._automation._scaling import Scale
 from labelme._automation._scaling import scale_shape
 from labelme._automation._suppression import _local_mask_from_detection
@@ -630,3 +631,148 @@ def test_redundant_compares_thin_candidates_as_their_shapes_are_saved(
     )
 
     assert kept == candidates[:kept_count]
+
+
+_SENT_TO_IMAGE: Final[Scale] = (Fraction(65, 63), Fraction(65, 63))
+
+
+def _sliver_drawn_one_column_right() -> Detection:
+    one_logit = 256
+    cells = np.array(
+        [[32768 - 100 * one_logit, 32768 + one_logit, 32768, 0]], dtype=np.uint16
+    )
+    return Detection(
+        bbox=(5, 0, 5, 62),
+        mask=np.ones((63, 1), dtype=bool),
+        mask_logits=MaskLogits(cells=cells, box=(4, 0, 8, 63), clip=(0, 0, 63, 63)),
+    )
+
+
+def test_a_mask_drawn_from_logits_matches_its_own_saved_shape() -> None:
+    [saved] = shapes_from_detections(
+        detections=[_sliver_drawn_one_column_right()],
+        shape_type="mask",
+        scale_to_image=_SENT_TO_IMAGE,
+    )
+    np.testing.assert_array_equal(saved.points, [[6, 0], [6, 64]])
+
+    result = match_detections_to_existing_shapes(
+        detections=[_sliver_drawn_one_column_right()],
+        existing_shapes=[saved],
+        scale_to_image=_SENT_TO_IMAGE,
+        saved_as_mask=True,
+    )
+
+    assert result.new_detections == []
+    assert result.matching_shapes == [saved]
+
+
+def test_a_mask_drawn_from_logits_is_new_beside_the_shape_its_sent_mask_covers() -> (
+    None
+):
+    beside = Shape(
+        shape_type="mask",
+        points=np.array([[5, 0], [5, 64]]),
+        mask=np.ones((65, 1), dtype=bool),
+    )
+    detection = _sliver_drawn_one_column_right()
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection],
+        existing_shapes=[beside],
+        scale_to_image=_SENT_TO_IMAGE,
+        saved_as_mask=True,
+    )
+
+    assert result.new_detections == [detection]
+    assert result.matching_shapes == []
+
+
+def test_a_mask_far_from_every_existing_shape_is_new_without_being_drawn() -> None:
+    far = Shape(
+        shape_type="mask",
+        points=np.array([[40, 0], [44, 64]]),
+        mask=np.ones((65, 5), dtype=bool),
+    )
+    detection = _sliver_drawn_one_column_right()
+    drawn: list[object] = []
+    assert detection.mask_logits is not None
+    object.__setattr__(
+        detection.mask_logits, "footprint", lambda *, scale: drawn.append(scale)
+    )
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection],
+        existing_shapes=[far],
+        scale_to_image=_SENT_TO_IMAGE,
+        saved_as_mask=True,
+    )
+
+    assert result.new_detections == [detection]
+    assert drawn == []
+
+
+def test_a_mask_whose_logits_draw_nothing_is_compared_by_its_saved_sent_mask() -> None:
+    on_a_sent_row_without_an_image_pixel_center = Detection(
+        bbox=(0.0, 0.0, 49.0, 0.0),
+        mask=np.ones((1, 50), dtype=bool),
+        mask_logits=MaskLogits(
+            cells=np.full((1, 1), 32768 + 256, dtype=np.uint16),
+            box=(0, 0, 50, 1),
+            clip=(0, 0, 50, 12),
+        ),
+    )
+    [saved] = shapes_from_detections(
+        detections=[on_a_sent_row_without_an_image_pixel_center],
+        shape_type="mask",
+        scale_to_image=_WIDER_AND_SHORTER,
+    )
+    assert saved.points.tolist() == [[0, 0], [99, 0]]
+    two_thirds_of_it = Shape(
+        shape_type="mask",
+        points=np.array([[20.0, 0.0], [119.0, 0.0]]),
+        mask=np.ones((1, 100), dtype=bool),
+    )
+
+    result = match_detections_to_existing_shapes(
+        detections=[on_a_sent_row_without_an_image_pixel_center],
+        existing_shapes=[two_thirds_of_it],
+        scale_to_image=_WIDER_AND_SHORTER,
+        saved_as_mask=True,
+    )
+
+    assert result.new_detections == []
+    assert result.matching_shapes == [two_thirds_of_it]
+
+
+def test_a_mask_drawn_onto_a_shorter_image_reaches_the_rows_its_pixel_covers() -> None:
+    twelve_sent_rows_per_image_row = (Fraction(1), Fraction(1, 12))
+    detection = Detection(
+        bbox=(0.0, 14.0, 7.0, 23.0),
+        mask=np.ones((10, 8), dtype=bool),
+        mask_logits=MaskLogits(
+            cells=np.full((1, 1), 32768 + 256, dtype=np.uint16),
+            box=(0, 14, 8, 24),
+            clip=(0, 0, 8, 36),
+        ),
+    )
+    [saved] = shapes_from_detections(
+        detections=[detection],
+        shape_type="mask",
+        scale_to_image=twelve_sent_rows_per_image_row,
+    )
+    assert saved.points.tolist() == [[0, 1], [7, 1]]
+    at_the_top_of_that_image_row = Shape(
+        shape_type="polygon",
+        points=np.array([[1.0, 1.0], [6.0, 1.0], [6.0, 1.05], [1.0, 1.05]]),
+    )
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection],
+        existing_shapes=[at_the_top_of_that_image_row],
+        scale_to_image=twelve_sent_rows_per_image_row,
+        saved_as_mask=True,
+    )
+
+    assert result.new_detections == []
+    assert result.matching_shapes == [at_the_top_of_that_image_row]

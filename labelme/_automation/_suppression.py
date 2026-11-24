@@ -123,13 +123,26 @@ def match_detections_to_existing_shapes(
         if detection.bbox is None:
             kept.append(detection)
             continue
+        touched = [
+            (shape, existing_mask)
+            for shape, existing_mask in existing_shape_masks
+            if not saved_as_mask
+            or _can_touch(
+                detection=detection,
+                existing=existing_mask,
+                scale_to_image=scale_to_image,
+            )
+        ]
+        if not touched:
+            kept.append(detection)
+            continue
         new_local = _local_mask_from_detection(
             detection=detection,
             scale_to_image=scale_to_image,
             saved_as_mask=saved_as_mask,
         )
         matches: list[tuple[Shape, _MaskOverlap]] = []
-        for shape, existing_mask in existing_shape_masks:
+        for shape, existing_mask in touched:
             overlap = _compute_mask_overlap(a=new_local, b=existing_mask)
             if _is_redundant_overlap(
                 overlap=overlap,
@@ -168,6 +181,22 @@ def _compute_mask_overlap(*, a: _LocalMask, b: _LocalMask) -> _MaskOverlap:
     return _MaskOverlap(iou=iou, containment=containment)
 
 
+def _can_touch(
+    *, detection: Detection, existing: _LocalMask, scale_to_image: Scale
+) -> bool:
+    bound = (
+        None
+        if detection.mask_logits is None
+        else detection.mask_logits.footprint_bound(scale=scale_to_image)
+    )
+    if bound is None:
+        return True
+    x0, y0 = existing.origin_xy
+    height, width = existing.mask.shape
+    xmin, ymin, xmax, ymax = bound
+    return xmin < x0 + width and xmax > x0 and ymin < y0 + height and ymax > y0
+
+
 def _local_mask_from_detection(
     *, detection: Detection, scale_to_image: Scale, saved_as_mask: bool
 ) -> _LocalMask:
@@ -188,7 +217,12 @@ def _local_mask_from_detection(
         mask = detection.mask
     origin = (xmin, ymin)
     if saved_as_mask:
-        mask, origin = _mask_shape_pixels_on_sent_image(
+        footprint = (
+            None
+            if detection.mask_logits is None
+            else detection.mask_logits.footprint(scale=scale_to_image)
+        )
+        mask, origin = footprint or _mask_shape_pixels_on_sent_image(
             mask=mask, origin=origin, scale_to_image=scale_to_image
         )
     return _LocalMask(mask=mask, origin_xy=origin, area=int(np.count_nonzero(mask)))

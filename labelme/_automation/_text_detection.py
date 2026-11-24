@@ -50,6 +50,12 @@ def propose_shapes_from_texts(
         raise MaskOutputUnavailableError(f"{shape_type!r} requires model masks")
 
     saved_as_mask = shape_type == "mask"
+    mask_logits = [
+        MaskLogits.from_annotation(annotation=annotation, sent_size=sent_size)
+        if shape_type == "mask"
+        else None
+        for annotation in annotations
+    ]
     above_cutoff = scores > np.float32(score_threshold)
     # Use the same mask overlap as example boxes; a polygon part can cover an
     # occluded object even when its bounding box is much smaller.
@@ -65,6 +71,7 @@ def propose_shapes_from_texts(
                     float(boxes[i, 3]),
                 ),
                 mask=None if masks is None else masks[i],
+                mask_logits=mask_logits[i],
             )
             for i in indices
         ]
@@ -93,11 +100,11 @@ def propose_shapes_from_texts(
         max_num_detections=100,
     )
 
-    kept_annotations = [annotations[i] for i in np.flatnonzero(is_new)[indices]]
+    kept = np.flatnonzero(is_new)[indices]
     del indices
 
     detections: list[Detection] = []
-    for box, score, label, annotation in zip(boxes, scores, labels, kept_annotations):
+    for box, score, label, i in zip(boxes, scores, labels, kept):
         text = texts[label]
         detections.append(
             Detection(
@@ -107,10 +114,8 @@ def propose_shapes_from_texts(
                     float(box[2]),
                     float(box[3]),
                 ),
-                mask=None if masks is None else annotation.mask,
-                mask_logits=MaskLogits.from_annotation(
-                    annotation=annotation, sent_size=sent_size
-                ),
+                mask=None if masks is None else masks[i],
+                mask_logits=mask_logits[i],
                 label=text,
                 description=json.dumps(dict(score=score.item(), text=text)),
             )

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import math
 from fractions import Fraction
 from typing import TYPE_CHECKING
 from typing import Final
@@ -9,12 +10,24 @@ import numpy as np
 from numpy.typing import NDArray
 
 from ._scaling import Scale
+from ._scaling import pixel_holding_center
 from ._scaling import pixels_centered_in
+from ._scaling import scale_mask
 
 if TYPE_CHECKING:
     import osam
 
 Box = tuple[float, float, float, float]
+
+
+@dataclasses.dataclass(frozen=True)
+class _Sampled:
+    left: int
+    top: int
+    cell_x: NDArray[np.int64]
+    cell_y: NDArray[np.int64]
+    among_on_cells: NDArray[np.bool_]
+    edge_bands: list[tuple[slice, NDArray[np.int64], NDArray[np.bool_]]]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -30,6 +43,9 @@ class MaskLogits:
     cells: NDArray[np.uint16]
     box: Box
     clip: Box
+    _sampled: dict[Scale, _Sampled | None] = dataclasses.field(
+        default_factory=dict, init=False, repr=False, compare=False
+    )
 
     @classmethod
     def from_annotation(
@@ -50,24 +66,119 @@ class MaskLogits:
             cells=annotation.mask_logits, box=annotation.mask_logits_box, clip=clip
         )
 
+    @property
+    def reach(self) -> Box:
+        return (
+            max(self.box[0], self.clip[0]),
+            max(self.box[1], self.clip[1]),
+            min(self.box[2], self.clip[2]),
+            min(self.box[3], self.clip[3]),
+        )
+
+    def footprint_bound(self, *, scale: Scale) -> tuple[int, int, int, int] | None:
+        if min(scale) < 1:
+            return None
+        xmin, ymin, xmax, ymax = self.reach
+        return math.floor(xmin), math.floor(ymin), math.ceil(xmax), math.ceil(ymax)
+
     def draw(self, *, scale: Scale) -> tuple[NDArray[np.bool_], tuple[int, int]] | None:
+        sampled = self._sample(scale=scale)
+        if sampled is None:
+            return None
+        rows, columns = self.cells.shape
+        cell_x, cell_y = sampled.cell_x, sampled.cell_y
+        widths = np.bincount(cell_x, minlength=columns)
+        heights = np.bincount(cell_y, minlength=rows)
+        among_on_cells = sampled.among_on_cells
+        in_row = np.any(among_on_cells[:, widths > 0], axis=1)[cell_y]
+        in_column = np.any(among_on_cells[heights > 0], axis=0)[cell_x]
+        for ys, xs, on in sampled.edge_bands:
+            in_row[ys] |= on.any(axis=1)
+            in_column[xs] |= on.any(axis=0)
+        if not in_row.any():
+            return None
+        y0, y1 = np.flatnonzero(in_row)[[0, -1]] + [0, 1]
+        x0, x1 = np.flatnonzero(in_column)[[0, -1]] + [0, 1]
+        mask = np.repeat(
+            np.repeat(
+                sampled.among_on_cells,
+                np.bincount(cell_x[x0:x1], minlength=columns),
+                axis=1,
+            ),
+            np.bincount(cell_y[y0:y1], minlength=rows),
+            axis=0,
+        )
+        for ys, xs, on in sampled.edge_bands:
+            band_top, band_bottom = max(ys.start, y0), min(ys.stop, y1)
+            if band_top >= band_bottom:
+                continue
+            kept = (x0 <= xs) & (xs < x1)
+            mask[band_top - y0 : band_bottom - y0, xs[kept] - x0] = on[
+                band_top - ys.start : band_bottom - ys.start, kept
+            ]
+        return mask, (sampled.left + int(x0), sampled.top + int(y0))
+
+    def footprint(
+        self, *, scale: Scale
+    ) -> tuple[NDArray[np.bool_], tuple[int, int]] | None:
+        sampled = self._sample(scale=scale)
+        if sampled is None:
+            return None
+        columns_of, left, to_sent_x = _grouped_to_sent(
+            first=sampled.left, count=len(sampled.cell_x), factor=scale[0]
+        )
+        rows_of, top, to_sent_y = _grouped_to_sent(
+            first=sampled.top, count=len(sampled.cell_y), factor=scale[1]
+        )
+        footprint = (
+            _touched(groups=rows_of, cells=sampled.cell_y, count=self.cells.shape[0])
+            @ sampled.among_on_cells.astype(np.float32)
+            @ _touched(
+                groups=columns_of, cells=sampled.cell_x, count=self.cells.shape[1]
+            ).T
+        ) > 0
+        for ys, xs, on in sampled.edge_bands:
+            if not on.size:
+                continue
+            band_rows, band_columns = rows_of[ys], columns_of[xs]
+            row_starts = np.flatnonzero(np.diff(band_rows, prepend=-1))
+            column_starts = np.flatnonzero(np.diff(band_columns, prepend=-1))
+            footprint[np.ix_(band_rows[row_starts], band_columns[column_starts])] |= (
+                np.logical_or.reduceat(
+                    np.logical_or.reduceat(on, row_starts, axis=0),
+                    column_starts,
+                    axis=1,
+                )
+            )
+        if not footprint.any():
+            return None
+        mask, box = scale_mask(
+            mask=footprint, origin=(left, top), factor=(to_sent_x, to_sent_y)
+        )
+        return mask, box[:2]
+
+    def _sample(self, *, scale: Scale) -> _Sampled | None:
+        if scale in self._sampled:
+            return self._sampled[scale]
         ZERO_LOGIT: Final = 32768
         rows, columns = self.cells.shape
+        reach = self.reach
         left, cell_x, toward_right = _pixels_on_cells(
             start=self.box[0],
             stop=self.box[2],
-            clip=(self.clip[0], self.clip[2]),
+            reach=(reach[0], reach[2]),
             cells=columns,
             factor=scale[0],
         )
         top, cell_y, toward_below = _pixels_on_cells(
             start=self.box[1],
             stop=self.box[3],
-            clip=(self.clip[1], self.clip[3]),
+            reach=(reach[1], reach[3]),
             cells=rows,
             factor=scale[1],
         )
         if not len(cell_x) or not len(cell_y):
+            self._sampled[scale] = None
             return None
         below = np.minimum(np.arange(rows) + 1, rows - 1)
         right = np.minimum(np.arange(columns) + 1, columns - 1)
@@ -75,10 +186,6 @@ class MaskLogits:
         cells_around = [on, on[below], on[:, right], on[below][:, right]]
         among_on_cells = np.logical_and.reduce(cells_around)
         on_the_edge = np.logical_or.reduce(cells_around) & ~among_on_cells
-        widths = np.bincount(cell_x, minlength=columns)
-        heights = np.bincount(cell_y, minlength=rows)
-        in_row = among_on_cells[:, widths > 0].any(axis=1)[cell_y]
-        in_column = among_on_cells[heights > 0].any(axis=0)[cell_x]
         logits = self.cells.astype(np.float64)
         tops = np.searchsorted(cell_y, np.arange(rows + 1))
         edge_bands = []
@@ -89,49 +196,58 @@ class MaskLogits:
                 a=logits[row], b=logits[below[row]], toward_b=toward_below[ys, None]
             )
             lefts = cell_x[xs]
-            sampled = (
-                _lerp(
-                    a=band[:, lefts], b=band[:, right[lefts]], toward_b=toward_right[xs]
+            edge_bands.append(
+                (
+                    ys,
+                    xs,
+                    _lerp(
+                        a=band[:, lefts],
+                        b=band[:, right[lefts]],
+                        toward_b=toward_right[xs],
+                    )
+                    > ZERO_LOGIT,
                 )
-                > ZERO_LOGIT
             )
-            edge_bands.append((ys, xs, sampled))
-            in_row[ys] |= sampled.any(axis=1)
-            in_column[xs] |= sampled.any(axis=0)
-        if not in_row.any():
-            return None
-        y0, y1 = np.flatnonzero(in_row)[[0, -1]] + [0, 1]
-        x0, x1 = np.flatnonzero(in_column)[[0, -1]] + [0, 1]
-        mask = np.repeat(
-            np.repeat(
-                among_on_cells,
-                np.bincount(cell_x[x0:x1], minlength=columns),
-                axis=1,
-            ),
-            np.bincount(cell_y[y0:y1], minlength=rows),
-            axis=0,
+        self._sampled[scale] = _Sampled(
+            left=left,
+            top=top,
+            cell_x=cell_x,
+            cell_y=cell_y,
+            among_on_cells=among_on_cells,
+            edge_bands=edge_bands,
         )
-        for ys, xs, sampled in edge_bands:
-            band_top, band_bottom = max(ys.start, y0), min(ys.stop, y1)
-            if band_top >= band_bottom:
-                continue
-            kept = (x0 <= xs) & (xs < x1)
-            mask[band_top - y0 : band_bottom - y0, xs[kept] - x0] = sampled[
-                band_top - ys.start : band_bottom - ys.start, kept
-            ]
-        return mask, (left + int(x0), top + int(y0))
+        return self._sampled[scale]
+
+
+def _grouped_to_sent(
+    *, first: int, count: int, factor: Fraction
+) -> tuple[NDArray[np.int64], int, Fraction]:
+    if factor <= 1:
+        return np.arange(count), first, 1 / factor
+    sent = pixel_holding_center(
+        pixel=np.arange(first, first + count), factor=1 / factor
+    )
+    return sent - sent[0], int(sent[0]), Fraction(1)
+
+
+def _touched(
+    *, groups: NDArray[np.int64], cells: NDArray[np.int64], count: int
+) -> NDArray[np.float32]:
+    touched = np.zeros((int(groups[-1]) + 1, count), dtype=np.float32)
+    touched[groups, cells] = 1
+    return touched
 
 
 def _pixels_on_cells(
     *,
     start: float,
     stop: float,
-    clip: tuple[float, float],
+    reach: tuple[float, float],
     cells: int,
     factor: Fraction,
 ) -> tuple[int, NDArray[np.int64], NDArray[np.float64]]:
     first_pixel, end_pixel = pixels_centered_in(
-        low=max(start, clip[0]), high=min(stop, clip[1]), factor=factor
+        low=reach[0], high=reach[1], factor=factor
     )
     centers_on_sent_image = (
         (np.arange(first_pixel, end_pixel) + 0.5) * factor.denominator

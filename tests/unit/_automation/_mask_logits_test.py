@@ -11,6 +11,8 @@ from numpy.typing import NDArray
 from labelme._automation._mask_logits import Box
 from labelme._automation._mask_logits import MaskLogits
 from labelme._automation._scaling import Scale
+from labelme._automation._scaling import scale_shape
+from labelme._shape import Shape
 
 _OFF, _ON = 0, 65535
 _SENT_IMAGE: Final[Box] = (0, 0, 32, 32)
@@ -116,6 +118,83 @@ def test_draw_matches_sampling_every_pixel(
     mask, _ = drawn
     assert mask[0].any() and mask[-1].any()
     assert mask[:, 0].any() and mask[:, -1].any()
+
+
+@pytest.mark.parametrize("seed", range(20))
+@pytest.mark.parametrize(
+    ("scale", "box", "clip"),
+    [
+        pytest.param((Fraction(3), Fraction(3)), (4, 8, 28, 24), _SENT_IMAGE, id="x3"),
+        pytest.param(
+            (Fraction(3307, 128), Fraction(5723, 256)),
+            (4, 8, 28, 24),
+            _SENT_IMAGE,
+            id="605mp-ratio",
+        ),
+        pytest.param(
+            (Fraction(65, 63), Fraction(7, 2)),
+            (-6, -2, 38, 34),
+            _SENT_IMAGE,
+            id="past-the-image",
+        ),
+        pytest.param(
+            (Fraction(2), Fraction(1, 2)), (4, 8, 28, 24), _SENT_IMAGE, id="shorter"
+        ),
+        pytest.param(
+            (Fraction(63, 65), Fraction(1)), (4, 8, 28, 24), _SENT_IMAGE, id="narrower"
+        ),
+        pytest.param(
+            (Fraction(7, 2), Fraction(5)),
+            (0, 4, 32, 28),
+            (5, 9, 22, 21),
+            id="cut-to-a-text-box",
+        ),
+    ],
+)
+def test_footprint_is_the_drawn_mask_scaled_back_to_the_sent_image(
+    *, seed: int, scale: Scale, box: Box, clip: Box
+) -> None:
+    logits = MaskLogits(cells=_blobs(seed=seed, shape=(11, 13)), box=box, clip=clip)
+    drawn = logits.draw(scale=scale)
+    assert drawn is not None
+    mask, origin = drawn
+    saved = scale_shape(
+        shape=Shape(
+            shape_type="mask",
+            points=np.array(
+                [origin, [origin[0] + mask.shape[1] - 1, origin[1] + mask.shape[0] - 1]]
+            ),
+            mask=mask,
+        ),
+        factor=(1 / scale[0], 1 / scale[1]),
+    )
+    assert saved.mask is not None
+
+    footprint = logits.footprint(scale=scale)
+    assert footprint is not None
+    np.testing.assert_array_equal(
+        _on_canvas(drawn=footprint, image_size=(40, 40)),
+        _on_canvas(
+            drawn=(saved.mask, (int(saved.points[0][0]), int(saved.points[0][1]))),
+            image_size=(40, 40),
+        ),
+    )
+    bound = logits.footprint_bound(scale=scale)
+    assert (bound is None) == (min(scale) < 1)
+    if bound is not None:
+        (height, width), (left, top) = footprint[0].shape, footprint[1]
+        assert bound[0] <= left
+        assert bound[1] <= top
+        assert left + width <= bound[2]
+        assert top + height <= bound[3]
+
+
+def test_footprint_is_none_without_a_pixel_above_zero() -> None:
+    logits = MaskLogits(
+        cells=np.full((4, 4), 32768, np.uint16), box=(0, 0, 16, 16), clip=(0, 0, 16, 16)
+    )
+
+    assert logits.footprint(scale=(Fraction(8), Fraction(8))) is None
 
 
 def test_draw_puts_the_edge_where_the_logits_cross_zero() -> None:

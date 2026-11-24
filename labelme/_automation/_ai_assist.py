@@ -64,7 +64,9 @@ class AiAssistSession:
         detections = [
             detection
             for detection in _detections_from_annotations(
-                annotations=annotations, sent_size=sent_size
+                annotations=annotations,
+                sent_size=sent_size,
+                keeps_logits=self.output_format == "mask",
             )
             if detection.score >= score_threshold
         ]
@@ -171,6 +173,7 @@ def _detections_from_annotations(
     *,
     annotations: list[osam.types.Annotation],
     sent_size: tuple[int, int],
+    keeps_logits: bool,
 ) -> list[Detection]:
     if not annotations:
         logger.warning("No annotations returned")
@@ -192,7 +195,9 @@ def _detections_from_annotations(
                 mask=annotation.mask,
                 mask_logits=MaskLogits.from_annotation(
                     annotation=annotation, sent_size=sent_size
-                ),
+                )
+                if keeps_logits
+                else None,
                 score=annotation.score if annotation.score is not None else 0.0,
             )
         )
