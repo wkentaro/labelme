@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from fractions import Fraction
 from typing import NamedTuple
 
 import numpy as np
@@ -373,3 +374,29 @@ def test_text_proposal_uses_the_configured_existing_shape_iou(
     )
 
     assert len(shapes) == count
+
+
+def test_text_proposal_drops_a_mask_saved_onto_the_pixels_of_a_kept_one() -> None:
+    annotations = [
+        osam.types.Annotation(
+            text="cat",
+            score=score,
+            bounding_box=osam.types.BoundingBox(xmin=0, ymin=ymin, xmax=49, ymax=ymax),
+            mask=np.ones((3, 50), dtype=bool),
+        )
+        for score, ymin, ymax in [(0.9, 6, 8), (0.8, 9, 11)]
+    ]
+
+    shapes = propose_shapes_from_texts(
+        annotations=annotations,
+        texts=["cat"],
+        shape_type="mask",
+        existing_shapes=[],
+        iou_threshold=0.5,
+        score_threshold=0.5,
+        image_size=(100, 2),
+        polygon_detail=80,
+        scale_to_image=(Fraction(2), Fraction(1, 6)),
+    )
+
+    assert [shape.points.tolist() for shape in shapes] == [[[0, 1], [99, 1]]]

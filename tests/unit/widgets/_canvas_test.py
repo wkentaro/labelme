@@ -1621,8 +1621,10 @@ def test_ai_segment_guess_skips_polygons_and_polygon_detail(
 ) -> None:
     formats: list[str] = []
 
-    def propose_shapes(self: AiAssistSession, **_: object) -> AiAssistProposal:
-        formats.append(self.output_format)
+    def propose_shapes(
+        self: AiAssistSession, *, shown_as_mask: bool, **_: object
+    ) -> AiAssistProposal:
+        formats.append("mask" if shown_as_mask else self.output_format)
         return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
 
     monkeypatch.setattr(AiAssistSession, "propose_shapes", propose_shapes)

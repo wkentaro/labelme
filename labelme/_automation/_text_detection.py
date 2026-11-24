@@ -47,6 +47,7 @@ def propose_shapes_from_texts(
     if masks is None and len(boxes) > 0 and shape_type in MASK_REQUIRED_SHAPE_TYPES:
         raise MaskOutputUnavailableError(f"{shape_type!r} requires model masks")
 
+    saved_as_mask = shape_type == "mask"
     # Use the same mask overlap as example boxes; a polygon part can cover an
     # occluded object even when its bounding box is much smaller.
     is_new = np.zeros(len(boxes), dtype=bool)
@@ -74,6 +75,7 @@ def propose_shapes_from_texts(
             ],
             iou_threshold=iou_threshold,
             scale_to_image=scale_to_image,
+            saved_as_mask=saved_as_mask,
         )
         new_ids = {id(detection) for detection in matches.new_detections}
         is_new[indices] = [id(detection) in new_ids for detection in candidates]
@@ -115,6 +117,8 @@ def propose_shapes_from_texts(
     detections = suppress_detections_greedy(
         detections=detections,
         iou_threshold=iou_threshold,
+        scale_to_image=scale_to_image,
+        saved_as_mask=saved_as_mask,
     )
     shapes = shapes_from_detections(
         detections=detections,

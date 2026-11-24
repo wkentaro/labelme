@@ -977,13 +977,11 @@ class Canvas(QtWidgets.QWidget):
             # AI-Segment proposals ignore the AI-Find All thresholds.
             else (0.0, 0.5)
         )
-        session = copy.copy(self._ai_assist_session)
-        if job.channel == "preview":
+        return functools.partial(
+            copy.copy(self._ai_assist_session).propose_shapes,
             # The guess only shows which object a click picks, so it skips
             # polygonizing; the result shows the shape Enter adds.
-            session.output_format = "mask"
-        return functools.partial(
-            session.propose_shapes,
+            shown_as_mask=job.channel == "preview",
             score_threshold=thresholds[0],
             iou_threshold=thresholds[1],
             annotations=result.annotations,
