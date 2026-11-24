@@ -4,6 +4,7 @@ import copy
 import math
 from fractions import Fraction
 from typing import Final
+from typing import overload
 
 import numpy as np
 from numpy.typing import NDArray
@@ -18,11 +19,23 @@ Scale = tuple[Fraction, Fraction]
 UNSCALED: Final[Scale] = (Fraction(1), Fraction(1))
 
 
+@overload
+def pixel_holding_center(*, pixel: int, factor: Fraction) -> int: ...
+@overload
+def pixel_holding_center(
+    *, pixel: NDArray[np.int64], factor: Fraction
+) -> NDArray[np.int64]: ...
+def pixel_holding_center(
+    *, pixel: int | NDArray[np.int64], factor: Fraction
+) -> int | NDArray[np.int64]:
+    return (2 * pixel + 1) * factor.numerator // (2 * factor.denominator)
+
+
 def _scale_pixel_span(*, first: int, last: int, factor: Fraction) -> tuple[int, int]:
     if factor <= 1:
         return (
-            math.floor((first + _HALF) * factor),
-            math.floor((last + _HALF) * factor),
+            pixel_holding_center(pixel=first, factor=factor),
+            pixel_holding_center(pixel=last, factor=factor),
         )
     scaled_first, scaled_end = pixels_centered_in(
         low=first, high=last + 1, factor=factor
