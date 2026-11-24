@@ -100,7 +100,14 @@ class MaskLogits:
         )
 
     def draws_nothing(self, *, scale: Scale) -> bool:
-        return self._sample(scale=scale) is None
+        (_, cell_x, _), (_, cell_y, _) = self._axes(scale=scale)
+        among_on_cells, _ = self._cells_by_surroundings()
+        return (
+            not _fills_a_pixel(
+                among_on_cells=among_on_cells, cell_x=cell_x, cell_y=cell_y
+            )
+            and self._sample(scale=scale) is None
+        )
 
     def draw(self, *, scale: Scale) -> tuple[NDArray[np.bool_], tuple[int, int]] | None:
         sampled = self._sample(scale=scale)
@@ -184,12 +191,8 @@ class MaskLogits:
         if not len(cell_x) or not len(cell_y):
             self._sampled[scale] = None
             return None
-        below = np.minimum(np.arange(rows) + 1, rows - 1)
-        right = np.minimum(np.arange(columns) + 1, columns - 1)
-        on = self.cells > _ZERO_LOGIT
-        cells_around = [on, on[below], on[:, right], on[below][:, right]]
-        among_on_cells = np.logical_and.reduce(cells_around)
-        on_the_edge = np.logical_or.reduce(cells_around) & ~among_on_cells
+        below, right = _next_cells(count=rows), _next_cells(count=columns)
+        among_on_cells, on_the_edge = self._cells_by_surroundings()
         logits = self.cells.astype(np.float64)
         tops = np.searchsorted(cell_y, np.arange(rows + 1))
         edge_bands = []
@@ -212,13 +215,9 @@ class MaskLogits:
                     > _ZERO_LOGIT,
                 )
             )
-        with_pixels = np.ix_(
-            np.bincount(cell_y, minlength=rows) > 0,
-            np.bincount(cell_x, minlength=columns) > 0,
-        )
-        if not among_on_cells[with_pixels].any() and not any(
-            on.any() for _, _, on in edge_bands
-        ):
+        if not _fills_a_pixel(
+            among_on_cells=among_on_cells, cell_x=cell_x, cell_y=cell_y
+        ) and not any(on.any() for _, _, on in edge_bands):
             self._sampled[scale] = None
             return None
         self._sampled[scale] = _Sampled(
@@ -230,6 +229,14 @@ class MaskLogits:
             edge_bands=edge_bands,
         )
         return self._sampled[scale]
+
+    def _cells_by_surroundings(self) -> tuple[NDArray[np.bool_], NDArray[np.bool_]]:
+        rows, columns = self.cells.shape
+        below, right = _next_cells(count=rows), _next_cells(count=columns)
+        on = self.cells > _ZERO_LOGIT
+        around = [on, on[below], on[:, right], on[below][:, right]]
+        among_on_cells = np.logical_and.reduce(around)
+        return among_on_cells, np.logical_or.reduce(around) & ~among_on_cells
 
     def _axes(self, *, scale: Scale) -> tuple[_Axis, _Axis]:
         rows, columns = self.cells.shape
@@ -253,6 +260,24 @@ class MaskLogits:
 
 
 _Axis = tuple[int, NDArray[np.int64], NDArray[np.float64]]
+
+
+def _next_cells(*, count: int) -> NDArray[np.int64]:
+    return np.minimum(np.arange(count) + 1, count - 1)
+
+
+def _fills_a_pixel(
+    *,
+    among_on_cells: NDArray[np.bool_],
+    cell_x: NDArray[np.int64],
+    cell_y: NDArray[np.int64],
+) -> bool:
+    rows, columns = among_on_cells.shape
+    with_pixels = np.ix_(
+        np.bincount(cell_y, minlength=rows) > 0,
+        np.bincount(cell_x, minlength=columns) > 0,
+    )
+    return bool(among_on_cells[with_pixels].any())
 
 
 def _grouped_to_sent(

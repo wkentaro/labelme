@@ -8,6 +8,7 @@ import osam
 import pytest
 from numpy.typing import NDArray
 
+from labelme._automation import _mask_logits
 from labelme._automation._mask_logits import Box
 from labelme._automation._mask_logits import MaskLogits
 from labelme._automation._scaling import Scale
@@ -351,3 +352,19 @@ def test_from_annotation_is_none_without_logits() -> None:
     )
 
     assert MaskLogits.from_annotation(annotation=annotation, sent_size=(2, 2)) is None
+
+
+def test_draws_nothing_sees_a_pixel_among_on_cells_without_sampling_an_edge(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    one_logit = 256
+    cells = np.full((8, 8), 32768 - 20 * one_logit, dtype=np.uint16)
+    cells[2:6, 2:6] = 32768 + 20 * one_logit
+    logits = MaskLogits(cells=cells, box=(0, 0, 8, 8), clip=(0, 0, 8, 8))
+
+    def no_sampling(**_: object) -> None:
+        raise AssertionError("an edge was sampled")
+
+    monkeypatch.setattr(_mask_logits, "_lerp", no_sampling)
+
+    assert not logits.draws_nothing(scale=(Fraction(4), Fraction(4)))
