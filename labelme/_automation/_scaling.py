@@ -31,7 +31,10 @@ def _scale_pixel_span(*, first: int, last: int, factor: Fraction) -> tuple[int, 
 
 
 def pixels_centered_in(*, low: float, high: float, factor: Fraction) -> tuple[int, int]:
-    return math.ceil(low * factor - _HALF), math.ceil(high * factor - _HALF)
+    return (
+        math.ceil(Fraction(low) * factor - _HALF),
+        math.ceil(Fraction(high) * factor - _HALF),
+    )
 
 
 def _first_pixels_centered_from(
