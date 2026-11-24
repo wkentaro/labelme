@@ -57,12 +57,15 @@ class AiAssistSession:
         score_threshold: float,
         iou_threshold: float,
         scale_to_image: Scale = UNSCALED,
+        sent_size: tuple[int, int],
         shown_as_mask: bool = False,
     ) -> AiAssistProposal:
         points = points / np.asarray(scale_to_image, dtype=np.float64)
         detections = [
             detection
-            for detection in _detections_from_annotations(annotations=annotations)
+            for detection in _detections_from_annotations(
+                annotations=annotations, sent_size=sent_size
+            )
             if detection.score >= score_threshold
         ]
         if prompt_kind == "box" and detections:
@@ -167,6 +170,7 @@ def _is_point_inside_detection(
 def _detections_from_annotations(
     *,
     annotations: list[osam.types.Annotation],
+    sent_size: tuple[int, int],
 ) -> list[Detection]:
     if not annotations:
         logger.warning("No annotations returned")
@@ -186,7 +190,9 @@ def _detections_from_annotations(
             Detection(
                 bbox=bbox,
                 mask=annotation.mask,
-                mask_logits=MaskLogits.from_annotation(annotation=annotation),
+                mask_logits=MaskLogits.from_annotation(
+                    annotation=annotation, sent_size=sent_size
+                ),
                 score=annotation.score if annotation.score is not None else 0.0,
             )
         )

@@ -29,41 +29,43 @@ class MaskLogits:
 
     cells: NDArray[np.uint16]
     box: Box
-    clip: Box | None = None
+    clip: Box
 
     @classmethod
-    def from_annotation(cls, *, annotation: osam.types.Annotation) -> MaskLogits | None:
+    def from_annotation(
+        cls, *, annotation: osam.types.Annotation, sent_size: tuple[int, int]
+    ) -> MaskLogits | None:
         if annotation.mask_logits is None or annotation.mask_logits_box is None:
             return None
-        text_box: Box | None = None
+        clip: Box = (0, 0, sent_size[0], sent_size[1])
         if annotation.text is not None and annotation.bounding_box is not None:
             bb = annotation.bounding_box
-            text_box = (bb.xmin, bb.ymin, bb.xmax + 1, bb.ymax + 1)
+            clip = (
+                max(clip[0], bb.xmin),
+                max(clip[1], bb.ymin),
+                min(clip[2], bb.xmax + 1),
+                min(clip[3], bb.ymax + 1),
+            )
         return cls(
-            cells=annotation.mask_logits, box=annotation.mask_logits_box, clip=text_box
+            cells=annotation.mask_logits, box=annotation.mask_logits_box, clip=clip
         )
 
-    def draw(
-        self, *, scale: Scale, image_size: tuple[int, int] | None
-    ) -> tuple[NDArray[np.bool_], tuple[int, int]] | None:
+    def draw(self, *, scale: Scale) -> tuple[NDArray[np.bool_], tuple[int, int]] | None:
         ZERO_LOGIT: Final = 32768
         rows, columns = self.cells.shape
-        clip = self.box if self.clip is None else self.clip
         left, cell_x, toward_right = _pixels_on_cells(
             start=self.box[0],
             stop=self.box[2],
-            clip=(clip[0], clip[2]),
+            clip=(self.clip[0], self.clip[2]),
             cells=columns,
             factor=scale[0],
-            size=None if image_size is None else image_size[0],
         )
         top, cell_y, toward_below = _pixels_on_cells(
             start=self.box[1],
             stop=self.box[3],
-            clip=(clip[1], clip[3]),
+            clip=(self.clip[1], self.clip[3]),
             cells=rows,
             factor=scale[1],
-            size=None if image_size is None else image_size[1],
         )
         if not len(cell_x) or not len(cell_y):
             return None
@@ -77,7 +79,7 @@ class MaskLogits:
         heights = np.bincount(cell_y, minlength=rows)
         in_row = among_on_cells[:, widths > 0].any(axis=1)[cell_y]
         in_column = among_on_cells[heights > 0].any(axis=0)[cell_x]
-        logits = self.cells.astype(np.float32)
+        logits = self.cells.astype(np.float64)
         tops = np.searchsorted(cell_y, np.arange(rows + 1))
         edge_bands = []
         for row in np.flatnonzero(on_the_edge.any(axis=1)):
@@ -127,14 +129,10 @@ def _pixels_on_cells(
     clip: tuple[float, float],
     cells: int,
     factor: Fraction,
-    size: int | None,
-) -> tuple[int, NDArray[np.int64], NDArray[np.float32]]:
+) -> tuple[int, NDArray[np.int64], NDArray[np.float64]]:
     first_pixel, end_pixel = pixels_centered_in(
         low=max(start, clip[0]), high=min(stop, clip[1]), factor=factor
     )
-    first_pixel = max(0, first_pixel)
-    if size is not None:
-        end_pixel = min(end_pixel, size)
     centers_on_sent_image = (
         (np.arange(first_pixel, end_pixel) + 0.5) * factor.denominator
     ) / factor.numerator
@@ -142,10 +140,10 @@ def _pixels_on_cells(
         (centers_on_sent_image - start) / (stop - start) * cells - 0.5, 0, cells - 1
     )
     cell = np.floor(position).astype(np.int64)
-    return first_pixel, cell, (position - cell).astype(np.float32)
+    return first_pixel, cell, position - cell
 
 
 def _lerp(
-    *, a: NDArray[np.float32], b: NDArray[np.float32], toward_b: NDArray[np.float32]
-) -> NDArray[np.float32]:
+    *, a: NDArray[np.float64], b: NDArray[np.float64], toward_b: NDArray[np.float64]
+) -> NDArray[np.float64]:
     return a * (1 - toward_b) + b * toward_b

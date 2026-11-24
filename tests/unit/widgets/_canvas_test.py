@@ -81,7 +81,12 @@ class _InlineOsamWorker(QtCore.QObject):
             self.finished.emit(job, self._result())
 
     def _result(self) -> InferenceResult:
-        return InferenceResult(annotations=self.annotations, scale_to_image=UNSCALED)
+        image = self.requests[-1].image
+        return InferenceResult(
+            annotations=self.annotations,
+            scale_to_image=UNSCALED,
+            sent_size=(image.width(), image.height()),
+        )
 
     def resume(self) -> None:
         self.paused = False

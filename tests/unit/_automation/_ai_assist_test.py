@@ -36,6 +36,7 @@ def _propose(
         points = np.zeros((1, 2))
         point_labels = np.array([1])
     return session.propose_shapes(
+        sent_size=(100, 100),
         annotations=annotations,
         prompt_kind=prompt_kind,
         points=points,
@@ -171,7 +172,7 @@ def existing_rectangle() -> Shape:
 
 
 def test_detections_from_annotations_empty_returns_empty() -> None:
-    assert _detections_from_annotations(annotations=[]) == []
+    assert _detections_from_annotations(annotations=[], sent_size=(100, 100)) == []
 
 
 def test_detections_from_annotations_sorts_by_score_descending() -> None:
@@ -180,7 +181,8 @@ def test_detections_from_annotations_sorts_by_score_descending() -> None:
             _annotation(score=0.2, bbox=(0, 0, 1, 1), mask=None),
             _annotation(score=0.9, bbox=(2, 2, 3, 3), mask=None),
             _annotation(score=0.5, bbox=(4, 4, 5, 5), mask=None),
-        ]
+        ],
+        sent_size=(100, 100),
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -195,7 +197,8 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
         annotations=[
             _annotation(score=None, bbox=(0, 0, 1, 1), mask=None),
             _annotation(score=0.5, bbox=(2, 2, 3, 3), mask=None),
-        ]
+        ],
+        sent_size=(100, 100),
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -206,7 +209,8 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
 
 def test_detections_from_annotations_flattens_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
-        annotations=[_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)]
+        annotations=[_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)],
+        sent_size=(100, 100),
     )
 
     assert detection.bbox == (1, 2, 3, 4)
@@ -214,7 +218,8 @@ def test_detections_from_annotations_flattens_bounding_box() -> None:
 
 def test_detections_from_annotations_keeps_bbox_none_without_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
-        annotations=[_annotation(score=0.5, bbox=None, mask=None)]
+        annotations=[_annotation(score=0.5, bbox=None, mask=None)],
+        sent_size=(100, 100),
     )
 
     assert detection.bbox is None
@@ -226,7 +231,8 @@ def test_detections_from_annotations_passes_mask_through() -> None:
     mask[0, 0] = True
 
     (detection,) = _detections_from_annotations(
-        annotations=[_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)]
+        annotations=[_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)],
+        sent_size=(100, 100),
     )
 
     np.testing.assert_array_equal(detection.mask, mask)
@@ -275,6 +281,7 @@ def test_point_prompt_reports_best_matching_existing_shape() -> None:
     session = AiAssistSession(output_format="rectangle")
 
     proposal = session.propose_shapes(
+        sent_size=(100, 100),
         annotations=response.annotations,
         prompt_kind="points",
         points=np.array([[5, 5], [25, 25]], dtype=np.float64),
@@ -414,6 +421,7 @@ def test_box_keeps_the_candidate_that_fills_the_box() -> None:
     session = AiAssistSession(model_name="sam3:latest", output_format="rectangle")
 
     proposal = session.propose_shapes(
+        sent_size=(100, 100),
         annotations=[
             _annotation(score=0.8, bbox=(10, 10, 30, 30), mask=None),
             _annotation(score=0.9, bbox=(60, 60, 80, 80), mask=None),
@@ -464,6 +472,7 @@ def test_shapes_from_a_shrunk_image_scale_to_the_image(
     proposal = AiAssistSession(
         output_format=output_format, polygon_detail=0
     ).propose_shapes(
+        sent_size=(10, 10),
         annotations=[
             _annotation(score=0.9, bbox=(2, 2, 5, 5), mask=np.ones((4, 4), bool))
         ],
@@ -495,6 +504,7 @@ def test_a_shrunk_image_matches_the_existing_shape_it_covers() -> None:
     )
 
     proposal = AiAssistSession(output_format="rectangle").propose_shapes(
+        sent_size=(25, 25),
         annotations=[_annotation(score=0.9, bbox=(2, 2, 5, 5), mask=None)],
         prompt_kind="points",
         points=np.array([[12.0, 12.0]]),
@@ -540,6 +550,7 @@ def test_a_proposal_shown_as_masks_adds_what_the_output_format_adds(
             score_threshold=0.0,
             iou_threshold=0.5,
             scale_to_image=(Fraction(2), Fraction(1, 3)),
+            sent_size=(60, 9),
             shown_as_mask=shown_as_mask,
         )
 

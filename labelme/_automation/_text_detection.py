@@ -39,6 +39,7 @@ def propose_shapes_from_texts(
     polygon_detail: int,
     suppressed_by: str | None = None,
     scale_to_image: Scale = UNSCALED,
+    sent_size: tuple[int, int],
 ) -> list[Shape]:
     # suppressed_by: the label the results will take, when it isn't their
     # text; only existing Shapes with that label suppress them.
@@ -107,7 +108,9 @@ def propose_shapes_from_texts(
                     float(box[3]),
                 ),
                 mask=None if masks is None else annotation.mask,
-                mask_logits=MaskLogits.from_annotation(annotation=annotation),
+                mask_logits=MaskLogits.from_annotation(
+                    annotation=annotation, sent_size=sent_size
+                ),
                 label=text,
                 description=json.dumps(dict(score=score.item(), text=text)),
             )

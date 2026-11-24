@@ -2103,6 +2103,7 @@ class MainWindow(QtWidgets.QMainWindow):
             _automation.propose_shapes_from_texts,
             annotations=result.annotations,
             scale_to_image=result.scale_to_image,
+            sent_size=result.sent_size,
             texts=text_job.texts,
             shape_type=text_job.shape_type,
             existing_shapes=self._canvas_widgets.canvas.shapes,

@@ -459,6 +459,7 @@ def test_run_sends_a_large_image_at_the_model_resolution() -> None:
     assert annotation.mask is not None
     np.testing.assert_array_equal(annotation.mask, np.eye(8, dtype=bool))
     assert results[0].scale_to_image == (4.0, 2.0)
+    assert results[0].sent_size == (8, 8)
 
 
 @pytest.mark.parametrize(

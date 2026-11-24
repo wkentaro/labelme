@@ -48,6 +48,7 @@ class InferenceRequest:
 class InferenceResult:
     annotations: list[osam.types.Annotation]
     scale_to_image: Scale
+    sent_size: tuple[int, int]
 
 
 def _model_image(*, image: QtGui.QImage, size: tuple[int, int]) -> NDArray[np.uint8]:
@@ -153,6 +154,7 @@ def _run(
     return InferenceResult(
         annotations=annotations,
         scale_to_image=(Fraction(width, sent_size[0]), Fraction(height, sent_size[1])),
+        sent_size=sent_size,
     )
 
 

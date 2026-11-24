@@ -189,6 +189,7 @@ def test_text_proposal_keeps_mask_and_score_alignment_after_suppression() -> Non
     )
 
     shapes = propose_shapes_from_texts(
+        sent_size=(30, 30),
         annotations=response.annotations,
         texts=["cat"],
         shape_type="mask",
@@ -247,6 +248,7 @@ def test_text_proposal_draws_the_kept_mask_from_its_own_logits() -> None:
         image_size=(60, 60),
         polygon_detail=80,
         scale_to_image=(Fraction(2), Fraction(2)),
+        sent_size=(30, 30),
     )
 
     np.testing.assert_array_equal(shape.points, [[26, 0], [31, 7]])
@@ -256,6 +258,7 @@ def test_text_proposal_draws_the_kept_mask_from_its_own_logits() -> None:
 def test_text_proposal_rejects_maskless_detections_for_mask_output() -> None:
     with pytest.raises(MaskOutputUnavailableError, match="requires model masks"):
         propose_shapes_from_texts(
+            sent_size=(4, 4),
             annotations=[_make_annotation(with_mask=False)],
             texts=["cat"],
             shape_type="mask",
@@ -282,6 +285,7 @@ def test_text_proposal_is_suppressed_by_the_chosen_label(
     )
 
     shapes = propose_shapes_from_texts(
+        sent_size=(30, 30),
         annotations=[annotation],
         texts=["black dog"],
         shape_type="rectangle",
@@ -312,6 +316,7 @@ def test_text_proposal_covered_candidate_does_not_hide_a_new_one() -> None:
     )
 
     shapes = propose_shapes_from_texts(
+        sent_size=(30, 30),
         annotations=annotations,
         texts=["dog"],
         shape_type="rectangle",
@@ -341,6 +346,7 @@ def test_text_proposal_skips_repeated_occluded_object(*, chosen_label: str) -> N
 
     def propose(existing_shapes: list[Shape]) -> list[Shape]:
         return propose_shapes_from_texts(
+            sent_size=(101, 21),
             annotations=[annotation],
             texts=["car"],
             shape_type="polygon",
@@ -381,6 +387,7 @@ def test_text_proposal_keeps_an_object_between_existing_polygon_parts() -> None:
     )
 
     shapes = propose_shapes_from_texts(
+        sent_size=(101, 21),
         annotations=[annotation],
         texts=["car"],
         shape_type="polygon",
@@ -408,6 +415,7 @@ def test_text_proposal_uses_the_configured_existing_shape_iou(
     )
 
     shapes = propose_shapes_from_texts(
+        sent_size=(30, 30),
         annotations=[annotation],
         texts=["car"],
         shape_type="rectangle",
@@ -442,6 +450,7 @@ def test_text_proposal_drops_a_mask_saved_onto_the_pixels_of_a_kept_one() -> Non
         image_size=(100, 2),
         polygon_detail=80,
         scale_to_image=(Fraction(2), Fraction(1, 6)),
+        sent_size=(50, 12),
     )
 
     assert [shape.points.tolist() for shape in shapes] == [[[0, 1], [99, 1]]]
@@ -477,6 +486,7 @@ def test_text_proposal_matches_only_candidates_above_the_score_cutoff(
         score_threshold=float(cutoff),
         image_size=(30, 30),
         polygon_detail=80,
+        sent_size=(30, 30),
     )
 
     matched = [

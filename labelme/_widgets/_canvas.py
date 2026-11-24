@@ -990,6 +990,7 @@ class Canvas(QtWidgets.QWidget):
             point_labels=job.point_labels,
             image_size=job.image_size,
             scale_to_image=result.scale_to_image,
+            sent_size=result.sent_size,
         )
 
     def _propose_ai_shapes(

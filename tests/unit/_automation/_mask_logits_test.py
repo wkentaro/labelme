@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from fractions import Fraction
+from typing import Final
 
 import numpy as np
 import osam
@@ -12,6 +13,7 @@ from labelme._automation._mask_logits import MaskLogits
 from labelme._automation._scaling import Scale
 
 _OFF, _ON = 0, 65535
+_SENT_IMAGE: Final[Box] = (0, 0, 32, 32)
 
 
 def _sampled_at_every_pixel(
@@ -19,16 +21,16 @@ def _sampled_at_every_pixel(
 ) -> NDArray[np.bool_]:
     rows, columns = logits.cells.shape
     xmin, ymin, xmax, ymax = logits.box
-    clip = logits.box if logits.clip is None else logits.clip
-    cells = logits.cells.astype(np.float32)
+    clip = logits.clip
+    cells = logits.cells.astype(np.float64)
 
     def axis(
         *, size: int, factor: Fraction, start: float, stop: float, count: int
-    ) -> tuple[NDArray[np.float64], NDArray[np.int64], NDArray[np.float32]]:
+    ) -> tuple[NDArray[np.float64], NDArray[np.int64], NDArray[np.float64]]:
         centers = (np.arange(size) + 0.5) * factor.denominator / factor.numerator
         t = np.clip((centers - start) / (stop - start) * count - 0.5, 0, count - 1)
         cell = np.floor(t).astype(np.int64)
-        return centers, cell, (t - cell).astype(np.float32)
+        return centers, cell, t - cell
 
     xs, x0, wx = axis(
         size=image_size[0], factor=scale[0], start=xmin, stop=xmax, count=columns
@@ -68,16 +70,27 @@ def _blobs(*, seed: int, shape: tuple[int, int]) -> NDArray[np.uint16]:
 @pytest.mark.parametrize(
     ("scale", "box", "clip"),
     [
-        pytest.param((Fraction(1), Fraction(1)), (4, 8, 28, 24), None, id="unscaled"),
-        pytest.param((Fraction(3), Fraction(3)), (4, 8, 28, 24), None, id="x3"),
+        pytest.param(
+            (Fraction(1), Fraction(1)), (4, 8, 28, 24), _SENT_IMAGE, id="unscaled"
+        ),
+        pytest.param((Fraction(3), Fraction(3)), (4, 8, 28, 24), _SENT_IMAGE, id="x3"),
         pytest.param(
             (Fraction(3307, 128), Fraction(5723, 256)),
             (4, 8, 28, 24),
-            None,
+            _SENT_IMAGE,
             id="605mp-ratio",
         ),
         pytest.param(
-            (Fraction(7, 2), Fraction(5)), (-6, -2, 38, 34), None, id="past-the-image"
+            (Fraction(7, 2), Fraction(5)),
+            (-6, -2, 38, 34),
+            _SENT_IMAGE,
+            id="past-the-image",
+        ),
+        pytest.param(
+            (Fraction(1040, 1008), Fraction(65, 63)),
+            (3.5, 4.5, 30.5, 27.5),
+            _SENT_IMAGE,
+            id="fractional-edges",
         ),
         pytest.param(
             (Fraction(7, 2), Fraction(5)),
@@ -88,12 +101,12 @@ def _blobs(*, seed: int, shape: tuple[int, int]) -> NDArray[np.uint16]:
     ],
 )
 def test_draw_matches_sampling_every_pixel(
-    *, seed: int, scale: Scale, box: Box, clip: Box | None
+    *, seed: int, scale: Scale, box: Box, clip: Box
 ) -> None:
     logits = MaskLogits(cells=_blobs(seed=seed, shape=(11, 13)), box=box, clip=clip)
     image_size = (round(32 * scale[0]), round(32 * scale[1]))
 
-    drawn = logits.draw(scale=scale, image_size=image_size)
+    drawn = logits.draw(scale=scale)
 
     np.testing.assert_array_equal(
         _on_canvas(drawn=drawn, image_size=image_size),
@@ -107,10 +120,12 @@ def test_draw_matches_sampling_every_pixel(
 
 def test_draw_puts_the_edge_where_the_logits_cross_zero() -> None:
     logits = MaskLogits(
-        cells=np.array([[_OFF, _ON]], dtype=np.uint16), box=(0, 0, 2, 1)
+        cells=np.array([[_OFF, _ON]], dtype=np.uint16),
+        box=(0, 0, 2, 1),
+        clip=(0, 0, 2, 1),
     )
 
-    drawn = logits.draw(scale=(Fraction(4), Fraction(4)), image_size=(8, 4))
+    drawn = logits.draw(scale=(Fraction(4), Fraction(4)))
 
     assert drawn is not None
     mask, origin = drawn
@@ -121,9 +136,9 @@ def test_draw_puts_the_edge_where_the_logits_cross_zero() -> None:
 def test_draw_rounds_an_edge_no_coarser_than_an_image_pixel() -> None:
     cells = np.full((3, 3), _OFF, dtype=np.uint16)
     cells[1, 1] = _ON
-    logits = MaskLogits(cells=cells, box=(0, 0, 3, 3))
+    logits = MaskLogits(cells=cells, box=(0, 0, 3, 3), clip=(0, 0, 3, 3))
 
-    drawn = logits.draw(scale=(Fraction(100), Fraction(100)), image_size=(300, 300))
+    drawn = logits.draw(scale=(Fraction(100), Fraction(100)))
 
     assert drawn is not None
     mask, origin = drawn
@@ -143,9 +158,7 @@ def test_draw_gives_a_pixel_on_a_shared_edge_to_one_text_box() -> None:
 
     drawn_by = np.sum(
         [
-            _on_canvas(
-                drawn=logits.draw(scale=scale, image_size=(3, 3)), image_size=(3, 3)
-            )
+            _on_canvas(drawn=logits.draw(scale=scale), image_size=(3, 3))
             for logits in (left, right)
         ],
         axis=0,
@@ -155,9 +168,11 @@ def test_draw_gives_a_pixel_on_a_shared_edge_to_one_text_box() -> None:
 
 
 def test_draw_is_none_without_a_pixel_above_zero() -> None:
-    logits = MaskLogits(cells=np.full((4, 4), 32768, np.uint16), box=(0, 0, 16, 16))
+    logits = MaskLogits(
+        cells=np.full((4, 4), 32768, np.uint16), box=(0, 0, 16, 16), clip=(0, 0, 16, 16)
+    )
 
-    assert logits.draw(scale=(Fraction(8), Fraction(8)), image_size=(128, 128)) is None
+    assert logits.draw(scale=(Fraction(8), Fraction(8))) is None
 
 
 def test_draw_is_none_when_the_text_box_misses_the_cells() -> None:
@@ -165,10 +180,57 @@ def test_draw_is_none_when_the_text_box_misses_the_cells() -> None:
         cells=np.full((4, 4), _ON, np.uint16), box=(0, 0, 16, 16), clip=(20, 20, 24, 24)
     )
 
-    assert logits.draw(scale=(Fraction(8), Fraction(8)), image_size=(256, 256)) is None
+    assert logits.draw(scale=(Fraction(8), Fraction(8))) is None
 
 
-def test_from_annotation_cuts_only_a_text_annotation_to_its_box() -> None:
+def test_draw_gives_a_pixel_centered_on_a_fractional_shared_edge_to_the_upper_box() -> (
+    None
+):
+    cells = np.full((1, 1), _ON, dtype=np.uint16)
+    scale = (Fraction(1040, 1008), Fraction(1))
+    image: Box = (0, 0, 1008, 1)
+
+    left = MaskLogits(cells=cells, box=(91.0, 0, 94.5, 1), clip=image).draw(scale=scale)
+    right = MaskLogits(cells=cells, box=(94.5, 0, 98.0, 1), clip=image).draw(
+        scale=scale
+    )
+
+    assert left is not None and right is not None
+    assert left[1][0] + left[0].shape[1] == 97
+    assert right[1][0] == 97
+
+
+def test_draw_keeps_a_pixel_that_float32_rounds_onto_zero() -> None:
+    cells = np.full((256, 256), 32768, dtype=np.uint16)
+    cells[128, 128] = 32769
+    logits = MaskLogits(cells=cells, box=(0, 0, 1024, 1024), clip=(0, 0, 1024, 1024))
+
+    drawn = logits.draw(scale=(Fraction(12289, 1024), Fraction(12289, 1024)))
+
+    assert drawn is not None
+    mask, (x, _) = drawn
+    assert (x, x + mask.shape[1] - 1) == (6120, 6216)
+
+
+def test_from_annotation_keeps_the_mask_inside_the_sent_image() -> None:
+    annotation = osam.types.Annotation(
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=7, ymax=7),
+        mask=np.ones((8, 8), dtype=bool),
+        mask_logits=np.full((3, 3), _ON, dtype=np.uint16),
+        mask_logits_box=(-4.0, -4.0, 12.0, 12.0),
+    )
+
+    logits = MaskLogits.from_annotation(annotation=annotation, sent_size=(8, 6))
+
+    assert logits is not None
+    drawn = logits.draw(scale=(Fraction(4), Fraction(4)))
+    assert drawn is not None
+    mask, origin = drawn
+    assert origin == (0, 0)
+    assert mask.shape == (24, 32)
+
+
+def test_from_annotation_cuts_a_text_annotation_to_its_box() -> None:
     cells = np.full((2, 2), _ON, dtype=np.uint16)
 
     def annotation(*, text: str | None) -> osam.types.Annotation:
@@ -180,11 +242,15 @@ def test_from_annotation_cuts_only_a_text_annotation_to_its_box() -> None:
             mask_logits_box=(0.0, 0.0, 8.0, 8.0),
         )
 
-    prompted = MaskLogits.from_annotation(annotation=annotation(text=None))
-    found = MaskLogits.from_annotation(annotation=annotation(text="cat"))
+    prompted = MaskLogits.from_annotation(
+        annotation=annotation(text=None), sent_size=(16, 16)
+    )
+    found = MaskLogits.from_annotation(
+        annotation=annotation(text="cat"), sent_size=(16, 16)
+    )
 
     assert prompted is not None and found is not None
-    assert prompted.clip is None
+    assert prompted.clip == (0, 0, 16, 16)
     assert found.clip == (1, 2, 6, 7)
     assert prompted.box == found.box == (0.0, 0.0, 8.0, 8.0)
 
@@ -195,4 +261,4 @@ def test_from_annotation_is_none_without_logits() -> None:
         mask=np.ones((2, 2), dtype=bool),
     )
 
-    assert MaskLogits.from_annotation(annotation=annotation) is None
+    assert MaskLogits.from_annotation(annotation=annotation, sent_size=(2, 2)) is None

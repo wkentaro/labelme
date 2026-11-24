@@ -106,18 +106,18 @@ def _build_shapes_from_detection(
     if shape_type == "mask":
         if detection.bbox is None or detection.mask is None:
             return []
-        if detection.mask_logits is None:
+        drawn = (
+            None
+            if detection.mask_logits is None
+            else detection.mask_logits.draw(scale=scale_to_image)
+        )
+        if drawn is None:
             if not detection.mask.any():
                 return []
             mask = detection.mask
             xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
             scale = scale_to_image
         else:
-            drawn = detection.mask_logits.draw(
-                scale=scale_to_image, image_size=image_size
-            )
-            if drawn is None:
-                return []
             mask, (xmin, ymin) = drawn
             xmax, ymax = xmin + mask.shape[1] - 1, ymin + mask.shape[0] - 1
             scale = UNSCALED
