@@ -507,3 +507,45 @@ def test_a_shrunk_image_matches_the_existing_shape_it_covers() -> None:
 
     assert proposal.new_shapes == []
     assert proposal.matching_existing_shapes == [existing]
+
+
+@pytest.mark.parametrize(
+    ("output_format", "new_count"),
+    [
+        pytest.param("mask", 0, id="a-mask-merges-its-three-sent-rows"),
+        pytest.param("rectangle", 1, id="a-rectangle-keeps-its-row"),
+    ],
+)
+def test_a_proposal_shown_as_masks_adds_what_the_output_format_adds(
+    *, output_format: _ai_assist.AiOutputFormat, new_count: int
+) -> None:
+    two_thirds_of_the_saved_mask = Shape(
+        shape_type="mask",
+        points=np.array([[20.0, 1.0], [119.0, 1.0]]),
+        mask=np.ones((1, 100), dtype=bool),
+    )
+    session = AiAssistSession(output_format=output_format)
+
+    def propose(*, shown_as_mask: bool) -> AiAssistProposal:
+        return session.propose_shapes(
+            annotations=[
+                _annotation(
+                    score=0.9, bbox=(0, 3, 49, 3), mask=np.ones((1, 50), dtype=bool)
+                )
+            ],
+            prompt_kind="points",
+            points=np.array([[10.0, 1.5]]),
+            point_labels=np.array([1]),
+            existing_shapes=[two_thirds_of_the_saved_mask],
+            score_threshold=0.0,
+            iou_threshold=0.5,
+            scale_to_image=(Fraction(2), Fraction(1, 3)),
+            shown_as_mask=shown_as_mask,
+        )
+
+    assert [shape.shape_type for shape in propose(shown_as_mask=False).new_shapes] == (
+        [output_format] * new_count
+    )
+    assert [shape.shape_type for shape in propose(shown_as_mask=True).new_shapes] == (
+        ["mask"] * new_count
+    )

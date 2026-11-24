@@ -56,6 +56,7 @@ class AiAssistSession:
         score_threshold: float,
         iou_threshold: float,
         scale_to_image: Scale = UNSCALED,
+        shown_as_mask: bool = False,
     ) -> AiAssistProposal:
         points = points / np.asarray(scale_to_image, dtype=np.float64)
         detections = [
@@ -91,19 +92,23 @@ class AiAssistSession:
             ]
         # Existing Shapes cover candidates before candidates suppress each
         # other, so a covered candidate never hides a new one.
+        saved_as_mask = self.output_format == "mask"
         matches = match_detections_to_existing_shapes(
             detections=detections,
             existing_shapes=existing_shapes,
             scale_to_image=scale_to_image,
+            saved_as_mask=saved_as_mask,
         )
         new_detections = suppress_detections_greedy(
             detections=matches.new_detections,
             iou_threshold=iou_threshold,
+            scale_to_image=scale_to_image,
+            saved_as_mask=saved_as_mask,
         )
         return AiAssistProposal(
             new_shapes=shapes_from_detections(
                 detections=new_detections,
-                shape_type=self.output_format,
+                shape_type="mask" if shown_as_mask else self.output_format,
                 image_size=image_size,
                 polygon_detail=self.polygon_detail,
                 scale_to_image=scale_to_image,

@@ -2,12 +2,16 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from fractions import Fraction
+from typing import Final
 
 import numpy as np
 import pytest
 
 from labelme._automation import Detection
 from labelme._automation import shapes_from_detections
+from labelme._automation._scaling import Scale
+from labelme._automation._scaling import scale_shape
+from labelme._automation._suppression import _local_mask_from_detection
 from labelme._automation._suppression import match_detections_to_existing_shapes
 from labelme._automation._suppression import suppress_detections_greedy
 from labelme._shape import Shape
@@ -486,3 +490,143 @@ def test_mask_shape_with_swapped_corners_covers_its_first_point() -> None:
     )
 
     assert result.matching_shapes == [mask]
+
+
+@pytest.mark.parametrize(
+    "scale",
+    [
+        pytest.param((Fraction(1), Fraction(1)), id="unscaled"),
+        pytest.param((Fraction(5, 2), Fraction(5, 2)), id="larger"),
+        pytest.param((Fraction(65, 63), Fraction(65, 63)), id="a-little-larger"),
+        pytest.param((Fraction(2, 5), Fraction(2, 5)), id="smaller"),
+        pytest.param((Fraction(2), Fraction(1, 3)), id="wider-and-shorter"),
+        pytest.param((Fraction(63, 65), Fraction(3)), id="narrower-and-taller"),
+    ],
+)
+@pytest.mark.parametrize("seed", range(10))
+def test_a_candidate_saved_as_a_mask_is_compared_by_its_saved_pixels(
+    *, scale: Scale, seed: int
+) -> None:
+    rng = np.random.default_rng(seed)
+    height, width = (int(side) for side in rng.integers(1, 12, size=2))
+    x, y = (int(offset) for offset in rng.integers(0, 40, size=2))
+    mask = rng.random((height, width)) < 0.5  # noqa: PLR2004
+    mask[rng.integers(height), rng.integers(width)] = True
+    detection = Detection(
+        bbox=(float(x), float(y), float(x + width - 1), float(y + height - 1)),
+        mask=mask,
+    )
+    [saved] = shapes_from_detections(
+        detections=[detection], shape_type="mask", scale_to_image=scale
+    )
+    back_on_sent_image = scale_shape(shape=saved, factor=(1 / scale[0], 1 / scale[1]))
+
+    compared = _local_mask_from_detection(
+        detection=detection, scale_to_image=scale, saved_as_mask=True
+    )
+
+    assert back_on_sent_image.mask is not None
+    np.testing.assert_array_equal(compared.mask, back_on_sent_image.mask)
+    assert list(compared.origin_xy) == back_on_sent_image.points[0].tolist()
+
+
+_WIDER_AND_SHORTER: Final[Scale] = (Fraction(2), Fraction(1, 3))
+
+
+def _one_sent_row(*, row: int) -> Detection:
+    return Detection(
+        bbox=(0.0, float(row), 49.0, float(row)), mask=np.ones((1, 50), dtype=bool)
+    )
+
+
+@pytest.mark.parametrize(
+    ("saved_as_mask", "is_new"),
+    [
+        pytest.param(True, False, id="a-mask-merges-its-three-sent-rows"),
+        pytest.param(False, True, id="another-format-keeps-its-row"),
+    ],
+)
+def test_overlapping_compares_a_thin_candidate_as_its_shape_is_saved(
+    *, saved_as_mask: bool, is_new: bool
+) -> None:
+    detection = _one_sent_row(row=3)
+    [saved] = shapes_from_detections(
+        detections=[detection], shape_type="mask", scale_to_image=_WIDER_AND_SHORTER
+    )
+    assert saved.points.tolist() == [[0, 1], [99, 1]]
+    two_thirds_of_it = Shape(
+        shape_type="mask",
+        points=np.array([[20.0, 1.0], [119.0, 1.0]]),
+        mask=np.ones((1, 100), dtype=bool),
+    )
+
+    result = match_detections_to_existing_shapes(
+        detections=[detection],
+        existing_shapes=[two_thirds_of_it],
+        scale_to_image=_WIDER_AND_SHORTER,
+        saved_as_mask=saved_as_mask,
+    )
+
+    assert result.new_detections == ([detection] if is_new else [])
+    assert result.matching_shapes == ([] if is_new else [two_thirds_of_it])
+
+
+def test_overlapping_keeps_a_candidate_whose_sent_mask_has_no_rows() -> None:
+    no_rows = Detection(bbox=(0.0, 1.0, 49.0, 0.0), mask=np.ones((0, 50), dtype=bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[no_rows],
+        existing_shapes=[
+            Shape(
+                shape_type="mask",
+                points=np.array([[0.0, 0.0], [99.0, 0.0]]),
+                mask=np.ones((1, 100), dtype=bool),
+            )
+        ],
+        scale_to_image=_WIDER_AND_SHORTER,
+        saved_as_mask=True,
+    )
+
+    assert result.new_detections == [no_rows]
+
+
+def test_overlapping_keeps_a_candidate_beside_a_mask_far_off_the_image() -> None:
+    candidate = _one_sent_row(row=3)
+
+    result = match_detections_to_existing_shapes(
+        detections=[candidate],
+        existing_shapes=[
+            Shape(
+                shape_type="mask",
+                points=np.array([[-(2.0**63), 0.0], [-(2.0**63) + 2, 0.0]]),
+                mask=np.ones((1, 3), dtype=bool),
+            )
+        ],
+        scale_to_image=_WIDER_AND_SHORTER,
+        saved_as_mask=True,
+    )
+
+    assert result.new_detections == [candidate]
+
+
+@pytest.mark.parametrize(
+    ("second_row", "saved_as_mask", "kept_count"),
+    [
+        pytest.param(4, True, 1, id="masks-saved-onto-the-same-image-row"),
+        pytest.param(6, True, 2, id="masks-saved-onto-neighboring-image-rows"),
+        pytest.param(4, False, 2, id="another-format-keeps-both-rows"),
+    ],
+)
+def test_redundant_compares_thin_candidates_as_their_shapes_are_saved(
+    *, second_row: int, saved_as_mask: bool, kept_count: int
+) -> None:
+    candidates = [_one_sent_row(row=3), _one_sent_row(row=second_row)]
+
+    kept = suppress_detections_greedy(
+        detections=candidates,
+        iou_threshold=0.5,
+        scale_to_image=_WIDER_AND_SHORTER,
+        saved_as_mask=saved_as_mask,
+    )
+
+    assert kept == candidates[:kept_count]

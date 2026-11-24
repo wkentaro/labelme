@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 from typing import Final
 
 import numpy as np
@@ -14,6 +15,7 @@ from ._geometry import round_bbox_to_int
 from ._geometry import shape_to_xyxy_bbox
 from ._scaling import UNSCALED
 from ._scaling import Scale
+from ._scaling import scale_mask
 from ._scaling import scale_shape
 from ._shape_builders import Detection
 
@@ -43,6 +45,8 @@ def suppress_detections_greedy(
     *,
     detections: list[Detection],
     iou_threshold: float,
+    scale_to_image: Scale = UNSCALED,
+    saved_as_mask: bool = False,
 ) -> list[Detection]:
     # Callers pass detections in priority order (highest first): the first
     # detection in each redundant cluster is kept and later ones are dropped.
@@ -67,7 +71,11 @@ def suppress_detections_greedy(
         if detection.bbox is None:
             kept.append(detection)
             continue
-        new_local = _local_mask_from_detection(detection=detection)
+        new_local = _local_mask_from_detection(
+            detection=detection,
+            scale_to_image=scale_to_image,
+            saved_as_mask=saved_as_mask,
+        )
         peers = kept_masks_by_label.setdefault(detection.label, [])
         if any(
             _is_redundant_overlap(
@@ -88,6 +96,7 @@ def match_detections_to_existing_shapes(
     existing_shapes: list[Shape],
     iou_threshold: float = 0.5,
     scale_to_image: Scale = UNSCALED,
+    saved_as_mask: bool = False,
 ) -> _ExistingShapeMatchResult:
     if not detections:
         return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
@@ -114,7 +123,11 @@ def match_detections_to_existing_shapes(
         if detection.bbox is None:
             kept.append(detection)
             continue
-        new_local = _local_mask_from_detection(detection=detection)
+        new_local = _local_mask_from_detection(
+            detection=detection,
+            scale_to_image=scale_to_image,
+            saved_as_mask=saved_as_mask,
+        )
         matches: list[tuple[Shape, _MaskOverlap]] = []
         for shape, existing_mask in existing_shape_masks:
             overlap = _compute_mask_overlap(a=new_local, b=existing_mask)
@@ -155,27 +168,46 @@ def _compute_mask_overlap(*, a: _LocalMask, b: _LocalMask) -> _MaskOverlap:
     return _MaskOverlap(iou=iou, containment=containment)
 
 
-def _local_mask_from_detection(*, detection: Detection) -> _LocalMask:
+def _local_mask_from_detection(
+    *, detection: Detection, scale_to_image: Scale, saved_as_mask: bool
+) -> _LocalMask:
     assert detection.bbox is not None
     xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
-    if detection.mask is None:
-        h, w = ymax - ymin + 1, xmax - xmin + 1
-        mask = np.ones((h, w), dtype=np.bool_)
-        return _LocalMask(mask=mask, origin_xy=(xmin, ymin), area=h * w)
     # Mask geometry below assumes mask covers exactly the bbox-derived extent
     # (matching the OSAM Annotation contract). Reject inconsistent shapes loudly
     # so a future non-OSAM caller doesn't silently produce wrong IoU values.
     expected_shape = (ymax - ymin + 1, xmax - xmin + 1)
-    if detection.mask.shape != expected_shape:
+    if detection.mask is None:
+        mask = np.ones(expected_shape, dtype=np.bool_)
+    elif detection.mask.shape != expected_shape:
         raise ValueError(
             f"mask shape {detection.mask.shape} does not match "
             f"bbox-derived extent {expected_shape}"
         )
-    return _LocalMask(
-        mask=detection.mask,
-        origin_xy=(xmin, ymin),
-        area=int(np.count_nonzero(detection.mask)),
+    else:
+        mask = detection.mask
+    origin = (xmin, ymin)
+    if saved_as_mask:
+        mask, origin = _mask_shape_pixels_on_sent_image(
+            mask=mask, origin=origin, scale_to_image=scale_to_image
+        )
+    return _LocalMask(mask=mask, origin_xy=origin, area=int(np.count_nonzero(mask)))
+
+
+def _mask_shape_pixels_on_sent_image(
+    *, mask: NDArray[np.bool_], origin: tuple[int, int], scale_to_image: Scale
+) -> tuple[NDArray[np.bool_], tuple[int, int]]:
+    if not mask.size:
+        return mask, origin
+    merging = (
+        min(scale_to_image[0], Fraction(1)),
+        min(scale_to_image[1], Fraction(1)),
     )
+    merged, box = scale_mask(mask=mask, origin=origin, factor=merging)
+    mask, box = scale_mask(
+        mask=merged, origin=box[:2], factor=(1 / merging[0], 1 / merging[1])
+    )
+    return mask, box[:2]
 
 
 def _local_mask_from_shape(*, shape: Shape) -> _LocalMask | None:

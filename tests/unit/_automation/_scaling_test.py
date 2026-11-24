@@ -6,6 +6,8 @@ import numpy as np
 import pytest
 
 from labelme._automation._scaling import Scale
+from labelme._automation._scaling import _first_pixels_centered_from
+from labelme._automation._scaling import _scale_pixel_span
 from labelme._automation._scaling import scale_bbox
 from labelme._automation._scaling import scale_pixel_box
 from labelme._automation._scaling import scale_shape
@@ -171,3 +173,27 @@ def test_scale_bbox_keeps_a_shrunk_box_from_inverting() -> None:
     )
 
     assert (xmax, ymax) >= (xmin, ymin)
+
+
+@pytest.mark.parametrize("first", [-40, -4_575_085_335_741_506, -(2**63)])
+@pytest.mark.parametrize(
+    "factor",
+    [
+        Fraction(3),
+        Fraction(7, 2),
+        Fraction(126, 125),
+        Fraction(3307, 128),
+        Fraction(69_997, 1008),
+    ],
+)
+def test_first_pixels_centered_from_starts_where_an_enlarged_span_does(
+    first: int, factor: Fraction
+) -> None:
+    count = 1140
+
+    start, steps = _first_pixels_centered_from(first=first, count=count, factor=factor)
+
+    assert [start + step for step in steps.tolist()] == [
+        _scale_pixel_span(first=edge, last=edge, factor=factor)[0]
+        for edge in range(first, first + count)
+    ]

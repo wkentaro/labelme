@@ -1621,8 +1621,10 @@ def test_ai_segment_guess_skips_polygons_and_polygon_detail(
 ) -> None:
     formats: list[str] = []
 
-    def propose_shapes(self: AiAssistSession, **_: object) -> AiAssistProposal:
-        formats.append(self.output_format)
+    def propose_shapes(
+        self: AiAssistSession, *, shown_as_mask: bool, **_: object
+    ) -> AiAssistProposal:
+        formats.append("mask" if shown_as_mask else self.output_format)
         return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
 
     monkeypatch.setattr(AiAssistSession, "propose_shapes", propose_shapes)
@@ -1640,6 +1642,39 @@ def test_ai_segment_guess_skips_polygons_and_polygon_detail(
     canvas.set_ai_polygon_detail(detail=10)
     canvas._refresh_ai_segment_preview()
     assert formats == ["polygon"]
+
+    formats.clear()
+    canvas.set_ai_output_format(output_format="rectangle")
+    canvas._refresh_ai_segment_preview()
+    assert formats == ["rectangle"]
+
+
+def test_ai_segment_guess_is_made_again_when_the_output_becomes_a_mask(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    proposals: list[tuple[str, bool]] = []
+
+    def propose_shapes(
+        self: AiAssistSession, *, shown_as_mask: bool, **_: object
+    ) -> AiAssistProposal:
+        proposals.append((self.output_format, shown_as_mask))
+        return AiAssistProposal(new_shapes=[], matching_existing_shapes=[])
+
+    monkeypatch.setattr(AiAssistSession, "propose_shapes", propose_shapes)
+    canvas.set_editing(value=False, create_mode="ai_segment")
+    canvas._current = _DraftShape(
+        shape_type="points", points=(QPointF(5, 5),), point_labels=(1,)
+    )
+    canvas._line = _DraftShape(
+        shape_type="points", points=(QPointF(6, 6),), point_labels=(1,)
+    )
+    canvas._refresh_ai_segment_preview()
+
+    proposals.clear()
+    canvas.set_ai_output_format(output_format="mask")
+    canvas._refresh_ai_segment_preview()
+
+    assert sorted(proposals) == [("mask", False), ("mask", True)]
 
 
 def test_ai_segment_enter_adds_the_filled_result_not_the_guess(
