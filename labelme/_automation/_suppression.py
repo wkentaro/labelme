@@ -197,6 +197,8 @@ def _local_mask_from_detection(
 def _mask_shape_pixels_on_sent_image(
     *, mask: NDArray[np.bool_], origin: tuple[int, int], scale_to_image: Scale
 ) -> tuple[NDArray[np.bool_], tuple[int, int]]:
+    if not mask.size:
+        return mask, origin
     merging = (
         min(scale_to_image[0], Fraction(1)),
         min(scale_to_image[1], Fraction(1)),

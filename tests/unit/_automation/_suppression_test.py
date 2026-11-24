@@ -571,6 +571,25 @@ def test_overlapping_compares_a_thin_candidate_as_its_shape_is_saved(
     assert result.matching_shapes == ([] if is_new else [two_thirds_of_it])
 
 
+def test_overlapping_keeps_a_candidate_whose_sent_mask_has_no_rows() -> None:
+    no_rows = Detection(bbox=(0.0, 1.0, 49.0, 0.0), mask=np.ones((0, 50), dtype=bool))
+
+    result = match_detections_to_existing_shapes(
+        detections=[no_rows],
+        existing_shapes=[
+            Shape(
+                shape_type="mask",
+                points=np.array([[0.0, 0.0], [99.0, 0.0]]),
+                mask=np.ones((1, 100), dtype=bool),
+            )
+        ],
+        scale_to_image=_WIDER_AND_SHORTER,
+        saved_as_mask=True,
+    )
+
+    assert result.new_detections == [no_rows]
+
+
 @pytest.mark.parametrize(
     ("second_row", "saved_as_mask", "kept_count"),
     [
