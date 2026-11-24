@@ -106,12 +106,12 @@ def match_detections_to_existing_shapes(
     if not detections:
         return _ExistingShapeMatchResult(new_detections=[], matching_shapes=[])
     shrink = (1 / scale_to_image[0], 1 / scale_to_image[1])
-    existing_shape_boxes = [
-        (shape, box)
+    existing = [
+        (shape, *boxed)
         for shape in existing_shapes
-        if (box := _pixel_box_on_sent_image(shape=shape, shrink=shrink)) is not None
+        if (boxed := _boxed_on_sent_image(shape=shape, shrink=shrink)) is not None
     ]
-    if not existing_shape_boxes:
+    if not existing:
         return _ExistingShapeMatchResult(
             new_detections=detections[:],
             matching_shapes=[],
@@ -134,7 +134,7 @@ def match_detections_to_existing_shapes(
         )
         touched = [
             index
-            for index, (_, box) in enumerate(existing_shape_boxes)
+            for index, (_, box, _) in enumerate(existing)
             if apart_can_match or reach is None or _share_a_pixel(a=reach, b=box)
         ]
         if not touched:
@@ -147,11 +147,11 @@ def match_detections_to_existing_shapes(
         )
         matches: list[tuple[Shape, _MaskOverlap]] = []
         for index in touched:
-            shape, _ = existing_shape_boxes[index]
+            shape, _, scaled = existing[index]
             if index not in existing_masks:
-                existing_masks[index] = _local_mask_from_shape(
-                    shape=scale_shape(shape=shape, factor=shrink)
-                )
+                if scaled is None:
+                    scaled = scale_shape(shape=shape, factor=shrink)
+                existing_masks[index] = _local_mask_from_shape(shape=scaled)
             overlap = _compute_mask_overlap(a=new_local, b=existing_masks[index])
             if _is_redundant_overlap(
                 overlap=overlap,
@@ -253,11 +253,16 @@ def _mask_shape_pixels_on_sent_image(
     return mask, box[:2]
 
 
-def _pixel_box_on_sent_image(*, shape: Shape, shrink: Scale) -> _PixelBox | None:
+def _boxed_on_sent_image(
+    *, shape: Shape, shrink: Scale
+) -> tuple[_PixelBox, Shape | None] | None:
+    # A Mask Shape is scaled only once a candidate reaches its box.
     if shape.shape_type == "mask" and shape.mask is not None:
         box = _pixel_box(shape=shape)
-        return None if box is None else scale_pixel_box(box=box, factor=shrink)
-    return _pixel_box(shape=scale_shape(shape=shape, factor=shrink))
+        return None if box is None else (scale_pixel_box(box=box, factor=shrink), None)
+    scaled = scale_shape(shape=shape, factor=shrink)
+    box = _pixel_box(shape=scaled)
+    return None if box is None else (box, scaled)
 
 
 def _pixel_box(*, shape: Shape) -> _PixelBox | None:

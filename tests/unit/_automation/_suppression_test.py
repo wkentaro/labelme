@@ -876,3 +876,25 @@ def test_overlapping_scales_down_only_the_mask_shapes_a_detection_can_reach(
     assert result.new_detections == []
     assert result.matching_shapes == [near]
     assert scaled == [near]
+
+
+def test_overlapping_scales_a_reached_circle_down_once(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    circle = Shape(shape_type="circle", points=np.array([[12.0, 12.0], [16.0, 12.0]]))
+    scaled: list[Shape] = []
+
+    def spy(*, shape: Shape, factor: Scale) -> Shape:
+        scaled.append(shape)
+        return scale_shape(shape=shape, factor=factor)
+
+    monkeypatch.setattr(_suppression, "scale_shape", spy)
+
+    result = match_detections_to_existing_shapes(
+        detections=[Detection(bbox=(2, 2, 3, 3), mask=np.ones((2, 2), dtype=bool))],
+        existing_shapes=[circle],
+        scale_to_image=(Fraction(4), Fraction(4)),
+    )
+
+    assert result.matching_shapes == [circle]
+    assert scaled == [circle]
