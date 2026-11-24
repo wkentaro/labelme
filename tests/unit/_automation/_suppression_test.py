@@ -776,3 +776,39 @@ def test_a_mask_drawn_onto_a_shorter_image_reaches_the_rows_its_pixel_covers() -
 
     assert result.new_detections == []
     assert result.matching_shapes == [at_the_top_of_that_image_row]
+
+
+def test_a_candidate_with_no_rival_is_kept_without_being_drawn() -> None:
+    detection = _sliver_drawn_one_column_right()
+    drawn: list[object] = []
+    assert detection.mask_logits is not None
+    object.__setattr__(
+        detection.mask_logits, "footprint", lambda *, scale: drawn.append(scale)
+    )
+
+    kept = suppress_detections_greedy(
+        detections=[detection],
+        iou_threshold=0.5,
+        scale_to_image=_SENT_TO_IMAGE,
+        saved_as_mask=True,
+    )
+
+    assert kept == [detection]
+    assert drawn == []
+
+
+def test_rivals_drawn_from_logits_are_compared_by_their_saved_pixels() -> None:
+    drawn_on_column_6 = _sliver_drawn_one_column_right()
+    sent_on_column_6 = Detection(bbox=(6, 0, 6, 62), mask=np.ones((63, 1), dtype=bool))
+    sent_on_column_5 = Detection(bbox=(5, 0, 5, 62), mask=np.ones((63, 1), dtype=bool))
+
+    def kept_after(*, rival: Detection) -> list[Detection]:
+        return suppress_detections_greedy(
+            detections=[drawn_on_column_6, rival],
+            iou_threshold=0.5,
+            scale_to_image=_SENT_TO_IMAGE,
+            saved_as_mask=True,
+        )
+
+    assert kept_after(rival=sent_on_column_6) == [drawn_on_column_6]
+    assert kept_after(rival=sent_on_column_5) == [drawn_on_column_6, sent_on_column_5]

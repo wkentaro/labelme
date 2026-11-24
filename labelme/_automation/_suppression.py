@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
 from fractions import Fraction
 from typing import Final
@@ -65,6 +66,7 @@ def suppress_detections_greedy(
             "detections must be homogeneous: either all have masks or none do"
         )
 
+    candidates_per_label = Counter(d.label for d in detections if d.bbox is not None)
     kept: list[Detection] = []
     kept_masks_by_label: dict[str | None, list[_LocalMask]] = {}
     for detection in detections:
@@ -74,7 +76,7 @@ def suppress_detections_greedy(
         new_local = _local_mask_from_detection(
             detection=detection,
             scale_to_image=scale_to_image,
-            saved_as_mask=saved_as_mask,
+            saved_as_mask=saved_as_mask and candidates_per_label[detection.label] > 1,
         )
         peers = kept_masks_by_label.setdefault(detection.label, [])
         if any(
