@@ -8,6 +8,7 @@ from loguru import logger
 from numpy.typing import NDArray
 
 from .._shape import Shape
+from ._mask_logits import MaskLogits
 from ._scaling import UNSCALED
 from ._scaling import Scale
 from ._shape_builders import MASK_REQUIRED_SHAPE_TYPES
@@ -38,6 +39,7 @@ def propose_shapes_from_texts(
     polygon_detail: int,
     suppressed_by: str | None = None,
     scale_to_image: Scale = UNSCALED,
+    sent_size: tuple[int, int],
 ) -> list[Shape]:
     # suppressed_by: the label the results will take, when it isn't their
     # text; only existing Shapes with that label suppress them.
@@ -48,6 +50,10 @@ def propose_shapes_from_texts(
         raise MaskOutputUnavailableError(f"{shape_type!r} requires model masks")
 
     saved_as_mask = shape_type == "mask"
+    mask_logits = [
+        MaskLogits.from_annotation(annotation=annotation, sent_size=sent_size)
+        for annotation in annotations
+    ]
     above_cutoff = scores > np.float32(score_threshold)
     # Use the same mask overlap as example boxes; a polygon part can cover an
     # occluded object even when its bounding box is much smaller.
@@ -63,6 +69,7 @@ def propose_shapes_from_texts(
                     float(boxes[i, 3]),
                 ),
                 mask=None if masks is None else masks[i],
+                mask_logits=mask_logits[i],
             )
             for i in indices
         ]
@@ -81,8 +88,6 @@ def propose_shapes_from_texts(
         new_ids = {id(detection) for detection in matches.new_detections}
         is_new[indices] = [id(detection) in new_ids for detection in candidates]
     boxes, scores, labels = boxes[is_new], scores[is_new], labels[is_new]
-    if masks is not None:
-        masks = [mask for mask, keep in zip(masks, is_new) if keep]
 
     boxes, scores, labels, indices = nms_bboxes(
         boxes=boxes,
@@ -93,14 +98,11 @@ def propose_shapes_from_texts(
         max_num_detections=100,
     )
 
-    if masks is None:
-        masks = [None] * len(boxes)
-    else:
-        masks = [masks[i] for i in indices]
+    kept = np.flatnonzero(is_new)[indices]
     del indices
 
     detections: list[Detection] = []
-    for box, score, label, mask in zip(boxes, scores, labels, masks):
+    for box, score, label, i in zip(boxes, scores, labels, kept):
         text = texts[label]
         detections.append(
             Detection(
@@ -110,7 +112,8 @@ def propose_shapes_from_texts(
                     float(box[2]),
                     float(box[3]),
                 ),
-                mask=mask,
+                mask=None if masks is None else masks[i],
+                mask_logits=mask_logits[i],
                 label=text,
                 description=json.dumps(dict(score=score.item(), text=text)),
             )

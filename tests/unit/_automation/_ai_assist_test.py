@@ -15,6 +15,8 @@ from labelme._automation._ai_assist import AiAssistProposal
 from labelme._automation._ai_assist import AiAssistSession
 from labelme._automation._ai_assist import _detections_from_annotations
 from labelme._automation._ai_assist import _is_point_inside_detection
+from labelme._automation._scaling import UNSCALED
+from labelme._automation._scaling import scale_mask
 from labelme._shape import Shape
 
 
@@ -36,6 +38,7 @@ def _propose(
         points = np.zeros((1, 2))
         point_labels = np.array([1])
     return session.propose_shapes(
+        sent_size=(100, 100),
         annotations=annotations,
         prompt_kind=prompt_kind,
         points=points,
@@ -171,7 +174,7 @@ def existing_rectangle() -> Shape:
 
 
 def test_detections_from_annotations_empty_returns_empty() -> None:
-    assert _detections_from_annotations(annotations=[]) == []
+    assert _detections_from_annotations(annotations=[], sent_size=(100, 100)) == []
 
 
 def test_detections_from_annotations_sorts_by_score_descending() -> None:
@@ -180,7 +183,8 @@ def test_detections_from_annotations_sorts_by_score_descending() -> None:
             _annotation(score=0.2, bbox=(0, 0, 1, 1), mask=None),
             _annotation(score=0.9, bbox=(2, 2, 3, 3), mask=None),
             _annotation(score=0.5, bbox=(4, 4, 5, 5), mask=None),
-        ]
+        ],
+        sent_size=(100, 100),
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -195,7 +199,8 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
         annotations=[
             _annotation(score=None, bbox=(0, 0, 1, 1), mask=None),
             _annotation(score=0.5, bbox=(2, 2, 3, 3), mask=None),
-        ]
+        ],
+        sent_size=(100, 100),
     )
 
     assert [detection.bbox for detection in detections] == [
@@ -206,7 +211,8 @@ def test_detections_from_annotations_treats_missing_score_as_zero() -> None:
 
 def test_detections_from_annotations_flattens_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
-        annotations=[_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)]
+        annotations=[_annotation(score=0.5, bbox=(1, 2, 3, 4), mask=None)],
+        sent_size=(100, 100),
     )
 
     assert detection.bbox == (1, 2, 3, 4)
@@ -214,7 +220,8 @@ def test_detections_from_annotations_flattens_bounding_box() -> None:
 
 def test_detections_from_annotations_keeps_bbox_none_without_bounding_box() -> None:
     (detection,) = _detections_from_annotations(
-        annotations=[_annotation(score=0.5, bbox=None, mask=None)]
+        annotations=[_annotation(score=0.5, bbox=None, mask=None)],
+        sent_size=(100, 100),
     )
 
     assert detection.bbox is None
@@ -226,7 +233,8 @@ def test_detections_from_annotations_passes_mask_through() -> None:
     mask[0, 0] = True
 
     (detection,) = _detections_from_annotations(
-        annotations=[_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)]
+        annotations=[_annotation(score=0.5, bbox=(0, 0, 1, 1), mask=mask)],
+        sent_size=(100, 100),
     )
 
     np.testing.assert_array_equal(detection.mask, mask)
@@ -240,6 +248,8 @@ def test_point_inside_detection_uses_rounded_mask_origin() -> None:
     is_inside = _is_point_inside_detection(
         detection=detection,
         point=np.array([10.0, 21.0]),
+        scale_to_image=UNSCALED,
+        saved_as_mask=False,
     )
 
     assert is_inside is True
@@ -251,9 +261,17 @@ def test_point_inside_detection_reads_the_pixel_under_the_point() -> None:
     mask[0, 0] = True
     detection = Detection(bbox=(10, 20, 11, 21), mask=mask)
 
-    assert _is_point_inside_detection(detection=detection, point=np.array([10.7, 20.7]))
+    assert _is_point_inside_detection(
+        detection=detection,
+        point=np.array([10.7, 20.7]),
+        scale_to_image=UNSCALED,
+        saved_as_mask=False,
+    )
     assert not _is_point_inside_detection(
-        detection=detection, point=np.array([11.0, 20.0])
+        detection=detection,
+        point=np.array([11.0, 20.0]),
+        scale_to_image=UNSCALED,
+        saved_as_mask=False,
     )
 
 
@@ -275,6 +293,7 @@ def test_point_prompt_reports_best_matching_existing_shape() -> None:
     session = AiAssistSession(output_format="rectangle")
 
     proposal = session.propose_shapes(
+        sent_size=(100, 100),
         annotations=response.annotations,
         prompt_kind="points",
         points=np.array([[5, 5], [25, 25]], dtype=np.float64),
@@ -414,6 +433,7 @@ def test_box_keeps_the_candidate_that_fills_the_box() -> None:
     session = AiAssistSession(model_name="sam3:latest", output_format="rectangle")
 
     proposal = session.propose_shapes(
+        sent_size=(100, 100),
         annotations=[
             _annotation(score=0.8, bbox=(10, 10, 30, 30), mask=None),
             _annotation(score=0.9, bbox=(60, 60, 80, 80), mask=None),
@@ -464,6 +484,7 @@ def test_shapes_from_a_shrunk_image_scale_to_the_image(
     proposal = AiAssistSession(
         output_format=output_format, polygon_detail=0
     ).propose_shapes(
+        sent_size=(10, 10),
         annotations=[
             _annotation(score=0.9, bbox=(2, 2, 5, 5), mask=np.ones((4, 4), bool))
         ],
@@ -495,6 +516,7 @@ def test_a_shrunk_image_matches_the_existing_shape_it_covers() -> None:
     )
 
     proposal = AiAssistSession(output_format="rectangle").propose_shapes(
+        sent_size=(25, 25),
         annotations=[_annotation(score=0.9, bbox=(2, 2, 5, 5), mask=None)],
         prompt_kind="points",
         points=np.array([[12.0, 12.0]]),
@@ -540,6 +562,7 @@ def test_a_proposal_shown_as_masks_adds_what_the_output_format_adds(
             score_threshold=0.0,
             iou_threshold=0.5,
             scale_to_image=(Fraction(2), Fraction(1, 3)),
+            sent_size=(60, 9),
             shown_as_mask=shown_as_mask,
         )
 
@@ -549,3 +572,167 @@ def test_a_proposal_shown_as_masks_adds_what_the_output_format_adds(
     assert [shape.shape_type for shape in propose(shown_as_mask=True).new_shapes] == (
         ["mask"] * new_count
     )
+
+
+@pytest.mark.parametrize(
+    ("existing_column", "new_count"),
+    [
+        pytest.param(5, 0, id="over-the-sent-mask"),
+        pytest.param(6, 1, id="over-the-mask-drawn-from-logits"),
+    ],
+)
+def test_a_guess_drawn_from_logits_adds_what_the_rectangle_click_adds(
+    *, existing_column: int, new_count: int
+) -> None:
+    one_logit = 256
+    annotation = osam.types.Annotation(
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=5, ymin=0, xmax=5, ymax=62),
+        mask=np.ones((63, 1), dtype=bool),
+        mask_logits=np.array(
+            [[32768 - 100 * one_logit, 32768 + one_logit, 32768, 0]], dtype=np.uint16
+        ),
+        mask_logits_box=(4.0, 0.0, 8.0, 63.0),
+    )
+    existing = Shape(
+        shape_type="mask",
+        points=np.array([[existing_column, 0], [existing_column, 64]]),
+        mask=np.ones((65, 1), dtype=bool),
+    )
+    session = AiAssistSession(output_format="rectangle")
+
+    def propose(*, shown_as_mask: bool) -> AiAssistProposal:
+        return session.propose_shapes(
+            annotations=[annotation],
+            prompt_kind="points",
+            points=np.array([[5.5, 30.0]]),
+            point_labels=np.array([1]),
+            existing_shapes=[existing],
+            score_threshold=0.0,
+            iou_threshold=0.5,
+            scale_to_image=(Fraction(65, 63), Fraction(65, 63)),
+            sent_size=(63, 63),
+            shown_as_mask=shown_as_mask,
+        )
+
+    click, guess = propose(shown_as_mask=False), propose(shown_as_mask=True)
+
+    assert [shape.shape_type for shape in click.new_shapes] == (
+        ["rectangle"] * new_count
+    )
+    assert [shape.points.tolist() for shape in guess.new_shapes] == (
+        [[[6, 0], [6, 64]]] * new_count
+    )
+
+
+@pytest.mark.parametrize(
+    ("output_format", "left_edge"),
+    [
+        pytest.param("mask", 0, id="the-mask-drawn-over-the-click"),
+        pytest.param("rectangle", 8, id="the-more-confident-sent-mask"),
+    ],
+)
+def test_a_click_picks_the_candidate_whose_saved_shape_covers_it(
+    *, output_format: _ai_assist.AiOutputFormat, left_edge: int
+) -> None:
+    one_logit = 256
+    drawn_right_of_the_click = osam.types.Annotation(
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=2, ymin=0, xmax=7, ymax=7),
+        mask=np.ones((8, 6), dtype=bool),
+        mask_logits=np.array(
+            [[32768 - 3 * one_logit, 32768 + 37 * one_logit]], dtype=np.uint16
+        ),
+        mask_logits_box=(0.0, 0.0, 8.0, 8.0),
+    )
+    drawn_over_the_click = osam.types.Annotation(
+        score=0.8,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=7, ymax=7),
+        mask=np.ones((8, 8), dtype=bool),
+        mask_logits=np.full((1, 2), 32768 + one_logit, dtype=np.uint16),
+        mask_logits_box=(0.0, 0.0, 8.0, 8.0),
+    )
+
+    proposal = AiAssistSession(output_format=output_format).propose_shapes(
+        annotations=[drawn_right_of_the_click, drawn_over_the_click],
+        prompt_kind="points",
+        points=np.array([[8.5, 16.0]]),
+        point_labels=np.array([1]),
+        existing_shapes=[],
+        score_threshold=0.0,
+        iou_threshold=0.5,
+        scale_to_image=(Fraction(4), Fraction(4)),
+        sent_size=(8, 8),
+    )
+
+    [shape] = proposal.new_shapes
+    assert shape.points.min(axis=0)[0] == left_edge
+
+
+def test_a_click_picks_the_candidate_whose_empty_redraw_is_saved_scaled_up() -> None:
+    one_logit = 256
+    cells = np.full((12, 12), 32768 - 30 * one_logit, dtype=np.uint16)
+    cells[8:10] = 32768 + 5 * one_logit
+    drawn_between_the_rows = osam.types.Annotation(
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=8, xmax=11, ymax=9),
+        mask=np.ones((2, 12), dtype=bool),
+        mask_logits=cells,
+        mask_logits_box=(0.0, 0.0, 12.0, 12.0),
+    )
+    drawn_everywhere = osam.types.Annotation(
+        score=0.8,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=11, ymax=11),
+        mask=np.ones((12, 12), dtype=bool),
+        mask_logits=np.full((1, 1), 32768 + one_logit, dtype=np.uint16),
+        mask_logits_box=(0.0, 0.0, 12.0, 12.0),
+    )
+
+    proposal = AiAssistSession(output_format="mask").propose_shapes(
+        annotations=[drawn_between_the_rows, drawn_everywhere],
+        prompt_kind="points",
+        points=np.array([[10.5, 2.1]]),
+        point_labels=np.array([1]),
+        existing_shapes=[],
+        score_threshold=0.0,
+        iou_threshold=0.5,
+        scale_to_image=(Fraction(2), Fraction(1, 3)),
+        sent_size=(12, 12),
+    )
+
+    [shape] = proposal.new_shapes
+    assert shape.points[:, 1].tolist() == [2, 3]
+
+
+@pytest.mark.parametrize(
+    "scale",
+    [
+        (Fraction(2), Fraction(1, 3)),
+        (Fraction(3, 2), Fraction(2, 3)),
+        (Fraction(126, 125), Fraction(5, 7)),
+        (Fraction(7, 2), Fraction(1)),
+    ],
+)
+def test_point_inside_a_mask_saved_scaled_up_reads_the_scaled_pixel(
+    scale: tuple[Fraction, Fraction],
+) -> None:
+    rng = np.random.default_rng(0)
+    for _ in range(20):
+        mask = rng.random((int(rng.integers(1, 7)), int(rng.integers(1, 7)))) < 0.5
+        left, top = (int(v) for v in rng.integers(-5, 20, size=2))
+        detection = Detection(
+            bbox=(left, top, left + mask.shape[1] - 1, top + mask.shape[0] - 1),
+            mask=mask,
+        )
+        scaled, (x0, y0, x1, y1) = scale_mask(
+            mask=mask, origin=(left, top), factor=scale
+        )
+
+        for y in range(y0 - 2, y1 + 3):
+            for x in range(x0 - 2, x1 + 3):
+                assert _is_point_inside_detection(
+                    detection=detection,
+                    point=np.array([x + 0.5, y + 0.5]),
+                    scale_to_image=scale,
+                    saved_as_mask=True,
+                ) == (x0 <= x <= x1 and y0 <= y <= y1 and bool(scaled[y - y0, x - x0]))

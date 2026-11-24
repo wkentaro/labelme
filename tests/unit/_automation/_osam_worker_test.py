@@ -459,6 +459,31 @@ def test_run_sends_a_large_image_at_the_model_resolution() -> None:
     assert annotation.mask is not None
     np.testing.assert_array_equal(annotation.mask, np.eye(8, dtype=bool))
     assert results[0].scale_to_image == (4.0, 2.0)
+    assert results[0].sent_size == (8, 8)
+
+
+@pytest.mark.parametrize(
+    ("image_size", "asks"), [((32, 16), True), ((8, 8), False), ((6, 4), False)]
+)
+def test_run_asks_for_mask_logits_only_with_an_image_it_shrank(
+    *, image_size: tuple[int, int], asks: bool
+) -> None:
+    client = _StretchingClient()
+    request = InferenceRequest(
+        model_name="m",
+        image=QtGui.QImage(*image_size, QtGui.QImage.Format.Format_RGB32),
+        points=np.array([[1.5, 1.5]]),
+        point_labels=np.array([1]),
+    )
+
+    _osam_worker._run(
+        client=cast(osam.Client, client),
+        request=request,
+        progress=lambda *_: None,
+        cache={},
+    )
+
+    assert client.kwargs[0]["include_mask_logits"] is asks
 
 
 def test_model_image_resizes_as_pillow_resizes_rgb() -> None:

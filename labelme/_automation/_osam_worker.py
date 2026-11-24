@@ -48,6 +48,7 @@ class InferenceRequest:
 class InferenceResult:
     annotations: list[osam.types.Annotation]
     scale_to_image: Scale
+    sent_size: tuple[int, int]
 
 
 def _model_image(*, image: QtGui.QImage, size: tuple[int, int]) -> NDArray[np.uint8]:
@@ -139,7 +140,11 @@ def _run(
         cache.clear()
         cache[key] = _model_image(image=request.image, size=sent_size)
     annotations = client.segment(
-        model, cache[key], keep_alive=-1, **_segment_kwargs(request=request)
+        model,
+        cache[key],
+        keep_alive=-1,
+        include_mask_logits=sent_size != (width, height),
+        **_segment_kwargs(request=request),
     )
     logger.info(
         "Segmented with {!r} in {:.0f} ms",
@@ -149,6 +154,7 @@ def _run(
     return InferenceResult(
         annotations=annotations,
         scale_to_image=(Fraction(width, sent_size[0]), Fraction(height, sent_size[1])),
+        sent_size=sent_size,
     )
 
 

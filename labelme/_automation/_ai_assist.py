@@ -9,8 +9,10 @@ from numpy.typing import NDArray
 
 from .._shape import Shape
 from ._geometry import round_bbox_to_int
+from ._mask_logits import MaskLogits
 from ._scaling import UNSCALED
 from ._scaling import Scale
+from ._scaling import scale_pixel_box
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
 from ._suppression import match_detections_to_existing_shapes
@@ -56,22 +58,27 @@ class AiAssistSession:
         score_threshold: float,
         iou_threshold: float,
         scale_to_image: Scale = UNSCALED,
+        sent_size: tuple[int, int],
         shown_as_mask: bool = False,
     ) -> AiAssistProposal:
-        points = points / np.asarray(scale_to_image, dtype=np.float64)
+        saved_as_mask = self.output_format == "mask"
         detections = [
             detection
-            for detection in _detections_from_annotations(annotations=annotations)
+            for detection in _detections_from_annotations(
+                annotations=annotations,
+                sent_size=sent_size,
+            )
             if detection.score >= score_threshold
         ]
         if prompt_kind == "box" and detections:
             # One Shape per box, whichever model answered: the candidate that
             # best fills the box, then the most confident.
+            box = (points / np.asarray(scale_to_image, dtype=np.float64)).ravel()
             detections = [
                 max(
                     detections,
                     key=lambda detection: (
-                        _box_iou(bbox=detection.bbox, box=points.ravel()),
+                        _box_iou(bbox=detection.bbox, box=box),
                         detection.score,
                     ),
                 )
@@ -85,6 +92,8 @@ class AiAssistSession:
                             detection=detection,
                             points=points,
                             point_labels=point_labels,
+                            scale_to_image=scale_to_image,
+                            saved_as_mask=saved_as_mask,
                         ),
                         detection.score,
                     ),
@@ -92,7 +101,6 @@ class AiAssistSession:
             ]
         # Existing Shapes cover candidates before candidates suppress each
         # other, so a covered candidate never hides a new one.
-        saved_as_mask = self.output_format == "mask"
         matches = match_detections_to_existing_shapes(
             detections=detections,
             existing_shapes=existing_shapes,
@@ -136,10 +144,17 @@ def _count_satisfied_prompt_points(
     detection: Detection,
     points: NDArray[np.floating],
     point_labels: NDArray[np.intp],
+    scale_to_image: Scale,
+    saved_as_mask: bool,
 ) -> int:
     # Box corners (labels 2, 3) say nothing about which mask is right.
     return sum(
-        _is_point_inside_detection(detection=detection, point=point)
+        _is_point_inside_detection(
+            detection=detection,
+            point=point,
+            scale_to_image=scale_to_image,
+            saved_as_mask=saved_as_mask,
+        )
         == (point_label == 1)
         for point, point_label in zip(points, point_labels, strict=True)
         if point_label in (0, 1)
@@ -150,22 +165,43 @@ def _is_point_inside_detection(
     *,
     detection: Detection,
     point: NDArray[np.floating],
+    scale_to_image: Scale,
+    saved_as_mask: bool,
 ) -> bool:
     if detection.bbox is None:
         return False
-    xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
+    logits = detection.mask_logits if saved_as_mask else None
     # The canvas spans pixel c from c to c + 1.
-    x, y = (int(np.floor(coordinate)) for coordinate in point)
-    if not (xmin <= x <= xmax and ymin <= y <= ymax):
-        return False
+    if saved_as_mask:
+        x, y = (int(np.floor(coordinate)) for coordinate in point)
+        if logits is not None and logits.holds(pixel=(x, y), scale=scale_to_image):
+            return True
+        x0, y0, x1, y1 = scale_pixel_box(
+            box=(x, y, x, y), factor=(1 / scale_to_image[0], 1 / scale_to_image[1])
+        )
+    else:
+        x0, y0 = x1, y1 = [
+            int(np.floor(coordinate / float(factor)))
+            for coordinate, factor in zip(point, scale_to_image)
+        ]
+    xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
     if detection.mask is None:
-        return True
-    return bool(detection.mask[y - ymin, x - xmin])
+        inside = x0 <= xmax and xmin <= x1 and y0 <= ymax and ymin <= y1
+    else:
+        inside = bool(
+            detection.mask[
+                max(y0 - ymin, 0) : max(y1 - ymin + 1, 0),
+                max(x0 - xmin, 0) : max(x1 - xmin + 1, 0),
+            ].any()
+        )
+    # A Mask Shape whose redraw comes out empty is the sent mask scaled up.
+    return inside and (logits is None or logits.draws_nothing(scale=scale_to_image))
 
 
 def _detections_from_annotations(
     *,
     annotations: list[osam.types.Annotation],
+    sent_size: tuple[int, int],
 ) -> list[Detection]:
     if not annotations:
         logger.warning("No annotations returned")
@@ -185,6 +221,9 @@ def _detections_from_annotations(
             Detection(
                 bbox=bbox,
                 mask=annotation.mask,
+                mask_logits=MaskLogits.from_annotation(
+                    annotation=annotation, sent_size=sent_size
+                ),
                 score=annotation.score if annotation.score is not None else 0.0,
             )
         )

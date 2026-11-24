@@ -13,6 +13,7 @@ from labelme._automation import AiOutputFormat
 from labelme._automation import Detection
 from labelme._automation import assign_available_group_ids
 from labelme._automation import shapes_from_detections
+from labelme._automation._mask_logits import MaskLogits
 from labelme._shape import Shape
 
 from ...mask_utils import shape_to_mask
@@ -465,3 +466,49 @@ def test_shapes_from_detections_fits_an_unscaled_oriented_rectangle_as_before() 
     np.testing.assert_allclose(
         shape.points, [[2.5, 0.5], [2.5, 3.5], [0.5, 3.5], [0.5, 0.5]]
     )
+
+
+def test_shapes_from_detections_draws_a_mask_from_its_logits_at_the_image_size() -> (
+    None
+):
+    one_logit = 256
+    detection = Detection(
+        bbox=(1, 0, 1, 0),
+        mask=np.array([[True]]),
+        mask_logits=MaskLogits(
+            cells=np.array([[32768 - one_logit, 32768 + 3 * one_logit]], np.uint16),
+            box=(0, 0, 2, 1),
+            clip=(0, 0, 2, 1),
+        ),
+    )
+
+    [shape] = shapes_from_detections(
+        detections=[detection],
+        shape_type="mask",
+        image_size=(8, 4),
+        scale_to_image=(Fraction(4), Fraction(4)),
+    )
+
+    np.testing.assert_array_equal(shape.points, [[3, 0], [7, 3]])
+    np.testing.assert_array_equal(shape.mask, np.ones((4, 5), dtype=bool))
+
+
+def test_shapes_from_detections_keeps_the_sent_mask_when_its_logits_draw_nothing() -> (
+    None
+):
+    detection = Detection(
+        bbox=(1, 0, 1, 0),
+        mask=np.array([[True]]),
+        mask_logits=MaskLogits(
+            cells=np.zeros((1, 2), np.uint16), box=(0, 0, 2, 1), clip=(0, 0, 2, 1)
+        ),
+    )
+
+    [shape] = shapes_from_detections(
+        detections=[detection],
+        shape_type="mask",
+        scale_to_image=(Fraction(4), Fraction(4)),
+    )
+
+    np.testing.assert_array_equal(shape.points, [[4, 0], [7, 3]])
+    np.testing.assert_array_equal(shape.mask, np.ones((4, 4), dtype=bool))
