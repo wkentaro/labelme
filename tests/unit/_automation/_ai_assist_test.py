@@ -611,3 +611,47 @@ def test_a_guess_drawn_from_logits_adds_what_the_rectangle_click_adds(
     assert [shape.points.tolist() for shape in guess.new_shapes] == (
         [[[6, 0], [6, 64]]] * new_count
     )
+
+
+@pytest.mark.parametrize(
+    ("output_format", "left_edge"),
+    [
+        pytest.param("mask", 0, id="the-mask-drawn-over-the-click"),
+        pytest.param("rectangle", 8, id="the-more-confident-sent-mask"),
+    ],
+)
+def test_a_click_picks_the_candidate_whose_saved_shape_covers_it(
+    *, output_format: _ai_assist.AiOutputFormat, left_edge: int
+) -> None:
+    one_logit = 256
+    drawn_right_of_the_click = osam.types.Annotation(
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=2, ymin=0, xmax=7, ymax=7),
+        mask=np.ones((8, 6), dtype=bool),
+        mask_logits=np.array(
+            [[32768 - 3 * one_logit, 32768 + 37 * one_logit]], dtype=np.uint16
+        ),
+        mask_logits_box=(0.0, 0.0, 8.0, 8.0),
+    )
+    drawn_over_the_click = osam.types.Annotation(
+        score=0.8,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=7, ymax=7),
+        mask=np.ones((8, 8), dtype=bool),
+        mask_logits=np.full((1, 2), 32768 + one_logit, dtype=np.uint16),
+        mask_logits_box=(0.0, 0.0, 8.0, 8.0),
+    )
+
+    proposal = AiAssistSession(output_format=output_format).propose_shapes(
+        annotations=[drawn_right_of_the_click, drawn_over_the_click],
+        prompt_kind="points",
+        points=np.array([[8.5, 16.0]]),
+        point_labels=np.array([1]),
+        existing_shapes=[],
+        score_threshold=0.0,
+        iou_threshold=0.5,
+        scale_to_image=(Fraction(4), Fraction(4)),
+        sent_size=(8, 8),
+    )
+
+    [shape] = proposal.new_shapes
+    assert shape.points.min(axis=0)[0] == left_edge

@@ -19,6 +19,8 @@ if TYPE_CHECKING:
 
 Box = tuple[float, float, float, float]
 
+_ZERO_LOGIT: Final = 32768
+
 
 @dataclasses.dataclass(frozen=True)
 class _Sampled:
@@ -80,6 +82,22 @@ class MaskLogits:
             return None
         xmin, ymin, xmax, ymax = self.reach
         return math.floor(xmin), math.floor(ymin), math.ceil(xmax), math.ceil(ymax)
+
+    def holds(self, *, pixel: tuple[int, int], scale: Scale) -> bool:
+        (left, cell_x, toward_right), (top, cell_y, toward_below) = self._axes(
+            scale=scale
+        )
+        column, row = pixel[0] - left, pixel[1] - top
+        if not (0 <= column < len(cell_x) and 0 <= row < len(cell_y)):
+            return False
+        rows, columns = self.cells.shape
+        x, y = cell_x[column], cell_y[row]
+        right, below = min(x + 1, columns - 1), min(y + 1, rows - 1)
+        around = self.cells[np.ix_([y, below], [x, right])].astype(np.float64)
+        band = _lerp(a=around[0], b=around[1], toward_b=toward_below[row])
+        return bool(
+            _lerp(a=band[0], b=band[1], toward_b=toward_right[column]) > _ZERO_LOGIT
+        )
 
     def draw(self, *, scale: Scale) -> tuple[NDArray[np.bool_], tuple[int, int]] | None:
         sampled = self._sample(scale=scale)
@@ -160,29 +178,16 @@ class MaskLogits:
     def _sample(self, *, scale: Scale) -> _Sampled | None:
         if scale in self._sampled:
             return self._sampled[scale]
-        ZERO_LOGIT: Final = 32768
         rows, columns = self.cells.shape
-        reach = self.reach
-        left, cell_x, toward_right = _pixels_on_cells(
-            start=self.box[0],
-            stop=self.box[2],
-            reach=(reach[0], reach[2]),
-            cells=columns,
-            factor=scale[0],
-        )
-        top, cell_y, toward_below = _pixels_on_cells(
-            start=self.box[1],
-            stop=self.box[3],
-            reach=(reach[1], reach[3]),
-            cells=rows,
-            factor=scale[1],
+        (left, cell_x, toward_right), (top, cell_y, toward_below) = self._axes(
+            scale=scale
         )
         if not len(cell_x) or not len(cell_y):
             self._sampled[scale] = None
             return None
         below = np.minimum(np.arange(rows) + 1, rows - 1)
         right = np.minimum(np.arange(columns) + 1, columns - 1)
-        on = self.cells > ZERO_LOGIT
+        on = self.cells > _ZERO_LOGIT
         cells_around = [on, on[below], on[:, right], on[below][:, right]]
         among_on_cells = np.logical_and.reduce(cells_around)
         on_the_edge = np.logical_or.reduce(cells_around) & ~among_on_cells
@@ -205,7 +210,7 @@ class MaskLogits:
                         b=band[:, right[lefts]],
                         toward_b=toward_right[xs],
                     )
-                    > ZERO_LOGIT,
+                    > _ZERO_LOGIT,
                 )
             )
         self._sampled[scale] = _Sampled(
@@ -217,6 +222,29 @@ class MaskLogits:
             edge_bands=edge_bands,
         )
         return self._sampled[scale]
+
+    def _axes(self, *, scale: Scale) -> tuple[_Axis, _Axis]:
+        rows, columns = self.cells.shape
+        reach = self.reach
+        return (
+            _pixels_on_cells(
+                start=self.box[0],
+                stop=self.box[2],
+                reach=(reach[0], reach[2]),
+                cells=columns,
+                factor=scale[0],
+            ),
+            _pixels_on_cells(
+                start=self.box[1],
+                stop=self.box[3],
+                reach=(reach[1], reach[3]),
+                cells=rows,
+                factor=scale[1],
+            ),
+        )
+
+
+_Axis = tuple[int, NDArray[np.int64], NDArray[np.float64]]
 
 
 def _grouped_to_sent(
@@ -245,7 +273,7 @@ def _pixels_on_cells(
     reach: tuple[float, float],
     cells: int,
     factor: Fraction,
-) -> tuple[int, NDArray[np.int64], NDArray[np.float64]]:
+) -> _Axis:
     first_pixel, end_pixel = pixels_centered_in(
         low=reach[0], high=reach[1], factor=factor
     )

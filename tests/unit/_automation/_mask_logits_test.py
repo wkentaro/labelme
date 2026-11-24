@@ -110,10 +110,19 @@ def test_draw_matches_sampling_every_pixel(
 
     drawn = logits.draw(scale=scale)
 
+    on_canvas = _on_canvas(drawn=drawn, image_size=image_size)
     np.testing.assert_array_equal(
-        _on_canvas(drawn=drawn, image_size=image_size),
+        on_canvas,
         _sampled_at_every_pixel(logits=logits, scale=scale, image_size=image_size),
     )
+    pixels = np.random.default_rng(seed).integers(
+        low=(-2, -2), high=(image_size[0] + 2, image_size[1] + 2), size=(300, 2)
+    )
+    for x, y in pixels.tolist():
+        inside = 0 <= x < image_size[0] and 0 <= y < image_size[1]
+        assert logits.holds(pixel=(x, y), scale=scale) == (
+            inside and bool(on_canvas[y, x])
+        )
     assert drawn is not None
     mask, _ = drawn
     assert mask[0].any() and mask[-1].any()
