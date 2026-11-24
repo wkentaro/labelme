@@ -12,6 +12,7 @@ from ._geometry import round_bbox_to_int
 from ._mask_logits import MaskLogits
 from ._scaling import UNSCALED
 from ._scaling import Scale
+from ._scaling import scale_pixel_box
 from ._shape_builders import Detection
 from ._shape_builders import shapes_from_detections
 from ._suppression import match_detections_to_existing_shapes
@@ -164,25 +165,37 @@ def _is_point_inside_detection(
     *,
     detection: Detection,
     point: NDArray[np.floating],
-    scale_to_image: Scale = UNSCALED,
-    saved_as_mask: bool = False,
+    scale_to_image: Scale,
+    saved_as_mask: bool,
 ) -> bool:
     if detection.bbox is None:
         return False
+    logits = detection.mask_logits if saved_as_mask else None
     # The canvas spans pixel c from c to c + 1.
-    if saved_as_mask and detection.mask_logits is not None:
+    if saved_as_mask:
         x, y = (int(np.floor(coordinate)) for coordinate in point)
-        return detection.mask_logits.holds(pixel=(x, y), scale=scale_to_image)
+        if logits is not None and logits.holds(pixel=(x, y), scale=scale_to_image):
+            return True
+        x0, y0, x1, y1 = scale_pixel_box(
+            box=(x, y, x, y), factor=(1 / scale_to_image[0], 1 / scale_to_image[1])
+        )
+    else:
+        x0, y0 = x1, y1 = [
+            int(np.floor(coordinate / float(factor)))
+            for coordinate, factor in zip(point, scale_to_image)
+        ]
     xmin, ymin, xmax, ymax = round_bbox_to_int(bbox=detection.bbox)
-    x, y = (
-        int(np.floor(coordinate / float(factor)))
-        for coordinate, factor in zip(point, scale_to_image)
-    )
-    if not (xmin <= x <= xmax and ymin <= y <= ymax):
-        return False
     if detection.mask is None:
-        return True
-    return bool(detection.mask[y - ymin, x - xmin])
+        inside = x0 <= xmax and xmin <= x1 and y0 <= ymax and ymin <= y1
+    else:
+        inside = bool(
+            detection.mask[
+                max(y0 - ymin, 0) : max(y1 - ymin + 1, 0),
+                max(x0 - xmin, 0) : max(x1 - xmin + 1, 0),
+            ].any()
+        )
+    # A Mask Shape whose redraw comes out empty is the sent mask scaled up.
+    return inside and (logits is None or logits.draws_nothing(scale=scale_to_image))
 
 
 def _detections_from_annotations(

@@ -110,6 +110,7 @@ def test_draw_matches_sampling_every_pixel(
 
     drawn = logits.draw(scale=scale)
 
+    assert logits.draws_nothing(scale=scale) == (drawn is None)
     on_canvas = _on_canvas(drawn=drawn, image_size=image_size)
     np.testing.assert_array_equal(
         on_canvas,

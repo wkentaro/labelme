@@ -15,6 +15,8 @@ from labelme._automation._ai_assist import AiAssistProposal
 from labelme._automation._ai_assist import AiAssistSession
 from labelme._automation._ai_assist import _detections_from_annotations
 from labelme._automation._ai_assist import _is_point_inside_detection
+from labelme._automation._scaling import UNSCALED
+from labelme._automation._scaling import scale_mask
 from labelme._shape import Shape
 
 
@@ -246,6 +248,8 @@ def test_point_inside_detection_uses_rounded_mask_origin() -> None:
     is_inside = _is_point_inside_detection(
         detection=detection,
         point=np.array([10.0, 21.0]),
+        scale_to_image=UNSCALED,
+        saved_as_mask=False,
     )
 
     assert is_inside is True
@@ -257,9 +261,17 @@ def test_point_inside_detection_reads_the_pixel_under_the_point() -> None:
     mask[0, 0] = True
     detection = Detection(bbox=(10, 20, 11, 21), mask=mask)
 
-    assert _is_point_inside_detection(detection=detection, point=np.array([10.7, 20.7]))
+    assert _is_point_inside_detection(
+        detection=detection,
+        point=np.array([10.7, 20.7]),
+        scale_to_image=UNSCALED,
+        saved_as_mask=False,
+    )
     assert not _is_point_inside_detection(
-        detection=detection, point=np.array([11.0, 20.0])
+        detection=detection,
+        point=np.array([11.0, 20.0]),
+        scale_to_image=UNSCALED,
+        saved_as_mask=False,
     )
 
 
@@ -655,3 +667,72 @@ def test_a_click_picks_the_candidate_whose_saved_shape_covers_it(
 
     [shape] = proposal.new_shapes
     assert shape.points.min(axis=0)[0] == left_edge
+
+
+def test_a_click_picks_the_candidate_whose_empty_redraw_is_saved_scaled_up() -> None:
+    one_logit = 256
+    cells = np.full((12, 12), 32768 - 30 * one_logit, dtype=np.uint16)
+    cells[8:10] = 32768 + 5 * one_logit
+    drawn_between_the_rows = osam.types.Annotation(
+        score=0.9,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=8, xmax=11, ymax=9),
+        mask=np.ones((2, 12), dtype=bool),
+        mask_logits=cells,
+        mask_logits_box=(0.0, 0.0, 12.0, 12.0),
+    )
+    drawn_everywhere = osam.types.Annotation(
+        score=0.8,
+        bounding_box=osam.types.BoundingBox(xmin=0, ymin=0, xmax=11, ymax=11),
+        mask=np.ones((12, 12), dtype=bool),
+        mask_logits=np.full((1, 1), 32768 + one_logit, dtype=np.uint16),
+        mask_logits_box=(0.0, 0.0, 12.0, 12.0),
+    )
+
+    proposal = AiAssistSession(output_format="mask").propose_shapes(
+        annotations=[drawn_between_the_rows, drawn_everywhere],
+        prompt_kind="points",
+        points=np.array([[10.5, 2.1]]),
+        point_labels=np.array([1]),
+        existing_shapes=[],
+        score_threshold=0.0,
+        iou_threshold=0.5,
+        scale_to_image=(Fraction(2), Fraction(1, 3)),
+        sent_size=(12, 12),
+    )
+
+    [shape] = proposal.new_shapes
+    assert shape.points[:, 1].tolist() == [2, 3]
+
+
+@pytest.mark.parametrize(
+    "scale",
+    [
+        (Fraction(2), Fraction(1, 3)),
+        (Fraction(3, 2), Fraction(2, 3)),
+        (Fraction(126, 125), Fraction(5, 7)),
+        (Fraction(7, 2), Fraction(1)),
+    ],
+)
+def test_point_inside_a_mask_saved_scaled_up_reads_the_scaled_pixel(
+    scale: tuple[Fraction, Fraction],
+) -> None:
+    rng = np.random.default_rng(0)
+    for _ in range(20):
+        mask = rng.random((int(rng.integers(1, 7)), int(rng.integers(1, 7)))) < 0.5
+        left, top = (int(v) for v in rng.integers(-5, 20, size=2))
+        detection = Detection(
+            bbox=(left, top, left + mask.shape[1] - 1, top + mask.shape[0] - 1),
+            mask=mask,
+        )
+        scaled, (x0, y0, x1, y1) = scale_mask(
+            mask=mask, origin=(left, top), factor=scale
+        )
+
+        for y in range(y0 - 2, y1 + 3):
+            for x in range(x0 - 2, x1 + 3):
+                assert _is_point_inside_detection(
+                    detection=detection,
+                    point=np.array([x + 0.5, y + 0.5]),
+                    scale_to_image=scale,
+                    saved_as_mask=True,
+                ) == (x0 <= x <= x1 and y0 <= y <= y1 and bool(scaled[y - y0, x - x0]))

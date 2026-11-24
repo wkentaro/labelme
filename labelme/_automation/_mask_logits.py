@@ -99,6 +99,9 @@ class MaskLogits:
             _lerp(a=band[0], b=band[1], toward_b=toward_right[column]) > _ZERO_LOGIT
         )
 
+    def draws_nothing(self, *, scale: Scale) -> bool:
+        return self._sample(scale=scale) is None
+
     def draw(self, *, scale: Scale) -> tuple[NDArray[np.bool_], tuple[int, int]] | None:
         sampled = self._sample(scale=scale)
         if sampled is None:
@@ -113,8 +116,6 @@ class MaskLogits:
         for ys, xs, on in sampled.edge_bands:
             in_row[ys] |= on.any(axis=1)
             in_column[xs] |= on.any(axis=0)
-        if not in_row.any():
-            return None
         y0, y1 = np.flatnonzero(in_row)[[0, -1]] + [0, 1]
         x0, x1 = np.flatnonzero(in_column)[[0, -1]] + [0, 1]
         mask = np.repeat(
@@ -168,8 +169,6 @@ class MaskLogits:
                     axis=1,
                 )
             )
-        if not footprint.any():
-            return None
         mask, box = scale_mask(
             mask=footprint, origin=(left, top), factor=(to_sent_x, to_sent_y)
         )
@@ -213,6 +212,15 @@ class MaskLogits:
                     > _ZERO_LOGIT,
                 )
             )
+        with_pixels = np.ix_(
+            np.bincount(cell_y, minlength=rows) > 0,
+            np.bincount(cell_x, minlength=columns) > 0,
+        )
+        if not among_on_cells[with_pixels].any() and not any(
+            on.any() for _, _, on in edge_bands
+        ):
+            self._sampled[scale] = None
+            return None
         self._sampled[scale] = _Sampled(
             left=left,
             top=top,
