@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## 7.11.1 - 2026-11-25
+
+### Fixed
+
+- AI-Segment and AI-Find All work again on images over 179 MP, which failed with "Image size exceeds limit" since 7.11.0. Labelme sends the AI server the image at the model's input size instead of in full, so SAM2 segments a 600 MP image in about a second. Labelme requires osam 0.12.1 or later. ([#3126](https://github.com/wkentaro/labelme/pull/3126))
+- Auto-save in a folder of thousands of Images no longer rescans every Image after each save, which paused the window for up to 0.3 s per save at 50k Images. The first save after opening a folder still indexes it once. ([#3129](https://github.com/wkentaro/labelme/pull/3129))
+- Browsing Images with a kept Brightness/Contrast no longer grows memory by the size of each Image it opens. ([#3130](https://github.com/wkentaro/labelme/pull/3130))
+- Merging Mask Shapes moved by half a pixel no longer shifts one of them a pixel away from the others. ([#3132](https://github.com/wkentaro/labelme/pull/3132))
+- The AI Models panel opens faster by sharing a single model catalog read with the toolbar. ([#3147](https://github.com/wkentaro/labelme/pull/3147))
+
 ## 7.11.0 - 2026-11-14
 
 ### Changed
