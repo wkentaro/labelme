@@ -8,6 +8,7 @@ import secrets
 import sys
 import traceback
 import types
+import unicodedata
 import webbrowser
 from collections.abc import Callable
 from pathlib import Path
@@ -534,10 +535,17 @@ def _activate_top_window() -> None:
 
 
 def _type_text(*, target: QtWidgets.QWidget, text: str) -> None:
-    if text.isascii():
-        QTest.keyClicks(target, text)
+    for number, line in enumerate(text.split("\n")):
+        if number:
+            QTest.keyClick(target, Qt.Key.Key_Return)
+        _type_line(target=target, line=line)
+
+
+def _type_line(*, target: QtWidgets.QWidget, line: str) -> None:
+    if line.isascii():
+        QTest.keyClicks(target, line)
         return
-    for char in text:
+    for char in line:
         QTest.sendKeyEvent(
             QTest.KeyAction.Click,
             target,
@@ -551,12 +559,14 @@ def _plan_key(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     sequence = QtGui.QKeySequence(req["sequence"])
     if sequence.isEmpty():
         raise CtlError(f"cannot parse key sequence {req['sequence']!r}")
-    combo = sequence[0]  # ty: ignore[not-subscriptable]
+    combos = [sequence[i] for i in range(sequence.count())]  # ty: ignore[not-subscriptable]
     target = _focus_target()
-    return (
-        f"key {sequence.toString()} on {type(target).__name__}",
-        lambda: QTest.keyClick(target, combo.key(), combo.keyboardModifiers()),
-    )
+
+    def press() -> None:
+        for combo in combos:
+            QTest.keyClick(target, combo.key(), combo.keyboardModifiers())
+
+    return f"key {sequence.toString()} on {type(target).__name__}", press
 
 
 def _plan_menu_click(
@@ -664,6 +674,13 @@ def _plan_input(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
             raise CtlError("a dialog or popup blocks the menu bar; close it first")
         return f"menu {req['path']}", _find_action(path=req["path"]).trigger
     if cmd == "type":
+        controls = {
+            c for c in req["text"] if c != "\n" and unicodedata.category(c) == "Cc"
+        }
+        if controls:
+            raise CtlError(
+                f"cannot type control characters {sorted(controls)}; use key"
+            )
         target = _focus_target()
         return (
             f"type into {type(target).__name__}",
