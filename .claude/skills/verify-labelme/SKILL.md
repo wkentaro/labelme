@@ -18,11 +18,11 @@ $CTL launch --checkout . --seed annotated -- '{data}'
 export LABELME_VERIFY_RUN=<run_dir from the output>
 ```
 
-- `--checkout` is the tree to run. Launch runs `uv sync --frozen` there, then starts that tree's `.venv/bin/python`. To compare base and head, make a worktree for each and launch one instance per tree.
+- `--checkout` is the tree to run. Launch starts that tree's `.venv/bin/python`, so run `uv sync --frozen` in the tree first. That sync builds the tree outside the sandbox, so run it only on a tree you trust. To compare base and head, make a worktree for each, sync each, and launch one instance per tree.
 - `--seed` copies sample data into `<run_dir>/data`: `raw` (three images, no annotations, the default), `annotated` (the same images with five, three, and two shapes), `tutorial` (`examples/tutorial`), or `none`.
 - `--language` writes the UI language to the scratch `.labelmerc`. It defaults to `en_US`, which the feature map's names assume. Pass `ja_JP` or another code to check a translation.
 - Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. labelme can read any path but write only inside the run dir, so copy a file you want to edit into `<run_dir>/data` first. A save outside shows `Save failed` in the status bar.
-- Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas or the folder's Image List is known to be empty. It also returns when a dialog opens first, such as the error for an image that cannot be read. Its output carries `image_loaded` and `dialog`, so check both before driving. A cold `uv sync` can take a minute. The default timeout is 120 s.
+- Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas or the folder's Image List is known to be empty. It also returns when a dialog opens first, such as the error for an image that cannot be read. Its output carries `image_loaded` and `dialog`, so check both before driving. The default timeout is 120 s.
 
 Each launch gets a fresh run dir from `mktemp`, so instances never share state, and two or more can run side by side. `--run-dir` picks the directory instead, and it must be new, empty, or made by an earlier launch. Inside the run dir:
 
@@ -32,7 +32,7 @@ Each launch gets a fresh run dir from `mktemp`, so instances never share state, 
 - `run.json` marks the directory as made by `launch` and holds the token every request sends. The control port rejects a request without it, so keep the run dir private.
 - `sandbox.sb` is the macOS sandbox profile labelme runs under, and `tmp/` is its `TMPDIR`.
 
-The sandbox denies every file write outside the run dir and every write to the user's preferences, so no file dialog, Save As, or link inside `data/` can change the user's files or `~/Library/Preferences`. A denied write fails with `Operation not permitted`, and labelme shows its own error. Help > Tutorial's browser and Settings' `Open config file as text` editor open nothing, and each appends a line to `state.blocked`, so a journey that needs one of them reports why it stopped.
+The sandbox denies every file write outside the run dir and every write to the user's preferences, so no file dialog, Save As, or link inside `data/` can change the user's files or `~/Library/Preferences`. A denied write fails with `Operation not permitted`, and labelme shows its own error. Help > Tutorial's browser and Settings' `Open config file as text` editor open nothing, and each appends a line to `state.blocked`, so a journey that needs one of them reports why it stopped. The sandbox blocks writes only. labelme can still read any file and reach the network, so it keeps a trusted tree from damaging files, not a hostile tree from leaking them.
 
 ## Doctor
 

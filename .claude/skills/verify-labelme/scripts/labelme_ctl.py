@@ -213,6 +213,9 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     checkout = Path(args.checkout).resolve()
     if not (checkout / "labelme" / "__main__.py").exists():
         sys.exit(f"not a labelme checkout: {checkout}")
+    python = checkout / ".venv" / "bin" / "python"
+    if not python.exists():
+        sys.exit(f"no {python}: run `uv sync --frozen` in {checkout} first")
     run_dir = _claim_run_dir(requested=args.run_dir)
     home, data, evidence = run_dir / "home", run_dir / "data", run_dir / "evidence"
     for directory in (home, data, evidence):
@@ -220,8 +223,6 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     (home / ".labelmerc").write_text(f"language: {args.language}\n")
     if args.seed != "none":
         shutil.copytree(checkout / SEEDS[args.seed], data, dirs_exist_ok=True)
-
-    subprocess.run(["uv", "sync", "--frozen", "--quiet"], cwd=checkout, check=True)
 
     labelme_args = [a.replace("{data}", str(data)) for a in args.labelme_args]
     if labelme_args[:1] == ["--"]:
@@ -245,7 +246,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
                 "/usr/bin/sandbox-exec",
                 "-f",
                 str(profile),
-                str(checkout / ".venv" / "bin" / "python"),
+                str(python),
                 str(Path(__file__).resolve()),
                 "serve",
                 "--run-dir",
