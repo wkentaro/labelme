@@ -2,15 +2,18 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import signal
 import socket
 import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import Final
 
 import pytest
 
+from .conftest import REPO
 from .conftest import Ctl
 from .conftest import Run
 
@@ -19,6 +22,14 @@ pytestmark = pytest.mark.skipif(
 )
 
 OVERSIZED_REQUEST: Final = b"x" * (2 << 20)
+SCRATCH_GIT_ENV: Final = {
+    "GIT_CONFIG_GLOBAL": os.devnull,
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_AUTHOR_NAME": "verify-labelme",
+    "GIT_AUTHOR_EMAIL": "verify-labelme@example.com",
+    "GIT_COMMITTER_NAME": "verify-labelme",
+    "GIT_COMMITTER_EMAIL": "verify-labelme@example.com",
+}
 
 
 def _assert_healthy(*, ctl: Ctl, run: Run) -> None:
@@ -33,6 +44,32 @@ def _sandboxed_touch(*, run: Run, path: Path) -> int:
         ["/usr/bin/sandbox-exec", "-f", str(profile), "/usr/bin/touch", str(path)],
         capture_output=True,
     ).returncode
+
+
+def _pid_gone(*, pid: int) -> bool:
+    deadline = time.monotonic() + 5
+    while time.monotonic() < deadline:
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            return True
+        time.sleep(0.1)
+    return False
+
+
+def _git(*, checkout: Path, args: list[str]) -> None:
+    subprocess.run(
+        ["git", "-C", str(checkout), *args],
+        check=True,
+        capture_output=True,
+        env={**os.environ, **SCRATCH_GIT_ENV},
+    )
+
+
+def _relaunchable_run_dir(*, ctl: Ctl, tmp_path: Path) -> Path:
+    run = ctl.launch("{data}", run_dir=tmp_path / "run")
+    assert ctl("cleanup", run=run).code == 0
+    return run.run_dir
 
 
 def _send_until_closed(*, port: int, request: bytes) -> bytes:
@@ -153,18 +190,30 @@ def test_commands_after_a_crash_report_it_as_json(*, ctl: Ctl) -> None:
     assert "crashed" in state.body["error"]
     doctor = ctl("doctor", run=run)
     assert doctor.code == 1
+    assert doctor.body["ok"] is False
     assert doctor.body["healthy"] is False
     assert "crashed" in doctor.body["error"]
 
 
-def test_doctor_after_cleanup_prints_json_and_exits_1(*, ctl: Ctl) -> None:
+def test_cleanup_stops_labelme_and_keeps_evidence(*, ctl: Ctl) -> None:
     run = ctl.launch("{data}")
-    assert ctl("cleanup", run=run).code == 0
+    assert ctl("screenshot", "01-window.png", run=run).code == 0
 
-    reply = ctl("doctor", run=run)
+    cleanup = ctl("cleanup", run=run)
 
-    assert reply.code == 1
-    assert reply.body["ok"] is False
+    assert cleanup.code == 0
+    assert cleanup.body["killed"] is True
+    assert _pid_gone(pid=run.launch["pid"])
+    evidence = run.run_dir / "evidence"
+    assert sorted(path.name for path in evidence.iterdir()) == [
+        "01-window.png",
+        "labelme.log",
+    ]
+    assert not run.data.exists()
+    doctor = ctl("doctor", run=run)
+    assert doctor.code == 1
+    assert doctor.body["ok"] is False
+    assert doctor.body["healthy"] is False
 
 
 def test_doctor_on_an_unresponsive_instance_prints_json_and_exits_1(
@@ -180,5 +229,107 @@ def test_doctor_on_an_unresponsive_instance_prints_json_and_exits_1(
         os.kill(pid, signal.SIGCONT)
 
     assert reply.code == 1
+    assert reply.body["ok"] is False
     assert reply.body["healthy"] is False
     assert reply.body["error"]
+
+
+def test_wait_on_a_stopped_instance_fails_by_its_timeout(*, ctl: Ctl) -> None:
+    run = ctl.launch("{data}")
+    pid = run.launch["pid"]
+
+    os.kill(pid, signal.SIGSTOP)
+    try:
+        start = time.monotonic()
+        reply = ctl("wait", "--status", "Saved", "--timeout", "2", run=run)
+        elapsed = time.monotonic() - start
+    finally:
+        os.kill(pid, signal.SIGCONT)
+
+    assert reply.code == 1
+    assert reply.body["ok"] is False
+    assert elapsed < 4
+
+
+@pytest.mark.parametrize("name", ["home", "data", "evidence"])
+def test_relaunch_refuses_a_symlinked_subdir_and_writes_nothing_outside(
+    *, ctl: Ctl, tmp_path: Path, name: str
+) -> None:
+    run_dir = _relaunchable_run_dir(ctl=ctl, tmp_path=tmp_path)
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    for planted in ("labelme.log", ".labelmerc"):
+        (outside / planted).write_text("keep")
+    shutil.rmtree(run_dir / name, ignore_errors=True)
+    (run_dir / name).symlink_to(outside)
+
+    reply = ctl.launch_reply("{data}", run_dir=run_dir)
+
+    assert reply.code == 1
+    assert reply.body["ok"] is False
+    assert sorted(path.name for path in outside.iterdir()) == [
+        ".labelmerc",
+        "labelme.log",
+    ]
+    assert {path.read_text() for path in outside.iterdir()} == {"keep"}
+
+
+def test_relaunch_over_hard_links_leaves_their_targets_unchanged(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    run_dir = _relaunchable_run_dir(ctl=ctl, tmp_path=tmp_path)
+    outside = tmp_path / "outside.txt"
+    outside.write_text("keep")
+    (run_dir / "evidence" / "labelme.log").unlink()
+    (run_dir / "home").mkdir()
+    for name in ("evidence/labelme.log", "home/.labelmerc"):
+        os.link(outside, run_dir / name)
+
+    run = ctl.launch("{data}", run_dir=run_dir)
+
+    assert outside.read_text() == "keep"
+    _assert_healthy(ctl=ctl, run=run)
+
+
+def test_screenshot_over_a_hard_link_leaves_its_target_unchanged(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    run = ctl.launch("{data}")
+    outside = tmp_path / "outside.png"
+    outside.write_bytes(b"keep")
+    shot = run.run_dir / "evidence" / "01-window.png"
+    os.link(outside, shot)
+
+    reply = ctl("screenshot", "01-window.png", run=run)
+
+    assert reply.code == 0, reply.body
+    assert outside.read_bytes() == b"keep"
+    assert shot.read_bytes().startswith(b"\x89PNG")
+
+
+def test_doctor_reports_problems_and_leaves_the_checkout_index_alone(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    checkout = tmp_path / "checkout"
+    entry = checkout / "labelme" / "__main__.py"
+    entry.parent.mkdir(parents=True)
+    entry.touch()
+    (checkout / ".venv").symlink_to(REPO / ".venv")
+    _git(checkout=checkout, args=["init", "--quiet"])
+    _git(checkout=checkout, args=["add", "labelme"])
+    _git(checkout=checkout, args=["commit", "--quiet", "--message", "seed"])
+    os.utime(entry, (0, 0))
+    index = checkout / ".git" / "index"
+    before = index.read_bytes()
+    launch = ctl.launch_reply(seed="none", checkout=checkout)
+    assert launch.code == 0, launch.body
+
+    reply = ctl("doctor", run=Run(run_dir=Path(launch.body["run_dir"]), launch={}))
+
+    assert reply.code == 1
+    assert reply.body["ok"] is False
+    assert reply.body["healthy"] is False
+    assert "labelme imported from outside the checkout" in reply.body["problems"]
+    assert "labelme imported from outside the checkout" in reply.body["error"]
+    assert reply.body["checkout_dirty"] is False
+    assert index.read_bytes() == before
