@@ -21,8 +21,8 @@ export LABELME_VERIFY_RUN=<run_dir from the output>
 - `--checkout` is the tree to run. Launch runs `uv sync --frozen` there, then starts that tree's `.venv/bin/python`. To compare base and head, make a worktree for each and launch one instance per tree.
 - `--seed` copies sample data into `<run_dir>/data`: `raw` (three images, no annotations, the default), `annotated` (the same images with five, three, and two shapes), `tutorial` (`examples/tutorial`), or `none`.
 - `--language` writes the UI language to the scratch `.labelmerc`. It defaults to `en_US`, which the feature map's names assume. Pass `ja_JP` or another code to check a translation.
-- Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. Launch refuses an existing path outside the run dir, and an `--output` or `--config` outside it, because labelme writes next to what it opens. Copy the user's file into `<run_dir>/data` first.
-- Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas. A cold `uv sync` can take a minute. The default timeout is 120 s.
+- Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. Launch refuses an existing path outside the run dir, and an `--output` or `--config` outside it (abbreviations such as `--out` included), because labelme writes next to what it opens. Copy the user's file into `<run_dir>/data` first.
+- Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas or the folder's Image List is known to be empty. A cold `uv sync` can take a minute. The default timeout is 120 s.
 
 Each launch gets a fresh run dir from `mktemp`, so instances never share state, and two or more can run side by side. `--run-dir` picks the directory instead, and it must be new, empty, or made by an earlier launch. Inside the run dir:
 
@@ -30,6 +30,8 @@ Each launch gets a fresh run dir from `mktemp`, so instances never share state, 
 - `data/` holds the seeded images and the annotation files the app writes.
 - `evidence/` holds `labelme.log` (the process's stdout and stderr) and every screenshot.
 - `run.json` marks the directory as made by `launch` and holds the token every request sends. The control port rejects a request without it, so keep the run dir private.
+
+The app must not touch anything outside the run dir. A file dialog that chooses a path outside it returns as if canceled, and `webbrowser.open`, which Help > Tutorial calls, opens nothing. Both append a line to `state.blocked`, so a journey that needs one of them reports why it stopped.
 
 Qt's file dialog saves its history to the user's real Qt settings when it is destroyed, and macOS stores those in `~/Library/Preferences/com.qtproject.plist` whatever `HOME` says. The helper keeps every file dialog alive and ends the process with `os._exit` once `app.exec()` returns, after flushing the scratch settings, so no exit-time destructor runs.
 
@@ -47,7 +49,7 @@ Read the screen with `state`, act, then read the reply. Every action replies abo
 
 | Command | What the user does |
 | --- | --- |
-| `state` | Looks at the screen: window title, `modal` dialog (title, labels, fields, buttons, lists), `popup` menu with its `items`, `focus`, `status_bar`, `toolbar` buttons with checked and enabled state, `docks` with their list rows (`text`, `checked`, `selected`), and `mouse_buttons_held`. |
+| `state` | Looks at the screen: window title, `modal` dialog (title, labels, fields, buttons, lists), `popup` menu with its `items`, `focus`, `status_bar`, `toolbar` buttons with checked and enabled state, `docks` with their list rows (`text`, `checked`, `selected`), `mouse_buttons_held`, and `blocked`, the launches and file choices the helper stopped. |
 | `menu` | Opens every menu and reads each item's path, enabled state, checked state, and shortcut. |
 | `action 'Edit > Polygon'` | Chooses a menu bar item. It refuses a disabled item, and any item while a dialog or popup is open, as the menu bar would. |
 | `key Ctrl+S` | Presses a key sequence on the open popup menu or the focused widget. Use Qt names: `Return`, `Escape`, `Delete`, `Ctrl+Z`, `D`. `Ctrl` is Command on macOS, matching the app's shortcuts. |
@@ -57,11 +59,11 @@ Read the screen with `state`, act, then read the reply. Every action replies abo
 | `click-canvas 120 80` | Clicks the canvas at image pixel (120, 80), whatever the zoom. Add `--double` or `--modifier shift`. `--button right` opens the context menu of the shape under the point, or the canvas menu on empty space. |
 | `drag-canvas 300 90 320 110` | Presses at one image pixel, moves, and releases at another. |
 | `wait --status Saved --no-dialog` | Polls `state` until every condition holds: `--title`, `--status`, `--dialog <title>`, `--no-dialog`, `--file <path>`, `--image-loaded`. The default timeout is 10 s. |
-| `screenshot 01-name.png` | Saves the top dialog, or the main window with `--window main`, to `evidence/`. |
+| `screenshot 01-name.png` | Saves the top dialog, or the main window with `--window main`, to `evidence/`. The name is relative to `evidence/`. |
 
 Before each input the helper does what the OS would. It releases a mouse button that a modal dialog swallowed the release of, and it reactivates the top window, because the offscreen platform has no window manager to do it. Without that, a double-click that opens a dialog leaves Left held, and the next canvas move drags whatever shape is selected.
 
-A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, or disabled. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true}`.
+A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, disabled, or behind an open dialog or popup, as the real input would be. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true}`.
 
 The feature map in [`features/README.md`](features/README.md) has the recipe for each user-facing feature. Read the feature's file before you drive it.
 
@@ -88,6 +90,6 @@ It refuses a directory without `run.json`. It kills only the PID this run starte
 - zsh passes `"300 100"` as one argument. Write coordinates as separate words.
 - Canvas coordinates are image pixels. Read a shape's points from its annotation file, or from the image size in the file, to aim a click.
 - Auto save is on by default, so each change writes `<image>.json` next to the image. Pass `--no-auto-save` to test explicit saves and the unsaved-changes dialog.
-- File > Open File and Open Folder show Qt's own file dialog offscreen. `type` the absolute path into its focused field and press `Return`.
+- File > Open File and Open Folder show Qt's own file dialog offscreen. `type` the absolute path into its focused field and press `Return`. On macOS, type the path `realpath` prints: a `/var/folders/...` path, which goes through a symlink, left the dialog open and empty in testing.
 - Because the process ends with `os._exit`, Python finalization and C++ destructors never run. A bug that shows only during interpreter shutdown will not appear here, so check it with the e2e tests or a plain `labelme` run.
 - AI-Segment and AI-Find All download models into the scratch `HOME` on first use, which takes minutes and needs network access. The feature map does not cover them yet.

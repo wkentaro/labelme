@@ -6,6 +6,7 @@ import re
 import secrets
 import sys
 import traceback
+import webbrowser
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -50,6 +51,7 @@ RUN_FILE: Final = "run.json"
 SEARCH_ROOT_KEEPALIVE: Final[list[QtWidgets.QWidget]] = []
 SCRATCH_SETTINGS: Final[list[QtCore.QSettings]] = []
 UNDESTROYED_FILE_DIALOGS: Final[list[QtWidgets.QFileDialog]] = []
+BLOCKED: Final[list[str]] = []
 
 
 class CtlError(Exception):
@@ -98,7 +100,7 @@ def _image_loaded() -> bool:
 def _row_text(*, view: QtWidgets.QAbstractItemView, index: QtCore.QModelIndex) -> str:
     text = index.data(Qt.ItemDataRole.DisplayRole)
     if text is not None:
-        return _plain(value=text)
+        return str(text)
     widget = view.indexWidget(index)
     if widget is None:
         return ""
@@ -285,6 +287,7 @@ def _state() -> dict[str, Any]:
         },
         "image_loaded": _image_loaded(),
         "mouse_buttons_held": [b.name for b in _held_buttons()],
+        "blocked": list(BLOCKED),
         "modal": _describe(root=modal) if modal else None,
         "popup": _describe(root=popup) if popup else None,
         "focus": _focus_info(),
@@ -535,8 +538,16 @@ def _plan_click(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     )
 
 
+def _require_reachable(*, widget: QtWidgets.QWidget) -> None:
+    root = _search_root()
+    if widget.window() is not root.window():
+        name = root.windowTitle() or type(root).__name__
+        raise CtlError(f"{name!r} is open and blocks this input; close it first")
+
+
 def _plan_pick(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     view = _find_view(name=req["list"])
+    _require_reachable(widget=view)
     index = _find_row(view=view, text=req["text"])
     view.scrollTo(index)
     viewport = view.viewport()
@@ -554,6 +565,7 @@ def _plan_pick(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
 
 def _plan_click_canvas(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     canvas = _canvas()
+    _require_reachable(widget=canvas)
     pos = _canvas_pos(x=req["x"], y=req["y"])
     button = BUTTONS[req.get("button", "left")]
     modifier = MODIFIERS[req.get("modifier")]
@@ -570,6 +582,7 @@ def _plan_click_canvas(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]
 
 def _plan_drag_canvas(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     canvas = _canvas()
+    _require_reachable(widget=canvas)
     start = _canvas_pos(x=req["x1"], y=req["y1"])
     end = _canvas_pos(x=req["x2"], y=req["y2"])
     button = BUTTONS[req.get("button", "left")]
@@ -743,6 +756,7 @@ def _isolate_window_state(*, home: Path) -> None:
 
 def _run_file_dialog(
     *,
+    run_dir: Path,
     parent: QtWidgets.QWidget | None,
     caption: str,
     directory: str,
@@ -760,10 +774,13 @@ def _run_file_dialog(
     chosen = (files[0], dialog.selectedNameFilter()) if files else ("", "")
     dialog.setParent(None)
     UNDESTROYED_FILE_DIALOGS.append(dialog)
+    if chosen[0] and not Path(chosen[0]).resolve().is_relative_to(run_dir):
+        BLOCKED.append(f"{caption}: {chosen[0]} is outside {run_dir}")
+        return ("", "")
     return chosen
 
 
-def _isolate_file_dialog_state() -> None:
+def _isolate_file_dialog_state(*, run_dir: Path) -> None:
     file_dialog = QtWidgets.QFileDialog
     no_options = file_dialog.Option(0)
 
@@ -775,6 +792,7 @@ def _isolate_file_dialog_state() -> None:
         options: QtWidgets.QFileDialog.Option = no_options,
     ) -> tuple[str, str]:
         return _run_file_dialog(
+            run_dir=run_dir,
             parent=parent,
             caption=caption,
             directory=dir,
@@ -792,6 +810,7 @@ def _isolate_file_dialog_state() -> None:
         options: QtWidgets.QFileDialog.Option = no_options,
     ) -> tuple[str, str]:
         return _run_file_dialog(
+            run_dir=run_dir,
             parent=parent,
             caption=caption,
             directory=dir,
@@ -808,6 +827,7 @@ def _isolate_file_dialog_state() -> None:
         options: QtWidgets.QFileDialog.Option = file_dialog.Option.ShowDirsOnly,
     ) -> str:
         directory, _ = _run_file_dialog(
+            run_dir=run_dir,
             parent=parent,
             caption=caption,
             directory=dir,
@@ -823,11 +843,20 @@ def _isolate_file_dialog_state() -> None:
     setattr(file_dialog, "getExistingDirectory", staticmethod(get_existing_directory))
 
 
+def _block_external_launches() -> None:
+    def record_url(url: str, *_: object, **__: object) -> bool:  # noqa: GR013 -- labelme calls webbrowser.open(url)
+        BLOCKED.append(f"open {url}")
+        return True
+
+    setattr(webbrowser, "open", record_url)
+
+
 def serve(*, run_dir: Path, size: str, labelme_args: list[str]) -> None:
     if labelme_args[:1] == ["--"]:
         labelme_args = labelme_args[1:]
     _isolate_window_state(home=run_dir / "home")
-    _isolate_file_dialog_state()
+    _isolate_file_dialog_state(run_dir=run_dir.resolve())
+    _block_external_launches()
     original_exec = QtWidgets.QApplication.exec
     controllers: list[Controller] = []
 

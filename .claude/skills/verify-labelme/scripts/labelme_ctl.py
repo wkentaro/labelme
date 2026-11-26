@@ -8,6 +8,7 @@ import secrets
 import shutil
 import signal
 import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -20,6 +21,8 @@ from typing import Final
 RUN_ENV: Final = "LABELME_VERIFY_RUN"
 SERVE_MARKER: Final = "labelme_ctl.py"
 RUN_FILE: Final = "run.json"
+RUN_TOOL: Final = "verify-labelme"
+RUN_FILE_MODE: Final = 0o600
 VALUED_OPTIONS: Final = frozenset(
     {
         "--logger-level",
@@ -54,9 +57,23 @@ def _run_dir(*, args: argparse.Namespace) -> Path:
     if not value:
         sys.exit(f"pass --run-dir or set {RUN_ENV}")
     run_dir = Path(value).resolve()
-    if not (run_dir / RUN_FILE).exists():
-        sys.exit(f"{run_dir} has no {RUN_FILE}, so `launch` did not make it")
+    if not _made_by_launch(run_dir=run_dir):
+        sys.exit(f"{run_dir} has no private {RUN_FILE} from `launch`; leaving it alone")
     return run_dir
+
+
+def _made_by_launch(*, run_dir: Path) -> bool:
+    run_file = run_dir / RUN_FILE
+    if not run_file.is_file():
+        return False
+    info = run_file.stat()
+    if info.st_uid != os.getuid() or stat.S_IMODE(info.st_mode) != RUN_FILE_MODE:
+        return False
+    try:
+        marker = json.loads(run_file.read_text())
+    except (OSError, ValueError):
+        return False
+    return isinstance(marker, dict) and marker.get("tool") == RUN_TOOL
 
 
 def _claim_run_dir(*, requested: str | None) -> Path:
@@ -65,15 +82,26 @@ def _claim_run_dir(*, requested: str | None) -> Path:
     else:
         run_dir = Path(requested).resolve()
         if run_dir.exists() and any(run_dir.iterdir()):
-            if not (run_dir / RUN_FILE).exists():
+            if not _made_by_launch(run_dir=run_dir):
                 sys.exit(f"{run_dir} is not empty and `launch` did not make it")
         run_dir.mkdir(parents=True, exist_ok=True)
     if (run_dir / "instance.json").exists():
         sys.exit(f"{run_dir} already holds an instance; clean it up or pick another")
     run_file = run_dir / RUN_FILE
-    run_file.touch(mode=0o600)
-    run_file.write_text(json.dumps({"token": secrets.token_hex(16)}))
+    run_file.touch(mode=RUN_FILE_MODE)
+    run_file.chmod(RUN_FILE_MODE)
+    marker = {"tool": RUN_TOOL, "token": secrets.token_hex(16)}
+    run_file.write_text(json.dumps(marker))
     return run_dir
+
+
+def _names_option(*, arg: str, options: frozenset[str]) -> bool:
+    name = arg.partition("=")[0]
+    return (
+        name.startswith("--")
+        and len(name) > len("--")
+        and any(option.startswith(name) for option in options)
+    )
 
 
 def _paths_outside(
@@ -83,22 +111,23 @@ def _paths_outside(
     previous = ""
     for arg in labelme_args:
         option, _, value = arg.partition("=")
-        if value and option in WRITTEN_OPTIONS:
+        if value and _names_option(arg=option, options=WRITTEN_OPTIONS):
             previous, arg = option, value
+        written = _names_option(arg=previous, options=WRITTEN_OPTIONS)
         path = (checkout / arg).resolve()
-        if (path.exists() or previous in WRITTEN_OPTIONS) and not path.is_relative_to(
-            run_dir
-        ):
+        if (path.exists() or written) and not path.is_relative_to(run_dir):
             outside.append(arg)
         previous = arg
     return outside
 
 
-def _opens_a_path(*, checkout: Path, labelme_args: list[str]) -> bool:
+def _opened_path(*, checkout: Path, labelme_args: list[str]) -> Path | None:
     if not labelme_args or not (checkout / labelme_args[-1]).exists():
-        return False
+        return None
     previous = labelme_args[-2:-1]
-    return not previous or previous[0] not in VALUED_OPTIONS
+    if previous and _names_option(arg=previous[0], options=VALUED_OPTIONS):
+        return None
+    return checkout / labelme_args[-1]
 
 
 def _pid_alive(*, pid: int) -> bool:
@@ -149,8 +178,25 @@ def _request(
     return reply["result"]
 
 
+def _image_list_rows(*, state: dict[str, Any]) -> int:
+    return sum(
+        len(view["rows"])
+        for dock in state["docks"]
+        if dock["title"] == "Image List"
+        for view in dock.get("lists", [])
+    )
+
+
+def _settled(*, state: dict[str, Any], opened: Path | None) -> bool:
+    if not state["main_window"]["visible"]:
+        return False
+    if opened is None or state["image_loaded"]:
+        return True
+    return opened.is_dir() and _image_list_rows(state=state) == 0
+
+
 def _wait_until_ready(
-    *, proc: subprocess.Popen, run_dir: Path, want_image: bool, timeout: float
+    *, proc: subprocess.Popen, run_dir: Path, opened: Path | None, timeout: float
 ) -> dict[str, Any]:
     log = run_dir / "evidence" / "labelme.log"
     cleanup = f"run `labelme_ctl.py cleanup --run-dir {run_dir}`"
@@ -163,9 +209,7 @@ def _wait_until_ready(
         time.sleep(0.1)
     while True:
         state = _request(run_dir=run_dir, payload={"cmd": "state"})
-        if state["main_window"]["visible"] and (
-            state["image_loaded"] or not want_image
-        ):
+        if _settled(state=state, opened=opened):
             return state
         if time.monotonic() > deadline:
             sys.exit(f"not ready after {timeout}s, {cleanup}: {json.dumps(state)}")
@@ -228,7 +272,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     state = _wait_until_ready(
         proc=proc,
         run_dir=run_dir,
-        want_image=_opens_a_path(checkout=checkout, labelme_args=labelme_args),
+        opened=_opened_path(checkout=checkout, labelme_args=labelme_args),
         timeout=args.timeout,
     )
     _print(
@@ -303,9 +347,10 @@ def cmd_forward(*, args: argparse.Namespace) -> None:
 
 def cmd_screenshot(*, args: argparse.Namespace) -> None:
     run_dir = _run_dir(args=args)
-    path = Path(args.name)
-    if not path.is_absolute():
-        path = run_dir / "evidence" / path
+    evidence = run_dir / "evidence"
+    path = (evidence / args.name).resolve()
+    if not path.is_relative_to(evidence.resolve()):
+        sys.exit(f"screenshots go under {evidence}; pass a relative name")
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {"cmd": "screenshot", "path": str(path), "window": args.window}
     _print(result=_request(run_dir=run_dir, payload=payload))
