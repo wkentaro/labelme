@@ -42,9 +42,25 @@ def img_qt_to_pil(*, img_qt: QtGui.QImage) -> PIL.Image.Image:
 
 
 def display_image(*, image: QtGui.QImage) -> QtGui.QImage:
-    if image.format() == QtGui.QImage.Format.Format_Grayscale16:
+    if image.format() != QtGui.QImage.Format.Format_Grayscale16:
+        return image
+    width, height = image.width(), image.height()
+    levels = np.frombuffer(image.constBits(), dtype=np.uint16).reshape(
+        height, image.bytesPerLine() // 2
+    )[:, :width]
+    low, high = int(levels.min()), int(levels.max())
+    if low == high:
         return image.convertToFormat(QtGui.QImage.Format.Format_Grayscale8)
-    return image
+    lut = np.zeros(2**16, dtype=np.uint8)
+    lut[low : high + 1] = (
+        (np.arange(low, high + 1) - low) / (high - low) * 255
+    ).astype(np.uint8)
+    shown = QtGui.QImage(width, height, QtGui.QImage.Format.Format_Grayscale8)
+    shown_rows = np.frombuffer(shown.bits(), dtype=np.uint8).reshape(
+        height, shown.bytesPerLine()
+    )
+    shown_rows[:, :width] = lut[levels]
+    return shown
 
 
 class ImageDecodeRequirement(NamedTuple):
