@@ -72,7 +72,7 @@ Input goes to the open popup menu, else the top dialog, modal or not, such as Se
 
 Before each input the helper does what the OS would. It releases a mouse button that a modal dialog swallowed the release of, and it reactivates the top window, because the offscreen platform has no window manager to do it. Without that, a double-click that opens a dialog leaves Left held, and the next canvas move drags whatever shape is selected.
 
-A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, disabled, or behind an open dialog or popup, as the real input would be. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true, "exit_code": 0}`.
+A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, disabled, or behind an open dialog or popup, as the real input would be. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true, "exit_code": 0}`. Input after the keystroke that closes labelme is dropped, and the reply carries `"exited": true`.
 
 ## Evidence
 
