@@ -66,6 +66,11 @@ class Ctl:
         )
         return Reply(code=proc.returncode, body=json.loads(proc.stdout))
 
+    def ok(self, command: str, /, *args: str, run: Run) -> dict[str, Any]:
+        reply = self(command, *args, run=run)
+        assert reply.code == 0, reply.body
+        return reply.body
+
     def launch_reply(
         self,
         *labelme_args: str,
