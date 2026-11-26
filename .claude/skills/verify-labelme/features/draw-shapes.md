@@ -30,6 +30,8 @@ Steps:
 - **Name it.** Run `$CTL type cat`, then `$CTL key Return`. The dialog closes, the Shape List has a row `cat`, the status bar shows `Saved`, and the `2011_000003.jpg` row in the Image List is `checked`.
 - **Check the file.** Run `$CTL wait --file "$LABELME_VERIFY_RUN/data/2011_000003.json" --no-dialog`. The file has one shape with `label` `cat`, `shape_type` `polygon`, and three points within a pixel of (100, 100), (300, 100), and (300, 250). Copy it to `evidence/`.
 - **Rectangle by shortcut.** Run `$CTL key Ctrl+R`, `$CTL click-canvas 20 200`, and `$CTL click-canvas 60 320`. The label dialog opens. Run `$CTL type box` and `$CTL key Return`. The file gains a `rectangle` shape `box` with points (20, 200) and (60, 320).
+- **Rectangle ending on the image edge.** Run `$CTL click-canvas 430 258` and `$CTL click-canvas 500 338`, then `$CTL type corner` and `$CTL key Return`. The file gains `corner` with points within a pixel of (430, 258) and (500, 338).
+- **Square with Shift.** Run `$CTL click-canvas 100 100` and `$CTL click-canvas 200 160 --modifier shift`, then `$CTL type square` and `$CTL key Return`. The file gains `square` with points within a pixel of (100, 100) and (160, 160).
 - **Cancel.** Run `$CTL key Ctrl+N`, `$CTL click-canvas 200 20`, `$CTL click-canvas 240 20`, and `$CTL key Escape`. The status bar returns to `Polygon • Click to add point`, and the file gains no shape.
 - **Proof.** Run `$CTL screenshot 03-saved.png --window main`. The canvas shows the outlined shapes and the Shape List lists them.
 
