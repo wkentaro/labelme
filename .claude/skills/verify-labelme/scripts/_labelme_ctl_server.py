@@ -483,25 +483,32 @@ def _canvas_pos(*, x: float, y: float) -> QPoint:
     origin = canvas.transform_image_point_to_widget(point=QPointF(0, 0))
     corner = canvas.transform_image_point_to_widget(point=QPointF(width, height))
     visible = canvas.visibleRegion().boundingRect()
-    pixel = QPoint(
-        _clamp(
-            value=point.x(),
-            low=max(visible.left(), math.ceil(origin.x())),
-            high=min(visible.right(), math.floor(corner.x())),
-        ),
-        _clamp(
-            value=point.y(),
-            low=max(visible.top(), math.ceil(origin.y())),
-            high=min(visible.bottom(), math.floor(corner.y())),
-        ),
+    column = _visible_pixel(
+        value=point.x(),
+        image=(origin.x(), corner.x()),
+        view=(visible.left(), visible.right()),
     )
-    if abs(pixel.x() - point.x()) > 1 or abs(pixel.y() - point.y()) > 1:
+    row = _visible_pixel(
+        value=point.y(),
+        image=(origin.y(), corner.y()),
+        view=(visible.top(), visible.bottom()),
+    )
+    if column is None or row is None:
         raise CtlError(f"({x}, {y}) is not visible on the canvas; scroll or zoom")
-    return pixel
+    return QPoint(column, row)
 
 
-def _clamp(*, value: float, low: int, high: int) -> int:
-    return min(max(round(value), low), high)
+def _visible_pixel(
+    *, value: float, image: tuple[float, float], view: tuple[int, int]
+) -> int | None:
+    image_low, image_high = math.ceil(image[0]), math.floor(image[1])
+    view_low, view_high = view
+    pixel = min(max(round(value), image_low), image_high)
+    if pixel < view_low and image_low >= view_low - 1:
+        return view_low
+    if pixel > view_high and image_high <= view_high + 1:
+        return view_high
+    return pixel if view_low <= pixel <= view_high else None
 
 
 def _send_move(
