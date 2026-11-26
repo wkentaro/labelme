@@ -22,8 +22,8 @@ export LABELME_VERIFY_RUN=<run_dir from the output>
 - `--checkout` is the tree to run. Launch starts that tree's `.venv/bin/python`, so run `uv sync --frozen` in the tree first. That sync builds the tree outside the sandbox, so run it only on a tree you trust. To compare base and head, make a worktree for each, sync each, and launch one instance per tree.
 - `--seed` copies sample data into `<run_dir>/data`: `raw` (three images, no annotations, the default), `annotated` (the same images with five, three, and two shapes), `tutorial` (`examples/tutorial`), or `none`.
 - The scratch `.labelmerc` sets the UI language to `en_US`, and the window is 1280x800.
-- Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. labelme can read any path but write only inside the run dir, so copy a file you want to edit into `<run_dir>/data` first. A save outside shows `Save failed` in the status bar.
-- Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas or the folder's Image List is known to be empty. It also returns when a dialog opens first, such as the error for an image that cannot be read. Its output carries `image_loaded` and `dialog`, so check both before driving. The default timeout is 120 s.
+- Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. labelme can read any path but write only inside the run dir, so copy a file you want to edit into `<run_dir>/data` first.
+- Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas or the folder's Image List is known to be empty. It also returns when a dialog opens first, such as the error for an image that cannot be read. Its output carries `image_loaded` and `dialog`, so check both first. If labelme exits before then, such as on a bad flag, launch exits 1 with `exited: true` and its `exit_code`. The default timeout is 120 s.
 
 Each launch gets a fresh run dir from `mktemp`, so instances never share state, and two or more can run side by side. A `LABELME_VERIFY_RUN` already set does not change that. `--run-dir` picks the directory instead. It must be new, empty, or made by an earlier launch and cleaned up since. Launch refuses one that still holds `home`, `data`, or `tmp`, or whose `evidence` is a symlink. It makes those three fresh, and it replaces each file it writes in the run dir and `evidence/` instead of writing through a link left at that name. Inside the run dir:
 
@@ -33,7 +33,7 @@ Each launch gets a fresh run dir from `mktemp`, so instances never share state, 
 - `run.json` marks the directory as made by `launch` and holds the token every request sends. The control port rejects a request without it, so keep the run dir private.
 - `sandbox.sb` is the macOS sandbox profile labelme runs under, and `tmp/` is its `TMPDIR`.
 
-The sandbox denies every file write outside the run dir and every write to the user's preferences, so no file dialog, Save As, or link inside `data/` can change the user's files or `~/Library/Preferences`. A denied write fails with `Operation not permitted`, and labelme shows its own error. Help > Tutorial's browser and Settings' `Open config file as text` editor open nothing, and each appends a line to `state.blocked`, so a journey that needs one of them reports why it stopped. The sandbox blocks writes only. labelme can still read any file and reach the network, so it keeps a trusted tree from damaging files, not a hostile tree from leaking them.
+The sandbox denies every file write outside the run dir and every write to the user's preferences, so no file dialog, Save As, or link inside `data/` can change the user's files or `~/Library/Preferences`. A denied write fails with `Operation not permitted`, and labelme shows its own error. The sandbox blocks writes only. labelme can still read any file and reach the network, so it keeps a trusted tree from damaging files, not a hostile tree from leaking them.
 
 ## Doctor
 
@@ -41,17 +41,17 @@ The sandbox denies every file write outside the run dir and every write to the u
 $CTL doctor
 ```
 
-Run it right after launch and whenever a reply looks wrong. It exits 0 and prints `"healthy": true` only when the PID is the one this run started, the control port answers from that PID, `labelme` imports from the checkout, `HOME` and the window state sit in the run's `home/`, the platform is `offscreen`, a write outside the run dir fails, and no uncaught exception has reached labelme's crash handler. An error dialog the app shows on purpose, such as a file that cannot be opened, does not make it unhealthy. `checkout_head` and `checkout_dirty` record which tree you are driving. `checkout_dirty` is true when the tree has uncommitted changes or untracked files. Any other result exits 1 with `"ok": false`, `"healthy": false`, an `error`, and the report fields it gathered. When labelme answered, `problems` lists each failed check. When labelme exited, `exit_code` holds its code. Drive only an instance whose doctor is healthy.
+Run it right after launch and whenever a reply looks wrong. It exits 0 and prints `"healthy": true` only when the PID is the one this run started, the control port answers from that PID, `labelme` imports from the checkout, `HOME` and the window state sit in the run's `home/`, the platform is `offscreen`, a write outside the run dir fails, and no uncaught exception has reached labelme's crash handler. An error dialog the app shows on purpose, such as a file that cannot be opened, does not make it unhealthy. `checkout_head` and `checkout_dirty` record which tree you are driving. `checkout_dirty` is true when the tree has uncommitted changes or untracked files. Any other result exits 1 with `"ok": false`, `"healthy": false`, an `error`, and the report fields it gathered. When labelme answered, `problems` lists each failed check. Drive only an instance whose doctor is healthy.
 
 ## Observe
 
 | Command | What it reads |
 | --- | --- |
 | `state` | The window title, the top `dialog` (title, `modal`, labels, fields, buttons, lists), `popup` menu with its `items`, `focus`, `status_bar`, `toolbar` buttons with checked and enabled state, `docks` with their list rows (`text`, `checked`, `selected`), `mouse_buttons_held`, and `blocked`, the launches the helper stopped. |
-| `wait --status Saved --no-dialog` | Polls `state` until every condition holds: `--status`, `--no-dialog`, `--file <path>`. It fails within its timeout, 10 s by default, even when labelme stops answering, and fails with `exit_code` when labelme exits first. |
+| `wait --status Saved --no-dialog` | Polls `state` until every condition holds: `--status`, `--no-dialog`, `--file <path>`, where a relative path starts from the current directory. It fails within its timeout, 10 s by default, even when labelme stops answering. |
 | `screenshot 01-name.png` | Saves the top dialog, or the main window with `--window main`, to `evidence/`. The name is relative to `evidence/`, and a file already at that name is replaced. |
 
-If labelme exits cleanly, the next `state` or `screenshot` replies `{"exited": true, "exit_code": 0}`, and `wait` and `doctor` fail with that `exit_code`. If labelme dies without exiting, such as on a Qt abort, the command exits 1 with `labelme crashed without exiting`, and the cause is in `evidence/labelme.log`.
+If labelme dies without exiting, such as on a Qt abort, the next command exits 1 with `labelme crashed without exiting`, and the cause is in `evidence/labelme.log`.
 
 ## Evidence
 
@@ -61,7 +61,7 @@ A proof has three parts.
 - The side effect on disk: read the annotation file the app wrote under `data/`, and copy it into `evidence/` before cleanup. A `Saved` status alone does not prove the file holds the right shapes.
 - A second view of the state: reopen the file, move to the next image and back, or relaunch on the same data, and confirm the shapes return.
 
-Drive the path a user takes: menus, shortcuts, toolbar buttons, list rows, and canvas clicks. Leave the app's Python objects alone. Offscreen rendering uses the Fusion style, so screenshots prove behavior and layout but not the native macOS or Windows look. For native-look screenshots, follow `docs/agents/gui-driving.md`.
+Leave the app's Python objects alone. Offscreen rendering uses the Fusion style, so screenshots prove behavior and layout but not the native macOS or Windows look. For native-look screenshots, follow `docs/agents/gui-driving.md`.
 
 ## Cleanup
 
