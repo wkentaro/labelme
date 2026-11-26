@@ -529,14 +529,12 @@ def _canvas_pos(*, x: float, y: float) -> QPoint:
 def _visible_pixel(
     *, value: float, image: tuple[float, float], view: tuple[int, int]
 ) -> int | None:
-    image_low, image_high = math.ceil(image[0]), math.floor(image[1])
     view_low, view_high = view
-    pixel = min(max(round(value), image_low), image_high)
-    if pixel < view_low and image_low >= view_low - 1:
-        return view_low
-    if pixel > view_high and image_high <= view_high + 1:
-        return view_high
-    return pixel if view_low <= pixel <= view_high else None
+    if value < view_low:
+        return view_low if image[0] >= view_low - 1 else None
+    if value > view_high:
+        return view_high if image[1] <= view_high + 1 else None
+    return min(max(round(value), math.ceil(image[0])), math.floor(image[1]))
 
 
 def _send_move(

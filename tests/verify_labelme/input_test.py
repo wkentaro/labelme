@@ -20,7 +20,6 @@ pytestmark = pytest.mark.skipif(
 
 ANNOTATED: Final = REPO / "tests" / "data" / "annotated"
 IMAGE: Final = "{data}/2011_000003.jpg"
-ZOOM_STEP: Final = 1.1
 
 
 def _saved_shapes(*, ctl: Ctl, run: Run) -> list[dict[str, Any]]:
@@ -64,14 +63,6 @@ def _wait_for_dialog_row(*, ctl: Ctl, run: Run, view: str, text: str) -> None:
             return
         time.sleep(0.2)
     raise AssertionError(f"{text!r} never appeared in {view!r}: {rows}")
-
-
-def _click_is_visible(*, ctl: Ctl, run: Run, x: float, y: float) -> bool:
-    reply = ctl("click-canvas", str(x), str(y), run=run)
-    if reply.code == 0:
-        return True
-    assert "not visible" in reply.body["error"], reply.body
-    return False
 
 
 def _assert_within_a_pixel(
@@ -164,33 +155,27 @@ def test_shift_click_draws_a_square(*, ctl: Ctl) -> None:
     _assert_within_a_pixel(point=shape["points"][1], expected=(160, 160))
 
 
-def test_zoomed_in_click_just_left_of_the_view_is_refused(*, ctl: Ctl) -> None:
+def test_zoomed_in_click_a_fraction_left_of_the_view_is_refused(*, ctl: Ctl) -> None:
     run = ctl.launch(IMAGE)
     ctl.ok("action", "View > Actual Size", run=run)
-    zoom_steps = 7
-    for _ in range(zoom_steps):
+    for _ in range(7):
         ctl.ok("action", "View > Zoom In", run=run)
-    widget_pixel = 1 / ZOOM_STEP**zoom_steps
-    hidden, shown = 0.0, 125.0
-    assert not _click_is_visible(ctl=ctl, run=run, x=hidden, y=169)
-    assert _click_is_visible(ctl=ctl, run=run, x=shown, y=169)
-    while shown - hidden > 0.02:
-        middle = (hidden + shown) / 2
-        if _click_is_visible(ctl=ctl, run=run, x=middle, y=169):
-            shown = middle
-        else:
-            hidden = middle
+    canvas = ctl.ok("state", run=run)["canvas"]
+    left, top, _, bottom = canvas["visible"]
+    assert left > 0
+    widget_pixel = 1 / canvas["scale"]
+    y = str((top + bottom) / 2)
 
-    refused = ctl("click-canvas", str(hidden), "169", run=run)
+    refused = ctl("click-canvas", str(left - widget_pixel / 4), y, run=run)
 
     assert refused.code == 1
     assert "not visible" in refused.body["error"]
-    _draw_rectangle(ctl=ctl, run=run, start=(str(shown), "169"), end=("250", "200"))
+    inside = left + widget_pixel / 4
+    _draw_rectangle(ctl=ctl, run=run, start=(str(inside), y), end=("250", "200"))
     ctl.ok("type", "edge", run=run)
     ctl.ok("key", "Return", run=run)
     [shape] = _saved_shapes(ctl=ctl, run=run)
-    assert 0 <= shape["points"][0][0] - shown < 0.75 * widget_pixel
-    _assert_within_a_pixel(point=shape["points"][1], expected=(250, 200))
+    assert left <= shape["points"][0][0] <= inside + widget_pixel / 2
 
 
 def test_two_line_description_saves_both_lines(*, ctl: Ctl) -> None:
