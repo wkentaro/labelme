@@ -545,11 +545,22 @@ def _activate_top_window() -> None:
         app.processEvents(QtCore.QEventLoop.ProcessEventsFlag.AllEvents, 50)
 
 
-def _type_text(*, target: QtWidgets.QWidget, text: str) -> None:
-    for number, line in enumerate(text.split("\n")):
-        if number:
-            QTest.keyClick(target, Qt.Key.Key_Return)
-        QTest.keyClicks(target, line)
+def _type_steps(*, text: str) -> list[Callable[[], None]]:
+    def target() -> QtWidgets.QWidget:
+        _activate_top_window()
+        return _focus_target()
+
+    def type_line(line: str) -> Callable[[], None]:
+        return lambda: QTest.keyClicks(target(), line)
+
+    def press_return() -> None:
+        QTest.keyClick(target(), Qt.Key.Key_Return)
+
+    first, *rest = text.split("\n")
+    steps = [type_line(first)]
+    for line in rest:
+        steps += [press_return, type_line(line)]
+    return steps
 
 
 def _plan_key(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
@@ -663,14 +674,14 @@ def _plan_drag_canvas(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     return f"drag canvas from image {span}", drag
 
 
-def _plan_input(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
+def _plan_input(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
     _release_held_buttons()
     _activate_top_window()
     cmd = req.get("cmd")
     if cmd == "action":
         if _search_root() is not _main_window():
             raise CtlError("a dialog or popup blocks the menu bar; close it first")
-        return f"menu {req['path']}", _find_action(path=req["path"]).trigger
+        return f"menu {req['path']}", [_find_action(path=req["path"]).trigger]
     if cmd == "type":
         controls = {
             c for c in req["text"] if c != "\n" and unicodedata.category(c) == "Cc"
@@ -682,10 +693,7 @@ def _plan_input(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
         if not req["text"].isascii():
             raise CtlError("cannot type non-ASCII text")
         target = _focus_target()
-        return (
-            f"type into {type(target).__name__}",
-            lambda: _type_text(target=target, text=req["text"]),
-        )
+        return f"type into {type(target).__name__}", _type_steps(text=req["text"])
     planners = {
         "key": _plan_key,
         "click": _plan_click,
@@ -695,7 +703,8 @@ def _plan_input(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     }
     if cmd not in planners:
         raise CtlError(f"unknown command {cmd!r}")
-    return planners[cmd](req=req)
+    description, run = planners[cmd](req=req)
+    return description, [run]
 
 
 def _screenshot(*, req: dict[str, Any]) -> dict[str, Any]:
@@ -853,23 +862,32 @@ class Controller(QtCore.QObject):
             result = observers[req["cmd"]]()
             self._reply(sock=sock, payload={"ok": True, "result": result})
             return
-        description, run = _plan_input(req=req)
+        description, steps = _plan_input(req=req)
         errors: list[str] = []
+        settle = QtCore.QTimer(sock)
+        settle.setSingleShot(True)
 
-        def guarded() -> None:
+        def run_next() -> None:
+            if not steps:
+                return
+            settle.start(SETTLE_MS)
             try:
-                run()
+                steps.pop(0)()
             except Exception:
                 errors.append(traceback.format_exc())
+                steps.clear()
+                return
+            QtCore.QTimer.singleShot(0, self, run_next)
 
         def answer() -> None:
+            steps.clear()
             result = {"did": description, "state": _state()}
             error = errors[0] if errors else None
             payload = {"ok": not errors, "result": result, "error": error}
             self._reply(sock=sock, payload=payload)
 
-        QtCore.QTimer.singleShot(0, self, guarded)
-        QtCore.QTimer.singleShot(SETTLE_MS, sock, answer)
+        settle.timeout.connect(answer)
+        QtCore.QTimer.singleShot(0, self, run_next)
 
 
 def _isolate_window_state(*, home: Path) -> None:
