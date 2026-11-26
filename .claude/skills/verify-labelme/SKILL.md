@@ -74,7 +74,7 @@ The helper sends each mouse press, move, and release as its own event through Qt
 
 A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, disabled, or behind an open dialog or popup, as the real input would be. `click` and `pick` also fail, and send nothing, when the point they aim at would reach another widget or row, such as a target scrolled out of view or covered by another widget. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true, "exit_code": 0}`. Input after the keystroke that closes labelme is dropped, and the reply carries `"exited": true`.
 
-The feature map in [`features/README.md`](features/README.md) has the recipe for each user-facing feature. Read the feature's file before you drive it.
+The feature map in [`features/README.md`](features/README.md) has recipes for the features it lists. Read a listed feature's file before you drive it. Some features, such as Settings, are not mapped yet, so drive those with the commands above.
 
 ## Evidence
 
