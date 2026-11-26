@@ -353,7 +353,11 @@ def test_shutdown_drops_what_the_thread_reports_after_it(
     sink = _osam_worker.logger.add(logged.append, level="ERROR")
     threads_before = set(threading.enumerate())
     worker = OsamWorker()
-    thread = next(t for t in threading.enumerate() if t not in threads_before)
+    [thread] = [
+        t
+        for t in threading.enumerate()
+        if t not in threads_before and t.name == "osam-worker"
+    ]
     try:
         worker.submit(
             channel="x", job="running", request=_request(model_name=model_name)
@@ -361,13 +365,11 @@ def test_shutdown_drops_what_the_thread_reports_after_it(
         qtbot.waitUntil(lambda: worker.stage == stage, timeout=_WAIT_MS)
         if unload:
             worker.unload(model_name=model_name)
-
+    finally:
         worker.shutdown()
-        shiboken6.delete(worker)  # as the window deletes it on quitting
+        shiboken6.delete(worker)
         release.set()
         thread.join(timeout=_WAIT_MS / 1000)
-    finally:
-        release.set()
         _osam_worker.logger.remove(sink)
 
     assert not thread.is_alive()
