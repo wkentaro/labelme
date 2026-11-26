@@ -7,6 +7,7 @@ import math
 from typing import NamedTuple
 
 import numpy as np
+import PIL.Image
 from numpy.typing import NDArray
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -21,6 +22,29 @@ def img_qt_to_arr(*, img_qt: QtGui.QImage) -> NDArray[np.uint8]:
         (h, img_qt.bytesPerLine())
     )
     return rows[:, : w * channels].reshape((h, w, channels))
+
+
+def img_qt_to_pil(*, img_qt: QtGui.QImage) -> PIL.Image.Image:
+    mode, image_format = (
+        ("RGBA", QtGui.QImage.Format.Format_RGBA8888)
+        if img_qt.hasAlphaChannel()
+        else ("RGB", QtGui.QImage.Format.Format_RGB888)
+    )
+    converted = img_qt.convertToFormat(image_format)
+    return PIL.Image.frombytes(
+        mode,
+        (converted.width(), converted.height()),
+        converted.constBits(),
+        "raw",
+        mode,
+        converted.bytesPerLine(),
+    )
+
+
+def display_image(*, image: QtGui.QImage) -> QtGui.QImage:
+    if image.format() == QtGui.QImage.Format.Format_Grayscale16:
+        return image.convertToFormat(QtGui.QImage.Format.Format_Grayscale8)
+    return image
 
 
 class ImageDecodeRequirement(NamedTuple):

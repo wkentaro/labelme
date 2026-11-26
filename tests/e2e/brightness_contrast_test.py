@@ -118,6 +118,29 @@ def test_restore_defaults_shows_a_16bit_image_as_it_opened(
     close_or_pause(qtbot=qtbot, widget=win, pause=pause)
 
 
+def test_restore_defaults_keeps_transparency(
+    *,
+    main_win: MainWinFactory,
+    qtbot: QtBot,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    image_path = tmp_path / "translucent.png"
+    rgba = np.zeros((3, 5, 4), dtype=np.uint8)
+    rgba[..., :3] = (100, 150, 200)
+    rgba[..., 3] = np.arange(15, dtype=np.uint8).reshape(3, 5) * 18
+    PIL.Image.fromarray(rgba).save(image_path)
+    win = main_win(file_or_dir=image_path)
+    show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
+    opened = canvas_pixels(win=win)
+
+    _brighten_then_restore_defaults(win=win)
+
+    np.testing.assert_array_equal(canvas_pixels(win=win), opened)
+
+    close_or_pause(qtbot=qtbot, widget=win, pause=pause)
+
+
 def test_kept_neutral_brightness_contrast_shows_the_next_16bit_image_as_is(
     *,
     main_win: MainWinFactory,
