@@ -228,6 +228,21 @@ def test_grayscale_tiff_float32(*, tmp_path: Path) -> None:
         assert image.size == (64, 64)
 
 
+@pytest.mark.parametrize(
+    ("level", "gray"), [(128, 0), (129, 1), (32768, 128), (65535, 255)]
+)
+def test_flat_uint16_grayscale_tiff_keeps_gray_level(
+    *, tmp_path: Path, level: int, gray: int
+) -> None:
+    path = tmp_path / "flat.tif"
+    PIL.Image.new("I;16", (8, 8), level).save(path)
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.getextrema() == (gray, gray)
+
+
 def test_constant_value_tiff_returns_black(*, tmp_path: Path) -> None:
     arr = np.full((64, 64), 42.0, dtype=np.float32)
     path = tmp_path / "constant.tif"

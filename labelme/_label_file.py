@@ -655,7 +655,9 @@ def _imread_tiff(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image
         img_arr = np.moveaxis(img_arr, 0, -1)
 
     if img_arr.ndim == _SINGLE_CHANNEL_NDIM:
-        img_arr_normalized = _normalize_to_uint8(arr=img_arr)
+        img_arr_normalized = _normalize_to_uint8(
+            arr=img_arr, preserve_flat_gray16=img_arr.dtype == np.uint16
+        )
     elif img_arr.ndim == MULTI_CHANNEL_NDIM:
         if img_arr.shape[2] >= RGB_CHANNEL_COUNT:
             img_arr_normalized = np.stack(
@@ -673,7 +675,9 @@ def _imread_tiff(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image
     return PIL.Image.fromarray(img_arr_normalized)
 
 
-def _normalize_to_uint8(*, arr: NDArray) -> NDArray[np.uint8]:
+def _normalize_to_uint8(
+    *, arr: NDArray, preserve_flat_gray16: bool = False
+) -> NDArray[np.uint8]:
     arr = arr.astype(np.float64)
     finite = arr[np.isfinite(arr)]
     if finite.size == 0:
@@ -681,7 +685,9 @@ def _normalize_to_uint8(*, arr: NDArray) -> NDArray[np.uint8]:
     min_val = finite.min()
     max_val = finite.max()
     if max_val - min_val == 0:
-        return np.zeros(arr.shape, dtype=np.uint8)
+        # Match display_image's conversion of a flat Grayscale16 image.
+        gray = round(min_val / 257) if preserve_flat_gray16 else 0
+        return np.full(arr.shape, gray, dtype=np.uint8)
     normalized = (arr - min_val) / (max_val - min_val) * 255
     bounded = np.nan_to_num(np.clip(normalized, 0, 255), nan=0.0)
     return bounded.astype(np.uint8)
