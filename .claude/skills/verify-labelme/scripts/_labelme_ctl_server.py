@@ -317,21 +317,36 @@ def _dialog_info(*, dialog: QtWidgets.QWidget) -> dict[str, Any]:
     return {**_describe(root=dialog), "modal": dialog.isModal()}
 
 
+class Clickable(NamedTuple):
+    image: tuple[float, float, float, float]
+    pixels: QtCore.QRect
+
+
+def _clickable(*, canvas: Canvas) -> Clickable:
+    width, height = canvas.pixmap.width(), canvas.pixmap.height()
+    view = canvas.visibleRegion().boundingRect()
+    origin = canvas.transform_image_point_to_widget(point=QPointF(0, 0))
+    corner = canvas.transform_image_point_to_widget(point=QPointF(width, height))
+    low = canvas.transform_widget_point_to_image(point=QPointF(view.topLeft()))
+    high = canvas.transform_widget_point_to_image(point=QPointF(view.bottomRight()))
+    image = (
+        0 if origin.x() >= view.left() - 1 else low.x(),
+        0 if origin.y() >= view.top() - 1 else low.y(),
+        width if corner.x() <= view.right() + 1 else high.x(),
+        height if corner.y() <= view.bottom() + 1 else high.y(),
+    )
+    inside_image = QtCore.QRect(
+        QPoint(math.ceil(origin.x()), math.ceil(origin.y())),
+        QPoint(math.floor(corner.x()), math.floor(corner.y())),
+    )
+    return Clickable(image=image, pixels=inside_image.intersected(view))
+
+
 def _canvas_info(*, win: MainWindow) -> dict[str, Any] | None:
     if not _image_loaded(win=win):
         return None
     canvas = win.findChildren(Canvas)[0]
-    view = canvas.visibleRegion().boundingRect()
-    low = canvas.transform_widget_point_to_image(point=QPointF(view.topLeft()))
-    high = canvas.transform_widget_point_to_image(point=QPointF(view.bottomRight()))
-    width, height = canvas.pixmap.width(), canvas.pixmap.height()
-    visible = [
-        max(low.x(), 0),
-        max(low.y(), 0),
-        min(high.x(), width),
-        min(high.y(), height),
-    ]
-    return {"scale": canvas.scale, "visible": visible}
+    return {"scale": canvas.scale, "visible": list(_clickable(canvas=canvas).image)}
 
 
 def _state() -> dict[str, Any]:
@@ -507,34 +522,16 @@ def _canvas_pos(*, x: float, y: float) -> QPoint:
     width, height = pixmap.width(), pixmap.height()
     if not (0 <= x <= width and 0 <= y <= height):
         raise CtlError(f"({x}, {y}) is outside the {width}x{height} image")
-    point = canvas.transform_image_point_to_widget(point=QPointF(x, y))
-    origin = canvas.transform_image_point_to_widget(point=QPointF(0, 0))
-    corner = canvas.transform_image_point_to_widget(point=QPointF(width, height))
-    visible = canvas.visibleRegion().boundingRect()
-    column = _visible_pixel(
-        value=point.x(),
-        image=(origin.x(), corner.x()),
-        view=(visible.left(), visible.right()),
-    )
-    row = _visible_pixel(
-        value=point.y(),
-        image=(origin.y(), corner.y()),
-        view=(visible.top(), visible.bottom()),
-    )
-    if column is None or row is None:
+    clickable = _clickable(canvas=canvas)
+    left, top, right, bottom = clickable.image
+    if not (left <= x <= right and top <= y <= bottom):
         raise CtlError(f"({x}, {y}) is not visible on the canvas; scroll or zoom")
-    return QPoint(column, row)
-
-
-def _visible_pixel(
-    *, value: float, image: tuple[float, float], view: tuple[int, int]
-) -> int | None:
-    view_low, view_high = view
-    if value < view_low:
-        return view_low if image[0] >= view_low - 1 else None
-    if value > view_high:
-        return view_high if image[1] <= view_high + 1 else None
-    return min(max(round(value), math.ceil(image[0])), math.floor(image[1]))
+    point = canvas.transform_image_point_to_widget(point=QPointF(x, y))
+    pixels = clickable.pixels
+    return QPoint(
+        min(max(round(point.x()), pixels.left()), pixels.right()),
+        min(max(round(point.y()), pixels.top()), pixels.bottom()),
+    )
 
 
 def _send_move(

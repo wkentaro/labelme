@@ -71,6 +71,20 @@ def _assert_within_a_pixel(
     assert point == pytest.approx(expected, abs=1)
 
 
+def _assert_visible(*, point: list[float], canvas: dict[str, Any]) -> None:
+    left, top, right, bottom = canvas["visible"]
+    assert left <= point[0] <= right, (point, canvas)
+    assert top <= point[1] <= bottom, (point, canvas)
+
+
+def _zoom_in(*, ctl: Ctl, run: Run, steps: int) -> dict[str, Any]:
+    if steps:
+        ctl.ok("action", "View > Actual Size", run=run)
+    for _ in range(steps):
+        ctl.ok("action", "View > Zoom In", run=run)
+    return ctl.ok("state", run=run)["canvas"]
+
+
 def test_save_outside_the_run_dir_fails_and_keeps_the_file(
     *, ctl: Ctl, tmp_path: Path
 ) -> None:
@@ -129,6 +143,8 @@ def test_rectangle_from_inside_to_an_image_edge_saves_its_corner(
     *, ctl: Ctl, end: tuple[int, int]
 ) -> None:
     run = ctl.launch(IMAGE)
+    canvas = ctl.ok("state", run=run)["canvas"]
+    _assert_visible(point=list(end), canvas=canvas)
 
     _draw_rectangle(
         ctl=ctl, run=run, start=("430", "258"), end=(str(end[0]), str(end[1]))
@@ -139,6 +155,7 @@ def test_rectangle_from_inside_to_an_image_edge_saves_its_corner(
     [shape] = _saved_shapes(ctl=ctl, run=run)
     _assert_within_a_pixel(point=shape["points"][0], expected=(430, 258))
     _assert_within_a_pixel(point=shape["points"][1], expected=end)
+    _assert_visible(point=shape["points"][1], canvas=canvas)
 
 
 def test_shift_click_draws_a_square(*, ctl: Ctl) -> None:
@@ -153,6 +170,43 @@ def test_shift_click_draws_a_square(*, ctl: Ctl) -> None:
     [shape] = _saved_shapes(ctl=ctl, run=run)
     _assert_within_a_pixel(point=shape["points"][0], expected=(100, 100))
     _assert_within_a_pixel(point=shape["points"][1], expected=(160, 160))
+
+
+@pytest.mark.parametrize("zoom_ins", [0, 9], ids=["default", "zoomed_in"])
+def test_rectangle_between_the_visible_bounds_saves_inside_them(
+    *, ctl: Ctl, zoom_ins: int
+) -> None:
+    run = ctl.launch(IMAGE)
+    canvas = _zoom_in(ctl=ctl, run=run, steps=zoom_ins)
+    left, top, right, bottom = (str(bound) for bound in canvas["visible"])
+
+    _draw_rectangle(ctl=ctl, run=run, start=(left, top), end=(right, bottom))
+    ctl.ok("type", "bounds", run=run)
+    ctl.ok("key", "Return", run=run)
+
+    [shape] = _saved_shapes(ctl=ctl, run=run)
+    for point in shape["points"]:
+        _assert_visible(point=point, canvas=canvas)
+
+
+@pytest.mark.parametrize("zoom_ins", [0, 9], ids=["default", "zoomed_in"])
+def test_click_a_fraction_beyond_a_visible_bound_is_refused(
+    *, ctl: Ctl, zoom_ins: int
+) -> None:
+    run = ctl.launch(IMAGE)
+    canvas = _zoom_in(ctl=ctl, run=run, steps=zoom_ins)
+    left, top, right, bottom = canvas["visible"]
+    nudge = 1 / canvas["scale"] / 4
+    x, y = (left + right) / 2, (top + bottom) / 2
+
+    for beyond in (
+        (left - nudge, y),
+        (right + nudge, y),
+        (x, top - nudge),
+        (x, bottom + nudge),
+    ):
+        refused = ctl("click-canvas", *(str(value) for value in beyond), run=run)
+        assert refused.code == 1, (beyond, canvas, refused.body)
 
 
 def test_zoomed_in_click_a_fraction_left_of_the_view_is_refused(*, ctl: Ctl) -> None:
