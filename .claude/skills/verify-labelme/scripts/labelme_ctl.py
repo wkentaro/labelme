@@ -256,7 +256,10 @@ def _wait_until_ready(
     deadline = time.monotonic() + timeout
     while not (run_dir / "instance.json").exists():
         if proc.poll() is not None:
-            raise CtlFailure(f"labelme exited with {proc.returncode}; see {log}")
+            raise CtlFailure(
+                f"labelme exited with {proc.returncode}; see {log}",
+                details={"exited": True, "exit_code": proc.returncode},
+            )
         if time.monotonic() > deadline:
             raise CtlFailure(
                 f"no control port after {timeout}s; see {log}, then {cleanup}"

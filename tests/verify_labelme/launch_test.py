@@ -311,6 +311,16 @@ def test_relaunch_refuses_a_leftover_subdir_and_writes_nothing_outside(
     assert reply.code == 1
     assert reply.body["ok"] is False
 
+
+def test_launch_reports_when_labelme_exits_before_its_control_port(*, ctl: Ctl) -> None:
+    reply = ctl.launch_reply("--no-such-flag")
+
+    assert reply.code == 1
+    assert reply.body["ok"] is False
+    assert reply.body["exited"] is True
+    assert reply.body["exit_code"] == 2
+
+
 def test_screenshot_over_a_hard_link_leaves_its_target_unchanged(
     *, ctl: Ctl, tmp_path: Path
 ) -> None:
