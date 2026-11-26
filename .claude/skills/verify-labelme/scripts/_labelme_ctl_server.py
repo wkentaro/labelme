@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import secrets
@@ -468,7 +469,20 @@ def _canvas_pos(*, x: float, y: float) -> QPoint:
     if not (0 <= x <= width and 0 <= y <= height):
         raise CtlError(f"({x}, {y}) is outside the {width}x{height} image")
     point = canvas.transform_image_point_to_widget(point=QPointF(x, y))
-    return QPoint(round(point.x()), round(point.y()))
+    for pixel in _nearest_pixels(point=point):
+        landed = canvas.transform_widget_point_to_image(point=QPointF(pixel))
+        if not canvas.is_out_of_pixmap(p=landed):
+            return pixel
+    raise CtlError(f"no screen pixel lands on image pixel ({x}, {y})")
+
+
+def _nearest_pixels(*, point: QPointF) -> list[QPoint]:
+    xs = {math.floor(point.x()), math.ceil(point.x())}
+    ys = {math.floor(point.y()), math.ceil(point.y())}
+    return sorted(
+        (QPoint(px, py) for px in xs for py in ys),
+        key=lambda p: (p.x() - point.x()) ** 2 + (p.y() - point.y()) ** 2,
+    )
 
 
 def _move_holding(
