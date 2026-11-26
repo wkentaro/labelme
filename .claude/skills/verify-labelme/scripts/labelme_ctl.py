@@ -193,7 +193,7 @@ def _image_list_rows(*, state: dict[str, Any]) -> int:
 
 
 def _settled(*, state: dict[str, Any], opened: Path | None) -> bool:
-    if state["modal"] is not None:
+    if state["dialog"] is not None:
         return True
     if not state["main_window"]["visible"]:
         return False
@@ -291,7 +291,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
             "evidence": str(evidence),
             "title": state["main_window"]["title"],
             "image_loaded": state["image_loaded"],
-            "modal": state["modal"],
+            "dialog": state["dialog"],
         }
     )
 
@@ -316,7 +316,10 @@ def _problems(*, info: dict[str, Any], run_dir: Path, pid: int) -> list[str]:
             info["window_state_file"].startswith(home),
             "window state is not stored in the scratch home",
         ),
-        (not info["crash_dialog"], f"crash dialog is open: {info['crash_dialog']}"),
+        (
+            not info["uncaught_exception"],
+            f"labelme hit an uncaught exception: {info['uncaught_exception']}",
+        ),
         (info["platform"] == "offscreen", "not running offscreen"),
     ]
     return [message for ok, message in checks if not ok]
@@ -366,16 +369,16 @@ def cmd_screenshot(*, args: argparse.Namespace) -> None:
 
 
 def _conditions_hold(*, args: argparse.Namespace, state: dict[str, Any]) -> bool:
-    modal = state["modal"]
+    dialog = state["dialog"]
     checks = []
     if args.title:
         checks.append(args.title in state["main_window"]["title"])
     if args.status:
         checks.append(args.status in " ".join(state["status_bar"]))
     if args.dialog:
-        checks.append(modal is not None and args.dialog in modal["title"])
+        checks.append(dialog is not None and args.dialog in dialog["title"])
     if args.no_dialog:
-        checks.append(modal is None)
+        checks.append(dialog is None)
     if args.file:
         checks.append(Path(args.file).exists())
     if args.image_loaded:

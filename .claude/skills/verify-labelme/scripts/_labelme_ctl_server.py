@@ -24,6 +24,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
 
 import labelme
+from labelme import __main__ as labelme_entry
 from labelme import _app as labelme_app
 from labelme.__main__ import main as labelme_main
 from labelme._app import MainWindow
@@ -50,10 +51,12 @@ CLICKABLE: Final = (
 )
 
 RUN_FILE: Final = "run.json"
+MAX_REQUEST_BYTES: Final = 1 << 20
 SEARCH_ROOT_KEEPALIVE: Final[list[QtWidgets.QWidget]] = []
 SCRATCH_SETTINGS: Final[list[QtCore.QSettings]] = []
 UNDESTROYED_FILE_DIALOGS: Final[list[QtWidgets.QFileDialog]] = []
 BLOCKED: Final[list[str]] = []
+UNCAUGHT: Final[list[str]] = []
 
 
 class CtlError(Exception):
@@ -80,11 +83,18 @@ def _visible(*, widget: QtWidgets.QWidget) -> bool:
     return widget.isVisible() and widget.width() > 0 and widget.height() > 0
 
 
-def _main_window() -> MainWindow:
+def _find_main_window() -> MainWindow | None:
     for widget in QtWidgets.QApplication.topLevelWidgets():
         if isinstance(widget, MainWindow):
             return widget
-    raise CtlError("no labelme MainWindow")
+    return None
+
+
+def _main_window() -> MainWindow:
+    win = _find_main_window()
+    if win is None:
+        raise CtlError("no labelme MainWindow")
+    return win
 
 
 def _canvas() -> Canvas:
@@ -94,9 +104,25 @@ def _canvas() -> Canvas:
     return canvases[0]
 
 
-def _image_loaded() -> bool:
-    pixmap = _canvas().pixmap
+def _image_loaded(*, win: MainWindow) -> bool:
+    canvases = win.findChildren(Canvas)
+    pixmap = canvases[0].pixmap if canvases else None
     return pixmap is not None and not pixmap.isNull()
+
+
+def _top_dialog() -> QtWidgets.QWidget | None:
+    app = _app()
+    if modal := app.activeModalWidget():
+        return modal
+    active = app.activeWindow()
+    if isinstance(active, QtWidgets.QDialog) and _visible(widget=active):
+        return active
+    dialogs = [
+        w
+        for w in app.topLevelWidgets()
+        if isinstance(w, QtWidgets.QDialog) and _visible(widget=w)
+    ]
+    return dialogs[-1] if dialogs else None
 
 
 def _row_text(*, view: QtWidgets.QAbstractItemView, index: QtCore.QModelIndex) -> str:
@@ -269,33 +295,37 @@ def _focus_info() -> dict[str, Any] | None:
     }
 
 
+def _dialog_info(*, dialog: QtWidgets.QWidget) -> dict[str, Any]:
+    return {**_describe(root=dialog), "modal": dialog.isModal()}
+
+
 def _state() -> dict[str, Any]:
     app = _app()
-    win = _main_window()
-    modal = app.activeModalWidget()
+    win = _find_main_window()
+    dialog = _top_dialog()
     popup = app.activePopupWidget()
     others = [
         {"title": w.windowTitle(), "class": type(w).__name__}
         for w in app.topLevelWidgets()
         if _visible(widget=w)
-        and w not in (win, modal, popup)
+        and w not in (win, dialog, popup)
         and not isinstance(w, QtWidgets.QMenu)
     ]
     return {
         "main_window": {
-            "title": win.windowTitle(),
-            "visible": win.isVisible(),
-            "size": [win.width(), win.height()],
+            "title": win.windowTitle() if win else "",
+            "visible": win is not None and win.isVisible(),
+            "size": [win.width(), win.height()] if win else [0, 0],
         },
-        "image_loaded": _image_loaded(),
+        "image_loaded": win is not None and _image_loaded(win=win),
         "mouse_buttons_held": [b.name for b in _held_buttons()],
         "blocked": list(BLOCKED),
-        "modal": _describe(root=modal) if modal else None,
+        "dialog": _dialog_info(dialog=dialog) if dialog else None,
         "popup": _describe(root=popup) if popup else None,
         "focus": _focus_info(),
-        "status_bar": _status_bar(win=win),
-        "toolbar": _toolbar(win=win),
-        "docks": [_dock_info(dock=d) for d in _docks()],
+        "status_bar": _status_bar(win=win) if win else [],
+        "toolbar": _toolbar(win=win) if win else [],
+        "docks": [_dock_info(dock=d) for d in _docks()] if win else [],
         "other_windows": others,
     }
 
@@ -357,7 +387,7 @@ def _find_action(*, path: str) -> QtGui.QAction:
 
 def _search_root() -> QtWidgets.QWidget:
     app = _app()
-    root = app.activePopupWidget() or app.activeModalWidget() or _main_window()
+    root = app.activePopupWidget() or _top_dialog() or _main_window()
     SEARCH_ROOT_KEEPALIVE[:] = [root]
     return root
 
@@ -426,7 +456,7 @@ def _focus_target() -> QtWidgets.QWidget:
     return (
         app.activePopupWidget()
         or app.focusWidget()
-        or app.activeModalWidget()
+        or _top_dialog()
         or app.activeWindow()
         or _main_window()
     )
@@ -632,7 +662,7 @@ def _screenshot(*, req: dict[str, Any]) -> dict[str, Any]:
     app = _app()
     target: QtWidgets.QWidget = _main_window()
     if req.get("window") == "active":
-        target = app.activePopupWidget() or app.activeModalWidget() or target
+        target = app.activePopupWidget() or _top_dialog() or target
     path = Path(req["path"])
     if not target.grab().save(str(path)):
         raise CtlError(f"could not write {path}")
@@ -644,15 +674,8 @@ def _screenshot(*, req: dict[str, Any]) -> dict[str, Any]:
 
 
 def _doctor() -> dict[str, Any]:
-    modal = _app().activeModalWidget()
-    crash_dialog = None
-    if (
-        isinstance(modal, QtWidgets.QMessageBox)
-        and modal.icon() == QtWidgets.QMessageBox.Icon.Critical
-    ):
-        crash_dialog = _plain(value=modal.text())
     return {
-        "crash_dialog": crash_dialog,
+        "uncaught_exception": UNCAUGHT[-1] if UNCAUGHT else None,
         "pid": os.getpid(),
         "labelme_version": labelme.__version__,
         "labelme_file": labelme.__file__,
@@ -664,9 +687,19 @@ def _doctor() -> dict[str, Any]:
     }
 
 
+def _parse_request(*, line: bytes) -> dict[str, Any] | None:
+    try:
+        req = json.loads(line)
+    except (ValueError, RecursionError):
+        return None
+    return req if isinstance(req, dict) else None
+
+
 class Controller(QtCore.QObject):
     _server: QtNetwork.QTcpServer
     _token: str
+    _size: QtCore.QSize
+    _sized: bool
 
     def __init__(self, *, run_dir: Path, size: str) -> None:
         super().__init__()
@@ -676,10 +709,8 @@ class Controller(QtCore.QObject):
         if not self._server.listen(QtNetwork.QHostAddress(localhost), 0):
             raise RuntimeError(self._server.errorString())
         self._server.newConnection.connect(self._on_connection)
-        width, height = (int(v) for v in size.split("x"))
-        win = _main_window()
-        win.resize(width, height)
-        win.activateWindow()
+        self._size = QtCore.QSize(*(int(v) for v in size.split("x")))
+        self._sized = False
         instance = {
             "port": self._server.serverPort(),
             "pid": os.getpid(),
@@ -694,13 +725,18 @@ class Controller(QtCore.QObject):
         sock.readyRead.connect(lambda: self._on_ready(sock=sock))
 
     def _on_ready(self, *, sock: QtNetwork.QTcpSocket) -> None:
+        if sock.bytesAvailable() > MAX_REQUEST_BYTES:
+            sock.abort()
+            return
         if not sock.canReadLine():
             return
-        req = json.loads(bytes(sock.readLine().data()).decode())
-        if not secrets.compare_digest(str(req.pop("token", "")), self._token):
-            self._reply(sock=sock, payload={"ok": False, "error": "wrong token"})
+        req = _parse_request(line=bytes(sock.readLine().data()))
+        token = str(req.pop("token", "")).encode() if req else b""
+        if req is None or not secrets.compare_digest(token, self._token.encode()):
+            self._reply(sock=sock, payload={"ok": False, "error": "rejected request"})
             return
         try:
+            self._size_main_window()
             self._handle(sock=sock, req=req)
         except CtlError as e:
             self._reply(sock=sock, payload={"ok": False, "error": str(e)})
@@ -708,6 +744,14 @@ class Controller(QtCore.QObject):
             self._reply(
                 sock=sock, payload={"ok": False, "error": traceback.format_exc()}
             )
+
+    def _size_main_window(self) -> None:
+        win = _find_main_window()
+        if self._sized or win is None or not win.isVisible():
+            return
+        win.resize(self._size)
+        win.activateWindow()
+        self._sized = True
 
     def _reply(self, *, sock: QtNetwork.QTcpSocket, payload: dict[str, Any]) -> None:
         sock.write(json.dumps(payload, ensure_ascii=False).encode() + b"\n")
@@ -860,12 +904,28 @@ def _block_external_launches() -> None:
     setattr(labelme_app, "subprocess", launcher)
 
 
+def _record_uncaught_exceptions() -> None:
+    handle_exception = labelme_entry._handle_exception
+
+    def record(  # noqa: GR013 -- sys.excepthook passes three positional arguments
+        exc_type: type[BaseException],
+        exc_value: BaseException,
+        exc_traceback: types.TracebackType | None,
+        /,
+    ) -> None:
+        UNCAUGHT.append(f"{exc_type.__name__}: {exc_value}")
+        handle_exception(exc_type, exc_value, exc_traceback)
+
+    setattr(labelme_entry, "_handle_exception", record)
+
+
 def serve(*, run_dir: Path, size: str, labelme_args: list[str]) -> None:
     if labelme_args[:1] == ["--"]:
         labelme_args = labelme_args[1:]
     _isolate_window_state(home=run_dir / "home")
     _isolate_file_dialog_state(run_dir=run_dir.resolve())
     _block_external_launches()
+    _record_uncaught_exceptions()
     controllers: list[Controller] = []
 
     class ControlledApplication(QtWidgets.QApplication):

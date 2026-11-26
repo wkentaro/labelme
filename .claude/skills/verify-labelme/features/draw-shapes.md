@@ -26,7 +26,7 @@ Steps:
 
 - **Pick Polygon.** Run `$CTL action 'Edit > Polygon'`. The `Polygon` toolbar button is `checked` and the status bar reads `Polygon • Click to add point`.
 - **Place points.** Run `$CTL click-canvas 100 100`, `$CTL click-canvas 300 100`, and `$CTL click-canvas 300 250`. After the third click the status bar adds `Enter or Space to finalize`. Run `$CTL screenshot 01-drawing.png --window main`.
-- **Close the polygon.** Run `$CTL click-canvas 100 100`. `state.modal.title` is `Shape Label`, the `Label` field is focused and empty, and the `OK` button has `"enabled": false`. Run `$CTL screenshot 02-label-dialog.png`.
+- **Close the polygon.** Run `$CTL click-canvas 100 100`. `state.dialog.title` is `Shape Label`, the `Label` field is focused and empty, and the `OK` button has `"enabled": false`. Run `$CTL screenshot 02-label-dialog.png`.
 - **Name it.** Run `$CTL type cat`, then `$CTL key Return`. The dialog closes, the Shape List has a row `cat`, the status bar shows `Saved`, and the `2011_000003.jpg` row in the Image List is `checked`.
 - **Check the file.** Run `$CTL wait --file "$LABELME_VERIFY_RUN/data/2011_000003.json" --no-dialog`. The file has one shape with `label` `cat`, `shape_type` `polygon`, and three points within a pixel of (100, 100), (300, 100), and (300, 250). Copy it to `evidence/`.
 - **Rectangle by shortcut.** Run `$CTL key Ctrl+R`, `$CTL click-canvas 20 200`, and `$CTL click-canvas 60 320`. The label dialog opens. Run `$CTL type box` and `$CTL key Return`. The file gains a `rectangle` shape `box` with points (20, 200) and (60, 320).

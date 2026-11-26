@@ -22,7 +22,7 @@ export LABELME_VERIFY_RUN=<run_dir from the output>
 - `--seed` copies sample data into `<run_dir>/data`: `raw` (three images, no annotations, the default), `annotated` (the same images with five, three, and two shapes), `tutorial` (`examples/tutorial`), or `none`.
 - `--language` writes the UI language to the scratch `.labelmerc`. It defaults to `en_US`, which the feature map's names assume. Pass `ja_JP` or another code to check a translation.
 - Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. Launch refuses an existing path outside the run dir, and an `--output` or `--config` outside it (abbreviations such as `--out` included), because labelme writes next to what it opens. Copy the user's file into `<run_dir>/data` first.
-- Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas or the folder's Image List is known to be empty. It also returns when a dialog opens first, such as the error for an image that cannot be read. Its output carries `image_loaded` and `modal`, so check both before driving. A cold `uv sync` can take a minute. The default timeout is 120 s.
+- Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas or the folder's Image List is known to be empty. It also returns when a dialog opens first, such as the error for an image that cannot be read. Its output carries `image_loaded` and `dialog`, so check both before driving. A cold `uv sync` can take a minute. The default timeout is 120 s.
 
 Each launch gets a fresh run dir from `mktemp`, so instances never share state, and two or more can run side by side. `--run-dir` picks the directory instead, and it must be new, empty, or made by an earlier launch. Inside the run dir:
 
@@ -41,15 +41,15 @@ Qt's file dialog saves its history to the user's real Qt settings when it is des
 $CTL doctor
 ```
 
-Run it right after launch and whenever a reply looks wrong. It exits 0 and prints `"healthy": true` only when the PID is the one this run started, the control port answers from that PID, `labelme` imports from the checkout, `HOME` and the window state sit in the run's `home/`, the platform is `offscreen`, and no crash dialog is open. `checkout_head` and `checkout_dirty` record which tree you are driving. Drive only an instance whose doctor is healthy.
+Run it right after launch and whenever a reply looks wrong. It exits 0 and prints `"healthy": true` only when the PID is the one this run started, the control port answers from that PID, `labelme` imports from the checkout, `HOME` and the window state sit in the run's `home/`, the platform is `offscreen`, and no uncaught exception has reached labelme's crash handler. An error dialog the app shows on purpose, such as a file that cannot be opened, does not make it unhealthy. `checkout_head` and `checkout_dirty` record which tree you are driving. Drive only an instance whose doctor is healthy.
 
 ## Drive
 
-Read the screen with `state`, act, then read the reply. Every action replies about 300 ms after the input with `{"did": ..., "state": ...}`, so a dialog the action opened is already in `state.modal`.
+Read the screen with `state`, act, then read the reply. Every action replies about 300 ms after the input with `{"did": ..., "state": ...}`, so a dialog the action opened is already in `state.dialog`.
 
 | Command | What the user does |
 | --- | --- |
-| `state` | Looks at the screen: window title, `modal` dialog (title, labels, fields, buttons, lists), `popup` menu with its `items`, `focus`, `status_bar`, `toolbar` buttons with checked and enabled state, `docks` with their list rows (`text`, `checked`, `selected`), `mouse_buttons_held`, and `blocked`, the launches and file choices the helper stopped. |
+| `state` | Looks at the screen: window title, the top `dialog` (title, `modal`, labels, fields, buttons, lists), `popup` menu with its `items`, `focus`, `status_bar`, `toolbar` buttons with checked and enabled state, `docks` with their list rows (`text`, `checked`, `selected`), `mouse_buttons_held`, and `blocked`, the launches and file choices the helper stopped. |
 | `menu` | Opens every menu and reads each item's path, enabled state, checked state, and shortcut. |
 | `action 'Edit > Polygon'` | Chooses a menu bar item. It refuses a disabled item, and any item while a dialog or popup is open, as the menu bar would. |
 | `key Ctrl+S` | Presses a key sequence on the open popup menu or the focused widget. Use Qt names: `Return`, `Escape`, `Delete`, `Ctrl+Z`, `D`. `Ctrl` is Command on macOS, matching the app's shortcuts. |
@@ -60,6 +60,8 @@ Read the screen with `state`, act, then read the reply. Every action replies abo
 | `drag-canvas 300 90 320 110` | Presses at one image pixel, moves, and releases at another. |
 | `wait --status Saved --no-dialog` | Polls `state` until every condition holds: `--title`, `--status`, `--dialog <title>`, `--no-dialog`, `--file <path>`, `--image-loaded`. The default timeout is 10 s. |
 | `screenshot 01-name.png` | Saves the top dialog, or the main window with `--window main`, to `evidence/`. The name is relative to `evidence/`. |
+
+Input goes to the open popup menu, else the top dialog, modal or not, such as Settings, else the main window. Close a dialog to reach the window behind it.
 
 Before each input the helper does what the OS would. It releases a mouse button that a modal dialog swallowed the release of, and it reactivates the top window, because the offscreen platform has no window manager to do it. Without that, a double-click that opens a dialog leaves Left held, and the next canvas move drags whatever shape is selected.
 

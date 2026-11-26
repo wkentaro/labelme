@@ -12,7 +12,7 @@ This directory is the maintained source for verifying labelme's user-facing beha
 
 - Reach features the way a user does: `action` for menu items, `key` for shortcuts, `click` for toolbar and dialog buttons, `pick` for list rows, `click-canvas` and `drag-canvas` for the canvas.
 - Treat names in commands as literal. They match the English UI, which `launch` selects by default with `--language en_US`.
-- Read each action's reply before the next action. When a reply shows an unexpected `modal`, handle or report the dialog before going on.
+- Read each action's reply before the next action. When a reply shows an unexpected `dialog`, handle or report the dialog before going on.
 - Canvas coordinates are image pixels.
 
 ## Proof and skip reporting
