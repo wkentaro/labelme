@@ -3,12 +3,14 @@ from __future__ import annotations
 import json
 import os
 import re
+import secrets
 import sys
 import traceback
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 from typing import Final
+from typing import NoReturn
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -44,7 +46,10 @@ CLICKABLE: Final = (
     QtWidgets.QTextEdit,
 )
 
+RUN_FILE: Final = "run.json"
 SEARCH_ROOT_KEEPALIVE: Final[list[QtWidgets.QWidget]] = []
+SCRATCH_SETTINGS: Final[list[QtCore.QSettings]] = []
+UNDESTROYED_FILE_DIALOGS: Final[list[QtWidgets.QFileDialog]] = []
 
 
 class CtlError(Exception):
@@ -155,8 +160,23 @@ def _field_info(*, widget: QtWidgets.QWidget) -> dict[str, Any] | None:
     return {"name": name, "text": text, "focused": widget.hasFocus()}
 
 
+def _menu_actions(*, menu: QtWidgets.QMenu) -> list[QtGui.QAction]:
+    return [a for a in menu.actions() if not a.isSeparator() and a.isVisible()]
+
+
+def _menu_item(*, action: QtGui.QAction) -> dict[str, Any]:
+    item: dict[str, Any] = {"text": action.text().replace("&", "")}
+    if not action.isEnabled():
+        item["enabled"] = False
+    if action.isCheckable():
+        item["checked"] = action.isChecked()
+    return item
+
+
 def _describe(*, root: QtWidgets.QWidget) -> dict[str, Any]:
     info: dict[str, Any] = {"title": root.windowTitle(), "class": type(root).__name__}
+    if isinstance(root, QtWidgets.QMenu):
+        info["items"] = [_menu_item(action=a) for a in _menu_actions(menu=root)]
     if isinstance(root, QtWidgets.QMessageBox):
         info["text"] = _plain(value=root.text())
         if root.informativeText():
@@ -399,8 +419,8 @@ def _find_row(*, view: QtWidgets.QAbstractItemView, text: str) -> QtCore.QModelI
 def _focus_target() -> QtWidgets.QWidget:
     app = _app()
     return (
-        app.focusWidget()
-        or app.activePopupWidget()
+        app.activePopupWidget()
+        or app.focusWidget()
         or app.activeModalWidget()
         or app.activeWindow()
         or _main_window()
@@ -454,6 +474,20 @@ def _activate_top_window() -> None:
         app.processEvents(QtCore.QEventLoop.ProcessEventsFlag.AllEvents, 50)
 
 
+def _type_text(*, target: QtWidgets.QWidget, text: str) -> None:
+    if text.isascii():
+        QTest.keyClicks(target, text)
+        return
+    for char in text:
+        QTest.sendKeyEvent(
+            QTest.KeyAction.Click,
+            target,
+            Qt.Key.Key_unknown,
+            char,
+            Qt.KeyboardModifier.NoModifier,
+        )
+
+
 def _plan_key(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     sequence = QtGui.QKeySequence(req["sequence"])
     if sequence.isEmpty():
@@ -466,7 +500,29 @@ def _plan_key(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     )
 
 
+def _plan_menu_click(
+    *, menu: QtWidgets.QMenu, name: str
+) -> tuple[str, Callable[[], None]]:
+    matches = [
+        a for a in _menu_actions(menu=menu) if _norm(text=a.text()) == _norm(text=name)
+    ]
+    if len(matches) != 1:
+        raise CtlError(f"{len(matches)} items named {name!r} in the open menu")
+    if not matches[0].isEnabled():
+        raise CtlError(f"{name!r} is disabled")
+    pos = menu.actionGeometry(matches[0]).center()
+    return (
+        f"click menu item {name!r}",
+        lambda: QTest.mouseClick(
+            menu, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier, pos
+        ),
+    )
+
+
 def _plan_click(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
+    root = _search_root()
+    if isinstance(root, QtWidgets.QMenu):
+        return _plan_menu_click(menu=root, name=req["name"])
     widget = _find_clickable(name=req["name"])
     target = (
         widget.viewport()
@@ -536,12 +592,14 @@ def _plan_input(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     _activate_top_window()
     cmd = req["cmd"]
     if cmd == "action":
+        if _search_root() is not _main_window():
+            raise CtlError("a dialog or popup blocks the menu bar; close it first")
         return f"menu {req['path']}", _find_action(path=req["path"]).trigger
     if cmd == "type":
         target = _focus_target()
         return (
             f"type into {type(target).__name__}",
-            lambda: QTest.keyClicks(target, req["text"]),
+            lambda: _type_text(target=target, text=req["text"]),
         )
     planners = {
         "key": _plan_key,
@@ -593,9 +651,11 @@ def _doctor() -> dict[str, Any]:
 
 class Controller(QtCore.QObject):
     _server: QtNetwork.QTcpServer
+    _token: str
 
     def __init__(self, *, run_dir: Path, size: str) -> None:
         super().__init__()
+        self._token = json.loads((run_dir / RUN_FILE).read_text())["token"]
         self._server = QtNetwork.QTcpServer(self)
         localhost = QtNetwork.QHostAddress.SpecialAddress.LocalHost
         if not self._server.listen(QtNetwork.QHostAddress(localhost), 0):
@@ -622,6 +682,9 @@ class Controller(QtCore.QObject):
         if not sock.canReadLine():
             return
         req = json.loads(bytes(sock.readLine().data()).decode())
+        if not secrets.compare_digest(str(req.pop("token", "")), self._token):
+            self._reply(sock=sock, payload={"ok": False, "error": "wrong token"})
+            return
         try:
             self._handle(sock=sock, req=req)
         except CtlError as e:
@@ -673,14 +736,98 @@ def _isolate_window_state(*, home: Path) -> None:
         def __init__(self, organization: str, application: str) -> None:  # noqa: GR013 -- labelme calls QSettings(organization, application)
             path = home / "qtsettings" / f"{organization}-{application}.ini"
             super().__init__(str(path), native.Format.IniFormat)
+            SCRATCH_SETTINGS.append(self)
 
     setattr(QtCore, "QSettings", ScratchSettings)
+
+
+def _run_file_dialog(
+    *,
+    parent: QtWidgets.QWidget | None,
+    caption: str,
+    directory: str,
+    name_filter: str,
+    mode: QtWidgets.QFileDialog.FileMode,
+    accept: QtWidgets.QFileDialog.AcceptMode,
+    options: QtWidgets.QFileDialog.Option,
+) -> tuple[str, str]:
+    dialog = QtWidgets.QFileDialog(parent, caption, directory, name_filter)
+    dialog.setFileMode(mode)
+    dialog.setAcceptMode(accept)
+    dialog.setOptions(options)
+    accepted = dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted
+    files = dialog.selectedFiles() if accepted else []
+    chosen = (files[0], dialog.selectedNameFilter()) if files else ("", "")
+    dialog.setParent(None)
+    UNDESTROYED_FILE_DIALOGS.append(dialog)
+    return chosen
+
+
+def _isolate_file_dialog_state() -> None:
+    file_dialog = QtWidgets.QFileDialog
+    no_options = file_dialog.Option(0)
+
+    def get_open_file_name(  # noqa: GR013 -- labelme passes Qt's positional order
+        parent: QtWidgets.QWidget | None = None,
+        caption: str = "",
+        dir: str = "",
+        filter: str = "",
+        options: QtWidgets.QFileDialog.Option = no_options,
+    ) -> tuple[str, str]:
+        return _run_file_dialog(
+            parent=parent,
+            caption=caption,
+            directory=dir,
+            name_filter=filter,
+            mode=file_dialog.FileMode.ExistingFile,
+            accept=file_dialog.AcceptMode.AcceptOpen,
+            options=options,
+        )
+
+    def get_save_file_name(  # noqa: GR013 -- labelme passes Qt's positional order
+        parent: QtWidgets.QWidget | None = None,
+        caption: str = "",
+        dir: str = "",
+        filter: str = "",
+        options: QtWidgets.QFileDialog.Option = no_options,
+    ) -> tuple[str, str]:
+        return _run_file_dialog(
+            parent=parent,
+            caption=caption,
+            directory=dir,
+            name_filter=filter,
+            mode=file_dialog.FileMode.AnyFile,
+            accept=file_dialog.AcceptMode.AcceptSave,
+            options=options,
+        )
+
+    def get_existing_directory(  # noqa: GR013 -- labelme passes Qt's positional order
+        parent: QtWidgets.QWidget | None = None,
+        caption: str = "",
+        dir: str = "",
+        options: QtWidgets.QFileDialog.Option = file_dialog.Option.ShowDirsOnly,
+    ) -> str:
+        directory, _ = _run_file_dialog(
+            parent=parent,
+            caption=caption,
+            directory=dir,
+            name_filter="",
+            mode=file_dialog.FileMode.Directory,
+            accept=file_dialog.AcceptMode.AcceptOpen,
+            options=options,
+        )
+        return directory
+
+    setattr(file_dialog, "getOpenFileName", staticmethod(get_open_file_name))
+    setattr(file_dialog, "getSaveFileName", staticmethod(get_save_file_name))
+    setattr(file_dialog, "getExistingDirectory", staticmethod(get_existing_directory))
 
 
 def serve(*, run_dir: Path, size: str, labelme_args: list[str]) -> None:
     if labelme_args[:1] == ["--"]:
         labelme_args = labelme_args[1:]
     _isolate_window_state(home=run_dir / "home")
+    _isolate_file_dialog_state()
     original_exec = QtWidgets.QApplication.exec
     controllers: list[Controller] = []
 
@@ -690,4 +837,20 @@ def serve(*, run_dir: Path, size: str, labelme_args: list[str]) -> None:
 
     setattr(QtWidgets.QApplication, "exec", exec_with_control)
     sys.argv = ["labelme", *labelme_args]
-    labelme_main()
+    exit_code: object = 0
+    try:
+        labelme_main()
+    except SystemExit as exit_request:
+        exit_code = exit_request.code
+    _exit_before_destructors(code=exit_code)
+
+
+def _exit_before_destructors(*, code: object) -> NoReturn:
+    for settings in SCRATCH_SETTINGS:
+        settings.sync()
+    if code is not None and not isinstance(code, int):
+        print(code, file=sys.stderr)
+        code = 1
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(code or 0)

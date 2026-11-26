@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import secrets
 import shutil
 import signal
 import socket
@@ -18,6 +19,22 @@ from typing import Final
 
 RUN_ENV: Final = "LABELME_VERIFY_RUN"
 SERVE_MARKER: Final = "labelme_ctl.py"
+RUN_FILE: Final = "run.json"
+VALUED_OPTIONS: Final = frozenset(
+    {
+        "--logger-level",
+        "--output",
+        "--config",
+        "--flags",
+        "--label-flags",
+        "--labelflags",
+        "--labels",
+        "--validate-label",
+        "--validatelabel",
+        "--epsilon",
+    }
+)
+WRITTEN_OPTIONS: Final = frozenset({"--output", "--config"})
 SEEDS: Final = {
     "raw": "tests/data/raw",
     "annotated": "tests/data/annotated",
@@ -36,7 +53,52 @@ def _run_dir(*, args: argparse.Namespace) -> Path:
     value = args.run_dir or os.environ.get(RUN_ENV)
     if not value:
         sys.exit(f"pass --run-dir or set {RUN_ENV}")
-    return Path(value).resolve()
+    run_dir = Path(value).resolve()
+    if not (run_dir / RUN_FILE).exists():
+        sys.exit(f"{run_dir} has no {RUN_FILE}, so `launch` did not make it")
+    return run_dir
+
+
+def _claim_run_dir(*, requested: str | None) -> Path:
+    if requested is None:
+        run_dir = Path(tempfile.mkdtemp(prefix="verify-labelme-")).resolve()
+    else:
+        run_dir = Path(requested).resolve()
+        if run_dir.exists() and any(run_dir.iterdir()):
+            if not (run_dir / RUN_FILE).exists():
+                sys.exit(f"{run_dir} is not empty and `launch` did not make it")
+        run_dir.mkdir(parents=True, exist_ok=True)
+    if (run_dir / "instance.json").exists():
+        sys.exit(f"{run_dir} already holds an instance; clean it up or pick another")
+    run_file = run_dir / RUN_FILE
+    run_file.touch(mode=0o600)
+    run_file.write_text(json.dumps({"token": secrets.token_hex(16)}))
+    return run_dir
+
+
+def _paths_outside(
+    *, run_dir: Path, checkout: Path, labelme_args: list[str]
+) -> list[str]:
+    outside = []
+    previous = ""
+    for arg in labelme_args:
+        option, _, value = arg.partition("=")
+        if value and option in WRITTEN_OPTIONS:
+            previous, arg = option, value
+        path = (checkout / arg).resolve()
+        if (path.exists() or previous in WRITTEN_OPTIONS) and not path.is_relative_to(
+            run_dir
+        ):
+            outside.append(arg)
+        previous = arg
+    return outside
+
+
+def _opens_a_path(*, checkout: Path, labelme_args: list[str]) -> bool:
+    if not labelme_args or not (checkout / labelme_args[-1]).exists():
+        return False
+    previous = labelme_args[-2:-1]
+    return not previous or previous[0] not in VALUED_OPTIONS
 
 
 def _pid_alive(*, pid: int) -> bool:
@@ -64,8 +126,9 @@ def _request(
     *, run_dir: Path, payload: dict[str, Any], timeout: float = 30
 ) -> dict[str, Any]:
     port = _load_instance(run_dir=run_dir)["port"]
+    token = json.loads((run_dir / RUN_FILE).read_text())["token"]
     with socket.create_connection(("127.0.0.1", port), timeout=timeout) as s:
-        s.sendall(json.dumps(payload).encode() + b"\n")
+        s.sendall(json.dumps({**payload, "token": token}).encode() + b"\n")
         buf = b""
         while not buf.endswith(b"\n"):
             chunk = s.recv(1 << 20)
@@ -90,12 +153,13 @@ def _wait_until_ready(
     *, proc: subprocess.Popen, run_dir: Path, want_image: bool, timeout: float
 ) -> dict[str, Any]:
     log = run_dir / "evidence" / "labelme.log"
+    cleanup = f"run `labelme_ctl.py cleanup --run-dir {run_dir}`"
     deadline = time.monotonic() + timeout
     while not (run_dir / "instance.json").exists():
         if proc.poll() is not None:
             sys.exit(f"labelme exited with {proc.returncode}; see {log}")
         if time.monotonic() > deadline:
-            sys.exit(f"no control port after {timeout}s; see {log}")
+            sys.exit(f"no control port after {timeout}s; see {log}, then {cleanup}")
         time.sleep(0.1)
     while True:
         state = _request(run_dir=run_dir, payload={"cmd": "state"})
@@ -104,7 +168,7 @@ def _wait_until_ready(
         ):
             return state
         if time.monotonic() > deadline:
-            sys.exit(f"window not ready after {timeout}s: {json.dumps(state)}")
+            sys.exit(f"not ready after {timeout}s, {cleanup}: {json.dumps(state)}")
         time.sleep(0.2)
 
 
@@ -114,9 +178,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     checkout = Path(args.checkout).resolve()
     if not (checkout / "labelme" / "__main__.py").exists():
         sys.exit(f"not a labelme checkout: {checkout}")
-    run_dir = Path(args.run_dir or tempfile.mkdtemp(prefix="verify-labelme-")).resolve()
-    if (run_dir / "instance.json").exists():
-        sys.exit(f"{run_dir} already holds an instance; clean it up or pick another")
+    run_dir = _claim_run_dir(requested=args.run_dir)
     home, data, evidence = run_dir / "home", run_dir / "data", run_dir / "evidence"
     for directory in (home, data, evidence):
         directory.mkdir(parents=True, exist_ok=True)
@@ -129,6 +191,11 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     labelme_args = [a.replace("{data}", str(data)) for a in args.labelme_args]
     if labelme_args[:1] == ["--"]:
         labelme_args = labelme_args[1:]
+    outside = _paths_outside(
+        run_dir=run_dir, checkout=checkout, labelme_args=labelme_args
+    )
+    if outside:
+        sys.exit(f"labelme may write these, so copy them into {data}: {outside}")
     env = {
         **os.environ,
         "HOME": str(home),
@@ -161,7 +228,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     state = _wait_until_ready(
         proc=proc,
         run_dir=run_dir,
-        want_image=bool(labelme_args) and not labelme_args[-1].startswith("-"),
+        want_image=_opens_a_path(checkout=checkout, labelme_args=labelme_args),
         timeout=args.timeout,
     )
     _print(
@@ -276,10 +343,10 @@ def cmd_wait(*, args: argparse.Namespace) -> None:
         time.sleep(0.1)
 
 
-def _stop(*, pid: int) -> None:
+def _stop(*, pid: int, run_dir: Path) -> None:
     os.kill(pid, signal.SIGTERM)
     for _ in range(50):
-        if not _pid_alive(pid=pid):
+        if not _pid_is_ours(pid=pid, run_dir=run_dir):
             return
         time.sleep(0.1)
     os.kill(pid, signal.SIGKILL)
@@ -292,7 +359,7 @@ def cmd_cleanup(*, args: argparse.Namespace) -> None:
     if pid_file.exists():
         pid = int(pid_file.read_text())
         if _pid_is_ours(pid=pid, run_dir=run_dir):
-            _stop(pid=pid)
+            _stop(pid=pid, run_dir=run_dir)
             killed = True
         pid_file.unlink()
     for name in ("home", "data", "instance.json"):

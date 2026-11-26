@@ -21,14 +21,17 @@ export LABELME_VERIFY_RUN=<run_dir from the output>
 - `--checkout` is the tree to run. Launch runs `uv sync --frozen` there, then starts that tree's `.venv/bin/python`. To compare base and head, make a worktree for each and launch one instance per tree.
 - `--seed` copies sample data into `<run_dir>/data`: `raw` (three images, no annotations, the default), `annotated` (the same images with five, three, and two shapes), `tutorial` (`examples/tutorial`), or `none`.
 - `--language` writes the UI language to the scratch `.labelmerc`. It defaults to `en_US`, which the feature map's names assume. Pass `ja_JP` or another code to check a translation.
-- Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`.
-- Launch returns once the window is visible, and, when the last argument is a path, once an image is on the canvas. A cold `uv sync` can take a minute. The default timeout is 120 s.
+- Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. Launch refuses an existing path outside the run dir, and an `--output` or `--config` outside it, because labelme writes next to what it opens. Copy the user's file into `<run_dir>/data` first.
+- Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas. A cold `uv sync` can take a minute. The default timeout is 120 s.
 
-Each launch gets a fresh run dir from `mktemp`, so instances never share state, and two or more can run side by side. Inside the run dir:
+Each launch gets a fresh run dir from `mktemp`, so instances never share state, and two or more can run side by side. `--run-dir` picks the directory instead, and it must be new, empty, or made by an earlier launch. Inside the run dir:
 
 - `home/` is the process's `HOME`. It holds `.labelmerc`, the log under `.cache/labelme/`, and the window state in `qtsettings/labelme-labelme.ini`. The helper redirects Qt's window state there, because Qt's native store on macOS ignores `HOME` and would overwrite the user's real `~/Library/Preferences/com.labelme.labelme.plist`.
 - `data/` holds the seeded images and the annotation files the app writes.
 - `evidence/` holds `labelme.log` (the process's stdout and stderr) and every screenshot.
+- `run.json` marks the directory as made by `launch` and holds the token every request sends. The control port rejects a request without it, so keep the run dir private.
+
+Qt's file dialog saves its history to the user's real Qt settings when it is destroyed, and macOS stores those in `~/Library/Preferences/com.qtproject.plist` whatever `HOME` says. The helper keeps every file dialog alive and ends the process with `os._exit` once `app.exec()` returns, after flushing the scratch settings, so no exit-time destructor runs.
 
 ## Doctor
 
@@ -44,14 +47,14 @@ Read the screen with `state`, act, then read the reply. Every action replies abo
 
 | Command | What the user does |
 | --- | --- |
-| `state` | Looks at the screen: window title, `modal` dialog (title, labels, fields, buttons, lists), `focus`, `status_bar`, `toolbar` buttons with checked and enabled state, `docks` with their list rows (`text`, `checked`, `selected`), and `mouse_buttons_held`. |
+| `state` | Looks at the screen: window title, `modal` dialog (title, labels, fields, buttons, lists), `popup` menu with its `items`, `focus`, `status_bar`, `toolbar` buttons with checked and enabled state, `docks` with their list rows (`text`, `checked`, `selected`), and `mouse_buttons_held`. |
 | `menu` | Opens every menu and reads each item's path, enabled state, checked state, and shortcut. |
-| `action 'Edit > Polygon'` | Chooses a menu item. It refuses a disabled item, as the menu would. |
-| `key Ctrl+S` | Presses a key sequence on the focused widget. Use Qt names: `Return`, `Escape`, `Delete`, `Ctrl+Z`, `D`. `Ctrl` is Command on macOS, matching the app's shortcuts. |
-| `type 'cat'` | Types text into the focused widget. |
-| `click 'Save'` | Clicks a button or a text field in the top dialog, or in the main window when no dialog is open. It matches visible text, tooltip, accessible name, or placeholder, such as `'Next'`, `'OK'`, `'Discard'`, or `'Search Filename'`. |
+| `action 'Edit > Polygon'` | Chooses a menu bar item. It refuses a disabled item, and any item while a dialog or popup is open, as the menu bar would. |
+| `key Ctrl+S` | Presses a key sequence on the open popup menu or the focused widget. Use Qt names: `Return`, `Escape`, `Delete`, `Ctrl+Z`, `D`. `Ctrl` is Command on macOS, matching the app's shortcuts. |
+| `type 'cat'` | Types text into the focused widget, non-ASCII text such as `猫` included. |
+| `click 'Save'` | Clicks a button or a text field in the top dialog, or in the main window when no dialog is open. It matches visible text, tooltip, accessible name, or placeholder, such as `'Next'`, `'OK'`, `'Discard'`, or `'Search Filename'`. With a context menu open, it clicks the item with that text, such as `'Delete Shapes'`. |
 | `pick 'Shape List' blue_block` | Clicks a row in a dock list (`Shape List`, `Label List`, `Image List`) or a dialog list. Add `--double` to double-click, or `--modifier ctrl` to add to the selection. |
-| `click-canvas 120 80` | Clicks the canvas at image pixel (120, 80), whatever the zoom. Add `--button right`, `--double`, or `--modifier shift`. |
+| `click-canvas 120 80` | Clicks the canvas at image pixel (120, 80), whatever the zoom. Add `--double` or `--modifier shift`. `--button right` opens the context menu of the shape under the point, or the canvas menu on empty space. |
 | `drag-canvas 300 90 320 110` | Presses at one image pixel, moves, and releases at another. |
 | `wait --status Saved --no-dialog` | Polls `state` until every condition holds: `--title`, `--status`, `--dialog <title>`, `--no-dialog`, `--file <path>`, `--image-loaded`. The default timeout is 10 s. |
 | `screenshot 01-name.png` | Saves the top dialog, or the main window with `--window main`, to `evidence/`. |
@@ -78,7 +81,7 @@ Drive the path a user takes: menus, shortcuts, toolbar buttons, list rows, and c
 $CTL cleanup
 ```
 
-It kills only the PID this run started, after checking that its command line names this run dir. Then it deletes `home/`, `data/`, and `instance.json`, and keeps `evidence/`. Report the evidence path, `<run_dir>/evidence`, with the verdict. Run cleanup after every run, failed runs included. If `doctor` reports a PID that is not ours, leave that process alone.
+It refuses a directory without `run.json`. It kills only the PID this run started, after checking that its command line names this run dir. Then it deletes `home/`, `data/`, and `instance.json`, and keeps `evidence/`. Report the evidence path, `<run_dir>/evidence`, with the verdict. Run cleanup after every run, failed runs included. If `doctor` reports a PID that is not ours, leave that process alone.
 
 ## Gotchas
 
@@ -86,4 +89,5 @@ It kills only the PID this run started, after checking that its command line nam
 - Canvas coordinates are image pixels. Read a shape's points from its annotation file, or from the image size in the file, to aim a click.
 - Auto save is on by default, so each change writes `<image>.json` next to the image. Pass `--no-auto-save` to test explicit saves and the unsaved-changes dialog.
 - File > Open File and Open Folder show Qt's own file dialog offscreen. `type` the absolute path into its focused field and press `Return`.
+- Because the process ends with `os._exit`, Python finalization and C++ destructors never run. A bug that shows only during interpreter shutdown will not appear here, so check it with the e2e tests or a plain `labelme` run.
 - AI-Segment and AI-Find All download models into the scratch `HOME` on first use, which takes minutes and needs network access. The feature map does not cover them yet.
