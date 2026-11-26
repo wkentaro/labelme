@@ -15,6 +15,7 @@ import pytest
 
 from .conftest import REPO
 from .conftest import Ctl
+from .conftest import Reply
 from .conftest import Run
 
 pytestmark = pytest.mark.skipif(
@@ -337,24 +338,34 @@ def test_screenshot_over_a_hard_link_leaves_its_target_unchanged(
     assert shot.read_bytes().startswith(b"\x89PNG")
 
 
-def test_doctor_reports_problems_and_leaves_the_checkout_index_alone(
-    *, ctl: Ctl, tmp_path: Path
-) -> None:
+def _scratch_checkout(*, tmp_path: Path) -> Path:
     checkout = tmp_path / "checkout"
     entry = checkout / "labelme" / "__main__.py"
     entry.parent.mkdir(parents=True)
     entry.touch()
     (checkout / ".venv").symlink_to(REPO / ".venv")
     _git(checkout=checkout, args=["init", "--quiet"])
+    (checkout / ".git" / "info" / "exclude").write_text(".venv\n")
     _git(checkout=checkout, args=["add", "labelme"])
     _git(checkout=checkout, args=["commit", "--quiet", "--message", "seed"])
-    os.utime(entry, (0, 0))
-    index = checkout / ".git" / "index"
-    before = index.read_bytes()
+    return checkout
+
+
+def _doctor_on(*, ctl: Ctl, checkout: Path) -> Reply:
     launch = ctl.launch_reply(seed="none", checkout=checkout)
     assert launch.code == 0, launch.body
+    return ctl("doctor", run=Run(run_dir=Path(launch.body["run_dir"]), launch={}))
 
-    reply = ctl("doctor", run=Run(run_dir=Path(launch.body["run_dir"]), launch={}))
+
+def test_doctor_reports_problems_and_leaves_the_checkout_index_alone(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    checkout = _scratch_checkout(tmp_path=tmp_path)
+    os.utime(checkout / "labelme" / "__main__.py", (0, 0))
+    index = checkout / ".git" / "index"
+    before = index.read_bytes()
+
+    reply = _doctor_on(ctl=ctl, checkout=checkout)
 
     assert reply.code == 1
     assert reply.body["ok"] is False
@@ -363,3 +374,12 @@ def test_doctor_reports_problems_and_leaves_the_checkout_index_alone(
     assert "labelme imported from outside the checkout" in reply.body["error"]
     assert reply.body["checkout_dirty"] is False
     assert index.read_bytes() == before
+
+
+def test_doctor_counts_an_untracked_file_as_dirty(*, ctl: Ctl, tmp_path: Path) -> None:
+    checkout = _scratch_checkout(tmp_path=tmp_path)
+    (checkout / "labelme" / "_untracked.py").touch()
+
+    reply = _doctor_on(ctl=ctl, checkout=checkout)
+
+    assert reply.body["checkout_dirty"] is True
