@@ -18,6 +18,7 @@ $CTL launch --checkout . --seed annotated -- '{data}'
 export LABELME_VERIFY_RUN=<run_dir from the output>
 ```
 
+- The output's `export` line quotes the path, so `eval` it when the path has spaces.
 - `--checkout` is the tree to run. Launch starts that tree's `.venv/bin/python`, so run `uv sync --frozen` in the tree first. That sync builds the tree outside the sandbox, so run it only on a tree you trust. To compare base and head, make a worktree for each, sync each, and launch one instance per tree.
 - `--seed` copies sample data into `<run_dir>/data`: `raw` (three images, no annotations, the default), `annotated` (the same images with five, three, and two shapes), `tutorial` (`examples/tutorial`), or `none`.
 - `--language` writes the UI language to the scratch `.labelmerc`. It defaults to `en_US`, which the feature map's names assume. Pass `ja_JP` or another code to check a translation.

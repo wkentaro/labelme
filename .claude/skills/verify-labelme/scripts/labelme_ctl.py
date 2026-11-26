@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import secrets
+import shlex
 import shutil
 import signal
 import socket
@@ -287,7 +288,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     _print(
         result={
             "run_dir": str(run_dir),
-            "export": f"export {RUN_ENV}={run_dir}",
+            "export": f"export {RUN_ENV}={shlex.quote(str(run_dir))}",
             "pid": proc.pid,
             "data": str(data),
             "evidence": str(evidence),
