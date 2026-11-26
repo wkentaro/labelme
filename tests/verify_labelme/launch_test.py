@@ -132,10 +132,13 @@ def test_launch_on_unreadable_image_returns_its_error_dialog(
     _assert_healthy(ctl=ctl, run=run)
 
 
-def test_launch_with_inline_config_is_healthy(*, ctl: Ctl) -> None:
-    run = ctl.launch("--config", "{auto_save: false}")
+def test_launch_with_inline_config_applies_it(*, ctl: Ctl) -> None:
+    run = ctl.launch("--config", "{labels: [zebra_test]}")
 
     assert run.launch["dialog"] is None
+    docks = ctl("state", run=run).body["docks"]
+    label_list = next(dock for dock in docks if dock["title"] == "Label List")
+    assert "zebra_test" in [row["text"] for row in label_list["lists"][0]["rows"]]
     _assert_healthy(ctl=ctl, run=run)
 
 
