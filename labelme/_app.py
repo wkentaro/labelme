@@ -38,7 +38,6 @@ from labelme import __version__
 from . import _ai_models
 from . import _automation
 from . import _config
-from . import _image_codec
 from . import _label_file
 from . import _label_flags
 from . import _label_path
@@ -3243,20 +3242,16 @@ class MainWindow(QtWidgets.QMainWindow):
             brightness,
             contrast,
         )
-        assert self._annotation is not None
+        shown = _utils.img_qt_to_pil(img_qt=_utils.display_image(image=self._image))
         if is_initial_load:
             self._on_brightness_contrast_changed(
                 adjust_brightness_contrast(
-                    img=_image_codec.img_data_to_pil(
-                        img_data=self._annotation.image_data
-                    ),
-                    brightness=brightness,
-                    contrast=contrast,
+                    img=shown, brightness=brightness, contrast=contrast
                 )
             )
         else:
             dialog = BrightnessContrastDialog(
-                img=_image_codec.img_data_to_pil(img_data=self._annotation.image_data),
+                img=shown,
                 callback=self._on_brightness_contrast_changed,
                 brightness=brightness,
                 contrast=contrast,
@@ -3618,7 +3613,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._label_file_path = label_file_path
         self._image = image
         t0 = time.time()
-        self._canvas_widgets.canvas.load_pixmap(pixmap=QtGui.QPixmap.fromImage(image))
+        self._canvas_widgets.canvas.load_pixmap(
+            pixmap=QtGui.QPixmap.fromImage(_utils.display_image(image=image))
+        )
         self._canvas_widgets.surface.setCurrentWidget(self._canvas_widgets.scroll_area)
         logger.debug("Loaded pixmap in {:.0f}ms", (time.time() - t0) * 1000)
         # Record one baseline state. Loading carried-forward shapes separately

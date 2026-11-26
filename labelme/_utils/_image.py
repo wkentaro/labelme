@@ -7,6 +7,7 @@ import math
 from typing import NamedTuple
 
 import numpy as np
+import PIL.Image
 from numpy.typing import NDArray
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -21,6 +22,45 @@ def img_qt_to_arr(*, img_qt: QtGui.QImage) -> NDArray[np.uint8]:
         (h, img_qt.bytesPerLine())
     )
     return rows[:, : w * channels].reshape((h, w, channels))
+
+
+def img_qt_to_pil(*, img_qt: QtGui.QImage) -> PIL.Image.Image:
+    mode, image_format = (
+        ("RGBA", QtGui.QImage.Format.Format_RGBA8888)
+        if img_qt.hasAlphaChannel()
+        else ("RGB", QtGui.QImage.Format.Format_RGB888)
+    )
+    converted = img_qt.convertToFormat(image_format)
+    return PIL.Image.frombytes(
+        mode,
+        (converted.width(), converted.height()),
+        converted.constBits(),
+        "raw",
+        mode,
+        converted.bytesPerLine(),
+    )
+
+
+def display_image(*, image: QtGui.QImage) -> QtGui.QImage:
+    if image.format() != QtGui.QImage.Format.Format_Grayscale16:
+        return image
+    width, height = image.width(), image.height()
+    levels = np.frombuffer(image.constBits(), dtype=np.uint16).reshape(
+        height, image.bytesPerLine() // 2
+    )[:, :width]
+    low, high = int(levels.min()), int(levels.max())
+    if low == high:
+        return image.convertToFormat(QtGui.QImage.Format.Format_Grayscale8)
+    lut = np.zeros(2**16, dtype=np.uint8)
+    lut[low : high + 1] = (
+        (np.arange(low, high + 1) - low) / (high - low) * 255
+    ).astype(np.uint8)
+    shown = QtGui.QImage(width, height, QtGui.QImage.Format.Format_Grayscale8)
+    shown_rows = np.frombuffer(shown.bits(), dtype=np.uint8).reshape(
+        height, shown.bytesPerLine()
+    )
+    shown_rows[:, :width] = lut[levels]
+    return shown
 
 
 class ImageDecodeRequirement(NamedTuple):

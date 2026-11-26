@@ -1,6 +1,8 @@
 from ._image import ImageDecodeRequirement
+from ._image import display_image
 from ._image import get_image_decode_requirement
 from ._image import get_reader_decode_requirement
+from ._image import img_qt_to_pil
 from ._qt import ONE_LINE_ICON_TEXT
 from ._qt import apply_color_theme
 from ._qt import direction_angle
@@ -16,8 +18,10 @@ __all__ = [
     "ImageDecodeRequirement",
     "apply_color_theme",
     "direction_angle",
+    "display_image",
     "get_image_decode_requirement",
     "get_reader_decode_requirement",
+    "img_qt_to_pil",
     "modifier_text",
     "new_action",
     "new_icon",

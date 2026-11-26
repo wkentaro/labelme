@@ -8,8 +8,11 @@ from collections.abc import Generator
 from pathlib import Path
 from typing import Final
 
+import numpy as np
 import osam
+import PIL.Image
 import pytest
+from numpy.typing import NDArray
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
@@ -27,6 +30,7 @@ from labelme.__main__ import main
 from labelme._ai_models import AI_ASSIST_MODEL_OPTIONS
 from labelme._ai_models import AI_TEXT_MODEL_OPTIONS
 from labelme._app import MainWindow
+from labelme._utils._image import img_qt_to_arr
 from labelme._widgets._canvas import Canvas
 from labelme._widgets._label_dialog import LabelDialog
 
@@ -352,6 +356,18 @@ def show_window_and_wait_for_imagedata(*, qtbot: QtBot, win: MainWindow) -> None
         assert all(f.done() for f in win._image_prefetcher._decoded.values())
 
     qtbot.waitUntil(check_image_data)
+
+
+def save_12bit_ramp(*, path: Path) -> None:
+    PIL.Image.fromarray(np.arange(4095, dtype=np.uint16).reshape(63, 65)).save(path)
+
+
+def canvas_pixels(*, win: MainWindow) -> NDArray[np.uint8]:
+    return img_qt_to_arr(
+        img_qt=win._canvas_widgets.canvas.pixmap.toImage().convertToFormat(
+            QtGui.QImage.Format.Format_RGBA8888
+        )
+    )
 
 
 def dismiss_active_modal(*, qtbot: QtBot, timeout: int = 3000) -> None:
