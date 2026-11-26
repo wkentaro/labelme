@@ -74,6 +74,8 @@ The helper sends each mouse press, move, and release as its own event through Qt
 
 A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, disabled, or behind an open dialog or popup, as the real input would be. `click` and `pick` also fail, and send nothing, when the point they aim at would reach another widget or row, such as a target scrolled out of view or covered by another widget. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true, "exit_code": 0}`. Input after the keystroke that closes labelme is dropped, and the reply carries `"exited": true`.
 
+The feature map in [`features/README.md`](features/README.md) has the recipe for each user-facing feature. Read the feature's file before you drive it.
+
 ## Evidence
 
 A proof has three parts.
@@ -97,7 +99,7 @@ It refuses a directory without `run.json`. It kills only the PID this run starte
 - zsh passes `"300 100"` as one argument. Write coordinates as separate words.
 - Canvas coordinates are image pixels. Read a shape's points from its annotation file, or from the image size in the file, to aim a click.
 - Auto save is on by default, so each change writes `<image>.json` next to the image. Pass `--no-auto-save` to test explicit saves and the unsaved-changes dialog.
-- File > Open File and Open Folder show Qt's own file dialog offscreen. It lists the folder after a moment, so poll `state` until the row shows in the `Files` list of `state.dialog`. Or `type` the absolute path into its focused field. On macOS, type the path `realpath` prints: a `/var/folders/...` path, which goes through a symlink, left the dialog open and empty in testing.
+- File > Open File and Open Folder show Qt's own file dialog offscreen. It lists the folder after a moment, so poll `state` until the row shows in the `Files` list of `state.dialog`. Or `type` the absolute path into its focused field. On macOS, type the path `realpath` prints: a `/var/folders/...` path, which goes through a symlink, left the dialog open and empty in testing. After a failed `/var/folders/...` attempt, the `realpath` form also fails in that dialog. Click `Cancel`, reopen the dialog, and then type the `realpath` form.
 - In Open File, `pick Files <name> --double` opens the image. After a typed path, press `Return`.
 - In Open Folder, a double-click on a folder only moves into it inside the dialog. `pick Files <name>` once, then `click Choose`. After a typed path, press `Return`, because typing opens a path completer and `click` is refused while it is open. Then check that the dialog closed and the Image List shows the folder's images.
-- AI-Segment and AI-Find All download models into the scratch `HOME` on first use, which takes minutes and needs network access.
+- AI-Segment and AI-Find All download models into the scratch `HOME` on first use, which takes minutes and needs network access. The feature map does not cover them yet.
