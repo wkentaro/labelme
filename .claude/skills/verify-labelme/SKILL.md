@@ -41,7 +41,7 @@ The sandbox denies every file write outside the run dir and every write to the u
 $CTL doctor
 ```
 
-Run it right after launch and whenever a reply looks wrong. It exits 0 and prints `"healthy": true` only when the PID is the one this run started, the control port answers from that PID, `labelme` imports from the checkout, `HOME` and the window state sit in the run's `home/`, the platform is `offscreen`, a write outside the run dir fails, and no uncaught exception has reached labelme's crash handler. An error dialog the app shows on purpose, such as a file that cannot be opened, does not make it unhealthy. `checkout_head` and `checkout_dirty` record which tree you are driving. Drive only an instance whose doctor is healthy.
+Run it right after launch and whenever a reply looks wrong. It exits 0 and prints `"healthy": true` only when the PID is the one this run started, the control port answers from that PID, `labelme` imports from the checkout, `HOME` and the window state sit in the run's `home/`, the platform is `offscreen`, a write outside the run dir fails, and no uncaught exception has reached labelme's crash handler. An error dialog the app shows on purpose, such as a file that cannot be opened, does not make it unhealthy. `checkout_head` and `checkout_dirty` record which tree you are driving. Any other result exits 1 with `"ok": false`, `"healthy": false`, an `error`, and the report fields it gathered. When labelme answered, `problems` lists each failed check. When labelme exited, `exit_code` holds its code. Drive only an instance whose doctor is healthy.
 
 ## Observe
 
@@ -51,7 +51,7 @@ Run it right after launch and whenever a reply looks wrong. It exits 0 and print
 | `wait --status Saved --no-dialog` | Polls `state` until every condition holds: `--status`, `--no-dialog`, `--file <path>`. It fails within its timeout, 10 s by default, even when labelme stops answering, and fails with `exit_code` when labelme exits first. |
 | `screenshot 01-name.png` | Saves the top dialog, or the main window with `--window main`, to `evidence/`. The name is relative to `evidence/`, and a file already at that name is replaced. |
 
-If labelme exits cleanly, the next command replies `{"exited": true, "exit_code": 0}`. If labelme dies without exiting, such as on a Qt abort, the command exits 1 with `labelme crashed without exiting`, and the cause is in `evidence/labelme.log`.
+If labelme exits cleanly, the next `state` or `screenshot` replies `{"exited": true, "exit_code": 0}`, and `wait` and `doctor` fail with that `exit_code`. If labelme dies without exiting, such as on a Qt abort, the command exits 1 with `labelme crashed without exiting`, and the cause is in `evidence/labelme.log`.
 
 ## Evidence
 

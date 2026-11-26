@@ -357,7 +357,10 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
 
 def _git(*, checkout: Path, args: list[str]) -> str:
     return subprocess.run(
-        ["git", *args], cwd=checkout, capture_output=True, text=True
+        ["git", "--no-optional-locks", *args],
+        cwd=checkout,
+        capture_output=True,
+        text=True,
     ).stdout.strip()
 
 
@@ -387,33 +390,30 @@ def _problems(*, info: dict[str, Any], run_dir: Path, pid: int) -> list[str]:
 
 def cmd_doctor(*, args: argparse.Namespace) -> None:
     run_dir = _run_dir(args=args)
-    pid = _load_pid(run_dir=run_dir)
-    report: dict[str, Any] = {
-        "run_dir": str(run_dir),
-        "pid": pid,
-        "pid_alive": _pid_alive(pid=pid),
-        "pid_is_ours": _pid_is_ours(pid=pid, run_dir=run_dir),
-        "healthy": False,
-    }
+    report: dict[str, Any] = {"run_dir": str(run_dir), "healthy": False}
     try:
+        pid = _load_pid(run_dir=run_dir)
+        report["pid"] = pid
+        report["pid_alive"] = _pid_alive(pid=pid)
+        report["pid_is_ours"] = _pid_is_ours(pid=pid, run_dir=run_dir)
         info = _request(run_dir=run_dir, payload={"cmd": "doctor"}, timeout=5)
     except CtlFailure as e:
-        report["error"] = str(e)
-        _print(result=report)
-        sys.exit(1)
+        raise CtlFailure(str(e), details=report) from e
     if info.get("exited"):
         report["exit_code"] = info["exit_code"]
-        _print(result=report)
-        sys.exit(1)
+        raise CtlFailure(f"labelme exited with {info['exit_code']}", details=report)
     checkout = Path(_load_instance(run_dir=run_dir)["checkout"])
     status = ["status", "--porcelain", "--untracked-files=no"]
     report.update(info)
     report["checkout_head"] = _git(checkout=checkout, args=["rev-parse", "HEAD"])
     report["checkout_dirty"] = bool(_git(checkout=checkout, args=status))
     report["problems"] = _problems(info=info, run_dir=run_dir, pid=pid)
-    report["healthy"] = report["pid_is_ours"] and not report["problems"]
+    if not report["pid_is_ours"]:
+        report["problems"].insert(0, "the PID is not the process this run started")
+    if report["problems"]:
+        raise CtlFailure("; ".join(report["problems"]), details=report)
+    report["healthy"] = True
     _print(result=report)
-    sys.exit(0 if report["healthy"] else 1)
 
 
 def cmd_forward(*, args: argparse.Namespace) -> None:
