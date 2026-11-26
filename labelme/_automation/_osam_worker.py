@@ -179,8 +179,6 @@ class OsamWorker(QtCore.QObject):
     _client: tuple[Device, osam.Client] | None  # the thread's only
     _sent_images: dict[tuple[int, tuple[int, int]], NDArray[np.uint8]]
     _removing: set[str]  # unloading until unloaded's slots delete the files
-    # Once shut down, the owner may delete this object, so the thread drops
-    # its reports; the lock keeps a report from racing the delete.
     _shut_down: bool
     _report_lock: threading.Lock
 
@@ -314,17 +312,22 @@ class OsamWorker(QtCore.QObject):
                     cache=self._sent_images,
                 )
             except Exception as error:
-                if self._shut_down:
-                    continue  # its failure goes unreported, like its result
-                if (
-                    isinstance(error, ResponseError)
-                    and error.code == "model_not_pulled"
-                ):
-                    logger.warning("AI inference failed: {}", error)
-                    self._report(request_id, "not_pulled", (str(error), error.device))
-                    continue
-                logger.opt(exception=error).error("AI inference failed")
-                self._report(request_id, "error", f"{type(error).__name__}: {error}")
+                with self._report_lock:
+                    if self._shut_down:
+                        continue
+                    if (
+                        isinstance(error, ResponseError)
+                        and error.code == "model_not_pulled"
+                    ):
+                        logger.warning("AI inference failed: {}", error)
+                        self._reported.emit(
+                            request_id, "not_pulled", (str(error), error.device)
+                        )
+                        continue
+                    logger.opt(exception=error).error("AI inference failed")
+                    self._reported.emit(
+                        request_id, "error", f"{type(error).__name__}: {error}"
+                    )
             else:
                 self._report(request_id, "done", result)
         if self._client is not None:
