@@ -14,6 +14,7 @@ A user opens an image, an annotation file, or a folder, then moves between image
 
 - Run `labelme <folder>`, `labelme <image>`, or `labelme <image>.json`.
 - Choose File > Open File (`Ctrl+O`) or the `Open File` toolbar button, then double-click a file or type its path.
+- Choose File > Open Folder (`Ctrl+U`) or the `Open Folder` toolbar button, then choose a folder.
 - Press `D` or `A`, choose File > Next Image or File > Previous Image, or click the `Next` or `Previous` toolbar button.
 - Click a row in the Image List dock.
 - Click the `Search Filename` field above the Image List and type.
