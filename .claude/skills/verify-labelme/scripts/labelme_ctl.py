@@ -240,7 +240,9 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     if labelme_args[:1] == ["--"]:
         labelme_args = labelme_args[1:]
     profile = run_dir / "sandbox.sb"
-    profile.write_text(SANDBOX_PROFILE.format(run_dir=json.dumps(str(run_dir))))
+    profile.write_text(
+        SANDBOX_PROFILE.format(run_dir=json.dumps(str(run_dir), ensure_ascii=False))
+    )
     (run_dir / "tmp").mkdir(exist_ok=True)
     env = {
         **os.environ,
