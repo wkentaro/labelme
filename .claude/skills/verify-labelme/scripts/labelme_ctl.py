@@ -453,15 +453,20 @@ def _build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(required=True)
 
     def add(
-        *, name: str, about: str, run: Callable[..., None] = cmd_forward
+        *,
+        name: str,
+        about: str,
+        run: Callable[..., None] = cmd_forward,
+        run_dir_help: str = f"defaults to ${RUN_ENV}",
     ) -> argparse.ArgumentParser:
         p = sub.add_parser(name, help=about)
-        p.add_argument("--run-dir", help=f"defaults to ${RUN_ENV}")
+        p.add_argument("--run-dir", help=run_dir_help)
         p.set_defaults(func=run, cmd=name)
         return p
 
     about = "start labelme offscreen with a scratch HOME"
-    _add_launch(p=add(name="launch", about=about, run=cmd_launch))
+    fresh = "a new or empty directory; defaults to a fresh mktemp directory"
+    _add_launch(p=add(name="launch", about=about, run=cmd_launch, run_dir_help=fresh))
     about = "check the instance is ours, alive, and from the checkout"
     add(name="doctor", about=about, run=cmd_doctor)
     add(name="state", about="visible state of every window as JSON")
