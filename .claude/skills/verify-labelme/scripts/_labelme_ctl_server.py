@@ -725,16 +725,27 @@ class Controller(QtCore.QObject):
         sock.readyRead.connect(lambda: self._on_ready(sock=sock))
 
     def _on_ready(self, *, sock: QtNetwork.QTcpSocket) -> None:
+        try:
+            self._serve(sock=sock)
+        except Exception:
+            sock.abort()
+
+    def _serve(self, *, sock: QtNetwork.QTcpSocket) -> None:
         if sock.bytesAvailable() > MAX_REQUEST_BYTES:
             sock.abort()
             return
         if not sock.canReadLine():
             return
         req = _parse_request(line=bytes(sock.readLine().data()))
-        token = str(req.pop("token", "")).encode() if req else b""
-        if req is None or not secrets.compare_digest(token, self._token.encode()):
+        token = req.pop("token", None) if req else None
+        if not (
+            isinstance(token, str)
+            and token.isascii()
+            and secrets.compare_digest(token, self._token)
+        ):
             self._reply(sock=sock, payload={"ok": False, "error": "rejected request"})
             return
+        assert req is not None
         try:
             self._size_main_window()
             self._handle(sock=sock, req=req)
