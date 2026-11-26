@@ -37,7 +37,8 @@ Steps:
 
 ## Gotchas
 
-- Clicks land on the nearest screen pixel, so saved points can differ from the requested image pixel by a fraction of a pixel at zoom levels other than 100%.
+- Clicks land on the nearest screen pixel inside the image, so saved points can differ from the requested image pixel by a fraction of a pixel at zoom levels other than 100%.
+- `click-canvas` and `drag-canvas` refuse a point scrolled out of view, as a user could not click it. Zoom out or scroll first.
 - Closing a polygon needs a click near the first point. A click elsewhere adds another point.
 - A tool stays active after a shape is created. Choose `Edit > Edit Shapes` (`Ctrl+J`) before clicking shapes to select them.
 - After the first shape, the label dialog prefills the last label with its text selected, so `type` replaces it.

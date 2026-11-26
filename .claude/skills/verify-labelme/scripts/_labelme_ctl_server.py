@@ -469,24 +469,36 @@ def _canvas_pos(*, x: float, y: float) -> QPoint:
     if not (0 <= x <= width and 0 <= y <= height):
         raise CtlError(f"({x}, {y}) is outside the {width}x{height} image")
     point = canvas.transform_image_point_to_widget(point=QPointF(x, y))
-    for pixel in _nearest_pixels(point=point):
-        landed = canvas.transform_widget_point_to_image(point=QPointF(pixel))
-        if not canvas.is_out_of_pixmap(p=landed):
-            return pixel
-    raise CtlError(f"no screen pixel lands on image pixel ({x}, {y})")
-
-
-def _nearest_pixels(*, point: QPointF) -> list[QPoint]:
-    xs = {math.floor(point.x()), math.ceil(point.x())}
-    ys = {math.floor(point.y()), math.ceil(point.y())}
-    return sorted(
-        (QPoint(px, py) for px in xs for py in ys),
-        key=lambda p: (p.x() - point.x()) ** 2 + (p.y() - point.y()) ** 2,
+    origin = canvas.transform_image_point_to_widget(point=QPointF(0, 0))
+    corner = canvas.transform_image_point_to_widget(point=QPointF(width, height))
+    visible = canvas.visibleRegion().boundingRect()
+    pixel = QPoint(
+        _clamp(
+            value=point.x(),
+            low=max(visible.left(), math.ceil(origin.x())),
+            high=min(visible.right(), math.floor(corner.x())),
+        ),
+        _clamp(
+            value=point.y(),
+            low=max(visible.top(), math.ceil(origin.y())),
+            high=min(visible.bottom(), math.floor(corner.y())),
+        ),
     )
+    if abs(pixel.x() - point.x()) > 1 or abs(pixel.y() - point.y()) > 1:
+        raise CtlError(f"({x}, {y}) is not visible on the canvas; scroll or zoom")
+    return pixel
 
 
-def _move_holding(
-    *, widget: QtWidgets.QWidget, pos: QPoint, buttons: Qt.MouseButton
+def _clamp(*, value: float, low: int, high: int) -> int:
+    return min(max(round(value), low), high)
+
+
+def _send_move(
+    *,
+    widget: QtWidgets.QWidget,
+    pos: QPoint,
+    buttons: Qt.MouseButton = Qt.MouseButton.NoButton,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
 ) -> None:
     event = QtGui.QMouseEvent(
         QtGui.QMouseEvent.Type.MouseMove,
@@ -494,7 +506,7 @@ def _move_holding(
         QPointF(widget.mapToGlobal(pos)),
         Qt.MouseButton.NoButton,
         buttons,
-        Qt.KeyboardModifier.NoModifier,
+        modifier,
     )
     QtWidgets.QApplication.sendEvent(widget, event)
 
@@ -614,8 +626,7 @@ def _plan_click_canvas(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]
     modifier = MODIFIERS[req.get("modifier")]
 
     def click() -> None:
-        QTest.mouseMove(canvas, QPoint(0, 0))
-        QTest.mouseMove(canvas, pos)
+        _send_move(widget=canvas, pos=pos, modifier=modifier)
         QTest.mouseClick(canvas, button, modifier, pos)
         if req.get("double"):
             QTest.mouseDClick(canvas, button, modifier, pos)
@@ -632,11 +643,11 @@ def _plan_drag_canvas(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     no_modifier = Qt.KeyboardModifier.NoModifier
 
     def drag() -> None:
-        QTest.mouseMove(canvas, start)
+        _send_move(widget=canvas, pos=start)
         QTest.mousePress(canvas, button, no_modifier, start)
         for i in range(1, DRAG_STEPS + 1):
             pos = start + (end - start) * (i / DRAG_STEPS)
-            _move_holding(widget=canvas, pos=pos, buttons=button)
+            _send_move(widget=canvas, pos=pos, buttons=button)
         QTest.mouseRelease(canvas, button, no_modifier, end)
 
     span = f"({req['x1']}, {req['y1']}) to ({req['x2']}, {req['y2']})"
