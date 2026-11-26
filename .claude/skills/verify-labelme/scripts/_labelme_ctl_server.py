@@ -447,7 +447,8 @@ def _find_view(*, name: str) -> QtWidgets.QAbstractItemView:
 
 def _find_row(*, view: QtWidgets.QAbstractItemView, text: str) -> QtCore.QModelIndex:
     model = view.model()
-    indexes = [model.index(r, 0) for r in range(model.rowCount())]
+    root = view.rootIndex()
+    indexes = [model.index(r, 0, root) for r in range(model.rowCount(root))]
     rows = [(i, _row_text(view=view, index=i)) for i in indexes]
     exact = [(i, t) for i, t in rows if t == text]
     if len(exact) == 1:
@@ -604,6 +605,9 @@ def _plan_pick(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     view = _find_view(name=req["list"])
     _require_reachable(widget=view)
     index = _find_row(view=view, text=req["text"])
+    usable = Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+    if index.flags() & usable != usable:
+        raise CtlError(f"row {req['text']!r} in {req['list']!r} is disabled")
     view.scrollTo(index)
     viewport = view.viewport()
     center = view.visualRect(index).center()

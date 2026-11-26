@@ -64,7 +64,7 @@ Read the screen with `state`, act, then read the reply. Every action replies abo
 | `key Ctrl+S` | Presses one key stroke on the open popup menu or the focused widget. Use Qt names: `Return`, `Escape`, `Delete`, `Ctrl+Z`, `D`. It refuses a multi-stroke sequence such as `'Ctrl+K, Ctrl+R'` and a name Qt does not know, so send each stroke with its own `key`. `Ctrl` is Command on macOS, matching the app's shortcuts. |
 | `type 'cat'` | Types ASCII text into the focused widget. A newline presses `Return`. Other control characters such as tab are refused, so send them with `key`. |
 | `click 'Save'` | Clicks a button or a text field in the top dialog, or in the main window when no dialog is open. It matches visible text, tooltip, accessible name, or placeholder, such as `'Next'`, `'OK'`, `'Discard'`, or `'Search Filename'`. With a context menu open, it clicks the item with that text, such as `'Delete Shapes'`. |
-| `pick 'Shape List' blue_block` | Clicks a row in a dock list (`Shape List`, `Label List`, `Image List`) or a dialog list. Add `--double` to double-click. |
+| `pick 'Shape List' blue_block` | Clicks a row in a dock list (`Shape List`, `Label List`, `Image List`) or a dialog list, such as `Files` in the Open File dialog. Add `--double` to double-click. It refuses a row the user cannot select, such as the `Found in files` header in the Label List. |
 | `click-canvas 120 80` | Clicks the canvas at image pixel (120, 80), whatever the zoom. Add `--modifier shift` to hold Shift. `--button right` opens the context menu of the shape under the point, or the canvas menu on empty space. |
 | `drag-canvas 300 90 320 110` | Presses the left button at one image pixel, moves, and releases at another. |
 
@@ -93,5 +93,5 @@ It refuses a directory without `run.json`. It kills only the PID this run starte
 - zsh passes `"300 100"` as one argument. Write coordinates as separate words.
 - Canvas coordinates are image pixels. Read a shape's points from its annotation file, or from the image size in the file, to aim a click.
 - Auto save is on by default, so each change writes `<image>.json` next to the image. Pass `--no-auto-save` to test explicit saves and the unsaved-changes dialog.
-- File > Open File and Open Folder show Qt's own file dialog offscreen. `type` the absolute path into its focused field and press `Return`. On macOS, type the path `realpath` prints: a `/var/folders/...` path, which goes through a symlink, left the dialog open and empty in testing.
+- File > Open File and Open Folder show Qt's own file dialog offscreen. It lists the folder after a moment, so poll `state` until the row shows in the `Files` list of `state.dialog`, then `pick Files <name> --double`. Or `type` the absolute path into its focused field and press `Return`. On macOS, type the path `realpath` prints: a `/var/folders/...` path, which goes through a symlink, left the dialog open and empty in testing.
 - AI-Segment and AI-Find All download models into the scratch `HOME` on first use, which takes minutes and needs network access.
