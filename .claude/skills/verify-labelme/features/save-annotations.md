@@ -26,11 +26,11 @@ Steps:
 - **Make a change.** Run `$CTL pick 'Shape List' blue_block` and `$CTL key Delete`. The title ends in `*` and the status bar shows `Unsaved changes`. The file still has `blue_block`.
 - **Save by shortcut.** Run `$CTL key Ctrl+S`. The `*` leaves the title, and the file no longer has `blue_block`.
 - **Change again, then quit.** Run `$CTL pick 'Shape List' amber_kite`, `$CTL key Delete`, and `$CTL action 'File > Quit'`. `state.dialog.text` reads `Save annotation changes to "2011_000003.jpg"?` with buttons `Save`, `Cancel`, and `Discard`. Run `$CTL screenshot 01-unsaved-dialog.png`.
-- **Choose Save.** Run `$CTL click Save`. The reply is `{"exited": true, "exit_code": 0}`, and the file has neither `blue_block` nor `amber_kite`.
+- **Choose Save.** Run `$CTL click Save`. The reply includes `"exited": true` and `"exit_code": 0`, and the file has neither `blue_block` nor `amber_kite`.
 - **Proof.** Copy `2011_000003.json` to `evidence/` before `cleanup`.
 
 ## Gotchas
 
-- Quitting closes the process, so take screenshots before the last click. `doctor` fails afterwards; run `cleanup` anyway.
+- Quitting closes the process, so take screenshots before the last click. Afterwards `doctor` and `wait` exit 1 with `"ok": false` and `"exit_code": 0`. Run `cleanup` anyway.
 - `Cancel` keeps the app open with the change unsaved, and `Discard` quits without writing.
 - With auto save on, no `*` or prompt appears, so test the prompt only with `--no-auto-save`.

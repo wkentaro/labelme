@@ -13,7 +13,7 @@ A user opens an image, an annotation file, or a folder, then moves between image
 ## How to get to it (user POV)
 
 - Run `labelme <folder>`, `labelme <image>`, or `labelme <image>.json`.
-- Choose File > Open File (`Ctrl+O`) or the `Open File` toolbar button.
+- Choose File > Open File (`Ctrl+O`) or the `Open File` toolbar button, then double-click a file or type its path.
 - Press `D` or `A`, choose File > Next Image or File > Previous Image, or click the `Next` or `Previous` toolbar button.
 - Click a row in the Image List dock.
 - Click the `Search Filename` field above the Image List and type.
@@ -31,6 +31,7 @@ Steps:
 - **Previous by toolbar.** Run `$CTL click Previous`. The title ends in `[1/3]` again.
 - **Next by menu.** Run `$CTL action 'File > Next Image'`. The title ends in `[2/3]`.
 - **Pick from the list.** Run `$CTL pick 'Image List' 2011_000025.jpg`. The title ends in `2011_000025.jpg [3/3]` and the Shape List shows `amber_arch` and `blue_marker`.
+- **Open from the file dialog.** Run `$CTL action 'File > Open File'`. Run `$CTL state` until the `Files` list in `state.dialog.lists` has a `2011_000006.jpg` row, then run `$CTL pick Files 2011_000006.jpg --double`. The dialog closes and the title ends in `2011_000006.jpg [2/3]`.
 - **Filter.** Run `$CTL click 'Search Filename'` and `$CTL type 0006`. The Image List shows only `2011_000006.jpg`, and the `Search Filename` field holds `0006`.
 - **Open one file.** In a fresh launch with `--seed annotated` and no path, run `$CTL action 'File > Open File'`. `state.dialog.title` is `Open File`. Run `$CTL type "$LABELME_VERIFY_RUN/data/2011_000006.json"` and `$CTL key Return`. The dialog closes, the title ends in `2011_000006.jpg`, and the status bar reads `Loaded 2011_000006.json`.
 - **Proof.** After each move you report, run `$CTL screenshot <NN>-<move>.png --window main` with a new number, such as `01-next-key.png` and `02-previous-toolbar.png`.
