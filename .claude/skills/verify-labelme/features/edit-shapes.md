@@ -14,8 +14,8 @@ A user selects an existing shape, moves it, renames it, deletes it, and undoes a
 
 - Click a row in the Shape List, or click inside a shape on the canvas in Edit Shapes mode.
 - Drag a shape on the canvas.
-- Double-click a Shape List row, choose Edit > Edit Label (`Ctrl+E`), or press `Ctrl+E`.
-- Press `Delete`, choose Edit > Delete Shapes, or click the `Delete` toolbar button.
+- Double-click a Shape List row, choose Edit > Edit Label (`Ctrl+E`), press `Ctrl+E`, or right-click the shape and choose `Edit Label…`.
+- Press `Delete`, choose Edit > Delete Shapes, click the `Delete` toolbar button, or right-click the shape and choose `Delete Shapes`.
 - Press `Ctrl+Z`, choose Edit > Undo, or click the `Undo` toolbar button.
 
 ## Driving it with labelme_ctl
@@ -30,6 +30,7 @@ Steps:
 - **Select from the list.** Run `$CTL pick 'Shape List' blue_block`. The `blue_block` row is `selected` and the `Delete` toolbar button is enabled.
 - **Delete.** Run `$CTL key Delete`. The Shape List drops `blue_block`. With auto save on, the status bar shows `Saved` and the file no longer has `blue_block`.
 - **Undo.** Run `$CTL key Ctrl+Z`. `blue_block` returns to the Shape List and to the file.
+- **Delete from the context menu.** Run `$CTL click-canvas 300 90 --button right`. `state.popup.items` lists `Delete Shapes`. Run `$CTL click 'Delete Shapes'`. The Shape List drops `blue_block`. Run `$CTL key Ctrl+Z` to bring it back.
 - **Move.** Run `$CTL drag-canvas 300 90 320 110`. `blue_block` becomes `selected`, and after `$CTL wait --status Saved` its first point in the file is near (265, 65). `amber_kite` keeps its first point (55, 65).
 - **Relabel by double-click.** Run `$CTL pick 'Shape List' amber_kite --double`. `state.modal.title` is `Shape Label` and the `Label` field holds `amber_kite`. Run `$CTL key Ctrl+A`, `$CTL type kite`, and `$CTL key Return`. The Shape List shows `kite` and the file's first shape has `label` `kite` with unchanged points.
 - **Relabel by shortcut.** Run `$CTL pick 'Shape List' kite` and `$CTL key Ctrl+E`. The `Shape Label` dialog opens on `kite`. Run `$CTL key Escape`. The label stays `kite`.
@@ -39,4 +40,4 @@ Steps:
 
 - Undo clears the selection, so a second `Delete` right after `Ctrl+Z` does nothing. Pick the shape again first.
 - A press on the canvas selects the shape under the point. Aim well inside the target and away from other shapes.
-- Without `--no-auto-save`, every edit writes the file immediately, so the file proves each step only if you read it between steps.
+- Auto save writes the file in the background after each edit, and the status bar keeps `Saved` from the edit before. Poll the file until it holds the expected shapes before you read it or copy it to `evidence/`.

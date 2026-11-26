@@ -11,7 +11,7 @@ A user picks a shape tool, clicks points on the image, and names the shape in th
 
 ## How to get to it (user POV)
 
-- Choose a tool from the Edit menu (`Edit > Polygon`, `Edit > Rectangle`, and the other shape types), press `Ctrl+N` for Polygon or `Ctrl+R` for Rectangle, or click the tool in the left toolbar.
+- Choose a tool from the Edit menu (`Edit > Polygon`, `Edit > Rectangle`, and the other shape types), press `Ctrl+N` for Polygon or `Ctrl+R` for Rectangle, click the tool in the left toolbar, or right-click empty canvas and choose the tool.
 - Click on the image to place points.
 - Type the label in the `Shape Label` dialog and press `Return` or click `OK`.
 
