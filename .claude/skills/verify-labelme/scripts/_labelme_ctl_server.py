@@ -51,6 +51,7 @@ CLICKABLE: Final = (
 )
 
 RUN_FILE: Final = "run.json"
+EXIT_FILE: Final = "exit_code"
 MAX_REQUEST_BYTES: Final = 1 << 20
 SEARCH_ROOT_KEEPALIVE: Final[list[QtWidgets.QWidget]] = []
 BLOCKED: Final[list[str]] = []
@@ -894,4 +895,8 @@ def serve(*, run_dir: Path, size: str, labelme_args: list[str]) -> None:
 
     setattr(QtWidgets, "QApplication", ControlledApplication)
     sys.argv = ["labelme", *labelme_args]
-    labelme_main()
+    try:
+        labelme_main()
+    except SystemExit as error:
+        (run_dir / EXIT_FILE).write_text(str(error.code or 0))
+        raise

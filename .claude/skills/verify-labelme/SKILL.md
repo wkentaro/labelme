@@ -64,7 +64,7 @@ Input goes to the open popup menu, else the top dialog, modal or not, such as Se
 
 Before each input the helper does what the OS would. It releases a mouse button that a modal dialog swallowed the release of, and it reactivates the top window, because the offscreen platform has no window manager to do it. Without that, a double-click that opens a dialog leaves Left held, and the next canvas move drags whatever shape is selected.
 
-A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, disabled, or behind an open dialog or popup, as the real input would be. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true}`.
+A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, disabled, or behind an open dialog or popup, as the real input would be. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true, "exit_code": 0}`. If labelme dies without exiting, such as on a Qt abort, the command exits 1 with `labelme crashed without exiting`, and the cause is in `evidence/labelme.log`.
 
 The feature map in [`features/README.md`](features/README.md) has the recipe for each user-facing feature. Read the feature's file before you drive it.
 
@@ -84,7 +84,7 @@ Drive the path a user takes: menus, shortcuts, toolbar buttons, list rows, and c
 $CTL cleanup
 ```
 
-It refuses a directory without `run.json`. It kills only the PID this run started, after checking that its command line names this run dir. Then it deletes `home/`, `data/`, `tmp/`, `sandbox.sb`, and `instance.json`, and keeps `evidence/`. Report the evidence path, `<run_dir>/evidence`, with the verdict. Run cleanup after every run, failed runs included. If `doctor` reports a PID that is not ours, leave that process alone.
+It refuses a directory without `run.json`. It kills only the PID this run started, after checking that its command line names this run dir. Then it deletes `home/`, `data/`, `tmp/`, `sandbox.sb`, `instance.json`, and `exit_code`, and keeps `evidence/`. Report the evidence path, `<run_dir>/evidence`, with the verdict. Run cleanup after every run, failed runs included. If `doctor` reports a PID that is not ours, leave that process alone.
 
 ## Gotchas
 

@@ -21,6 +21,7 @@ from typing import Final
 RUN_ENV: Final = "LABELME_VERIFY_RUN"
 SERVE_MARKER: Final = "labelme_ctl.py"
 RUN_FILE: Final = "run.json"
+EXIT_FILE: Final = "exit_code"
 RUN_TOOL: Final = "verify-labelme"
 RUN_FILE_MODE: Final = 0o600
 VALUED_OPTIONS: Final = frozenset(
@@ -91,6 +92,7 @@ def _claim_run_dir(*, requested: str | None) -> Path:
         run_dir.mkdir(parents=True, exist_ok=True)
     if (run_dir / "instance.json").exists():
         sys.exit(f"{run_dir} already holds an instance; clean it up or pick another")
+    (run_dir / EXIT_FILE).unlink(missing_ok=True)
     run_file = run_dir / RUN_FILE
     run_file.touch(mode=RUN_FILE_MODE)
     run_file.chmod(RUN_FILE_MODE)
@@ -143,19 +145,22 @@ def _request(
 ) -> dict[str, Any]:
     port = _load_instance(run_dir=run_dir)["port"]
     token = json.loads((run_dir / RUN_FILE).read_text())["token"]
-    with socket.create_connection(("127.0.0.1", port), timeout=timeout) as s:
-        s.sendall(json.dumps({**payload, "token": token}).encode() + b"\n")
-        buf = b""
-        while not buf.endswith(b"\n"):
-            chunk = s.recv(1 << 20)
-            if not chunk:
-                break
-            buf += chunk
+    buf = b""
+    try:
+        with socket.create_connection(("127.0.0.1", port), timeout=timeout) as s:
+            s.sendall(json.dumps({**payload, "token": token}).encode() + b"\n")
+            while not buf.endswith(b"\n"):
+                chunk = s.recv(1 << 20)
+                if not chunk:
+                    break
+                buf += chunk
+    except ConnectionError:
+        pass
     if not buf:
         pid = int((run_dir / "pid").read_text())
         for _ in range(50):
             if not _pid_alive(pid=pid):
-                return {"did": payload["cmd"], "exited": True}
+                return _exited(run_dir=run_dir, cmd=payload["cmd"])
             time.sleep(0.1)
         sys.exit("labelme closed the connection without a reply; see labelme.log")
     reply = json.loads(buf)
@@ -163,6 +168,13 @@ def _request(
         _print(result=reply)
         sys.exit(1)
     return reply["result"]
+
+
+def _exited(*, run_dir: Path, cmd: str) -> dict[str, Any]:
+    exit_file = run_dir / EXIT_FILE
+    if not exit_file.exists():
+        sys.exit("labelme crashed without exiting; see evidence/labelme.log")
+    return {"did": cmd, "exited": True, "exit_code": int(exit_file.read_text())}
 
 
 def _image_list_rows(*, state: dict[str, Any]) -> int:
@@ -408,7 +420,7 @@ def cmd_cleanup(*, args: argparse.Namespace) -> None:
             _stop(pid=pid, run_dir=run_dir)
             killed = True
         pid_file.unlink()
-    for name in ("home", "data", "tmp", "sandbox.sb", "instance.json"):
+    for name in ("home", "data", "tmp", "sandbox.sb", "instance.json", EXIT_FILE):
         target = run_dir / name
         if target.is_dir():
             shutil.rmtree(target)
