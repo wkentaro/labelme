@@ -13,6 +13,7 @@ import numpy as np
 import osam
 import PIL.Image
 import pytest
+import shiboken6
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 from pytestqt.qtbot import QtBot
@@ -54,6 +55,8 @@ class _ScriptedClient:
 
     def load(self, *args: object, **kwargs: object) -> osam.types.RunningModel:
         name = cast(str, args[0])  # positional, as osam takes it
+        if name == "hang-load":
+            self.release.wait(timeout=_WAIT_MS / 1000)
         if kwargs.get("keep_alive") == 0:
             self.loaded.discard(name)
         else:
@@ -314,6 +317,64 @@ def test_shutdown_does_not_wait_for_a_running_request(
 
     client.release.set()  # the request ends; the thread then closes it
     qtbot.waitUntil(lambda: client.closed, timeout=_WAIT_MS)
+
+
+@pytest.mark.parametrize(
+    ("stage", "model_name", "unload"),
+    [
+        pytest.param("starting", "ok", False, id="starting"),
+        pytest.param("loading", "hang-load", False, id="loading"),
+        pytest.param("generating", "hang", False, id="generating"),
+        pytest.param("generating", "hang", True, id="unloading"),
+    ],
+)
+def test_shutdown_drops_what_the_thread_reports_after_it(
+    *,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    stage: str,
+    model_name: str,
+    unload: bool,
+) -> None:
+    release = threading.Event()
+
+    def start(*, device: str, **_: object) -> _ScriptedClient:
+        if stage == "starting":
+            release.wait(timeout=_WAIT_MS / 1000)
+            raise RuntimeError("osam server exited with code None on start")
+        client = _ScriptedClient(device=device)
+        client.release = release
+        return client
+
+    monkeypatch.setattr(_osam_worker, "osam_client", start)
+    thread_errors: list[object] = []
+    monkeypatch.setattr(threading, "excepthook", thread_errors.append)
+    logged: list[str] = []
+    sink = _osam_worker.logger.add(logged.append, level="ERROR")
+    threads_before = set(threading.enumerate())
+    worker = OsamWorker()
+    [thread] = [
+        t
+        for t in threading.enumerate()
+        if t not in threads_before and t.name == "osam-worker"
+    ]
+    try:
+        worker.submit(
+            channel="x", job="running", request=_request(model_name=model_name)
+        )
+        qtbot.waitUntil(lambda: worker.stage == stage, timeout=_WAIT_MS)
+        if unload:
+            worker.unload(model_name=model_name)
+    finally:
+        worker.shutdown()
+        shiboken6.delete(worker)
+        release.set()
+        thread.join(timeout=_WAIT_MS / 1000)
+        _osam_worker.logger.remove(sink)
+
+    assert not thread.is_alive()
+    assert thread_errors == []
+    assert logged == []
 
 
 def test_runs_on_a_private_server(
