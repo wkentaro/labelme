@@ -188,6 +188,8 @@ def _image_list_rows(*, state: dict[str, Any]) -> int:
 
 
 def _settled(*, state: dict[str, Any], opened: Path | None) -> bool:
+    if state["modal"] is not None:
+        return True
     if not state["main_window"]["visible"]:
         return False
     if opened is None or state["image_loaded"]:
@@ -283,6 +285,8 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
             "data": str(data),
             "evidence": str(evidence),
             "title": state["main_window"]["title"],
+            "image_loaded": state["image_loaded"],
+            "modal": state["modal"],
         }
     )
 

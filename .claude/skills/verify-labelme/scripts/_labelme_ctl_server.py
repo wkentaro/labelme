@@ -866,14 +866,16 @@ def serve(*, run_dir: Path, size: str, labelme_args: list[str]) -> None:
     _isolate_window_state(home=run_dir / "home")
     _isolate_file_dialog_state(run_dir=run_dir.resolve())
     _block_external_launches()
-    original_exec = QtWidgets.QApplication.exec
     controllers: list[Controller] = []
 
-    def exec_with_control(_app: QtWidgets.QApplication) -> int:  # noqa: GR013 -- Qt binds app.exec() positionally
-        controllers.append(Controller(run_dir=run_dir, size=size))
-        return original_exec()
+    class ControlledApplication(QtWidgets.QApplication):
+        def __init__(self, argv: list[str]) -> None:  # noqa: GR013 -- labelme calls QApplication(sys.argv)
+            super().__init__(argv)
+            QtCore.QTimer.singleShot(
+                0, lambda: controllers.append(Controller(run_dir=run_dir, size=size))
+            )
 
-    setattr(QtWidgets.QApplication, "exec", exec_with_control)
+    setattr(QtWidgets, "QApplication", ControlledApplication)
     sys.argv = ["labelme", *labelme_args]
     exit_code: object = 0
     try:
