@@ -806,6 +806,7 @@ dev = [
     { name = "hypothesis" },
     { name = "ipython" },
     { name = "mdformat" },
+    { name = "mdformat-frontmatter" },
     { name = "packaging" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -844,6 +845,7 @@ dev = [
     { name = "hypothesis", specifier = ">=6.170.15" },
     { name = "ipython" },
     { name = "mdformat", specifier = ">=0.7" },
+    { name = "mdformat-frontmatter", specifier = ">=2.2.0" },
     { name = "packaging", specifier = ">=26.1" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
@@ -1048,6 +1050,32 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/3f/05/32b5e14b192b0a8a309f32232c580aefedd9d06017cb8fe8fce34bec654c/mdformat-1.0.0.tar.gz", hash = "sha256:4954045fcae797c29f86d4ad879e43bb151fa55dbaf74ac6eaeacf1d45bb3928", size = 56953, upload-time = "2025-10-16T12:05:03.695Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/9a/8fe71b95985ca7a4001effbcc58e5a07a1f2a2884203f74dcf48a3b08315/mdformat-1.0.0-py3-none-any.whl", hash = "sha256:bca015d65a1d063a02e885a91daee303057bc7829c2cd37b2075a50dbb65944b", size = 53288, upload-time = "2025-10-16T12:05:02.607Z" },
+]
+
+[[package]]
+name = "mdformat-frontmatter"
+version = "2.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mdformat" },
+    { name = "mdit-py-plugins" },
+    { name = "ruamel-yaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8d/dd/6e5d98bd900213b7f619c9df97abc05e9cd16232e9f7aef94d8032203de9/mdformat_frontmatter-2.2.0.tar.gz", hash = "sha256:5559bfeb187354ab1dfba81fb85af3f9dda44fd38a893a842761564b9394bb6a", size = 9447, upload-time = "2026-10-27T06:37:16.508Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/40/06/0c90c4ec435c5f179fdafc265689868893707f4c7cea3aa687c8f92ae6e9/mdformat_frontmatter-2.2.0-py3-none-any.whl", hash = "sha256:3ec539929a9ee4937a14c9f5483b3af4145003f68da9db94fb883ad341b04ce8", size = 4939, upload-time = "2026-10-27T06:37:15.175Z" },
+]
+
+[[package]]
+name = "mdit-py-plugins"
+version = "0.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "markdown-it-py" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ad/a4/77a4e1be19fd9b08993c76d5e54979ac836b327754f1f5fecfed1b56cc67/mdit_py_plugins-0.7.0.tar.gz", hash = "sha256:26d2179227aaf4d1dc7acffe7a738cbd15cade6b5a61cff0a2cbf9fed93efede", size = 51268, upload-time = "2026-11-10T16:29:31.081Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/d3/d07e61326f150944ead0da9d0b39fb20d7fa367bbc951b10fca6bb1c7382/mdit_py_plugins-0.7.0-py3-none-any.whl", hash = "sha256:7f8e30403f3dd8bfe3afcdcbc6e61066d3f2e714167507b9c26eb385ec399353", size = 72937, upload-time = "2026-11-10T16:29:29.847Z" },
 ]
 
 [[package]]
