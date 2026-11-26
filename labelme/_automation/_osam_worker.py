@@ -329,7 +329,7 @@ class OsamWorker(QtCore.QObject):
                         request_id, "error", f"{type(error).__name__}: {error}"
                     )
             else:
-                self._report(request_id, "done", result)
+                self._report(request_id=request_id, kind="done", payload=result)
         if self._client is not None:
             self._client[1].close()
 
@@ -353,9 +353,9 @@ class OsamWorker(QtCore.QObject):
     def _report_stage(
         self, request_id: int, stage: WorkerStage, device: str | None, /
     ) -> None:
-        self._report(request_id, "stage", (stage, device))
+        self._report(request_id=request_id, kind="stage", payload=(stage, device))
 
-    def _report(self, request_id: int, kind: str, payload: object, /) -> None:
+    def _report(self, *, request_id: int, kind: str, payload: object) -> None:
         with self._report_lock:
             if not self._shut_down:
                 self._reported.emit(request_id, kind, payload)
