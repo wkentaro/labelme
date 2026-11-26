@@ -25,6 +25,7 @@ RUN_FILE: Final = "run.json"
 EXIT_FILE: Final = "exit_code"
 RUN_TOOL: Final = "verify-labelme"
 RUN_FILE_MODE: Final = 0o600
+RUN_SUBDIRS: Final = ("home", "data", "evidence", "tmp")
 VALUED_OPTIONS: Final = frozenset(
     {
         "--logger-level",
@@ -109,13 +110,25 @@ def _claim_run_dir(*, requested: str | None) -> Path:
         raise CtlFailure(
             f"{run_dir} already holds an instance; clean it up or pick another"
         )
+    linked = [name for name in RUN_SUBDIRS if (run_dir / name).is_symlink()]
+    if linked:
+        raise CtlFailure(f"{run_dir} has symlinked {', '.join(linked)}; pick another")
     (run_dir / EXIT_FILE).unlink(missing_ok=True)
-    run_file = run_dir / RUN_FILE
-    run_file.touch(mode=RUN_FILE_MODE)
-    run_file.chmod(RUN_FILE_MODE)
     marker = {"tool": RUN_TOOL, "token": secrets.token_hex(16)}
-    run_file.write_text(json.dumps(marker))
+    run_file = run_dir / RUN_FILE
+    _write_new(path=run_file, text=json.dumps(marker), mode=RUN_FILE_MODE)
+    run_file.chmod(RUN_FILE_MODE)
     return run_dir
+
+
+def _create_new(*, path: Path, mode: int = 0o644) -> int:
+    path.unlink(missing_ok=True)
+    return os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, mode)
+
+
+def _write_new(*, path: Path, text: str, mode: int = 0o644) -> None:
+    with os.fdopen(_create_new(path=path, mode=mode), "w") as file:
+        file.write(text)
 
 
 def _names_option(*, arg: str, options: frozenset[str]) -> bool:
@@ -256,7 +269,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     home, data, evidence = run_dir / "home", run_dir / "data", run_dir / "evidence"
     for directory in (home, data, evidence):
         directory.mkdir(parents=True, exist_ok=True)
-    (home / ".labelmerc").write_text(f"language: {LANGUAGE}\n")
+    _write_new(path=home / ".labelmerc", text=f"language: {LANGUAGE}\n")
     if args.seed != "none":
         shutil.copytree(checkout / SEEDS[args.seed], data, dirs_exist_ok=True)
 
@@ -264,8 +277,11 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     if labelme_args[:1] == ["--"]:
         labelme_args = labelme_args[1:]
     profile = run_dir / "sandbox.sb"
-    profile.write_text(
-        SANDBOX_PROFILE.format(run_dir=json.dumps(str(run_dir), ensure_ascii=False))
+    _write_new(
+        path=profile,
+        text=SANDBOX_PROFILE.format(
+            run_dir=json.dumps(str(run_dir), ensure_ascii=False)
+        ),
     )
     (run_dir / "tmp").mkdir(exist_ok=True)
     env = {
@@ -278,7 +294,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
         "QT_QPA_PLATFORM": "offscreen",
     }
     env.pop("QT_QPA_PLATFORMTHEME", None)
-    with open(evidence / "labelme.log", "w") as log:
+    with os.fdopen(_create_new(path=evidence / "labelme.log"), "w") as log:
         proc = subprocess.Popen(
             [
                 "/usr/bin/sandbox-exec",
@@ -298,7 +314,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
             stderr=subprocess.STDOUT,
             start_new_session=True,
         )
-    (run_dir / "pid").write_text(str(proc.pid))
+    _write_new(path=run_dir / "pid", text=str(proc.pid))
 
     state = _wait_until_ready(
         proc=proc,

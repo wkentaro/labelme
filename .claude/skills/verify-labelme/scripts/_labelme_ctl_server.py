@@ -5,6 +5,7 @@ import os
 import re
 import secrets
 import sys
+import tempfile
 import traceback
 import types
 import webbrowser
@@ -310,13 +311,25 @@ def _screenshot(*, req: dict[str, Any]) -> dict[str, Any]:
     if req.get("window") == "active":
         target = app.activePopupWidget() or _top_dialog() or target
     path = Path(req["path"])
-    if not target.grab().save(str(path)):
-        raise CtlError(f"could not write {path}")
+    _save_replacing(pixmap=target.grab(), path=path)
     return {
         "path": str(path),
         "window": target.windowTitle(),
         "size": [target.width(), target.height()],
     }
+
+
+def _save_replacing(*, pixmap: QtGui.QPixmap, path: Path) -> None:
+    fd, scratch = tempfile.mkstemp(
+        dir=path.parent, prefix=f".{path.name}.", suffix=path.suffix
+    )
+    os.close(fd)
+    try:
+        if not pixmap.save(scratch):
+            raise CtlError(f"could not write {path}")
+        os.replace(scratch, path)
+    finally:
+        Path(scratch).unlink(missing_ok=True)
 
 
 def _writes_confined(*, run_dir: Path) -> bool:
