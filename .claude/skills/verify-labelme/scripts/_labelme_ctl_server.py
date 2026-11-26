@@ -396,7 +396,9 @@ class Controller(QtCore.QObject):
             "checkout": os.getcwd(),
         }
         tmp = run_dir / "instance.json.tmp"
-        tmp.write_text(json.dumps(instance))
+        tmp.unlink(missing_ok=True)
+        with os.fdopen(os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL), "w") as f:
+            f.write(json.dumps(instance))
         tmp.replace(run_dir / "instance.json")
 
     def _on_connection(self) -> None:

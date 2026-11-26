@@ -25,7 +25,7 @@ RUN_FILE: Final = "run.json"
 EXIT_FILE: Final = "exit_code"
 RUN_TOOL: Final = "verify-labelme"
 RUN_FILE_MODE: Final = 0o600
-RUN_SUBDIRS: Final = ("home", "data", "evidence", "tmp")
+FRESH_SUBDIRS: Final = ("home", "data", "tmp")
 EXIT_GRACE_S: Final = 5
 VALUED_OPTIONS: Final = frozenset(
     {
@@ -117,9 +117,13 @@ def _claim_run_dir(*, requested: str | None) -> Path:
         raise CtlFailure(
             f"{run_dir} already holds an instance; clean it up or pick another"
         )
-    linked = [name for name in RUN_SUBDIRS if (run_dir / name).is_symlink()]
-    if linked:
-        raise CtlFailure(f"{run_dir} has symlinked {', '.join(linked)}; pick another")
+    leftover = [name for name in FRESH_SUBDIRS if os.path.lexists(run_dir / name)]
+    if leftover:
+        raise CtlFailure(
+            f"{run_dir} still holds {', '.join(leftover)}; clean it up or pick another"
+        )
+    if (run_dir / "evidence").is_symlink():
+        raise CtlFailure(f"{run_dir}/evidence is a symlink; pick another")
     (run_dir / EXIT_FILE).unlink(missing_ok=True)
     marker = {"tool": RUN_TOOL, "token": secrets.token_hex(16)}
     run_file = run_dir / RUN_FILE
@@ -286,11 +290,13 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
         raise CtlFailure(f"no {python}: run `uv sync --frozen` in {checkout} first")
     run_dir = _claim_run_dir(requested=args.run_dir)
     home, data, evidence = run_dir / "home", run_dir / "data", run_dir / "evidence"
-    for directory in (home, data, evidence):
-        directory.mkdir(parents=True, exist_ok=True)
+    home.mkdir()
+    evidence.mkdir(exist_ok=True)
     _write_new(path=home / ".labelmerc", text=f"language: {LANGUAGE}\n")
-    if args.seed != "none":
-        shutil.copytree(checkout / SEEDS[args.seed], data, dirs_exist_ok=True)
+    if args.seed == "none":
+        data.mkdir()
+    else:
+        shutil.copytree(checkout / SEEDS[args.seed], data)
 
     labelme_args = [a.replace("{data}", str(data)) for a in args.labelme_args]
     if labelme_args[:1] == ["--"]:
@@ -302,7 +308,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
             run_dir=json.dumps(str(run_dir), ensure_ascii=False)
         ),
     )
-    (run_dir / "tmp").mkdir(exist_ok=True)
+    (run_dir / "tmp").mkdir()
     env = {
         **os.environ,
         "HOME": str(home),
@@ -532,7 +538,7 @@ def _build_parser() -> argparse.ArgumentParser:
         return p
 
     about = "start labelme offscreen with a scratch HOME"
-    fresh = "a new or empty directory; defaults to a fresh mktemp directory"
+    fresh = "a new, empty, or cleaned-up run dir; defaults to a fresh mktemp directory"
     _add_launch(p=add(name="launch", about=about, run=cmd_launch, run_dir_help=fresh))
     about = "check the instance is ours, alive, and from the checkout"
     add(name="doctor", about=about, run=cmd_doctor)

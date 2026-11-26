@@ -277,22 +277,39 @@ def test_relaunch_refuses_a_symlinked_subdir_and_writes_nothing_outside(
     assert {path.read_text() for path in outside.iterdir()} == {"keep"}
 
 
-def test_relaunch_over_hard_links_leaves_their_targets_unchanged(
-    *, ctl: Ctl, tmp_path: Path
+@pytest.mark.parametrize("name", ["evidence/labelme.log", "instance.json.tmp"])
+def test_relaunch_over_a_hard_link_leaves_its_target_unchanged(
+    *, ctl: Ctl, tmp_path: Path, name: str
 ) -> None:
     run_dir = _relaunchable_run_dir(ctl=ctl, tmp_path=tmp_path)
     outside = tmp_path / "outside.txt"
     outside.write_text("keep")
-    (run_dir / "evidence" / "labelme.log").unlink()
-    (run_dir / "home").mkdir()
-    for name in ("evidence/labelme.log", "home/.labelmerc"):
-        os.link(outside, run_dir / name)
+    (run_dir / name).unlink(missing_ok=True)
+    os.link(outside, run_dir / name)
 
     run = ctl.launch("{data}", run_dir=run_dir)
 
     assert outside.read_text() == "keep"
     _assert_healthy(ctl=ctl, run=run)
 
+
+@pytest.mark.parametrize(
+    "planted", ["data/2011_000003.jpg", "home/.labelmerc", "tmp/scratch"]
+)
+def test_relaunch_refuses_a_leftover_subdir_and_writes_nothing_outside(
+    *, ctl: Ctl, tmp_path: Path, planted: str
+) -> None:
+    run_dir = _relaunchable_run_dir(ctl=ctl, tmp_path=tmp_path)
+    outside = tmp_path / "outside.txt"
+    outside.write_bytes(b"keep")
+    (run_dir / planted).parent.mkdir()
+    (run_dir / planted).symlink_to(outside)
+
+    reply = ctl.launch_reply("{data}", run_dir=run_dir)
+
+    assert outside.read_bytes() == b"keep"
+    assert reply.code == 1
+    assert reply.body["ok"] is False
 
 def test_screenshot_over_a_hard_link_leaves_its_target_unchanged(
     *, ctl: Ctl, tmp_path: Path
