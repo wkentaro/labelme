@@ -48,7 +48,7 @@ Run it right after launch and whenever a reply looks wrong. It exits 0 and print
 | Command | What it reads |
 | --- | --- |
 | `state` | The window title, the top `dialog` (title, `modal`, labels, fields, buttons, lists), `popup` menu with its `items`, `focus`, `status_bar`, `toolbar` buttons with checked and enabled state, `docks` with their list rows (`text`, `checked`, `selected`), `mouse_buttons_held`, and `blocked`, the launches the helper stopped. |
-| `wait --status Saved --no-dialog` | Polls `state` until every condition holds: `--status`, `--no-dialog`, `--file <path>`. The default timeout is 10 s. |
+| `wait --status Saved --no-dialog` | Polls `state` until every condition holds: `--status`, `--no-dialog`, `--file <path>`. It fails within its timeout, 10 s by default, even when labelme stops answering, and fails with `exit_code` when labelme exits first. |
 | `screenshot 01-name.png` | Saves the top dialog, or the main window with `--window main`, to `evidence/`. The name is relative to `evidence/`, and a file already at that name is replaced. |
 
 If labelme exits cleanly, the next command replies `{"exited": true, "exit_code": 0}`. If labelme dies without exiting, such as on a Qt abort, the command exits 1 with `labelme crashed without exiting`, and the cause is in `evidence/labelme.log`.

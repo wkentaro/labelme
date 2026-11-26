@@ -26,6 +26,7 @@ EXIT_FILE: Final = "exit_code"
 RUN_TOOL: Final = "verify-labelme"
 RUN_FILE_MODE: Final = 0o600
 RUN_SUBDIRS: Final = ("home", "data", "evidence", "tmp")
+EXIT_GRACE_S: Final = 5
 VALUED_OPTIONS: Final = frozenset(
     {
         "--logger-level",
@@ -54,7 +55,13 @@ SEEDS: Final = {
 
 
 class CtlFailure(Exception):
-    pass
+    details: dict[str, Any]
+
+    def __init__(
+        self, message: str, /, *, details: dict[str, Any] | None = None
+    ) -> None:
+        super().__init__(message)
+        self.details = details or {}
 
 
 def _load_instance(*, run_dir: Path) -> dict[str, Any]:
@@ -170,9 +177,14 @@ def _print(*, result: object) -> None:
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
+def _remaining(*, deadline: float) -> float:
+    return max(deadline - time.monotonic(), 0.01)
+
+
 def _request(
     *, run_dir: Path, payload: dict[str, Any], timeout: float = 30
 ) -> dict[str, Any]:
+    deadline = time.monotonic() + timeout
     port = _load_instance(run_dir=run_dir)["port"]
     token = json.loads((run_dir / RUN_FILE).read_text())["token"]
     buf = b""
@@ -180,6 +192,7 @@ def _request(
         with socket.create_connection(("127.0.0.1", port), timeout=timeout) as s:
             s.sendall(json.dumps({**payload, "token": token}).encode() + b"\n")
             while not buf.endswith(b"\n"):
+                s.settimeout(_remaining(deadline=deadline))
                 chunk = s.recv(1 << 20)
                 if not chunk:
                     break
@@ -190,11 +203,13 @@ def _request(
         unreachable = "labelme closed the connection without a reply"
     if not buf:
         pid = _load_pid(run_dir=run_dir)
-        for _ in range(50):
-            if not _pid_alive(pid=pid):
-                return _exited(run_dir=run_dir, cmd=payload["cmd"])
+        grace_end = min(deadline, time.monotonic() + EXIT_GRACE_S)
+        while _pid_alive(pid=pid):
+            if time.monotonic() >= grace_end:
+                log = run_dir / "evidence" / "labelme.log"
+                raise CtlFailure(f"{unreachable}; see {log}")
             time.sleep(0.1)
-        raise CtlFailure(f"{unreachable}; see {run_dir / 'evidence' / 'labelme.log'}")
+        return _exited(run_dir=run_dir, cmd=payload["cmd"])
     reply = json.loads(buf)
     if not reply.get("ok"):
         _print(result=reply)
@@ -244,7 +259,11 @@ def _wait_until_ready(
             )
         time.sleep(0.1)
     while True:
-        state = _request(run_dir=run_dir, payload={"cmd": "state"})
+        state = _request(
+            run_dir=run_dir,
+            payload={"cmd": "state"},
+            timeout=_remaining(deadline=deadline),
+        )
         if _settled(state=state, opened=opened):
             return state
         if time.monotonic() > deadline:
@@ -428,7 +447,16 @@ def cmd_wait(*, args: argparse.Namespace) -> None:
     run_dir = _run_dir(args=args)
     deadline = time.monotonic() + args.timeout
     while True:
-        state = _request(run_dir=run_dir, payload={"cmd": "state"})
+        state = _request(
+            run_dir=run_dir,
+            payload={"cmd": "state"},
+            timeout=_remaining(deadline=deadline),
+        )
+        if state.get("exited"):
+            raise CtlFailure(
+                "labelme exited before the conditions held",
+                details={"exited": True, "exit_code": state["exit_code"]},
+            )
         if _conditions_hold(args=args, state=state):
             _print(result=state)
             return
@@ -531,7 +559,7 @@ def main() -> None:
     try:
         args.func(args=args)
     except CtlFailure as e:
-        _print(result={"ok": False, "error": str(e)})
+        _print(result={"ok": False, "error": str(e), **e.details})
         sys.exit(1)
 
 
