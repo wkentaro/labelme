@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import json
 import math
 import os
@@ -15,6 +16,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 from typing import Final
+from typing import NamedTuple
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -33,6 +35,9 @@ from labelme._app import MainWindow
 from labelme._widgets._canvas import Canvas
 
 SETTLE_MS: Final = 300
+ACTIVATE_POLL_MS: Final = 50
+ACTIVATE_TIMEOUT_MS: Final = 1000
+INPUT_TIMEOUT_MS: Final = 20_000
 MAX_ROWS: Final = 200
 DRAG_STEPS: Final = 8
 WINDOW_SIZE: Final = QtCore.QSize(1280, 800)
@@ -62,6 +67,11 @@ UNCAUGHT: Final[list[str]] = []
 
 class CtlError(Exception):
     pass
+
+
+class Step(NamedTuple):
+    delivers: str
+    send: Callable[[], None]
 
 
 def _app() -> QtWidgets.QApplication:
@@ -552,33 +562,34 @@ def _release_held_buttons() -> None:
         QTest.mouseRelease(QtWidgets.QWidget(), button)
 
 
-def _activate_top_window() -> None:
+def _try_activate_top_window() -> bool:
     app = _app()
     top = _search_root().window()
-    if app.activeWindow() is top:
-        return
+    if app.activePopupWidget() is top or app.activeWindow() is top:
+        return True
     top.activateWindow()
-    deadline = QtCore.QDeadlineTimer(1000)
-    while app.activeWindow() is not top and not deadline.hasExpired():
-        app.processEvents(QtCore.QEventLoop.ProcessEventsFlag.AllEvents, 50)
+    return False
 
 
-def _type_steps(*, text: str) -> list[Callable[[], None]]:
-    def target() -> QtWidgets.QWidget:
-        _activate_top_window()
-        return _focus_target()
+def _activate_top_window() -> None:
+    deadline = QtCore.QDeadlineTimer(ACTIVATE_TIMEOUT_MS)
+    while not _try_activate_top_window() and not deadline.hasExpired():
+        _app().processEvents(
+            QtCore.QEventLoop.ProcessEventsFlag.AllEvents, ACTIVATE_POLL_MS
+        )
 
-    def type_line(line: str) -> Callable[[], None]:
-        return lambda: QTest.keyClicks(target(), line)
 
-    def press_return() -> None:
-        QTest.keyClick(target(), Qt.Key.Key_Return)
+def _type_char(char: str) -> None:
+    if char == "\n":
+        QTest.keyClick(_focus_target(), Qt.Key.Key_Return)
+    else:
+        QTest.keyClicks(_focus_target(), char)
 
-    first, *rest = text.split("\n")
-    steps = [type_line(first)]
-    for line in rest:
-        steps += [press_return, type_line(line)]
-    return steps
+
+def _type_steps(*, text: str) -> list[Step]:
+    return [
+        Step(delivers=char, send=functools.partial(_type_char, char)) for char in text
+    ]
 
 
 def _plan_key(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
@@ -692,14 +703,16 @@ def _plan_drag_canvas(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     return f"drag canvas from image {span}", drag
 
 
-def _plan_input(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
+def _plan_input(*, req: dict[str, Any]) -> tuple[str, list[Step]]:
     _release_held_buttons()
     _activate_top_window()
     cmd = req.get("cmd")
     if cmd == "action":
         if _search_root() is not _main_window():
             raise CtlError("a dialog or popup blocks the menu bar; close it first")
-        return f"menu {req['path']}", [_find_action(path=req["path"]).trigger]
+        description = f"menu {req['path']}"
+        action = _find_action(path=req["path"])
+        return description, [Step(delivers=description, send=action.trigger)]
     if cmd == "type":
         controls = {
             c for c in req["text"] if c != "\n" and unicodedata.category(c) == "Cc"
@@ -722,7 +735,7 @@ def _plan_input(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
     if cmd not in planners:
         raise CtlError(f"unknown command {cmd!r}")
     description, run = planners[cmd](req=req)
-    return description, [run]
+    return description, [Step(delivers=description, send=run)]
 
 
 def _screenshot(*, req: dict[str, Any]) -> dict[str, Any]:
@@ -881,31 +894,56 @@ class Controller(QtCore.QObject):
             self._reply(sock=sock, payload={"ok": True, "result": result})
             return
         description, steps = _plan_input(req=req)
-        errors: list[str] = []
         settle = QtCore.QTimer(sock)
         settle.setSingleShot(True)
+        limit = QtCore.QTimer(sock)
+        limit.setSingleShot(True)
+        activation = QtCore.QDeadlineTimer(ACTIVATE_TIMEOUT_MS)
+        answered = False
+
+        def answer(*, error: str | None) -> None:
+            nonlocal answered
+            if answered:
+                return
+            answered = True
+            limit.stop()
+            settle.stop()
+            result = {"did": description, "state": _state()}
+            if steps:
+                result["undelivered"] = "".join(step.delivers for step in steps)
+                steps.clear()
+            payload = {"ok": error is None, "result": result, "error": error}
+            self._reply(sock=sock, payload=payload)
 
         def run_next() -> None:
             if not steps:
                 return
-            settle.start(SETTLE_MS)
-            try:
-                steps.pop(0)()
-            except Exception:
-                errors.append(traceback.format_exc())
-                steps.clear()
+            if not _try_activate_top_window() and not activation.hasExpired():
+                QtCore.QTimer.singleShot(ACTIVATE_POLL_MS, settle, run_next)
                 return
-            QtCore.QTimer.singleShot(0, self, run_next)
+            activation.setRemainingTime(ACTIVATE_TIMEOUT_MS)
+            step = steps.pop(0)
+            settle.start(SETTLE_MS)
+            QtCore.QTimer.singleShot(0, settle, run_next)
+            try:
+                step.send()
+            except Exception:
+                steps.insert(0, step)
+                answer(error=traceback.format_exc())
 
-        def answer() -> None:
-            steps.clear()
-            result = {"did": description, "state": _state()}
-            error = errors[0] if errors else None
-            payload = {"ok": not errors, "result": result, "error": error}
-            self._reply(sock=sock, payload=payload)
+        def settled() -> None:
+            if not steps:
+                answer(error=None)
 
-        settle.timeout.connect(answer)
-        QtCore.QTimer.singleShot(0, self, run_next)
+        def timed_out() -> None:
+            if steps:
+                seconds = INPUT_TIMEOUT_MS // 1000
+                answer(error=f"input not delivered within {seconds}s")
+
+        settle.timeout.connect(settled)
+        limit.timeout.connect(timed_out)
+        limit.start(INPUT_TIMEOUT_MS)
+        QtCore.QTimer.singleShot(0, settle, run_next)
 
 
 def _isolate_window_state(*, home: Path) -> None:

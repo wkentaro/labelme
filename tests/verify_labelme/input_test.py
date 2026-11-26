@@ -221,6 +221,31 @@ def test_type_after_a_newline_goes_where_return_moved_focus(*, ctl: Ctl) -> None
     assert not (run.data / "2011_000006.json").exists()
 
 
+def test_type_after_a_return_that_opens_a_dialog_lands_in_it(*, ctl: Ctl) -> None:
+    run = ctl.launch(IMAGE)
+    ctl.ok("key", "Ctrl+N", run=run)
+    for x, y in (("100", "100"), ("200", "100"), ("200", "200")):
+        ctl.ok("click-canvas", x, y, run=run)
+
+    reply = ctl.ok("type", "\nbox", run=run)
+
+    assert reply["state"]["dialog"]["title"] == "Shape Label"
+    assert _field_text(state=reply["state"], name="Label") == "box"
+    ctl.ok("key", "Return", run=run)
+    [shape] = _saved_shapes(ctl=ctl, run=run)
+    assert shape["label"] == "box"
+
+
+def test_type_after_a_file_not_found_prompt_answers_it(*, ctl: Ctl) -> None:
+    run = ctl.launch("{data}")
+    ctl.ok("action", "File > Open File", run=run)
+    _wait_for_dialog_row(ctl=ctl, run=run, view="Files", text="2011_000006.jpg")
+
+    reply = ctl.ok("type", "missing.jpg\n\n", run=run)
+
+    assert reply["state"]["dialog"]["title"] == "Open File"
+
+
 def test_type_refuses_a_tab(*, ctl: Ctl) -> None:
     run = ctl.launch(IMAGE)
     _draw_rectangle(ctl=ctl, run=run, start=("100", "100"), end=("200", "200"))
