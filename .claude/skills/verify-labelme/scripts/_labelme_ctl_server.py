@@ -6,6 +6,7 @@ import re
 import secrets
 import sys
 import traceback
+import types
 import webbrowser
 from collections.abc import Callable
 from pathlib import Path
@@ -23,6 +24,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
 
 import labelme
+from labelme import _app as labelme_app
 from labelme.__main__ import main as labelme_main
 from labelme._app import MainWindow
 from labelme._widgets._canvas import Canvas
@@ -768,7 +770,7 @@ def _run_file_dialog(
     dialog = QtWidgets.QFileDialog(parent, caption, directory, name_filter)
     dialog.setFileMode(mode)
     dialog.setAcceptMode(accept)
-    dialog.setOptions(options)
+    dialog.setOptions(options | QtWidgets.QFileDialog.Option.ReadOnly)
     accepted = dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted
     files = dialog.selectedFiles() if accepted else []
     chosen = (files[0], dialog.selectedNameFilter()) if files else ("", "")
@@ -848,7 +850,14 @@ def _block_external_launches() -> None:
         BLOCKED.append(f"open {url}")
         return True
 
+    def record_launch(args: list[object], *_: object, **__: object) -> None:  # noqa: GR013 -- labelme calls subprocess.Popen([...])
+        BLOCKED.append(" ".join(str(arg) for arg in args))
+
+    launcher = types.ModuleType("subprocess")
+    setattr(launcher, "Popen", record_launch)
+
     setattr(webbrowser, "open", record_url)
+    setattr(labelme_app, "subprocess", launcher)
 
 
 def serve(*, run_dir: Path, size: str, labelme_args: list[str]) -> None:

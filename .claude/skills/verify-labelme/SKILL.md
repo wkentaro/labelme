@@ -31,7 +31,7 @@ Each launch gets a fresh run dir from `mktemp`, so instances never share state, 
 - `evidence/` holds `labelme.log` (the process's stdout and stderr) and every screenshot.
 - `run.json` marks the directory as made by `launch` and holds the token every request sends. The control port rejects a request without it, so keep the run dir private.
 
-The app must not touch anything outside the run dir. A file dialog that chooses a path outside it returns as if canceled, and `webbrowser.open`, which Help > Tutorial calls, opens nothing. Both append a line to `state.blocked`, so a journey that needs one of them reports why it stopped.
+The app must not touch anything outside the run dir. File dialogs are read-only, so they cannot delete, rename, or create files. A file dialog that chooses a path outside the run dir returns as if canceled. Help > Tutorial's browser and Settings' `Open config file as text` editor open nothing. Each of these appends a line to `state.blocked`, so a journey that needs one of them reports why it stopped.
 
 Qt's file dialog saves its history to the user's real Qt settings when it is destroyed, and macOS stores those in `~/Library/Preferences/com.qtproject.plist` whatever `HOME` says. The helper keeps every file dialog alive and ends the process with `os._exit` once `app.exec()` returns, after flushing the scratch settings, so no exit-time destructor runs.
 
