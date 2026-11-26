@@ -40,4 +40,4 @@ Steps:
 
 - Undo clears the selection, so a second `Delete` right after `Ctrl+Z` does nothing. Pick the shape again first.
 - A press on the canvas selects the shape under the point. Aim well inside the target and away from other shapes.
-- Auto save writes the file in the background after each edit, and the status bar keeps `Saved` from the edit before. Poll the file until it holds the expected shapes before you read it or copy it to `evidence/`.
+- Auto save writes the file in the background after each edit. The status bar shows `Saving…` at once and `Saved` when the latest edit is on disk, so run `$CTL wait --status Saved` before you read the file or copy it to `evidence/`.
