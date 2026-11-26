@@ -345,6 +345,10 @@ def cmd_doctor(*, args: argparse.Namespace) -> None:
         report["control_port"] = f"unreachable: {e}"
         _print(result=report)
         sys.exit(1)
+    if info.get("exited"):
+        report["exit_code"] = info["exit_code"]
+        _print(result=report)
+        sys.exit(1)
     checkout = Path(_load_instance(run_dir=run_dir)["checkout"])
     status = ["status", "--porcelain", "--untracked-files=no"]
     report.update(info)
