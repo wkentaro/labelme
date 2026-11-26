@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import shutil
 import sys
+import time
 from pathlib import Path
 from typing import Any
 from typing import Final
@@ -19,6 +20,7 @@ pytestmark = pytest.mark.skipif(
 
 ANNOTATED: Final = REPO / "tests" / "data" / "annotated"
 IMAGE: Final = "{data}/2011_000003.jpg"
+ZOOM_STEP: Final = 1.1
 
 
 def _saved_shapes(*, ctl: Ctl, run: Run) -> list[dict[str, Any]]:
@@ -46,6 +48,30 @@ def _draw_rectangle(
 def _field_text(*, state: dict[str, Any], name: str) -> str:
     fields = state["dialog"]["fields"]
     return next(field["text"] for field in fields if field["name"] == name)
+
+
+def _list_rows(*, state: dict[str, Any], dock: str) -> list[dict[str, Any]]:
+    found = next(entry for entry in state["docks"] if entry["title"] == dock)
+    return found["lists"][0]["rows"]
+
+
+def _wait_for_dialog_row(*, ctl: Ctl, run: Run, view: str, text: str) -> None:
+    deadline = time.monotonic() + 10
+    while time.monotonic() < deadline:
+        lists = ctl.ok("state", run=run)["dialog"]["lists"]
+        rows = next(entry["rows"] for entry in lists if entry["name"] == view)
+        if any(row["text"] == text for row in rows):
+            return
+        time.sleep(0.2)
+    raise AssertionError(f"{text!r} never appeared in {view!r}: {rows}")
+
+
+def _click_is_visible(*, ctl: Ctl, run: Run, x: float, y: float) -> bool:
+    reply = ctl("click-canvas", str(x), str(y), run=run)
+    if reply.code == 0:
+        return True
+    assert "not visible" in reply.body["error"], reply.body
+    return False
 
 
 def _assert_within_a_pixel(
@@ -83,6 +109,7 @@ def test_delete_in_the_open_file_dialog_keeps_the_file(
     run = ctl.launch(str(image), seed="none")
 
     ctl.ok("action", "File > Open File", run=run)
+    _wait_for_dialog_row(ctl=ctl, run=run, view="Files", text="zebra.jpg")
     ctl.ok("key", "Shift+Tab", run=run)
     ctl.ok("key", "Z", run=run)
     reply = ctl.ok("key", "Delete", run=run)
@@ -137,22 +164,33 @@ def test_shift_click_draws_a_square(*, ctl: Ctl) -> None:
     _assert_within_a_pixel(point=shape["points"][1], expected=(160, 160))
 
 
-def test_zoomed_in_click_out_of_view_is_refused(*, ctl: Ctl) -> None:
+def test_zoomed_in_click_just_left_of_the_view_is_refused(*, ctl: Ctl) -> None:
     run = ctl.launch(IMAGE)
-    for _ in range(4):
+    ctl.ok("action", "View > Actual Size", run=run)
+    zoom_steps = 7
+    for _ in range(zoom_steps):
         ctl.ok("action", "View > Zoom In", run=run)
-    ctl.ok("key", "Ctrl+R", run=run)
+    widget_pixel = 1 / ZOOM_STEP**zoom_steps
+    hidden, shown = 0.0, 125.0
+    assert not _click_is_visible(ctl=ctl, run=run, x=hidden, y=169)
+    assert _click_is_visible(ctl=ctl, run=run, x=shown, y=169)
+    while shown - hidden > 0.02:
+        middle = (hidden + shown) / 2
+        if _click_is_visible(ctl=ctl, run=run, x=middle, y=169):
+            shown = middle
+        else:
+            hidden = middle
 
-    refused = ctl("click-canvas", "0", "0", run=run)
+    refused = ctl("click-canvas", str(hidden), "169", run=run)
+
     assert refused.code == 1
-    assert refused.body["ok"] is False
-
-    _draw_rectangle(ctl=ctl, run=run, start=("250", "169"), end=("260", "175"))
-    ctl.ok("type", "visible", run=run)
+    assert "not visible" in refused.body["error"]
+    _draw_rectangle(ctl=ctl, run=run, start=(str(shown), "169"), end=("250", "200"))
+    ctl.ok("type", "edge", run=run)
     ctl.ok("key", "Return", run=run)
     [shape] = _saved_shapes(ctl=ctl, run=run)
-    _assert_within_a_pixel(point=shape["points"][0], expected=(250, 169))
-    _assert_within_a_pixel(point=shape["points"][1], expected=(260, 175))
+    assert 0 <= shape["points"][0][0] - shown < 0.75 * widget_pixel
+    _assert_within_a_pixel(point=shape["points"][1], expected=(250, 200))
 
 
 def test_two_line_description_saves_both_lines(*, ctl: Ctl) -> None:
@@ -166,6 +204,21 @@ def test_two_line_description_saves_both_lines(*, ctl: Ctl) -> None:
 
     [shape] = _saved_shapes(ctl=ctl, run=run)
     assert shape["description"] == "line one\nline two"
+
+
+def test_type_after_a_newline_goes_where_return_moved_focus(*, ctl: Ctl) -> None:
+    run = ctl.launch("{data}")
+    _draw_rectangle(ctl=ctl, run=run, start=("100", "100"), end=("200", "200"))
+
+    reply = ctl.ok("type", "box\nD", run=run)
+
+    assert reply["state"]["dialog"] is None
+    assert "2011_000006.jpg" in reply["state"]["main_window"]["title"]
+    annotation = run.data / "2011_000003.json"
+    ctl.ok("wait", "--file", str(annotation), run=run)
+    [shape] = json.loads(annotation.read_text())["shapes"]
+    assert shape["label"] == "box"
+    assert not (run.data / "2011_000006.json").exists()
 
 
 def test_type_refuses_a_tab(*, ctl: Ctl) -> None:
@@ -186,6 +239,37 @@ def test_file_quit_replies_with_a_clean_exit(*, ctl: Ctl) -> None:
 
     assert reply["exited"] is True
     assert reply["exit_code"] == 0
+    for command in (["wait", "--no-dialog"], ["doctor"]):
+        after = ctl(*command, run=run)
+        assert after.code == 1, command
+        assert after.body["ok"] is False
+        assert after.body["error"]
+        assert after.body["exit_code"] == 0
+
+
+def test_double_click_in_the_open_file_dialog_opens_the_file(*, ctl: Ctl) -> None:
+    run = ctl.launch("{data}")
+    ctl.ok("action", "File > Open File", run=run)
+    _wait_for_dialog_row(ctl=ctl, run=run, view="Files", text="2011_000006.jpg")
+
+    reply = ctl.ok("pick", "Files", "2011_000006.jpg", "--double", run=run)
+
+    assert reply["state"]["dialog"] is None
+    assert reply["state"]["image_loaded"] is True
+    assert "2011_000006.jpg" in reply["state"]["main_window"]["title"]
+
+
+def test_pick_refuses_a_disabled_row_and_keeps_the_selection(*, ctl: Ctl) -> None:
+    run = ctl.launch(IMAGE, seed="annotated")
+    ctl.ok("pick", "Label List", "amber_kite", run=run)
+    before = _list_rows(state=ctl.ok("state", run=run), dock="Label List")
+    assert [row["text"] for row in before if row.get("selected")] == ["amber_kite"]
+
+    reply = ctl("pick", "Label List", "Found in files", run=run)
+
+    assert reply.code == 1
+    assert "disabled" in reply.body["error"]
+    assert _list_rows(state=ctl.ok("state", run=run), dock="Label List") == before
 
 
 @pytest.mark.parametrize("sequence", ["Tab, 7", "not a Qt key"])
@@ -199,9 +283,16 @@ def test_key_refuses_anything_but_one_known_stroke(*, ctl: Ctl, sequence: str) -
 
     assert reply.code == 1
     assert reply.body["ok"] is False
-    label = _field_text(state=ctl.ok("state", run=run), name="Label")
-    assert label == "amber_kite"
+    state = ctl.ok("state", run=run)
+    assert _field_text(state=state, name="Label") == "amber_kite"
+    assert _field_text(state=state, name="Group ID") == ""
     docks = ctl.ok("click", "OK", run=run)["state"]["docks"]
     shape_list = next(dock for dock in docks if dock["title"] == "Shape List")
     assert shape_list["lists"][0]["rows"][0]["text"] == "amber_kite"
     assert annotation.read_bytes() == before
+    [amber_kite] = [
+        shape
+        for shape in json.loads(annotation.read_text())["shapes"]
+        if shape["label"] == "amber_kite"
+    ]
+    assert amber_kite["group_id"] is None
