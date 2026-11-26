@@ -378,6 +378,7 @@ def test_doctor_reports_problems_and_leaves_the_checkout_index_alone(
 
 def test_doctor_counts_an_untracked_file_as_dirty(*, ctl: Ctl, tmp_path: Path) -> None:
     checkout = _scratch_checkout(tmp_path=tmp_path)
+    _git(checkout=checkout, args=["config", "status.showUntrackedFiles", "no"])
     (checkout / "labelme" / "_untracked.py").touch()
 
     reply = _doctor_on(ctl=ctl, checkout=checkout)

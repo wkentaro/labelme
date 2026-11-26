@@ -413,7 +413,7 @@ def cmd_doctor(*, args: argparse.Namespace) -> None:
         report["exit_code"] = info["exit_code"]
         raise CtlFailure(f"labelme exited with {info['exit_code']}", details=report)
     checkout = Path(_load_instance(run_dir=run_dir)["checkout"])
-    status = ["status", "--porcelain"]
+    status = ["status", "--porcelain", "--untracked-files=normal"]
     report.update(info)
     report["checkout_head"] = _git(checkout=checkout, args=["rev-parse", "HEAD"])
     report["checkout_dirty"] = bool(_git(checkout=checkout, args=status))
