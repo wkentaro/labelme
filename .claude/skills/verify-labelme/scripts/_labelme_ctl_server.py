@@ -111,10 +111,12 @@ def _rows(*, view: QtWidgets.QAbstractItemView) -> list[dict[str, Any]]:
     model = view.model()
     if model is None:
         return []
+    root = view.rootIndex()
+    count = model.rowCount(root)
     selection = view.selectionModel()
     rows: list[dict[str, Any]] = []
-    for row in range(min(model.rowCount(), MAX_ROWS)):
-        index = model.index(row, 0)
+    for row in range(min(count, MAX_ROWS)):
+        index = model.index(row, 0, root)
         entry: dict[str, Any] = {"text": _row_text(view=view, index=index)}
         check = index.data(Qt.ItemDataRole.CheckStateRole)
         if check is not None:
@@ -124,8 +126,8 @@ def _rows(*, view: QtWidgets.QAbstractItemView) -> list[dict[str, Any]]:
         if isinstance(view, QtWidgets.QListView) and view.isRowHidden(row):
             entry["hidden"] = True
         rows.append(entry)
-    if model.rowCount() > MAX_ROWS:
-        rows.append({"truncated": model.rowCount() - MAX_ROWS})
+    if count > MAX_ROWS:
+        rows.append({"truncated": count - MAX_ROWS})
     return rows
 
 
