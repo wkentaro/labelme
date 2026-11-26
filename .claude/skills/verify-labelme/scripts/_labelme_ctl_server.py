@@ -12,7 +12,6 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 from typing import Final
-from typing import NoReturn
 
 from PySide6 import QtCore
 from PySide6 import QtGui
@@ -53,8 +52,6 @@ CLICKABLE: Final = (
 RUN_FILE: Final = "run.json"
 MAX_REQUEST_BYTES: Final = 1 << 20
 SEARCH_ROOT_KEEPALIVE: Final[list[QtWidgets.QWidget]] = []
-SCRATCH_SETTINGS: Final[list[QtCore.QSettings]] = []
-UNDESTROYED_FILE_DIALOGS: Final[list[QtWidgets.QFileDialog]] = []
 BLOCKED: Final[list[str]] = []
 UNCAUGHT: Final[list[str]] = []
 
@@ -673,8 +670,21 @@ def _screenshot(*, req: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _doctor() -> dict[str, Any]:
+def _writes_confined(*, run_dir: Path) -> bool:
+    probe = run_dir.parent / f".{run_dir.name}.sandbox-probe"
+    try:
+        os.close(os.open(probe, os.O_WRONLY | os.O_CREAT | os.O_EXCL))
+    except PermissionError:
+        return True
+    except OSError:
+        return False
+    probe.unlink()
+    return False
+
+
+def _doctor(*, run_dir: Path) -> dict[str, Any]:
     return {
+        "writes_confined": _writes_confined(run_dir=run_dir),
         "uncaught_exception": UNCAUGHT[-1] if UNCAUGHT else None,
         "pid": os.getpid(),
         "labelme_version": labelme.__version__,
@@ -698,11 +708,13 @@ def _parse_request(*, line: bytes) -> dict[str, Any] | None:
 class Controller(QtCore.QObject):
     _server: QtNetwork.QTcpServer
     _token: str
+    _run_dir: Path
     _size: QtCore.QSize
     _sized: bool
 
     def __init__(self, *, run_dir: Path, size: str) -> None:
         super().__init__()
+        self._run_dir = run_dir
         self._token = json.loads((run_dir / RUN_FILE).read_text())["token"]
         self._server = QtNetwork.QTcpServer(self)
         localhost = QtNetwork.QHostAddress.SpecialAddress.LocalHost
@@ -773,7 +785,7 @@ class Controller(QtCore.QObject):
         observers: dict[str, Callable[[], object]] = {
             "state": _state,
             "menu": _menu,
-            "doctor": _doctor,
+            "doctor": lambda: _doctor(run_dir=self._run_dir),
             "screenshot": lambda: _screenshot(req=req),
         }
         if req["cmd"] in observers:
@@ -806,98 +818,8 @@ def _isolate_window_state(*, home: Path) -> None:
         def __init__(self, organization: str, application: str) -> None:  # noqa: GR013 -- labelme calls QSettings(organization, application)
             path = home / "qtsettings" / f"{organization}-{application}.ini"
             super().__init__(str(path), native.Format.IniFormat)
-            SCRATCH_SETTINGS.append(self)
 
     setattr(QtCore, "QSettings", ScratchSettings)
-
-
-def _run_file_dialog(
-    *,
-    run_dir: Path,
-    parent: QtWidgets.QWidget | None,
-    caption: str,
-    directory: str,
-    name_filter: str,
-    mode: QtWidgets.QFileDialog.FileMode,
-    accept: QtWidgets.QFileDialog.AcceptMode,
-    options: QtWidgets.QFileDialog.Option,
-) -> tuple[str, str]:
-    dialog = QtWidgets.QFileDialog(parent, caption, directory, name_filter)
-    dialog.setFileMode(mode)
-    dialog.setAcceptMode(accept)
-    dialog.setOptions(options | QtWidgets.QFileDialog.Option.ReadOnly)
-    accepted = dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted
-    files = dialog.selectedFiles() if accepted else []
-    chosen = (files[0], dialog.selectedNameFilter()) if files else ("", "")
-    dialog.setParent(None)
-    UNDESTROYED_FILE_DIALOGS.append(dialog)
-    if chosen[0] and not Path(chosen[0]).resolve().is_relative_to(run_dir):
-        BLOCKED.append(f"{caption}: {chosen[0]} is outside {run_dir}")
-        return ("", "")
-    return chosen
-
-
-def _isolate_file_dialog_state(*, run_dir: Path) -> None:
-    file_dialog = QtWidgets.QFileDialog
-    no_options = file_dialog.Option(0)
-
-    def get_open_file_name(  # noqa: GR013 -- labelme passes Qt's positional order
-        parent: QtWidgets.QWidget | None = None,
-        caption: str = "",
-        dir: str = "",
-        filter: str = "",
-        options: QtWidgets.QFileDialog.Option = no_options,
-    ) -> tuple[str, str]:
-        return _run_file_dialog(
-            run_dir=run_dir,
-            parent=parent,
-            caption=caption,
-            directory=dir,
-            name_filter=filter,
-            mode=file_dialog.FileMode.ExistingFile,
-            accept=file_dialog.AcceptMode.AcceptOpen,
-            options=options,
-        )
-
-    def get_save_file_name(  # noqa: GR013 -- labelme passes Qt's positional order
-        parent: QtWidgets.QWidget | None = None,
-        caption: str = "",
-        dir: str = "",
-        filter: str = "",
-        options: QtWidgets.QFileDialog.Option = no_options,
-    ) -> tuple[str, str]:
-        return _run_file_dialog(
-            run_dir=run_dir,
-            parent=parent,
-            caption=caption,
-            directory=dir,
-            name_filter=filter,
-            mode=file_dialog.FileMode.AnyFile,
-            accept=file_dialog.AcceptMode.AcceptSave,
-            options=options,
-        )
-
-    def get_existing_directory(  # noqa: GR013 -- labelme passes Qt's positional order
-        parent: QtWidgets.QWidget | None = None,
-        caption: str = "",
-        dir: str = "",
-        options: QtWidgets.QFileDialog.Option = file_dialog.Option.ShowDirsOnly,
-    ) -> str:
-        directory, _ = _run_file_dialog(
-            run_dir=run_dir,
-            parent=parent,
-            caption=caption,
-            directory=dir,
-            name_filter="",
-            mode=file_dialog.FileMode.Directory,
-            accept=file_dialog.AcceptMode.AcceptOpen,
-            options=options,
-        )
-        return directory
-
-    setattr(file_dialog, "getOpenFileName", staticmethod(get_open_file_name))
-    setattr(file_dialog, "getSaveFileName", staticmethod(get_save_file_name))
-    setattr(file_dialog, "getExistingDirectory", staticmethod(get_existing_directory))
 
 
 def _block_external_launches() -> None:
@@ -934,7 +856,6 @@ def serve(*, run_dir: Path, size: str, labelme_args: list[str]) -> None:
     if labelme_args[:1] == ["--"]:
         labelme_args = labelme_args[1:]
     _isolate_window_state(home=run_dir / "home")
-    _isolate_file_dialog_state(run_dir=run_dir.resolve())
     _block_external_launches()
     _record_uncaught_exceptions()
     controllers: list[Controller] = []
@@ -948,20 +869,4 @@ def serve(*, run_dir: Path, size: str, labelme_args: list[str]) -> None:
 
     setattr(QtWidgets, "QApplication", ControlledApplication)
     sys.argv = ["labelme", *labelme_args]
-    exit_code: object = 0
-    try:
-        labelme_main()
-    except SystemExit as exit_request:
-        exit_code = exit_request.code
-    _exit_before_destructors(code=exit_code)
-
-
-def _exit_before_destructors(*, code: object) -> NoReturn:
-    for settings in SCRATCH_SETTINGS:
-        settings.sync()
-    if code is not None and not isinstance(code, int):
-        print(code, file=sys.stderr)
-        code = 1
-    sys.stdout.flush()
-    sys.stderr.flush()
-    os._exit(code or 0)
+    labelme_main()

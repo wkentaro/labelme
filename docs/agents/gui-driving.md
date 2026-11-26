@@ -8,7 +8,7 @@ Cheapest option first. Stop at the first one that answers the question.
 
 ## 2. The `verify-labelme` skill (macOS)
 
-`.claude/skills/verify-labelme/` launches labelme offscreen from a checkout, with scratch data and settings, and drives it with real Qt mouse and keyboard input. It saves screenshots and annotation files as proof and never touches the user's desktop or settings. Its `features/` files hold the recipes for the main journeys. It has not been run on Linux and does not support Windows.
+`.claude/skills/verify-labelme/` launches labelme offscreen from a checkout, with scratch data and settings, and drives it with real Qt mouse and keyboard input. It saves screenshots and annotation files as proof, and a macOS sandbox keeps labelme from writing outside its run dir or to the user's settings. Its `features/` files hold the recipes for the main journeys. It does not support Linux or Windows.
 
 ## 3. The harness's own computer use (macOS, Windows)
 

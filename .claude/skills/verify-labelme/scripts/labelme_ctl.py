@@ -37,7 +37,11 @@ VALUED_OPTIONS: Final = frozenset(
         "--epsilon",
     }
 )
-WRITTEN_OPTIONS: Final = frozenset({"--output", "--config"})
+SANDBOX_PROFILE: Final = """(version 1)
+(allow default)
+(deny file-write* (require-not (require-any (subpath {run_dir}) (literal "/dev/null"))))
+(deny user-preference-write)
+"""
 SEEDS: Final = {
     "raw": "tests/data/raw",
     "annotated": "tests/data/annotated",
@@ -102,28 +106,6 @@ def _names_option(*, arg: str, options: frozenset[str]) -> bool:
         and len(name) > len("--")
         and any(option.startswith(name) for option in options)
     )
-
-
-def _resolve_paths(
-    *, run_dir: Path, checkout: Path, labelme_args: list[str]
-) -> tuple[list[str], list[str]]:
-    resolved, outside = [], []
-    previous = ""
-    for arg in labelme_args:
-        prefix = ""
-        option, _, value = arg.partition("=")
-        if value and _names_option(arg=option, options=WRITTEN_OPTIONS):
-            previous, prefix, arg = option, f"{option}=", value
-        written = _names_option(arg=previous, options=WRITTEN_OPTIONS)
-        path = (checkout / arg).resolve()
-        if path.exists() or written:
-            if not path.is_relative_to(run_dir):
-                outside.append(arg)
-            resolved.append(f"{prefix}{path}")
-        else:
-            resolved.append(f"{prefix}{arg}")
-        previous = arg
-    return resolved, outside
 
 
 def _opened_path(*, checkout: Path, labelme_args: list[str]) -> Path | None:
@@ -224,8 +206,10 @@ def _wait_until_ready(
 
 
 def cmd_launch(*, args: argparse.Namespace) -> None:
-    if os.name == "nt":
-        sys.exit("labelme_ctl.py supports macOS and Linux")
+    if sys.platform != "darwin":
+        sys.exit(
+            "labelme_ctl.py needs macOS sandbox-exec to keep writes in the run dir"
+        )
     checkout = Path(args.checkout).resolve()
     if not (checkout / "labelme" / "__main__.py").exists():
         sys.exit(f"not a labelme checkout: {checkout}")
@@ -242,22 +226,25 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     labelme_args = [a.replace("{data}", str(data)) for a in args.labelme_args]
     if labelme_args[:1] == ["--"]:
         labelme_args = labelme_args[1:]
-    labelme_args, outside = _resolve_paths(
-        run_dir=run_dir, checkout=checkout, labelme_args=labelme_args
-    )
-    if outside:
-        sys.exit(f"labelme may write these, so copy them into {data}: {outside}")
+    profile = run_dir / "sandbox.sb"
+    profile.write_text(SANDBOX_PROFILE.format(run_dir=json.dumps(str(run_dir))))
+    (run_dir / "tmp").mkdir(exist_ok=True)
     env = {
         **os.environ,
         "HOME": str(home),
         "XDG_CONFIG_HOME": str(home / ".config"),
         "XDG_CACHE_HOME": str(home / ".cache"),
+        "TMPDIR": str(run_dir / "tmp"),
+        "PYTHONDONTWRITEBYTECODE": "1",
         "QT_QPA_PLATFORM": "offscreen",
     }
     env.pop("QT_QPA_PLATFORMTHEME", None)
     with open(evidence / "labelme.log", "w") as log:
         proc = subprocess.Popen(
             [
+                "/usr/bin/sandbox-exec",
+                "-f",
+                str(profile),
                 str(checkout / ".venv" / "bin" / "python"),
                 str(Path(__file__).resolve()),
                 "serve",
@@ -321,6 +308,7 @@ def _problems(*, info: dict[str, Any], run_dir: Path, pid: int) -> list[str]:
             f"labelme hit an uncaught exception: {info['uncaught_exception']}",
         ),
         (info["platform"] == "offscreen", "not running offscreen"),
+        (info["writes_confined"], "labelme can write outside the run dir"),
     ]
     return [message for ok, message in checks if not ok]
 
@@ -419,7 +407,7 @@ def cmd_cleanup(*, args: argparse.Namespace) -> None:
             _stop(pid=pid, run_dir=run_dir)
             killed = True
         pid_file.unlink()
-    for name in ("home", "data", "instance.json"):
+    for name in ("home", "data", "tmp", "sandbox.sb", "instance.json"):
         target = run_dir / name
         if target.is_dir():
             shutil.rmtree(target)

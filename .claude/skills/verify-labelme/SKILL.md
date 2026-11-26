@@ -9,7 +9,7 @@ labelme is a PySide6 desktop app. This skill runs the real `labelme` entry point
 
 The helper is `.claude/skills/verify-labelme/scripts/labelme_ctl.py`. Run it from any directory with the system `python3`, and run `labelme_ctl.py <command> --help` for flags. The examples below use `CTL=.claude/skills/verify-labelme/scripts/labelme_ctl.py` from the repo root.
 
-It runs on macOS and Linux. It has been proven on macOS only.
+It runs on macOS only, because it uses `sandbox-exec` to keep labelme's writes inside the run dir.
 
 ## Launch
 
@@ -21,19 +21,18 @@ export LABELME_VERIFY_RUN=<run_dir from the output>
 - `--checkout` is the tree to run. Launch runs `uv sync --frozen` there, then starts that tree's `.venv/bin/python`. To compare base and head, make a worktree for each and launch one instance per tree.
 - `--seed` copies sample data into `<run_dir>/data`: `raw` (three images, no annotations, the default), `annotated` (the same images with five, three, and two shapes), `tutorial` (`examples/tutorial`), or `none`.
 - `--language` writes the UI language to the scratch `.labelmerc`. It defaults to `en_US`, which the feature map's names assume. Pass `ja_JP` or another code to check a translation.
-- Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. Launch refuses an existing path outside the run dir, and an `--output` or `--config` outside it (abbreviations such as `--out` included), because labelme writes next to what it opens. Copy the user's file into `<run_dir>/data` first.
+- Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. labelme can read any path but write only inside the run dir, so copy a file you want to edit into `<run_dir>/data` first. A save outside shows `Save failed` in the status bar.
 - Launch returns once the window is visible, and, when the last argument is an existing path, once an image is on the canvas or the folder's Image List is known to be empty. It also returns when a dialog opens first, such as the error for an image that cannot be read. Its output carries `image_loaded` and `dialog`, so check both before driving. A cold `uv sync` can take a minute. The default timeout is 120 s.
 
 Each launch gets a fresh run dir from `mktemp`, so instances never share state, and two or more can run side by side. `--run-dir` picks the directory instead, and it must be new, empty, or made by an earlier launch. Inside the run dir:
 
-- `home/` is the process's `HOME`. It holds `.labelmerc`, the log under `.cache/labelme/`, and the window state in `qtsettings/labelme-labelme.ini`. The helper redirects Qt's window state there, because Qt's native store on macOS ignores `HOME` and would overwrite the user's real `~/Library/Preferences/com.labelme.labelme.plist`.
+- `home/` is the process's `HOME`. It holds `.labelmerc`, the log under `.cache/labelme/`, and the window state in `qtsettings/labelme-labelme.ini`. The helper redirects Qt's window state there, because Qt's native store on macOS ignores `HOME`.
 - `data/` holds the seeded images and the annotation files the app writes.
 - `evidence/` holds `labelme.log` (the process's stdout and stderr) and every screenshot.
 - `run.json` marks the directory as made by `launch` and holds the token every request sends. The control port rejects a request without it, so keep the run dir private.
+- `sandbox.sb` is the macOS sandbox profile labelme runs under, and `tmp/` is its `TMPDIR`.
 
-The app must not touch anything outside the run dir. File dialogs are read-only, so they cannot delete, rename, or create files. A file dialog that chooses a path outside the run dir returns as if canceled. Help > Tutorial's browser and Settings' `Open config file as text` editor open nothing. Each of these appends a line to `state.blocked`, so a journey that needs one of them reports why it stopped.
-
-Qt's file dialog saves its history to the user's real Qt settings when it is destroyed, and macOS stores those in `~/Library/Preferences/com.qtproject.plist` whatever `HOME` says. The helper keeps every file dialog alive and ends the process with `os._exit` once `app.exec()` returns, after flushing the scratch settings, so no exit-time destructor runs.
+The sandbox denies every file write outside the run dir and every write to the user's preferences, so no file dialog, Save As, or link inside `data/` can change the user's files or `~/Library/Preferences`. A denied write fails with `Operation not permitted`, and labelme shows its own error. Help > Tutorial's browser and Settings' `Open config file as text` editor open nothing, and each appends a line to `state.blocked`, so a journey that needs one of them reports why it stopped.
 
 ## Doctor
 
@@ -41,7 +40,7 @@ Qt's file dialog saves its history to the user's real Qt settings when it is des
 $CTL doctor
 ```
 
-Run it right after launch and whenever a reply looks wrong. It exits 0 and prints `"healthy": true` only when the PID is the one this run started, the control port answers from that PID, `labelme` imports from the checkout, `HOME` and the window state sit in the run's `home/`, the platform is `offscreen`, and no uncaught exception has reached labelme's crash handler. An error dialog the app shows on purpose, such as a file that cannot be opened, does not make it unhealthy. `checkout_head` and `checkout_dirty` record which tree you are driving. Drive only an instance whose doctor is healthy.
+Run it right after launch and whenever a reply looks wrong. It exits 0 and prints `"healthy": true` only when the PID is the one this run started, the control port answers from that PID, `labelme` imports from the checkout, `HOME` and the window state sit in the run's `home/`, the platform is `offscreen`, a write outside the run dir fails, and no uncaught exception has reached labelme's crash handler. An error dialog the app shows on purpose, such as a file that cannot be opened, does not make it unhealthy. `checkout_head` and `checkout_dirty` record which tree you are driving. Drive only an instance whose doctor is healthy.
 
 ## Drive
 
@@ -85,7 +84,7 @@ Drive the path a user takes: menus, shortcuts, toolbar buttons, list rows, and c
 $CTL cleanup
 ```
 
-It refuses a directory without `run.json`. It kills only the PID this run started, after checking that its command line names this run dir. Then it deletes `home/`, `data/`, and `instance.json`, and keeps `evidence/`. Report the evidence path, `<run_dir>/evidence`, with the verdict. Run cleanup after every run, failed runs included. If `doctor` reports a PID that is not ours, leave that process alone.
+It refuses a directory without `run.json`. It kills only the PID this run started, after checking that its command line names this run dir. Then it deletes `home/`, `data/`, `tmp/`, `sandbox.sb`, and `instance.json`, and keeps `evidence/`. Report the evidence path, `<run_dir>/evidence`, with the verdict. Run cleanup after every run, failed runs included. If `doctor` reports a PID that is not ours, leave that process alone.
 
 ## Gotchas
 
@@ -93,5 +92,4 @@ It refuses a directory without `run.json`. It kills only the PID this run starte
 - Canvas coordinates are image pixels. Read a shape's points from its annotation file, or from the image size in the file, to aim a click.
 - Auto save is on by default, so each change writes `<image>.json` next to the image. Pass `--no-auto-save` to test explicit saves and the unsaved-changes dialog.
 - File > Open File and Open Folder show Qt's own file dialog offscreen. `type` the absolute path into its focused field and press `Return`. On macOS, type the path `realpath` prints: a `/var/folders/...` path, which goes through a symlink, left the dialog open and empty in testing.
-- Because the process ends with `os._exit`, Python finalization and C++ destructors never run. A bug that shows only during interpreter shutdown will not appear here, so check it with the e2e tests or a plain `labelme` run.
 - AI-Segment and AI-Find All download models into the scratch `HOME` on first use, which takes minutes and needs network access. The feature map does not cover them yet.
