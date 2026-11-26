@@ -1,11 +1,11 @@
 ---
 name: verify-labelme
-description: Launch the labelme desktop app from a checkout offscreen in a sandboxed scratch run, read its state, and capture screenshots as proof. Use to verify a labelme change or PR in the real app, or to compare one journey on a base tree and a head tree.
+description: Launch the labelme desktop app from a checkout, drive it headlessly with real Qt mouse and keyboard input, and capture screenshots and saved annotation files as proof. Use to verify a labelme change or PR in the real app, or to compare one journey on a base tree and a head tree.
 ---
 
 # Verify labelme
 
-labelme is a PySide6 desktop app. This skill runs the real `labelme` entry point offscreen in its own process, with a scratch `HOME`, and reads it through a control port. Every command prints JSON. A failed command prints `{"ok": false, "error": ...}` and exits 1.
+labelme is a PySide6 desktop app. This skill runs the real `labelme` entry point offscreen in its own process, with a scratch `HOME`, and drives it through a control port that sends the same Qt input events a user's mouse and keyboard produce. Every command prints JSON. A failed command prints `{"ok": false, "error": ...}` and exits 1.
 
 The helper is `.claude/skills/verify-labelme/scripts/labelme_ctl.py`. Run it from any directory with the system `python3`, and run `labelme_ctl.py <command> --help` for flags. The examples below use `CTL=.claude/skills/verify-labelme/scripts/labelme_ctl.py` from the repo root.
 
@@ -53,6 +53,27 @@ Run it right after launch and whenever a reply looks wrong. It exits 0 and print
 
 If labelme dies without exiting, such as on a Qt abort, the next command exits 1 with `labelme crashed without exiting`, and the cause is in `evidence/labelme.log`.
 
+## Drive
+
+Read the screen with `state`, act, then read the reply. Every action replies about 300 ms after the input with `{"did": ..., "state": ...}`, so a dialog the action opened is already in `state.dialog`.
+
+| Command | What the user does |
+| --- | --- |
+| `menu` | Opens every menu and reads each item's path, enabled state, checked state, and shortcut. |
+| `action 'Edit > Polygon'` | Chooses a menu bar item. It refuses a disabled item, and any item while a dialog or popup is open, as the menu bar would. |
+| `key Ctrl+S` | Presses one key stroke on the open popup menu or the focused widget. Use Qt names: `Return`, `Escape`, `Delete`, `Ctrl+Z`, `D`. It refuses a multi-stroke sequence such as `'Ctrl+K, Ctrl+R'` and a name Qt does not know, so send each stroke with its own `key`. `Ctrl` is Command on macOS, matching the app's shortcuts. |
+| `type 'cat'` | Types ASCII text into the focused widget. A newline presses `Return`. Other control characters such as tab are refused, so send them with `key`. |
+| `click 'Save'` | Clicks a button or a text field in the top dialog, or in the main window when no dialog is open. It matches visible text, tooltip, accessible name, or placeholder, such as `'Next'`, `'OK'`, `'Discard'`, or `'Search Filename'`. With a context menu open, it clicks the item with that text, such as `'Delete Shapes'`. |
+| `pick 'Shape List' blue_block` | Clicks a row in a dock list (`Shape List`, `Label List`, `Image List`) or a dialog list. Add `--double` to double-click. |
+| `click-canvas 120 80` | Clicks the canvas at image pixel (120, 80), whatever the zoom. Add `--modifier shift` to hold Shift. `--button right` opens the context menu of the shape under the point, or the canvas menu on empty space. |
+| `drag-canvas 300 90 320 110` | Presses the left button at one image pixel, moves, and releases at another. |
+
+Input goes to the open popup menu, else the top dialog, modal or not, such as Settings, else the main window. Close a dialog to reach the window behind it.
+
+Before each input the helper does what the OS would. It releases a mouse button that a modal dialog swallowed the release of, and it reactivates the top window, because the offscreen platform has no window manager to do it. Without that, a double-click that opens a dialog leaves Left held, and the next canvas move drags whatever shape is selected.
+
+A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, disabled, or behind an open dialog or popup, as the real input would be. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true, "exit_code": 0}`.
+
 ## Evidence
 
 A proof is the command, its reply, and a screenshot of what it shows. Number screenshots in journey order (`01-launch.png`, `02-error-dialog.png`). For a second view, launch again on the first run's `data/` and confirm the same state returns.
@@ -66,3 +87,11 @@ $CTL cleanup
 ```
 
 It refuses a directory without `run.json`. It kills only the PID this run started, after checking that its command line names this run dir. Then it deletes `home/`, `data/`, `tmp/`, `sandbox.sb`, `instance.json`, and `exit_code`, and keeps `evidence/`. Report the evidence path, `<run_dir>/evidence`, with the verdict. Run cleanup after every run, failed runs included. If `doctor` reports a PID that is not ours, leave that process alone.
+
+## Gotchas
+
+- zsh passes `"300 100"` as one argument. Write coordinates as separate words.
+- Canvas coordinates are image pixels. Read a shape's points from its annotation file, or from the image size in the file, to aim a click.
+- Auto save is on by default, so each change writes `<image>.json` next to the image. Pass `--no-auto-save` to test explicit saves and the unsaved-changes dialog.
+- File > Open File and Open Folder show Qt's own file dialog offscreen. `type` the absolute path into its focused field and press `Return`. On macOS, type the path `realpath` prints: a `/var/folders/...` path, which goes through a symlink, left the dialog open and empty in testing.
+- AI-Segment and AI-Find All download models into the scratch `HOME` on first use, which takes minutes and needs network access.

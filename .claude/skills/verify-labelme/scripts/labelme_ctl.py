@@ -555,6 +555,30 @@ def _build_parser() -> argparse.ArgumentParser:
     about = "check the instance is ours, alive, and from the checkout"
     add(name="doctor", about=about, run=cmd_doctor)
     add(name="state", about="visible state of every window as JSON")
+    add(name="menu", about="menu items with enabled and checked state")
+    add(name="action", about="choose a menu item, e.g. 'File > Save'").add_argument(
+        "path"
+    )
+    add(name="key", about="press one key stroke on the focused widget").add_argument(
+        "sequence", help="QKeySequence text for one stroke, e.g. Ctrl+S, Return"
+    )
+    add(name="type", about="type text into the focused widget").add_argument("text")
+    about = "click a button or text field by text, tooltip, or placeholder"
+    add(name="click", about=about).add_argument("name")
+
+    p = add(name="pick", about="click a row in a list by its text")
+    p.add_argument("list", help="dock title or accessible name, e.g. 'Image List'")
+    p.add_argument("text")
+    p.add_argument("--double", action="store_true")
+
+    p = add(name="click-canvas", about="click the canvas at image pixel X Y")
+    p.add_argument("x", type=float)
+    p.add_argument("y", type=float)
+    p.add_argument("--button", choices=["left", "right"], default="left")
+    p.add_argument("--modifier", choices=["shift"])
+    p = add(name="drag-canvas", about="drag on the canvas between image pixels")
+    for coordinate in ("x1", "y1", "x2", "y2"):
+        p.add_argument(coordinate, type=float)
 
     p = add(name="screenshot", about="save a PNG under evidence/", run=cmd_screenshot)
     p.add_argument("name")
