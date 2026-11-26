@@ -307,6 +307,23 @@ def _dialog_info(*, dialog: QtWidgets.QWidget) -> dict[str, Any]:
     return {**_describe(root=dialog), "modal": dialog.isModal()}
 
 
+def _canvas_info(*, win: MainWindow) -> dict[str, Any] | None:
+    if not _image_loaded(win=win):
+        return None
+    canvas = win.findChildren(Canvas)[0]
+    view = canvas.visibleRegion().boundingRect()
+    low = canvas.transform_widget_point_to_image(point=QPointF(view.topLeft()))
+    high = canvas.transform_widget_point_to_image(point=QPointF(view.bottomRight()))
+    width, height = canvas.pixmap.width(), canvas.pixmap.height()
+    visible = [
+        max(low.x(), 0),
+        max(low.y(), 0),
+        min(high.x(), width),
+        min(high.y(), height),
+    ]
+    return {"scale": canvas.scale, "visible": visible}
+
+
 def _state() -> dict[str, Any]:
     app = _app()
     win = _find_main_window()
@@ -326,6 +343,7 @@ def _state() -> dict[str, Any]:
             "size": [win.width(), win.height()] if win else [0, 0],
         },
         "image_loaded": win is not None and _image_loaded(win=win),
+        "canvas": _canvas_info(win=win) if win else None,
         "mouse_buttons_held": [b.name for b in _held_buttons()],
         "blocked": list(BLOCKED),
         "dialog": _dialog_info(dialog=dialog) if dialog else None,
