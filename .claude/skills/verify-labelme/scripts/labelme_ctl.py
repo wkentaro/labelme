@@ -27,6 +27,7 @@ RUN_TOOL: Final = "verify-labelme"
 RUN_FILE_MODE: Final = 0o600
 FRESH_SUBDIRS: Final = ("home", "data", "tmp")
 EXIT_GRACE_S: Final = 5
+WAIT_POLL_S: Final = 0.1
 VALUED_OPTIONS: Final = frozenset(
     {
         "--logger-level",
@@ -452,28 +453,32 @@ def _conditions_hold(*, args: argparse.Namespace, state: dict[str, Any]) -> bool
     return all(checks)
 
 
+def _poll_state(*, run_dir: Path, deadline: float) -> dict[str, Any]:
+    state = _request(
+        run_dir=run_dir,
+        payload={"cmd": "state"},
+        timeout=_remaining(deadline=deadline),
+    )
+    if state.get("exited"):
+        raise CtlFailure(
+            "labelme exited before the conditions held",
+            details={"exited": True, "exit_code": state["exit_code"]},
+        )
+    return state
+
+
 def cmd_wait(*, args: argparse.Namespace) -> None:
     run_dir = _run_dir(args=args)
     deadline = time.monotonic() + args.timeout
-    while True:
-        state = _request(
-            run_dir=run_dir,
-            payload={"cmd": "state"},
-            timeout=_remaining(deadline=deadline),
-        )
-        if state.get("exited"):
-            raise CtlFailure(
-                "labelme exited before the conditions held",
-                details={"exited": True, "exit_code": state["exit_code"]},
-            )
-        if _conditions_hold(args=args, state=state):
-            _print(result=state)
-            return
-        if time.monotonic() > deadline:
+    state = _poll_state(run_dir=run_dir, deadline=deadline)
+    while not _conditions_hold(args=args, state=state):
+        time.sleep(min(WAIT_POLL_S, max(deadline - time.monotonic(), 0)))
+        if time.monotonic() >= deadline:
             raise CtlFailure(
                 f"wait timed out after {args.timeout}s: {json.dumps(state)}"
             )
-        time.sleep(0.1)
+        state = _poll_state(run_dir=run_dir, deadline=deadline)
+    _print(result=state)
 
 
 def _stop(*, pid: int, run_dir: Path) -> None:
