@@ -6,7 +6,11 @@ Cheapest option first. Stop at the first one that answers the question.
 
 `tests/e2e/` runs offscreen and has pixel snapshots. Any bug found by driving the GUI by hand gets pinned down as a test here. See `tests/conftest.py` for `--headed`, `--pause`, and `--update-snapshots`.
 
-## 2. The harness's own computer use (macOS, Windows)
+## 2. The `verify-labelme` skill (macOS)
+
+`.claude/skills/verify-labelme/` launches labelme offscreen from a checkout, with scratch data and settings, and drives it with real Qt mouse and keyboard input. It saves screenshots and annotation files as proof and never touches the user's desktop or settings. Its `features/` files hold the recipes for the main journeys. It has not been run on Linux and does not support Windows.
+
+## 3. The harness's own computer use (macOS, Windows)
 
 If the agent harness ships desktop control, use it instead of hand-rolled scripts. Launch labelme, then screenshot, click, and type through the harness tool.
 
@@ -15,7 +19,7 @@ If the agent harness ships desktop control, use it instead of hand-rolled script
 
 Neither supports Linux. This is the live desktop, so the window is visible to the user.
 
-## 3. Xvfb sandbox (Linux)
+## 4. Xvfb sandbox (Linux)
 
 Isolated X display: fixed geometry, no focus stealing, matches CI. Requires `Xvfb` (Arch: `xorg-server-xvfb`), `xdotool`, and ImageMagick.
 
@@ -32,13 +36,13 @@ import -window root /tmp/shot.png       # ImageMagick screenshot
 
 Kill labelme and Xvfb when done. Coordinates depend on the window size, so set it before reading a screenshot. `xdotool` warns about `XGetInputFocus` because no window manager runs on the display; ignore it.
 
-## 4. Live desktop by hand (harnesses without computer use)
+## 5. Live desktop by hand (harnesses without computer use)
 
 The window takes focus from the user, so reserve this for when the user wants to watch, for PR screenshots, or for Wayland-only behavior.
 
 ### Linux
 
-Same commands as tier 3 without `DISPLAY=:99`. On Wayland, labelme must still run with `QT_QPA_PLATFORM=xcb` so `xdotool` can reach it; use `grim` for full-screen captures. The compositor picks the window size.
+Same commands as tier 4 without `DISPLAY=:99`. On Wayland, labelme must still run with `QT_QPA_PLATFORM=xcb` so `xdotool` can reach it; use `grim` for full-screen captures. The compositor picks the window size.
 
 ### macOS
 
