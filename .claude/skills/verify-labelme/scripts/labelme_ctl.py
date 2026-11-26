@@ -104,21 +104,26 @@ def _names_option(*, arg: str, options: frozenset[str]) -> bool:
     )
 
 
-def _paths_outside(
+def _resolve_paths(
     *, run_dir: Path, checkout: Path, labelme_args: list[str]
-) -> list[str]:
-    outside = []
+) -> tuple[list[str], list[str]]:
+    resolved, outside = [], []
     previous = ""
     for arg in labelme_args:
+        prefix = ""
         option, _, value = arg.partition("=")
         if value and _names_option(arg=option, options=WRITTEN_OPTIONS):
-            previous, arg = option, value
+            previous, prefix, arg = option, f"{option}=", value
         written = _names_option(arg=previous, options=WRITTEN_OPTIONS)
         path = (checkout / arg).resolve()
-        if (path.exists() or written) and not path.is_relative_to(run_dir):
-            outside.append(arg)
+        if path.exists() or written:
+            if not path.is_relative_to(run_dir):
+                outside.append(arg)
+            resolved.append(f"{prefix}{path}")
+        else:
+            resolved.append(f"{prefix}{arg}")
         previous = arg
-    return outside
+    return resolved, outside
 
 
 def _opened_path(*, checkout: Path, labelme_args: list[str]) -> Path | None:
@@ -237,7 +242,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     labelme_args = [a.replace("{data}", str(data)) for a in args.labelme_args]
     if labelme_args[:1] == ["--"]:
         labelme_args = labelme_args[1:]
-    outside = _paths_outside(
+    labelme_args, outside = _resolve_paths(
         run_dir=run_dir, checkout=checkout, labelme_args=labelme_args
     )
     if outside:
