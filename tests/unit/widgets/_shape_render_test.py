@@ -590,6 +590,24 @@ def test_rotation_highlight_colors_rotation_group_without_coloring_vertices() ->
     assert image.pixelColor(50, 50) == QtGui.QColor(255, 0, 0)
 
 
+@pytest.mark.usefixtures("qapp")
+def test_corner_paints_over_a_rotation_handle_on_it() -> None:
+    shape = Shape(
+        label=None,
+        shape_type="oriented_rectangle",
+        points=np.array([[50, 50], [150, 50], [150, 50], [50, 50]], dtype=np.float64),
+    )
+    image = _render(
+        shape=shape,
+        show_label=False,
+        scale=1.0,
+        rotation_highlight=VertexHighlight(index=0, mode="move"),
+        highlight=None,
+    )
+
+    assert image.pixelColor(50, 50) == QtGui.QColor(255, 0, 0)
+
+
 @pytest.mark.parametrize(
     ("shape_type", "points"),
     [
