@@ -146,11 +146,12 @@ def _find_nearest_marker(
         return None
     has_corner = any(_is_corner(target=target) for _, target in tied)
     hovered_shape = None if hovered is None else hovered.shape
+    selected_shapes = set(selected)
     _, best = min(
         tied,
         key=lambda candidate: (
             has_corner and candidate[1].kind is HitKind.ROTATION_HANDLE,
-            candidate[1].shape not in selected,
+            candidate[1].shape not in selected_shapes,
             candidate[1].shape is not hovered_shape,
             -candidate[0],
         ),
