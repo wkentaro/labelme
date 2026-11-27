@@ -74,6 +74,7 @@ def find_hover_target(
             shapes=[shape for shape in editable if shape in drawn_over_dot],
             point=point,
             image_epsilon=marker_radius,
+            marker_radius=marker_radius,
             priority_shape=priority_shape,
         )
         if handle_over_dot is not None:
@@ -84,6 +85,7 @@ def find_hover_target(
         shapes=editable,
         point=point,
         image_epsilon=image_epsilon,
+        marker_radius=marker_radius,
         priority_shape=priority_shape,
     )
     if handle is not None:
@@ -114,6 +116,7 @@ def _find_handle(
     shapes: list[Shape],
     point: npt.NDArray[np.float64],
     image_epsilon: float,
+    marker_radius: float,
     priority_shape: Shape | None,
 ) -> HitTarget | None:
     ranked: list[tuple[tuple[bool, float], HitTarget]] = []
@@ -127,7 +130,10 @@ def _find_handle(
             )
             if nearest is None:
                 continue
-            rank = (shape is not priority_shape, nearest.distance)
+            under_hovered_marker = (
+                shape is priority_shape and nearest.distance <= marker_radius
+            )
+            rank = (not under_hovered_marker, nearest.distance)
             handle = HitTarget(kind=kind, shape=shape, index=nearest.index)
             ranked.append((rank, handle))
     if not ranked:
