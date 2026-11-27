@@ -616,6 +616,18 @@ def _plan_menu_click(
     )
 
 
+def _click_pos(*, widget: QtWidgets.QWidget) -> QPoint:
+    if isinstance(widget, QtWidgets.QCheckBox):
+        element = QtWidgets.QStyle.SubElement.SE_CheckBoxClickRect
+    elif isinstance(widget, QtWidgets.QRadioButton):
+        element = QtWidgets.QStyle.SubElement.SE_RadioButtonClickRect
+    else:
+        return widget.rect().center()
+    option = QtWidgets.QStyleOptionButton()
+    widget.initStyleOption(option)
+    return widget.style().subElementRect(element, option, widget).center()
+
+
 def _plan_click(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     root = _search_root()
     if isinstance(root, QtWidgets.QMenu):
@@ -626,9 +638,12 @@ def _plan_click(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
         if isinstance(widget, QtWidgets.QAbstractScrollArea)
         else widget
     )
+    pos = _click_pos(widget=target)
     return (
         f"click {type(widget).__name__} {req['name']!r}",
-        lambda: QTest.mouseClick(target, Qt.MouseButton.LeftButton),
+        lambda: QTest.mouseClick(
+            target, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier, pos
+        ),
     )
 
 
