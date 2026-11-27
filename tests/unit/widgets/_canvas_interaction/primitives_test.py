@@ -533,6 +533,16 @@ def test_rotation_handle_beats_a_farther_vertex_of_another_shape(
     )
 
 
+def test_rotation_handle_beats_a_farther_corner_of_its_own_shape() -> None:
+    oriented_rect = _oriented_rectangle(
+        points=[(50, 50), (68, 50), (68, 100), (50, 100)]
+    )
+    result = _hover(shapes=[oriented_rect], at=(58, 47), hovered=oriented_rect)
+    _assert_hit(
+        result=result, kind=HitKind.ROTATION_HANDLE, shape=oriented_rect, index=1
+    )
+
+
 def test_shared_corner_goes_to_the_topmost_shape() -> None:
     lower = _left_box()
     upper = _right_box(left=40)
