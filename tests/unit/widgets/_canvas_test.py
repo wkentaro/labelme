@@ -4252,6 +4252,73 @@ def test_drag_on_front_body_within_rear_corner_reach_moves_front(
     np.testing.assert_array_equal(front.points, [(72, 30), (72, 10)])
 
 
+@pytest.mark.parametrize(
+    ("front", "approach", "press", "end"),
+    [
+        pytest.param(
+            Shape(
+                shape_type="rectangle",
+                points=np.array([(30, 24), (80, 48)], dtype=float),
+                locked=True,
+            ),
+            (80, 17),
+            (80, 22),
+            (91, 14),
+            id="locked_box_new_corner",
+        ),
+        pytest.param(
+            Shape(
+                shape_type="rectangle",
+                points=np.array([(30, 26), (76, 48)], dtype=float),
+                locked=True,
+            ),
+            (74, 23),
+            (74, 23),
+            (64, 27),
+            id="locked_box_new_corner_over_rear_body",
+        ),
+        pytest.param(
+            Shape(shape_type="point", points=np.array([(84.5, 20)])),
+            (80, 20),
+            (80, 20),
+            (91, 14),
+            id="point_rim",
+        ),
+        pytest.param(
+            Shape(shape_type="circle", points=np.array([(65.5, 20), (65.5, 34.2)])),
+            (80, 20),
+            (80, 20),
+            (91, 14),
+            id="circle_outline",
+        ),
+    ],
+)
+def test_drag_on_front_paint_keeps_rear_rectangle_size(
+    *,
+    editing_canvas: Canvas,
+    front: Shape,
+    approach: tuple[float, float],
+    press: tuple[float, float],
+    end: tuple[float, float],
+) -> None:
+    rear = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (80, 45)], dtype=float)
+    )
+    front_points = front.points.copy()
+    editing_canvas.load_shapes(shapes=[rear, front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(*approach)],
+        start=QPointF(*press),
+        end=QPointF(*end),
+    )
+
+    np.testing.assert_array_equal(np.diff(rear.points, axis=0), [(60, 25)])
+    if front.locked:
+        np.testing.assert_array_equal(front.points, front_points)
+
+
 @pytest.mark.parametrize("remove", ["delete", "hide"])
 @pytest.mark.parametrize(
     (
