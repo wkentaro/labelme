@@ -505,13 +505,9 @@ def _find_row(*, view: QtWidgets.QAbstractItemView, text: str) -> QtCore.QModelI
 
 def _focus_target() -> QtWidgets.QWidget:
     app = _app()
-    return (
-        app.activePopupWidget()
-        or app.focusWidget()
-        or _top_dialog()
-        or app.activeWindow()
-        or _main_window()
-    )
+    if popup := app.activePopupWidget():
+        return popup.focusWidget() or popup
+    return app.focusWidget() or _top_dialog() or app.activeWindow() or _main_window()
 
 
 def _canvas_pos(*, x: float, y: float) -> QPoint:
