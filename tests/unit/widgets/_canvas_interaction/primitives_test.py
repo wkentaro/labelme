@@ -732,3 +732,17 @@ def test_extent_reject_never_changes_the_hover_target(
 
     assert rejected == targets()
     assert {target.kind for target in rejected if target is not None} == set(HitKind)
+
+
+def test_hovered_shape_out_of_reach_offers_no_edge() -> None:
+    polygon = _polygon(points=[(0, 0), (40, 0), (40, 40), (0, 40)], visible=True)
+    result = find_hover_target(
+        shapes=[],
+        point=_point(x=20, y=0),
+        scale=_SCALE,
+        epsilon=_EPSILON,
+        point_size=_POINT_SIZE,
+        hovered=_body(shape=polygon),
+        selected=(),
+    )
+    assert result is None
