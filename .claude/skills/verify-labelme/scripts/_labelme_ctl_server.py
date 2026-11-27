@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import functools
 import json
+import math
 import os
 import re
 import secrets
@@ -8,17 +10,23 @@ import sys
 import tempfile
 import traceback
 import types
+import unicodedata
 import webbrowser
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 from typing import Final
+from typing import NamedTuple
 
+import shiboken6
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtNetwork
 from PySide6 import QtWidgets
+from PySide6.QtCore import QPoint
+from PySide6.QtCore import QPointF
 from PySide6.QtCore import Qt
+from PySide6.QtTest import QTest
 
 import labelme
 from labelme import __main__ as labelme_entry
@@ -27,17 +35,34 @@ from labelme.__main__ import main as labelme_main
 from labelme._app import MainWindow
 from labelme._widgets._canvas import Canvas
 
+SETTLE_MS: Final = 300
+ACTIVATE_POLL_MS: Final = 50
+ACTIVATE_TIMEOUT_MS: Final = 1000
+INPUT_TIMEOUT_MS: Final = 20_000
 MAX_ROWS: Final = 200
+DRAG_STEPS: Final = 8
+DOUBLE_CLICK_GAP_MS: Final = 10
 WINDOW_SIZE: Final = QtCore.QSize(1280, 800)
 BUTTONS: Final = {
     "left": Qt.MouseButton.LeftButton,
     "right": Qt.MouseButton.RightButton,
     "middle": Qt.MouseButton.MiddleButton,
 }
+MODIFIERS: Final = {
+    None: Qt.KeyboardModifier.NoModifier,
+    "shift": Qt.KeyboardModifier.ShiftModifier,
+}
+CLICKABLE: Final = (
+    QtWidgets.QAbstractButton,
+    QtWidgets.QLineEdit,
+    QtWidgets.QPlainTextEdit,
+    QtWidgets.QTextEdit,
+)
 
 RUN_FILE: Final = "run.json"
 EXIT_FILE: Final = "exit_code"
 MAX_REQUEST_BYTES: Final = 1 << 20
+SEARCH_ROOT_KEEPALIVE: Final[list[QtWidgets.QWidget]] = []
 BLOCKED: Final[list[str]] = []
 UNCAUGHT: Final[list[str]] = []
 
@@ -46,10 +71,33 @@ class CtlError(Exception):
     pass
 
 
+class Step(NamedTuple):
+    delivers: str
+    send: Callable[[], None]
+
+
+class MouseEvent(NamedTuple):
+    action: QTest.MouseAction
+    window: QtGui.QWindow
+    target: QPoint
+    button: Qt.MouseButton
+    modifier: Qt.KeyboardModifier
+    delay: int
+
+
+LAST_MOUSE_EVENT: Final[list[MouseEvent]] = []
+
+
 def _app() -> QtWidgets.QApplication:
     app = QtWidgets.QApplication.instance()
     assert isinstance(app, QtWidgets.QApplication)
     return app
+
+
+def _norm(*, text: str) -> str:
+    text = text.replace("&&", "\0").replace("&", "").replace("\0", "&")
+    text = " ".join(text.split("\t")[0].split())
+    return text.rstrip("…").rstrip(".").strip().casefold()
 
 
 def _plain(*, value: object) -> str:
@@ -72,6 +120,13 @@ def _main_window() -> MainWindow:
     if win is None:
         raise CtlError("no labelme MainWindow")
     return win
+
+
+def _canvas() -> Canvas:
+    canvases = _main_window().findChildren(Canvas)
+    if not canvases:
+        raise CtlError("no Canvas widget")
+    return canvases[0]
 
 
 def _image_loaded(*, win: MainWindow) -> bool:
@@ -276,6 +331,38 @@ def _dialog_info(*, dialog: QtWidgets.QWidget) -> dict[str, Any]:
     return {**_describe(root=dialog), "modal": dialog.isModal()}
 
 
+class Clickable(NamedTuple):
+    image: tuple[float, float, float, float]
+    pixels: QtCore.QRect
+
+
+def _clickable(*, canvas: Canvas) -> Clickable:
+    width, height = canvas.pixmap.width(), canvas.pixmap.height()
+    view = canvas.visibleRegion().boundingRect()
+    origin = canvas.transform_image_point_to_widget(point=QPointF(0, 0))
+    corner = canvas.transform_image_point_to_widget(point=QPointF(width, height))
+    low = canvas.transform_widget_point_to_image(point=QPointF(view.topLeft()))
+    high = canvas.transform_widget_point_to_image(point=QPointF(view.bottomRight()))
+    image = (
+        0 if origin.x() >= view.left() - 1 else low.x(),
+        0 if origin.y() >= view.top() - 1 else low.y(),
+        width if corner.x() <= view.right() + 1 else high.x(),
+        height if corner.y() <= view.bottom() + 1 else high.y(),
+    )
+    inside_image = QtCore.QRect(
+        QPoint(math.ceil(origin.x()), math.ceil(origin.y())),
+        QPoint(math.floor(corner.x()), math.floor(corner.y())),
+    )
+    return Clickable(image=image, pixels=inside_image.intersected(view))
+
+
+def _canvas_info(*, win: MainWindow) -> dict[str, Any] | None:
+    if not _image_loaded(win=win):
+        return None
+    canvas = win.findChildren(Canvas)[0]
+    return {"scale": canvas.scale, "visible": list(_clickable(canvas=canvas).image)}
+
+
 def _state() -> dict[str, Any]:
     app = _app()
     win = _find_main_window()
@@ -295,6 +382,7 @@ def _state() -> dict[str, Any]:
             "size": [win.width(), win.height()] if win else [0, 0],
         },
         "image_loaded": win is not None and _image_loaded(win=win),
+        "canvas": _canvas_info(win=win) if win else None,
         "mouse_buttons_held": [b.name for b in _held_buttons()],
         "blocked": list(BLOCKED),
         "dialog": _dialog_info(dialog=dialog) if dialog else None,
@@ -305,6 +393,483 @@ def _state() -> dict[str, Any]:
         "docks": [_dock_info(dock=d) for d in _docks()] if win else [],
         "other_windows": others,
     }
+
+
+def _walk_menu(*, menu: QtWidgets.QMenu, prefix: str) -> list[dict[str, Any]]:
+    menu.aboutToShow.emit()
+    entries: list[dict[str, Any]] = []
+    for action in menu.actions():
+        if action.isSeparator() or not action.isVisible():
+            continue
+        path = f"{prefix} > {action.text().replace('&', '')}"
+        submenu = action.menu()
+        if isinstance(submenu, QtWidgets.QMenu):
+            entries += _walk_menu(menu=submenu, prefix=path)
+            continue
+        entry: dict[str, Any] = {"path": path}
+        if not action.isEnabled():
+            entry["enabled"] = False
+        if action.isCheckable():
+            entry["checked"] = action.isChecked()
+        if not action.shortcut().isEmpty():
+            entry["shortcut"] = action.shortcut().toString()
+        entries.append(entry)
+    return entries
+
+
+def _menu() -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    for action in _main_window().menuBar().actions():
+        menu = action.menu()
+        if isinstance(menu, QtWidgets.QMenu) and action.isVisible():
+            entries += _walk_menu(menu=menu, prefix=action.text().replace("&", ""))
+    return entries
+
+
+def _find_action(*, path: str) -> QtGui.QAction:
+    parts = [p for p in (s.strip() for s in path.split(">")) if p]
+    actions = _main_window().menuBar().actions()
+    for depth, part in enumerate(parts):
+        items = [a for a in actions if not a.isSeparator()]
+        matches = [a for a in items if _norm(text=a.text()) == _norm(text=part)]
+        if not matches:
+            available = [a.text().replace("&", "") for a in items]
+            raise CtlError(f"no menu item {part!r} under {parts[:depth]}: {available}")
+        action = matches[0]
+        submenu = action.menu()
+        if depth == len(parts) - 1:
+            if submenu is not None:
+                raise CtlError(f"{path!r} is a submenu, not an item")
+            if not action.isVisible() or not action.isEnabled():
+                raise CtlError(f"{path!r} is disabled")
+            return action
+        if not isinstance(submenu, QtWidgets.QMenu):
+            raise CtlError(f"{part!r} is not a menu")
+        submenu.aboutToShow.emit()
+        actions = submenu.actions()
+    raise CtlError(f"empty menu path {path!r}")
+
+
+def _search_root() -> QtWidgets.QWidget:
+    app = _app()
+    root = app.activePopupWidget() or _top_dialog() or _main_window()
+    SEARCH_ROOT_KEEPALIVE[:] = [root]
+    return root
+
+
+def _names(*, widget: QtWidgets.QWidget) -> set[str]:
+    names = {_norm(text=widget.toolTip()), _norm(text=widget.accessibleName())}
+    if isinstance(widget, QtWidgets.QAbstractButton):
+        names.add(_norm(text=widget.text()))
+    if isinstance(
+        widget, QtWidgets.QLineEdit | QtWidgets.QPlainTextEdit | QtWidgets.QTextEdit
+    ):
+        names.add(_norm(text=widget.placeholderText()))
+    return names - {""}
+
+
+def _find_clickable(*, name: str) -> QtWidgets.QWidget:
+    root = _search_root()
+    matches = [
+        w
+        for w in root.findChildren(QtWidgets.QWidget)
+        if isinstance(w, CLICKABLE)
+        and _visible(widget=w)
+        and _norm(text=name) in _names(widget=w)
+    ]
+    if not matches:
+        raise CtlError(f"no button or field {name!r} in {root.windowTitle()!r}")
+    if len(matches) > 1:
+        raise CtlError(f"{len(matches)} widgets match {name!r}; use a menu or key")
+    if not matches[0].isEnabled():
+        raise CtlError(f"{name!r} is disabled")
+    return matches[0]
+
+
+def _find_view(*, name: str) -> QtWidgets.QAbstractItemView:
+    for view in _search_root().findChildren(QtWidgets.QAbstractItemView):
+        if _visible(widget=view) and _norm(text=view.accessibleName()) == _norm(
+            text=name
+        ):
+            return view
+    for dock in _docks():
+        if _norm(text=dock.windowTitle()) != _norm(text=name):
+            continue
+        views = dock.findChildren(QtWidgets.QAbstractItemView)
+        visible = [v for v in views if _visible(widget=v)]
+        if visible:
+            return visible[0]
+    raise CtlError(f"no visible list {name!r}")
+
+
+def _find_row(*, view: QtWidgets.QAbstractItemView, text: str) -> QtCore.QModelIndex:
+    model = view.model()
+    root = view.rootIndex()
+    indexes = [model.index(r, 0, root) for r in range(model.rowCount(root))]
+    rows = [(i, _row_text(view=view, index=i)) for i in indexes]
+    exact = [(i, t) for i, t in rows if t == text]
+    if len(exact) == 1:
+        return exact[0][0]
+    partial = [(i, t) for i, t in rows if text in t]
+    if len(exact) > 1 or len(partial) != 1:
+        matches = [t for _, t in (exact or partial)][:10]
+        raise CtlError(f"{len(exact) or len(partial)} rows match {text!r}: {matches}")
+    return partial[0][0]
+
+
+def _focus_target() -> QtWidgets.QWidget:
+    app = _app()
+    if popup := app.activePopupWidget():
+        return popup.focusWidget() or popup
+    return app.focusWidget() or _top_dialog() or app.activeWindow() or _main_window()
+
+
+def _canvas_pos(*, x: float, y: float) -> QPoint:
+    canvas = _canvas()
+    pixmap = canvas.pixmap
+    if pixmap is None or pixmap.isNull():
+        raise CtlError("no image is open on the canvas")
+    width, height = pixmap.width(), pixmap.height()
+    if not (0 <= x <= width and 0 <= y <= height):
+        raise CtlError(f"({x}, {y}) is outside the {width}x{height} image")
+    clickable = _clickable(canvas=canvas)
+    left, top, right, bottom = clickable.image
+    if not (left <= x <= right and top <= y <= bottom):
+        raise CtlError(f"({x}, {y}) is not visible on the canvas; scroll or zoom")
+    point = canvas.transform_image_point_to_widget(point=QPointF(x, y))
+    pixels = clickable.pixels
+    return QPoint(
+        min(max(round(point.x()), pixels.left()), pixels.right()),
+        min(max(round(point.y()), pixels.top()), pixels.bottom()),
+    )
+
+
+def _window_pos(*, window: QtGui.QWindow, target: QPoint) -> QPoint:
+    local = window.mapFromGlobal(target)
+    if local.isNull():
+        raise CtlError("Qt Test reads a window's top-left pixel as its center")
+    return local
+
+
+def _send_mouse(*, event: MouseEvent) -> None:
+    window = (
+        event.window
+        if shiboken6.isValid(event.window)
+        else QtGui.QGuiApplication.topLevelAt(event.target)
+        or _main_window().windowHandle()
+    )
+    QTest.mouseEvent(
+        event.action,
+        window,
+        event.button,
+        event.modifier,
+        _window_pos(window=window, target=event.target),
+        event.delay,
+    )
+    LAST_MOUSE_EVENT[:] = [event]
+
+
+def _mouse(
+    *,
+    action: QTest.MouseAction,
+    widget: QtWidgets.QWidget,
+    pos: QPoint,
+    button: Qt.MouseButton = Qt.MouseButton.NoButton,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
+    delay: int = -1,
+) -> Callable[[], None]:
+    window = widget.window().windowHandle()
+    target = widget.mapToGlobal(pos)
+    _window_pos(window=window, target=target)
+    event = MouseEvent(
+        action=action,
+        window=window,
+        target=target,
+        button=button,
+        modifier=modifier,
+        delay=delay,
+    )
+    return functools.partial(_send_mouse, event=event)
+
+
+def _click(
+    *,
+    widget: QtWidgets.QWidget,
+    pos: QPoint,
+    button: Qt.MouseButton = Qt.MouseButton.LeftButton,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
+    release_delay: int = -1,
+) -> list[Callable[[], None]]:
+    return [
+        _mouse(
+            action=QTest.MouseAction.MousePress,
+            widget=widget,
+            pos=pos,
+            button=button,
+            modifier=modifier,
+        ),
+        _mouse(
+            action=QTest.MouseAction.MouseRelease,
+            widget=widget,
+            pos=pos,
+            button=button,
+            modifier=modifier,
+            delay=release_delay,
+        ),
+    ]
+
+
+def _move(
+    *,
+    widget: QtWidgets.QWidget,
+    pos: QPoint,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
+) -> Callable[[], None]:
+    return _mouse(
+        action=QTest.MouseAction.MouseMove, widget=widget, pos=pos, modifier=modifier
+    )
+
+
+def _release_held_buttons() -> None:
+    held = _held_buttons()
+    if not held or not LAST_MOUSE_EVENT:
+        return
+    [last] = LAST_MOUSE_EVENT
+    for button in held:
+        _send_mouse(
+            event=last._replace(
+                action=QTest.MouseAction.MouseRelease,
+                button=button,
+                modifier=Qt.KeyboardModifier.NoModifier,
+                delay=-1,
+            )
+        )
+
+
+def _let_closed_loops_return() -> None:
+    dispatcher = QtCore.QAbstractEventDispatcher.instance()
+    assert dispatcher is not None
+    dispatcher.wakeUp()
+
+
+def _try_activate_top_window() -> bool:
+    app = _app()
+    top = _search_root().window()
+    if app.activePopupWidget() is top or app.activeWindow() is top:
+        return True
+    top.activateWindow()
+    return False
+
+
+def _activate_top_window() -> None:
+    deadline = QtCore.QDeadlineTimer(ACTIVATE_TIMEOUT_MS)
+    while not _try_activate_top_window() and not deadline.hasExpired():
+        _app().processEvents(
+            QtCore.QEventLoop.ProcessEventsFlag.AllEvents, ACTIVATE_POLL_MS
+        )
+
+
+def _type_char(char: str) -> None:
+    if char == "\n":
+        QTest.keyClick(_focus_target(), Qt.Key.Key_Return)
+    else:
+        QTest.keyClicks(_focus_target(), char)
+
+
+def _type_steps(*, text: str) -> list[Step]:
+    return [
+        Step(delivers=char, send=functools.partial(_type_char, char)) for char in text
+    ]
+
+
+def _plan_key(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
+    sequence = QtGui.QKeySequence(req["sequence"])
+    if sequence.count() != 1:
+        raise CtlError(f"{req['sequence']!r} is not one key stroke; send one per key")
+    combo = sequence[0]  # ty: ignore[not-subscriptable]
+    if combo.key() == Qt.Key.Key_unknown or not sequence.toString():
+        raise CtlError(f"{req['sequence']!r} is not a Qt key name")
+    target = _focus_target()
+    return (
+        f"key {sequence.toString()} on {type(target).__name__}",
+        [lambda: QTest.keyClick(target, combo.key(), combo.keyboardModifiers())],
+    )
+
+
+def _plan_menu_click(
+    *, menu: QtWidgets.QMenu, name: str
+) -> tuple[str, list[Callable[[], None]]]:
+    matches = [
+        a for a in _menu_actions(menu=menu) if _norm(text=a.text()) == _norm(text=name)
+    ]
+    if len(matches) != 1:
+        raise CtlError(f"{len(matches)} items named {name!r} in the open menu")
+    [action] = matches
+    if not action.isEnabled():
+        raise CtlError(f"{name!r} is disabled")
+    what = f"menu item {name!r}"
+    pos = _aim(widget=menu, area=menu.actionGeometry(action), what=what)
+    if menu.actionAt(pos) is not action:
+        raise CtlError(f"a click on {what} would land on another item")
+    return f"click {what}", _click(widget=menu, pos=pos)
+
+
+def _reveal(*, widget: QtWidgets.QWidget) -> None:
+    parent = widget.parentWidget()
+    while parent is not None:
+        if isinstance(parent, QtWidgets.QScrollArea):
+            parent.ensureWidgetVisible(widget)
+        parent = parent.parentWidget()
+
+
+def _aim(*, widget: QtWidgets.QWidget, area: QtCore.QRect, what: str) -> QPoint:
+    visible = area.intersected(widget.visibleRegion().boundingRect())
+    if visible.isEmpty():
+        raise CtlError(f"{what} is out of view")
+    pos = visible.center()
+    window = widget.window()
+    hit = window.childAt(widget.mapTo(window, pos)) or window
+    if hit is not widget and not widget.isAncestorOf(hit):
+        name = (
+            _button_text(button=hit)
+            if isinstance(hit, QtWidgets.QAbstractButton)
+            else hit.accessibleName()
+        )
+        raise CtlError(f"{type(hit).__name__} {name!r} covers {what}")
+    return pos
+
+
+def _click_area(*, widget: QtWidgets.QWidget) -> QtCore.QRect:
+    if isinstance(widget, QtWidgets.QCheckBox):
+        element = QtWidgets.QStyle.SubElement.SE_CheckBoxClickRect
+    elif isinstance(widget, QtWidgets.QRadioButton):
+        element = QtWidgets.QStyle.SubElement.SE_RadioButtonClickRect
+    else:
+        return widget.rect()
+    option = QtWidgets.QStyleOptionButton()
+    widget.initStyleOption(option)
+    return widget.style().subElementRect(element, option, widget)
+
+
+def _plan_click(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
+    root = _search_root()
+    if isinstance(root, QtWidgets.QMenu):
+        return _plan_menu_click(menu=root, name=req["name"])
+    widget = _find_clickable(name=req["name"])
+    target = (
+        widget.viewport()
+        if isinstance(widget, QtWidgets.QAbstractScrollArea)
+        else widget
+    )
+    _reveal(widget=target)
+    what = f"{type(widget).__name__} {req['name']!r}"
+    pos = _aim(widget=target, area=_click_area(widget=target), what=what)
+    return f"click {what}", _click(widget=target, pos=pos)
+
+
+def _require_reachable(*, widget: QtWidgets.QWidget) -> None:
+    root = _search_root()
+    if widget.window() is not root.window():
+        name = root.windowTitle() or type(root).__name__
+        raise CtlError(f"{name!r} is open and blocks this input; close it first")
+
+
+def _plan_pick(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
+    view = _find_view(name=req["list"])
+    _require_reachable(widget=view)
+    index = _find_row(view=view, text=req["text"])
+    usable = Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+    if index.flags() & usable != usable:
+        raise CtlError(f"row {req['text']!r} in {req['list']!r} is disabled")
+    _reveal(widget=view)
+    view.scrollTo(index)
+    viewport = view.viewport()
+    row = f"{_row_text(view=view, index=index)!r} in {req['list']!r}"
+    pos = _aim(widget=viewport, area=view.visualRect(index), what=f"row {row}")
+    if view.indexAt(pos) != index:
+        raise CtlError(f"a click on row {row} would land on another row")
+    events = (
+        _click(widget=viewport, pos=pos, release_delay=DOUBLE_CLICK_GAP_MS)
+        + _click(widget=viewport, pos=pos)
+        if req.get("double")
+        else _click(widget=viewport, pos=pos)
+    )
+    return f"pick {row}", events
+
+
+def _plan_click_canvas(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
+    canvas = _canvas()
+    _require_reachable(widget=canvas)
+    pos = _canvas_pos(x=req["x"], y=req["y"])
+    button = BUTTONS[req.get("button", "left")]
+    modifier = MODIFIERS[req.get("modifier")]
+    return f"click canvas at image ({req['x']}, {req['y']})", [
+        _move(widget=canvas, pos=pos, modifier=modifier),
+        *_click(widget=canvas, pos=pos, button=button, modifier=modifier),
+    ]
+
+
+def _plan_drag_canvas(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
+    canvas = _canvas()
+    _require_reachable(widget=canvas)
+    start = _canvas_pos(x=req["x1"], y=req["y1"])
+    end = _canvas_pos(x=req["x2"], y=req["y2"])
+    left = Qt.MouseButton.LeftButton
+    span = f"({req['x1']}, {req['y1']}) to ({req['x2']}, {req['y2']})"
+    return f"drag canvas from image {span}", [
+        _move(widget=canvas, pos=start),
+        _mouse(
+            action=QTest.MouseAction.MousePress, widget=canvas, pos=start, button=left
+        ),
+        *(
+            _move(widget=canvas, pos=start + (end - start) * (i / DRAG_STEPS))
+            for i in range(1, DRAG_STEPS + 1)
+        ),
+        _mouse(
+            action=QTest.MouseAction.MouseRelease, widget=canvas, pos=end, button=left
+        ),
+    ]
+
+
+def _plan_input(*, req: dict[str, Any]) -> tuple[str, list[Step]]:
+    _release_held_buttons()
+    _activate_top_window()
+    cmd = req.get("cmd")
+    if cmd == "action":
+        if _search_root() is not _main_window():
+            raise CtlError("a dialog or popup blocks the menu bar; close it first")
+        description = f"menu {req['path']}"
+        action = _find_action(path=req["path"])
+        return description, [Step(delivers=description, send=action.trigger)]
+    if cmd == "type":
+        controls = {
+            c for c in req["text"] if c != "\n" and unicodedata.category(c) == "Cc"
+        }
+        if controls:
+            raise CtlError(
+                f"cannot type control characters {sorted(controls)}; use key"
+            )
+        if not req["text"].isascii():
+            raise CtlError("cannot type non-ASCII text")
+        if not req["text"]:
+            raise CtlError("nothing to type")
+        target = _focus_target()
+        return f"type into {type(target).__name__}", _type_steps(text=req["text"])
+    planners = {
+        "key": _plan_key,
+        "click": _plan_click,
+        "pick": _plan_pick,
+        "click-canvas": _plan_click_canvas,
+        "drag-canvas": _plan_drag_canvas,
+    }
+    if cmd not in planners:
+        raise CtlError(f"unknown command {cmd!r}")
+    description, events = planners[cmd](req=req)
+    *leading, last = events
+    return description, [
+        *(Step(delivers="", send=event) for event in leading),
+        Step(delivers=description, send=last),
+    ]
 
 
 def _screenshot(*, req: dict[str, Any]) -> dict[str, Any]:
@@ -454,13 +1019,66 @@ class Controller(QtCore.QObject):
     def _handle(self, *, sock: QtNetwork.QTcpSocket, req: dict[str, Any]) -> None:
         observers: dict[str, Callable[[], object]] = {
             "state": _state,
+            "menu": _menu,
             "doctor": lambda: _doctor(run_dir=self._run_dir),
             "screenshot": lambda: _screenshot(req=req),
         }
-        if req.get("cmd") not in observers:
-            raise CtlError(f"unknown command {req.get('cmd')!r}")
-        result = observers[req["cmd"]]()
-        self._reply(sock=sock, payload={"ok": True, "result": result})
+        if req.get("cmd") in observers:
+            result = observers[req["cmd"]]()
+            self._reply(sock=sock, payload={"ok": True, "result": result})
+            return
+        description, steps = _plan_input(req=req)
+        settle = QtCore.QTimer(sock)
+        settle.setSingleShot(True)
+        limit = QtCore.QTimer(sock)
+        limit.setSingleShot(True)
+        activation = QtCore.QDeadlineTimer(ACTIVATE_TIMEOUT_MS)
+        answered = False
+
+        def answer(*, error: str | None) -> None:
+            nonlocal answered
+            if answered:
+                return
+            answered = True
+            limit.stop()
+            settle.stop()
+            result = {"did": description, "state": _state()}
+            if steps:
+                result["undelivered"] = "".join(step.delivers for step in steps)
+                steps.clear()
+            payload = {"ok": error is None, "result": result, "error": error}
+            self._reply(sock=sock, payload=payload)
+
+        def run_next() -> None:
+            if not steps:
+                return
+            if not _try_activate_top_window() and not activation.hasExpired():
+                QtCore.QTimer.singleShot(ACTIVATE_POLL_MS, settle, run_next)
+                return
+            activation.setRemainingTime(ACTIVATE_TIMEOUT_MS)
+            step = steps.pop(0)
+            settle.start(SETTLE_MS)
+            QtCore.QTimer.singleShot(0, settle, run_next)
+            try:
+                step.send()
+            except Exception:
+                steps.insert(0, step)
+                answer(error=traceback.format_exc())
+            _let_closed_loops_return()
+
+        def settled() -> None:
+            if not steps:
+                answer(error=None)
+
+        def timed_out() -> None:
+            if steps:
+                seconds = INPUT_TIMEOUT_MS // 1000
+                answer(error=f"input not delivered within {seconds}s")
+
+        settle.timeout.connect(settled)
+        limit.timeout.connect(timed_out)
+        limit.start(INPUT_TIMEOUT_MS)
+        QtCore.QTimer.singleShot(0, settle, run_next)
 
 
 def _isolate_window_state(*, home: Path) -> None:

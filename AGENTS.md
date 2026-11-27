@@ -20,7 +20,7 @@ For issue triage and type labels or pull-request verdict labels, follow `docs/ag
 
 ### GUI driving
 
-To see or drive the real app, follow `docs/agents/gui-driving.md`: e2e tests first, then the harness's own computer use on macOS or Windows, Xvfb on Linux, and hand-driven live desktop last.
+To see or drive the real app, follow `docs/agents/gui-driving.md`: e2e tests first, then the `verify-labelme` skill, then the harness's own computer use on macOS or Windows, Xvfb on Linux, and hand-driven live desktop last.
 
 ### Domain docs
 
