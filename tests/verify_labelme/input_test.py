@@ -10,6 +10,8 @@ from typing import Final
 
 import pytest
 
+from labelme import _yaml
+
 from .conftest import REPO
 from .conftest import Ctl
 from .conftest import Run
@@ -360,3 +362,43 @@ def test_key_refuses_anything_but_one_known_stroke(*, ctl: Ctl, sequence: str) -
         if shape["label"] == "amber_kite"
     ]
     assert amber_kite["group_id"] is None
+
+
+def test_keys_choose_an_option_in_an_open_settings_combo(*, ctl: Ctl) -> None:
+    run = ctl.launch(IMAGE)
+    ctl.ok("action", "File > Settings", run=run)
+    for stroke in ("Tab", "Tab", "Space"):
+        ctl.ok("key", stroke, run=run)
+
+    ctl.ok("key", "Down", run=run)
+    reply = ctl.ok("key", "Return", run=run)
+
+    assert reply["state"]["popup"] is None
+    combos = reply["state"]["dialog"]["combos"]
+    assert {"name": "Color theme", "text": "Light"} in combos
+    labelmerc = run.run_dir / "home" / ".labelmerc"
+    config = _yaml.safe_load(stream=labelmerc.read_text())
+    assert config["color_theme"] == "light"
+
+
+def test_clicking_a_shape_flag_saves_it_checked(*, ctl: Ctl) -> None:
+    run = ctl.launch(IMAGE, "--label-flags", "{.*: [occluded]}")
+    _draw_rectangle(ctl=ctl, run=run, start=("100", "100"), end=("200", "200"))
+    ctl.ok("type", "box", run=run)
+
+    ctl.ok("click", "occluded", run=run)
+    ctl.ok("click", "OK", run=run)
+
+    [shape] = _saved_shapes(ctl=ctl, run=run)
+    assert shape["flags"] == {"occluded": True}
+
+
+def test_type_refuses_empty_text_at_once(*, ctl: Ctl) -> None:
+    run = ctl.launch(IMAGE)
+
+    started = time.monotonic()
+    reply = ctl("type", "", run=run)
+
+    assert time.monotonic() - started < 10
+    assert reply.code == 1
+    assert reply.body["ok"] is False
