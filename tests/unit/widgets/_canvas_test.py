@@ -221,7 +221,9 @@ _FLAT_BOX: Final = [(20.0, 25.0), (54.0, 25.0), (54.0, 25.0), (20.0, 25.0)]
     [
         pytest.param(_OPEN_BOX, 24, QtCore.QPoint(31, 8), "rotation", id="open_handle"),
         pytest.param(_OPEN_BOX, 24, QtCore.QPoint(27, 8), "corner", id="open_corner"),
-        pytest.param(_FLAT_BOX, 24, QtCore.QPoint(30, 22), "rotation", id="flat_handle"),
+        pytest.param(
+            _FLAT_BOX, 24, QtCore.QPoint(30, 22), "rotation", id="flat_handle"
+        ),
         pytest.param(_FLAT_BOX, 8, QtCore.QPoint(19, 23), "corner", id="flat_corner"),
     ],
 )
