@@ -125,18 +125,21 @@ def _find_nearest_marker(
                 continue
             offsets = centers - point
             distances = np.einsum("ij,ij->i", offsets, offsets)
-            eligible = distances <= reach**2
-            if (
-                hovered is not None
-                and hovered.shape is shape
-                and hovered.kind is kind
-                and hovered.index is not None
-                and hovered.index < len(centers)
-            ):
-                eligible[hovered.index] = distances[hovered.index] <= hovered_reach**2
-            index = int(np.argmin(np.where(eligible, distances, np.inf)))
+            index = int(distances.argmin())
+            if distances[index] > reach**2:
+                if (
+                    hovered is not None
+                    and hovered.shape is shape
+                    and hovered.kind is kind
+                    and hovered.index is not None
+                    and hovered.index < len(centers)
+                    and distances[hovered.index] <= hovered_reach**2
+                ):
+                    index = hovered.index
+                else:
+                    continue
             closest = distances[index]
-            if not eligible[index] or closest > nearest:
+            if closest > nearest:
                 continue
             if closest < nearest:
                 nearest = closest
@@ -205,16 +208,8 @@ def _build_candidates(
     shapes: list[Shape],
     priority_shape: Shape | None,
 ) -> list[Shape]:
-    candidates: list[Shape] = []
-    if priority_shape is not None and priority_shape.visible:
-        candidates.append(priority_shape)
-    for shape in reversed(shapes):
-        if not shape.visible:
-            continue
-        if shape is priority_shape:
-            continue
-        candidates.append(shape)
-    return candidates
+    visible = [shape for shape in reversed(shapes) if shape.visible]
+    return sorted(visible, key=lambda shape: shape is not priority_shape)
 
 
 def is_within_pick_threshold(
