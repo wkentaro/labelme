@@ -6,8 +6,8 @@ from ._convert import convert_shape
 from ._hit_testing import image_extent
 from ._hit_testing import mask_shape_box
 from ._hit_testing import nearest_edge_index
-from ._hit_testing import nearest_rotation_point
-from ._hit_testing import nearest_vertex
+from ._hit_testing import rotation_handles_near
+from ._hit_testing import vertices_near
 from ._merge import MergeBlocker
 from ._merge import can_merge_shapes
 from ._merge import merge_blocker
@@ -51,9 +51,9 @@ __all__ = [
     "merge_blocker",
     "merge_masks",
     "nearest_edge_index",
-    "nearest_rotation_point",
-    "nearest_vertex",
     "oriented_rectangle_arrow_points",
     "oriented_rectangle_center",
     "rotate",
+    "rotation_handles_near",
+    "vertices_near",
 ]

@@ -703,7 +703,8 @@ def is_marker_hit_by_point(
     reach = drawn_marker_radius(point_size=size, scale=scale)
     offset = np.abs(point - center)
     if marker_type == "square":
-        return bool(offset.max() <= reach)
+        bevel_reach = (size + _OUTLINE_WIDTH / 2) / scale
+        return bool(offset.max() <= reach and offset.sum() <= bevel_reach)
     return bool(np.hypot(*offset) <= reach)
 
 

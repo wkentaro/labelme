@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 from typing import NamedTuple
 
 import numpy as np
@@ -23,16 +24,29 @@ def _find_closest(*, distances: npt.NDArray[np.float64]) -> Nearest:
     return Nearest(index=closest, distance=float(distances[closest]))
 
 
-def nearest_vertex(
+def vertices_near(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
-) -> Nearest | None:
+    radius: float,
+) -> Iterator[Nearest]:
     # A mask's bbox corners are derived from its bitmap, and a point shape's
     # single point *is* the shape, not a draggable vertex; neither exposes one.
     if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
-        return None
-    return _find_closest(distances=np.linalg.norm(shape.points - point, axis=1))
+        return iter(())
+    return _nearest_first(centers=shape.points, point=point, radius=radius)
+
+
+def _nearest_first(
+    *,
+    centers: npt.NDArray[np.float64],
+    point: npt.NDArray[np.float64],
+    radius: float,
+) -> Iterator[Nearest]:
+    distances = np.linalg.norm(centers - point, axis=1)
+    near = np.flatnonzero(distances <= radius)
+    for i in near[np.lexsort((-near, distances[near]))]:
+        yield Nearest(index=int(i), distance=float(distances[i]))
 
 
 def nearest_edge_index(
@@ -67,17 +81,17 @@ def nearest_edge_index(
     return nearest.index if nearest.distance <= image_epsilon else None
 
 
-def nearest_rotation_point(
+def rotation_handles_near(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
-) -> Nearest | None:
+    radius: float,
+) -> Iterator[Nearest]:
     if not is_full_oriented_rectangle(shape=shape):
-        return None
-    distances = np.linalg.norm(
-        get_rotation_handles(points=shape.points) - point, axis=1
+        return iter(())
+    return _nearest_first(
+        centers=get_rotation_handles(points=shape.points), point=point, radius=radius
     )
-    return _find_closest(distances=distances)
 
 
 def image_extent(

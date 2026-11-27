@@ -135,7 +135,7 @@ def test_rotate_reports_source_points_length_in_error() -> None:
         )
 
 
-def test_nearest_vertex_returns_none_for_mask() -> None:
+def test_vertices_near_is_empty_for_mask() -> None:
     # Mask bbox is anchored to the bitmap; exposing draggable vertices would
     # desync the rectangle from the mask.
     shape = Shape(
@@ -146,10 +146,10 @@ def test_nearest_vertex_returns_none_for_mask() -> None:
     )
 
     for corner in shape.points:
-        assert _shape.nearest_vertex(shape=shape, point=corner) is None
+        assert list(_shape.vertices_near(shape=shape, point=corner, radius=10.0)) == []
 
 
-def test_nearest_vertex_returns_none_for_point() -> None:
+def test_vertices_near_is_empty_for_point() -> None:
     # A point shape's single point is the shape itself, not a draggable vertex;
     # it is selected and moved as a whole, so it exposes no vertex to hit.
     shape = Shape(
@@ -158,7 +158,10 @@ def test_nearest_vertex_returns_none_for_point() -> None:
         closed=True,
     )
 
-    assert _shape.nearest_vertex(shape=shape, point=shape.points[0]) is None
+    assert (
+        list(_shape.vertices_near(shape=shape, point=shape.points[0], radius=10.0))
+        == []
+    )
 
 
 def _make_square_polygon() -> Shape:
@@ -453,18 +456,40 @@ def test_nearest_edge_index_matches_drawn_edge_for_linestrip() -> None:
     assert index == 1
 
 
-def test_nearest_vertex_returns_the_nearest_vertex_and_its_distance() -> None:
+def test_vertices_near_lists_the_vertices_within_radius_nearest_first() -> None:
     shape = _make_square_polygon()
 
-    nearest = _shape.nearest_vertex(shape=shape, point=shape.points[1] + (0.4, 0.0))
+    near = list(
+        _shape.vertices_near(shape=shape, point=np.array([7.0, 1.0]), radius=10.0)
+    )
 
-    assert nearest == (1, pytest.approx(0.4))
+    assert near == [
+        (1, pytest.approx(math.hypot(3, 1))),
+        (0, pytest.approx(math.hypot(7, 1))),
+        (2, pytest.approx(math.hypot(3, 9))),
+    ]
 
 
-def test_nearest_vertex_returns_none_for_empty_shape() -> None:
+def test_vertices_near_puts_the_later_of_two_coincident_vertices_first() -> None:
+    shape = Shape(
+        shape_type="polygon",
+        points=np.array([(0.0, 0.0), (10.0, 0.0), (0.0, 0.0)], dtype=np.float64),
+    )
+
+    near = list(
+        _shape.vertices_near(shape=shape, point=np.array([0.0, 1.0]), radius=2.0)
+    )
+
+    assert [n.index for n in near] == [2, 0]
+
+
+def test_vertices_near_is_empty_for_empty_shape() -> None:
     shape = Shape(shape_type="polygon")
 
-    assert _shape.nearest_vertex(shape=shape, point=np.array([0.0, 0.0])) is None
+    assert (
+        list(_shape.vertices_near(shape=shape, point=np.array([0.0, 0.0]), radius=10.0))
+        == []
+    )
 
 
 # Rotation handles sit at the edge midpoints; handle i is the midpoint of the
@@ -498,30 +523,38 @@ def test_get_rotation_handle_raises_for_non_oriented_rectangle() -> None:
         _shape.get_rotation_handle(shape=shape, index=0)
 
 
-def test_nearest_rotation_point_returns_the_nearest_handle_and_its_distance() -> None:
+def test_rotation_handles_near_lists_the_handles_within_radius() -> None:
     shape = _make_axis_aligned_oriented_rectangle()
     # handle 2 is the right-edge midpoint at (10, 2); probe just beside it.
     point = np.array([10.3, 2.0])
 
-    nearest = _shape.nearest_rotation_point(shape=shape, point=point)
+    near = list(_shape.rotation_handles_near(shape=shape, point=point, radius=1.0))
 
-    assert nearest == (2, pytest.approx(0.3))
+    assert near == [(2, pytest.approx(0.3))]
 
 
-def test_nearest_rotation_point_returns_none_for_non_oriented_rectangle() -> None:
+def test_rotation_handles_near_is_empty_for_non_oriented_rectangle() -> None:
     shape = _make_square_polygon()
 
-    nearest = _shape.nearest_rotation_point(shape=shape, point=np.array([5.0, 0.0]))
+    near = list(
+        _shape.rotation_handles_near(
+            shape=shape, point=np.array([5.0, 0.0]), radius=10.0
+        )
+    )
 
-    assert nearest is None
+    assert near == []
 
 
-def test_nearest_rotation_point_returns_none_for_empty_shape() -> None:
+def test_rotation_handles_near_is_empty_for_empty_shape() -> None:
     shape = Shape(shape_type="oriented_rectangle")
 
-    nearest = _shape.nearest_rotation_point(shape=shape, point=np.array([0.0, 0.0]))
+    near = list(
+        _shape.rotation_handles_near(
+            shape=shape, point=np.array([0.0, 0.0]), radius=10.0
+        )
+    )
 
-    assert nearest is None
+    assert near == []
 
 
 def test_oriented_rectangle_arrow_points_axis_aligned() -> None:
