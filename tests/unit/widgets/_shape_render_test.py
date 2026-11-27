@@ -537,14 +537,18 @@ _HOVERED: Final = VertexHighlight(index=0, mode="move")
     [
         pytest.param("round", None, (3, 4), True, id="round_rim"),
         pytest.param("round", None, (4, 4), False, id="round_past_rim"),
-        pytest.param("square", None, (5, 5), True, id="square_corner"),
+        pytest.param("square", None, (5, 4), True, id="square_bevel"),
+        pytest.param("square", None, (5, 4.5), False, id="square_past_bevel"),
         pytest.param("square", None, (5.5, 0), False, id="square_past_side"),
-        pytest.param("round", _HOVERED, (7, 7), True, id="hovered_square_corner"),
+        pytest.param("round", _HOVERED, (7, 6), True, id="hovered_square_bevel"),
+        pytest.param(
+            "round", _HOVERED, (6.9, 6.9), False, id="hovered_square_past_bevel"
+        ),
         pytest.param("round", _HOVERED, (7.5, 0), False, id="hovered_past_side"),
         pytest.param(
             "round",
             VertexHighlight(index=1, mode="move"),
-            (7, 7),
+            (7, 6),
             False,
             id="another_marker_hovered",
         ),

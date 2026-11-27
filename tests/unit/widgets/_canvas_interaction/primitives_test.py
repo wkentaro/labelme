@@ -341,27 +341,6 @@ def test_hovered_shape_keeps_a_vertex_shared_with_a_shape_drawn_over_it() -> Non
     _assert_hit(result=result, kind=HitKind.VERTEX, shape=shape_a, index=0)
 
 
-def test_priority_shape_not_duplicated_in_candidates() -> None:
-    shape = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
-    # Only one match expected: VERTEX at index 0.
-    result = find_hover_target(
-        shapes=[shape],
-        point=_point(x=10.0, y=10.0),
-        scale=_SCALE,
-        epsilon=_EPSILON,
-        point_size=_POINT_SIZE,
-        point_type=_POINT_TYPE,
-        hovered=shape,
-        highlight=None,
-        rotation_highlight=None,
-        selected=(),
-    )
-    assert result is not None
-    assert result.kind == HitKind.VERTEX
-    assert result.shape is shape
-    assert result.index == 0
-
-
 # ---------------------------------------------------------------------------
 # find_hover_target — reverse paint order for non-priority shapes
 # ---------------------------------------------------------------------------
@@ -463,7 +442,6 @@ def test_point_dot_beats_hovered_box(
 
 
 def test_box_edge_wins_outside_point_dot() -> None:
-    # 6 px from the edge is within its tolerance but outside the 4 px dot.
     box = _box()
     result = _hover(
         shapes=[box, _keypoint(x=50, y=0)], at=(50, 6), hovered=_hovered_body(shape=box)
@@ -486,7 +464,7 @@ _HANDLES: Final = [
 
 
 @pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
-def test_point_dot_beats_hovered_handle_drawn_under_it(
+def test_hovered_handle_beats_a_point_dot_drawn_over_its_center(
     *,
     make_shape: Callable[[], Shape],
     handle_at: tuple[float, float],
@@ -495,19 +473,35 @@ def test_point_dot_beats_hovered_handle_drawn_under_it(
 ) -> None:
     shape = make_shape()
     hovered = HitTarget(kind=kind, shape=shape, index=index)
-    alone = _hover(shapes=[shape], at=handle_at, hovered=hovered)
-    _assert_hit(result=alone, kind=kind, shape=shape, index=index)
     keypoint = _keypoint(x=handle_at[0], y=handle_at[1])
     result = _hover(shapes=[shape, keypoint], at=handle_at, hovered=hovered)
+    _assert_hit(result=result, kind=kind, shape=shape, index=index)
+
+
+@pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
+def test_point_dot_drawn_over_a_hovered_handle_wins_at_its_own_center(
+    *,
+    make_shape: Callable[[], Shape],
+    handle_at: tuple[float, float],
+    kind: HitKind,
+    index: int,
+) -> None:
+    shape = make_shape()
+    hovered = HitTarget(kind=kind, shape=shape, index=index)
+    dot_at = (handle_at[0] + 3, handle_at[1])
+    alone = _hover(shapes=[shape], at=dot_at, hovered=hovered)
+    _assert_hit(result=alone, kind=kind, shape=shape, index=index)
+    keypoint = _keypoint(x=dot_at[0], y=dot_at[1])
+    result = _hover(shapes=[shape, keypoint], at=dot_at, hovered=hovered)
     _assert_hit(result=result, kind=HitKind.BODY, shape=keypoint, index=None)
 
 
 @pytest.mark.parametrize(
-    ("scale", "dot_offset"),
+    ("scale", "dot_offset", "cursor_offset"),
     [
-        pytest.param(1.0, (0, 0), id="on_handle"),
-        pytest.param(1.0, (4, 1), id="under_marker_outline"),
-        pytest.param(2.0, (2, 0.5), id="under_marker_outline_zoomed"),
+        pytest.param(1.0, (0, 0), (0, 0), id="on_handle"),
+        pytest.param(1.0, (4, 1), (1, 0.25), id="nearer_the_handle"),
+        pytest.param(2.0, (2, 0.5), (0.5, 0.125), id="nearer_the_handle_zoomed"),
     ],
 )
 @pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
@@ -519,23 +513,26 @@ def test_handle_drawn_over_point_dot_beats_it(
     index: int,
     scale: float,
     dot_offset: tuple[float, float],
+    cursor_offset: tuple[float, float],
 ) -> None:
     shape = make_shape()
-    dot_at = (handle_at[0] + dot_offset[0], handle_at[1] + dot_offset[1])
-    keypoint = _keypoint(x=dot_at[0], y=dot_at[1])
-    result = _hover(shapes=[keypoint, shape], at=dot_at, hovered=None, scale=scale)
+    keypoint = _keypoint(x=handle_at[0] + dot_offset[0], y=handle_at[1] + dot_offset[1])
+    at = (handle_at[0] + cursor_offset[0], handle_at[1] + cursor_offset[1])
+    result = _hover(shapes=[keypoint, shape], at=at, hovered=None, scale=scale)
     _assert_hit(result=result, kind=kind, shape=shape, index=index)
 
 
 @pytest.mark.parametrize(
     ("scale", "dot_offset"),
     [
+        pytest.param(1.0, (4, 1), id="under_marker_outline"),
+        pytest.param(2.0, (2, 0.5), id="under_marker_outline_zoomed"),
         pytest.param(1.0, (5, 1), id="past_marker_outline"),
         pytest.param(2.0, (2.5, 0.5), id="past_marker_outline_zoomed"),
     ],
 )
 @pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
-def test_point_dot_beats_handle_drawn_over_it_whose_marker_misses_it(
+def test_point_dot_beats_handle_drawn_over_it_at_the_dots_center(
     *,
     make_shape: Callable[[], Shape],
     handle_at: tuple[float, float],
@@ -670,42 +667,59 @@ _SCALES: Final = [
 ]
 
 
+@pytest.mark.parametrize(
+    "cursor_above",
+    [
+        pytest.param(4.5, id="under_its_marker"),
+        pytest.param(7.5, id="past_its_marker"),
+    ],
+)
 @pytest.mark.parametrize("scale", _SCALES)
 @pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
-def test_hovered_handle_drawn_over_a_nearer_corner_beats_it(
+def test_nearer_corner_beats_a_hovered_handle_drawn_over_it(
     *,
     make_shape: Callable[[], Shape],
     handle_at: tuple[float, float],
     kind: HitKind,
     index: int,
     scale: float,
+    cursor_above: float,
 ) -> None:
     shape = make_shape()
     hovered = HitTarget(kind=kind, shape=shape, index=index)
-    corner = _corner_8px_above(handle_at=handle_at, scale=scale)
-    at = (handle_at[0], handle_at[1] - 4.5 / scale)
-    result = _hover(shapes=[corner, shape], at=at, hovered=hovered, scale=scale)
-    _assert_hit(result=result, kind=kind, shape=shape, index=index)
-
-
-@pytest.mark.parametrize("scale", _SCALES)
-@pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
-def test_nearer_corner_beats_a_hovered_handle_whose_marker_misses_the_cursor(
-    *,
-    make_shape: Callable[[], Shape],
-    handle_at: tuple[float, float],
-    kind: HitKind,
-    index: int,
-    scale: float,
-) -> None:
-    shape = make_shape()
-    hovered = HitTarget(kind=kind, shape=shape, index=index)
-    at = (handle_at[0], handle_at[1] - 7.5 / scale)
+    at = (handle_at[0], handle_at[1] - cursor_above / scale)
     alone = _hover(shapes=[shape], at=at, hovered=hovered, scale=scale)
     _assert_hit(result=alone, kind=kind, shape=shape, index=index)
     corner = _corner_8px_above(handle_at=handle_at, scale=scale)
     result = _hover(shapes=[corner, shape], at=at, hovered=hovered, scale=scale)
     _assert_hit(result=result, kind=HitKind.VERTEX, shape=corner, index=0)
+
+
+def test_hovered_corner_misses_a_press_past_its_bevel() -> None:
+    box = _box()
+    result = find_hover_target(
+        shapes=[box],
+        point=_point(x=6.9, y=6.9),
+        scale=_SCALE,
+        epsilon=4.0,
+        point_size=_POINT_SIZE,
+        point_type=_POINT_TYPE,
+        hovered=box,
+        highlight=VertexHighlight(index=0, mode="move"),
+        rotation_highlight=None,
+        selected=(),
+    )
+    _assert_hit(result=result, kind=HitKind.BODY, shape=box, index=None)
+
+
+def test_nearest_of_a_shapes_markers_beats_its_hovered_one() -> None:
+    polygon = _polygon(points=[(20, 20), (26, 20), (70, 35)], visible=True)
+    result = _hover(
+        shapes=[polygon],
+        at=(26.5, 20),
+        hovered=HitTarget(kind=HitKind.VERTEX, shape=polygon, index=0),
+    )
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=polygon, index=1)
 
 
 def test_hovered_highlight_reaching_past_epsilon_outside_its_shape_is_grabbed() -> None:
