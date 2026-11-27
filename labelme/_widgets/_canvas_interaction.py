@@ -17,6 +17,7 @@ from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
 from ._shape_render import drawn_marker_half_size
 from ._shape_render import is_hit_by_point
+from ._shape_render import is_painted_at
 
 
 class HitKind(enum.Enum):
@@ -147,7 +148,9 @@ def find_hover_target(
                     kind=HitKind.VERTEX, shape=shape, index=idx, priority_shape=top
                 )
             in_reach = in_reach or (shape, idx)
-        if shape is top:
+        if shape is top or is_painted_at(
+            shape=shape, point=point, scale=scale, point_size=point_size
+        ):
             break
     if in_reach is not None:
         shape, idx = in_reach

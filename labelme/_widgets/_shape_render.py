@@ -687,6 +687,27 @@ def is_hit_by_point(
     return _build_outline_path(shape=shape).contains(QtCore.QPointF(*point))
 
 
+def is_painted_at(
+    *,
+    shape: Shape,
+    point: npt.NDArray[np.float64],
+    scale: float,
+    point_size: int,
+) -> bool:
+    marker_radius = drawn_marker_half_size(point_size=point_size, highlighted=False)
+    if len(shape.points) > 0 and np.any(
+        np.linalg.norm(shape.vertices() - point, axis=1) <= marker_radius / scale
+    ):
+        return True
+    outline = _build_outline_path(shape=shape)
+    stroker = QtGui.QPainterPathStroker()
+    stroker.setWidth(_OUTLINE_WIDTH / scale)
+    target = QtCore.QPointF(*point)
+    if shape.shape_type in ("line", "linestrip", "point", "points"):
+        return stroker.createStroke(outline).contains(target)
+    return outline.contains(target) or stroker.createStroke(outline).contains(target)
+
+
 def bounds(*, shape: Shape) -> QtCore.QRectF:
     return _build_outline_path(shape=shape).boundingRect()
 
