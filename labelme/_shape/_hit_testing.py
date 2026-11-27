@@ -57,7 +57,7 @@ def nearest_derived_corner_index(
     distances = np.linalg.norm(
         vertices[list(RECTANGLE_DERIVED_CORNERS)] - point, axis=1
     )
-    held = highlighted in RECTANGLE_DERIVED_CORNERS and bool(
+    held = highlighted is not None and bool(
         np.all(np.abs(vertices[highlighted] - point) <= highlight_half_size)
     )
     if not held and not np.any(distances <= reach):

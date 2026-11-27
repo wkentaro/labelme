@@ -58,16 +58,22 @@ def find_hover_target(
         for shape in shapes
         if _is_near_extent(shape=shape, point=point, margin=margin)
     ]
-    candidates = _build_candidates(
-        shapes=shapes,
-        priority_shape=priority_shape,
-    )
-
-    # A locked shape offers no vertex, rotation handle, or edge to grab.
-    editable = [shape for shape in candidates if not shape.locked]
+    paint_order = [
+        shape for shape in reversed(shapes) if shape.visible and not shape.locked
+    ]
+    handle_order = paint_order
+    if (
+        priority_shape is not None
+        and priority_shape.visible
+        and not priority_shape.locked
+    ):
+        handle_order = [
+            priority_shape,
+            *(shape for shape in paint_order if shape is not priority_shape),
+        ]
 
     # Pass 1: vertex proximity
-    for shape in editable:
+    for shape in handle_order:
         idx = nearest_vertex_index(
             shape=shape, point=point, image_epsilon=image_epsilon
         )
@@ -77,7 +83,7 @@ def find_hover_target(
             )
 
     # Pass 2: rotation handle proximity
-    for shape in editable:
+    for shape in handle_order:
         idx = nearest_rotation_point_index(
             shape=shape, point=point, image_epsilon=image_epsilon
         )
@@ -103,7 +109,7 @@ def find_hover_target(
         return HitTarget(kind=HitKind.BODY, shape=top, index=None, priority_shape=top)
 
     # Pass 4: edge proximity (only shapes that support adding a point)
-    for shape in editable:
+    for shape in handle_order:
         if not shape.can_add_point():
             continue
         idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)
@@ -113,7 +119,7 @@ def find_hover_target(
             )
 
     marker_radius = drawn_marker_half_size(point_size=point_size, highlighted=False)
-    for shape in editable:
+    for shape in paint_order:
         idx = nearest_derived_corner_index(
             shape=shape,
             point=point,
@@ -175,23 +181,6 @@ def _is_near_extent(
         return False
     lo, hi = image_extent(shape=shape)
     return bool(np.all(point >= lo - margin) and np.all(point <= hi + margin))
-
-
-def _build_candidates(
-    *,
-    shapes: list[Shape],
-    priority_shape: Shape | None,
-) -> list[Shape]:
-    candidates: list[Shape] = []
-    if priority_shape is not None and priority_shape.visible:
-        candidates.append(priority_shape)
-    for shape in reversed(shapes):
-        if not shape.visible:
-            continue
-        if shape is priority_shape:
-            continue
-        candidates.append(shape)
-    return candidates
 
 
 def is_within_pick_threshold(
