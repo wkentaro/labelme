@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Final
 
 import numpy as np
@@ -432,10 +433,46 @@ def test_box_edge_wins_outside_point_dot() -> None:
     assert result.shape is box
 
 
-def test_hovered_box_vertex_beats_point_on_corner() -> None:
-    box = _box()
-    result = _hover(shapes=[box, _keypoint(x=0, y=0)], at=(0, 0), priority=box)
-    _assert_hit(result=result, kind=HitKind.VERTEX, shape=box, index=0)
+_HANDLES: Final = [
+    pytest.param(_box, (0, 0), HitKind.VERTEX, 0, id="vertex"),
+    pytest.param(
+        lambda: _oriented_rectangle(points=[(0, 0), (40, 0), (40, 10), (0, 10)]),
+        (20, 0),
+        HitKind.ROTATION_HANDLE,
+        1,
+        id="rotation_handle",
+    ),
+]
+
+
+@pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
+def test_point_dot_beats_hovered_handle_drawn_under_it(
+    *,
+    make_shape: Callable[[], Shape],
+    handle_at: tuple[float, float],
+    kind: HitKind,
+    index: int,
+) -> None:
+    shape = make_shape()
+    alone = _hover(shapes=[shape], at=handle_at, priority=shape)
+    _assert_hit(result=alone, kind=kind, shape=shape, index=index)
+    keypoint = _keypoint(x=handle_at[0], y=handle_at[1])
+    result = _hover(shapes=[shape, keypoint], at=handle_at, priority=shape)
+    _assert_hit(result=result, kind=HitKind.BODY, shape=keypoint, index=None)
+
+
+@pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
+def test_handle_drawn_over_point_dot_beats_it(
+    *,
+    make_shape: Callable[[], Shape],
+    handle_at: tuple[float, float],
+    kind: HitKind,
+    index: int,
+) -> None:
+    shape = make_shape()
+    keypoint = _keypoint(x=handle_at[0], y=handle_at[1])
+    result = _hover(shapes=[keypoint, shape], at=handle_at, priority=None)
+    _assert_hit(result=result, kind=kind, shape=shape, index=index)
 
 
 def test_vertex_of_shape_under_later_box_stays_grabbable() -> None:

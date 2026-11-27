@@ -3846,6 +3846,103 @@ def test_dragging_point_inside_box_commits_move(*, editing_canvas: Canvas) -> No
     np.testing.assert_array_equal(canvas.shape_backups[-1][1].points, [[90, 40]])
 
 
+def _hover_and_drag(*, canvas: Canvas, start: QPointF, end: QPointF) -> None:
+    move = QtCore.QEvent.Type.MouseMove
+    no_button = Qt.MouseButton.NoButton
+    left = Qt.MouseButton.LeftButton
+    canvas.mouseMoveEvent(
+        _mouse_event(canvas=canvas, kind=move, image_pos=start, buttons=no_button)
+    )
+    canvas.mousePressEvent(
+        _mouse_event(
+            canvas=canvas,
+            kind=QtCore.QEvent.Type.MouseButtonPress,
+            image_pos=start,
+            buttons=left,
+        )
+    )
+    canvas.mouseMoveEvent(
+        _mouse_event(canvas=canvas, kind=move, image_pos=end, buttons=left)
+    )
+    canvas.mouseReleaseEvent(
+        _mouse_event(
+            canvas=canvas,
+            kind=QtCore.QEvent.Type.MouseButtonRelease,
+            image_pos=end,
+            buttons=no_button,
+        )
+    )
+
+
+def _rectangle_and_point(
+    *, canvas: Canvas, point_at: tuple[float, float], point_drawn_last: bool
+) -> tuple[Shape, Shape]:
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([(5, 5), (80, 45)], dtype=np.float64),
+    )
+    point = Shape(shape_type="point", points=np.array([point_at], dtype=np.float64))
+    canvas.load_shapes(
+        shapes=[rectangle, point] if point_drawn_last else [point, rectangle]
+    )
+    return rectangle, point
+
+
+@pytest.mark.parametrize(
+    ("point_at", "point_drawn_last"),
+    [
+        pytest.param((80, 45), True, id="dot_on_corner"),
+        pytest.param((9, 8), True, id="dot_beside_corner"),
+        pytest.param((9, 8), False, id="dot_beside_corner_drawn_over_it"),
+    ],
+)
+def test_dragging_point_dot_near_a_corner_moves_the_point(
+    *,
+    editing_canvas: Canvas,
+    point_at: tuple[float, float],
+    point_drawn_last: bool,
+) -> None:
+    rectangle, point = _rectangle_and_point(
+        canvas=editing_canvas, point_at=point_at, point_drawn_last=point_drawn_last
+    )
+
+    _hover_and_drag(
+        canvas=editing_canvas, start=QPointF(*point_at), end=QPointF(50, 25)
+    )
+
+    np.testing.assert_array_equal(point.points, [[50, 25]])
+    np.testing.assert_array_equal(rectangle.points, [[5, 5], [80, 45]])
+
+
+@pytest.mark.parametrize(
+    ("point_at", "point_drawn_last", "press_at", "dragged_corner"),
+    [
+        pytest.param((80, 45), False, (80, 45), 1, id="corner_drawn_over_dot"),
+        pytest.param((9, 8), True, (4, 4), 0, id="corner_off_dot"),
+    ],
+)
+def test_dragging_corner_near_a_point_dot_moves_the_corner(
+    *,
+    editing_canvas: Canvas,
+    point_at: tuple[float, float],
+    point_drawn_last: bool,
+    press_at: tuple[float, float],
+    dragged_corner: int,
+) -> None:
+    rectangle, point = _rectangle_and_point(
+        canvas=editing_canvas, point_at=point_at, point_drawn_last=point_drawn_last
+    )
+    expected = rectangle.points.copy()
+    expected[dragged_corner] = (50, 25)
+
+    _hover_and_drag(
+        canvas=editing_canvas, start=QPointF(*press_at), end=QPointF(50, 25)
+    )
+
+    np.testing.assert_array_equal(rectangle.points, expected)
+    np.testing.assert_array_equal(point.points, [point_at])
+
+
 @pytest.mark.parametrize(
     "kind",
     [QtCore.QEvent.Type.MouseButtonPress, QtCore.QEvent.Type.MouseButtonDblClick],
