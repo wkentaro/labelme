@@ -3892,8 +3892,8 @@ def _rectangle_and_point(
     ("point_at", "point_drawn_last"),
     [
         pytest.param((80, 45), True, id="dot_on_corner"),
-        pytest.param((9, 8), True, id="dot_beside_corner"),
-        pytest.param((9, 8), False, id="dot_beside_corner_drawn_over_it"),
+        pytest.param((10, 8), True, id="dot_beside_corner"),
+        pytest.param((10, 8), False, id="dot_beside_corner_drawn_over_it"),
     ],
 )
 def test_dragging_point_dot_near_a_corner_moves_the_point(
@@ -3919,7 +3919,7 @@ def test_dragging_point_dot_near_a_corner_moves_the_point(
     [
         pytest.param((80, 45), False, (80, 45), 1, id="corner_drawn_over_dot"),
         pytest.param((76, 44), False, (76, 44), 1, id="corner_outline_over_dot"),
-        pytest.param((9, 8), True, (4, 4), 0, id="corner_off_dot"),
+        pytest.param((10, 8), True, (4, 4), 0, id="corner_off_dot"),
     ],
 )
 def test_dragging_corner_near_a_point_dot_moves_the_corner(

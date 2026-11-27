@@ -675,6 +675,10 @@ def is_hit_by_point(
     return _build_outline_path(shape=shape).contains(QtCore.QPointF(*point))
 
 
+def drawn_marker_radius(*, point_size: int, scale: float) -> float:
+    return (point_size + _OUTLINE_WIDTH) / 2 / scale
+
+
 def bounds(*, shape: Shape) -> QtCore.QRectF:
     return _build_outline_path(shape=shape).boundingRect()
 

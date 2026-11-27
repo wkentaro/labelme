@@ -13,6 +13,7 @@ from .._shape import image_extent
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
+from ._shape_render import drawn_marker_radius
 from ._shape_render import is_hit_by_point
 
 
@@ -42,7 +43,7 @@ def find_hover_target(
     # Proximity is measured in image space, so the screen-pixel threshold is
     # converted here rather than scaling every shape's points.
     image_epsilon = epsilon / scale
-    marker_radius = point_size / 2 / scale
+    marker_radius = drawn_marker_radius(point_size=point_size, scale=scale)
 
     # Every pass below costs array work per shape, so drop the shapes the
     # pointer is nowhere near once, up front.
