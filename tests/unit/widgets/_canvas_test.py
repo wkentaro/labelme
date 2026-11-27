@@ -4207,6 +4207,51 @@ def test_drag_on_rear_corner_beside_front_corner_reach_resizes_rear(
     np.testing.assert_array_equal(rear.points, [(20, 10), (90, 40)])
 
 
+def test_drag_on_front_marker_over_rear_highlight_resizes_front(
+    *, editing_canvas: Canvas
+) -> None:
+    rear = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (80, 45)], dtype=float)
+    )
+    front = Shape(
+        shape_type="rectangle", points=np.array([(30, 26), (80, 48)], dtype=float)
+    )
+    editing_canvas.load_shapes(shapes=[rear, front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(80, 20)],
+        start=QPointF(80, 26),
+        end=QPointF(91, 15),
+    )
+
+    np.testing.assert_array_equal(rear.points, [(20, 20), (80, 45)])
+    np.testing.assert_array_equal(front.points, [(30, 15), (91, 48)])
+
+
+def test_drag_on_front_body_within_rear_corner_reach_moves_front(
+    *, editing_canvas: Canvas
+) -> None:
+    rear = Shape(
+        shape_type="rectangle", points=np.array([(10, 20), (60, 45)], dtype=float)
+    )
+    front = Shape(
+        shape_type="circle", points=np.array([(78, 30), (78, 10)], dtype=float)
+    )
+    editing_canvas.load_shapes(shapes=[rear, front])
+    editing_canvas.select_shapes(shapes=[front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(70, 25)],
+        start=QPointF(62, 25),
+        end=QPointF(56, 25),
+    )
+
+    np.testing.assert_array_equal(rear.points, [(10, 20), (60, 45)])
+    np.testing.assert_array_equal(front.points, [(72, 30), (72, 10)])
+
+
 @pytest.mark.parametrize("remove", ["delete", "hide"])
 @pytest.mark.parametrize(
     (
