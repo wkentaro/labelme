@@ -646,6 +646,12 @@ def _release_held_buttons() -> None:
         )
 
 
+def _let_closed_loops_return() -> None:
+    dispatcher = QtCore.QAbstractEventDispatcher.instance()
+    assert dispatcher is not None
+    dispatcher.wakeUp()
+
+
 def _try_activate_top_window() -> bool:
     app = _app()
     top = _search_root().window()
@@ -1058,6 +1064,7 @@ class Controller(QtCore.QObject):
             except Exception:
                 steps.insert(0, step)
                 answer(error=traceback.format_exc())
+            _let_closed_loops_return()
 
         def settled() -> None:
             if not steps:
