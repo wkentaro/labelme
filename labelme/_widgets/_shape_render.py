@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import collections
 import dataclasses
+import functools
 import sys
 import typing
 from typing import Final
@@ -414,7 +415,17 @@ def _paint_shape_points(
 
     if context.outline:
         painter.drawPath(paths.line)
-        _paint_filled_vertices(
+        paint_corners = functools.partial(
+            _paint_filled_vertices,
+            painter=painter,
+            vertices=paths.vertices,
+            fill=palette.hvertex_fill
+            if context.highlight is not None
+            else palette.vertex_fill,
+            points=paths.vertex_points,
+        )
+        paint_rotation_handles = functools.partial(
+            _paint_filled_vertices,
             painter=painter,
             vertices=paths.rotation_vertices,
             fill=(
@@ -423,14 +434,12 @@ def _paint_shape_points(
                 else palette.vertex_fill
             ),
         )
-        _paint_filled_vertices(
-            painter=painter,
-            vertices=paths.vertices,
-            fill=palette.hvertex_fill
-            if context.highlight is not None
-            else palette.vertex_fill,
-            points=paths.vertex_points,
-        )
+        if context.rotation_highlight is None:
+            paint_rotation_handles()
+            paint_corners()
+        else:
+            paint_corners()
+            paint_rotation_handles()
     if context.fill and shape.shape_type not in ["line", "linestrip", "points", "mask"]:
         fill = palette.select_fill if context.selected else palette.fill
         painter.fillPath(paths.line, fill)
