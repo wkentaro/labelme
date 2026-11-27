@@ -505,3 +505,16 @@ def test_pick_an_image_list_row_wider_than_the_list_opens_it(
     reply = ctl.ok("pick", "Image List", wide, run=run)
 
     assert wide in reply["state"]["main_window"]["title"]
+
+
+def test_save_on_the_quit_prompt_replies_with_a_clean_exit(*, ctl: Ctl) -> None:
+    run = ctl.launch("--no-auto-save", IMAGE, seed="annotated")
+    ctl.ok("pick", "Shape List", "amber_kite", run=run)
+    ctl.ok("key", "Delete", run=run)
+    prompt = ctl.ok("action", "File > Quit", run=run)
+    assert "Save annotation changes" in prompt["state"]["dialog"]["text"]
+
+    reply = ctl.ok("click", "Save", run=run)
+
+    assert reply["exited"] is True
+    assert reply["exit_code"] == 0
