@@ -39,10 +39,9 @@ def nearest_vertex_index(
     return _nearest_corner(vertices=shape.vertices(), point=point)
 
 
-class CornerGrip(enum.IntEnum):
-    HELD = 0
-    PAINTED = 1
-    REACH = 2
+class CornerGrip(enum.Enum):
+    ON_MARKER = "on_marker"
+    IN_REACH = "in_reach"
 
 
 def derived_corner_grip(
@@ -64,14 +63,13 @@ def derived_corner_grip(
         marker_radius,
         _derived_corner_reach(shape=shape, point=point, image_epsilon=image_epsilon),
     )
-    if highlighted is not None and np.all(
-        np.abs(vertices[highlighted] - point) <= highlight_half_size
+    if np.any(distances <= marker_radius) or (
+        highlighted is not None
+        and np.all(np.abs(vertices[highlighted] - point) <= highlight_half_size)
     ):
-        grip = CornerGrip.HELD
-    elif np.any(distances <= marker_radius):
-        grip = CornerGrip.PAINTED
+        grip = CornerGrip.ON_MARKER
     elif np.any(distances <= reach):
-        grip = CornerGrip.REACH
+        grip = CornerGrip.IN_REACH
     else:
         return None
     return grip, _nearest_corner(vertices=vertices, point=point)

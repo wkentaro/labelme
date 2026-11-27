@@ -120,24 +120,37 @@ def find_hover_target(
             )
 
     marker_radius = drawn_marker_half_size(point_size=point_size, highlighted=False)
-    best: tuple[CornerGrip, Shape, int] | None = None
-    for shape in paint_order:
-        hit = derived_corner_grip(
-            shape=shape,
-            point=point,
-            image_epsilon=image_epsilon,
-            marker_radius=marker_radius / scale,
-            highlighted=(
-                highlighted_vertex[1]
-                if highlighted_vertex is not None and highlighted_vertex[0] is shape
-                else None
-            ),
-            highlight_half_size=highlight_half_size,
+    in_reach: tuple[Shape, int] | None = None
+    for shape in reversed(shapes):
+        if not shape.visible:
+            continue
+        hit = (
+            None
+            if shape.locked
+            else derived_corner_grip(
+                shape=shape,
+                point=point,
+                image_epsilon=image_epsilon,
+                marker_radius=marker_radius / scale,
+                highlighted=(
+                    highlighted_vertex[1]
+                    if highlighted_vertex is not None and highlighted_vertex[0] is shape
+                    else None
+                ),
+                highlight_half_size=highlight_half_size,
+            )
         )
-        if hit is not None and (best is None or hit[0] < best[0]):
-            best = (hit[0], shape, hit[1])
-    if best is not None:
-        _, shape, idx = best
+        if hit is not None:
+            grip, idx = hit
+            if grip is CornerGrip.ON_MARKER:
+                return HitTarget(
+                    kind=HitKind.VERTEX, shape=shape, index=idx, priority_shape=top
+                )
+            in_reach = in_reach or (shape, idx)
+        if shape is top:
+            break
+    if in_reach is not None:
+        shape, idx = in_reach
         return HitTarget(
             kind=HitKind.VERTEX, shape=shape, index=idx, priority_shape=top
         )
