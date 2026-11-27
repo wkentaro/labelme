@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Final
 
 import numpy as np
@@ -32,6 +33,10 @@ def _polygon(*, points: list[tuple[float, float]], visible: bool) -> Shape:
         closed=True,
         visible=visible,
     )
+
+
+def _body(*, shape: Shape) -> HitTarget:
+    return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
 
 
 def _oriented_rectangle(*, points: list[tuple[float, float]]) -> Shape:
@@ -67,7 +72,8 @@ def test_find_hover_target_empty_shapes_returns_none() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is None
 
@@ -85,7 +91,8 @@ def test_invisible_shapes_are_excluded() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is None
 
@@ -98,7 +105,8 @@ def test_visible_shape_body_hit() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is not None
     assert result.kind == HitKind.BODY
@@ -119,7 +127,8 @@ def test_vertex_match_beats_body() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -142,7 +151,8 @@ def test_vertex_on_last_candidate_beats_body_on_first_candidate() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -161,7 +171,8 @@ def test_category_precedence_vertex_over_body_across_shapes() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -189,7 +200,8 @@ def test_rotation_handle_beats_edge_across_shapes() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is not None
     assert result.kind == HitKind.ROTATION_HANDLE
@@ -210,7 +222,8 @@ def test_rotation_handle_beats_body_across_shapes() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is not None
     assert result.kind == HitKind.ROTATION_HANDLE
@@ -232,7 +245,8 @@ def test_vertex_beats_rotation_handle_across_shapes() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -254,7 +268,8 @@ def test_edge_hit_on_polygon() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     # Should be VERTEX or EDGE depending on distance to vertices.
     # (50,10) is 40px from (10,10) and 40px from (90,10) — no vertex hit.
@@ -279,7 +294,8 @@ def test_edge_not_tested_on_non_polyline_shape() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     # rectangle is not a polyline, so edge pass is skipped; body hit for interior.
     assert result is not None
@@ -287,64 +303,43 @@ def test_edge_not_tested_on_non_polyline_shape() -> None:
     assert result.shape is rect
 
 
-# ---------------------------------------------------------------------------
-# find_hover_target — priority_shape ordering
-# ---------------------------------------------------------------------------
-
-
-def test_priority_shape_is_checked_first() -> None:
-    # priority_shape is listed last in shapes but must be tried first.
-    # Two shapes overlap at (10,10). priority_shape has vertex at (10,10).
-    # The other shape also has vertex at (10,10).
-    # Without priority, reverse order tries shape_b first (it is last in list).
-    # With priority=shape_a, shape_a is tried first.
-    shape_a = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
-    shape_b = _polygon(points=[(10, 10), (80, 10), (80, 80), (10, 80)], visible=True)
+def test_top_rectangle_keeps_a_fractional_shared_corner() -> None:
+    lower = Shape(
+        shape_type="rectangle",
+        points=np.array([(47.367, 40), (90, 90)], dtype=np.float64),
+    )
+    top = Shape(
+        shape_type="rectangle",
+        points=np.array([(47.367, 40), (80, 80)], dtype=np.float64),
+    )
     result = find_hover_target(
-        shapes=[shape_b, shape_a],
-        point=_point(x=10.0, y=10.0),
+        shapes=[lower, top],
+        point=_point(x=40.0, y=40.0),
         scale=_SCALE,
         epsilon=_EPSILON,
-        point_size=_POINT_SIZE,
-        priority_shape=shape_a,
+        point_size=20,
+        hovered=None,
+        selected=(),
     )
-    assert result is not None
-    assert result.kind == HitKind.VERTEX
-    assert result.shape is shape_a
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=top, index=0)
 
 
-def test_priority_shape_not_in_shapes_is_still_checked() -> None:
-    # priority_shape need not be a member of shapes.
-    orphan = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+def test_hovered_corner_takes_a_press_at_its_exact_enlarged_reach() -> None:
+    scale = 5.47
+    rect = Shape(
+        shape_type="rectangle",
+        points=np.array([(16 / scale, 10), (20, 20)], dtype=np.float64),
+    )
     result = find_hover_target(
-        shapes=[],
-        point=_point(x=10.0, y=10.0),
-        scale=_SCALE,
+        shapes=[rect],
+        point=_point(x=0.0, y=10.0),
+        scale=scale,
         epsilon=_EPSILON,
-        point_size=_POINT_SIZE,
-        priority_shape=orphan,
+        point_size=20,
+        hovered=HitTarget(kind=HitKind.VERTEX, shape=rect, index=0),
+        selected=(),
     )
-    assert result is not None
-    assert result.kind == HitKind.VERTEX
-    assert result.shape is orphan
-
-
-def test_priority_shape_not_duplicated_in_candidates() -> None:
-    # priority_shape appears in shapes; it must not be examined twice.
-    shape = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
-    # Only one match expected: VERTEX at index 0.
-    result = find_hover_target(
-        shapes=[shape],
-        point=_point(x=10.0, y=10.0),
-        scale=_SCALE,
-        epsilon=_EPSILON,
-        point_size=_POINT_SIZE,
-        priority_shape=shape,
-    )
-    assert result is not None
-    assert result.kind == HitKind.VERTEX
-    assert result.shape is shape
-    assert result.index == 0
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=rect, index=0)
 
 
 # ---------------------------------------------------------------------------
@@ -363,7 +358,8 @@ def test_reverse_paint_order_topmost_body_wins() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=None,
+        hovered=None,
+        selected=(),
     )
     assert result is not None
     assert result.kind == HitKind.BODY
@@ -385,15 +381,20 @@ def _keypoint(*, x: float, y: float) -> Shape:
 
 
 def _hover(
-    *, shapes: list[Shape], at: tuple[float, float], priority: Shape | None
+    *,
+    shapes: list[Shape],
+    at: tuple[float, float],
+    hovered: Shape | None,
+    scale: float = _SCALE,
 ) -> HitTarget | None:
     return find_hover_target(
         shapes=shapes,
         point=_point(x=at[0], y=at[1]),
-        scale=_SCALE,
+        scale=scale,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        priority_shape=priority,
+        hovered=None if hovered is None else _body(shape=hovered),
+        selected=(),
     )
 
 
@@ -412,6 +413,7 @@ def _assert_hit(
         pytest.param((50, 50), (50, 50), id="inside_box"),
         pytest.param((50, 3), (50, 3), id="within_edge_tolerance"),
         pytest.param((50, 50), (52, 51), id="off_center_on_dot"),
+        pytest.param((50, 0), (50, 6), id="off_dot_within_reach"),
     ],
 )
 def test_point_dot_beats_hovered_box(
@@ -419,35 +421,185 @@ def test_point_dot_beats_hovered_box(
 ) -> None:
     box = _box()
     keypoint = _keypoint(x=keypoint_at[0], y=keypoint_at[1])
-    result = _hover(shapes=[box, keypoint], at=cursor_at, priority=box)
-    _assert_hit(result=result, kind=HitKind.BODY, shape=keypoint, index=None)
+    result = _hover(shapes=[box, keypoint], at=cursor_at, hovered=box)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=keypoint, index=0)
 
 
-def test_box_edge_wins_outside_point_dot() -> None:
-    # 6 px from the edge is within its tolerance but outside the 4 px dot.
+def test_box_edge_wins_outside_point_reach() -> None:
     box = _box()
-    result = _hover(shapes=[box, _keypoint(x=50, y=0)], at=(50, 6), priority=box)
+    result = _hover(shapes=[box, _keypoint(x=50, y=0)], at=(62, 6), hovered=box)
     assert result is not None
     assert result.kind == HitKind.EDGE
     assert result.shape is box
 
 
+_HANDLES: Final = [
+    pytest.param(_box, (0, 0), HitKind.VERTEX, 0, id="vertex"),
+    pytest.param(
+        lambda: _oriented_rectangle(points=[(0, 0), (40, 0), (40, 10), (0, 10)]),
+        (20, 0),
+        HitKind.ROTATION_HANDLE,
+        1,
+        id="rotation_handle",
+    ),
+]
+
+
+@pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
+def test_point_dot_drawn_over_a_hovered_handle_wins_at_its_own_center(
+    *,
+    make_shape: Callable[[], Shape],
+    handle_at: tuple[float, float],
+    kind: HitKind,
+    index: int,
+) -> None:
+    shape = make_shape()
+    dot_at = (handle_at[0] + 3, handle_at[1])
+    alone = _hover(shapes=[shape], at=dot_at, hovered=shape)
+    _assert_hit(result=alone, kind=kind, shape=shape, index=index)
+    keypoint = _keypoint(x=dot_at[0], y=dot_at[1])
+    result = _hover(shapes=[shape, keypoint], at=dot_at, hovered=shape)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=keypoint, index=0)
+
+
+@pytest.mark.parametrize(
+    ("scale", "dot_offset"),
+    [
+        pytest.param(1.0, (4, 1), id="under_marker_outline"),
+        pytest.param(2.0, (2, 0.5), id="under_marker_outline_zoomed"),
+        pytest.param(1.0, (5, 1), id="past_marker_outline"),
+        pytest.param(2.0, (2.5, 0.5), id="past_marker_outline_zoomed"),
+    ],
+)
+@pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
+def test_point_dot_beats_handle_drawn_over_it_at_the_dots_center(
+    *,
+    make_shape: Callable[[], Shape],
+    handle_at: tuple[float, float],
+    kind: HitKind,
+    index: int,
+    scale: float,
+    dot_offset: tuple[float, float],
+) -> None:
+    shape = make_shape()
+    dot_at = (handle_at[0] + dot_offset[0], handle_at[1] + dot_offset[1])
+    alone = _hover(shapes=[shape], at=dot_at, hovered=None, scale=scale)
+    _assert_hit(result=alone, kind=kind, shape=shape, index=index)
+    keypoint = _keypoint(x=dot_at[0], y=dot_at[1])
+    result = _hover(shapes=[keypoint, shape], at=dot_at, hovered=None, scale=scale)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=keypoint, index=0)
+
+
 def test_hovered_box_vertex_beats_point_on_corner() -> None:
     box = _box()
-    result = _hover(shapes=[box, _keypoint(x=0, y=0)], at=(0, 0), priority=box)
+    result = _hover(shapes=[box, _keypoint(x=0, y=0)], at=(0, 0), hovered=box)
     _assert_hit(result=result, kind=HitKind.VERTEX, shape=box, index=0)
 
 
 def test_vertex_of_shape_under_later_box_stays_grabbable() -> None:
     small = _polygon(points=[(20, 20), (40, 20), (40, 40), (20, 40)], visible=True)
-    result = _hover(shapes=[small, _box()], at=(20, 20), priority=None)
+    result = _hover(shapes=[small, _box()], at=(20, 20), hovered=None)
     _assert_hit(result=result, kind=HitKind.VERTEX, shape=small, index=0)
+
+
+def test_hovered_shape_keeps_a_vertex_shared_with_a_shape_drawn_over_it() -> None:
+    shape_a = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
+    shape_b = _polygon(points=[(10, 10), (80, 10), (80, 80), (10, 80)], visible=True)
+    result = _hover(shapes=[shape_a, shape_b], at=(10, 10), hovered=shape_a)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=shape_a, index=0)
+
+
+def _left_box() -> Shape:
+    return _polygon(points=[(0, 0), (40, 0), (40, 40), (0, 40)], visible=True)
+
+
+def _right_box(*, left: float) -> Shape:
+    return _polygon(points=[(left, 0), (90, 0), (90, 40), (left, 40)], visible=True)
+
+
+def test_nearest_vertex_wins_over_the_topmost_shapes_vertex() -> None:
+    lower = _left_box()
+    upper = _right_box(left=48)
+    result = _hover(shapes=[lower, upper], at=(42, 0), hovered=None)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=lower, index=1)
+
+
+@pytest.mark.parametrize("hovered", [False, True], ids=["unhovered", "hovered"])
+def test_rotation_handle_beats_a_farther_vertex_of_another_shape(
+    *, hovered: bool
+) -> None:
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(20, 8), (0, 40)], dtype=np.float64)
+    )
+    oriented_rect = _oriented_rectangle(points=[(0, 0), (40, 0), (40, 10), (0, 10)])
+    result = _hover(
+        shapes=[rectangle, oriented_rect],
+        at=(20, 0),
+        hovered=oriented_rect if hovered else None,
+    )
+    _assert_hit(
+        result=result, kind=HitKind.ROTATION_HANDLE, shape=oriented_rect, index=1
+    )
+
+
+def test_rotation_handle_beats_a_farther_corner_of_its_own_shape() -> None:
+    oriented_rect = _oriented_rectangle(
+        points=[(50, 50), (68, 50), (68, 100), (50, 100)]
+    )
+    result = _hover(shapes=[oriented_rect], at=(58, 47), hovered=oriented_rect)
+    _assert_hit(
+        result=result, kind=HitKind.ROTATION_HANDLE, shape=oriented_rect, index=1
+    )
+
+
+def test_shared_corner_goes_to_the_topmost_shape() -> None:
+    lower = _left_box()
+    upper = _right_box(left=40)
+    result = _hover(shapes=[lower, upper], at=(40, 3), hovered=None)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=upper, index=0)
+
+
+def test_corner_drawn_over_the_cursor_beats_the_hovered_corner_beside_it() -> None:
+    hovered = _left_box()
+    beside = _right_box(left=43)
+    result = _hover(shapes=[hovered, beside], at=(42, 0), hovered=hovered)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=beside, index=0)
+
+
+@pytest.mark.parametrize(
+    "cursor_above",
+    [
+        pytest.param(4.5, id="under_its_marker"),
+        pytest.param(7.5, id="past_its_marker"),
+    ],
+)
+@pytest.mark.parametrize(
+    "scale",
+    [
+        pytest.param(1.0, id="actual_size"),
+        pytest.param(2.0, id="zoomed"),
+    ],
+)
+def test_nearer_corner_beats_a_hovered_vertex_drawn_over_it(
+    *, scale: float, cursor_above: float
+) -> None:
+    box = _box()
+    at = (0, -cursor_above / scale)
+    alone = _hover(shapes=[box], at=at, hovered=box, scale=scale)
+    _assert_hit(result=alone, kind=HitKind.VERTEX, shape=box, index=0)
+    corner_y = -8 / scale
+    corner = Shape(
+        shape_type="rectangle",
+        points=np.array([(0, corner_y), (30, corner_y - 30)], dtype=np.float64),
+    )
+    result = _hover(shapes=[corner, box], at=at, hovered=box, scale=scale)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=corner, index=0)
 
 
 def test_body_follows_paint_order_over_priority() -> None:
     lower = _box()
     upper = _box()
-    result = _hover(shapes=[lower, upper], at=(50, 50), priority=lower)
+    result = _hover(shapes=[lower, upper], at=(50, 50), hovered=lower)
     _assert_hit(result=result, kind=HitKind.BODY, shape=upper, index=None)
 
 
@@ -465,10 +617,10 @@ def test_find_shape_at_prefers_point_under_later_box() -> None:
         is keypoint
     )
     _assert_hit(
-        result=_hover(shapes=[keypoint, box], at=(50, 50), priority=box),
-        kind=HitKind.BODY,
+        result=_hover(shapes=[keypoint, box], at=(50, 50), hovered=box),
+        kind=HitKind.VERTEX,
         shape=keypoint,
-        index=None,
+        index=0,
     )
 
 
@@ -572,15 +724,30 @@ def test_extent_reject_never_changes_the_hover_target(
                 scale=1.5,
                 epsilon=10.0,
                 point_size=8,
-                priority_shape=None,
+                hovered=None,
+                selected=(),
             )
             for point in points
         ]
 
     rejected = targets()
     monkeypatch.setattr(
-        "labelme._widgets._canvas_interaction._is_near_extent", lambda **_: True
+        "labelme._widgets._canvas_interaction._extent_gap", lambda **_: 0.0
     )
 
     assert rejected == targets()
     assert {target.kind for target in rejected if target is not None} == set(HitKind)
+
+
+def test_hovered_shape_out_of_reach_offers_no_edge() -> None:
+    polygon = _polygon(points=[(0, 0), (40, 0), (40, 40), (0, 40)], visible=True)
+    result = find_hover_target(
+        shapes=[],
+        point=_point(x=20, y=0),
+        scale=_SCALE,
+        epsilon=_EPSILON,
+        point_size=_POINT_SIZE,
+        hovered=_body(shape=polygon),
+        selected=(),
+    )
+    assert result is None

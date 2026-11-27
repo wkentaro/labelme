@@ -61,7 +61,8 @@ def main() -> None:
             scale=SCALE,
             epsilon=EPSILON,
             point_size=POINT_SIZE,
-            priority_shape=None,
+            hovered=None,
+            selected=(),
         )
         target = hover()
         runs = timeit.repeat(hover, number=args.number, repeat=args.repeat)

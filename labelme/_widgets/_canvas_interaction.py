@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import enum
+from collections.abc import Collection
 from typing import Final
 
 import numpy as np
@@ -11,9 +12,11 @@ from PySide6.QtCore import Qt
 from .._shape import Shape
 from .._shape import image_extent
 from .._shape import nearest_edge_index
-from .._shape import nearest_rotation_point_index
-from .._shape import nearest_vertex_index
+from .._shape import rotation_handle_centers
+from .._shape import vertex_centers
+from ._shape_render import hovered_marker_half_size
 from ._shape_render import is_hit_by_point
+from ._shape_render import marker_half_size
 
 
 class HitKind(enum.Enum):
@@ -37,47 +40,44 @@ def find_hover_target(
     scale: float,
     epsilon: float,
     point_size: int,
-    priority_shape: Shape | None,
+    hovered: HitTarget | None,
+    selected: Collection[Shape],
 ) -> HitTarget | None:
     # Proximity is measured in image space, so the screen-pixel threshold is
     # converted here rather than scaling every shape's points.
     image_epsilon = epsilon / scale
+    reach = max(epsilon, marker_half_size(point_size=point_size)) / scale
+    hovered_reach = (
+        max(epsilon, hovered_marker_half_size(point_size=point_size)) / scale
+    )
 
     # Every pass below costs array work per shape, so drop the shapes the
     # pointer is nowhere near once, up front.
-    margin = max(image_epsilon, point_size / 2 / scale)
-    shapes = [
-        shape
-        for shape in shapes
-        if _is_near_extent(shape=shape, point=point, margin=margin)
-    ]
-    candidates = _build_candidates(
-        shapes=shapes,
-        priority_shape=priority_shape,
+    enlarged = (
+        hovered.shape
+        if hovered is not None
+        and hovered.kind in (HitKind.VERTEX, HitKind.ROTATION_HANDLE)
+        else None
     )
+    gaps = [(shape, _extent_gap(shape=shape, point=point)) for shape in shapes]
+    marker = _find_nearest_marker(
+        gaps=[
+            (shape, gap)
+            for shape, gap in gaps
+            if gap <= (hovered_reach if shape is enlarged else reach)
+        ],
+        point=point,
+        reach=reach,
+        hovered_reach=hovered_reach,
+        hovered=hovered,
+        selected=selected,
+    )
+    if marker is not None:
+        return marker
 
-    # A locked shape offers no vertex, rotation handle, or edge to grab.
-    editable = [shape for shape in candidates if not shape.locked]
+    fallback_margin = max(image_epsilon, point_size / 2 / scale)
+    shapes = [shape for shape, gap in gaps if gap <= fallback_margin]
 
-    # Pass 1: vertex proximity
-    for shape in editable:
-        idx = nearest_vertex_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
-
-    # Pass 2: rotation handle proximity
-    for shape in editable:
-        idx = nearest_rotation_point_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
-
-    # Pass 3: point dot. A point shape's dot is drawn over the shapes around
-    # it, so it outranks their edges. Bodies follow paint order, not the
-    # priority shape, so hover picks the shape a click selects.
     top = find_shape_at(
         shapes=shapes,
         point=point,
@@ -88,19 +88,94 @@ def find_hover_target(
     if top is not None and top.shape_type == "point":
         return HitTarget(kind=HitKind.BODY, shape=top, index=None)
 
-    # Pass 4: edge proximity (only shapes that support adding a point)
-    for shape in editable:
-        if not shape.can_add_point():
+    priority_shape = None if hovered is None else hovered.shape
+    for shape in _build_candidates(shapes=shapes, priority_shape=priority_shape):
+        if shape.locked or not shape.can_add_point():
             continue
         idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)
         if idx is not None:
             return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
 
-    # Pass 5: body hit
     if top is not None:
         return HitTarget(kind=HitKind.BODY, shape=top, index=None)
 
     return None
+
+
+def _find_nearest_marker(
+    *,
+    gaps: list[tuple[Shape, float]],
+    point: npt.NDArray[np.float64],
+    reach: float,
+    hovered_reach: float,
+    hovered: HitTarget | None,
+    selected: Collection[Shape],
+) -> HitTarget | None:
+    nearest = np.inf
+    corner_tied = False
+    tied: list[tuple[int, Shape, HitKind, int]] = []
+    for order, (shape, gap) in enumerate(gaps):
+        if not shape.visible or shape.locked:
+            continue
+        floor = max(gap, 0.0)
+        nearest_possible = floor * floor
+        if nearest_possible > nearest:
+            continue
+        for kind, centers_of in (
+            (HitKind.VERTEX, vertex_centers),
+            (HitKind.ROTATION_HANDLE, rotation_handle_centers),
+        ):
+            if (
+                kind is HitKind.ROTATION_HANDLE
+                and corner_tied
+                and nearest_possible >= nearest
+            ):
+                continue
+            centers = centers_of(shape=shape)
+            if len(centers) == 0:
+                continue
+            offsets = centers - point
+            distances = np.einsum("ij,ij->i", offsets, offsets)
+            index = int(distances.argmin())
+            if distances[index] > reach * reach:
+                if (
+                    hovered is not None
+                    and hovered.shape is shape
+                    and hovered.kind is kind
+                    and hovered.index is not None
+                    and hovered.index < len(centers)
+                    and distances[hovered.index] <= hovered_reach * hovered_reach
+                ):
+                    index = hovered.index
+                else:
+                    continue
+            closest = distances[index]
+            if closest > nearest:
+                continue
+            if closest < nearest:
+                nearest = closest
+                corner_tied = False
+                tied = []
+            corner_tied = corner_tied or _is_corner(kind=kind, shape=shape)
+            tied.append((order, shape, kind, index))
+    if not tied:
+        return None
+    hovered_shape = None if hovered is None else hovered.shape
+    selected_shapes = set(selected)
+    _, shape, kind, index = min(
+        tied,
+        key=lambda candidate: (
+            corner_tied and candidate[2] is HitKind.ROTATION_HANDLE,
+            candidate[1] not in selected_shapes,
+            candidate[1] is not hovered_shape,
+            -candidate[0],
+        ),
+    )
+    return HitTarget(kind=kind, shape=shape, index=index)
+
+
+def _is_corner(*, kind: HitKind, shape: Shape) -> bool:
+    return kind is HitKind.VERTEX and shape.shape_type != "point"
 
 
 def find_shape_at(
@@ -133,13 +208,11 @@ def find_shape_at(
     return first
 
 
-def _is_near_extent(
-    *, shape: Shape, point: npt.NDArray[np.float64], margin: float
-) -> bool:
+def _extent_gap(*, shape: Shape, point: npt.NDArray[np.float64]) -> float:
     if len(shape.points) == 0:
-        return False
+        return np.inf
     lo, hi = image_extent(shape=shape)
-    return bool(np.all(point >= lo - margin) and np.all(point <= hi + margin))
+    return float(np.max(np.maximum(lo - point, point - hi)))
 
 
 def _build_candidates(
@@ -147,16 +220,8 @@ def _build_candidates(
     shapes: list[Shape],
     priority_shape: Shape | None,
 ) -> list[Shape]:
-    candidates: list[Shape] = []
-    if priority_shape is not None and priority_shape.visible:
-        candidates.append(priority_shape)
-    for shape in reversed(shapes):
-        if not shape.visible:
-            continue
-        if shape is priority_shape:
-            continue
-        candidates.append(shape)
-    return candidates
+    visible = [shape for shape in reversed(shapes) if shape.visible]
+    return sorted(visible, key=lambda shape: shape is not priority_shape)
 
 
 def is_within_pick_threshold(
