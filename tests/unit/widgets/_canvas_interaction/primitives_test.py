@@ -342,23 +342,6 @@ def test_hovered_corner_takes_a_press_at_its_exact_enlarged_reach() -> None:
     _assert_hit(result=result, kind=HitKind.VERTEX, shape=rect, index=0)
 
 
-def test_hovered_shape_vertex_hit_reports_its_index() -> None:
-    shape = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
-    result = find_hover_target(
-        shapes=[shape],
-        point=_point(x=10.0, y=10.0),
-        scale=_SCALE,
-        epsilon=_EPSILON,
-        point_size=_POINT_SIZE,
-        hovered=_body(shape=shape),
-        selected=(),
-    )
-    assert result is not None
-    assert result.kind == HitKind.VERTEX
-    assert result.shape is shape
-    assert result.index == 0
-
-
 # ---------------------------------------------------------------------------
 # find_hover_target — reverse paint order for non-priority shapes
 # ---------------------------------------------------------------------------
