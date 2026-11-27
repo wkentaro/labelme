@@ -570,8 +570,12 @@ def _append_shape_rotation_vertex(
     _append_vertex(vertices=vertices, pos=pos, size=size, point_type=point_type)
 
 
+def marker_half_size(*, point_size: float) -> float:
+    return (point_size + _OUTLINE_WIDTH) / 2
+
+
 def hovered_marker_half_size(*, point_size: int) -> float:
-    return (point_size * _HOVERED_MARKER.size_factor + _OUTLINE_WIDTH) / 2
+    return marker_half_size(point_size=point_size * _HOVERED_MARKER.size_factor)
 
 
 def _append_vertex(

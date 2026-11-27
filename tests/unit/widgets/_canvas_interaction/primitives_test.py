@@ -35,6 +35,10 @@ def _polygon(*, points: list[tuple[float, float]], visible: bool) -> Shape:
     )
 
 
+def _body(*, shape: Shape) -> HitTarget:
+    return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
+
+
 def _oriented_rectangle(*, points: list[tuple[float, float]]) -> Shape:
     return Shape(
         shape_type="oriented_rectangle",
@@ -308,7 +312,7 @@ def test_hovered_shape_drawn_on_top_keeps_a_shared_vertex() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        hovered=shape_a,
+        hovered=_body(shape=shape_a),
         selected=(),
     )
     assert result is not None
@@ -324,7 +328,7 @@ def test_hovered_shape_vertex_hit_reports_its_index() -> None:
         scale=_SCALE,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        hovered=shape,
+        hovered=_body(shape=shape),
         selected=(),
     )
     assert result is not None
@@ -384,7 +388,7 @@ def _hover(
         scale=scale,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
-        hovered=hovered,
+        hovered=None if hovered is None else _body(shape=hovered),
         selected=(),
     )
 

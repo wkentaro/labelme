@@ -41,6 +41,7 @@ from .._shape import ShapeType
 from . import _canvas_interaction
 from ._canvas_interaction import CursorRole
 from ._canvas_interaction import HitKind
+from ._canvas_interaction import HitTarget
 from ._hint_chip import RETURN_GLYPH
 from ._hint_chip import HintItem
 from ._hint_chip import paint_hint_chip
@@ -261,6 +262,18 @@ class _Hover:
     vertex: int | None = None
     edge: int | None = None
     rotation: int | None = None
+
+    def as_hit_target(self) -> HitTarget | None:
+        if self.shape is None:
+            return None
+        for kind, index in (
+            (HitKind.VERTEX, self.vertex),
+            (HitKind.ROTATION_HANDLE, self.rotation),
+            (HitKind.EDGE, self.edge),
+        ):
+            if index is not None:
+                return HitTarget(kind=kind, shape=self.shape, index=index)
+        return HitTarget(kind=HitKind.BODY, shape=self.shape, index=None)
 
 
 _AI_PROGRESS_RADIUS: Final = 12
@@ -1620,7 +1633,7 @@ class Canvas(QtWidgets.QWidget):
             scale=self.scale,
             epsilon=self._epsilon,
             point_size=self._point_size,
-            hovered=self._hover.shape,
+            hovered=self._hover.as_hit_target(),
             selected=self.selected_shapes,
         )
 
