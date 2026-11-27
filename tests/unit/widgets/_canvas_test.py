@@ -5070,3 +5070,32 @@ def test_double_click_selects_the_point_under_its_second_press(
 
     emitted.assert_called_once_with()
     assert canvas.selected_shapes == [second]
+
+
+def test_press_inside_an_enlarged_hovered_corner_drags_it(
+    *, canvas: Canvas, qtbot: QtBot
+) -> None:
+    pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
+    pixmap.fill(QtGui.QColor("black"))
+    canvas.pixmap = pixmap
+    canvas.set_point_size(point_size=20)
+    corners = [(40, 20), (80, 20), (80, 45), (40, 45)]
+    canvas.load_shapes(
+        shapes=[
+            Shape(
+                shape_type="polygon",
+                points=np.array(corners, dtype=np.float64),
+                closed=True,
+            )
+        ]
+    )
+    pointer = QtCore.QPoint(27, 20)
+
+    canvas._refresh_hover_state(pos=QPointF(40, 20))
+    canvas._refresh_hover_state(pos=QPointF(pointer))
+    drawn = canvas.grab().toImage().pixelColor(pointer)
+    _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(8, 8))
+
+    assert drawn == canvas._resolve_palette(label=None).hvertex_fill
+    np.testing.assert_array_equal(canvas.shapes[0].points[1:], corners[1:])
+    assert not np.array_equal(canvas.shapes[0].points[0], corners[0])
