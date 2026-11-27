@@ -35,7 +35,11 @@ def nearest_vertex_index(
     index = _find_closest_index_within(distances=distances, epsilon=image_epsilon)
     if index is None or not shape.is_full_rectangle():
         return index
-    return RECTANGLE_STORED_CORNERS[index]
+    stored_first = RECTANGLE_STORED_CORNERS + RECTANGLE_DERIVED_CORNERS
+    corner_distances = np.linalg.norm(
+        shape.vertices()[list(stored_first)] - point, axis=1
+    )
+    return stored_first[int(np.argmin(corner_distances))]
 
 
 def nearest_derived_corner_index(
@@ -44,11 +48,19 @@ def nearest_derived_corner_index(
     point: npt.NDArray[np.float64],
     image_epsilon: float,
     marker_radius: float,
+    highlighted: int | None,
+    highlight_half_size: float,
 ) -> int | None:
     if not shape.is_full_rectangle():
         return None
-    corners = shape.vertices()[list(RECTANGLE_DERIVED_CORNERS)]
-    distances = np.linalg.norm(corners - point, axis=1)
+    vertices = shape.vertices()
+    if highlighted in RECTANGLE_DERIVED_CORNERS and np.all(
+        np.abs(vertices[highlighted] - point) <= highlight_half_size
+    ):
+        return highlighted
+    distances = np.linalg.norm(
+        vertices[list(RECTANGLE_DERIVED_CORNERS)] - point, axis=1
+    )
     index = _find_closest_index_within(
         distances=distances,
         epsilon=max(

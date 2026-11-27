@@ -50,7 +50,7 @@ def _oriented_rectangle(*, points: list[tuple[float, float]]) -> Shape:
 
 def test_hit_target_frozen() -> None:
     shape = _polygon(points=[(0, 0), (10, 0), (10, 10)], visible=True)
-    target = HitTarget(kind=HitKind.BODY, shape=shape, index=None)
+    target = HitTarget(kind=HitKind.BODY, shape=shape, index=None, priority_shape=shape)
     with pytest.raises((AttributeError, TypeError)):
         target.kind = HitKind.VERTEX  # ty: ignore[invalid-assignment]
 
@@ -68,6 +68,7 @@ def test_find_hover_target_empty_shapes_returns_none() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is None
 
@@ -86,6 +87,7 @@ def test_invisible_shapes_are_excluded() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is None
 
@@ -99,6 +101,7 @@ def test_visible_shape_body_hit() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.BODY
@@ -120,6 +123,7 @@ def test_vertex_match_beats_body() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -143,6 +147,7 @@ def test_vertex_on_last_candidate_beats_body_on_first_candidate() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -162,6 +167,7 @@ def test_category_precedence_vertex_over_body_across_shapes() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -190,6 +196,7 @@ def test_rotation_handle_beats_edge_across_shapes() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.ROTATION_HANDLE
@@ -211,6 +218,7 @@ def test_rotation_handle_beats_body_across_shapes() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.ROTATION_HANDLE
@@ -233,6 +241,7 @@ def test_vertex_beats_rotation_handle_across_shapes() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -255,6 +264,7 @@ def test_edge_hit_on_polygon() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     # Should be VERTEX or EDGE depending on distance to vertices.
     # (50,10) is 40px from (10,10) and 40px from (90,10) — no vertex hit.
@@ -280,6 +290,7 @@ def test_edge_not_tested_on_non_polyline_shape() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     # rectangle is not a polyline, so edge pass is skipped; body hit for interior.
     assert result is not None
@@ -307,6 +318,7 @@ def test_priority_shape_is_checked_first() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=shape_a,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -323,6 +335,7 @@ def test_priority_shape_not_in_shapes_is_still_checked() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=orphan,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -340,6 +353,7 @@ def test_priority_shape_not_duplicated_in_candidates() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=shape,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.VERTEX
@@ -364,6 +378,7 @@ def test_reverse_paint_order_topmost_body_wins() -> None:
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=None,
+        highlighted_vertex=None,
     )
     assert result is not None
     assert result.kind == HitKind.BODY
@@ -394,6 +409,7 @@ def _hover(
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=priority,
+        highlighted_vertex=None,
     )
 
 
@@ -573,6 +589,7 @@ def test_extent_reject_never_changes_the_hover_target(
                 epsilon=10.0,
                 point_size=8,
                 priority_shape=None,
+                highlighted_vertex=None,
             )
             for point in points
         ]

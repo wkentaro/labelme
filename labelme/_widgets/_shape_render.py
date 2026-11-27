@@ -207,6 +207,7 @@ def render_shape(
 
 
 _LARGEST_HIGHLIGHT: Final = VertexHighlight(index=0, mode="near")
+_MOVE_HIGHLIGHT: Final = VertexHighlight(index=0, mode="move")
 
 
 def intersects_rect(
@@ -657,8 +658,9 @@ def _build_shape_points_paths(
     return paths
 
 
-def drawn_marker_radius(*, point_size: int) -> float:
-    return (point_size + _OUTLINE_WIDTH) / 2
+def drawn_marker_half_size(*, point_size: int, highlighted: bool) -> float:
+    size_factor = _MOVE_HIGHLIGHT.size_factor if highlighted else 1.0
+    return (point_size * size_factor + _OUTLINE_WIDTH) / 2
 
 
 def is_hit_by_point(

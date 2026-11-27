@@ -261,6 +261,7 @@ class _Hover:
     vertex: int | None = None
     edge: int | None = None
     rotation: int | None = None
+    priority_shape: Shape | None = None
 
 
 _AI_PROGRESS_RADIUS: Final = 12
@@ -1620,7 +1621,12 @@ class Canvas(QtWidgets.QWidget):
             scale=self.scale,
             epsilon=self._epsilon,
             point_size=self._point_size,
-            priority_shape=self._hover.shape,
+            priority_shape=self._hover.priority_shape,
+            highlighted_vertex=(
+                None
+                if self._hover.shape is None or self._hover.vertex is None
+                else (self._hover.shape, self._hover.vertex)
+            ),
         )
 
         if target is None:
@@ -1630,7 +1636,13 @@ class Canvas(QtWidgets.QWidget):
 
         if target.kind is HitKind.VERTEX:
             assert target.index is not None
-            self._set_highlight(hover=_Hover(shape=target.shape, vertex=target.index))
+            self._set_highlight(
+                hover=_Hover(
+                    shape=target.shape,
+                    vertex=target.index,
+                    priority_shape=target.priority_shape,
+                )
+            )
             self._highlight_vertex(index=target.index, mode="move")
             self._apply_cursor(role=CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to move point"))
@@ -1646,7 +1658,13 @@ class Canvas(QtWidgets.QWidget):
 
         if target.kind is HitKind.ROTATION_HANDLE:
             assert target.index is not None
-            self._set_highlight(hover=_Hover(shape=target.shape, rotation=target.index))
+            self._set_highlight(
+                hover=_Hover(
+                    shape=target.shape,
+                    rotation=target.index,
+                    priority_shape=target.priority_shape,
+                )
+            )
             self._highlight_rotation_point(index=target.index, mode="move")
             self._apply_cursor(role=CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to rotate the shape"))
@@ -1654,7 +1672,13 @@ class Canvas(QtWidgets.QWidget):
 
         if target.kind is HitKind.EDGE:
             assert target.index is not None
-            self._set_highlight(hover=_Hover(shape=target.shape, edge=target.index))
+            self._set_highlight(
+                hover=_Hover(
+                    shape=target.shape,
+                    edge=target.index,
+                    priority_shape=target.priority_shape,
+                )
+            )
             self._apply_cursor(role=CursorRole.HANDLE)
             status_messages.append(
                 self.tr("Hold %s and click to add a point on the edge")
@@ -1663,7 +1687,9 @@ class Canvas(QtWidgets.QWidget):
             return
 
         if target.kind is HitKind.BODY:
-            self._set_highlight(hover=_Hover(shape=target.shape))
+            self._set_highlight(
+                hover=_Hover(shape=target.shape, priority_shape=target.priority_shape)
+            )
             if target.shape.locked:
                 status_messages.append(self.tr("Shape is locked"))
                 self._release_cursor()
@@ -1682,7 +1708,7 @@ class Canvas(QtWidgets.QWidget):
             return
         shape.insert_point(i=index, point=(point.x(), point.y()))
         self._highlight_vertex(index=index, mode="move")
-        self._hover = _Hover(shape=shape, vertex=index)
+        self._hover = _Hover(shape=shape, vertex=index, priority_shape=shape)
         self._is_moving_shape = True
         # Repaint now; otherwise the edit is invisible until the next mouse move.
         self.update()
@@ -1702,8 +1728,8 @@ class Canvas(QtWidgets.QWidget):
         # Drop the hovered vertex and selection so the press that deleted the
         # point cannot also drag the adjacent vertex (#968) or the whole shape.
         self.deselect_shape()
-        self._hover = _Hover(shape=shape)
-        self._last_hover = _Hover(shape=shape)
+        self._hover = _Hover(shape=shape, priority_shape=shape)
+        self._last_hover = _Hover(shape=shape, priority_shape=shape)
         # Snapshot now: a shortcut has no mouse release to commit on.
         self.backup_shapes()
         self.shape_moved.emit()

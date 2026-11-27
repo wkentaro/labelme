@@ -14,7 +14,7 @@ from .._shape import nearest_derived_corner_index
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
-from ._shape_render import drawn_marker_radius
+from ._shape_render import drawn_marker_half_size
 from ._shape_render import is_hit_by_point
 
 
@@ -30,6 +30,7 @@ class HitTarget:
     kind: HitKind
     shape: Shape
     index: int | None
+    priority_shape: Shape | None
 
 
 def find_hover_target(
@@ -40,6 +41,7 @@ def find_hover_target(
     epsilon: float,
     point_size: int,
     priority_shape: Shape | None,
+    highlighted_vertex: tuple[Shape, int] | None,
 ) -> HitTarget | None:
     # Proximity is measured in image space, so the screen-pixel threshold is
     # converted here rather than scaling every shape's points.
@@ -47,7 +49,10 @@ def find_hover_target(
 
     # Every pass below costs array work per shape, so drop the shapes the
     # pointer is nowhere near once, up front.
-    margin = max(image_epsilon, point_size / 2 / scale)
+    highlight_half_size = (
+        drawn_marker_half_size(point_size=point_size, highlighted=True) / scale
+    )
+    margin = max(image_epsilon, highlight_half_size)
     shapes = [
         shape
         for shape in shapes
@@ -67,7 +72,9 @@ def find_hover_target(
             shape=shape, point=point, image_epsilon=image_epsilon
         )
         if idx is not None:
-            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
+            return HitTarget(
+                kind=HitKind.VERTEX, shape=shape, index=idx, priority_shape=shape
+            )
 
     # Pass 2: rotation handle proximity
     for shape in editable:
@@ -75,7 +82,12 @@ def find_hover_target(
             shape=shape, point=point, image_epsilon=image_epsilon
         )
         if idx is not None:
-            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
+            return HitTarget(
+                kind=HitKind.ROTATION_HANDLE,
+                shape=shape,
+                index=idx,
+                priority_shape=shape,
+            )
 
     # Pass 3: point dot. A point shape's dot is drawn over the shapes around
     # it, so it outranks their edges. Bodies follow paint order, not the
@@ -88,7 +100,7 @@ def find_hover_target(
         epsilon=epsilon,
     )
     if top is not None and top.shape_type == "point":
-        return HitTarget(kind=HitKind.BODY, shape=top, index=None)
+        return HitTarget(kind=HitKind.BODY, shape=top, index=None, priority_shape=top)
 
     # Pass 4: edge proximity (only shapes that support adding a point)
     for shape in editable:
@@ -96,21 +108,32 @@ def find_hover_target(
             continue
         idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)
         if idx is not None:
-            return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
+            return HitTarget(
+                kind=HitKind.EDGE, shape=shape, index=idx, priority_shape=shape
+            )
 
+    marker_radius = drawn_marker_half_size(point_size=point_size, highlighted=False)
     for shape in editable:
         idx = nearest_derived_corner_index(
             shape=shape,
             point=point,
             image_epsilon=image_epsilon,
-            marker_radius=drawn_marker_radius(point_size=point_size) / scale,
+            marker_radius=marker_radius / scale,
+            highlighted=(
+                highlighted_vertex[1]
+                if highlighted_vertex is not None and highlighted_vertex[0] is shape
+                else None
+            ),
+            highlight_half_size=highlight_half_size,
         )
         if idx is not None:
-            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
+            return HitTarget(
+                kind=HitKind.VERTEX, shape=shape, index=idx, priority_shape=top
+            )
 
     # Pass 5: body hit
     if top is not None:
-        return HitTarget(kind=HitKind.BODY, shape=top, index=None)
+        return HitTarget(kind=HitKind.BODY, shape=top, index=None, priority_shape=top)
 
     return None
 
