@@ -3944,6 +3944,24 @@ def test_dragging_corner_near_a_point_dot_moves_the_corner(
     np.testing.assert_array_equal(point.points, [point_at])
 
 
+def test_dragging_rotation_handle_near_another_corner_rotates_its_shape(
+    *, editing_canvas: Canvas
+) -> None:
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([(50, 13), (10, 45)], dtype=np.float64),
+    )
+    square = _make_oriented_rectangle(corners=[(35, 5), (65, 5), (65, 35), (35, 35)])
+    editing_canvas.load_shapes(shapes=[rectangle, square])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(50, 5), end=QPointF(65, 20))
+
+    np.testing.assert_array_equal(rectangle.points, [(50, 13), (10, 45)])
+    np.testing.assert_allclose(
+        square.points, [(65, 5), (65, 35), (35, 35), (35, 5)], atol=1e-9
+    )
+
+
 @pytest.mark.parametrize(
     "kind",
     [QtCore.QEvent.Type.MouseButtonPress, QtCore.QEvent.Type.MouseButtonDblClick],

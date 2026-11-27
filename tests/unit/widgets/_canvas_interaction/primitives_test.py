@@ -522,6 +522,53 @@ def test_vertex_of_shape_under_later_box_stays_grabbable() -> None:
     _assert_hit(result=result, kind=HitKind.VERTEX, shape=small, index=0)
 
 
+def _left_box() -> Shape:
+    return _polygon(points=[(0, 0), (40, 0), (40, 40), (0, 40)], visible=True)
+
+
+def _right_box(*, left: float) -> Shape:
+    return _polygon(points=[(left, 0), (90, 0), (90, 40), (left, 40)], visible=True)
+
+
+def test_nearest_vertex_wins_over_the_topmost_shapes_vertex() -> None:
+    lower = _left_box()
+    upper = _right_box(left=48)
+    result = _hover(shapes=[lower, upper], at=(42, 0), priority=None)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=lower, index=1)
+
+
+@pytest.mark.parametrize("hovered", [False, True], ids=["unhovered", "hovered"])
+def test_rotation_handle_beats_a_farther_vertex_of_another_shape(
+    *, hovered: bool
+) -> None:
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(20, 8), (0, 40)], dtype=np.float64)
+    )
+    oriented_rect = _oriented_rectangle(points=[(0, 0), (40, 0), (40, 10), (0, 10)])
+    result = _hover(
+        shapes=[rectangle, oriented_rect],
+        at=(20, 0),
+        priority=oriented_rect if hovered else None,
+    )
+    _assert_hit(
+        result=result, kind=HitKind.ROTATION_HANDLE, shape=oriented_rect, index=1
+    )
+
+
+def test_shared_corner_goes_to_the_topmost_shape() -> None:
+    lower = _left_box()
+    upper = _right_box(left=40)
+    result = _hover(shapes=[lower, upper], at=(40, 3), priority=None)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=upper, index=0)
+
+
+def test_hovered_shape_keeps_its_corner_over_a_nearer_corner_beside_it() -> None:
+    hovered = _left_box()
+    beside = _right_box(left=43)
+    result = _hover(shapes=[hovered, beside], at=(42, 0), priority=hovered)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=hovered, index=1)
+
+
 def test_body_follows_paint_order_over_priority() -> None:
     lower = _box()
     upper = _box()
