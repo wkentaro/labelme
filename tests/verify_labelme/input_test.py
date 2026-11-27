@@ -475,3 +475,33 @@ def test_drag_canvas_onto_the_widget_origin_ends_a_stroke_there(
 
     [shape] = _saved_shapes(ctl=ctl, run=run, stem="fit")
     assert shape["points"] == [[200, 200], [0, 0], [0, 200]]
+
+
+def test_click_a_settings_checkbox_below_the_fold_toggles_it(*, ctl: Ctl) -> None:
+    run = ctl.launch(IMAGE)
+    ctl.ok("action", "File > Settings", run=run)
+
+    reply = ctl.ok("click", "Fill polygon while drawing", run=run)
+
+    assert reply["state"]["dialog"]["title"] == "Settings"
+    buttons = reply["state"]["dialog"]["buttons"]
+    assert {"text": "Fill polygon while drawing", "checked": False} in buttons
+    labelmerc = run.run_dir / "home" / ".labelmerc"
+    config = _yaml.safe_load(stream=labelmerc.read_text())
+    assert config["canvas"]["fill_drawing"] is False
+
+
+def test_pick_an_image_list_row_wider_than_the_list_opens_it(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    folder = tmp_path / "folder"
+    folder.mkdir()
+    wide = "inspection_line03_camera02_2026-11-27T08-42-00_" * 3 + "frame0053.jpg"
+    for name in ("a.jpg", wide):
+        shutil.copy(ANNOTATED / "2011_000003.jpg", folder / name)
+    run = ctl.launch(str(folder), seed="none")
+    assert "a.jpg" in ctl.ok("state", run=run)["main_window"]["title"]
+
+    reply = ctl.ok("pick", "Image List", wide, run=run)
+
+    assert wide in reply["state"]["main_window"]["title"]
