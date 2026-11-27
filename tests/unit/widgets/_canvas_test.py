@@ -5041,3 +5041,32 @@ def test_mask_render_cache_survives_undo_reload_and_clears_on_reset(
     assert contours.call_count == 2
     canvas.reset_state()
     assert not canvas._render_cache._entries
+
+
+def test_double_click_selects_the_point_under_its_second_press(
+    *, editing_canvas: Canvas
+) -> None:
+    canvas = editing_canvas
+    first = Shape(shape_type="point", points=np.array([(50, 50)], dtype=np.float64))
+    second = Shape(shape_type="point", points=np.array([(54, 50)], dtype=np.float64))
+    canvas.load_shapes(shapes=[first, second])
+    emitted = Mock()
+    canvas.shape_double_clicked.connect(emitted)
+
+    def send(kind: QtCore.QEvent.Type, x: float, buttons: Qt.MouseButton) -> None:
+        QtWidgets.QApplication.sendEvent(
+            canvas,
+            _mouse_event(
+                canvas=canvas, kind=kind, image_pos=QPointF(x, 50), buttons=buttons
+            ),
+        )
+
+    send(QtCore.QEvent.Type.MouseMove, 49, Qt.MouseButton.NoButton)
+    send(QtCore.QEvent.Type.MouseButtonPress, 49, Qt.MouseButton.LeftButton)
+    send(QtCore.QEvent.Type.MouseButtonRelease, 49, Qt.MouseButton.NoButton)
+    assert canvas.selected_shapes == [first]
+
+    send(QtCore.QEvent.Type.MouseButtonDblClick, 53, Qt.MouseButton.LeftButton)
+
+    emitted.assert_called_once_with()
+    assert canvas.selected_shapes == [second]
