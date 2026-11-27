@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from typing import NamedTuple
 
 import numpy as np
 import numpy.typing as npt
@@ -12,25 +13,31 @@ from ._oriented_rectangle import is_full_oriented_rectangle
 from ._oriented_rectangle import oriented_rectangle_arrow_points
 
 
-def _find_closest_index_within(
+class Nearest(NamedTuple):
+    index: int
+    distance: float
+
+
+def _find_closest_within(
     *, distances: npt.NDArray[np.float64], epsilon: float
-) -> int | None:
+) -> Nearest | None:
     closest = int(np.argmin(distances))
-    return closest if distances[closest] <= epsilon else None
+    distance = float(distances[closest])
+    return Nearest(index=closest, distance=distance) if distance <= epsilon else None
 
 
-def nearest_vertex_index(
+def nearest_vertex(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
     image_epsilon: float,
-) -> int | None:
+) -> Nearest | None:
     # A mask's bbox corners are derived from its bitmap, and a point shape's
     # single point *is* the shape, not a draggable vertex; neither exposes one.
     if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
         return None
     distances = np.linalg.norm(shape.points - point, axis=1)
-    return _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+    return _find_closest_within(distances=distances, epsilon=image_epsilon)
 
 
 def nearest_edge_index(
@@ -61,21 +68,22 @@ def nearest_edge_index(
         # last point back to the first. A linestrip is open, so that segment
         # is never drawn and must never be picked as a hit.
         distances[0] = np.inf
-    return _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+    nearest = _find_closest_within(distances=distances, epsilon=image_epsilon)
+    return None if nearest is None else nearest.index
 
 
-def nearest_rotation_point_index(
+def nearest_rotation_point(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
     image_epsilon: float,
-) -> int | None:
+) -> Nearest | None:
     if not is_full_oriented_rectangle(shape=shape):
         return None
     distances = np.linalg.norm(
         get_rotation_handles(points=shape.points) - point, axis=1
     )
-    return _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+    return _find_closest_within(distances=distances, epsilon=image_epsilon)
 
 
 def image_extent(

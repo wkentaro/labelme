@@ -11,8 +11,8 @@ from PySide6.QtCore import Qt
 from .._shape import Shape
 from .._shape import image_extent
 from .._shape import nearest_edge_index
-from .._shape import nearest_rotation_point_index
-from .._shape import nearest_vertex_index
+from .._shape import nearest_rotation_point
+from .._shape import nearest_vertex
 from ._shape_render import drawn_marker_radius
 from ._shape_render import is_hit_by_point
 
@@ -74,12 +74,18 @@ def find_hover_target(
             shapes=[shape for shape in editable if shape in drawn_over_dot],
             point=point,
             image_epsilon=marker_radius,
+            priority_shape=priority_shape,
         )
         if handle_over_dot is not None:
             return handle_over_dot
         return HitTarget(kind=HitKind.BODY, shape=dot, index=None)
 
-    handle = _find_handle(shapes=editable, point=point, image_epsilon=image_epsilon)
+    handle = _find_handle(
+        shapes=editable,
+        point=point,
+        image_epsilon=image_epsilon,
+        priority_shape=priority_shape,
+    )
     if handle is not None:
         return handle
 
@@ -104,21 +110,30 @@ def find_hover_target(
 
 
 def _find_handle(
-    *, shapes: list[Shape], point: npt.NDArray[np.float64], image_epsilon: float
+    *,
+    shapes: list[Shape],
+    point: npt.NDArray[np.float64],
+    image_epsilon: float,
+    priority_shape: Shape | None,
 ) -> HitTarget | None:
-    for shape in shapes:
-        idx = nearest_vertex_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
-    for shape in shapes:
-        idx = nearest_rotation_point_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
-    return None
+    ranked: list[tuple[tuple[bool, float], HitTarget]] = []
+    for kind, find_nearest in (
+        (HitKind.VERTEX, nearest_vertex),
+        (HitKind.ROTATION_HANDLE, nearest_rotation_point),
+    ):
+        for shape in shapes:
+            nearest = find_nearest(
+                shape=shape, point=point, image_epsilon=image_epsilon
+            )
+            if nearest is None:
+                continue
+            rank = (shape is not priority_shape, nearest.distance)
+            handle = HitTarget(kind=kind, shape=shape, index=nearest.index)
+            ranked.append((rank, handle))
+    if not ranked:
+        return None
+    _, handle = min(ranked, key=lambda ranked_handle: ranked_handle[0])
+    return handle
 
 
 def find_shape_at(
