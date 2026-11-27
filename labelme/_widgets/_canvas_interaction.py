@@ -61,8 +61,8 @@ def find_hover_target(
     )
     gaps = [(shape, _extent_gap(shape=shape, point=point)) for shape in shapes]
     marker = _find_nearest_marker(
-        shapes=[
-            shape
+        gaps=[
+            (shape, gap)
             for shape, gap in gaps
             if gap <= (hovered_reach if shape is enlarged else reach)
         ],
@@ -104,7 +104,7 @@ def find_hover_target(
 
 def _find_nearest_marker(
     *,
-    shapes: list[Shape],
+    gaps: list[tuple[Shape, float]],
     point: npt.NDArray[np.float64],
     reach: float,
     hovered_reach: float,
@@ -112,14 +112,24 @@ def _find_nearest_marker(
     selected: Collection[Shape],
 ) -> HitTarget | None:
     nearest = np.inf
-    tied: list[tuple[int, HitTarget]] = []
-    for order, shape in enumerate(shapes):
+    corner_tied = False
+    tied: list[tuple[int, Shape, HitKind, int]] = []
+    for order, (shape, gap) in enumerate(gaps):
         if not shape.visible or shape.locked:
+            continue
+        nearest_possible = max(gap, 0.0) ** 2
+        if nearest_possible > nearest:
             continue
         for kind, centers_of in (
             (HitKind.VERTEX, vertex_centers),
             (HitKind.ROTATION_HANDLE, rotation_handle_centers),
         ):
+            if (
+                kind is HitKind.ROTATION_HANDLE
+                and corner_tied
+                and nearest_possible >= nearest
+            ):
+                continue
             centers = centers_of(shape=shape)
             if len(centers) == 0:
                 continue
@@ -143,27 +153,28 @@ def _find_nearest_marker(
                 continue
             if closest < nearest:
                 nearest = closest
+                corner_tied = False
                 tied = []
-            tied.append((order, HitTarget(kind=kind, shape=shape, index=index)))
+            corner_tied = corner_tied or _is_corner(kind=kind, shape=shape)
+            tied.append((order, shape, kind, index))
     if not tied:
         return None
-    has_corner = any(_is_corner(target=target) for _, target in tied)
     hovered_shape = None if hovered is None else hovered.shape
     selected_shapes = set(selected)
-    _, best = min(
+    _, shape, kind, index = min(
         tied,
         key=lambda candidate: (
-            has_corner and candidate[1].kind is HitKind.ROTATION_HANDLE,
-            candidate[1].shape not in selected_shapes,
-            candidate[1].shape is not hovered_shape,
+            corner_tied and candidate[2] is HitKind.ROTATION_HANDLE,
+            candidate[1] not in selected_shapes,
+            candidate[1] is not hovered_shape,
             -candidate[0],
         ),
     )
-    return best
+    return HitTarget(kind=kind, shape=shape, index=index)
 
 
-def _is_corner(*, target: HitTarget) -> bool:
-    return target.kind is HitKind.VERTEX and target.shape.shape_type != "point"
+def _is_corner(*, kind: HitKind, shape: Shape) -> bool:
+    return kind is HitKind.VERTEX and shape.shape_type != "point"
 
 
 def find_shape_at(
