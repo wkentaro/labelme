@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from typing import Final
 
 import numpy as np
 import numpy.typing as npt
@@ -11,6 +12,8 @@ from ._oriented_rectangle import get_rotation_handles
 from ._oriented_rectangle import is_full_oriented_rectangle
 from ._oriented_rectangle import oriented_rectangle_arrow_points
 
+_NO_CENTERS: Final = np.empty((0, 2), dtype=np.float64)
+
 
 def _find_closest_index_within(
     *, distances: npt.NDArray[np.float64], epsilon: float
@@ -19,18 +22,10 @@ def _find_closest_index_within(
     return closest if distances[closest] <= epsilon else None
 
 
-def nearest_vertex_index(
-    *,
-    shape: Shape,
-    point: npt.NDArray[np.float64],
-    image_epsilon: float,
-) -> int | None:
-    # A mask's bbox corners are derived from its bitmap, and a point shape's
-    # single point *is* the shape, not a draggable vertex; neither exposes one.
-    if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
-        return None
-    distances = np.linalg.norm(shape.points - point, axis=1)
-    return _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+def vertex_centers(*, shape: Shape) -> npt.NDArray[np.float64]:
+    if shape.shape_type == "mask":
+        return _NO_CENTERS
+    return shape.points
 
 
 def nearest_edge_index(
@@ -64,18 +59,10 @@ def nearest_edge_index(
     return _find_closest_index_within(distances=distances, epsilon=image_epsilon)
 
 
-def nearest_rotation_point_index(
-    *,
-    shape: Shape,
-    point: npt.NDArray[np.float64],
-    image_epsilon: float,
-) -> int | None:
+def rotation_handle_centers(*, shape: Shape) -> npt.NDArray[np.float64]:
     if not is_full_oriented_rectangle(shape=shape):
-        return None
-    distances = np.linalg.norm(
-        get_rotation_handles(points=shape.points) - point, axis=1
-    )
-    return _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+        return _NO_CENTERS
+    return get_rotation_handles(points=shape.points)
 
 
 def image_extent(

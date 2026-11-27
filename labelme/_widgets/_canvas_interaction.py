@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import enum
+from collections.abc import Collection
 from typing import Final
 
 import numpy as np
@@ -11,9 +12,10 @@ from PySide6.QtCore import Qt
 from .._shape import Shape
 from .._shape import image_extent
 from .._shape import nearest_edge_index
-from .._shape import nearest_rotation_point_index
-from .._shape import nearest_vertex_index
+from .._shape import rotation_handle_centers
+from .._shape import vertex_centers
 from ._shape_render import is_hit_by_point
+from ._shape_render import marker_half_size
 
 
 class HitKind(enum.Enum):
@@ -30,6 +32,20 @@ class HitTarget:
     index: int | None
 
 
+_MARKER_KINDS: Final = (
+    (HitKind.VERTEX, vertex_centers),
+    (HitKind.ROTATION_HANDLE, rotation_handle_centers),
+)
+
+
+@dataclasses.dataclass(frozen=True)
+class _Markers:
+    centers: npt.NDArray[np.float64]
+    shape_order: npt.NDArray[np.intp]
+    kind_rank: npt.NDArray[np.intp]
+    index: npt.NDArray[np.intp]
+
+
 def find_hover_target(
     *,
     shapes: list[Shape],
@@ -37,47 +53,31 @@ def find_hover_target(
     scale: float,
     epsilon: float,
     point_size: int,
-    priority_shape: Shape | None,
+    hovered: Shape | None,
+    selected: Collection[Shape],
 ) -> HitTarget | None:
     # Proximity is measured in image space, so the screen-pixel threshold is
     # converted here rather than scaling every shape's points.
     image_epsilon = epsilon / scale
+    reach = max(epsilon, marker_half_size(point_size=point_size)) / scale
 
     # Every pass below costs array work per shape, so drop the shapes the
     # pointer is nowhere near once, up front.
-    margin = max(image_epsilon, point_size / 2 / scale)
     shapes = [
         shape
         for shape in shapes
-        if _is_near_extent(shape=shape, point=point, margin=margin)
+        if _is_near_extent(shape=shape, point=point, margin=reach)
     ]
-    candidates = _build_candidates(
+    marker = _find_nearest_marker(
         shapes=shapes,
-        priority_shape=priority_shape,
+        point=point,
+        reach=reach,
+        hovered=hovered,
+        selected=selected,
     )
+    if marker is not None:
+        return marker
 
-    # A locked shape offers no vertex, rotation handle, or edge to grab.
-    editable = [shape for shape in candidates if not shape.locked]
-
-    # Pass 1: vertex proximity
-    for shape in editable:
-        idx = nearest_vertex_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
-
-    # Pass 2: rotation handle proximity
-    for shape in editable:
-        idx = nearest_rotation_point_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
-
-    # Pass 3: point dot. A point shape's dot is drawn over the shapes around
-    # it, so it outranks their edges. Bodies follow paint order, not the
-    # priority shape, so hover picks the shape a click selects.
     top = find_shape_at(
         shapes=shapes,
         point=point,
@@ -88,19 +88,67 @@ def find_hover_target(
     if top is not None and top.shape_type == "point":
         return HitTarget(kind=HitKind.BODY, shape=top, index=None)
 
-    # Pass 4: edge proximity (only shapes that support adding a point)
-    for shape in editable:
-        if not shape.can_add_point():
+    for shape in _build_candidates(shapes=shapes, priority_shape=hovered):
+        if shape.locked or not shape.can_add_point():
             continue
         idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)
         if idx is not None:
             return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
 
-    # Pass 5: body hit
     if top is not None:
         return HitTarget(kind=HitKind.BODY, shape=top, index=None)
 
     return None
+
+
+def _find_nearest_marker(
+    *,
+    shapes: list[Shape],
+    point: npt.NDArray[np.float64],
+    reach: float,
+    hovered: Shape | None,
+    selected: Collection[Shape],
+) -> HitTarget | None:
+    markers = _collect_markers(shapes=shapes)
+    if markers is None:
+        return None
+    distances = np.linalg.norm(markers.centers - point, axis=1)
+    nearest = distances.min()
+    if nearest > reach:
+        return None
+    tied = np.flatnonzero(distances == nearest)
+    order = markers.shape_order[tied]
+    not_hovered = np.array([shapes[i] is not hovered for i in order])
+    not_selected = np.array([shapes[i] not in selected for i in order])
+    best = tied[
+        np.lexsort((-order, not_hovered, not_selected, markers.kind_rank[tied]))[0]
+    ]
+    kind, _ = _MARKER_KINDS[markers.kind_rank[best]]
+    return HitTarget(
+        kind=kind,
+        shape=shapes[markers.shape_order[best]],
+        index=int(markers.index[best]),
+    )
+
+
+def _collect_markers(*, shapes: list[Shape]) -> _Markers | None:
+    blocks = [
+        (order, rank, centers)
+        for order, shape in enumerate(shapes)
+        if shape.visible and not shape.locked
+        for rank, (_, centers_of) in enumerate(_MARKER_KINDS)
+        if len(centers := centers_of(shape=shape)) > 0
+    ]
+    if not blocks:
+        return None
+    orders, ranks, centers = zip(*blocks, strict=True)
+    sizes = [len(block) for block in centers]
+    return _Markers(
+        centers=np.concatenate(centers),
+        shape_order=np.repeat(orders, sizes),
+        kind_rank=np.repeat(ranks, sizes),
+        index=np.concatenate([np.arange(size) for size in sizes]),
+    )
 
 
 def find_shape_at(

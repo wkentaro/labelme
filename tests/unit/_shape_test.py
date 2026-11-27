@@ -135,7 +135,7 @@ def test_rotate_reports_source_points_length_in_error() -> None:
         )
 
 
-def test_nearest_vertex_index_returns_none_for_mask() -> None:
+def test_vertex_centers_are_empty_for_mask() -> None:
     # Mask bbox is anchored to the bitmap; exposing draggable vertices would
     # desync the rectangle from the mask.
     shape = Shape(
@@ -145,28 +145,17 @@ def test_nearest_vertex_index_returns_none_for_mask() -> None:
         closed=True,
     )
 
-    for corner in shape.points:
-        assert (
-            _shape.nearest_vertex_index(shape=shape, point=corner, image_epsilon=10.0)
-            is None
-        )
+    assert _shape.vertex_centers(shape=shape).shape == (0, 2)
 
 
-def test_nearest_vertex_index_returns_none_for_point() -> None:
-    # A point shape's single point is the shape itself, not a draggable vertex;
-    # it is selected and moved as a whole, so it exposes no vertex to hit.
+def test_vertex_centers_of_point_are_its_dot() -> None:
     shape = Shape(
         shape_type="point",
         points=np.array([(5.0, 5.0)], dtype=np.float64),
         closed=True,
     )
 
-    assert (
-        _shape.nearest_vertex_index(
-            shape=shape, point=shape.points[0], image_epsilon=10.0
-        )
-        is None
-    )
+    np.testing.assert_array_equal(_shape.vertex_centers(shape=shape), [(5.0, 5.0)])
 
 
 def _make_square_polygon() -> Shape:
@@ -461,39 +450,6 @@ def test_nearest_edge_index_matches_drawn_edge_for_linestrip() -> None:
     assert index == 1
 
 
-def test_nearest_vertex_index_returns_nearest_within_epsilon() -> None:
-    shape = _make_square_polygon()
-    # vertex 1 is at (10.0, 0.0); probe 0.4 units away, inside the 1.0 threshold
-    vertex_1 = shape.points[1]
-    point_within_epsilon = vertex_1 + np.array([0.4, 0.0])
-
-    index = _shape.nearest_vertex_index(
-        shape=shape, point=point_within_epsilon, image_epsilon=1.0
-    )
-
-    assert index == 1
-
-
-def test_nearest_vertex_index_returns_none_when_far() -> None:
-    shape = _make_square_polygon()
-
-    index = _shape.nearest_vertex_index(
-        shape=shape, point=np.array([5.0, 5.0]), image_epsilon=1.0
-    )
-
-    assert index is None
-
-
-def test_nearest_vertex_index_returns_none_for_empty_shape() -> None:
-    shape = Shape(shape_type="polygon")
-
-    index = _shape.nearest_vertex_index(
-        shape=shape, point=np.array([0.0, 0.0]), image_epsilon=10.0
-    )
-
-    assert index is None
-
-
 # Rotation handles sit at the edge midpoints; handle i is the midpoint of the
 # edge from points[i-1] to points[i] (roll-by-1 convention).
 @pytest.mark.parametrize(
@@ -525,46 +481,26 @@ def test_get_rotation_handle_raises_for_non_oriented_rectangle() -> None:
         _shape.get_rotation_handle(shape=shape, index=0)
 
 
-def test_nearest_rotation_point_index_returns_handle_within_epsilon() -> None:
-    shape = _make_axis_aligned_oriented_rectangle()
-    # handle 2 is the right-edge midpoint at (10, 2); probe just beside it.
-    point = np.array([10.3, 2.0])
-
-    index = _shape.nearest_rotation_point_index(
-        shape=shape, point=point, image_epsilon=1.0
-    )
-
-    assert index == 2
-
-
-def test_nearest_rotation_point_index_returns_none_when_far() -> None:
+def test_rotation_handle_centers_are_the_edge_midpoints() -> None:
     shape = _make_axis_aligned_oriented_rectangle()
 
-    index = _shape.nearest_rotation_point_index(
-        shape=shape, point=np.array([20.0, 20.0]), image_epsilon=1.0
+    np.testing.assert_array_equal(
+        _shape.rotation_handle_centers(shape=shape),
+        [(0.0, 2.0), (5.0, 0.0), (10.0, 2.0), (5.0, 4.0)],
     )
 
-    assert index is None
 
-
-def test_nearest_rotation_point_index_returns_none_for_non_oriented_rectangle() -> None:
-    shape = _make_square_polygon()
-
-    index = _shape.nearest_rotation_point_index(
-        shape=shape, point=np.array([5.0, 0.0]), image_epsilon=10.0
-    )
-
-    assert index is None
-
-
-def test_nearest_rotation_point_index_returns_none_for_empty_shape() -> None:
-    shape = Shape(shape_type="oriented_rectangle")
-
-    index = _shape.nearest_rotation_point_index(
-        shape=shape, point=np.array([0.0, 0.0]), image_epsilon=10.0
-    )
-
-    assert index is None
+@pytest.mark.parametrize(
+    "shape",
+    [
+        pytest.param(_make_square_polygon(), id="polygon"),
+        pytest.param(Shape(shape_type="oriented_rectangle"), id="empty"),
+    ],
+)
+def test_rotation_handle_centers_are_empty_without_a_full_oriented_rectangle(
+    *, shape: Shape
+) -> None:
+    assert _shape.rotation_handle_centers(shape=shape).shape == (0, 2)
 
 
 def test_oriented_rectangle_arrow_points_axis_aligned() -> None:
