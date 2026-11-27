@@ -43,4 +43,5 @@ Steps:
 - Launching with an image path lists every image in its folder, so the title shows a position such as `[1/3]`. Launching with an annotation file, or opening one through File > Open File in a fresh launch, leaves the Image List empty and Next Image and Previous Image disabled, so `action` refuses them.
 - With a filter, the title's `[n/m]` counts only the listed images, and it drops out when the filter hides the open image.
 - `D` and `A` type into the `Search Filename` field while it has focus, and `Escape` does not move focus out. Run `$CTL click-canvas 5 5` first, in Edit Shapes mode so the click draws nothing.
+- On the welcome screen, before an image loads, `click 'Open Folder'` matches two widgets and is refused. Use the toolbar button once an image is loaded, or `action 'File > Open Folder'`.
 - `--seed raw` images have no annotation files, so no Image List row is checked until a save.
