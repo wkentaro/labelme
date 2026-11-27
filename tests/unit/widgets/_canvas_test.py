@@ -4166,6 +4166,47 @@ def test_drag_on_front_highlight_leaves_rear_rectangle_in_place(
     )
 
 
+@pytest.mark.parametrize(
+    ("front_points", "approach", "press"),
+    [
+        pytest.param(
+            [(30, 9), (75, 45)],
+            [(80, 20)],
+            (83, 14),
+            id="highlighted_rear_corner",
+        ),
+        pytest.param(
+            [(30, 24), (80, 45)],
+            [],
+            (80, 16),
+            id="painted_rear_marker",
+        ),
+    ],
+)
+def test_drag_on_rear_corner_beside_front_corner_reach_resizes_rear(
+    *,
+    editing_canvas: Canvas,
+    front_points: list[tuple[int, int]],
+    approach: list[tuple[int, int]],
+    press: tuple[int, int],
+) -> None:
+    rear = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (80, 40)], dtype=float)
+    )
+    front = Shape(shape_type="rectangle", points=np.array(front_points, dtype=float))
+    editing_canvas.load_shapes(shapes=[rear, front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(*point) for point in approach],
+        start=QPointF(*press),
+        end=QPointF(90, 10),
+    )
+
+    np.testing.assert_array_equal(front.points, front_points)
+    np.testing.assert_array_equal(rear.points, [(20, 10), (90, 40)])
+
+
 @pytest.mark.parametrize("remove", ["delete", "hide"])
 @pytest.mark.parametrize(
     (
