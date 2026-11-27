@@ -51,6 +51,10 @@ benchmark_undo *args:
 benchmark_mask_paint *args:
     QT_QPA_PLATFORM=offscreen uv run python -m tools.benchmark_mask_paint "$@"
 
+# Time the hover hit test (e.g. just benchmark_hover_target --case all-in-reach)
+benchmark_hover_target *args:
+    uv run python -m tools.benchmark_hover_target "$@"
+
 # Run tests with coverage
 coverage: (test "--numprocesses=auto" "--dist=worksteal" "--cov=labelme" "--cov-report=term-missing")
 
