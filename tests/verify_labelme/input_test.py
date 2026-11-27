@@ -9,6 +9,7 @@ from typing import Any
 from typing import Final
 
 import pytest
+from PIL import Image
 
 from labelme import _yaml
 
@@ -22,10 +23,13 @@ pytestmark = pytest.mark.skipif(
 
 ANNOTATED: Final = REPO / "tests" / "data" / "annotated"
 IMAGE: Final = "{data}/2011_000003.jpg"
+VIEWPORT_PROBE: Final = 4000
 
 
-def _saved_shapes(*, ctl: Ctl, run: Run) -> list[dict[str, Any]]:
-    annotation = run.data / "2011_000003.json"
+def _saved_shapes(
+    *, ctl: Ctl, run: Run, stem: str = "2011_000003"
+) -> list[dict[str, Any]]:
+    annotation = run.data / f"{stem}.json"
     ctl.ok("wait", "--status", "Saved", "--file", str(annotation), run=run)
     return json.loads(annotation.read_text())["shapes"]
 
@@ -85,6 +89,31 @@ def _zoom_in(*, ctl: Ctl, run: Run, steps: int) -> dict[str, Any]:
     for _ in range(steps):
         ctl.ok("action", "View > Zoom In", run=run)
     return ctl.ok("state", run=run)["canvas"]
+
+
+def _canvas_viewport(*, ctl: Ctl, tmp_path: Path) -> tuple[int, int]:
+    probes = tmp_path / "probes"
+    probes.mkdir()
+    Image.new("RGB", (VIEWPORT_PROBE, 1)).save(probes / "1_wide.png")
+    Image.new("RGB", (1, VIEWPORT_PROBE)).save(probes / "2_tall.png")
+    run = ctl.launch(str(probes), seed="none")
+    wide = ctl.ok("state", run=run)["canvas"]["scale"]
+    tall = ctl.ok("key", "D", run=run)["state"]["canvas"]["scale"]
+    ctl.ok("cleanup", run=run)
+    return round(wide * VIEWPORT_PROBE), round(tall * VIEWPORT_PROBE)
+
+
+def _launch_with_the_image_origin_on_the_widget_origin(
+    *, ctl: Ctl, tmp_path: Path
+) -> Run:
+    width, height = _canvas_viewport(ctl=ctl, tmp_path=tmp_path)
+    image = tmp_path / "fit" / "fit.png"
+    image.parent.mkdir()
+    Image.new("RGB", (width, height)).save(image)
+    run = ctl.launch("--output", "{data}", str(image), seed="none")
+    canvas = ctl.ok("state", run=run)["canvas"]
+    assert canvas == {"scale": 1.0, "visible": [0, 0, width, height]}
+    return run
 
 
 def test_save_outside_the_run_dir_fails_and_keeps_the_file(
@@ -402,3 +431,47 @@ def test_type_refuses_empty_text_at_once(*, ctl: Ctl) -> None:
     assert time.monotonic() - started < 10
     assert reply.code == 1
     assert reply.body["ok"] is False
+
+
+def test_click_canvas_on_the_widget_origin_saves_the_image_origin(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    run = _launch_with_the_image_origin_on_the_widget_origin(ctl=ctl, tmp_path=tmp_path)
+
+    _draw_rectangle(ctl=ctl, run=run, start=("0", "0"), end=("100", "100"))
+    ctl.ok("type", "corner", run=run)
+    ctl.ok("key", "Return", run=run)
+
+    [shape] = _saved_shapes(ctl=ctl, run=run, stem="fit")
+    assert shape["points"] == [[0, 0], [100, 100]]
+
+
+def test_drag_canvas_from_the_widget_origin_starts_a_rectangle_there(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    run = _launch_with_the_image_origin_on_the_widget_origin(ctl=ctl, tmp_path=tmp_path)
+    ctl.ok("key", "Ctrl+R", run=run)
+
+    ctl.ok("drag-canvas", "0", "0", "100", "100", run=run)
+    ctl.ok("click-canvas", "100", "100", run=run)
+    ctl.ok("type", "corner", run=run)
+    ctl.ok("key", "Return", run=run)
+
+    [shape] = _saved_shapes(ctl=ctl, run=run, stem="fit")
+    assert shape["points"] == [[0, 0], [100, 100]]
+
+
+def test_drag_canvas_onto_the_widget_origin_ends_a_stroke_there(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    run = _launch_with_the_image_origin_on_the_widget_origin(ctl=ctl, tmp_path=tmp_path)
+    ctl.ok("key", "Ctrl+N", run=run)
+
+    ctl.ok("drag-canvas", "200", "200", "0", "0", run=run)
+    ctl.ok("click-canvas", "0", "200", run=run)
+    ctl.ok("click-canvas", "200", "200", run=run)
+    ctl.ok("type", "stroke", run=run)
+    ctl.ok("key", "Return", run=run)
+
+    [shape] = _saved_shapes(ctl=ctl, run=run, stem="fit")
+    assert shape["points"] == [[200, 200], [0, 0], [0, 200]]
