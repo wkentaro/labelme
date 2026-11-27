@@ -639,6 +639,8 @@ def _build_shape_points_paths(
         and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
     ):
         for i in range(len(points)):
+            if np.array_equal(points[i - 1], points[i]):
+                continue
             _append_shape_rotation_vertex(
                 vertices=paths.rotation_vertices,
                 shape=shape,
