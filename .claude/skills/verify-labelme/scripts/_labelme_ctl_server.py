@@ -18,6 +18,7 @@ from typing import Any
 from typing import Final
 from typing import NamedTuple
 
+import shiboken6
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtNetwork
@@ -40,6 +41,7 @@ ACTIVATE_TIMEOUT_MS: Final = 1000
 INPUT_TIMEOUT_MS: Final = 20_000
 MAX_ROWS: Final = 200
 DRAG_STEPS: Final = 8
+DOUBLE_CLICK_GAP_MS: Final = 10
 WINDOW_SIZE: Final = QtCore.QSize(1280, 800)
 BUTTONS: Final = {
     "left": Qt.MouseButton.LeftButton,
@@ -72,6 +74,18 @@ class CtlError(Exception):
 class Step(NamedTuple):
     delivers: str
     send: Callable[[], None]
+
+
+class MouseEvent(NamedTuple):
+    action: QTest.MouseAction
+    window: QtGui.QWindow
+    target: QPoint
+    button: Qt.MouseButton
+    modifier: Qt.KeyboardModifier
+    delay: int
+
+
+LAST_MOUSE_EVENT: Final[list[MouseEvent]] = []
 
 
 def _app() -> QtWidgets.QApplication:
@@ -530,27 +544,106 @@ def _canvas_pos(*, x: float, y: float) -> QPoint:
     )
 
 
-def _send_move(
+def _window_pos(*, window: QtGui.QWindow, target: QPoint) -> QPoint:
+    local = window.mapFromGlobal(target)
+    if local.isNull():
+        raise CtlError("Qt Test reads a window's top-left pixel as its center")
+    return local
+
+
+def _send_mouse(*, event: MouseEvent) -> None:
+    window = (
+        event.window
+        if shiboken6.isValid(event.window)
+        else QtGui.QGuiApplication.topLevelAt(event.target)
+        or _main_window().windowHandle()
+    )
+    QTest.mouseEvent(
+        event.action,
+        window,
+        event.button,
+        event.modifier,
+        _window_pos(window=window, target=event.target),
+        event.delay,
+    )
+    LAST_MOUSE_EVENT[:] = [event]
+
+
+def _mouse(
+    *,
+    action: QTest.MouseAction,
+    widget: QtWidgets.QWidget,
+    pos: QPoint,
+    button: Qt.MouseButton = Qt.MouseButton.NoButton,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
+    delay: int = -1,
+) -> Callable[[], None]:
+    window = widget.window().windowHandle()
+    target = widget.mapToGlobal(pos)
+    _window_pos(window=window, target=target)
+    event = MouseEvent(
+        action=action,
+        window=window,
+        target=target,
+        button=button,
+        modifier=modifier,
+        delay=delay,
+    )
+    return functools.partial(_send_mouse, event=event)
+
+
+def _click(
     *,
     widget: QtWidgets.QWidget,
     pos: QPoint,
-    buttons: Qt.MouseButton = Qt.MouseButton.NoButton,
+    button: Qt.MouseButton = Qt.MouseButton.LeftButton,
     modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
-) -> None:
-    event = QtGui.QMouseEvent(
-        QtGui.QMouseEvent.Type.MouseMove,
-        QPointF(pos),
-        QPointF(widget.mapToGlobal(pos)),
-        Qt.MouseButton.NoButton,
-        buttons,
-        modifier,
+    release_delay: int = -1,
+) -> list[Callable[[], None]]:
+    return [
+        _mouse(
+            action=QTest.MouseAction.MousePress,
+            widget=widget,
+            pos=pos,
+            button=button,
+            modifier=modifier,
+        ),
+        _mouse(
+            action=QTest.MouseAction.MouseRelease,
+            widget=widget,
+            pos=pos,
+            button=button,
+            modifier=modifier,
+            delay=release_delay,
+        ),
+    ]
+
+
+def _move(
+    *,
+    widget: QtWidgets.QWidget,
+    pos: QPoint,
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
+) -> Callable[[], None]:
+    return _mouse(
+        action=QTest.MouseAction.MouseMove, widget=widget, pos=pos, modifier=modifier
     )
-    QtWidgets.QApplication.sendEvent(widget, event)
 
 
 def _release_held_buttons() -> None:
-    for button in _held_buttons():
-        QTest.mouseRelease(QtWidgets.QWidget(), button)
+    held = _held_buttons()
+    if not held or not LAST_MOUSE_EVENT:
+        return
+    [last] = LAST_MOUSE_EVENT
+    for button in held:
+        _send_mouse(
+            event=last._replace(
+                action=QTest.MouseAction.MouseRelease,
+                button=button,
+                modifier=Qt.KeyboardModifier.NoModifier,
+                delay=-1,
+            )
+        )
 
 
 def _try_activate_top_window() -> bool:
@@ -583,7 +676,7 @@ def _type_steps(*, text: str) -> list[Step]:
     ]
 
 
-def _plan_key(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
+def _plan_key(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
     sequence = QtGui.QKeySequence(req["sequence"])
     if sequence.count() != 1:
         raise CtlError(f"{req['sequence']!r} is not one key stroke; send one per key")
@@ -593,13 +686,13 @@ def _plan_key(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     target = _focus_target()
     return (
         f"key {sequence.toString()} on {type(target).__name__}",
-        lambda: QTest.keyClick(target, combo.key(), combo.keyboardModifiers()),
+        [lambda: QTest.keyClick(target, combo.key(), combo.keyboardModifiers())],
     )
 
 
 def _plan_menu_click(
     *, menu: QtWidgets.QMenu, name: str
-) -> tuple[str, Callable[[], None]]:
+) -> tuple[str, list[Callable[[], None]]]:
     matches = [
         a for a in _menu_actions(menu=menu) if _norm(text=a.text()) == _norm(text=name)
     ]
@@ -608,12 +701,7 @@ def _plan_menu_click(
     if not matches[0].isEnabled():
         raise CtlError(f"{name!r} is disabled")
     pos = menu.actionGeometry(matches[0]).center()
-    return (
-        f"click menu item {name!r}",
-        lambda: QTest.mouseClick(
-            menu, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier, pos
-        ),
-    )
+    return f"click menu item {name!r}", _click(widget=menu, pos=pos)
 
 
 def _click_pos(*, widget: QtWidgets.QWidget) -> QPoint:
@@ -628,7 +716,7 @@ def _click_pos(*, widget: QtWidgets.QWidget) -> QPoint:
     return widget.style().subElementRect(element, option, widget).center()
 
 
-def _plan_click(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
+def _plan_click(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
     root = _search_root()
     if isinstance(root, QtWidgets.QMenu):
         return _plan_menu_click(menu=root, name=req["name"])
@@ -638,12 +726,9 @@ def _plan_click(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
         if isinstance(widget, QtWidgets.QAbstractScrollArea)
         else widget
     )
-    pos = _click_pos(widget=target)
     return (
         f"click {type(widget).__name__} {req['name']!r}",
-        lambda: QTest.mouseClick(
-            target, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier, pos
-        ),
+        _click(widget=target, pos=_click_pos(widget=target)),
     )
 
 
@@ -654,7 +739,7 @@ def _require_reachable(*, widget: QtWidgets.QWidget) -> None:
         raise CtlError(f"{name!r} is open and blocks this input; close it first")
 
 
-def _plan_pick(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
+def _plan_pick(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
     view = _find_view(name=req["list"])
     _require_reachable(widget=view)
     index = _find_row(view=view, text=req["text"])
@@ -664,49 +749,47 @@ def _plan_pick(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
     view.scrollTo(index)
     viewport = view.viewport()
     center = view.visualRect(index).center()
-    left = Qt.MouseButton.LeftButton
-    no_modifier = Qt.KeyboardModifier.NoModifier
-
-    def pick() -> None:
-        QTest.mouseClick(viewport, left, no_modifier, center)
-        if req.get("double"):
-            QTest.mouseDClick(viewport, left, no_modifier, center)
-
-    return f"pick {_row_text(view=view, index=index)!r} in {req['list']!r}", pick
+    events = (
+        _click(widget=viewport, pos=center, release_delay=DOUBLE_CLICK_GAP_MS)
+        + _click(widget=viewport, pos=center)
+        if req.get("double")
+        else _click(widget=viewport, pos=center)
+    )
+    return f"pick {_row_text(view=view, index=index)!r} in {req['list']!r}", events
 
 
-def _plan_click_canvas(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
+def _plan_click_canvas(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
     canvas = _canvas()
     _require_reachable(widget=canvas)
     pos = _canvas_pos(x=req["x"], y=req["y"])
     button = BUTTONS[req.get("button", "left")]
     modifier = MODIFIERS[req.get("modifier")]
-
-    def click() -> None:
-        _send_move(widget=canvas, pos=pos, modifier=modifier)
-        QTest.mouseClick(canvas, button, modifier, pos)
-
-    return f"click canvas at image ({req['x']}, {req['y']})", click
+    return f"click canvas at image ({req['x']}, {req['y']})", [
+        _move(widget=canvas, pos=pos, modifier=modifier),
+        *_click(widget=canvas, pos=pos, button=button, modifier=modifier),
+    ]
 
 
-def _plan_drag_canvas(*, req: dict[str, Any]) -> tuple[str, Callable[[], None]]:
+def _plan_drag_canvas(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
     canvas = _canvas()
     _require_reachable(widget=canvas)
     start = _canvas_pos(x=req["x1"], y=req["y1"])
     end = _canvas_pos(x=req["x2"], y=req["y2"])
     left = Qt.MouseButton.LeftButton
-    no_modifier = Qt.KeyboardModifier.NoModifier
-
-    def drag() -> None:
-        _send_move(widget=canvas, pos=start)
-        QTest.mousePress(canvas, left, no_modifier, start)
-        for i in range(1, DRAG_STEPS + 1):
-            pos = start + (end - start) * (i / DRAG_STEPS)
-            _send_move(widget=canvas, pos=pos, buttons=left)
-        QTest.mouseRelease(canvas, left, no_modifier, end)
-
     span = f"({req['x1']}, {req['y1']}) to ({req['x2']}, {req['y2']})"
-    return f"drag canvas from image {span}", drag
+    return f"drag canvas from image {span}", [
+        _move(widget=canvas, pos=start),
+        _mouse(
+            action=QTest.MouseAction.MousePress, widget=canvas, pos=start, button=left
+        ),
+        *(
+            _move(widget=canvas, pos=start + (end - start) * (i / DRAG_STEPS))
+            for i in range(1, DRAG_STEPS + 1)
+        ),
+        _mouse(
+            action=QTest.MouseAction.MouseRelease, widget=canvas, pos=end, button=left
+        ),
+    ]
 
 
 def _plan_input(*, req: dict[str, Any]) -> tuple[str, list[Step]]:
@@ -742,8 +825,12 @@ def _plan_input(*, req: dict[str, Any]) -> tuple[str, list[Step]]:
     }
     if cmd not in planners:
         raise CtlError(f"unknown command {cmd!r}")
-    description, run = planners[cmd](req=req)
-    return description, [Step(delivers=description, send=run)]
+    description, events = planners[cmd](req=req)
+    *leading, last = events
+    return description, [
+        *(Step(delivers="", send=event) for event in leading),
+        Step(delivers=description, send=last),
+    ]
 
 
 def _screenshot(*, req: dict[str, Any]) -> dict[str, Any]:

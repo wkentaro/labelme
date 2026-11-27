@@ -70,7 +70,7 @@ Read the screen with `state`, act, then read the reply. Every action replies abo
 
 Input goes to the open popup menu, else the top dialog, modal or not, such as Settings, else the main window. Close a dialog to reach the window behind it.
 
-Before each input the helper does what the OS would. It releases a mouse button that a modal dialog swallowed the release of, and it reactivates the top window, because the offscreen platform has no window manager to do it. Without that, a double-click that opens a dialog leaves Left held, and the next canvas move drags whatever shape is selected.
+The helper sends each mouse press, move, and release as its own event through Qt's window system input, the path a real mouse takes, at the exact pixel it chose. Popups, focus on press, the pressed widget's grab, and double-click detection work as they do for a user. A press that opens a modal dialog, such as the click that finishes a rectangle, gets its release while the dialog is open, and the window behind the dialog drops it. Qt Test reads a window's top-left pixel as its center, so the helper refuses input there. Before each input the helper reactivates the top window, because the offscreen platform has no window manager to do it, and releases any button a failed command left held, where that command last pointed.
 
 A command fails with `{"ok": false, "error": ...}` and exit code 1 when its target is missing, ambiguous, disabled, or behind an open dialog or popup, as the real input would be. Read the error, check `state`, and choose another entry point. An action that closes the app replies `{"exited": true, "exit_code": 0}`. Input after the keystroke that closes labelme is dropped, and the reply carries `"exited": true`.
 
