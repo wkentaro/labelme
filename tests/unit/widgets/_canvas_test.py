@@ -4018,6 +4018,33 @@ def test_dragging_near_a_rectangle_derived_corner_resizes_it(
             [[20, 15], [43, 38]],
             id="highlighted_marker",
         ),
+        pytest.param(
+            24,
+            [(20, 20), (35, 35)],
+            [(95, 3), (20, 35)],
+            (35, 20),
+            (49, 12),
+            [[20, 12], [49, 35]],
+            id="center_beside_a_highlighted_corner",
+        ),
+        pytest.param(
+            8,
+            [(20, 20), (90, 30)],
+            [(95, 3), (90, 20)],
+            (94, 26),
+            (95, 35),
+            [[20, 20], [95, 35]],
+            id="nearer_saved_corner_inside_a_highlight",
+        ),
+        pytest.param(
+            24,
+            [(25, 30), (75, 30)],
+            [(95, 3)],
+            (75, 18),
+            (82, 45),
+            [[25, 30], [82, 45]],
+            id="flat_box_from_a_large_marker_rim",
+        ),
     ],
 )
 def test_dragging_inside_a_derived_corner_painted_marker_resizes_it(
@@ -4067,6 +4094,48 @@ def test_hovering_a_derived_corner_keeps_another_rectangle_saved_corner_drag(
 
     np.testing.assert_array_equal(back.points, [(20, 20), (60, 39)])
     np.testing.assert_array_equal(front.points, [(76, 26), (105, 72)])
+
+
+def test_deleting_a_rectangle_ranked_by_a_derived_corner_hover_forgets_it(
+    *, editing_canvas: Canvas
+) -> None:
+    back = Shape(
+        shape_type="rectangle", points=np.array([(10, 15), (45, 48)], dtype=np.float64)
+    )
+    front = Shape(
+        shape_type="rectangle", points=np.array([(30, 5), (70, 40)], dtype=np.float64)
+    )
+    dot = Shape(shape_type="point", points=np.array([(33, 8)], dtype=np.float64))
+    editing_canvas.load_shapes(shapes=[back, front, dot])
+    editing_canvas.select_shapes(shapes=[front])
+    editing_canvas.mouseMoveEvent(
+        _mouse_event(
+            canvas=editing_canvas,
+            kind=QtCore.QEvent.Type.MouseMove,
+            image_pos=QPointF(45, 16),
+            buttons=Qt.MouseButton.NoButton,
+        )
+    )
+    assert editing_canvas.delete_selected() == [front]
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(33, 8), end=QPointF(25, 4))
+
+    np.testing.assert_array_equal(dot.points, [(25, 4)])
+    np.testing.assert_array_equal(front.points, [(30, 5), (70, 40)])
+
+
+def test_dragging_a_small_rectangle_body_when_zoomed_in_moves_it(
+    *, editing_canvas: Canvas
+) -> None:
+    editing_canvas.scale = 2.0
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (32, 32)], dtype=np.float64)
+    )
+    editing_canvas.load_shapes(shapes=[rectangle])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(26, 26), end=QPointF(30, 28))
+
+    np.testing.assert_array_equal(rectangle.points, [(24, 22), (36, 34)])
 
 
 def test_dragging_a_small_rectangle_beside_its_derived_corner_moves_it(
