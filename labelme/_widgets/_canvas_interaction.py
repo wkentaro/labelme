@@ -42,10 +42,11 @@ def find_hover_target(
     # Proximity is measured in image space, so the screen-pixel threshold is
     # converted here rather than scaling every shape's points.
     image_epsilon = epsilon / scale
+    marker_radius = point_size / 2 / scale
 
     # Every pass below costs array work per shape, so drop the shapes the
     # pointer is nowhere near once, up front.
-    margin = max(image_epsilon, point_size / 2 / scale)
+    margin = max(image_epsilon, marker_radius)
     shapes = [
         shape
         for shape in shapes
@@ -59,25 +60,6 @@ def find_hover_target(
     # A locked shape offers no vertex, rotation handle, or edge to grab.
     editable = [shape for shape in candidates if not shape.locked]
 
-    # Pass 1: vertex proximity
-    for shape in editable:
-        idx = nearest_vertex_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
-
-    # Pass 2: rotation handle proximity
-    for shape in editable:
-        idx = nearest_rotation_point_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
-        )
-        if idx is not None:
-            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
-
-    # Pass 3: point dot. A point shape's dot is drawn over the shapes around
-    # it, so it outranks their edges. Bodies follow paint order, not the
-    # priority shape, so hover picks the shape a click selects.
     top = find_shape_at(
         shapes=shapes,
         point=point,
@@ -86,9 +68,20 @@ def find_hover_target(
         epsilon=epsilon,
     )
     if top is not None and top.shape_type == "point":
+        drawn_over_dot = shapes[shapes.index(top) + 1 :]
+        handle_over_dot = _find_handle(
+            shapes=[shape for shape in editable if shape in drawn_over_dot],
+            point=point,
+            image_epsilon=marker_radius,
+        )
+        if handle_over_dot is not None:
+            return handle_over_dot
         return HitTarget(kind=HitKind.BODY, shape=top, index=None)
 
-    # Pass 4: edge proximity (only shapes that support adding a point)
+    handle = _find_handle(shapes=editable, point=point, image_epsilon=image_epsilon)
+    if handle is not None:
+        return handle
+
     for shape in editable:
         if not shape.can_add_point():
             continue
@@ -96,10 +89,27 @@ def find_hover_target(
         if idx is not None:
             return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
 
-    # Pass 5: body hit
     if top is not None:
         return HitTarget(kind=HitKind.BODY, shape=top, index=None)
 
+    return None
+
+
+def _find_handle(
+    *, shapes: list[Shape], point: npt.NDArray[np.float64], image_epsilon: float
+) -> HitTarget | None:
+    for shape in shapes:
+        idx = nearest_vertex_index(
+            shape=shape, point=point, image_epsilon=image_epsilon
+        )
+        if idx is not None:
+            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
+    for shape in shapes:
+        idx = nearest_rotation_point_index(
+            shape=shape, point=point, image_epsilon=image_epsilon
+        )
+        if idx is not None:
+            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=idx)
     return None
 
 
