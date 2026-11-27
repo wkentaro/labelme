@@ -4008,6 +4008,65 @@ def test_dragging_corner_down_from_a_nearby_rotation_handle_moves_the_corner(
 
 
 @pytest.mark.parametrize(
+    ("square_top", "corner", "approach"),
+    [
+        pytest.param(15, (54, 15), (50, 15), id="beside_the_handle"),
+        pytest.param(5, (50, 9), (50, 0), id="below_the_handle"),
+    ],
+)
+def test_dragging_corner_drawn_over_a_hovered_rotation_handle_moves_the_corner(
+    *,
+    editing_canvas: Canvas,
+    square_top: float,
+    corner: tuple[float, float],
+    approach: tuple[float, float],
+) -> None:
+    square_corners: list[tuple[float, float]] = [
+        (35, square_top),
+        (65, square_top),
+        (65, square_top + 30),
+        (35, square_top + 30),
+    ]
+    square = _make_oriented_rectangle(corners=square_corners)
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([corner, (90, 40)], dtype=np.float64),
+    )
+    editing_canvas.load_shapes(shapes=[square, rectangle])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(*corner),
+        end=QPointF(65, 30),
+        approach=[QPointF(*approach)],
+    )
+
+    np.testing.assert_array_equal(rectangle.points, [(65, 30), (90, 40)])
+    np.testing.assert_array_equal(square.points, square_corners)
+
+
+def test_dragging_point_dot_under_a_hovered_corner_moves_the_corner(
+    *, editing_canvas: Canvas
+) -> None:
+    point = Shape(shape_type="point", points=np.array([(10, 10)], dtype=np.float64))
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([(5, 5), (40, 40)], dtype=np.float64),
+    )
+    editing_canvas.load_shapes(shapes=[point, rectangle])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(10, 10),
+        end=QPointF(50, 25),
+        approach=[QPointF(5, 5)],
+    )
+
+    np.testing.assert_array_equal(rectangle.points, [(50, 25), (40, 40)])
+    np.testing.assert_array_equal(point.points, [(10, 10)])
+
+
+@pytest.mark.parametrize(
     "kind",
     [QtCore.QEvent.Type.MouseButtonPress, QtCore.QEvent.Type.MouseButtonDblClick],
     ids=["press", "double_click"],
