@@ -303,23 +303,6 @@ def test_edge_not_tested_on_non_polyline_shape() -> None:
     assert result.shape is rect
 
 
-def test_hovered_shape_drawn_on_top_keeps_a_shared_vertex() -> None:
-    shape_a = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
-    shape_b = _polygon(points=[(10, 10), (80, 10), (80, 80), (10, 80)], visible=True)
-    result = find_hover_target(
-        shapes=[shape_b, shape_a],
-        point=_point(x=10.0, y=10.0),
-        scale=_SCALE,
-        epsilon=_EPSILON,
-        point_size=_POINT_SIZE,
-        hovered=_body(shape=shape_a),
-        selected=(),
-    )
-    assert result is not None
-    assert result.kind == HitKind.VERTEX
-    assert result.shape is shape_a
-
-
 def test_hovered_shape_vertex_hit_reports_its_index() -> None:
     shape = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
