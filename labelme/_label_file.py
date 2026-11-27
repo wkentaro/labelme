@@ -650,6 +650,10 @@ def _imread_tiff(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image
         )
         series = tif.series[0]
         img_arr: NDArray = series.asarray()
+    if series.keyframe.photometric == tifffile.PHOTOMETRIC.MINISWHITE:
+        img_arr = (
+            -img_arr if np.issubdtype(img_arr.dtype, np.inexact) else np.invert(img_arr)
+        )
     # Planar-separate TIFFs put the band axis first.
     if img_arr.ndim == MULTI_CHANNEL_NDIM and series.axes.startswith("S"):
         img_arr = np.moveaxis(img_arr, 0, -1)
