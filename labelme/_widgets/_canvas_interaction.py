@@ -59,17 +59,13 @@ def find_hover_target(
         and hovered.kind in (HitKind.VERTEX, HitKind.ROTATION_HANDLE)
         else None
     )
-    shapes = [
-        shape
-        for shape in shapes
-        if _is_near_extent(
-            shape=shape,
-            point=point,
-            margin=hovered_reach if shape is enlarged else reach,
-        )
-    ]
+    gaps = [(shape, _extent_gap(shape=shape, point=point)) for shape in shapes]
     marker = _find_nearest_marker(
-        shapes=shapes,
+        shapes=[
+            shape
+            for shape, gap in gaps
+            if gap <= (hovered_reach if shape is enlarged else reach)
+        ],
         point=point,
         reach=reach,
         hovered_reach=hovered_reach,
@@ -78,6 +74,9 @@ def find_hover_target(
     )
     if marker is not None:
         return marker
+
+    fallback_margin = max(image_epsilon, point_size / 2 / scale)
+    shapes = [shape for shape, gap in gaps if gap <= fallback_margin]
 
     top = find_shape_at(
         shapes=shapes,
@@ -193,13 +192,11 @@ def find_shape_at(
     return first
 
 
-def _is_near_extent(
-    *, shape: Shape, point: npt.NDArray[np.float64], margin: float
-) -> bool:
+def _extent_gap(*, shape: Shape, point: npt.NDArray[np.float64]) -> float:
     if len(shape.points) == 0:
-        return False
+        return np.inf
     lo, hi = image_extent(shape=shape)
-    return bool(np.all(point >= lo - margin) and np.all(point <= hi + margin))
+    return float(np.max(np.maximum(lo - point, point - hi)))
 
 
 def _build_candidates(

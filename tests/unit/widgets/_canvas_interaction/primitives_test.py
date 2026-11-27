@@ -727,7 +727,7 @@ def test_extent_reject_never_changes_the_hover_target(
 
     rejected = targets()
     monkeypatch.setattr(
-        "labelme._widgets._canvas_interaction._is_near_extent", lambda **_: True
+        "labelme._widgets._canvas_interaction._extent_gap", lambda **_: 0.0
     )
 
     assert rejected == targets()
