@@ -207,6 +207,7 @@ def render_shape(
 
 
 _LARGEST_HIGHLIGHT: Final = VertexHighlight(index=0, mode="near")
+_HOVERED_MARKER: Final = VertexHighlight(index=0, mode="move")
 
 
 def intersects_rect(
@@ -569,8 +570,8 @@ def _append_shape_rotation_vertex(
     _append_vertex(vertices=vertices, pos=pos, size=size, point_type=point_type)
 
 
-def marker_half_size(*, point_size: int) -> float:
-    return (point_size + _OUTLINE_WIDTH) / 2
+def hovered_marker_half_size(*, point_size: int) -> float:
+    return (point_size * _HOVERED_MARKER.size_factor + _OUTLINE_WIDTH) / 2
 
 
 def _append_vertex(
