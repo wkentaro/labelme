@@ -416,20 +416,20 @@ def _paint_shape_points(
         painter.drawPath(paths.line)
         _paint_filled_vertices(
             painter=painter,
-            vertices=paths.vertices,
-            fill=palette.hvertex_fill
-            if context.highlight is not None
-            else palette.vertex_fill,
-            points=paths.vertex_points,
-        )
-        _paint_filled_vertices(
-            painter=painter,
             vertices=paths.rotation_vertices,
             fill=(
                 palette.hvertex_fill
                 if context.rotation_highlight is not None
                 else palette.vertex_fill
             ),
+        )
+        _paint_filled_vertices(
+            painter=painter,
+            vertices=paths.vertices,
+            fill=palette.hvertex_fill
+            if context.highlight is not None
+            else palette.vertex_fill,
+            points=paths.vertex_points,
         )
     if context.fill and shape.shape_type not in ["line", "linestrip", "points", "mask"]:
         fill = palette.select_fill if context.selected else palette.fill
