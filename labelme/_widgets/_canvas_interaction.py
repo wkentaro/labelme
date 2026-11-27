@@ -10,6 +10,7 @@ from PySide6.QtCore import Qt
 
 from .._shape import Shape
 from .._shape import image_extent
+from .._shape import nearest_derived_corner_index
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
@@ -95,6 +96,13 @@ def find_hover_target(
         idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)
         if idx is not None:
             return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
+
+    for shape in editable:
+        idx = nearest_derived_corner_index(
+            shape=shape, point=point, image_epsilon=image_epsilon
+        )
+        if idx is not None:
+            return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)
 
     # Pass 5: body hit
     if top is not None:

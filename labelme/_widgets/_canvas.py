@@ -2298,11 +2298,12 @@ class Canvas(QtWidgets.QWidget):
         pos: QPointF,
         is_shift_pressed: bool,
     ) -> None:
-        if vertex_index >= len(shape.points):
+        vertices = shape.vertices()
+        if vertex_index >= len(vertices):
             logger.warning(
-                "vertex_index is out of range: vertex_index={:d}, len(points)={:d}",
+                "vertex_index is out of range: vertex_index={:d}, len(vertices)={:d}",
                 vertex_index,
-                len(shape.points),
+                len(vertices),
             )
             return
 
@@ -2314,14 +2315,14 @@ class Canvas(QtWidgets.QWidget):
 
         if self._should_constrain_to_pixmap(point=pos):
             pos = _compute_intersection_edges_image(
-                p1=QPointF(*shape.points[vertex_index]),
+                p1=QPointF(*vertices[vertex_index]),
                 p2=pos,
                 image_size=self.pixmap.size(),
             )
 
         if is_shift_pressed and shape.shape_type == "rectangle":
             pos = _snap_cursor_pos_for_square(
-                pos=pos, opposite_vertex=QPointF(*shape.points[1 - vertex_index])
+                pos=pos, opposite_vertex=QPointF(*vertices[(vertex_index + 2) % 4])
             )
 
         shape.move_vertex(i=vertex_index, pos=(pos.x(), pos.y()))

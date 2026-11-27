@@ -39,6 +39,8 @@ MIN_LINESTRIP_POINT_COUNT: Final = 2
 MIN_POLYGON_POINT_COUNT: Final = 3
 
 _RECTANGLE_CORNER_SOURCES: Final = np.array([(0, 0), (1, 0), (1, 1), (0, 1)])
+RECTANGLE_STORED_CORNERS: Final = (0, 2)
+RECTANGLE_DERIVED_CORNERS: Final = (1, 3)
 
 
 class ShapeDict(TypedDict):
@@ -128,7 +130,12 @@ class Shape:
         )
 
     def move_vertex(self, *, i: int, pos: npt.ArrayLike) -> None:
-        self.points[i] = np.asarray(pos, dtype=np.float64).reshape(2)
+        position = np.asarray(pos, dtype=np.float64).reshape(2)
+        if self.is_full_rectangle():
+            x_source, y_source = _RECTANGLE_CORNER_SOURCES[i]
+            self.points[x_source, 0], self.points[y_source, 1] = position
+            return
+        self.points[i] = position
 
     def copy(self) -> Shape:
         return copy.deepcopy(self)

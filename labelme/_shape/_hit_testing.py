@@ -6,6 +6,8 @@ import numpy as np
 import numpy.typing as npt
 
 from ._model import CIRCLE_POINT_COUNT
+from ._model import RECTANGLE_DERIVED_CORNERS
+from ._model import RECTANGLE_STORED_CORNERS
 from ._model import Shape
 from ._oriented_rectangle import get_rotation_handles
 from ._oriented_rectangle import is_full_oriented_rectangle
@@ -30,7 +32,39 @@ def nearest_vertex_index(
     if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
         return None
     distances = np.linalg.norm(shape.points - point, axis=1)
-    return _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+    index = _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+    if index is None or not shape.is_full_rectangle():
+        return index
+    return RECTANGLE_STORED_CORNERS[index]
+
+
+def nearest_derived_corner_index(
+    *,
+    shape: Shape,
+    point: npt.NDArray[np.float64],
+    image_epsilon: float,
+) -> int | None:
+    if not shape.is_full_rectangle():
+        return None
+    corners = shape.vertices()[list(RECTANGLE_DERIVED_CORNERS)]
+    distances = np.linalg.norm(corners - point, axis=1)
+    index = _find_closest_index_within(
+        distances=distances,
+        epsilon=_derived_corner_reach(
+            shape=shape, point=point, image_epsilon=image_epsilon
+        ),
+    )
+    return None if index is None else RECTANGLE_DERIVED_CORNERS[index]
+
+
+def _derived_corner_reach(
+    *, shape: Shape, point: npt.NDArray[np.float64], image_epsilon: float
+) -> float:
+    lo, hi = shape.points.min(axis=0), shape.points.max(axis=0)
+    if np.any(point < lo) or np.any(point > hi):
+        return image_epsilon
+    halfway_to_center = float(np.linalg.norm(hi - lo)) / 4
+    return min(image_epsilon, halfway_to_center)
 
 
 def nearest_edge_index(
