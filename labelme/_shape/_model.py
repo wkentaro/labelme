@@ -38,6 +38,8 @@ ORIENTED_RECTANGLE_POINT_COUNT: Final = 4
 MIN_LINESTRIP_POINT_COUNT: Final = 2
 MIN_POLYGON_POINT_COUNT: Final = 3
 
+_RECTANGLE_CORNER_SOURCES: Final = np.array([(0, 0), (1, 0), (1, 1), (0, 1)])
+
 
 class ShapeDict(TypedDict):
     label: str
@@ -113,6 +115,17 @@ class Shape:
             return
         self.points = np.delete(self.points, i, axis=0)
         self.point_labels = np.delete(self.point_labels, i)
+
+    def vertices(self) -> npt.NDArray[np.float64]:
+        if not self.is_full_rectangle():
+            return self.points
+        x_sources, y_sources = _RECTANGLE_CORNER_SOURCES.T
+        return np.column_stack([self.points[x_sources, 0], self.points[y_sources, 1]])
+
+    def is_full_rectangle(self) -> bool:
+        return (
+            self.shape_type == "rectangle" and len(self.points) == RECTANGLE_POINT_COUNT
+        )
 
     def move_vertex(self, *, i: int, pos: npt.ArrayLike) -> None:
         self.points[i] = np.asarray(pos, dtype=np.float64).reshape(2)

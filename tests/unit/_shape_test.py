@@ -19,6 +19,10 @@ def _make_oriented_rectangle(*, points: list[tuple[float, float]]) -> Shape:
     )
 
 
+def _make_rectangle(*, points: list[tuple[float, float]]) -> Shape:
+    return Shape(shape_type="rectangle", points=np.array(points, dtype=np.float64))
+
+
 def _make_axis_aligned_oriented_rectangle() -> Shape:
     return _make_oriented_rectangle(
         points=[(0.0, 0.0), (10.0, 0.0), (10.0, 4.0), (0.0, 4.0)]
@@ -362,6 +366,20 @@ def test_move_vertex_does_not_mutate_the_array_given_to_the_constructor() -> Non
     shape.move_vertex(i=0, pos=(999.0, 999.0))
 
     assert points[0] == pytest.approx((0.0, 0.0))
+
+
+def test_rectangle_vertices_are_its_four_corners_from_its_first_point() -> None:
+    shape = _make_rectangle(points=[(10.0, 20.0), (50.0, 80.0)])
+
+    np.testing.assert_array_equal(
+        shape.vertices(), [(10, 20), (50, 20), (50, 80), (10, 80)]
+    )
+
+
+def test_rectangle_draft_vertices_are_its_points() -> None:
+    shape = _make_rectangle(points=[(10.0, 20.0)])
+
+    np.testing.assert_array_equal(shape.vertices(), [(10, 20)])
 
 
 def test_constructor_copies_the_given_point_labels() -> None:
