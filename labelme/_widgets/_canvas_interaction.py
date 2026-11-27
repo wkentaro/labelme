@@ -117,7 +117,8 @@ def _find_nearest_marker(
     for order, (shape, gap) in enumerate(gaps):
         if not shape.visible or shape.locked:
             continue
-        nearest_possible = max(gap, 0.0) ** 2
+        floor = max(gap, 0.0)
+        nearest_possible = floor * floor
         if nearest_possible > nearest:
             continue
         for kind, centers_of in (
@@ -136,14 +137,14 @@ def _find_nearest_marker(
             offsets = centers - point
             distances = np.einsum("ij,ij->i", offsets, offsets)
             index = int(distances.argmin())
-            if distances[index] > reach**2:
+            if distances[index] > reach * reach:
                 if (
                     hovered is not None
                     and hovered.shape is shape
                     and hovered.kind is kind
                     and hovered.index is not None
                     and hovered.index < len(centers)
-                    and distances[hovered.index] <= hovered_reach**2
+                    and distances[hovered.index] <= hovered_reach * hovered_reach
                 ):
                     index = hovered.index
                 else:
