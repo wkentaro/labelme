@@ -4066,6 +4066,45 @@ def test_dragging_point_dot_under_a_hovered_corner_moves_the_corner(
     np.testing.assert_array_equal(point.points, [(10, 10)])
 
 
+def test_dragging_a_point_by_its_outline_over_a_corner_moves_the_point(
+    *, editing_canvas: Canvas
+) -> None:
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (60, 60)], dtype=np.float64)
+    )
+    point = Shape(shape_type="point", points=np.array([(24.5, 20)], dtype=np.float64))
+    editing_canvas.load_shapes(shapes=[rectangle, point])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(20, 20), end=QPointF(30, 30))
+
+    np.testing.assert_array_equal(point.points, [(34.5, 30)])
+    np.testing.assert_array_equal(rectangle.points, [(20, 20), (60, 60)])
+
+
+def test_dragging_beside_a_shared_corner_edits_the_selected_polygon(
+    *, editing_canvas: Canvas
+) -> None:
+    selected = Shape(
+        shape_type="polygon",
+        points=np.array([(50, 10), (90, 10), (90, 40), (50, 40)], dtype=np.float64),
+    )
+    beside = Shape(
+        shape_type="polygon",
+        points=np.array([(10, 10), (50, 10), (50, 40), (10, 40)], dtype=np.float64),
+    )
+    editing_canvas.load_shapes(shapes=[selected, beside])
+    editing_canvas.select_shapes(shapes=[selected])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(50, 4), end=QPointF(55, 2))
+
+    np.testing.assert_array_equal(
+        selected.points, [(55, 2), (90, 10), (90, 40), (50, 40)]
+    )
+    np.testing.assert_array_equal(
+        beside.points, [(10, 10), (50, 10), (50, 40), (10, 40)]
+    )
+
+
 @pytest.mark.parametrize(
     "kind",
     [QtCore.QEvent.Type.MouseButtonPress, QtCore.QEvent.Type.MouseButtonDblClick],

@@ -896,6 +896,7 @@ def _hover_then_zoom_off_every_shape(
             point=np.array([image_pos.x(), image_pos.y()]),
             scale=canvas.scale,
             point_size=canvas._point_size,
+            point_type=canvas._point_type,
             epsilon=canvas._epsilon,
         )
         is None

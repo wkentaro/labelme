@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Final
+from typing import Literal
 
 import numpy as np
 import pytest
@@ -15,6 +16,7 @@ from labelme._widgets._shape_render import VertexHighlight
 from labelme._widgets._shape_render import bounds
 from labelme._widgets._shape_render import intersects_rect
 from labelme._widgets._shape_render import is_hit_by_point
+from labelme._widgets._shape_render import is_marker_hit_by_point
 from labelme._widgets._shape_render import render_shape
 
 _SIZE: Final = 200
@@ -460,6 +462,7 @@ def _hit(*, shape: Shape, point: tuple[float, float], scale: float) -> bool:
         point=np.array(point, dtype=np.float64),
         scale=scale,
         point_size=8,
+        point_type="round",
         epsilon=5.0,
     )
 
@@ -522,10 +525,52 @@ def test_point_shape_hit_within_radius(*, scale: float) -> None:
         shape_type="point",
         points=np.array([[10, 10]], dtype=np.float64),
     )
-    # The point marker's hit radius is 4 screen pixels, so probes at 3 and 5
-    # screen pixels straddle it at every zoom.
-    assert _hit(shape=shape, point=(10, 10 + 3 / scale), scale=scale) is True
-    assert _hit(shape=shape, point=(10, 10 + 5 / scale), scale=scale) is False
+    assert _hit(shape=shape, point=(10, 10 + 4.5 / scale), scale=scale) is True
+    assert _hit(shape=shape, point=(10, 10 + 5.5 / scale), scale=scale) is False
+
+
+_HOVERED: Final = VertexHighlight(index=0, mode="move")
+
+
+@pytest.mark.parametrize(
+    ("point_type", "highlight", "screen_offset", "expected"),
+    [
+        pytest.param("round", None, (3, 4), True, id="round_rim"),
+        pytest.param("round", None, (4, 4), False, id="round_past_rim"),
+        pytest.param("square", None, (5, 5), True, id="square_corner"),
+        pytest.param("square", None, (5.5, 0), False, id="square_past_side"),
+        pytest.param("round", _HOVERED, (7, 7), True, id="hovered_square_corner"),
+        pytest.param("round", _HOVERED, (7.5, 0), False, id="hovered_past_side"),
+        pytest.param(
+            "round",
+            VertexHighlight(index=1, mode="move"),
+            (7, 7),
+            False,
+            id="another_marker_hovered",
+        ),
+    ],
+)
+def test_marker_is_hit_where_it_is_drawn(
+    *,
+    point_type: Literal["square", "round"],
+    highlight: VertexHighlight | None,
+    screen_offset: tuple[float, float],
+    expected: bool,
+) -> None:
+    scale = 2.0
+    center = np.array([10.0, 10.0])
+
+    hit = is_marker_hit_by_point(
+        center=center,
+        index=0,
+        highlight=highlight,
+        point=center + np.array(screen_offset) / scale,
+        scale=scale,
+        point_size=8,
+        point_type=point_type,
+    )
+
+    assert hit is expected
 
 
 def test_empty_point_shape_is_not_hit() -> None:
@@ -827,6 +872,7 @@ def test_mask_alignment_hit_extent() -> None:
             point=np.array([x, 5.0]),
             scale=_ALIGNMENT_SCALE,
             point_size=8,
+            point_type="round",
             epsilon=0.0,
         )
     ]

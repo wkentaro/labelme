@@ -657,6 +657,7 @@ def is_hit_by_point(
     point: npt.NDArray[np.float64],
     scale: float,
     point_size: int,
+    point_type: Literal["square", "round"],
     epsilon: float,
 ) -> bool:
     if shape.shape_type in ("line", "linestrip"):
@@ -669,13 +670,44 @@ def is_hit_by_point(
     if shape.shape_type == "point":
         if len(shape.points) == 0:
             return False
-        return bool(np.linalg.norm(point - shape.points[0]) <= point_size / 2 / scale)
+        return is_marker_hit_by_point(
+            center=shape.points[0],
+            index=0,
+            highlight=None,
+            point=point,
+            scale=scale,
+            point_size=point_size,
+            point_type=point_type,
+        )
     if shape.mask is not None:
         return _hits_mask_pixel(shape=shape, point=point)
     return _build_outline_path(shape=shape).contains(QtCore.QPointF(*point))
 
 
-def drawn_marker_radius(*, point_size: int, scale: float) -> float:
+def is_marker_hit_by_point(
+    *,
+    center: npt.NDArray[np.float64],
+    index: int,
+    highlight: VertexHighlight | None,
+    point: npt.NDArray[np.float64],
+    scale: float,
+    point_size: int,
+    point_type: Literal["square", "round"],
+) -> bool:
+    size, marker_type = _resolve_vertex_style(
+        highlight=highlight,
+        vertex_index=index,
+        default_size=point_size,
+        default_point_type=point_type,
+    )
+    reach = drawn_marker_radius(point_size=size, scale=scale)
+    offset = np.abs(point - center)
+    if marker_type == "square":
+        return bool(offset.max() <= reach)
+    return bool(np.hypot(*offset) <= reach)
+
+
+def drawn_marker_radius(*, point_size: float, scale: float) -> float:
     return (point_size + _OUTLINE_WIDTH) / 2 / scale
 
 

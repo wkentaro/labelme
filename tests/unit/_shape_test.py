@@ -146,9 +146,7 @@ def test_nearest_vertex_returns_none_for_mask() -> None:
     )
 
     for corner in shape.points:
-        assert (
-            _shape.nearest_vertex(shape=shape, point=corner, image_epsilon=10.0) is None
-        )
+        assert _shape.nearest_vertex(shape=shape, point=corner) is None
 
 
 def test_nearest_vertex_returns_none_for_point() -> None:
@@ -160,10 +158,7 @@ def test_nearest_vertex_returns_none_for_point() -> None:
         closed=True,
     )
 
-    assert (
-        _shape.nearest_vertex(shape=shape, point=shape.points[0], image_epsilon=10.0)
-        is None
-    )
+    assert _shape.nearest_vertex(shape=shape, point=shape.points[0]) is None
 
 
 def _make_square_polygon() -> Shape:
@@ -458,37 +453,18 @@ def test_nearest_edge_index_matches_drawn_edge_for_linestrip() -> None:
     assert index == 1
 
 
-def test_nearest_vertex_returns_nearest_within_epsilon() -> None:
+def test_nearest_vertex_returns_the_nearest_vertex_and_its_distance() -> None:
     shape = _make_square_polygon()
-    # vertex 1 is at (10.0, 0.0); probe 0.4 units away, inside the 1.0 threshold
-    vertex_1 = shape.points[1]
-    point_within_epsilon = vertex_1 + np.array([0.4, 0.0])
 
-    nearest = _shape.nearest_vertex(
-        shape=shape, point=point_within_epsilon, image_epsilon=1.0
-    )
+    nearest = _shape.nearest_vertex(shape=shape, point=shape.points[1] + (0.4, 0.0))
 
     assert nearest == (1, pytest.approx(0.4))
-
-
-def test_nearest_vertex_returns_none_when_far() -> None:
-    shape = _make_square_polygon()
-
-    nearest = _shape.nearest_vertex(
-        shape=shape, point=np.array([5.0, 5.0]), image_epsilon=1.0
-    )
-
-    assert nearest is None
 
 
 def test_nearest_vertex_returns_none_for_empty_shape() -> None:
     shape = Shape(shape_type="polygon")
 
-    nearest = _shape.nearest_vertex(
-        shape=shape, point=np.array([0.0, 0.0]), image_epsilon=10.0
-    )
-
-    assert nearest is None
+    assert _shape.nearest_vertex(shape=shape, point=np.array([0.0, 0.0])) is None
 
 
 # Rotation handles sit at the edge midpoints; handle i is the midpoint of the
@@ -522,32 +498,20 @@ def test_get_rotation_handle_raises_for_non_oriented_rectangle() -> None:
         _shape.get_rotation_handle(shape=shape, index=0)
 
 
-def test_nearest_rotation_point_returns_handle_within_epsilon() -> None:
+def test_nearest_rotation_point_returns_the_nearest_handle_and_its_distance() -> None:
     shape = _make_axis_aligned_oriented_rectangle()
     # handle 2 is the right-edge midpoint at (10, 2); probe just beside it.
     point = np.array([10.3, 2.0])
 
-    nearest = _shape.nearest_rotation_point(shape=shape, point=point, image_epsilon=1.0)
+    nearest = _shape.nearest_rotation_point(shape=shape, point=point)
 
     assert nearest == (2, pytest.approx(0.3))
-
-
-def test_nearest_rotation_point_returns_none_when_far() -> None:
-    shape = _make_axis_aligned_oriented_rectangle()
-
-    nearest = _shape.nearest_rotation_point(
-        shape=shape, point=np.array([20.0, 20.0]), image_epsilon=1.0
-    )
-
-    assert nearest is None
 
 
 def test_nearest_rotation_point_returns_none_for_non_oriented_rectangle() -> None:
     shape = _make_square_polygon()
 
-    nearest = _shape.nearest_rotation_point(
-        shape=shape, point=np.array([5.0, 0.0]), image_epsilon=10.0
-    )
+    nearest = _shape.nearest_rotation_point(shape=shape, point=np.array([5.0, 0.0]))
 
     assert nearest is None
 
@@ -555,9 +519,7 @@ def test_nearest_rotation_point_returns_none_for_non_oriented_rectangle() -> Non
 def test_nearest_rotation_point_returns_none_for_empty_shape() -> None:
     shape = Shape(shape_type="oriented_rectangle")
 
-    nearest = _shape.nearest_rotation_point(
-        shape=shape, point=np.array([0.0, 0.0]), image_epsilon=10.0
-    )
+    nearest = _shape.nearest_rotation_point(shape=shape, point=np.array([0.0, 0.0]))
 
     assert nearest is None
 

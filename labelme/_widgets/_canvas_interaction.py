@@ -2,19 +2,25 @@ from __future__ import annotations
 
 import dataclasses
 import enum
+from collections.abc import Collection
 from typing import Final
+from typing import Literal
+from typing import NamedTuple
 
 import numpy as np
 import numpy.typing as npt
 from PySide6.QtCore import Qt
 
 from .._shape import Shape
+from .._shape import get_rotation_handle
 from .._shape import image_extent
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point
 from .._shape import nearest_vertex
+from ._shape_render import VertexHighlight
 from ._shape_render import drawn_marker_radius
 from ._shape_render import is_hit_by_point
+from ._shape_render import is_marker_hit_by_point
 
 
 class HitKind(enum.Enum):
@@ -38,71 +44,115 @@ def find_hover_target(
     scale: float,
     epsilon: float,
     point_size: int,
-    priority_shape: Shape | None,
+    point_type: Literal["square", "round"],
+    hovered: Shape | None,
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+    selected: Collection[Shape],
 ) -> HitTarget | None:
     # Proximity is measured in image space, so the screen-pixel threshold is
     # converted here rather than scaling every shape's points.
     image_epsilon = epsilon / scale
-    marker_radius = drawn_marker_radius(point_size=point_size, scale=scale)
 
     # Every pass below costs array work per shape, so drop the shapes the
     # pointer is nowhere near once, up front.
-    margin = max(image_epsilon, marker_radius)
+    hovered_marker_size = point_size * max(
+        (h.size_factor for h in (highlight, rotation_highlight) if h is not None),
+        default=1.0,
+    )
+    margin = max(
+        image_epsilon,
+        drawn_marker_radius(point_size=hovered_marker_size, scale=scale),
+    )
     shapes = [
         shape
         for shape in shapes
         if _is_near_extent(shape=shape, point=point, margin=margin)
     ]
-    candidates = _build_candidates(
-        shapes=shapes,
-        priority_shape=priority_shape,
-    )
 
-    # A locked shape offers no vertex, rotation handle, or edge to grab.
-    editable = [shape for shape in candidates if not shape.locked]
+    def precedence(shape: Shape) -> tuple[bool, bool]:
+        return shape not in selected, shape is not hovered
 
-    dot = find_shape_at(
-        shapes=[shape for shape in shapes if shape.shape_type == "point"],
-        point=point,
-        scale=scale,
-        point_size=point_size,
-        epsilon=epsilon,
-    )
-    if dot is not None:
-        drawn_over_dot = shapes[shapes.index(dot) + 1 :]
-        handle_over_dot = _find_handle(
-            shapes=[shape for shape in editable if shape in drawn_over_dot],
-            point=point,
-            image_epsilon=marker_radius,
-            marker_radius=marker_radius,
-            priority_shape=priority_shape,
+    painted: _Marker | None = None
+    in_reach: list[tuple[float, HitTarget]] = []
+    for shape in reversed(shapes):
+        if not shape.visible:
+            continue
+        if shape.shape_type == "point":
+            if painted is None and is_hit_by_point(
+                shape=shape,
+                point=point,
+                scale=scale,
+                point_size=point_size,
+                point_type=point_type,
+                epsilon=epsilon,
+            ):
+                return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
+            continue
+        if shape.locked:
+            continue
+        handles = (
+            (
+                HitKind.ROTATION_HANDLE,
+                nearest_rotation_point(shape=shape, point=point),
+                rotation_highlight if shape is hovered else None,
+            ),
+            (
+                HitKind.VERTEX,
+                nearest_vertex(shape=shape, point=point),
+                highlight if shape is hovered else None,
+            ),
         )
-        if handle_over_dot is not None:
-            return handle_over_dot
-        return HitTarget(kind=HitKind.BODY, shape=dot, index=None)
+        for kind, nearest, marker_highlight in handles:
+            if nearest is None:
+                continue
+            marker = _find_marker_under(
+                shape=shape,
+                kind=kind,
+                nearest_index=nearest.index,
+                highlight=marker_highlight,
+                point=point,
+                scale=scale,
+                point_size=point_size,
+                point_type=point_type,
+            )
+            if marker is not None and (
+                painted is None
+                or (
+                    np.array_equal(marker.center, painted.center)
+                    and precedence(shape) < precedence(painted.target.shape)
+                )
+            ):
+                painted = marker
+            if nearest.distance <= image_epsilon:
+                in_reach.append(
+                    (
+                        nearest.distance,
+                        HitTarget(kind=kind, shape=shape, index=nearest.index),
+                    )
+                )
+    if painted is not None:
+        return painted.target
+    if in_reach:
+        _, nearest_handle = min(
+            in_reach,
+            key=lambda reached: (reached[0], precedence(reached[1].shape)),
+        )
+        return nearest_handle
 
-    handle = _find_handle(
-        shapes=editable,
-        point=point,
-        image_epsilon=image_epsilon,
-        marker_radius=marker_radius,
-        priority_shape=priority_shape,
-    )
-    if handle is not None:
-        return handle
-
-    for shape in editable:
-        if not shape.can_add_point():
+    for shape in _build_candidates(shapes=shapes, priority_shape=hovered):
+        if shape.locked or not shape.can_add_point():
             continue
         idx = nearest_edge_index(shape=shape, point=point, image_epsilon=image_epsilon)
         if idx is not None:
             return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
 
     top = find_shape_at(
-        shapes=shapes,
+        shapes=[shape for shape in shapes if shape.shape_type != "point"],
         point=point,
         scale=scale,
         point_size=point_size,
+        point_type=point_type,
         epsilon=epsilon,
     )
     if top is not None:
@@ -111,35 +161,41 @@ def find_hover_target(
     return None
 
 
-def _find_handle(
+class _Marker(NamedTuple):
+    target: HitTarget
+    center: npt.NDArray[np.float64]
+
+
+def _find_marker_under(
     *,
-    shapes: list[Shape],
+    shape: Shape,
+    kind: HitKind,
+    nearest_index: int,
+    highlight: VertexHighlight | None,
     point: npt.NDArray[np.float64],
-    image_epsilon: float,
-    marker_radius: float,
-    priority_shape: Shape | None,
-) -> HitTarget | None:
-    ranked: list[tuple[tuple[bool, float], HitTarget]] = []
-    for kind, find_nearest in (
-        (HitKind.VERTEX, nearest_vertex),
-        (HitKind.ROTATION_HANDLE, nearest_rotation_point),
-    ):
-        for shape in shapes:
-            nearest = find_nearest(
-                shape=shape, point=point, image_epsilon=image_epsilon
+    scale: float,
+    point_size: int,
+    point_type: Literal["square", "round"],
+) -> _Marker | None:
+    indices = [nearest_index] if highlight is None else [highlight.index, nearest_index]
+    for index in indices:
+        if kind is HitKind.ROTATION_HANDLE:
+            center = get_rotation_handle(shape=shape, index=index)
+        else:
+            center = shape.points[index]
+        if is_marker_hit_by_point(
+            center=center,
+            index=index,
+            highlight=highlight,
+            point=point,
+            scale=scale,
+            point_size=point_size,
+            point_type=point_type,
+        ):
+            return _Marker(
+                target=HitTarget(kind=kind, shape=shape, index=index), center=center
             )
-            if nearest is None:
-                continue
-            under_hovered_marker = (
-                shape is priority_shape and nearest.distance <= marker_radius
-            )
-            rank = (not under_hovered_marker, nearest.distance)
-            handle = HitTarget(kind=kind, shape=shape, index=nearest.index)
-            ranked.append((rank, handle))
-    if not ranked:
-        return None
-    _, handle = min(ranked, key=lambda ranked_handle: ranked_handle[0])
-    return handle
+    return None
 
 
 def find_shape_at(
@@ -148,6 +204,7 @@ def find_shape_at(
     point: npt.NDArray[np.float64],
     scale: float,
     point_size: int,
+    point_type: Literal["square", "round"],
     epsilon: float,
 ) -> Shape | None:
     # Topmost first, with point shapes ahead of the shapes they sit on. Below
@@ -163,6 +220,7 @@ def find_shape_at(
             point=point,
             scale=scale,
             point_size=point_size,
+            point_type=point_type,
             epsilon=epsilon,
         ):
             continue

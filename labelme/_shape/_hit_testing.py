@@ -18,26 +18,21 @@ class Nearest(NamedTuple):
     distance: float
 
 
-def _find_closest_within(
-    *, distances: npt.NDArray[np.float64], epsilon: float
-) -> Nearest | None:
+def _find_closest(*, distances: npt.NDArray[np.float64]) -> Nearest:
     closest = int(np.argmin(distances))
-    distance = float(distances[closest])
-    return Nearest(index=closest, distance=distance) if distance <= epsilon else None
+    return Nearest(index=closest, distance=float(distances[closest]))
 
 
 def nearest_vertex(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
-    image_epsilon: float,
 ) -> Nearest | None:
     # A mask's bbox corners are derived from its bitmap, and a point shape's
     # single point *is* the shape, not a draggable vertex; neither exposes one.
     if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
         return None
-    distances = np.linalg.norm(shape.points - point, axis=1)
-    return _find_closest_within(distances=distances, epsilon=image_epsilon)
+    return _find_closest(distances=np.linalg.norm(shape.points - point, axis=1))
 
 
 def nearest_edge_index(
@@ -68,22 +63,21 @@ def nearest_edge_index(
         # last point back to the first. A linestrip is open, so that segment
         # is never drawn and must never be picked as a hit.
         distances[0] = np.inf
-    nearest = _find_closest_within(distances=distances, epsilon=image_epsilon)
-    return None if nearest is None else nearest.index
+    nearest = _find_closest(distances=distances)
+    return nearest.index if nearest.distance <= image_epsilon else None
 
 
 def nearest_rotation_point(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
-    image_epsilon: float,
 ) -> Nearest | None:
     if not is_full_oriented_rectangle(shape=shape):
         return None
     distances = np.linalg.norm(
         get_rotation_handles(points=shape.points) - point, axis=1
     )
-    return _find_closest_within(distances=distances, epsilon=image_epsilon)
+    return _find_closest(distances=distances)
 
 
 def image_extent(
