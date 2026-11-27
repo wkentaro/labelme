@@ -698,22 +698,51 @@ def _plan_menu_click(
     ]
     if len(matches) != 1:
         raise CtlError(f"{len(matches)} items named {name!r} in the open menu")
-    if not matches[0].isEnabled():
+    [action] = matches
+    if not action.isEnabled():
         raise CtlError(f"{name!r} is disabled")
-    pos = menu.actionGeometry(matches[0]).center()
-    return f"click menu item {name!r}", _click(widget=menu, pos=pos)
+    what = f"menu item {name!r}"
+    pos = _aim(widget=menu, area=menu.actionGeometry(action), what=what)
+    if menu.actionAt(pos) is not action:
+        raise CtlError(f"a click on {what} would land on another item")
+    return f"click {what}", _click(widget=menu, pos=pos)
 
 
-def _click_pos(*, widget: QtWidgets.QWidget) -> QPoint:
+def _reveal(*, widget: QtWidgets.QWidget) -> None:
+    parent = widget.parentWidget()
+    while parent is not None:
+        if isinstance(parent, QtWidgets.QScrollArea):
+            parent.ensureWidgetVisible(widget)
+        parent = parent.parentWidget()
+
+
+def _aim(*, widget: QtWidgets.QWidget, area: QtCore.QRect, what: str) -> QPoint:
+    visible = area.intersected(widget.visibleRegion().boundingRect())
+    if visible.isEmpty():
+        raise CtlError(f"{what} is out of view")
+    pos = visible.center()
+    window = widget.window()
+    hit = window.childAt(widget.mapTo(window, pos)) or window
+    if hit is not widget and not widget.isAncestorOf(hit):
+        name = (
+            _button_text(button=hit)
+            if isinstance(hit, QtWidgets.QAbstractButton)
+            else hit.accessibleName()
+        )
+        raise CtlError(f"{type(hit).__name__} {name!r} covers {what}")
+    return pos
+
+
+def _click_area(*, widget: QtWidgets.QWidget) -> QtCore.QRect:
     if isinstance(widget, QtWidgets.QCheckBox):
         element = QtWidgets.QStyle.SubElement.SE_CheckBoxClickRect
     elif isinstance(widget, QtWidgets.QRadioButton):
         element = QtWidgets.QStyle.SubElement.SE_RadioButtonClickRect
     else:
-        return widget.rect().center()
+        return widget.rect()
     option = QtWidgets.QStyleOptionButton()
     widget.initStyleOption(option)
-    return widget.style().subElementRect(element, option, widget).center()
+    return widget.style().subElementRect(element, option, widget)
 
 
 def _plan_click(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
@@ -726,10 +755,10 @@ def _plan_click(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
         if isinstance(widget, QtWidgets.QAbstractScrollArea)
         else widget
     )
-    return (
-        f"click {type(widget).__name__} {req['name']!r}",
-        _click(widget=target, pos=_click_pos(widget=target)),
-    )
+    _reveal(widget=target)
+    what = f"{type(widget).__name__} {req['name']!r}"
+    pos = _aim(widget=target, area=_click_area(widget=target), what=what)
+    return f"click {what}", _click(widget=target, pos=pos)
 
 
 def _require_reachable(*, widget: QtWidgets.QWidget) -> None:
@@ -746,16 +775,20 @@ def _plan_pick(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
     usable = Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
     if index.flags() & usable != usable:
         raise CtlError(f"row {req['text']!r} in {req['list']!r} is disabled")
+    _reveal(widget=view)
     view.scrollTo(index)
     viewport = view.viewport()
-    center = view.visualRect(index).center()
+    row = f"{_row_text(view=view, index=index)!r} in {req['list']!r}"
+    pos = _aim(widget=viewport, area=view.visualRect(index), what=f"row {row}")
+    if view.indexAt(pos) != index:
+        raise CtlError(f"a click on row {row} would land on another row")
     events = (
-        _click(widget=viewport, pos=center, release_delay=DOUBLE_CLICK_GAP_MS)
-        + _click(widget=viewport, pos=center)
+        _click(widget=viewport, pos=pos, release_delay=DOUBLE_CLICK_GAP_MS)
+        + _click(widget=viewport, pos=pos)
         if req.get("double")
-        else _click(widget=viewport, pos=center)
+        else _click(widget=viewport, pos=pos)
     )
-    return f"pick {_row_text(view=view, index=index)!r} in {req['list']!r}", events
+    return f"pick {row}", events
 
 
 def _plan_click_canvas(*, req: dict[str, Any]) -> tuple[str, list[Callable[[], None]]]:
