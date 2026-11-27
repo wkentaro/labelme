@@ -650,23 +650,29 @@ def _imread_tiff(*, filename: str, max_decode_mb: int | None) -> PIL.Image.Image
         )
         series = tif.series[0]
         img_arr: NDArray = series.asarray()
+    if series.keyframe.photometric == tifffile.PHOTOMETRIC.MINISWHITE:
+        img_arr = (
+            -img_arr if np.issubdtype(img_arr.dtype, np.inexact) else np.invert(img_arr)
+        )
     # Planar-separate TIFFs put the band axis first.
     if img_arr.ndim == MULTI_CHANNEL_NDIM and series.axes.startswith("S"):
         img_arr = np.moveaxis(img_arr, 0, -1)
 
+    if img_arr.ndim == MULTI_CHANNEL_NDIM and img_arr.shape[2] < RGB_CHANNEL_COUNT:
+        img_arr = img_arr[:, :, 0]
+
+    if img_arr.ndim == _SINGLE_CHANNEL_NDIM and img_arr.dtype == np.uint16:
+        return PIL.Image.fromarray(img_arr)
     if img_arr.ndim == _SINGLE_CHANNEL_NDIM:
         img_arr_normalized = _normalize_to_uint8(arr=img_arr)
     elif img_arr.ndim == MULTI_CHANNEL_NDIM:
-        if img_arr.shape[2] >= RGB_CHANNEL_COUNT:
-            img_arr_normalized = np.stack(
-                [
-                    _normalize_to_uint8(arr=img_arr[:, :, i])
-                    for i in range(RGB_CHANNEL_COUNT)
-                ],
-                axis=2,
-            )
-        else:
-            img_arr_normalized = _normalize_to_uint8(arr=img_arr[:, :, 0])
+        img_arr_normalized = np.stack(
+            [
+                _normalize_to_uint8(arr=img_arr[:, :, i])
+                for i in range(RGB_CHANNEL_COUNT)
+            ],
+            axis=2,
+        )
     else:
         raise OSError(f"Unsupported image shape: {img_arr.shape}")
 

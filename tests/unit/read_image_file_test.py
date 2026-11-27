@@ -5,6 +5,8 @@ import json
 import struct
 import zlib
 from pathlib import Path
+from typing import Final
+from typing import Literal
 
 import numpy as np
 import PIL.features
@@ -127,6 +129,37 @@ def test_16bit_pgm_keeps_its_16_bits(*, tmp_path: Path) -> None:
         np.testing.assert_array_equal(np.asarray(image), _gradient_16bit())
 
 
+@pytest.mark.parametrize("byteorder", ["<", ">"])
+def test_16bit_grayscale_tiff_keeps_its_16_bits(
+    *, tmp_path: Path, byteorder: Literal["<", ">"]
+) -> None:
+    path = tmp_path / "test.tif"
+    tifffile.imwrite(path, _gradient_16bit(), byteorder=byteorder)
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.format == "PNG"
+        np.testing.assert_array_equal(np.asarray(image), _gradient_16bit())
+
+
+def test_16bit_gray_alpha_tiff_keeps_its_gray_16_bits(*, tmp_path: Path) -> None:
+    path = tmp_path / "test.tif"
+    alpha = np.full_like(_gradient_16bit(), 65535)
+    tifffile.imwrite(
+        path,
+        np.dstack([_gradient_16bit(), alpha]),
+        photometric="minisblack",
+        extrasamples=["unassalpha"],
+    )
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.format == "PNG"
+        np.testing.assert_array_equal(np.asarray(image), _gradient_16bit())
+
+
 def test_16bit_png_with_exif_rotation_keeps_its_16_bits(*, tmp_path: Path) -> None:
     path = tmp_path / "test.png"
     exif = PIL.Image.Exif()
@@ -237,6 +270,57 @@ def test_constant_value_tiff_returns_black(*, tmp_path: Path) -> None:
     with PIL.Image.open(io.BytesIO(data)) as image:
         assert image.size == (64, 64)
         assert np.array(image).max() == 0
+
+
+_RAMP_16BIT: Final = np.tile(np.arange(64, dtype=np.uint16) * 1000, (48, 1))
+
+
+@pytest.mark.parametrize(
+    ("white_zero_levels", "black_zero_levels"),
+    [
+        pytest.param(_RAMP_16BIT, 65535 - _RAMP_16BIT, id="uint16-ramp"),
+        pytest.param(
+            np.zeros((48, 64), np.uint16),
+            np.full((48, 64), 65535, np.uint16),
+            id="uint16-flat-white",
+        ),
+        pytest.param(
+            np.full((48, 64), 65535, np.uint16),
+            np.zeros((48, 64), np.uint16),
+            id="uint16-flat-black",
+        ),
+        pytest.param(
+            _RAMP_16BIT.astype(np.float32),
+            -_RAMP_16BIT.astype(np.float32),
+            id="float32-ramp",
+        ),
+        pytest.param(
+            _RAMP_16BIT.astype(np.complex64),
+            -_RAMP_16BIT.astype(np.complex64),
+            id="complex64-ramp",
+        ),
+    ],
+)
+def test_miniswhite_tiff_reads_as_the_same_minisblack_tiff(
+    *,
+    tmp_path: Path,
+    white_zero_levels: np.ndarray,
+    black_zero_levels: np.ndarray,
+) -> None:
+    tifffile.imwrite(
+        tmp_path / "white_zero.tif", white_zero_levels, photometric="miniswhite"
+    )
+    tifffile.imwrite(
+        tmp_path / "black_zero.tif", black_zero_levels, photometric="minisblack"
+    )
+
+    read = {}
+    for name in ("white_zero.tif", "black_zero.tif"):
+        data = read_image_file(filename=str(tmp_path / name))
+        with PIL.Image.open(io.BytesIO(data)) as image:
+            read[name] = np.asarray(image)
+
+    np.testing.assert_array_equal(read["white_zero.tif"], read["black_zero.tif"])
 
 
 def test_two_band_tiff_falls_back_to_first_band(*, tmp_path: Path) -> None:

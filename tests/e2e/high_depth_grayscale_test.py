@@ -56,14 +56,16 @@ def test_16bit_grayscale_png_shows_as_the_same_tiff_does(
     np.testing.assert_array_equal(shown["levels.png"], shown["levels.tif"])
 
 
+@pytest.mark.parametrize("suffix", [".png", ".tif"])
 def test_flat_16bit_grayscale_keeps_its_gray_level(
     *,
     main_win: MainWinFactory,
     qtbot: QtBot,
     tmp_path: Path,
     pause: bool,
+    suffix: str,
 ) -> None:
-    image_path = tmp_path / "flat.png"
+    image_path = tmp_path / f"flat{suffix}"
     PIL.Image.fromarray(np.full((24, 32), 32768, dtype=np.uint16)).save(image_path)
     win = main_win(file_or_dir=image_path)
     show_window_and_wait_for_imagedata(qtbot=qtbot, win=win)
