@@ -5099,3 +5099,36 @@ def test_press_inside_an_enlarged_hovered_corner_drags_it(
     assert drawn == canvas._resolve_palette(label=None).hvertex_fill
     np.testing.assert_array_equal(canvas.shapes[0].points[1:], corners[1:])
     assert not np.array_equal(canvas.shapes[0].points[0], corners[0])
+
+
+def test_drag_past_an_unhovered_dot_moves_the_box_beneath(
+    *, editing_canvas: Canvas
+) -> None:
+    editing_canvas.set_point_size(point_size=20)
+    box = Shape(
+        shape_type="rectangle", points=np.array([(5, 5), (80, 50)], dtype=np.float64)
+    )
+    point = Shape(shape_type="point", points=np.array([(40, 25)], dtype=np.float64))
+    editing_canvas.load_shapes(shapes=[box, point])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(54, 25), end=QPointF(64, 25))
+
+    np.testing.assert_array_equal(box.points, [(15, 5), (90, 50)])
+    np.testing.assert_array_equal(point.points, [(40, 25)])
+
+
+def test_dot_on_a_selected_box_rotation_handle_yields_to_the_handle(
+    *, editing_canvas: Canvas
+) -> None:
+    box = _make_oriented_rectangle(corners=[(35, 10), (65, 10), (65, 40), (35, 40)])
+    point = Shape(shape_type="point", points=np.array([(50, 10)], dtype=np.float64))
+    editing_canvas.load_shapes(shapes=[box, point])
+    editing_canvas.select_shapes(shapes=[box])
+    corners = box.points.copy()
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(50, 10), end=QPointF(65, 25))
+
+    assert not np.allclose(box.points, corners)
+    side = np.linalg.norm(box.points[1] - box.points[0])
+    assert side == pytest.approx(30.0)
+    np.testing.assert_array_equal(point.points, [(50, 10)])
