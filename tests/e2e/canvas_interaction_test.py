@@ -1156,6 +1156,111 @@ def test_square_creation_resize_save_and_reopen(
     close_or_pause(qtbot=qtbot, widget=reopened, pause=pause)
 
 
+def _drag_rectangle_corner_and_save(
+    *,
+    qtbot: QtBot,
+    win: MainWindow,
+    tmp_path: Path,
+    corner: tuple[float, float],
+    target: tuple[float, float],
+    modifier: Qt.KeyboardModifier = Qt.KeyboardModifier.NoModifier,
+) -> list[list[float]]:
+    canvas = win._canvas_widgets.canvas
+    canvas.scale = 2.0
+    (rectangle,) = (s for s in canvas.shapes if s.shape_type == "rectangle")
+    np.testing.assert_array_equal(rectangle.points, [(245, 45), (355, 135)])
+    start = image_to_widget_pos(canvas=canvas, image_pos=QPointF(*corner))
+    hover_widget_pos(qtbot=qtbot, canvas=canvas, pos=start)
+    drag_canvas(
+        qtbot=qtbot,
+        canvas=canvas,
+        button=Qt.MouseButton.LeftButton,
+        start=start,
+        end=image_to_widget_pos(canvas=canvas, image_pos=QPointF(*target)),
+        modifier=modifier,
+    )
+    label_path = tmp_path / "saved.json"
+    assert win.save_labels(label_path=str(label_path))
+    (saved,) = (
+        s
+        for s in json.loads(label_path.read_text())["shapes"]
+        if s["shape_type"] == "rectangle"
+    )
+    return saved["points"]
+
+
+@pytest.mark.parametrize(
+    ("corner", "target", "expected"),
+    [
+        pytest.param((245, 45), (260, 65), [[260, 65], [355, 135]], id="top-left"),
+        pytest.param((355, 45), (370, 65), [[245, 65], [370, 135]], id="top-right"),
+        pytest.param(
+            (355, 135), (370, 155), [[245, 45], [370, 155]], id="bottom-right"
+        ),
+        pytest.param((245, 135), (260, 155), [[260, 45], [355, 155]], id="bottom-left"),
+    ],
+)
+def test_drag_any_rectangle_corner_pins_the_opposite_corner(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+    corner: tuple[float, float],
+    target: tuple[float, float],
+    expected: list[list[float]],
+) -> None:
+    saved = _drag_rectangle_corner_and_save(
+        qtbot=qtbot,
+        win=annotated_win,
+        tmp_path=tmp_path,
+        corner=corner,
+        target=target,
+    )
+
+    assert saved == expected
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+def test_shift_drag_rectangle_corner_snaps_to_square_on_the_opposite_corner(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    saved = _drag_rectangle_corner_and_save(
+        qtbot=qtbot,
+        win=annotated_win,
+        tmp_path=tmp_path,
+        corner=(355, 45),
+        target=(405, 15),
+        modifier=Qt.KeyboardModifier.ShiftModifier,
+    )
+
+    assert saved == [[245, 15], [365, 135]]
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
+def test_drag_rectangle_corner_past_the_image_edge_stops_at_the_edge(
+    *,
+    qtbot: QtBot,
+    annotated_win: MainWindow,
+    tmp_path: Path,
+    pause: bool,
+) -> None:
+    saved = _drag_rectangle_corner_and_save(
+        qtbot=qtbot,
+        win=annotated_win,
+        tmp_path=tmp_path,
+        corner=(355, 45),
+        target=(645, 25),
+    )
+
+    assert saved == [[245, 35], [500, 135]]
+    close_or_pause(qtbot=qtbot, widget=annotated_win, pause=pause)
+
+
 def test_press_ignores_a_vertex_hover_left_stale_by_a_zoom(
     *,
     qtbot: QtBot,
