@@ -3918,6 +3918,7 @@ def test_dragging_point_dot_near_a_corner_moves_the_point(
     ("point_at", "point_drawn_last", "press_at", "dragged_corner"),
     [
         pytest.param((80, 45), False, (80, 45), 1, id="corner_drawn_over_dot"),
+        pytest.param((76, 44), False, (76, 44), 1, id="corner_outline_over_dot"),
         pytest.param((9, 8), True, (4, 4), 0, id="corner_off_dot"),
     ],
 )

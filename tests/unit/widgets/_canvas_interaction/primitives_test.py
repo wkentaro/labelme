@@ -386,12 +386,16 @@ def _keypoint(*, x: float, y: float) -> Shape:
 
 
 def _hover(
-    *, shapes: list[Shape], at: tuple[float, float], priority: Shape | None
+    *,
+    shapes: list[Shape],
+    at: tuple[float, float],
+    priority: Shape | None,
+    scale: float = _SCALE,
 ) -> HitTarget | None:
     return find_hover_target(
         shapes=shapes,
         point=_point(x=at[0], y=at[1]),
-        scale=_SCALE,
+        scale=scale,
         epsilon=_EPSILON,
         point_size=_POINT_SIZE,
         priority_shape=priority,
@@ -461,6 +465,14 @@ def test_point_dot_beats_hovered_handle_drawn_under_it(
     _assert_hit(result=result, kind=HitKind.BODY, shape=keypoint, index=None)
 
 
+@pytest.mark.parametrize(
+    ("scale", "dot_offset"),
+    [
+        pytest.param(1.0, (0, 0), id="on_handle"),
+        pytest.param(1.0, (4, 1), id="under_marker_outline"),
+        pytest.param(2.0, (2, 0.5), id="under_marker_outline_zoomed"),
+    ],
+)
 @pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
 def test_handle_drawn_over_point_dot_beats_it(
     *,
@@ -468,11 +480,40 @@ def test_handle_drawn_over_point_dot_beats_it(
     handle_at: tuple[float, float],
     kind: HitKind,
     index: int,
+    scale: float,
+    dot_offset: tuple[float, float],
 ) -> None:
     shape = make_shape()
-    keypoint = _keypoint(x=handle_at[0], y=handle_at[1])
-    result = _hover(shapes=[keypoint, shape], at=handle_at, priority=None)
+    dot_at = (handle_at[0] + dot_offset[0], handle_at[1] + dot_offset[1])
+    keypoint = _keypoint(x=dot_at[0], y=dot_at[1])
+    result = _hover(shapes=[keypoint, shape], at=dot_at, priority=None, scale=scale)
     _assert_hit(result=result, kind=kind, shape=shape, index=index)
+
+
+@pytest.mark.parametrize(
+    ("scale", "dot_offset"),
+    [
+        pytest.param(1.0, (5, 1), id="past_marker_outline"),
+        pytest.param(2.0, (2.5, 0.5), id="past_marker_outline_zoomed"),
+    ],
+)
+@pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
+def test_point_dot_beats_handle_drawn_over_it_whose_marker_misses_it(
+    *,
+    make_shape: Callable[[], Shape],
+    handle_at: tuple[float, float],
+    kind: HitKind,
+    index: int,
+    scale: float,
+    dot_offset: tuple[float, float],
+) -> None:
+    shape = make_shape()
+    dot_at = (handle_at[0] + dot_offset[0], handle_at[1] + dot_offset[1])
+    alone = _hover(shapes=[shape], at=dot_at, priority=None, scale=scale)
+    _assert_hit(result=alone, kind=kind, shape=shape, index=index)
+    keypoint = _keypoint(x=dot_at[0], y=dot_at[1])
+    result = _hover(shapes=[keypoint, shape], at=dot_at, priority=None, scale=scale)
+    _assert_hit(result=result, kind=HitKind.BODY, shape=keypoint, index=None)
 
 
 def test_vertex_of_shape_under_later_box_stays_grabbable() -> None:
