@@ -18,6 +18,7 @@ SCALE: Final[float] = 0.05
 EPSILON: Final[float] = 10.0
 POINT_SIZE: Final[int] = 8
 CENTER_SPACING: Final[float] = 20.0
+SHAPES: Final[int] = 3
 MS_PER_S: Final[int] = 1000
 CASES: Final[dict[str, tuple[float, tuple[float, float]]]] = {
     "all-in-reach": (150.0, (20.37, 3.11)),
@@ -39,18 +40,17 @@ def _circle(*, center_x: float, radius: float, vertices: int) -> Shape:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--case", choices=CASES, action="append", dest="cases")
-    parser.add_argument("--shapes", type=int, default=3)
     parser.add_argument("--vertices", type=int, default=10000)
     parser.add_argument("--number", type=int, default=50)
     parser.add_argument("--repeat", type=int, default=15)
     args = parser.parse_args()
-    if min(args.shapes, args.vertices, args.number, args.repeat) < 1:
+    if min(args.vertices, args.number, args.repeat) < 1:
         parser.error("counts must be positive")
     for case in args.cases or CASES:
         radius, cursor = CASES[case]
         shapes = [
             _circle(center_x=i * CENTER_SPACING, radius=radius, vertices=args.vertices)
-            for i in range(args.shapes)
+            for i in range(SHAPES)
         ]
         point = np.array(cursor, dtype=np.float64)
 
@@ -70,7 +70,7 @@ def main() -> None:
             json.dumps(
                 {
                     "case": case,
-                    "shapes": args.shapes,
+                    "shapes": SHAPES,
                     "vertices": args.vertices,
                     "number": args.number,
                     "repeat": args.repeat,
