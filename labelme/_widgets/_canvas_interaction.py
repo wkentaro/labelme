@@ -53,10 +53,20 @@ def find_hover_target(
 
     # Every pass below costs array work per shape, so drop the shapes the
     # pointer is nowhere near once, up front.
+    enlarged = (
+        hovered.shape
+        if hovered is not None
+        and hovered.kind in (HitKind.VERTEX, HitKind.ROTATION_HANDLE)
+        else None
+    )
     shapes = [
         shape
         for shape in shapes
-        if _is_near_extent(shape=shape, point=point, margin=hovered_reach)
+        if _is_near_extent(
+            shape=shape,
+            point=point,
+            margin=hovered_reach if shape is enlarged else reach,
+        )
     ]
     marker = _find_nearest_marker(
         shapes=shapes,
@@ -125,18 +135,14 @@ def _find_nearest_marker(
                 and hovered.index < len(centers)
             ):
                 eligible[hovered.index] = distances[hovered.index] <= hovered_reach**2
-            if not eligible.any():
-                continue
-            closest = distances[eligible].min()
-            if closest > nearest:
+            index = int(np.argmin(np.where(eligible, distances, np.inf)))
+            closest = distances[index]
+            if not eligible[index] or closest > nearest:
                 continue
             if closest < nearest:
                 nearest = closest
                 tied = []
-            tied += [
-                (order, HitTarget(kind=kind, shape=shape, index=int(index)))
-                for index in np.flatnonzero(eligible & (distances == closest))
-            ]
+            tied.append((order, HitTarget(kind=kind, shape=shape, index=index)))
     if not tied:
         return None
     has_corner = any(_is_corner(target=target) for _, target in tied)
