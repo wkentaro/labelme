@@ -6,6 +6,7 @@ import struct
 import zlib
 from pathlib import Path
 from typing import Final
+from typing import Literal
 
 import numpy as np
 import PIL.features
@@ -120,6 +121,37 @@ def _gradient_16bit() -> np.ndarray:
 def test_16bit_pgm_keeps_its_16_bits(*, tmp_path: Path) -> None:
     path = tmp_path / "test.pgm"
     PIL.Image.fromarray(_gradient_16bit()).save(str(path))
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.format == "PNG"
+        np.testing.assert_array_equal(np.asarray(image), _gradient_16bit())
+
+
+@pytest.mark.parametrize("byteorder", ["<", ">"])
+def test_16bit_grayscale_tiff_keeps_its_16_bits(
+    *, tmp_path: Path, byteorder: Literal["<", ">"]
+) -> None:
+    path = tmp_path / "test.tif"
+    tifffile.imwrite(path, _gradient_16bit(), byteorder=byteorder)
+
+    data = read_image_file(filename=str(path))
+
+    with PIL.Image.open(io.BytesIO(data)) as image:
+        assert image.format == "PNG"
+        np.testing.assert_array_equal(np.asarray(image), _gradient_16bit())
+
+
+def test_16bit_gray_alpha_tiff_keeps_its_gray_16_bits(*, tmp_path: Path) -> None:
+    path = tmp_path / "test.tif"
+    alpha = np.full_like(_gradient_16bit(), 65535)
+    tifffile.imwrite(
+        path,
+        np.dstack([_gradient_16bit(), alpha]),
+        photometric="minisblack",
+        extrasamples=["unassalpha"],
+    )
 
     data = read_image_file(filename=str(path))
 
