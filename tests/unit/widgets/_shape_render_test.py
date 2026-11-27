@@ -591,7 +591,25 @@ def test_rotation_highlight_colors_rotation_group_without_coloring_vertices() ->
 
 
 @pytest.mark.usefixtures("qapp")
-def test_corner_paints_over_a_rotation_handle_on_it() -> None:
+def test_corner_paints_over_a_rotation_handle_it_overlaps() -> None:
+    shape = Shape(
+        label=None,
+        shape_type="oriented_rectangle",
+        points=np.array([[50, 50], [56, 50], [56, 80], [50, 80]], dtype=np.float64),
+    )
+    image = _render(
+        shape=shape,
+        show_label=False,
+        scale=1.0,
+        rotation_highlight=VertexHighlight(index=1, mode="move"),
+        highlight=None,
+    )
+
+    assert image.pixelColor(51, 50) == QtGui.QColor(255, 0, 0)
+
+
+@pytest.mark.usefixtures("qapp")
+def test_hovered_corner_of_a_flattened_box_shows_no_rotation_handle() -> None:
     shape = Shape(
         label=None,
         shape_type="oriented_rectangle",
@@ -601,11 +619,11 @@ def test_corner_paints_over_a_rotation_handle_on_it() -> None:
         shape=shape,
         show_label=False,
         scale=1.0,
-        rotation_highlight=VertexHighlight(index=0, mode="move"),
-        highlight=None,
+        highlight=VertexHighlight(index=0, mode="move"),
+        rotation_highlight=None,
     )
 
-    assert image.pixelColor(50, 50) == QtGui.QColor(255, 0, 0)
+    assert image.pixelColor(50, 52) != QtGui.QColor(255, 0, 0)
 
 
 @pytest.mark.parametrize(
