@@ -2413,7 +2413,7 @@ class Canvas(QtWidgets.QWidget):
 
     def _forget_hover(self, *, shapes: list[Shape]) -> None:
         # A removed or hidden Shape must not stay a hover or edit target.
-        if self._hover.shape in shapes:
+        if self._hover.shape in shapes or self._hover.priority_shape in shapes:
             self._set_highlight(hover=_Hover())
         if self._last_hover.shape in shapes:
             self._last_hover = _Hover()

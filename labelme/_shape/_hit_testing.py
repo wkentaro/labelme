@@ -35,11 +35,7 @@ def nearest_vertex_index(
     index = _find_closest_index_within(distances=distances, epsilon=image_epsilon)
     if index is None or not shape.is_full_rectangle():
         return index
-    stored_first = RECTANGLE_STORED_CORNERS + RECTANGLE_DERIVED_CORNERS
-    corner_distances = np.linalg.norm(
-        shape.vertices()[list(stored_first)] - point, axis=1
-    )
-    return stored_first[int(np.argmin(corner_distances))]
+    return _nearest_corner(shape=shape, point=point)
 
 
 def nearest_derived_corner_index(
@@ -54,23 +50,25 @@ def nearest_derived_corner_index(
     if not shape.is_full_rectangle():
         return None
     vertices = shape.vertices()
-    if highlighted in RECTANGLE_DERIVED_CORNERS and np.all(
-        np.abs(vertices[highlighted] - point) <= highlight_half_size
-    ):
-        return highlighted
+    reach = max(
+        marker_radius,
+        _derived_corner_reach(shape=shape, point=point, image_epsilon=image_epsilon),
+    )
     distances = np.linalg.norm(
         vertices[list(RECTANGLE_DERIVED_CORNERS)] - point, axis=1
     )
-    index = _find_closest_index_within(
-        distances=distances,
-        epsilon=max(
-            marker_radius,
-            _derived_corner_reach(
-                shape=shape, point=point, image_epsilon=image_epsilon
-            ),
-        ),
+    held = highlighted in RECTANGLE_DERIVED_CORNERS and bool(
+        np.all(np.abs(vertices[highlighted] - point) <= highlight_half_size)
     )
-    return None if index is None else RECTANGLE_DERIVED_CORNERS[index]
+    if not held and not np.any(distances <= reach):
+        return None
+    return _nearest_corner(shape=shape, point=point)
+
+
+def _nearest_corner(*, shape: Shape, point: npt.NDArray[np.float64]) -> int:
+    stored_first = RECTANGLE_STORED_CORNERS + RECTANGLE_DERIVED_CORNERS
+    distances = np.linalg.norm(shape.vertices()[list(stored_first)] - point, axis=1)
+    return stored_first[int(np.argmin(distances))]
 
 
 def _derived_corner_reach(
