@@ -212,18 +212,32 @@ def test_drag_hovered_rotation_point_does_not_drift_on_repeated_drags(
         assert canvas.shapes[0].points[i][1] == pytest.approx(y)
 
 
+_OPEN_BOX: Final = [(20.0, 10.0), (54.0, 10.0), (54.0, 40.0), (20.0, 40.0)]
+_FLAT_BOX: Final = [(20.0, 25.0), (54.0, 25.0), (54.0, 25.0), (20.0, 25.0)]
+
+
 @pytest.mark.parametrize(
-    ("pointer", "grabbed"),
+    ("corners", "point_size", "pointer", "grabbed"),
     [
-        pytest.param(QtCore.QPoint(31, 8), "rotation", id="rotation_handle"),
-        pytest.param(QtCore.QPoint(27, 8), "corner", id="corner"),
+        pytest.param(_OPEN_BOX, 24, QtCore.QPoint(31, 8), "rotation", id="open_handle"),
+        pytest.param(_OPEN_BOX, 24, QtCore.QPoint(27, 8), "corner", id="open_corner"),
+        pytest.param(_FLAT_BOX, 24, QtCore.QPoint(30, 22), "rotation", id="flat_handle"),
+        pytest.param(_FLAT_BOX, 8, QtCore.QPoint(19, 23), "corner", id="flat_corner"),
     ],
 )
-def test_large_markers_paint_the_grabbed_one_on_top(
-    *, canvas: Canvas, qtbot: QtBot, pointer: QtCore.QPoint, grabbed: str
+def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    corners: list[tuple[float, float]],
+    point_size: int,
+    pointer: QtCore.QPoint,
+    grabbed: str,
 ) -> None:
-    canvas.set_point_size(point_size=24)
-    corners = [(20.0, 10.0), (54.0, 10.0), (54.0, 40.0), (20.0, 40.0)]
+    pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
+    pixmap.fill(QtGui.QColor("black"))
+    canvas.pixmap = pixmap
+    canvas.set_point_size(point_size=point_size)
     canvas.load_shapes(shapes=[_make_oriented_rectangle(corners=corners)])
 
     canvas._refresh_hover_state(pos=QPointF(pointer))
