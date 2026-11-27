@@ -3936,6 +3936,13 @@ def test_click_on_rotation_handle_selects_its_shape(
             id="small_box_on_its_marker",
         ),
         pytest.param(
+            [(20.5, 20.7), (33.3, 33.5)],
+            (30, 24),
+            (45, 15),
+            [[20.5, 15], [45, 33.5]],
+            id="small_box_on_its_marker_rim",
+        ),
+        pytest.param(
             [(20, 20), (40, 40)],
             (48, 20),
             (51, 10),
