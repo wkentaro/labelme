@@ -4038,6 +4038,15 @@ def test_dragging_near_a_rectangle_derived_corner_resizes_it(
         ),
         pytest.param(
             24,
+            [(20, 20), (80, 22)],
+            [(80, 20)],
+            (80, 37),
+            (91, 42),
+            [[20, 20], [91, 42]],
+            id="saved_corner_after_highlight_handoff",
+        ),
+        pytest.param(
+            24,
             [(25, 30), (75, 30)],
             [(95, 3)],
             (75, 18),
@@ -4122,6 +4131,113 @@ def test_deleting_a_rectangle_ranked_by_a_derived_corner_hover_forgets_it(
 
     np.testing.assert_array_equal(dot.points, [(25, 4)])
     np.testing.assert_array_equal(front.points, [(30, 5), (70, 40)])
+
+
+@pytest.mark.parametrize(
+    ("rear_points", "front_points", "approach", "press", "end"),
+    [
+        ([(30, 18), (82, 75)], [(20, 20), (80, 80)], (80, 15), (80, 20), (90, 12)),
+        ([(25, 22), (60, 65)], [(20, 20), (50, 60)], (52, 20), (52, 24), (56, 15)),
+    ],
+)
+def test_drag_on_front_highlight_leaves_rear_rectangle_in_place(
+    *,
+    editing_canvas: Canvas,
+    rear_points: list[tuple[int, int]],
+    front_points: list[tuple[int, int]],
+    approach: tuple[int, int],
+    press: tuple[int, int],
+    end: tuple[int, int],
+) -> None:
+    rear = Shape(shape_type="rectangle", points=np.array(rear_points, dtype=float))
+    front = Shape(shape_type="rectangle", points=np.array(front_points, dtype=float))
+    editing_canvas.load_shapes(shapes=[rear, front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(*approach)],
+        start=QPointF(*press),
+        end=QPointF(*end),
+    )
+
+    np.testing.assert_array_equal(rear.points, rear_points)
+    np.testing.assert_array_equal(
+        front.points, [(front_points[0][0], end[1]), (end[0], front_points[1][1])]
+    )
+
+
+@pytest.mark.parametrize("remove", ["delete", "hide"])
+@pytest.mark.parametrize(
+    (
+        "body_points",
+        "other_points",
+        "hovered_points",
+        "hover",
+        "press",
+        "end",
+        "corner",
+    ),
+    [
+        (
+            [(30, 5), (70, 40)],
+            [(5, 1), (30, 5)],
+            [(10, 15), (45, 48)],
+            (45, 16),
+            (30, 5),
+            (36, 12),
+            0,
+        ),
+        (
+            [(25, 5), (61, 29)],
+            [(62, 21), (90, 40)],
+            [(20, 20), (50, 60)],
+            (52, 24),
+            (53, 24),
+            (57, 35),
+            1,
+        ),
+    ],
+    ids=["shared_corner", "overlapping_reach"],
+)
+def test_removing_highlight_leaves_next_shared_handle_with_its_body(
+    *,
+    editing_canvas: Canvas,
+    remove: str,
+    body_points: list[tuple[int, int]],
+    other_points: list[tuple[int, int]],
+    hovered_points: list[tuple[int, int]],
+    hover: tuple[int, int],
+    press: tuple[int, int],
+    end: tuple[int, int],
+    corner: int,
+) -> None:
+    body = Shape(shape_type="rectangle", points=np.array(body_points, dtype=float))
+    other = Shape(shape_type="rectangle", points=np.array(other_points, dtype=float))
+    hovered = Shape(
+        shape_type="rectangle", points=np.array(hovered_points, dtype=float)
+    )
+    editing_canvas.load_shapes(shapes=[body, other, hovered])
+    editing_canvas.select_shapes(shapes=[hovered])
+    editing_canvas.mouseMoveEvent(
+        _mouse_event(
+            canvas=editing_canvas,
+            kind=QtCore.QEvent.Type.MouseMove,
+            image_pos=QPointF(*hover),
+            buttons=Qt.MouseButton.NoButton,
+        )
+    )
+    assert editing_canvas._hover.shape is hovered
+    if remove == "delete":
+        assert editing_canvas.delete_selected() == [hovered]
+    else:
+        editing_canvas.set_shape_visible(shape=hovered, value=False)
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(*press), end=QPointF(*end))
+
+    expected = body_points.copy()
+    expected[corner] = end
+    np.testing.assert_array_equal(body.points, expected)
+    np.testing.assert_array_equal(other.points, other_points)
 
 
 def test_dragging_a_small_rectangle_body_when_zoomed_in_moves_it(
