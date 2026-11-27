@@ -631,16 +631,24 @@ def _build_shape_points_paths(
         shape.shape_type == "oriented_rectangle" and len(points) == 1
     ):
         return paths
+    is_oriented_rectangle = shape.shape_type == "oriented_rectangle"
+    grouped_corners: set[tuple[float, ...]] = set()
     for i in range(len(points)):
         hovered = context.highlight is not None and context.highlight.index == i
-        if context.show_vertices or hovered:
-            on_top = hovered and shape.shape_type == "oriented_rectangle"
-            _append_shape_vertex(
-                vertices=paths.hover_vertex if on_top else paths.vertices,
-                shape=shape,
-                context=context,
-                vertex_index=i,
-            )
+        if not (context.show_vertices or hovered):
+            continue
+        on_top = hovered and is_oriented_rectangle
+        if is_oriented_rectangle and not on_top:
+            corner = tuple(points[i])
+            if corner in grouped_corners:
+                continue
+            grouped_corners.add(corner)
+        _append_shape_vertex(
+            vertices=paths.hover_vertex if on_top else paths.vertices,
+            shape=shape,
+            context=context,
+            vertex_index=i,
+        )
     if (
         shape.shape_type == "oriented_rectangle"
         and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
