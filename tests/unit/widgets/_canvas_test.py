@@ -4805,3 +4805,20 @@ def test_mask_render_cache_survives_undo_reload_and_clears_on_reset(
     assert contours.call_count == 2
     canvas.reset_state()
     assert not canvas._render_cache._entries
+
+
+def test_unhovered_rotation_handle_paints_over_the_corner_beside_it(
+    *, canvas: Canvas
+) -> None:
+    pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
+    pixmap.fill(QtGui.QColor("black"))
+    canvas.pixmap = pixmap
+    canvas.set_point_size(point_size=24)
+    shape = _make_oriented_rectangle(corners=[(20, 10), (80, 10), (80, 35), (20, 35)])
+    canvas.load_shapes(shapes=[shape])
+    canvas.selected_shapes = [shape]
+
+    canvas._refresh_hover_state(pos=QPointF(2, 45))
+    drawn = canvas.grab().toImage().pixelColor(80, 22)
+
+    assert drawn == canvas._resolve_palette(label=None).vertex_fill
