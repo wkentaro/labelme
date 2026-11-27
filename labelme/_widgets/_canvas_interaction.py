@@ -61,15 +61,15 @@ def find_hover_target(
     # A locked shape offers no vertex, rotation handle, or edge to grab.
     editable = [shape for shape in candidates if not shape.locked]
 
-    top = find_shape_at(
-        shapes=shapes,
+    dot = find_shape_at(
+        shapes=[shape for shape in shapes if shape.shape_type == "point"],
         point=point,
         scale=scale,
         point_size=point_size,
         epsilon=epsilon,
     )
-    if top is not None and top.shape_type == "point":
-        drawn_over_dot = shapes[shapes.index(top) + 1 :]
+    if dot is not None:
+        drawn_over_dot = shapes[shapes.index(dot) + 1 :]
         handle_over_dot = _find_handle(
             shapes=[shape for shape in editable if shape in drawn_over_dot],
             point=point,
@@ -77,7 +77,7 @@ def find_hover_target(
         )
         if handle_over_dot is not None:
             return handle_over_dot
-        return HitTarget(kind=HitKind.BODY, shape=top, index=None)
+        return HitTarget(kind=HitKind.BODY, shape=dot, index=None)
 
     handle = _find_handle(shapes=editable, point=point, image_epsilon=image_epsilon)
     if handle is not None:
@@ -90,6 +90,13 @@ def find_hover_target(
         if idx is not None:
             return HitTarget(kind=HitKind.EDGE, shape=shape, index=idx)
 
+    top = find_shape_at(
+        shapes=shapes,
+        point=point,
+        scale=scale,
+        point_size=point_size,
+        epsilon=epsilon,
+    )
     if top is not None:
         return HitTarget(kind=HitKind.BODY, shape=top, index=None)
 
