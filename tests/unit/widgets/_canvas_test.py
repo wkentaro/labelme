@@ -5,6 +5,7 @@ import itertools
 import math
 import weakref
 from collections.abc import Callable
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Final
 from unittest.mock import Mock
@@ -3844,6 +3845,281 @@ def test_dragging_point_inside_box_commits_move(*, editing_canvas: Canvas) -> No
     np.testing.assert_array_equal(point.points, [[90, 40]])
     moved.assert_called_once()
     np.testing.assert_array_equal(canvas.shape_backups[-1][1].points, [[90, 40]])
+
+
+def _hover_and_drag(
+    *,
+    canvas: Canvas,
+    start: QPointF,
+    end: QPointF,
+    approach: Sequence[QPointF] = (),
+) -> None:
+    move = QtCore.QEvent.Type.MouseMove
+    no_button = Qt.MouseButton.NoButton
+    left = Qt.MouseButton.LeftButton
+    for image_pos in [*approach, start]:
+        canvas.mouseMoveEvent(
+            _mouse_event(
+                canvas=canvas, kind=move, image_pos=image_pos, buttons=no_button
+            )
+        )
+    canvas.mousePressEvent(
+        _mouse_event(
+            canvas=canvas,
+            kind=QtCore.QEvent.Type.MouseButtonPress,
+            image_pos=start,
+            buttons=left,
+        )
+    )
+    canvas.mouseMoveEvent(
+        _mouse_event(canvas=canvas, kind=move, image_pos=end, buttons=left)
+    )
+    canvas.mouseReleaseEvent(
+        _mouse_event(
+            canvas=canvas,
+            kind=QtCore.QEvent.Type.MouseButtonRelease,
+            image_pos=end,
+            buttons=no_button,
+        )
+    )
+
+
+def _rectangle_and_point(
+    *, canvas: Canvas, point_at: tuple[float, float], point_drawn_last: bool
+) -> tuple[Shape, Shape]:
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([(5, 5), (80, 45)], dtype=np.float64),
+    )
+    point = Shape(shape_type="point", points=np.array([point_at], dtype=np.float64))
+    canvas.load_shapes(
+        shapes=[rectangle, point] if point_drawn_last else [point, rectangle]
+    )
+    return rectangle, point
+
+
+@pytest.mark.parametrize(
+    ("point_at", "point_drawn_last"),
+    [
+        pytest.param((80, 45), True, id="dot_on_corner"),
+        pytest.param((10, 8), True, id="dot_beside_corner"),
+        pytest.param((10, 8), False, id="dot_beside_corner_drawn_over_it"),
+        pytest.param((76, 44), False, id="dot_under_corner_outline"),
+    ],
+)
+def test_dragging_point_dot_near_a_corner_moves_the_point(
+    *,
+    editing_canvas: Canvas,
+    point_at: tuple[float, float],
+    point_drawn_last: bool,
+) -> None:
+    rectangle, point = _rectangle_and_point(
+        canvas=editing_canvas, point_at=point_at, point_drawn_last=point_drawn_last
+    )
+
+    _hover_and_drag(
+        canvas=editing_canvas, start=QPointF(*point_at), end=QPointF(50, 25)
+    )
+
+    np.testing.assert_array_equal(point.points, [[50, 25]])
+    np.testing.assert_array_equal(rectangle.points, [[5, 5], [80, 45]])
+
+
+def test_dragging_a_corner_drawn_over_a_point_dot_moves_the_corner(
+    *, editing_canvas: Canvas
+) -> None:
+    rectangle, point = _rectangle_and_point(
+        canvas=editing_canvas, point_at=(80, 45), point_drawn_last=False
+    )
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(80, 45), end=QPointF(50, 25))
+
+    np.testing.assert_array_equal(rectangle.points, [[5, 5], [50, 25]])
+    np.testing.assert_array_equal(point.points, [[80, 45]])
+
+
+def _rectangle_and_oriented_square(*, canvas: Canvas) -> tuple[Shape, Shape]:
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([(50, 13), (10, 45)], dtype=np.float64),
+    )
+    square = _make_oriented_rectangle(corners=[(35, 5), (65, 5), (65, 35), (35, 35)])
+    canvas.load_shapes(shapes=[rectangle, square])
+    return rectangle, square
+
+
+@pytest.mark.parametrize(
+    "approach",
+    [
+        pytest.param([], id="straight_onto_the_handle"),
+        pytest.param(
+            [QPointF(50, y) for y in range(13, 5, -1)], id="up_from_the_corner"
+        ),
+    ],
+)
+def test_dragging_rotation_handle_near_another_corner_rotates_its_shape(
+    *, editing_canvas: Canvas, approach: list[QPointF]
+) -> None:
+    rectangle, square = _rectangle_and_oriented_square(canvas=editing_canvas)
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(50, 5),
+        end=QPointF(65, 20),
+        approach=approach,
+    )
+
+    np.testing.assert_array_equal(rectangle.points, [(50, 13), (10, 45)])
+    np.testing.assert_allclose(
+        square.points, [(65, 5), (65, 35), (35, 35), (35, 5)], atol=1e-9
+    )
+
+
+def test_dragging_point_dot_under_a_hovered_corner_moves_the_point(
+    *, editing_canvas: Canvas
+) -> None:
+    point = Shape(shape_type="point", points=np.array([(10, 10)], dtype=np.float64))
+    rectangle = Shape(
+        shape_type="rectangle",
+        points=np.array([(5, 5), (40, 40)], dtype=np.float64),
+    )
+    editing_canvas.load_shapes(shapes=[point, rectangle])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(10, 10),
+        end=QPointF(50, 25),
+        approach=[QPointF(5, 5)],
+    )
+
+    np.testing.assert_array_equal(point.points, [(50, 25)])
+    np.testing.assert_array_equal(rectangle.points, [(5, 5), (40, 40)])
+
+
+def test_dragging_a_point_by_its_outline_beside_a_corner_moves_the_point(
+    *, editing_canvas: Canvas
+) -> None:
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (60, 60)], dtype=np.float64)
+    )
+    point = Shape(shape_type="point", points=np.array([(30, 20)], dtype=np.float64))
+    editing_canvas.load_shapes(shapes=[rectangle, point])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(25.5, 20), end=QPointF(30, 30))
+
+    np.testing.assert_array_equal(point.points, [(34.5, 30)])
+    np.testing.assert_array_equal(rectangle.points, [(20, 20), (60, 60)])
+
+
+def test_dragging_a_point_dot_past_a_hovered_corners_bevel_moves_the_point(
+    *, editing_canvas: Canvas
+) -> None:
+    point = Shape(shape_type="point", points=np.array([(26.9, 26.9)], dtype=np.float64))
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (60, 60)], dtype=np.float64)
+    )
+    editing_canvas.load_shapes(shapes=[point, rectangle])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(26.9, 26.9),
+        end=QPointF(36.9, 46.9),
+        approach=[QPointF(20, 20)],
+    )
+
+    np.testing.assert_allclose(point.points, [(36.9, 46.9)])
+    np.testing.assert_array_equal(rectangle.points, [(20, 20), (60, 60)])
+
+
+def _side_by_side_polygons(*, canvas: Canvas) -> tuple[Shape, Shape]:
+    left = Shape(
+        shape_type="polygon",
+        points=np.array([(10, 10), (50, 10), (50, 40), (10, 40)], dtype=np.float64),
+    )
+    right = Shape(
+        shape_type="polygon",
+        points=np.array([(50, 10), (90, 10), (90, 40), (50, 40)], dtype=np.float64),
+    )
+    canvas.load_shapes(shapes=[left, right])
+    return left, right
+
+
+def test_dragging_beside_a_shared_corner_edits_the_selected_polygon(
+    *, editing_canvas: Canvas
+) -> None:
+    left, right = _side_by_side_polygons(canvas=editing_canvas)
+    editing_canvas.select_shapes(shapes=[left])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(50, 4), end=QPointF(55, 2))
+
+    np.testing.assert_array_equal(left.points, [(10, 10), (55, 2), (50, 40), (10, 40)])
+    np.testing.assert_array_equal(
+        right.points, [(50, 10), (90, 10), (90, 40), (50, 40)]
+    )
+
+
+def test_dragging_a_corner_shared_with_the_hovered_polygon_edits_the_selected_one(
+    *, editing_canvas: Canvas
+) -> None:
+    left, right = _side_by_side_polygons(canvas=editing_canvas)
+    editing_canvas.select_shapes(shapes=[left])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(50, 4),
+        end=QPointF(55, 2),
+        approach=[QPointF(70, 25)],
+    )
+
+    np.testing.assert_array_equal(left.points, [(10, 10), (55, 2), (50, 40), (10, 40)])
+    np.testing.assert_array_equal(
+        right.points, [(50, 10), (90, 10), (90, 40), (50, 40)]
+    )
+
+
+@pytest.mark.parametrize(
+    ("selected", "expected_rectangle", "expected_point"),
+    [
+        pytest.param("rectangle", [(5, 5), (50, 25)], [(80, 45)], id="rectangle"),
+        pytest.param("point", [(5, 5), (80, 45)], [(50, 25)], id="point"),
+    ],
+)
+@pytest.mark.parametrize(
+    "point_drawn_last", [False, True], ids=["point_first", "point_last"]
+)
+def test_dragging_a_point_on_a_corner_edits_the_selected_shape(
+    *,
+    editing_canvas: Canvas,
+    selected: str,
+    expected_rectangle: list[tuple[float, float]],
+    expected_point: list[tuple[float, float]],
+    point_drawn_last: bool,
+) -> None:
+    rectangle, point = _rectangle_and_point(
+        canvas=editing_canvas, point_at=(80, 45), point_drawn_last=point_drawn_last
+    )
+    editing_canvas.select_shapes(
+        shapes=[{"rectangle": rectangle, "point": point}[selected]]
+    )
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(80, 45), end=QPointF(50, 25))
+
+    np.testing.assert_array_equal(rectangle.points, expected_rectangle)
+    np.testing.assert_array_equal(point.points, expected_point)
+
+
+def test_dragging_coincident_points_moves_the_selected_one(
+    *, editing_canvas: Canvas
+) -> None:
+    earlier = Shape(shape_type="point", points=np.array([(40, 30)], dtype=np.float64))
+    later = Shape(shape_type="point", points=np.array([(40, 30)], dtype=np.float64))
+    editing_canvas.load_shapes(shapes=[earlier, later])
+    editing_canvas.select_shapes(shapes=[earlier])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(40, 30), end=QPointF(50, 25))
+
+    np.testing.assert_array_equal(earlier.points, [(50, 25)])
+    np.testing.assert_array_equal(later.points, [(40, 30)])
 
 
 @pytest.mark.parametrize(
