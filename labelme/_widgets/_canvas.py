@@ -338,6 +338,7 @@ class Canvas(QtWidgets.QWidget):
     selected_shapes: list[Shape]
     _current: _DraftShape | None
     _hover: _Hover
+    _pick_priority: Shape | None
     # The hover, or the one just before the pointer left a Shape, so Add and
     # Delete Point from the menu act on it.
     _last_hover: _Hover
@@ -1113,6 +1114,7 @@ class Canvas(QtWidgets.QWidget):
 
     @override
     def leaveEvent(self, _a0: QtCore.QEvent, /) -> None:
+        self._pick_priority = None
         self._set_highlight(hover=_Hover())
         self._release_cursor()
         self._update_status(extra_messages=None)
@@ -1137,6 +1139,7 @@ class Canvas(QtWidgets.QWidget):
             self._clear_ai_find_all_draft()
         self.mode = new_mode
         if self.mode == _CanvasMode.CREATE:
+            self._pick_priority = None
             self._set_highlight(hover=_Hover())
             self.deselect_shape()
         self._update_status(extra_messages=None)
@@ -1620,9 +1623,15 @@ class Canvas(QtWidgets.QWidget):
             scale=self.scale,
             epsilon=self._epsilon,
             point_size=self._point_size,
-            priority_shape=self._hover.shape,
+            priority_shape=self._pick_priority,
+            highlighted_vertex=(
+                None
+                if self._hover.shape is None or self._hover.vertex is None
+                else (self._hover.shape, self._hover.vertex)
+            ),
         )
 
+        self._pick_priority = None if target is None else target.priority_shape
         if target is None:
             self._release_cursor()
             self._set_highlight(hover=_Hover())
@@ -1630,7 +1639,12 @@ class Canvas(QtWidgets.QWidget):
 
         if target.kind is HitKind.VERTEX:
             assert target.index is not None
-            self._set_highlight(hover=_Hover(shape=target.shape, vertex=target.index))
+            self._set_highlight(
+                hover=_Hover(
+                    shape=target.shape,
+                    vertex=target.index,
+                )
+            )
             self._highlight_vertex(index=target.index, mode="move")
             self._apply_cursor(role=CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to move point"))
@@ -1646,7 +1660,12 @@ class Canvas(QtWidgets.QWidget):
 
         if target.kind is HitKind.ROTATION_HANDLE:
             assert target.index is not None
-            self._set_highlight(hover=_Hover(shape=target.shape, rotation=target.index))
+            self._set_highlight(
+                hover=_Hover(
+                    shape=target.shape,
+                    rotation=target.index,
+                )
+            )
             self._highlight_rotation_point(index=target.index, mode="move")
             self._apply_cursor(role=CursorRole.HANDLE)
             status_messages.append(self.tr("Click & drag to rotate the shape"))
@@ -1654,7 +1673,12 @@ class Canvas(QtWidgets.QWidget):
 
         if target.kind is HitKind.EDGE:
             assert target.index is not None
-            self._set_highlight(hover=_Hover(shape=target.shape, edge=target.index))
+            self._set_highlight(
+                hover=_Hover(
+                    shape=target.shape,
+                    edge=target.index,
+                )
+            )
             self._apply_cursor(role=CursorRole.HANDLE)
             status_messages.append(
                 self.tr("Hold %s and click to add a point on the edge")
@@ -1683,6 +1707,7 @@ class Canvas(QtWidgets.QWidget):
         shape.insert_point(i=index, point=(point.x(), point.y()))
         self._highlight_vertex(index=index, mode="move")
         self._hover = _Hover(shape=shape, vertex=index)
+        self._pick_priority = shape
         self._is_moving_shape = True
         # Repaint now; otherwise the edit is invisible until the next mouse move.
         self.update()
@@ -1702,8 +1727,8 @@ class Canvas(QtWidgets.QWidget):
         # Drop the hovered vertex and selection so the press that deleted the
         # point cannot also drag the adjacent vertex (#968) or the whole shape.
         self.deselect_shape()
-        self._hover = _Hover(shape=shape)
-        self._last_hover = _Hover(shape=shape)
+        self._hover = self._last_hover = _Hover(shape=shape)
+        self._pick_priority = shape
         # Snapshot now: a shortcut has no mouse release to commit on.
         self.backup_shapes()
         self.shape_moved.emit()
@@ -2298,11 +2323,12 @@ class Canvas(QtWidgets.QWidget):
         pos: QPointF,
         is_shift_pressed: bool,
     ) -> None:
-        if vertex_index >= len(shape.points):
+        vertices = shape.vertices()
+        if vertex_index >= len(vertices):
             logger.warning(
-                "vertex_index is out of range: vertex_index={:d}, len(points)={:d}",
+                "vertex_index is out of range: vertex_index={:d}, len(vertices)={:d}",
                 vertex_index,
-                len(shape.points),
+                len(vertices),
             )
             return
 
@@ -2314,14 +2340,14 @@ class Canvas(QtWidgets.QWidget):
 
         if self._should_constrain_to_pixmap(point=pos):
             pos = _compute_intersection_edges_image(
-                p1=QPointF(*shape.points[vertex_index]),
+                p1=QPointF(*vertices[vertex_index]),
                 p2=pos,
                 image_size=self.pixmap.size(),
             )
 
         if is_shift_pressed and shape.shape_type == "rectangle":
             pos = _snap_cursor_pos_for_square(
-                pos=pos, opposite_vertex=QPointF(*shape.points[1 - vertex_index])
+                pos=pos, opposite_vertex=QPointF(*vertices[(vertex_index + 2) % 4])
             )
 
         shape.move_vertex(i=vertex_index, pos=(pos.x(), pos.y()))
@@ -2386,6 +2412,8 @@ class Canvas(QtWidgets.QWidget):
 
     def _forget_hover(self, *, shapes: list[Shape]) -> None:
         # A removed or hidden Shape must not stay a hover or edit target.
+        if self._pick_priority in shapes:
+            self._pick_priority = None
         if self._hover.shape in shapes:
             self._set_highlight(hover=_Hover())
         if self._last_hover.shape in shapes:
@@ -3335,6 +3363,7 @@ class Canvas(QtWidgets.QWidget):
         if was_drawing:
             self.busy_changed.emit()
         self._hover = _Hover()
+        self._pick_priority = None
         # The loaded shapes are new objects; a remembered hover would point at
         # a detached one.
         self._last_hover = _Hover()
@@ -3413,6 +3442,7 @@ class Canvas(QtWidgets.QWidget):
         self._rotation_highlight = None
         self._set_ai_existing_shape_highlights(shapes=[])
         self._hover = _Hover()
+        self._pick_priority = None
         self._last_hover = _Hover()
         # The draft and any pending AI job are gone with the old image.
         self.busy_changed.emit()

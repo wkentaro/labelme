@@ -157,8 +157,7 @@ def convert_shape(
     if target == "rectangle":
         converted.points = _bounding_box(shape=shape, image_size=image_size)
     elif shape.shape_type == "rectangle":
-        (x0, y0), (x1, y1) = shape.points
-        converted.points = np.array([[x0, y0], [x1, y0], [x1, y1], [x0, y1]])
+        converted.points = shape.vertices()
     elif shape.shape_type == "circle":
         # Deferred: _automation imports _shape, and owns the detail curve.
         from .._automation import compute_polygon_from_circle  # noqa: PLC0415

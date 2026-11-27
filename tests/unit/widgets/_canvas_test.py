@@ -5,6 +5,7 @@ import itertools
 import math
 import weakref
 from collections.abc import Callable
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Final
 from unittest.mock import Mock
@@ -287,7 +288,7 @@ def test_bounded_move_vertex_clamps_to_image_by_default(*, canvas: Canvas) -> No
     )
 
     canvas._bounded_move_vertex(
-        shape=shape, vertex_index=1, pos=QPointF(150, 80), is_shift_pressed=False
+        shape=shape, vertex_index=2, pos=QPointF(150, 80), is_shift_pressed=False
     )
 
     x, y = shape.points[1]
@@ -305,7 +306,7 @@ def test_bounded_move_vertex_keeps_out_of_bounds_when_enabled(
     )
 
     canvas._bounded_move_vertex(
-        shape=shape, vertex_index=1, pos=QPointF(150, 80), is_shift_pressed=False
+        shape=shape, vertex_index=2, pos=QPointF(150, 80), is_shift_pressed=False
     )
 
     assert (shape.points[1][0], shape.points[1][1]) == pytest.approx((150, 80))
@@ -3794,6 +3795,43 @@ def _mouse_event(
     )
 
 
+def _hover_and_drag(
+    *,
+    canvas: Canvas,
+    start: QPointF,
+    end: QPointF,
+    approach: Sequence[QPointF] = (),
+) -> None:
+    move = QtCore.QEvent.Type.MouseMove
+    no_button = Qt.MouseButton.NoButton
+    left = Qt.MouseButton.LeftButton
+    for image_pos in [*approach, start]:
+        canvas.mouseMoveEvent(
+            _mouse_event(
+                canvas=canvas, kind=move, image_pos=image_pos, buttons=no_button
+            )
+        )
+    canvas.mousePressEvent(
+        _mouse_event(
+            canvas=canvas,
+            kind=QtCore.QEvent.Type.MouseButtonPress,
+            image_pos=start,
+            buttons=left,
+        )
+    )
+    canvas.mouseMoveEvent(
+        _mouse_event(canvas=canvas, kind=move, image_pos=end, buttons=left)
+    )
+    canvas.mouseReleaseEvent(
+        _mouse_event(
+            canvas=canvas,
+            kind=QtCore.QEvent.Type.MouseButtonRelease,
+            image_pos=end,
+            buttons=no_button,
+        )
+    )
+
+
 def test_dragging_point_inside_box_commits_move(*, editing_canvas: Canvas) -> None:
     canvas = editing_canvas
     box = Shape(
@@ -3885,6 +3923,575 @@ def test_click_on_rotation_handle_selects_its_shape(
         canvas.mousePressEvent(event)
 
     assert canvas.selected_shapes == [rectangle]
+
+
+@pytest.mark.parametrize(
+    ("corners", "start", "end", "expected"),
+    [
+        pytest.param(
+            [(20, 20), (32, 32)],
+            (31, 21),
+            (46, 36),
+            [[20, 36], [46, 32]],
+            id="small_box_on_its_marker",
+        ),
+        pytest.param(
+            [(20.5, 20.7), (33.3, 33.5)],
+            (30, 24),
+            (45, 15),
+            [[20.5, 15], [45, 33.5]],
+            id="small_box_on_its_marker_rim",
+        ),
+        pytest.param(
+            [(20, 20), (90, 28)],
+            (90, 20),
+            (95, 12),
+            [[20, 12], [95, 28]],
+            id="thin_box_on_its_marker_center",
+        ),
+        pytest.param(
+            [(20, 20), (40, 40)],
+            (48, 20),
+            (51, 10),
+            [[20, 10], [51, 40]],
+            id="small_box_just_outside",
+        ),
+        pytest.param(
+            [(20, 5), (90, 45)],
+            (84, 11),
+            (95, 15),
+            [[20, 15], [95, 45]],
+            id="large_box_top_right_inside_at_epsilon",
+        ),
+        pytest.param(
+            [(20, 5), (90, 45)],
+            (26, 39),
+            (15, 40),
+            [[15, 5], [90, 40]],
+            id="large_box_bottom_left_inside_at_epsilon",
+        ),
+        pytest.param(
+            [(10, 20), (90, 23)],
+            (90, 11),
+            (95, 15),
+            [[10, 15], [95, 23]],
+            id="thin_box_outside_at_epsilon",
+        ),
+    ],
+)
+def test_dragging_near_a_rectangle_derived_corner_resizes_it(
+    *,
+    editing_canvas: Canvas,
+    corners: list[tuple[float, float]],
+    start: tuple[float, float],
+    end: tuple[float, float],
+    expected: list[list[float]],
+) -> None:
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array(corners, dtype=np.float64)
+    )
+    editing_canvas.load_shapes(shapes=[rectangle])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(*start), end=QPointF(*end))
+
+    np.testing.assert_array_equal(rectangle.points, expected)
+
+
+@pytest.mark.parametrize(
+    ("point_size", "corners", "approach", "start", "end", "expected"),
+    [
+        pytest.param(
+            24,
+            [(20, 20.5), (80, 45)],
+            [(95, 3)],
+            (80, 8),
+            (86, 14),
+            [[20, 14], [86, 45]],
+            id="large_marker_rim",
+        ),
+        pytest.param(
+            8,
+            [(20, 20), (38, 38)],
+            [(100, 5), (38, 20)],
+            (33, 25),
+            (43, 15),
+            [[20, 15], [43, 38]],
+            id="highlighted_marker",
+        ),
+        pytest.param(
+            24,
+            [(20, 20), (35, 35)],
+            [(95, 3), (20, 35)],
+            (35, 20),
+            (49, 12),
+            [[20, 12], [49, 35]],
+            id="center_beside_a_highlighted_corner",
+        ),
+        pytest.param(
+            8,
+            [(20, 20), (90, 30)],
+            [(95, 3), (90, 20)],
+            (94, 26),
+            (95, 35),
+            [[20, 20], [95, 35]],
+            id="nearer_saved_corner_inside_a_highlight",
+        ),
+        pytest.param(
+            24,
+            [(20, 20), (80, 22)],
+            [(80, 20)],
+            (80, 37),
+            (91, 42),
+            [[20, 20], [91, 42]],
+            id="saved_corner_after_highlight_handoff",
+        ),
+        pytest.param(
+            24,
+            [(25, 30), (75, 30)],
+            [(95, 3)],
+            (75, 18),
+            (82, 45),
+            [[25, 30], [82, 45]],
+            id="flat_box_from_a_large_marker_rim",
+        ),
+    ],
+)
+def test_dragging_inside_a_derived_corner_painted_marker_resizes_it(
+    *,
+    editing_canvas: Canvas,
+    point_size: int,
+    corners: list[tuple[float, float]],
+    approach: list[tuple[float, float]],
+    start: tuple[float, float],
+    end: tuple[float, float],
+    expected: list[list[float]],
+) -> None:
+    editing_canvas.set_point_size(point_size=point_size)
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array(corners, dtype=np.float64)
+    )
+    editing_canvas.load_shapes(shapes=[rectangle])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(*start),
+        end=QPointF(*end),
+        approach=[QPointF(*position) for position in approach],
+    )
+
+    np.testing.assert_array_equal(rectangle.points, expected)
+
+
+def test_hovering_a_derived_corner_keeps_another_rectangle_saved_corner_drag(
+    *, editing_canvas: Canvas
+) -> None:
+    back = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (60, 39)], dtype=np.float64)
+    )
+    front = Shape(
+        shape_type="rectangle",
+        points=np.array([(64, 31), (105, 72)], dtype=np.float64),
+    )
+    editing_canvas.load_shapes(shapes=[back, front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(64, 31),
+        end=QPointF(76, 26),
+        approach=[QPointF(64, 20)],
+    )
+
+    np.testing.assert_array_equal(back.points, [(20, 20), (60, 39)])
+    np.testing.assert_array_equal(front.points, [(76, 26), (105, 72)])
+
+
+def test_deleting_a_rectangle_ranked_by_a_derived_corner_hover_forgets_it(
+    *, editing_canvas: Canvas
+) -> None:
+    back = Shape(
+        shape_type="rectangle", points=np.array([(10, 15), (45, 48)], dtype=np.float64)
+    )
+    front = Shape(
+        shape_type="rectangle", points=np.array([(30, 5), (70, 40)], dtype=np.float64)
+    )
+    dot = Shape(shape_type="point", points=np.array([(33, 8)], dtype=np.float64))
+    editing_canvas.load_shapes(shapes=[back, front, dot])
+    editing_canvas.select_shapes(shapes=[front])
+    editing_canvas.mouseMoveEvent(
+        _mouse_event(
+            canvas=editing_canvas,
+            kind=QtCore.QEvent.Type.MouseMove,
+            image_pos=QPointF(45, 16),
+            buttons=Qt.MouseButton.NoButton,
+        )
+    )
+    assert editing_canvas.delete_selected() == [front]
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(33, 8), end=QPointF(25, 4))
+
+    np.testing.assert_array_equal(dot.points, [(25, 4)])
+    np.testing.assert_array_equal(front.points, [(30, 5), (70, 40)])
+
+
+@pytest.mark.parametrize(
+    ("rear_points", "front_points", "approach", "press", "end"),
+    [
+        ([(30, 18), (82, 75)], [(20, 20), (80, 80)], (80, 15), (80, 20), (90, 12)),
+        ([(25, 22), (60, 65)], [(20, 20), (50, 60)], (52, 20), (52, 24), (56, 15)),
+    ],
+)
+def test_drag_on_front_highlight_leaves_rear_rectangle_in_place(
+    *,
+    editing_canvas: Canvas,
+    rear_points: list[tuple[int, int]],
+    front_points: list[tuple[int, int]],
+    approach: tuple[int, int],
+    press: tuple[int, int],
+    end: tuple[int, int],
+) -> None:
+    rear = Shape(shape_type="rectangle", points=np.array(rear_points, dtype=float))
+    front = Shape(shape_type="rectangle", points=np.array(front_points, dtype=float))
+    editing_canvas.load_shapes(shapes=[rear, front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(*approach)],
+        start=QPointF(*press),
+        end=QPointF(*end),
+    )
+
+    np.testing.assert_array_equal(rear.points, rear_points)
+    np.testing.assert_array_equal(
+        front.points, [(front_points[0][0], end[1]), (end[0], front_points[1][1])]
+    )
+
+
+@pytest.mark.parametrize(
+    ("front_points", "approach", "press"),
+    [
+        pytest.param(
+            [(30, 9), (75, 45)],
+            [(80, 20)],
+            (83, 14),
+            id="highlighted_rear_corner",
+        ),
+        pytest.param(
+            [(30, 24), (80, 45)],
+            [],
+            (80, 16),
+            id="painted_rear_marker",
+        ),
+    ],
+)
+def test_drag_on_rear_corner_beside_front_corner_reach_resizes_rear(
+    *,
+    editing_canvas: Canvas,
+    front_points: list[tuple[int, int]],
+    approach: list[tuple[int, int]],
+    press: tuple[int, int],
+) -> None:
+    rear = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (80, 40)], dtype=float)
+    )
+    front = Shape(shape_type="rectangle", points=np.array(front_points, dtype=float))
+    editing_canvas.load_shapes(shapes=[rear, front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(*point) for point in approach],
+        start=QPointF(*press),
+        end=QPointF(90, 10),
+    )
+
+    np.testing.assert_array_equal(front.points, front_points)
+    np.testing.assert_array_equal(rear.points, [(20, 10), (90, 40)])
+
+
+def test_drag_on_front_marker_over_rear_highlight_resizes_front(
+    *, editing_canvas: Canvas
+) -> None:
+    rear = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (80, 45)], dtype=float)
+    )
+    front = Shape(
+        shape_type="rectangle", points=np.array([(30, 26), (80, 48)], dtype=float)
+    )
+    editing_canvas.load_shapes(shapes=[rear, front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(80, 20)],
+        start=QPointF(80, 26),
+        end=QPointF(91, 15),
+    )
+
+    np.testing.assert_array_equal(rear.points, [(20, 20), (80, 45)])
+    np.testing.assert_array_equal(front.points, [(30, 15), (91, 48)])
+
+
+def test_drag_on_front_body_within_rear_corner_reach_moves_front(
+    *, editing_canvas: Canvas
+) -> None:
+    rear = Shape(
+        shape_type="rectangle", points=np.array([(10, 20), (60, 45)], dtype=float)
+    )
+    front = Shape(
+        shape_type="circle", points=np.array([(78, 30), (78, 10)], dtype=float)
+    )
+    editing_canvas.load_shapes(shapes=[rear, front])
+    editing_canvas.select_shapes(shapes=[front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(70, 25)],
+        start=QPointF(62, 25),
+        end=QPointF(56, 25),
+    )
+
+    np.testing.assert_array_equal(rear.points, [(10, 20), (60, 45)])
+    np.testing.assert_array_equal(front.points, [(72, 30), (72, 10)])
+
+
+@pytest.mark.parametrize(
+    ("front", "approach", "press", "end"),
+    [
+        pytest.param(
+            Shape(
+                shape_type="rectangle",
+                points=np.array([(30, 24), (80, 48)], dtype=float),
+                locked=True,
+            ),
+            (80, 17),
+            (80, 22),
+            (91, 14),
+            id="locked_box_new_corner",
+        ),
+        pytest.param(
+            Shape(
+                shape_type="rectangle",
+                points=np.array([(30, 26), (76, 48)], dtype=float),
+                locked=True,
+            ),
+            (74, 23),
+            (74, 23),
+            (64, 27),
+            id="locked_box_new_corner_over_rear_body",
+        ),
+        pytest.param(
+            Shape(shape_type="point", points=np.array([(84.5, 20)])),
+            (80, 20),
+            (80, 20),
+            (91, 14),
+            id="point_rim",
+        ),
+        pytest.param(
+            Shape(shape_type="circle", points=np.array([(65.5, 20), (65.5, 34.2)])),
+            (80, 20),
+            (80, 20),
+            (91, 14),
+            id="circle_outline",
+        ),
+    ],
+)
+def test_drag_on_front_paint_keeps_rear_rectangle_size(
+    *,
+    editing_canvas: Canvas,
+    front: Shape,
+    approach: tuple[float, float],
+    press: tuple[float, float],
+    end: tuple[float, float],
+) -> None:
+    rear = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (80, 45)], dtype=float)
+    )
+    front_points = front.points.copy()
+    editing_canvas.load_shapes(shapes=[rear, front])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        approach=[QPointF(*approach)],
+        start=QPointF(*press),
+        end=QPointF(*end),
+    )
+
+    np.testing.assert_array_equal(np.diff(rear.points, axis=0), [(60, 25)])
+    if front.locked:
+        np.testing.assert_array_equal(front.points, front_points)
+
+
+@pytest.mark.parametrize("remove", ["delete", "hide"])
+@pytest.mark.parametrize(
+    (
+        "body_points",
+        "other_points",
+        "hovered_points",
+        "hover",
+        "press",
+        "end",
+        "corner",
+    ),
+    [
+        (
+            [(30, 5), (70, 40)],
+            [(5, 1), (30, 5)],
+            [(10, 15), (45, 48)],
+            (45, 16),
+            (30, 5),
+            (36, 12),
+            0,
+        ),
+        (
+            [(25, 5), (61, 29)],
+            [(62, 21), (90, 40)],
+            [(20, 20), (50, 60)],
+            (52, 24),
+            (53, 24),
+            (57, 35),
+            1,
+        ),
+    ],
+    ids=["shared_corner", "overlapping_reach"],
+)
+def test_removing_highlight_leaves_next_shared_handle_with_its_body(
+    *,
+    editing_canvas: Canvas,
+    remove: str,
+    body_points: list[tuple[int, int]],
+    other_points: list[tuple[int, int]],
+    hovered_points: list[tuple[int, int]],
+    hover: tuple[int, int],
+    press: tuple[int, int],
+    end: tuple[int, int],
+    corner: int,
+) -> None:
+    body = Shape(shape_type="rectangle", points=np.array(body_points, dtype=float))
+    other = Shape(shape_type="rectangle", points=np.array(other_points, dtype=float))
+    hovered = Shape(
+        shape_type="rectangle", points=np.array(hovered_points, dtype=float)
+    )
+    editing_canvas.load_shapes(shapes=[body, other, hovered])
+    editing_canvas.select_shapes(shapes=[hovered])
+    editing_canvas.mouseMoveEvent(
+        _mouse_event(
+            canvas=editing_canvas,
+            kind=QtCore.QEvent.Type.MouseMove,
+            image_pos=QPointF(*hover),
+            buttons=Qt.MouseButton.NoButton,
+        )
+    )
+    assert editing_canvas._hover.shape is hovered
+    if remove == "delete":
+        assert editing_canvas.delete_selected() == [hovered]
+    else:
+        editing_canvas.set_shape_visible(shape=hovered, value=False)
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(*press), end=QPointF(*end))
+
+    expected = body_points.copy()
+    expected[corner] = end
+    np.testing.assert_array_equal(body.points, expected)
+    np.testing.assert_array_equal(other.points, other_points)
+
+
+def test_dragging_a_small_rectangle_body_when_zoomed_in_moves_it(
+    *, editing_canvas: Canvas
+) -> None:
+    editing_canvas.scale = 2.0
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (32, 32)], dtype=np.float64)
+    )
+    editing_canvas.load_shapes(shapes=[rectangle])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(26, 26), end=QPointF(30, 28))
+
+    np.testing.assert_array_equal(rectangle.points, [(24, 22), (36, 34)])
+
+
+def test_dragging_a_small_rectangle_beside_its_derived_corner_moves_it(
+    *, editing_canvas: Canvas
+) -> None:
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (40, 40)], dtype=np.float64)
+    )
+    editing_canvas.load_shapes(shapes=[rectangle])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(33, 27), end=QPointF(41, 35))
+
+    np.testing.assert_array_equal(rectangle.points, [(28, 28), (48, 48)])
+
+
+@pytest.mark.parametrize(
+    ("start", "end", "expected"),
+    [
+        pytest.param((25, 20), (20, 10), [[20, 10], [75, 20]], id="left_end"),
+        pytest.param((75, 20), (80, 30), [[25, 20], [80, 30]], id="right_end"),
+    ],
+)
+def test_dragging_an_end_of_a_flat_rectangle_keeps_its_diagonal(
+    *,
+    editing_canvas: Canvas,
+    start: tuple[float, float],
+    end: tuple[float, float],
+    expected: list[list[float]],
+) -> None:
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(25, 20), (75, 20)], dtype=np.float64)
+    )
+    editing_canvas.load_shapes(shapes=[rectangle])
+
+    _hover_and_drag(canvas=editing_canvas, start=QPointF(*start), end=QPointF(*end))
+
+    np.testing.assert_array_equal(rectangle.points, expected)
+
+
+@pytest.mark.parametrize(
+    "approach",
+    [pytest.param([], id="unhovered"), pytest.param([(50, 30)], id="box_hovered")],
+)
+def test_dragging_a_point_dot_beside_a_rectangle_derived_corner_moves_the_point(
+    *, editing_canvas: Canvas, approach: list[tuple[float, float]]
+) -> None:
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(20, 20), (60, 40)], dtype=np.float64)
+    )
+    point = Shape(shape_type="point", points=np.array([(64, 16)], dtype=np.float64))
+    editing_canvas.load_shapes(shapes=[rectangle, point])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(64, 16),
+        end=QPointF(70, 10),
+        approach=[QPointF(*p) for p in approach],
+    )
+
+    np.testing.assert_array_equal(point.points, [(70, 10)])
+    np.testing.assert_array_equal(rectangle.points, [(20, 20), (60, 40)])
+
+
+@pytest.mark.parametrize(
+    "approach",
+    [pytest.param([], id="unhovered"), pytest.param([(25, 40)], id="box_hovered")],
+)
+def test_dragging_a_rotation_handle_beside_a_rectangle_derived_corner_rotates(
+    *, editing_canvas: Canvas, approach: list[tuple[float, float]]
+) -> None:
+    rotated = _make_oriented_rectangle(corners=[(10, 10), (50, 10), (50, 30), (10, 30)])
+    rectangle = Shape(
+        shape_type="rectangle", points=np.array([(14, 14), (34, 45)], dtype=np.float64)
+    )
+    editing_canvas.load_shapes(shapes=[rotated, rectangle])
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(30, 10),
+        end=QPointF(40, 20),
+        approach=[QPointF(*p) for p in approach],
+    )
+
+    np.testing.assert_allclose(
+        rotated.points, [(40, 0), (40, 40), (20, 40), (20, 0)], atol=1e-9
+    )
+    np.testing.assert_array_equal(rectangle.points, [(14, 14), (34, 45)])
 
 
 def _start_ai_box_finalize(*, canvas: Canvas) -> _DraftShape:

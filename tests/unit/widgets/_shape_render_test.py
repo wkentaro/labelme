@@ -574,6 +574,22 @@ def test_vertex_highlight_colors_the_vertex_group(*, shape_type: ShapeType) -> N
 
 
 @pytest.mark.usefixtures("qapp")
+def test_rectangle_marks_all_four_corners_alike() -> None:
+    image = _render(
+        shape=_shape(shape_type="rectangle", points=[[50, 50], [150, 150]]),
+        show_label=False,
+        scale=1.0,
+        highlight=None,
+        rotation_highlight=None,
+    )
+
+    just_outside_each_corner = [(48, 48), (152, 48), (152, 152), (48, 152)]
+    assert [image.pixelColor(x, y) for x, y in just_outside_each_corner] == [
+        QtGui.QColor(255, 0, 0)
+    ] * 4
+
+
+@pytest.mark.usefixtures("qapp")
 def test_rotation_highlight_colors_rotation_group_without_coloring_vertices() -> None:
     shape = _polygon(label=None)
     shape.shape_type = "oriented_rectangle"

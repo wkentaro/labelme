@@ -207,6 +207,7 @@ def render_shape(
 
 
 _LARGEST_HIGHLIGHT: Final = VertexHighlight(index=0, mode="near")
+_MOVE_HIGHLIGHT: Final = VertexHighlight(index=0, mode="move")
 
 
 def intersects_rect(
@@ -537,7 +538,7 @@ def _resolve_vertex_style(
 def _append_shape_vertex(
     *,
     vertices: list[_Vertex],
-    shape: Shape,
+    position: npt.NDArray[np.float64],
     context: ShapeRenderContext,
     vertex_index: int,
 ) -> None:
@@ -547,7 +548,7 @@ def _append_shape_vertex(
         default_size=context.point_size,
         default_point_type=context.point_type,
     )
-    pos = QtCore.QPointF(*(shape.points[vertex_index] * context.scale))
+    pos = QtCore.QPointF(*(position * context.scale))
     _append_vertex(vertices=vertices, pos=pos, size=size, point_type=point_type)
 
 
@@ -614,7 +615,10 @@ def _build_shape_points_paths(
         for i, point_label in enumerate(shape.point_labels):
             vertices = paths.vertices if point_label == 1 else paths.negative_vertices
             _append_shape_vertex(
-                vertices=vertices, shape=shape, context=context, vertex_index=i
+                vertices=vertices,
+                position=shape.points[i],
+                context=context,
+                vertex_index=i,
             )
         return paths
 
@@ -627,12 +631,15 @@ def _build_shape_points_paths(
         shape.shape_type == "oriented_rectangle" and len(points) == 1
     ):
         return paths
-    for i in range(len(points)):
+    for i, position in enumerate(shape.vertices()):
         if context.show_vertices or (
             context.highlight is not None and context.highlight.index == i
         ):
             _append_shape_vertex(
-                vertices=paths.vertices, shape=shape, context=context, vertex_index=i
+                vertices=paths.vertices,
+                position=position,
+                context=context,
+                vertex_index=i,
             )
     if (
         shape.shape_type == "oriented_rectangle"
@@ -649,6 +656,11 @@ def _build_shape_points_paths(
             path=paths.orientation_arrow, shape=shape, scale=scale
         )
     return paths
+
+
+def drawn_marker_half_size(*, point_size: int, highlighted: bool) -> float:
+    size_factor = _MOVE_HIGHLIGHT.size_factor if highlighted else 1.0
+    return (point_size * size_factor + _OUTLINE_WIDTH) / 2
 
 
 def is_hit_by_point(
@@ -673,6 +685,27 @@ def is_hit_by_point(
     if shape.mask is not None:
         return _hits_mask_pixel(shape=shape, point=point)
     return _build_outline_path(shape=shape).contains(QtCore.QPointF(*point))
+
+
+def is_painted_at(
+    *,
+    shape: Shape,
+    point: npt.NDArray[np.float64],
+    scale: float,
+    point_size: int,
+) -> bool:
+    marker_radius = drawn_marker_half_size(point_size=point_size, highlighted=False)
+    if len(shape.points) > 0 and np.any(
+        np.linalg.norm(shape.vertices() - point, axis=1) <= marker_radius / scale
+    ):
+        return True
+    outline = _build_outline_path(shape=shape)
+    stroker = QtGui.QPainterPathStroker()
+    stroker.setWidth(_OUTLINE_WIDTH / scale)
+    target = QtCore.QPointF(*point)
+    if shape.shape_type in ("line", "linestrip", "point", "points"):
+        return stroker.createStroke(outline).contains(target)
+    return outline.contains(target) or stroker.createStroke(outline).contains(target)
 
 
 def bounds(*, shape: Shape) -> QtCore.QRectF:

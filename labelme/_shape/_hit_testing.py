@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import enum
 import math
 
 import numpy as np
 import numpy.typing as npt
 
 from ._model import CIRCLE_POINT_COUNT
+from ._model import RECTANGLE_DERIVED_CORNERS
+from ._model import RECTANGLE_STORED_CORNERS
 from ._model import Shape
 from ._oriented_rectangle import get_rotation_handles
 from ._oriented_rectangle import is_full_oriented_rectangle
@@ -30,7 +33,64 @@ def nearest_vertex_index(
     if shape.shape_type in ("mask", "point") or len(shape.points) == 0:
         return None
     distances = np.linalg.norm(shape.points - point, axis=1)
-    return _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+    index = _find_closest_index_within(distances=distances, epsilon=image_epsilon)
+    if index is None or not shape.is_full_rectangle():
+        return index
+    return _nearest_corner(vertices=shape.vertices(), point=point)
+
+
+class CornerGrip(enum.Enum):
+    ON_MARKER = "on_marker"
+    IN_REACH = "in_reach"
+
+
+def derived_corner_grip(
+    *,
+    shape: Shape,
+    point: npt.NDArray[np.float64],
+    image_epsilon: float,
+    marker_radius: float,
+    highlighted: int | None,
+    highlight_half_size: float,
+) -> tuple[CornerGrip, int] | None:
+    if not shape.is_full_rectangle():
+        return None
+    vertices = shape.vertices()
+    distances = np.linalg.norm(
+        vertices[list(RECTANGLE_DERIVED_CORNERS)] - point, axis=1
+    )
+    reach = max(
+        marker_radius,
+        _derived_corner_reach(shape=shape, point=point, image_epsilon=image_epsilon),
+    )
+    if np.any(distances <= marker_radius) or (
+        highlighted is not None
+        and np.all(np.abs(vertices[highlighted] - point) <= highlight_half_size)
+    ):
+        grip = CornerGrip.ON_MARKER
+    elif np.any(distances <= reach):
+        grip = CornerGrip.IN_REACH
+    else:
+        return None
+    return grip, _nearest_corner(vertices=vertices, point=point)
+
+
+def _nearest_corner(
+    *, vertices: npt.NDArray[np.float64], point: npt.NDArray[np.float64]
+) -> int:
+    stored_first = RECTANGLE_STORED_CORNERS + RECTANGLE_DERIVED_CORNERS
+    distances = np.linalg.norm(vertices[list(stored_first)] - point, axis=1)
+    return stored_first[int(np.argmin(distances))]
+
+
+def _derived_corner_reach(
+    *, shape: Shape, point: npt.NDArray[np.float64], image_epsilon: float
+) -> float:
+    lo, hi = shape.points.min(axis=0), shape.points.max(axis=0)
+    if np.any(point < lo) or np.any(point > hi):
+        return image_epsilon
+    halfway_to_center = float(np.linalg.norm(hi - lo)) / 4
+    return min(image_epsilon, halfway_to_center)
 
 
 def nearest_edge_index(
