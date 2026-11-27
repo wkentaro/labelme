@@ -303,6 +303,45 @@ def test_edge_not_tested_on_non_polyline_shape() -> None:
     assert result.shape is rect
 
 
+def test_top_rectangle_keeps_a_fractional_shared_corner() -> None:
+    lower = Shape(
+        shape_type="rectangle",
+        points=np.array([(47.367, 40), (90, 90)], dtype=np.float64),
+    )
+    top = Shape(
+        shape_type="rectangle",
+        points=np.array([(47.367, 40), (80, 80)], dtype=np.float64),
+    )
+    result = find_hover_target(
+        shapes=[lower, top],
+        point=_point(x=40.0, y=40.0),
+        scale=_SCALE,
+        epsilon=_EPSILON,
+        point_size=20,
+        hovered=None,
+        selected=(),
+    )
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=top, index=0)
+
+
+def test_hovered_corner_takes_a_press_at_its_exact_enlarged_reach() -> None:
+    scale = 5.47
+    rect = Shape(
+        shape_type="rectangle",
+        points=np.array([(16 / scale, 10), (20, 20)], dtype=np.float64),
+    )
+    result = find_hover_target(
+        shapes=[rect],
+        point=_point(x=0.0, y=10.0),
+        scale=scale,
+        epsilon=_EPSILON,
+        point_size=20,
+        hovered=HitTarget(kind=HitKind.VERTEX, shape=rect, index=0),
+        selected=(),
+    )
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=rect, index=0)
+
+
 def test_hovered_shape_vertex_hit_reports_its_index() -> None:
     shape = _polygon(points=[(10, 10), (50, 10), (50, 50), (10, 50)], visible=True)
     result = find_hover_target(
