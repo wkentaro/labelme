@@ -634,8 +634,9 @@ def _build_shape_points_paths(
     for i in range(len(points)):
         hovered = context.highlight is not None and context.highlight.index == i
         if context.show_vertices or hovered:
+            on_top = hovered and shape.shape_type == "oriented_rectangle"
             _append_shape_vertex(
-                vertices=paths.hover_vertex if hovered else paths.vertices,
+                vertices=paths.hover_vertex if on_top else paths.vertices,
                 shape=shape,
                 context=context,
                 vertex_index=i,
