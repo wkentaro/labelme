@@ -2182,6 +2182,7 @@ class Canvas(QtWidgets.QWidget):
         if a0.button() != Qt.MouseButton.LeftButton:
             return
         pos: QPointF = self.transform_widget_point_to_image(point=a0.position())
+        self._refresh_hover_state(pos=pos)
         shape = self._find_pointed_shape(point=pos)
         if shape is None:
             return
