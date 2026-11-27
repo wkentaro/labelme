@@ -8,9 +8,10 @@ import numpy as np
 import numpy.typing as npt
 from PySide6.QtCore import Qt
 
+from .._shape import CornerGrip
 from .._shape import Shape
+from .._shape import derived_corner_grip
 from .._shape import image_extent
-from .._shape import nearest_derived_corner_index
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
@@ -119,8 +120,9 @@ def find_hover_target(
             )
 
     marker_radius = drawn_marker_half_size(point_size=point_size, highlighted=False)
+    best: tuple[CornerGrip, Shape, int] | None = None
     for shape in paint_order:
-        idx = nearest_derived_corner_index(
+        hit = derived_corner_grip(
             shape=shape,
             point=point,
             image_epsilon=image_epsilon,
@@ -132,10 +134,13 @@ def find_hover_target(
             ),
             highlight_half_size=highlight_half_size,
         )
-        if idx is not None:
-            return HitTarget(
-                kind=HitKind.VERTEX, shape=shape, index=idx, priority_shape=top
-            )
+        if hit is not None and (best is None or hit[0] < best[0]):
+            best = (hit[0], shape, hit[1])
+    if best is not None:
+        _, shape, idx = best
+        return HitTarget(
+            kind=HitKind.VERTEX, shape=shape, index=idx, priority_shape=top
+        )
 
     # Pass 5: body hit
     if top is not None:

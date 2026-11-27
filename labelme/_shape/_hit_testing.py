@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import enum
 import math
 
 import numpy as np
@@ -35,10 +36,16 @@ def nearest_vertex_index(
     index = _find_closest_index_within(distances=distances, epsilon=image_epsilon)
     if index is None or not shape.is_full_rectangle():
         return index
-    return _nearest_corner(shape=shape, point=point)
+    return _nearest_corner(vertices=shape.vertices(), point=point)
 
 
-def nearest_derived_corner_index(
+class CornerGrip(enum.IntEnum):
+    HELD = 0
+    PAINTED = 1
+    REACH = 2
+
+
+def derived_corner_grip(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
@@ -46,28 +53,35 @@ def nearest_derived_corner_index(
     marker_radius: float,
     highlighted: int | None,
     highlight_half_size: float,
-) -> int | None:
+) -> tuple[CornerGrip, int] | None:
     if not shape.is_full_rectangle():
         return None
     vertices = shape.vertices()
+    distances = np.linalg.norm(
+        vertices[list(RECTANGLE_DERIVED_CORNERS)] - point, axis=1
+    )
     reach = max(
         marker_radius,
         _derived_corner_reach(shape=shape, point=point, image_epsilon=image_epsilon),
     )
-    distances = np.linalg.norm(
-        vertices[list(RECTANGLE_DERIVED_CORNERS)] - point, axis=1
-    )
-    held = highlighted is not None and bool(
-        np.all(np.abs(vertices[highlighted] - point) <= highlight_half_size)
-    )
-    if not held and not np.any(distances <= reach):
+    if highlighted is not None and np.all(
+        np.abs(vertices[highlighted] - point) <= highlight_half_size
+    ):
+        grip = CornerGrip.HELD
+    elif np.any(distances <= marker_radius):
+        grip = CornerGrip.PAINTED
+    elif np.any(distances <= reach):
+        grip = CornerGrip.REACH
+    else:
         return None
-    return _nearest_corner(shape=shape, point=point)
+    return grip, _nearest_corner(vertices=vertices, point=point)
 
 
-def _nearest_corner(*, shape: Shape, point: npt.NDArray[np.float64]) -> int:
+def _nearest_corner(
+    *, vertices: npt.NDArray[np.float64], point: npt.NDArray[np.float64]
+) -> int:
     stored_first = RECTANGLE_STORED_CORNERS + RECTANGLE_DERIVED_CORNERS
-    distances = np.linalg.norm(shape.vertices()[list(stored_first)] - point, axis=1)
+    distances = np.linalg.norm(vertices[list(stored_first)] - point, axis=1)
     return stored_first[int(np.argmin(distances))]
 
 

@@ -3,9 +3,10 @@ from ._convert import ConvertTarget
 from ._convert import conversion_needs_detail
 from ._convert import convert_blocker
 from ._convert import convert_shape
+from ._hit_testing import CornerGrip
+from ._hit_testing import derived_corner_grip
 from ._hit_testing import image_extent
 from ._hit_testing import mask_shape_box
-from ._hit_testing import nearest_derived_corner_index
 from ._hit_testing import nearest_edge_index
 from ._hit_testing import nearest_rotation_point_index
 from ._hit_testing import nearest_vertex_index
@@ -38,6 +39,7 @@ __all__ = [
     "RECTANGLE_POINT_COUNT",
     "ConvertBlocker",
     "ConvertTarget",
+    "CornerGrip",
     "MergeBlocker",
     "Shape",
     "ShapeDict",
@@ -46,12 +48,12 @@ __all__ = [
     "conversion_needs_detail",
     "convert_blocker",
     "convert_shape",
+    "derived_corner_grip",
     "get_rotation_handle",
     "image_extent",
     "mask_shape_box",
     "merge_blocker",
     "merge_masks",
-    "nearest_derived_corner_index",
     "nearest_edge_index",
     "nearest_rotation_point_index",
     "nearest_vertex_index",
