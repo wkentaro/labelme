@@ -657,6 +657,10 @@ def _build_shape_points_paths(
     return paths
 
 
+def drawn_marker_radius(*, point_size: int) -> float:
+    return (point_size + _OUTLINE_WIDTH) / 2
+
+
 def is_hit_by_point(
     *,
     shape: Shape,

@@ -14,6 +14,7 @@ from .._shape import nearest_derived_corner_index
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
+from ._shape_render import drawn_marker_radius
 from ._shape_render import is_hit_by_point
 
 
@@ -99,7 +100,10 @@ def find_hover_target(
 
     for shape in editable:
         idx = nearest_derived_corner_index(
-            shape=shape, point=point, image_epsilon=image_epsilon
+            shape=shape,
+            point=point,
+            image_epsilon=image_epsilon,
+            marker_radius=drawn_marker_radius(point_size=point_size) / scale,
         )
         if idx is not None:
             return HitTarget(kind=HitKind.VERTEX, shape=shape, index=idx)

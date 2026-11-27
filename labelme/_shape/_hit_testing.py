@@ -43,6 +43,7 @@ def nearest_derived_corner_index(
     shape: Shape,
     point: npt.NDArray[np.float64],
     image_epsilon: float,
+    marker_radius: float,
 ) -> int | None:
     if not shape.is_full_rectangle():
         return None
@@ -50,8 +51,11 @@ def nearest_derived_corner_index(
     distances = np.linalg.norm(corners - point, axis=1)
     index = _find_closest_index_within(
         distances=distances,
-        epsilon=_derived_corner_reach(
-            shape=shape, point=point, image_epsilon=image_epsilon
+        epsilon=max(
+            marker_radius,
+            _derived_corner_reach(
+                shape=shape, point=point, image_epsilon=image_epsilon
+            ),
         ),
     )
     return None if index is None else RECTANGLE_DERIVED_CORNERS[index]
