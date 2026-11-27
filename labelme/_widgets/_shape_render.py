@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import collections
 import dataclasses
-import functools
 import sys
 import typing
 from typing import Final
@@ -357,6 +356,7 @@ class _ShapePaths:
     vertices: list[_Vertex] = dataclasses.field(default_factory=list)
     negative_vertices: list[_Vertex] = dataclasses.field(default_factory=list)
     rotation_vertices: list[_Vertex] = dataclasses.field(default_factory=list)
+    hover_vertex: list[_Vertex] = dataclasses.field(default_factory=list)
     # Marker centers grouped by size and type, for batched painting.
     vertex_points: dict[tuple[float, str], QtGui.QPolygonF] = dataclasses.field(
         default_factory=dict
@@ -415,17 +415,7 @@ def _paint_shape_points(
 
     if context.outline:
         painter.drawPath(paths.line)
-        paint_corners = functools.partial(
-            _paint_filled_vertices,
-            painter=painter,
-            vertices=paths.vertices,
-            fill=palette.hvertex_fill
-            if context.highlight is not None
-            else palette.vertex_fill,
-            points=paths.vertex_points,
-        )
-        paint_rotation_handles = functools.partial(
-            _paint_filled_vertices,
+        _paint_filled_vertices(
             painter=painter,
             vertices=paths.rotation_vertices,
             fill=(
@@ -434,12 +424,17 @@ def _paint_shape_points(
                 else palette.vertex_fill
             ),
         )
-        if context.rotation_highlight is None:
-            paint_rotation_handles()
-            paint_corners()
-        else:
-            paint_corners()
-            paint_rotation_handles()
+        _paint_filled_vertices(
+            painter=painter,
+            vertices=paths.vertices,
+            fill=palette.hvertex_fill
+            if context.highlight is not None
+            else palette.vertex_fill,
+            points=paths.vertex_points,
+        )
+        _paint_filled_vertices(
+            painter=painter, vertices=paths.hover_vertex, fill=palette.hvertex_fill
+        )
     if context.fill and shape.shape_type not in ["line", "linestrip", "points", "mask"]:
         fill = palette.select_fill if context.selected else palette.fill
         painter.fillPath(paths.line, fill)
@@ -637,11 +632,13 @@ def _build_shape_points_paths(
     ):
         return paths
     for i in range(len(points)):
-        if context.show_vertices or (
-            context.highlight is not None and context.highlight.index == i
-        ):
+        hovered = context.highlight is not None and context.highlight.index == i
+        if context.show_vertices or hovered:
             _append_shape_vertex(
-                vertices=paths.vertices, shape=shape, context=context, vertex_index=i
+                vertices=paths.hover_vertex if hovered else paths.vertices,
+                shape=shape,
+                context=context,
+                vertex_index=i,
             )
     if (
         shape.shape_type == "oriented_rectangle"
@@ -650,8 +647,12 @@ def _build_shape_points_paths(
         for i in range(len(points)):
             if np.array_equal(points[i - 1], points[i]):
                 continue
+            hovered = (
+                context.rotation_highlight is not None
+                and context.rotation_highlight.index == i
+            )
             _append_shape_rotation_vertex(
-                vertices=paths.rotation_vertices,
+                vertices=paths.hover_vertex if hovered else paths.rotation_vertices,
                 shape=shape,
                 context=context,
                 vertex_index=i,
