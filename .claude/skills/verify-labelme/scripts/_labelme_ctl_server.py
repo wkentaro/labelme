@@ -729,6 +729,8 @@ def _plan_input(*, req: dict[str, Any]) -> tuple[str, list[Step]]:
             )
         if not req["text"].isascii():
             raise CtlError("cannot type non-ASCII text")
+        if not req["text"]:
+            raise CtlError("nothing to type")
         target = _focus_target()
         return f"type into {type(target).__name__}", _type_steps(text=req["text"])
     planners = {
