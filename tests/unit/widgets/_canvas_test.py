@@ -212,23 +212,28 @@ def test_drag_hovered_rotation_point_does_not_drift_on_repeated_drags(
         assert canvas.shapes[0].points[i][1] == pytest.approx(y)
 
 
-def test_large_corner_marker_leaves_the_grabbed_rotation_handle_on_top(
-    *, canvas: Canvas, qtbot: QtBot
+@pytest.mark.parametrize(
+    ("pointer", "grabbed"),
+    [
+        pytest.param(QtCore.QPoint(31, 8), "rotation", id="rotation_handle"),
+        pytest.param(QtCore.QPoint(27, 8), "corner", id="corner"),
+    ],
+)
+def test_large_markers_paint_the_grabbed_one_on_top(
+    *, canvas: Canvas, qtbot: QtBot, pointer: QtCore.QPoint, grabbed: str
 ) -> None:
     canvas.set_point_size(point_size=24)
     corners = [(20.0, 10.0), (54.0, 10.0), (54.0, 40.0), (20.0, 40.0)]
     canvas.load_shapes(shapes=[_make_oriented_rectangle(corners=corners)])
-    pointer = QtCore.QPoint(31, 8)
 
     canvas._refresh_hover_state(pos=QPointF(pointer))
     drawn = canvas.grab().toImage().pixelColor(pointer)
-    _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=QtCore.QPoint(45, 2))
+    _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(8, 8))
 
     assert drawn == canvas._resolve_palette(label=None).hvertex_fill
+    side = np.linalg.norm(canvas.shapes[0].points[1] - canvas.shapes[0].points[0])
+    assert (side == pytest.approx(34.0)) == (grabbed == "rotation")
     assert not np.allclose(canvas.shapes[0].points, corners)
-    assert np.linalg.norm(
-        canvas.shapes[0].points[1] - canvas.shapes[0].points[0]
-    ) == pytest.approx(34.0)
 
 
 def _start_rotation_near_right_edge(*, canvas: Canvas) -> None:
