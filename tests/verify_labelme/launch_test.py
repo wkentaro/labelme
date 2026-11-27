@@ -7,6 +7,7 @@ import signal
 import socket
 import subprocess
 import sys
+import sysconfig
 import time
 from pathlib import Path
 from typing import Final
@@ -351,8 +352,31 @@ def _scratch_checkout(*, tmp_path: Path) -> Path:
     return checkout
 
 
-def _doctor_on(*, ctl: Ctl, checkout: Path) -> Reply:
-    launch = ctl.launch_reply(seed="none", checkout=checkout)
+def _labelme_tree(*, path: Path) -> Path:
+    shutil.copytree(
+        REPO / "labelme",
+        path / "labelme",
+        ignore=shutil.ignore_patterns("__pycache__"),
+    )
+    return path
+
+
+def _venv_importing_labelme_from(*, checkout: Path, tree: Path) -> None:
+    venv = checkout / ".venv"
+    subprocess.run(
+        [sys.executable, "-m", "venv", "--without-pip", str(venv)],
+        check=True,
+        capture_output=True,
+    )
+    site_packages = Path(sysconfig.get_path("purelib", vars={"base": str(venv)}))
+    dependencies = sysconfig.get_path("purelib")
+    (site_packages / "labelme_tree.pth").write_text(
+        f"{tree}\nimport site; site.addsitedir({dependencies!r})\n"
+    )
+
+
+def _doctor_on(*, ctl: Ctl, checkout: Path, env: dict[str, str] | None = None) -> Reply:
+    launch = ctl.launch_reply(seed="none", checkout=checkout, env=env)
     assert launch.code == 0, launch.body
     return ctl("doctor", run=Run(run_dir=Path(launch.body["run_dir"]), launch={}))
 
@@ -384,3 +408,33 @@ def test_doctor_counts_an_untracked_file_as_dirty(*, ctl: Ctl, tmp_path: Path) -
     reply = _doctor_on(ctl=ctl, checkout=checkout)
 
     assert reply.body["checkout_dirty"] is True
+
+
+def test_launch_imports_labelme_from_the_checkout_despite_pythonpath(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    checkout = _labelme_tree(path=tmp_path / "checkout")
+    _venv_importing_labelme_from(checkout=checkout, tree=checkout)
+    sibling = _labelme_tree(path=tmp_path / "checkout-base")
+
+    reply = _doctor_on(ctl=ctl, checkout=checkout, env={"PYTHONPATH": str(sibling)})
+
+    assert reply.code == 0, reply.body
+    assert reply.body["healthy"] is True
+    assert Path(reply.body["labelme_file"]).resolve().is_relative_to(checkout.resolve())
+
+
+def test_doctor_reports_labelme_from_a_sibling_sharing_the_checkout_prefix(
+    *, ctl: Ctl, tmp_path: Path
+) -> None:
+    checkout = tmp_path / "checkout"
+    (checkout / "labelme").mkdir(parents=True)
+    (checkout / "labelme" / "__main__.py").touch()
+    sibling = _labelme_tree(path=tmp_path / "checkout-base")
+    _venv_importing_labelme_from(checkout=checkout, tree=sibling)
+
+    reply = _doctor_on(ctl=ctl, checkout=checkout)
+
+    assert reply.code == 1
+    assert reply.body["healthy"] is False
+    assert "labelme imported from outside the checkout" in reply.body["problems"]
