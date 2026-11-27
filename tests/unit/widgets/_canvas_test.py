@@ -5,6 +5,7 @@ import itertools
 import math
 import weakref
 from collections.abc import Callable
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Final
 from unittest.mock import Mock
@@ -3846,13 +3847,22 @@ def test_dragging_point_inside_box_commits_move(*, editing_canvas: Canvas) -> No
     np.testing.assert_array_equal(canvas.shape_backups[-1][1].points, [[90, 40]])
 
 
-def _hover_and_drag(*, canvas: Canvas, start: QPointF, end: QPointF) -> None:
+def _hover_and_drag(
+    *,
+    canvas: Canvas,
+    start: QPointF,
+    end: QPointF,
+    approach: Sequence[QPointF] = (),
+) -> None:
     move = QtCore.QEvent.Type.MouseMove
     no_button = Qt.MouseButton.NoButton
     left = Qt.MouseButton.LeftButton
-    canvas.mouseMoveEvent(
-        _mouse_event(canvas=canvas, kind=move, image_pos=start, buttons=no_button)
-    )
+    for image_pos in [*approach, start]:
+        canvas.mouseMoveEvent(
+            _mouse_event(
+                canvas=canvas, kind=move, image_pos=image_pos, buttons=no_button
+            )
+        )
     canvas.mousePressEvent(
         _mouse_event(
             canvas=canvas,
@@ -3944,22 +3954,57 @@ def test_dragging_corner_near_a_point_dot_moves_the_corner(
     np.testing.assert_array_equal(point.points, [point_at])
 
 
-def test_dragging_rotation_handle_near_another_corner_rotates_its_shape(
-    *, editing_canvas: Canvas
-) -> None:
+def _rectangle_and_oriented_square(*, canvas: Canvas) -> tuple[Shape, Shape]:
     rectangle = Shape(
         shape_type="rectangle",
         points=np.array([(50, 13), (10, 45)], dtype=np.float64),
     )
     square = _make_oriented_rectangle(corners=[(35, 5), (65, 5), (65, 35), (35, 35)])
-    editing_canvas.load_shapes(shapes=[rectangle, square])
+    canvas.load_shapes(shapes=[rectangle, square])
+    return rectangle, square
 
-    _hover_and_drag(canvas=editing_canvas, start=QPointF(50, 5), end=QPointF(65, 20))
+
+@pytest.mark.parametrize(
+    "approach",
+    [
+        pytest.param([], id="straight_onto_the_handle"),
+        pytest.param(
+            [QPointF(50, y) for y in range(13, 5, -1)], id="up_from_the_corner"
+        ),
+    ],
+)
+def test_dragging_rotation_handle_near_another_corner_rotates_its_shape(
+    *, editing_canvas: Canvas, approach: list[QPointF]
+) -> None:
+    rectangle, square = _rectangle_and_oriented_square(canvas=editing_canvas)
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(50, 5),
+        end=QPointF(65, 20),
+        approach=approach,
+    )
 
     np.testing.assert_array_equal(rectangle.points, [(50, 13), (10, 45)])
     np.testing.assert_allclose(
         square.points, [(65, 5), (65, 35), (35, 35), (35, 5)], atol=1e-9
     )
+
+
+def test_dragging_corner_down_from_a_nearby_rotation_handle_moves_the_corner(
+    *, editing_canvas: Canvas
+) -> None:
+    rectangle, square = _rectangle_and_oriented_square(canvas=editing_canvas)
+
+    _hover_and_drag(
+        canvas=editing_canvas,
+        start=QPointF(50, 13),
+        end=QPointF(65, 20),
+        approach=[QPointF(50, y) for y in range(2, 13)],
+    )
+
+    np.testing.assert_array_equal(rectangle.points, [(65, 20), (10, 45)])
+    np.testing.assert_array_equal(square.points, [(35, 5), (65, 5), (65, 35), (35, 35)])
 
 
 @pytest.mark.parametrize(

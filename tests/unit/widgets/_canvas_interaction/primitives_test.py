@@ -569,6 +569,56 @@ def test_hovered_shape_keeps_its_corner_over_a_nearer_corner_beside_it() -> None
     _assert_hit(result=result, kind=HitKind.VERTEX, shape=hovered, index=1)
 
 
+def _corner_8px_above(*, handle_at: tuple[float, float], scale: float) -> Shape:
+    x, y = handle_at[0], handle_at[1] - 8 / scale
+    return Shape(
+        shape_type="rectangle",
+        points=np.array([(x, y), (x + 30, y - 30)], dtype=np.float64),
+    )
+
+
+_SCALES: Final = [
+    pytest.param(1.0, id="actual_size"),
+    pytest.param(2.0, id="zoomed"),
+]
+
+
+@pytest.mark.parametrize("scale", _SCALES)
+@pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
+def test_hovered_handle_under_the_cursor_beats_a_nearer_corner(
+    *,
+    make_shape: Callable[[], Shape],
+    handle_at: tuple[float, float],
+    kind: HitKind,
+    index: int,
+    scale: float,
+) -> None:
+    hovered = make_shape()
+    corner = _corner_8px_above(handle_at=handle_at, scale=scale)
+    at = (handle_at[0], handle_at[1] - 4.5 / scale)
+    result = _hover(shapes=[hovered, corner], at=at, priority=hovered, scale=scale)
+    _assert_hit(result=result, kind=kind, shape=hovered, index=index)
+
+
+@pytest.mark.parametrize("scale", _SCALES)
+@pytest.mark.parametrize(("make_shape", "handle_at", "kind", "index"), _HANDLES)
+def test_nearer_corner_beats_a_hovered_handle_whose_marker_misses_the_cursor(
+    *,
+    make_shape: Callable[[], Shape],
+    handle_at: tuple[float, float],
+    kind: HitKind,
+    index: int,
+    scale: float,
+) -> None:
+    hovered = make_shape()
+    at = (handle_at[0], handle_at[1] - 5.5 / scale)
+    alone = _hover(shapes=[hovered], at=at, priority=hovered, scale=scale)
+    _assert_hit(result=alone, kind=kind, shape=hovered, index=index)
+    corner = _corner_8px_above(handle_at=handle_at, scale=scale)
+    result = _hover(shapes=[corner, hovered], at=at, priority=hovered, scale=scale)
+    _assert_hit(result=result, kind=HitKind.VERTEX, shape=corner, index=0)
+
+
 def test_body_follows_paint_order_over_priority() -> None:
     lower = _box()
     upper = _box()
