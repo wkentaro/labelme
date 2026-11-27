@@ -314,7 +314,7 @@ def cmd_launch(*, args: argparse.Namespace) -> None:
     )
     (run_dir / "tmp").mkdir()
     env = {
-        **os.environ,
+        **{k: v for k, v in os.environ.items() if not k.startswith("PYTHON")},
         "HOME": str(home),
         "XDG_CONFIG_HOME": str(home / ".config"),
         "XDG_CACHE_HOME": str(home / ".cache"),
@@ -374,18 +374,22 @@ def _git(*, checkout: Path, args: list[str]) -> str:
     ).stdout.strip()
 
 
+def _inside(*, path: str, root: Path) -> bool:
+    return Path(path).resolve().is_relative_to(root.resolve())
+
+
 def _problems(*, info: dict[str, Any], run_dir: Path, pid: int) -> list[str]:
-    checkout = _load_instance(run_dir=run_dir)["checkout"]
-    home = str(run_dir / "home")
+    checkout = Path(_load_instance(run_dir=run_dir)["checkout"])
+    home = run_dir / "home"
     checks = [
         (info["pid"] == pid, "control port answered from a different process"),
         (
-            info["labelme_file"].startswith(checkout),
+            _inside(path=info["labelme_file"], root=checkout),
             "labelme imported from outside the checkout",
         ),
-        (info["home"] == home, "HOME is not the run's scratch home"),
+        (info["home"] == str(home), "HOME is not the run's scratch home"),
         (
-            info["window_state_file"].startswith(home),
+            _inside(path=info["window_state_file"], root=home),
             "window state is not stored in the scratch home",
         ),
         (

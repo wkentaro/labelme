@@ -19,7 +19,7 @@ export LABELME_VERIFY_RUN=<run_dir from the output>
 ```
 
 - The output's `export` line quotes the path, so `eval` it when the path has spaces.
-- `--checkout` is the tree to run. Launch starts that tree's `.venv/bin/python`, so run `uv sync --frozen` in the tree first. That sync builds the tree outside the sandbox, so run it only on a tree you trust. To compare base and head, make a worktree for each, sync each, and launch one instance per tree.
+- `--checkout` is the tree to run. Launch starts that tree's `.venv/bin/python` without your shell's `PYTHON*` variables, so labelme imports only from that tree. Run `uv sync --frozen` in the tree first. That sync builds the tree outside the sandbox, so run it only on a tree you trust. To compare base and head, make a worktree for each, sync each, and launch one instance per tree.
 - `--seed` copies sample data into `<run_dir>/data`: `raw` (three images, no annotations, the default), `annotated` (the same images with five, three, and two shapes), `tutorial` (`examples/tutorial`), or `none`.
 - The scratch `.labelmerc` sets the UI language to `en_US`, and the window is 1280x800.
 - Everything after `--` is passed to `labelme`. `{data}` expands to the seeded folder. Pass a folder, an image, or a `.json` file, plus any labelme flag such as `--no-auto-save` or `--output '{data}/ann'`. labelme can read any path but write only inside the run dir.
