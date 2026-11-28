@@ -5561,3 +5561,45 @@ def test_hovered_vertex_paints_over_the_vertex_beside_it(
 
     assert with_neighbor == without_neighbor
     assert shape.points.tolist() == [[46, 52], [48, 40], [70, 70], [40, 70]]
+
+
+@pytest.mark.parametrize(
+    ("locked_shape", "pointer"),
+    [
+        pytest.param(("point", ((39.75, 40),)), QtCore.QPoint(44, 40), id="point"),
+        pytest.param(
+            ("rectangle", ((10, 10), (40, 40))), QtCore.QPoint(43, 40), id="corner"
+        ),
+    ],
+)
+def test_press_on_a_locked_marker_over_a_selected_body_moves_nothing(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    locked_shape: tuple[ShapeType, _Points],
+    pointer: QtCore.QPoint,
+) -> None:
+    loaded = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[locked_shape, ("rectangle", ((22, 22), (90, 90)))],
+        selected=(1,),
+        locked=(0,),
+    )
+    _hover_widget_point(canvas=canvas, at=(2, 2))
+    drawn = _drawn_owner(canvas=canvas, at=pointer)
+    _hover_widget_point(canvas=canvas, at=(pointer.x(), pointer.y()))
+    target = _hover_target(canvas=canvas)
+    before = [shape.points.copy() for shape in loaded]
+
+    _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(0, 12))
+
+    moved = [
+        owner
+        for owner, (points, shape) in enumerate(zip(before, loaded, strict=True))
+        if not np.array_equal(points, shape.points)
+    ]
+    assert drawn == 0
+    assert moved == []
+    assert target == (0, "body", None)
