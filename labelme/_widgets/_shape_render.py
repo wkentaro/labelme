@@ -185,13 +185,61 @@ def render_shape(
     context: ShapeRenderContext,
     cache: ShapeRenderCache | None = None,
 ) -> None:
-    if shape.mask is None and len(shape.points) == 0:
-        return
+    render_shapes(
+        painter=painter, contexts={shape: context}, marker_stack=[shape], cache=cache
+    )
 
-    palette = context.palette
-    color = palette.select_line if context.selected else palette.line
+
+def marker_stack(
+    *, shapes: list[Shape], selected: list[Shape], lifted: Shape | None
+) -> list[Shape]:
+    chosen = set(selected)
+
+    def tier(shape: Shape) -> int:
+        if shape.locked:
+            return 0
+        if shape in chosen:
+            return 3
+        if shape is lifted:
+            return 2
+        return 1
+
+    return sorted(shapes, key=tier)
+
+
+def render_shapes(
+    *,
+    painter: QtGui.QPainter,
+    contexts: dict[Shape, ShapeRenderContext],
+    marker_stack: list[Shape],
+    cache: ShapeRenderCache | None,
+) -> None:
+    marker_paths = {
+        shape: _paint_body(painter=painter, shape=shape, context=context, cache=cache)
+        for shape, context in contexts.items()
+    }
+    for shape in marker_stack:
+        paths = marker_paths[shape]
+        if paths is not None:
+            _paint_markers(painter=painter, context=contexts[shape], paths=paths)
+
+
+def _line_color(*, context: ShapeRenderContext) -> QtGui.QColor:
+    return context.palette.select_line if context.selected else context.palette.line
+
+
+def _paint_body(
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+    cache: ShapeRenderCache | None,
+) -> _ShapePaths | None:
+    if shape.mask is None and len(shape.points) == 0:
+        return None
+
     painter.setPen(
-        QtGui.QPen(color, _OUTLINE_WIDTH, context.line_style)
+        QtGui.QPen(_line_color(context=context), _OUTLINE_WIDTH, context.line_style)
         if context.outline
         else QtCore.Qt.PenStyle.NoPen
     )
@@ -199,11 +247,16 @@ def render_shape(
     if shape.shape_type == "mask" and shape.mask is not None:
         _paint_mask(painter=painter, shape=shape, context=context, cache=cache)
 
+    paths = None
     if len(shape.points) > 0:
-        _paint_shape_points(painter=painter, shape=shape, context=context, cache=cache)
+        paths = _shape_paths(shape=shape, context=context, cache=cache)
+        _paint_outline_and_fill(
+            painter=painter, shape=shape, context=context, paths=paths
+        )
 
     if context.show_label:
         _paint_label(painter=painter, shape=shape, context=context)
+    return paths
 
 
 _LARGEST_HIGHLIGHT: Final = VertexHighlight(index=0, mode="near")
@@ -366,14 +419,12 @@ class _ShapePaths:
     )
 
 
-def _paint_shape_points(
+def _shape_paths(
     *,
-    painter: QtGui.QPainter,
     shape: Shape,
     context: ShapeRenderContext,
     cache: ShapeRenderCache | None,
-) -> None:
-    palette = context.palette
+) -> _ShapePaths:
     key = None
     if (
         cache is not None
@@ -412,38 +463,56 @@ def _paint_shape_points(
                 + len(paths.vertices) * (256 + 16),
             )
     assert isinstance(paths, _ShapePaths)
+    return paths
 
+
+def _paint_outline_and_fill(
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+    paths: _ShapePaths,
+) -> None:
+    palette = context.palette
     if context.outline:
         painter.drawPath(paths.line)
-        _paint_filled_vertices(
-            painter=painter,
-            vertices=paths.vertices,
-            fill=palette.hvertex_fill
-            if context.highlight is not None
-            else palette.vertex_fill,
-            points=paths.vertex_points,
-        )
-        _paint_filled_vertices(
-            painter=painter,
-            vertices=paths.rotation_vertices,
-            fill=(
-                palette.hvertex_fill
-                if context.rotation_highlight is not None
-                else palette.vertex_fill
-            ),
-        )
-        _paint_filled_vertices(
-            painter=painter, vertices=paths.hover_vertex, fill=palette.hvertex_fill
-        )
     if context.fill and shape.shape_type not in ["line", "linestrip", "points", "mask"]:
         fill = palette.select_fill if context.selected else palette.fill
         painter.fillPath(paths.line, fill)
-    if not context.outline:
-        return
-    if paths.orientation_arrow.length() > 0:
+    if context.outline and paths.orientation_arrow.length() > 0:
         painter.setPen(QtGui.QPen(palette.vertex_fill, _OUTLINE_WIDTH))
         painter.drawPath(paths.orientation_arrow)
 
+
+def _paint_markers(
+    *, painter: QtGui.QPainter, context: ShapeRenderContext, paths: _ShapePaths
+) -> None:
+    if not context.outline:
+        return
+    palette = context.palette
+    painter.setPen(
+        QtGui.QPen(_line_color(context=context), _OUTLINE_WIDTH, context.line_style)
+    )
+    _paint_filled_vertices(
+        painter=painter,
+        vertices=paths.vertices,
+        fill=palette.hvertex_fill
+        if context.highlight is not None
+        else palette.vertex_fill,
+        points=paths.vertex_points,
+    )
+    _paint_filled_vertices(
+        painter=painter,
+        vertices=paths.rotation_vertices,
+        fill=(
+            palette.hvertex_fill
+            if context.rotation_highlight is not None
+            else palette.vertex_fill
+        ),
+    )
+    _paint_filled_vertices(
+        painter=painter, vertices=paths.hover_vertex, fill=palette.hvertex_fill
+    )
     if paths.negative_vertices:
         neg_color = QtGui.QColor(*NEGATIVE_RGB)
         painter.setPen(QtGui.QPen(neg_color, _OUTLINE_WIDTH))

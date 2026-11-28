@@ -15,6 +15,7 @@ from labelme._widgets._shape_render import VertexHighlight
 from labelme._widgets._shape_render import bounds
 from labelme._widgets._shape_render import intersects_rect
 from labelme._widgets._shape_render import is_hit_by_point
+from labelme._widgets._shape_render import marker_stack
 from labelme._widgets._shape_render import render_shape
 
 _SIZE: Final = 200
@@ -852,3 +853,16 @@ def test_mask_alignment_hit_extent() -> None:
     ]
     # The hit area matches the fill and the outline: 5.0 up to 6.0.
     assert (round(xs[0], 2), round(xs[-1], 2)) == (5.0, 5.95)
+
+
+def test_marker_stack_lifts_the_hovered_shape_below_the_selection() -> None:
+    chosen, locked, first, lifted, last = (_polygon(label=None) for _ in range(5))
+    locked.locked = True
+
+    stack = marker_stack(
+        shapes=[chosen, locked, first, lifted, last],
+        selected=[chosen, locked],
+        lifted=lifted,
+    )
+
+    assert stack == [locked, first, last, lifted, chosen]

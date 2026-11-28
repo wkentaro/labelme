@@ -52,7 +52,9 @@ from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
 from ._shape_render import bounds as _shape_bounds
 from ._shape_render import intersects_rect
+from ._shape_render import marker_stack
 from ._shape_render import render_shape
+from ._shape_render import render_shapes
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(rgb=_DEFAULT_SHAPE_RGB)
@@ -261,6 +263,12 @@ class _Hover:
     vertex: int | None = None
     edge: int | None = None
     rotation: int | None = None
+
+    @property
+    def lifted_shape(self) -> Shape | None:
+        if self.vertex is None and self.rotation is None:
+            return None
+        return self.shape
 
 
 _AI_PROGRESS_RADIUS: Final = 12
@@ -2657,6 +2665,7 @@ class Canvas(QtWidgets.QWidget):
             if visible.isEmpty()
             else painter.transform().inverted()[0].mapRect(QRectF(visible))
         )
+        contexts: dict[Shape, ShapeRenderContext] = {}
         for shape in self.shapes:
             if not shape.visible:
                 continue
@@ -2667,9 +2676,17 @@ class Canvas(QtWidgets.QWidget):
                 painter=painter, shape=shape, context=context, rect=visible_rect
             ):
                 continue
-            render_shape(
-                painter=painter, shape=shape, context=context, cache=self._render_cache
-            )
+            contexts[shape] = context
+        render_shapes(
+            painter=painter,
+            contexts=contexts,
+            marker_stack=marker_stack(
+                shapes=list(contexts),
+                selected=self.selected_shapes,
+                lifted=self._hover.lifted_shape,
+            ),
+            cache=self._render_cache,
+        )
 
     def _draw_active_shape_layer(self, painter: QtGui.QPainter, /) -> None:
         if self.create_mode == "ai_segment":
