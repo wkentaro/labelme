@@ -2270,14 +2270,13 @@ class Canvas(QtWidgets.QWidget):
         self._record_drag_anchor(shapes=self._movable_selected_shapes(), click=point)
 
     def _find_pointed_shape(self, *, point: QPointF) -> Shape | None:
-        # A hovered vertex, edge, or rotation handle acts on its own shape, so it
-        # wins over a body lying under it, or over none just outside an edge.
+        hover = self._hover
         if (
-            self._hover.vertex is not None
-            or self._hover.rotation is not None
-            or self._hover.edge is not None
+            hover.lifted_shape is not None
+            or hover.edge is not None
+            or (hover.shape is not None and hover.shape.shape_type == "point")
         ):
-            return self._hover.shape
+            return hover.shape
         return _canvas_interaction.find_shape_at(
             shapes=self.shapes,
             point=np.array([point.x(), point.y()]),
