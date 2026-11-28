@@ -604,7 +604,6 @@ def _build_shape_points_paths(
     context: ShapeRenderContext,
 ) -> _ShapePaths:
     paths = _ShapePaths()
-    scale = context.scale
     points = shape.points
     if shape.shape_type in ("rectangle", "mask", "circle"):
         assert len(points) in [1, 2]
@@ -613,63 +612,139 @@ def _build_shape_points_paths(
     elif shape.shape_type == "points":
         assert len(points) == len(shape.point_labels)
 
-    if shape.shape_type == "points":
-        # Prompt points are standalone markers; their outline only bounds them.
-        for i, point_label in enumerate(shape.point_labels):
-            vertices = paths.vertices if point_label == 1 else paths.negative_vertices
-            _append_shape_vertex(
-                vertices=vertices, shape=shape, context=context, vertex_index=i
+    if shape.shape_type != "points":
+        paths.line.addPath(
+            QtGui.QTransform.fromScale(context.scale, context.scale).map(
+                _build_outline_path(shape=shape)
             )
-        return paths
+        )
+    groups = {
+        "vertices": paths.vertices,
+        "rotations": paths.rotation_vertices,
+        "hovered": paths.hover_vertex,
+        "negatives": paths.negative_vertices,
+    }
+    for layer in _marker_layers(
+        shape=shape,
+        highlight=context.highlight,
+        rotation_highlight=context.rotation_highlight,
+        show_vertices=context.show_vertices,
+    ):
+        append = (
+            _append_shape_vertex
+            if layer.kind == "vertex"
+            else _append_shape_rotation_vertex
+        )
+        for index in layer.indices:
+            append(
+                vertices=groups[layer.group],
+                shape=shape,
+                context=context,
+                vertex_index=int(index),
+            )
+    if (
+        shape.shape_type == "oriented_rectangle"
+        and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
+    ):
+        _build_shape_oriented_rectangle_arrow_path(
+            path=paths.orientation_arrow, shape=shape, scale=context.scale
+        )
+    return paths
 
-    paths.line.addPath(
-        QtGui.QTransform.fromScale(scale, scale).map(_build_outline_path(shape=shape))
-    )
+
+MarkerKind = Literal["vertex", "rotation"]
+
+
+@dataclasses.dataclass(frozen=True)
+class _MarkerLayer:
+    group: Literal["vertices", "rotations", "hovered", "negatives"]
+    kind: MarkerKind
+    indices: npt.NDArray[np.intp]
+
+
+def _marker_layers(
+    *,
+    shape: Shape,
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+    show_vertices: bool,
+) -> list[_MarkerLayer]:
+    points = shape.points
+    if shape.shape_type == "points":
+        positive = np.asarray(shape.point_labels) == 1
+        return [
+            _MarkerLayer(
+                group="vertices", kind="vertex", indices=np.flatnonzero(positive)
+            ),
+            _MarkerLayer(
+                group="negatives", kind="vertex", indices=np.flatnonzero(~positive)
+            ),
+        ]
     # A mask's corners are not draggable, and an oriented rectangle's first
     # corner is drawn by the drag preview until its first edge is locked.
     if shape.shape_type == "mask" or (
         shape.shape_type == "oriented_rectangle" and len(points) == 1
     ):
-        return paths
-    is_oriented_rectangle = shape.shape_type == "oriented_rectangle"
-    grouped_corners: set[tuple[float, ...]] = set()
-    for i in range(len(points)):
-        hovered = context.highlight is not None and context.highlight.index == i
-        if not (context.show_vertices or hovered):
-            continue
-        on_top = hovered and is_oriented_rectangle
-        if is_oriented_rectangle and not on_top:
-            corner = tuple(points[i])
-            if corner in grouped_corners:
-                continue
-            grouped_corners.add(corner)
-        _append_shape_vertex(
-            vertices=paths.hover_vertex if on_top else paths.vertices,
-            shape=shape,
-            context=context,
-            vertex_index=i,
-        )
-    if (
-        shape.shape_type == "oriented_rectangle"
-        and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
-    ):
+        return []
+    hovered = (
+        highlight.index
+        if highlight is not None and 0 <= highlight.index < len(points)
+        else None
+    )
+    if shape.shape_type != "oriented_rectangle":
+        if show_vertices:
+            corners = np.arange(len(points))
+        else:
+            corners = np.array([] if hovered is None else [hovered], dtype=np.intp)
+        return [_MarkerLayer(group="vertices", kind="vertex", indices=corners)]
+
+    painted: dict[tuple[float, ...], int] = {}
+    if show_vertices:
         for i in range(len(points)):
-            if np.array_equal(points[i - 1], points[i]):
-                continue
-            hovered = (
-                context.rotation_highlight is not None
-                and context.rotation_highlight.index == i
-            )
-            _append_shape_rotation_vertex(
-                vertices=paths.hover_vertex if hovered else paths.rotation_vertices,
-                shape=shape,
-                context=context,
-                vertex_index=i,
-            )
-        _build_shape_oriented_rectangle_arrow_path(
-            path=paths.orientation_arrow, shape=shape, scale=scale
+            if i != hovered:
+                painted.setdefault(tuple(points[i]), i)
+    layers = [
+        _MarkerLayer(
+            group="vertices",
+            kind="vertex",
+            indices=np.array(list(painted.values()), dtype=np.intp),
         )
-    return paths
+    ]
+    hovered_handle = None
+    if len(points) == ORIENTED_RECTANGLE_POINT_COUNT:
+        handles = [
+            i
+            for i in range(len(points))
+            if not np.array_equal(points[i - 1], points[i])
+        ]
+        if rotation_highlight is not None and rotation_highlight.index in handles:
+            hovered_handle = rotation_highlight.index
+        layers.append(
+            _MarkerLayer(
+                group="rotations",
+                kind="rotation",
+                indices=np.array(
+                    [i for i in handles if i != hovered_handle], dtype=np.intp
+                ),
+            )
+        )
+    if hovered is not None:
+        layers.append(
+            _MarkerLayer(
+                group="hovered",
+                kind="vertex",
+                indices=np.array([hovered], dtype=np.intp),
+            )
+        )
+    if hovered_handle is not None:
+        layers.append(
+            _MarkerLayer(
+                group="hovered",
+                kind="rotation",
+                indices=np.array([hovered_handle], dtype=np.intp),
+            )
+        )
+    return layers
 
 
 def is_hit_by_point(
