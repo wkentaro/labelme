@@ -5619,3 +5619,32 @@ def test_press_on_a_locked_marker_over_a_selected_body_moves_nothing(
     assert drawn == 0
     assert moved == []
     assert target == (0, "body", None)
+
+
+def test_orientation_arrow_draws_over_its_hovered_rotation_handle(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[
+            ("oriented_rectangle", ((100, 150), (200, 150), (200, 162), (100, 162)))
+        ],
+        scale=0.5,
+    )
+    handle = canvas.transform_image_point_to_widget(point=QPointF(150, 162))
+    canvas._refresh_hover_state(pointer=handle)
+    with_arrow = canvas.grab().toImage()
+    monkeypatch.setattr(
+        _shape_render, "_build_shape_oriented_rectangle_arrow_path", lambda **_: None
+    )
+    without_arrow = canvas.grab().toImage()
+
+    x, y = round(handle.x()), round(handle.y())
+    arrow_pixels = [
+        (px, py)
+        for px, py in itertools.product(range(x - 15, x + 15), range(y - 15, y + 15))
+        if with_arrow.pixel(px, py) != without_arrow.pixel(px, py)
+    ]
+    assert canvas._hover.rotation == 3
+    assert arrow_pixels
