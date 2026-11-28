@@ -11,6 +11,7 @@ from PySide6 import QtGui
 
 from labelme._shape import Shape
 from labelme._shape import ShapeType
+from labelme._widgets import _shape_render
 from labelme._widgets._shape_render import RENDER_HINTS
 from labelme._widgets._shape_render import Palette
 from labelme._widgets._shape_render import ShapeRenderContext
@@ -874,21 +875,34 @@ def test_marker_stack_lifts_the_hovered_shape_below_the_selection() -> None:
 
 @pytest.mark.usefixtures("qapp")
 @pytest.mark.parametrize(
-    ("center", "point_size", "point_type", "scale"),
+    ("shape_type", "points", "point_size", "point_type", "scale"),
     [
-        pytest.param((20.3, 20.0), 8, "square", 1.33, id="square_faint_edge"),
-        pytest.param((20.37, 20.81), 8, "round", 0.9, id="round"),
+        pytest.param(
+            "point", ((20.3, 20.0),), 8, "square", 1.33, id="square_faint_edge"
+        ),
+        pytest.param("point", ((20.37, 20.81),), 8, "round", 0.9, id="round"),
+        pytest.param(
+            "oriented_rectangle",
+            ((30, 40), (50, 40), (50, 42), (30, 42)),
+            0,
+            "round",
+            0.5,
+            id="orientation_arrow_cap",
+        ),
     ],
 )
 def test_marker_coverage_reads_each_pixel_the_markers_paint(
     *,
-    center: tuple[float, float],
+    monkeypatch: pytest.MonkeyPatch,
+    shape_type: ShapeType,
+    points: tuple[tuple[float, float], ...],
     point_size: int,
     point_type: Literal["square", "round"],
     scale: float,
 ) -> None:
+    monkeypatch.setattr(_shape_render, "_paint_outline_and_fill", lambda **_: None)
     shape = Shape(
-        shape_type="point", points=np.array([center], dtype=np.float64), closed=True
+        shape_type=shape_type, points=np.array(points, dtype=np.float64), closed=True
     )
     context = ShapeRenderContext(
         scale=scale,
