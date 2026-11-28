@@ -32,6 +32,7 @@ def _paint_combined_vertices(
         else:
             path.addRect(rect)
     painter.drawPath(path)
+    path.setFillRule(QtCore.Qt.FillRule.WindingFill)
     painter.fillPath(path, fill)
 
 

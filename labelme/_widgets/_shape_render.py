@@ -484,6 +484,14 @@ def _paint_outline_and_fill(
         painter.drawPath(paths.orientation_arrow)
 
 
+def _marker_pen(
+    *, color: QtGui.QColor, style: QtCore.Qt.PenStyle = QtCore.Qt.PenStyle.SolidLine
+) -> QtGui.QPen:
+    pen = QtGui.QPen(color, _OUTLINE_WIDTH, style)
+    pen.setJoinStyle(QtCore.Qt.PenJoinStyle.MiterJoin)
+    return pen
+
+
 def _paint_markers(
     *, painter: QtGui.QPainter, context: ShapeRenderContext, paths: _ShapePaths
 ) -> None:
@@ -491,7 +499,7 @@ def _paint_markers(
         return
     palette = context.palette
     painter.setPen(
-        QtGui.QPen(_line_color(context=context), _OUTLINE_WIDTH, context.line_style)
+        _marker_pen(color=_line_color(context=context), style=context.line_style)
     )
     _paint_filled_vertices(
         painter=painter,
@@ -515,7 +523,7 @@ def _paint_markers(
     )
     if paths.negative_vertices:
         neg_color = QtGui.QColor(*NEGATIVE_RGB)
-        painter.setPen(QtGui.QPen(neg_color, _OUTLINE_WIDTH))
+        painter.setPen(_marker_pen(color=neg_color))
         _paint_filled_vertices(
             painter=painter, vertices=paths.negative_vertices, fill=neg_color
         )
@@ -568,7 +576,7 @@ def _paint_filled_vertices(
             path.addRect(rect)
     if not draw_individually:
         painter.drawPath(path)
-    # The shared fill retains the holes and highlights where markers overlap.
+    path.setFillRule(QtCore.Qt.FillRule.WindingFill)
     painter.fillPath(path, fill)
 
 
