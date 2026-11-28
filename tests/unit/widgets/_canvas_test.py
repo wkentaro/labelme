@@ -212,6 +212,46 @@ def test_drag_hovered_rotation_point_does_not_drift_on_repeated_drags(
         assert canvas.shapes[0].points[i][1] == pytest.approx(y)
 
 
+_OPEN_BOX: Final = [(20.0, 10.0), (54.0, 10.0), (54.0, 40.0), (20.0, 40.0)]
+_FLAT_BOX: Final = [(20.0, 25.0), (54.0, 25.0), (54.0, 25.0), (20.0, 25.0)]
+
+
+@pytest.mark.parametrize(
+    ("corners", "point_size", "pointer", "grabbed"),
+    [
+        pytest.param(_OPEN_BOX, 24, QtCore.QPoint(31, 8), "rotation", id="open_handle"),
+        pytest.param(_OPEN_BOX, 24, QtCore.QPoint(27, 8), "corner", id="open_corner"),
+        pytest.param(
+            _FLAT_BOX, 24, QtCore.QPoint(30, 22), "rotation", id="flat_handle"
+        ),
+        pytest.param(_FLAT_BOX, 8, QtCore.QPoint(19, 23), "corner", id="flat_corner"),
+    ],
+)
+def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    corners: list[tuple[float, float]],
+    point_size: int,
+    pointer: QtCore.QPoint,
+    grabbed: str,
+) -> None:
+    pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
+    pixmap.fill(QtGui.QColor("black"))
+    canvas.pixmap = pixmap
+    canvas.set_point_size(point_size=point_size)
+    canvas.load_shapes(shapes=[_make_oriented_rectangle(corners=corners)])
+
+    canvas._refresh_hover_state(pos=QPointF(pointer))
+    drawn = canvas.grab().toImage().pixelColor(pointer)
+    _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(8, 8))
+
+    assert drawn == canvas._resolve_palette(label=None).hvertex_fill
+    side = np.linalg.norm(canvas.shapes[0].points[1] - canvas.shapes[0].points[0])
+    assert (side == pytest.approx(34.0)) == (grabbed == "rotation")
+    assert not np.allclose(canvas.shapes[0].points, corners)
+
+
 def _start_rotation_near_right_edge(*, canvas: Canvas) -> None:
     shape = _make_oriented_rectangle(corners=[(70, 5), (100, 5), (100, 45), (70, 45)])
     canvas.load_shapes(shapes=[shape])
@@ -4765,3 +4805,20 @@ def test_mask_render_cache_survives_undo_reload_and_clears_on_reset(
     assert contours.call_count == 2
     canvas.reset_state()
     assert not canvas._render_cache._entries
+
+
+def test_unhovered_rotation_handle_paints_over_the_corner_beside_it(
+    *, canvas: Canvas
+) -> None:
+    pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
+    pixmap.fill(QtGui.QColor("black"))
+    canvas.pixmap = pixmap
+    canvas.set_point_size(point_size=24)
+    shape = _make_oriented_rectangle(corners=[(20, 10), (80, 10), (80, 35), (20, 35)])
+    canvas.load_shapes(shapes=[shape])
+    canvas.selected_shapes = [shape]
+
+    canvas._refresh_hover_state(pos=QPointF(2, 45))
+    drawn = canvas.grab().toImage().pixelColor(80, 22)
+
+    assert drawn == canvas._resolve_palette(label=None).vertex_fill

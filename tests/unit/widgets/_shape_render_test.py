@@ -44,9 +44,10 @@ def _render(
     scale: float,
     highlight: VertexHighlight | None,
     rotation_highlight: VertexHighlight | None,
+    background: QtCore.Qt.GlobalColor = QtCore.Qt.GlobalColor.white,
 ) -> QtGui.QImage:
     image = QtGui.QImage(_SIZE, _SIZE, QtGui.QImage.Format.Format_ARGB32)
-    image.fill(QtGui.QColor(255, 255, 255))
+    image.fill(background)
     painter = QtGui.QPainter(image)
     context = ShapeRenderContext(
         scale=scale,
@@ -588,6 +589,25 @@ def test_rotation_highlight_colors_rotation_group_without_coloring_vertices() ->
     assert image.pixelColor(100, 50) == QtGui.QColor(255, 255, 255)
     assert image.pixelColor(150, 100) == QtGui.QColor(255, 255, 255)
     assert image.pixelColor(50, 50) == QtGui.QColor(255, 0, 0)
+
+
+@pytest.mark.usefixtures("qapp")
+def test_flattened_box_fills_its_far_corner_with_no_rotation_handle() -> None:
+    shape = Shape(
+        label=None,
+        shape_type="oriented_rectangle",
+        points=np.array([[50, 50], [150, 50], [150, 50], [50, 50]], dtype=np.float64),
+    )
+    image = _render(
+        shape=shape,
+        show_label=False,
+        scale=1.0,
+        highlight=VertexHighlight(index=1, mode="move"),
+        rotation_highlight=None,
+        background=QtCore.Qt.GlobalColor.black,
+    )
+
+    assert image.pixelColor(50, 52) == Palette.from_rgb(rgb=(255, 0, 0)).hvertex_fill
 
 
 @pytest.mark.parametrize(

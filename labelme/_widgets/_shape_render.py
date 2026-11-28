@@ -356,6 +356,7 @@ class _ShapePaths:
     vertices: list[_Vertex] = dataclasses.field(default_factory=list)
     negative_vertices: list[_Vertex] = dataclasses.field(default_factory=list)
     rotation_vertices: list[_Vertex] = dataclasses.field(default_factory=list)
+    hover_vertex: list[_Vertex] = dataclasses.field(default_factory=list)
     # Marker centers grouped by size and type, for batched painting.
     vertex_points: dict[tuple[float, str], QtGui.QPolygonF] = dataclasses.field(
         default_factory=dict
@@ -430,6 +431,9 @@ def _paint_shape_points(
                 if context.rotation_highlight is not None
                 else palette.vertex_fill
             ),
+        )
+        _paint_filled_vertices(
+            painter=painter, vertices=paths.hover_vertex, fill=palette.hvertex_fill
         )
     if context.fill and shape.shape_type not in ["line", "linestrip", "points", "mask"]:
         fill = palette.select_fill if context.selected else palette.fill
@@ -627,20 +631,37 @@ def _build_shape_points_paths(
         shape.shape_type == "oriented_rectangle" and len(points) == 1
     ):
         return paths
+    is_oriented_rectangle = shape.shape_type == "oriented_rectangle"
+    grouped_corners: set[tuple[float, ...]] = set()
     for i in range(len(points)):
-        if context.show_vertices or (
-            context.highlight is not None and context.highlight.index == i
-        ):
-            _append_shape_vertex(
-                vertices=paths.vertices, shape=shape, context=context, vertex_index=i
-            )
+        hovered = context.highlight is not None and context.highlight.index == i
+        if not (context.show_vertices or hovered):
+            continue
+        on_top = hovered and is_oriented_rectangle
+        if is_oriented_rectangle and not on_top:
+            corner = tuple(points[i])
+            if corner in grouped_corners:
+                continue
+            grouped_corners.add(corner)
+        _append_shape_vertex(
+            vertices=paths.hover_vertex if on_top else paths.vertices,
+            shape=shape,
+            context=context,
+            vertex_index=i,
+        )
     if (
         shape.shape_type == "oriented_rectangle"
         and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
     ):
         for i in range(len(points)):
+            if np.array_equal(points[i - 1], points[i]):
+                continue
+            hovered = (
+                context.rotation_highlight is not None
+                and context.rotation_highlight.index == i
+            )
             _append_shape_rotation_vertex(
-                vertices=paths.rotation_vertices,
+                vertices=paths.hover_vertex if hovered else paths.rotation_vertices,
                 shape=shape,
                 context=context,
                 vertex_index=i,
