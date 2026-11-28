@@ -5528,3 +5528,36 @@ def test_press_grabs_the_marker_drawn_in_the_device_pixel_under_the_pointer(
     ]
     assert drawn is not None
     assert moved == [drawn]
+
+
+@pytest.mark.parametrize(
+    "shape_type",
+    [
+        pytest.param("polygon", id="polygon"),
+        pytest.param("linestrip", id="linestrip"),
+    ],
+)
+def test_hovered_vertex_paints_over_the_vertex_beside_it(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    shape_type: ShapeType,
+) -> None:
+    (shape,) = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[(shape_type, ((40, 40), (48, 40), (70, 70), (40, 70)))],
+    )
+    _hover_widget_point(canvas=canvas, at=(40, 40))
+    _hover_widget_point(canvas=canvas, at=(46, 40))
+    pointer = QtCore.QPoint(46, 40)
+    with_neighbor = canvas.grab().toImage().pixelColor(pointer)
+    shape.points[1, 0] = 58
+    without_neighbor = canvas.grab().toImage().pixelColor(pointer)
+    shape.points[1, 0] = 48
+
+    _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(0, 12))
+
+    assert with_neighbor == without_neighbor
+    assert shape.points.tolist() == [[46, 52], [48, 40], [70, 70], [40, 70]]
