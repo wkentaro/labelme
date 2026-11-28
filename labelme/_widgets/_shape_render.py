@@ -253,7 +253,7 @@ def marker_coverage(
         context=context,
         layers=_layers_near(shape=shape, context=context, rect=pixel),
     )
-    reach = _OUTLINE_WIDTH / 2 + _RASTER_SLACK
+    reach = _OUTLINE_WIDTH + _RASTER_SLACK
     if not (
         paths.vertices
         or paths.rotation_vertices
