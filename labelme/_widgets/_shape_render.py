@@ -451,13 +451,6 @@ def _shape_paths(
     paths = cache._get(key=key) if cache is not None and key is not None else None
     if paths is None:
         paths = _build_shape_points_paths(shape=shape, context=context)
-        for rect, point_type in paths.vertices:
-            # A zero-width pen is cosmetic in Qt and would still paint a dot.
-            if rect.isEmpty():
-                continue
-            paths.vertex_points.setdefault(
-                (rect.width(), point_type), QtGui.QPolygonF()
-            ).append(rect.center())
         if cache is not None and key is not None:
             cache._put(
                 key=key,
@@ -685,7 +678,6 @@ def _build_shape_points_paths(
     shape: Shape,
     context: ShapeRenderContext,
 ) -> _ShapePaths:
-    paths = _ShapePaths()
     points = shape.points
     if shape.shape_type in ("rectangle", "mask", "circle"):
         assert len(points) in [1, 2]
@@ -694,24 +686,36 @@ def _build_shape_points_paths(
     elif shape.shape_type == "points":
         assert len(points) == len(shape.point_labels)
 
+    paths = _build_marker_paths(
+        shape=shape,
+        context=context,
+        layers=_marker_layers(
+            shape=shape,
+            highlight=context.highlight,
+            rotation_highlight=context.rotation_highlight,
+            show_vertices=context.show_vertices,
+        ),
+    )
     if shape.shape_type != "points":
         paths.line.addPath(
             QtGui.QTransform.fromScale(context.scale, context.scale).map(
                 _build_outline_path(shape=shape)
             )
         )
+    return paths
+
+
+def _build_marker_paths(
+    *, shape: Shape, context: ShapeRenderContext, layers: list[_MarkerLayer]
+) -> _ShapePaths:
+    paths = _ShapePaths()
     groups = {
         "vertices": paths.vertices,
         "rotations": paths.rotation_vertices,
         "hovered": paths.hover_vertex,
         "negatives": paths.negative_vertices,
     }
-    for layer in _marker_layers(
-        shape=shape,
-        highlight=context.highlight,
-        rotation_highlight=context.rotation_highlight,
-        show_vertices=context.show_vertices,
-    ):
+    for layer in layers:
         append = (
             _append_shape_vertex
             if layer.kind == "vertex"
@@ -724,9 +728,15 @@ def _build_shape_points_paths(
                 context=context,
                 vertex_index=int(index),
             )
+    for rect, point_type in paths.vertices:
+        if rect.isEmpty():
+            continue
+        paths.vertex_points.setdefault(
+            (rect.width(), point_type), QtGui.QPolygonF()
+        ).append(rect.center())
     if (
         shape.shape_type == "oriented_rectangle"
-        and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
+        and len(shape.points) == ORIENTED_RECTANGLE_POINT_COUNT
     ):
         _build_shape_oriented_rectangle_arrow_path(
             path=paths.orientation_arrow, shape=shape, scale=context.scale
