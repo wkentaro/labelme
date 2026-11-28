@@ -193,7 +193,9 @@ def test_drag_hovered_rotation_point_does_not_drift_on_repeated_drags(
     shape = _make_oriented_rectangle(corners=original)
     canvas.load_shapes(shapes=[shape])
 
-    canvas._refresh_hover_state(pos=QPointF(50, 10))
+    canvas._refresh_hover_state(
+        pointer=canvas.transform_image_point_to_widget(point=QPointF(50, 10))
+    )
     assert canvas._hover.rotation == 1
     canvas._capture_rotation_anchors()
 
@@ -251,7 +253,9 @@ def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
     canvas.load_shapes(shapes=[_make_oriented_rectangle(corners=corners)])
 
     for step in path:
-        canvas._refresh_hover_state(pos=QPointF(step))
+        canvas._refresh_hover_state(
+            pointer=canvas.transform_image_point_to_widget(point=QPointF(step))
+        )
     pointer = path[-1]
     drawn = canvas.grab().toImage().pixelColor(pointer)
     _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(8, 8))
@@ -265,7 +269,9 @@ def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
 def _start_rotation_near_right_edge(*, canvas: Canvas) -> None:
     shape = _make_oriented_rectangle(corners=[(70, 5), (100, 5), (100, 45), (70, 45)])
     canvas.load_shapes(shapes=[shape])
-    canvas._refresh_hover_state(pos=QPointF(85, 5))
+    canvas._refresh_hover_state(
+        pointer=canvas.transform_image_point_to_widget(point=QPointF(85, 5))
+    )
     assert canvas._hover.rotation is not None
     canvas._capture_rotation_anchors()
 
@@ -3516,7 +3522,9 @@ def test_hover_transitions_repaint(
         (QPointF(100, 40), 1, 2, None),
     ]:
         painted.clear()
-        canvas._refresh_hover_state(pos=point)
+        canvas._refresh_hover_state(
+            pointer=canvas.transform_image_point_to_widget(point=point)
+        )
         qtbot.waitUntil(lambda: bool(painted))
         active = painted[-1][shape_index]
         inactive = painted[-1][1 - shape_index]
@@ -3531,7 +3539,9 @@ def test_hover_transitions_repaint(
 
     painted.clear()
     if clear_action == "empty":
-        canvas._refresh_hover_state(pos=QPointF(130, 50))
+        canvas._refresh_hover_state(
+            pointer=canvas.transform_image_point_to_widget(point=QPointF(130, 50))
+        )
     elif clear_action == "leave":
         canvas.leaveEvent(QtCore.QEvent(QtCore.QEvent.Type.Leave))
     else:
@@ -3545,7 +3555,9 @@ def test_hover_transitions_repaint(
     )
     if clear_action == "empty":
         painted.clear()
-        canvas._refresh_hover_state(pos=QPointF(125, 50))
+        canvas._refresh_hover_state(
+            pointer=canvas.transform_image_point_to_widget(point=QPointF(125, 50))
+        )
         qtbot.wait(20)
         assert not painted
     if clear_action == "create":
@@ -4828,7 +4840,9 @@ def test_unhovered_rotation_handle_paints_over_the_corner_beside_it(
     canvas.load_shapes(shapes=[shape])
     canvas.selected_shapes = [shape]
 
-    canvas._refresh_hover_state(pos=QPointF(2, 45))
+    canvas._refresh_hover_state(
+        pointer=canvas.transform_image_point_to_widget(point=QPointF(2, 45))
+    )
     drawn = canvas.grab().toImage().pixelColor(80, 22)
 
     assert drawn == canvas._resolve_palette(label=None).vertex_fill
@@ -4920,7 +4934,7 @@ def _hover_target(*, canvas: Canvas) -> _Target | None:
 
 
 def _hover_widget_point(*, canvas: Canvas, at: tuple[float, float]) -> None:
-    canvas._refresh_hover_state(pos=QPointF(at[0] / canvas.scale, at[1] / canvas.scale))
+    canvas._refresh_hover_state(pointer=QPointF(*at))
 
 
 @pytest.mark.parametrize(

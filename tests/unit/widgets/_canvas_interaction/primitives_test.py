@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import functools
 from typing import Final
 
 import numpy as np
+import numpy.typing as npt
 import pytest
 from PySide6.QtCore import Qt
 
@@ -22,14 +22,32 @@ _EPSILON: Final[float] = 10.0
 _SCALE: Final[float] = 1.0
 _POINT_SIZE: Final[int] = 8
 
-_find_unhovered = functools.partial(
-    find_hover_target,
-    point_type="round",
-    highlight=None,
-    rotation_highlight=None,
-    selected=[],
-    lifted=None,
-)
+
+def _find_unhovered(
+    *,
+    shapes: list[Shape],
+    point: npt.NDArray[np.float64],
+    scale: float,
+    epsilon: float,
+    point_size: int,
+    priority_shape: Shape | None,
+    highlight: VertexHighlight | None = None,
+    lifted: Shape | None = None,
+) -> HitTarget | None:
+    return find_hover_target(
+        shapes=shapes,
+        point=point,
+        pixel_center=(np.floor(point * scale) + 0.5) / scale,
+        scale=scale,
+        epsilon=epsilon,
+        point_size=point_size,
+        point_type="round",
+        priority_shape=priority_shape,
+        highlight=highlight,
+        rotation_highlight=None,
+        selected=[],
+        lifted=lifted,
+    )
 
 
 def _point(*, x: float, y: float) -> np.ndarray:

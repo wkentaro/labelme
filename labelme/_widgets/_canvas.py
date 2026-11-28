@@ -5,6 +5,7 @@ import copy
 import dataclasses
 import enum
 import functools
+import math
 import typing
 from collections.abc import Callable
 from collections.abc import Sequence
@@ -1303,7 +1304,7 @@ class Canvas(QtWidgets.QWidget):
         if buttons & Qt.MouseButton.LeftButton:
             self._continue_left_button_drag(pos=pos, event=event)
             return
-        self._refresh_hover_state(pos=pos)
+        self._refresh_hover_state(pointer=event.position())
 
     def _advance_pan(self, *, event: QtGui.QMouseEvent) -> None:
         assert self._pan_anchor is not None
@@ -1460,9 +1461,9 @@ class Canvas(QtWidgets.QWidget):
             epsilon=self._epsilon,
         )
 
-    def _refresh_hover_state(self, *, pos: QPointF) -> None:
+    def _refresh_hover_state(self, *, pointer: QPointF) -> None:
         status_messages: list[str] = []
-        self._highlight_hover_shape(pos=pos, status_messages=status_messages)
+        self._highlight_hover_shape(pointer=pointer, status_messages=status_messages)
         self.vertex_selected.emit(self._hover.vertex is not None)
         self.edge_selected.emit(self._hover.edge is not None)
         self._update_status(extra_messages=status_messages)
@@ -1620,11 +1621,16 @@ class Canvas(QtWidgets.QWidget):
         self._is_moving_shape = True
 
     def _highlight_hover_shape(
-        self, *, pos: QPointF, status_messages: list[str]
+        self, *, pointer: QPointF, status_messages: list[str]
     ) -> None:
+        pos = self.transform_widget_point_to_image(point=pointer)
+        pixel_center = self.transform_widget_point_to_image(
+            point=_device_pixel_center(point=pointer, ratio=self.devicePixelRatioF())
+        )
         target = _canvas_interaction.find_hover_target(
             shapes=self.shapes,
             point=np.array([pos.x(), pos.y()]),
+            pixel_center=np.array([pixel_center.x(), pixel_center.y()]),
             scale=self.scale,
             epsilon=self._epsilon,
             point_size=self._point_size,
@@ -1742,7 +1748,7 @@ class Canvas(QtWidgets.QWidget):
             # the hover from the last move on a shape the press is not over. A
             # press joining a held button keeps that gesture's target.
             self._prev_move_point = pos
-            self._refresh_hover_state(pos=pos)
+            self._refresh_hover_state(pointer=event.position())
         button = event.button()
         if button == Qt.MouseButton.LeftButton:
             self._press_left(pos=pos, event=event)
@@ -3664,6 +3670,13 @@ def _points_leave_image(*, points: np.ndarray, image_size: QtCore.QSize) -> bool
         or points[:, 0].max() > image_size.width() + TOLERANCE
         or points[:, 1].max() > image_size.height() + TOLERANCE
     )
+
+
+def _device_pixel_center(*, point: QPointF, ratio: float) -> QPointF:
+    return (
+        QPointF(math.floor(point.x() * ratio), math.floor(point.y() * ratio))
+        + QPointF(0.5, 0.5)
+    ) / ratio
 
 
 def _is_out_of_image(*, point: QPointF, image_size: QtCore.QSize) -> bool:

@@ -39,6 +39,7 @@ def find_hover_target(
     *,
     shapes: list[Shape],
     point: npt.NDArray[np.float64],
+    pixel_center: npt.NDArray[np.float64],
     scale: float,
     epsilon: float,
     point_size: int,
@@ -63,7 +64,7 @@ def find_hover_target(
     ]
     drawn = _find_drawn_marker(
         shapes=shapes,
-        point=point,
+        pixel_center=pixel_center,
         scale=scale,
         point_size=point_size,
         point_type=point_type,
@@ -131,7 +132,7 @@ def find_hover_target(
 def _find_drawn_marker(
     *,
     shapes: list[Shape],
-    point: npt.NDArray[np.float64],
+    pixel_center: npt.NDArray[np.float64],
     scale: float,
     point_size: int,
     point_type: Literal["square", "round"],
@@ -141,7 +142,6 @@ def _find_drawn_marker(
     selected: list[Shape],
     lifted: Shape | None,
 ) -> HitTarget | None:
-    pixel_center = point + 0.5 / scale
     stack = marker_stack(
         shapes=[shape for shape in shapes if shape.visible and not shape.locked],
         selected=selected,
