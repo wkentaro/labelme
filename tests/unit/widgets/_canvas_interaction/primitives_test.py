@@ -5,6 +5,8 @@ from typing import Final
 import numpy as np
 import numpy.typing as npt
 import pytest
+from PySide6 import QtCore
+from PySide6 import QtGui
 from PySide6.QtCore import Qt
 
 from labelme._shape import Shape
@@ -15,7 +17,10 @@ from labelme._widgets._canvas_interaction import cursor_shape_for
 from labelme._widgets._canvas_interaction import find_hover_target
 from labelme._widgets._canvas_interaction import find_shape_at
 from labelme._widgets._canvas_interaction import is_within_pick_threshold
+from labelme._widgets._shape_render import Palette
+from labelme._widgets._shape_render import ShapeRenderContext
 from labelme._widgets._shape_render import VertexHighlight
+from labelme._widgets._shape_render import marker_coverage
 
 # Shared test constants
 _EPSILON: Final[float] = 10.0
@@ -39,6 +44,22 @@ def _find_unhovered(
         point=point,
         pixel_center=(np.floor(point * scale) + 0.5) / scale,
         device_pixel_ratio=1.0,
+        marker_coverage=lambda shape: marker_coverage(
+            shape=shape,
+            context=ShapeRenderContext(
+                scale=scale,
+                palette=Palette.from_rgb(rgb=(0, 255, 0)),
+                point_size=point_size,
+                point_type="round",
+                selected=False,
+                fill=False,
+                highlight=highlight if shape is priority_shape else None,
+                rotation_highlight=None,
+            ),
+            world=QtGui.QTransform(),
+            device_pixel=QtCore.QPoint(*np.floor(point * scale).astype(int)),
+            ratio=1.0,
+        ),
         scale=scale,
         epsilon=epsilon,
         point_size=point_size,

@@ -47,12 +47,14 @@ from ._hint_chip import HintItem
 from ._hint_chip import paint_hint_chip
 from ._hint_chip import place_hint_chip
 from ._shape_render import NEGATIVE_RGB
+from ._shape_render import RENDER_HINTS
 from ._shape_render import Palette
 from ._shape_render import ShapeRenderCache
 from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
 from ._shape_render import bounds as _shape_bounds
 from ._shape_render import intersects_rect
+from ._shape_render import marker_coverage
 from ._shape_render import marker_stack
 from ._shape_render import render_shape
 from ._shape_render import render_shapes
@@ -1625,14 +1627,27 @@ class Canvas(QtWidgets.QWidget):
     ) -> None:
         pos = self.transform_widget_point_to_image(point=pointer)
         ratio = self.devicePixelRatioF()
-        pixel_center = self.transform_widget_point_to_image(
-            point=_device_pixel_center(point=pointer, ratio=ratio)
+        device_pixel = QtCore.QPoint(
+            math.floor(pointer.x() * ratio), math.floor(pointer.y() * ratio)
         )
+        pixel_center = self.transform_widget_point_to_image(
+            point=(QPointF(device_pixel) + QPointF(0.5, 0.5)) / ratio
+        )
+        world = self._world_transform()
         target = _canvas_interaction.find_hover_target(
             shapes=self.shapes,
             point=np.array([pos.x(), pos.y()]),
             pixel_center=np.array([pixel_center.x(), pixel_center.y()]),
             device_pixel_ratio=ratio,
+            marker_coverage=lambda shape: marker_coverage(
+                shape=shape,
+                context=self._render_context(
+                    shape=shape, highlighted=shape is self._hover.shape
+                ),
+                world=world,
+                device_pixel=device_pixel,
+                ratio=ratio,
+            ),
             scale=self.scale,
             epsilon=self._epsilon,
             point_size=self._point_size,
@@ -2454,12 +2469,12 @@ class Canvas(QtWidgets.QWidget):
             painter.end()
 
     def _setup_world_transform(self, *, painter: QtGui.QPainter) -> None:
-        for hint in (
-            QtGui.QPainter.RenderHint.Antialiasing,
-            QtGui.QPainter.RenderHint.SmoothPixmapTransform,
-        ):
-            painter.setRenderHint(hint)
-        painter.translate(self._compute_image_origin_offset(area=None) * self.scale)
+        painter.setRenderHints(RENDER_HINTS)
+        painter.setTransform(self._world_transform())
+
+    def _world_transform(self) -> QtGui.QTransform:
+        offset = self._compute_image_origin_offset(area=None) * self.scale
+        return QtGui.QTransform.fromTranslate(offset.x(), offset.y())
 
     def _render_layers(self) -> tuple[Callable[[QtGui.QPainter], None], ...]:
         # Order is z-order, back-to-front.
@@ -3675,13 +3690,6 @@ def _points_leave_image(*, points: np.ndarray, image_size: QtCore.QSize) -> bool
         or points[:, 0].max() > image_size.width() + TOLERANCE
         or points[:, 1].max() > image_size.height() + TOLERANCE
     )
-
-
-def _device_pixel_center(*, point: QPointF, ratio: float) -> QPointF:
-    return (
-        QPointF(math.floor(point.x() * ratio), math.floor(point.y() * ratio))
-        + QPointF(0.5, 0.5)
-    ) / ratio
 
 
 def _is_out_of_image(*, point: QPointF, image_size: QtCore.QSize) -> bool:

@@ -106,6 +106,11 @@ class ShapeRenderContext:
 # pixels at every zoom level.
 _OUTLINE_WIDTH: Final[float] = 2.0
 
+RENDER_HINTS: Final = (
+    QtGui.QPainter.RenderHint.Antialiasing
+    | QtGui.QPainter.RenderHint.SmoothPixmapTransform
+)
+
 # Red marks an excluding prompt, a negative point or a counter-example box; a
 # "−" goes with it, since red and green are the pair color-blind users confuse.
 NEGATIVE_RGB: Final[tuple[int, int, int]] = (255, 0, 0)
@@ -224,6 +229,75 @@ def render_shapes(
         paths = marker_paths[shape]
         if paths is not None:
             _paint_markers(painter=painter, context=contexts[shape], paths=paths)
+
+
+def marker_coverage(
+    *,
+    shape: Shape,
+    context: ShapeRenderContext,
+    world: QtGui.QTransform,
+    device_pixel: QtCore.QPoint,
+    ratio: float,
+) -> float:
+    if not context.outline or len(shape.points) == 0:
+        return 0.0
+    origin = QtCore.QPointF(device_pixel) / ratio
+    pixel = world.inverted()[0].mapRect(
+        QtCore.QRectF(origin, QtCore.QSizeF(1 / ratio, 1 / ratio))
+    )
+    reach = marker_reach(point_size=context.point_size)
+    near = pixel.adjusted(-reach, -reach, reach, reach)
+    paths = _build_marker_paths(
+        shape=shape,
+        context=context,
+        layers=_layers_near(
+            shape=shape,
+            layers=_marker_layers(
+                shape=shape,
+                highlight=context.highlight,
+                rotation_highlight=context.rotation_highlight,
+                show_vertices=context.show_vertices,
+            ),
+            rect=near,
+            scale=context.scale,
+        ),
+    )
+    if not (
+        paths.vertices
+        or paths.rotation_vertices
+        or paths.hover_vertex
+        or paths.negative_vertices
+        or near.intersects(paths.orientation_arrow.controlPointRect())
+    ):
+        return 0.0
+    image = QtGui.QImage(1, 1, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
+    image.setDevicePixelRatio(ratio)
+    image.fill(QtCore.Qt.GlobalColor.transparent)
+    painter = QtGui.QPainter(image)
+    painter.setRenderHints(RENDER_HINTS)
+    painter.setTransform(
+        world * QtGui.QTransform.fromTranslate(-origin.x(), -origin.y())
+    )
+    _paint_markers(painter=painter, context=context, paths=paths)
+    painter.end()
+    return image.pixelColor(0, 0).alphaF()
+
+
+def _layers_near(
+    *,
+    shape: Shape,
+    layers: list[_MarkerLayer],
+    rect: QtCore.QRectF,
+    scale: float,
+) -> list[_MarkerLayer]:
+    lo = np.array([rect.left(), rect.top()]) / scale
+    hi = np.array([rect.right(), rect.bottom()]) / scale
+    near = []
+    for layer in layers:
+        centers = _marker_centers(shape=shape, kind=layer.kind)[layer.indices]
+        inside = np.all((centers >= lo) & (centers <= hi), axis=1)
+        near.append(dataclasses.replace(layer, indices=layer.indices[inside]))
+    return near
 
 
 def _line_color(*, context: ShapeRenderContext) -> QtGui.QColor:

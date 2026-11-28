@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import enum
 import functools
+from collections.abc import Callable
 from typing import Final
 from typing import Literal
 
@@ -43,6 +44,7 @@ def find_hover_target(
     point: npt.NDArray[np.float64],
     pixel_center: npt.NDArray[np.float64],
     device_pixel_ratio: float,
+    marker_coverage: Callable[[Shape], float],
     scale: float,
     epsilon: float,
     point_size: int,
@@ -69,6 +71,7 @@ def find_hover_target(
         shapes=shapes,
         pixel_center=pixel_center,
         device_pixel_ratio=device_pixel_ratio,
+        marker_coverage=marker_coverage,
         scale=scale,
         point_size=point_size,
         point_type=point_type,
@@ -138,6 +141,7 @@ def _find_drawn_marker(
     shapes: list[Shape],
     pixel_center: npt.NDArray[np.float64],
     device_pixel_ratio: float,
+    marker_coverage: Callable[[Shape], float],
     scale: float,
     point_size: int,
     point_type: Literal["square", "round"],
@@ -147,33 +151,48 @@ def _find_drawn_marker(
     selected: list[Shape],
     lifted: Shape | None,
 ) -> HitTarget | None:
-    stack = marker_stack(
-        shapes=[shape for shape in shapes if shape.visible],
-        selected=selected,
-        lifted=lifted,
+    drawn = _find_drawn_shape(
+        stack=marker_stack(
+            shapes=[shape for shape in shapes if shape.visible],
+            selected=selected,
+            lifted=lifted,
+        ),
+        marker_coverage=marker_coverage,
     )
-    grazed = None
+    if drawn is None:
+        return None
+    is_priority = drawn is priority_shape
+    find = functools.partial(
+        find_marker,
+        shape=drawn,
+        point=pixel_center,
+        scale=scale,
+        point_size=point_size,
+        point_type=point_type,
+        highlight=highlight if is_priority else None,
+        rotation_highlight=rotation_highlight if is_priority else None,
+    )
+    marker = find(pixel_half=0.0) or find(pixel_half=0.5 / device_pixel_ratio)
+    if marker is None:
+        return None
+    return _marker_target(shape=drawn, marker=marker)
+
+
+def _find_drawn_shape(
+    *, stack: list[Shape], marker_coverage: Callable[[Shape], float]
+) -> Shape | None:
+    drawn = None
+    drawn_share = 0.0
+    shown = 1.0
     for shape in reversed(stack):
-        is_priority = shape is priority_shape
-        find = functools.partial(
-            find_marker,
-            shape=shape,
-            point=pixel_center,
-            scale=scale,
-            point_size=point_size,
-            point_type=point_type,
-            highlight=highlight if is_priority else None,
-            rotation_highlight=rotation_highlight if is_priority else None,
-        )
-        touched = find(pixel_half=0.5 / device_pixel_ratio)
-        if touched is None:
-            continue
-        centered = find(pixel_half=0.0)
-        if centered is not None:
-            return _marker_target(shape=shape, marker=centered)
-        if grazed is None:
-            grazed = _marker_target(shape=shape, marker=touched)
-    return grazed
+        if shown <= drawn_share:
+            break
+        coverage = marker_coverage(shape)
+        if coverage * shown > drawn_share:
+            drawn = shape
+            drawn_share = coverage * shown
+        shown *= 1 - coverage
+    return drawn
 
 
 def _marker_target(*, shape: Shape, marker: tuple[MarkerKind, int]) -> HitTarget:
