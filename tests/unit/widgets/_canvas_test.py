@@ -217,14 +217,22 @@ _FLAT_BOX: Final = [(20.0, 25.0), (54.0, 25.0), (54.0, 25.0), (20.0, 25.0)]
 
 
 @pytest.mark.parametrize(
-    ("corners", "point_size", "pointer", "grabbed"),
+    ("corners", "point_size", "path", "grabbed"),
     [
-        pytest.param(_OPEN_BOX, 24, QtCore.QPoint(31, 8), "rotation", id="open_handle"),
-        pytest.param(_OPEN_BOX, 24, QtCore.QPoint(27, 8), "corner", id="open_corner"),
         pytest.param(
-            _FLAT_BOX, 24, QtCore.QPoint(30, 22), "rotation", id="flat_handle"
+            _OPEN_BOX, 24, [QtCore.QPoint(31, 8)], "rotation", id="open_handle"
         ),
-        pytest.param(_FLAT_BOX, 8, QtCore.QPoint(19, 23), "corner", id="flat_corner"),
+        pytest.param(
+            _OPEN_BOX,
+            24,
+            [QtCore.QPoint(20, 10), QtCore.QPoint(27, 8)],
+            "corner",
+            id="open_corner",
+        ),
+        pytest.param(
+            _FLAT_BOX, 24, [QtCore.QPoint(30, 22)], "rotation", id="flat_handle"
+        ),
+        pytest.param(_FLAT_BOX, 8, [QtCore.QPoint(19, 23)], "corner", id="flat_corner"),
     ],
 )
 def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
@@ -233,7 +241,7 @@ def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
     qtbot: QtBot,
     corners: list[tuple[float, float]],
     point_size: int,
-    pointer: QtCore.QPoint,
+    path: list[QtCore.QPoint],
     grabbed: str,
 ) -> None:
     pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
@@ -242,7 +250,9 @@ def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
     canvas.set_point_size(point_size=point_size)
     canvas.load_shapes(shapes=[_make_oriented_rectangle(corners=corners)])
 
-    canvas._refresh_hover_state(pos=QPointF(pointer))
+    for step in path:
+        canvas._refresh_hover_state(pos=QPointF(step))
+    pointer = path[-1]
     drawn = canvas.grab().toImage().pixelColor(pointer)
     _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(8, 8))
 

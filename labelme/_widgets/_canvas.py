@@ -1628,7 +1628,12 @@ class Canvas(QtWidgets.QWidget):
             scale=self.scale,
             epsilon=self._epsilon,
             point_size=self._point_size,
+            point_type=self._point_type,
             priority_shape=self._hover.shape,
+            highlight=self._highlight,
+            rotation_highlight=self._rotation_highlight,
+            selected=self.selected_shapes,
+            lifted=self._hover.lifted_shape,
         )
 
         if target is None:

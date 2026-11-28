@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import enum
 from typing import Final
+from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
@@ -13,7 +14,11 @@ from .._shape import image_extent
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
+from ._shape_render import VertexHighlight
+from ._shape_render import find_marker
 from ._shape_render import is_hit_by_point
+from ._shape_render import marker_reach
+from ._shape_render import marker_stack
 
 
 class HitKind(enum.Enum):
@@ -37,7 +42,12 @@ def find_hover_target(
     scale: float,
     epsilon: float,
     point_size: int,
+    point_type: Literal["square", "round"],
     priority_shape: Shape | None,
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+    selected: list[Shape],
+    lifted: Shape | None,
 ) -> HitTarget | None:
     # Proximity is measured in image space, so the screen-pixel threshold is
     # converted here rather than scaling every shape's points.
@@ -45,12 +55,27 @@ def find_hover_target(
 
     # Every pass below costs array work per shape, so drop the shapes the
     # pointer is nowhere near once, up front.
-    margin = max(image_epsilon, point_size / 2 / scale)
+    margin = max(image_epsilon, marker_reach(point_size=point_size) / scale)
     shapes = [
         shape
         for shape in shapes
         if _is_near_extent(shape=shape, point=point, margin=margin)
     ]
+    drawn = _find_drawn_marker(
+        shapes=shapes,
+        point=point,
+        scale=scale,
+        point_size=point_size,
+        point_type=point_type,
+        priority_shape=priority_shape,
+        highlight=highlight,
+        rotation_highlight=rotation_highlight,
+        selected=selected,
+        lifted=lifted,
+    )
+    if drawn is not None:
+        return drawn
+
     candidates = _build_candidates(
         shapes=shapes,
         priority_shape=priority_shape,
@@ -100,6 +125,47 @@ def find_hover_target(
     if top is not None:
         return HitTarget(kind=HitKind.BODY, shape=top, index=None)
 
+    return None
+
+
+def _find_drawn_marker(
+    *,
+    shapes: list[Shape],
+    point: npt.NDArray[np.float64],
+    scale: float,
+    point_size: int,
+    point_type: Literal["square", "round"],
+    priority_shape: Shape | None,
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+    selected: list[Shape],
+    lifted: Shape | None,
+) -> HitTarget | None:
+    pixel_center = point + 0.5 / scale
+    stack = marker_stack(
+        shapes=[shape for shape in shapes if shape.visible and not shape.locked],
+        selected=selected,
+        lifted=lifted,
+    )
+    for shape in reversed(stack):
+        is_priority = shape is priority_shape
+        marker = find_marker(
+            shape=shape,
+            point=pixel_center,
+            scale=scale,
+            point_size=point_size,
+            point_type=point_type,
+            highlight=highlight if is_priority else None,
+            rotation_highlight=rotation_highlight if is_priority else None,
+        )
+        if marker is None:
+            continue
+        kind, index = marker
+        if shape.shape_type == "point":
+            return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
+        if kind == "rotation":
+            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=index)
+        return HitTarget(kind=HitKind.VERTEX, shape=shape, index=index)
     return None
 
 

@@ -262,6 +262,10 @@ def _paint_body(
 _LARGEST_HIGHLIGHT: Final = VertexHighlight(index=0, mode="near")
 
 
+def marker_reach(*, point_size: int) -> float:
+    return point_size * _LARGEST_HIGHLIGHT.size_factor / 2 + _OUTLINE_WIDTH
+
+
 def intersects_rect(
     *,
     painter: QtGui.QPainter,
@@ -276,8 +280,7 @@ def intersects_rect(
         return True
     anchor = points.min(axis=0)
     lo, hi = image_extent(shape=shape)
-    largest_marker = context.point_size * _LARGEST_HIGHLIGHT.size_factor
-    pad = largest_marker / 2 + _OUTLINE_WIDTH
+    pad = marker_reach(point_size=context.point_size)
     left, top = lo * context.scale - pad
     right, bottom = hi * context.scale + pad
     extent = QtCore.QRectF(left, top, right - left, bottom - top)
@@ -822,6 +825,106 @@ def _marker_layers(
             )
         )
     return layers
+
+
+def find_marker(
+    *,
+    shape: Shape,
+    point: npt.NDArray[np.float64],
+    scale: float,
+    point_size: int,
+    point_type: Literal["square", "round"],
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+) -> tuple[MarkerKind, int] | None:
+    for layer in reversed(
+        _marker_layers(
+            shape=shape,
+            highlight=highlight,
+            rotation_highlight=rotation_highlight,
+            show_vertices=True,
+        )
+    ):
+        if len(layer.indices) == 0:
+            continue
+        index = _find_marker_in_layer(
+            deltas=_marker_centers(shape=shape, kind=layer.kind) - point,
+            indices=layer.indices,
+            scale=scale,
+            point_size=point_size,
+            point_type=point_type,
+            highlight=highlight if layer.kind == "vertex" else rotation_highlight,
+        )
+        if index is not None:
+            return layer.kind, index
+    return None
+
+
+def _marker_centers(*, shape: Shape, kind: MarkerKind) -> npt.NDArray[np.float64]:
+    if kind == "vertex":
+        return shape.points
+    return np.array(
+        [get_rotation_handle(shape=shape, index=i) for i in range(len(shape.points))]
+    )
+
+
+def _find_marker_in_layer(
+    *,
+    deltas: npt.NDArray[np.float64],
+    indices: npt.NDArray[np.intp],
+    scale: float,
+    point_size: int,
+    point_type: Literal["square", "round"],
+    highlight: VertexHighlight | None,
+) -> int | None:
+    distances = np.einsum("ij,ij->i", deltas, deltas)[indices]
+    hits = _covers(
+        deltas=deltas,
+        indices=indices,
+        distances=distances,
+        size=point_size,
+        point_type=point_type,
+        scale=scale,
+    )
+    if highlight is not None and highlight.index in indices:
+        (i,) = np.flatnonzero(indices == highlight.index)
+        size, highlighted_type = _resolve_vertex_style(
+            highlight=highlight,
+            vertex_index=highlight.index,
+            default_size=point_size,
+            default_point_type=point_type,
+        )
+        if _covers(
+            deltas=deltas,
+            indices=indices[i : i + 1],
+            distances=distances[i : i + 1],
+            size=size,
+            point_type=highlighted_type,
+            scale=scale,
+        )[0]:
+            return highlight.index
+        hits[i] = False
+    candidates = np.flatnonzero(hits)
+    if len(candidates) == 0:
+        return None
+    return int(indices[candidates[np.argmin(distances[candidates])]])
+
+
+def _covers(
+    *,
+    deltas: npt.NDArray[np.float64],
+    indices: npt.NDArray[np.intp],
+    distances: npt.NDArray[np.float64],
+    size: float,
+    point_type: Literal["square", "round"],
+    scale: float,
+) -> npt.NDArray[np.bool_]:
+    if size <= 0:
+        return np.zeros(len(indices), dtype=bool)
+    half = (size + _OUTLINE_WIDTH) / 2 / scale
+    if point_type == "round":
+        return distances <= half * half
+    return np.abs(deltas[indices]).max(axis=1) <= half
 
 
 def is_hit_by_point(
