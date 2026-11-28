@@ -2280,7 +2280,10 @@ class Canvas(QtWidgets.QWidget):
         if (
             hover.lifted_shape is not None
             or hover.edge is not None
-            or (hover.shape is not None and hover.shape.shape_type == "point")
+            or (
+                hover.shape is not None
+                and (hover.shape.shape_type == "point" or hover.shape.locked)
+            )
         ):
             return hover.shape
         return _canvas_interaction.find_shape_at(

@@ -143,7 +143,7 @@ def _find_drawn_marker(
     lifted: Shape | None,
 ) -> HitTarget | None:
     stack = marker_stack(
-        shapes=[shape for shape in shapes if shape.visible and not shape.locked],
+        shapes=[shape for shape in shapes if shape.visible],
         selected=selected,
         lifted=lifted,
     )
@@ -161,7 +161,7 @@ def _find_drawn_marker(
         if marker is None:
             continue
         kind, index = marker
-        if shape.shape_type == "point":
+        if shape.shape_type == "point" or shape.locked:
             return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
         if kind == "rotation":
             return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=index)
