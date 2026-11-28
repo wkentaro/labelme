@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import collections
 import dataclasses
+import functools
 import math
 import sys
 import typing
@@ -105,6 +106,8 @@ class ShapeRenderContext:
 # Shapes are stroked in widget space, so the outline keeps this many screen
 # pixels at every zoom level.
 _OUTLINE_WIDTH: Final[float] = 2.0
+
+_RASTER_SLACK: Final = 0.125
 
 RENDER_HINTS: Final = (
     QtGui.QPainter.RenderHint.Antialiasing
@@ -245,29 +248,20 @@ def marker_coverage(
     pixel = world.inverted()[0].mapRect(
         QtCore.QRectF(origin, QtCore.QSizeF(1 / ratio, 1 / ratio))
     )
-    reach = marker_reach(point_size=context.point_size)
-    near = pixel.adjusted(-reach, -reach, reach, reach)
     paths = _build_marker_paths(
         shape=shape,
         context=context,
-        layers=_layers_near(
-            shape=shape,
-            layers=_marker_layers(
-                shape=shape,
-                highlight=context.highlight,
-                rotation_highlight=context.rotation_highlight,
-                show_vertices=context.show_vertices,
-            ),
-            rect=near,
-            scale=context.scale,
-        ),
+        layers=_layers_near(shape=shape, context=context, rect=pixel),
     )
+    reach = _OUTLINE_WIDTH / 2 + _RASTER_SLACK
     if not (
         paths.vertices
         or paths.rotation_vertices
         or paths.hover_vertex
         or paths.negative_vertices
-        or near.intersects(paths.orientation_arrow.controlPointRect())
+        or pixel.adjusted(-reach, -reach, reach, reach).intersects(
+            paths.orientation_arrow.controlPointRect()
+        )
     ):
         return 0.0
     border = 1
@@ -287,18 +281,46 @@ def marker_coverage(
 
 
 def _layers_near(
-    *,
-    shape: Shape,
-    layers: list[_MarkerLayer],
-    rect: QtCore.QRectF,
-    scale: float,
+    *, shape: Shape, context: ShapeRenderContext, rect: QtCore.QRectF
 ) -> list[_MarkerLayer]:
-    lo = np.array([rect.left(), rect.top()]) / scale
-    hi = np.array([rect.right(), rect.bottom()]) / scale
+    point = np.array([rect.center().x(), rect.center().y()]) / context.scale
+    cover = functools.partial(
+        _covers, pixel_half=rect.width() / 2 + _RASTER_SLACK, scale=context.scale
+    )
     near = []
-    for layer in layers:
-        centers = _marker_centers(shape=shape, kind=layer.kind)[layer.indices]
-        inside = np.all((centers >= lo) & (centers <= hi), axis=1)
+    for layer in _marker_layers(
+        shape=shape,
+        highlight=context.highlight,
+        rotation_highlight=context.rotation_highlight,
+        show_vertices=context.show_vertices,
+    ):
+        deltas = _marker_centers(shape=shape, kind=layer.kind) - point
+        distances = np.einsum("ij,ij->i", deltas, deltas)[layer.indices]
+        inside = cover(
+            deltas=deltas,
+            indices=layer.indices,
+            distances=distances,
+            size=context.point_size,
+            point_type=context.point_type,
+        )
+        highlight = (
+            context.highlight if layer.kind == "vertex" else context.rotation_highlight
+        )
+        if highlight is not None:
+            highlighted = layer.indices == highlight.index
+            size, point_type = _resolve_vertex_style(
+                highlight=highlight,
+                vertex_index=highlight.index,
+                default_size=context.point_size,
+                default_point_type=context.point_type,
+            )
+            inside[highlighted] = cover(
+                deltas=deltas,
+                indices=layer.indices[highlighted],
+                distances=distances[highlighted],
+                size=size,
+                point_type=point_type,
+            )
         near.append(dataclasses.replace(layer, indices=layer.indices[inside]))
     return near
 
