@@ -5070,6 +5070,22 @@ def _hover_widget_point(*, canvas: Canvas, at: tuple[float, float]) -> None:
             id="sol_point_rim",
         ),
         pytest.param(
+            [("rectangle", ((32, 40), (10, 15))), ("point", ((45, 43),))],
+            [(40, 40)],
+            (1, "body", None),
+            (),
+            (),
+            id="point_antialiased_rim_left",
+        ),
+        pytest.param(
+            [("rectangle", ((92, 87), (130, 130))), ("point", ((80, 80),))],
+            [(84, 82)],
+            (1, "body", None),
+            (),
+            (),
+            id="point_antialiased_rim_right",
+        ),
+        pytest.param(
             [
                 ("point", ((94.5, 82.5),)),
                 (
