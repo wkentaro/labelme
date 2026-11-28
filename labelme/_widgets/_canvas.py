@@ -1624,13 +1624,15 @@ class Canvas(QtWidgets.QWidget):
         self, *, pointer: QPointF, status_messages: list[str]
     ) -> None:
         pos = self.transform_widget_point_to_image(point=pointer)
+        ratio = self.devicePixelRatioF()
         pixel_center = self.transform_widget_point_to_image(
-            point=_device_pixel_center(point=pointer, ratio=self.devicePixelRatioF())
+            point=_device_pixel_center(point=pointer, ratio=ratio)
         )
         target = _canvas_interaction.find_hover_target(
             shapes=self.shapes,
             point=np.array([pos.x(), pos.y()]),
             pixel_center=np.array([pixel_center.x(), pixel_center.y()]),
+            device_pixel_ratio=ratio,
             scale=self.scale,
             epsilon=self._epsilon,
             point_size=self._point_size,

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import collections
 import dataclasses
+import math
 import sys
 import typing
 from typing import Final
@@ -827,6 +828,7 @@ def find_marker(
     *,
     shape: Shape,
     point: npt.NDArray[np.float64],
+    pixel_half: float,
     scale: float,
     point_size: int,
     point_type: Literal["square", "round"],
@@ -847,6 +849,7 @@ def find_marker(
             deltas=_marker_centers(shape=shape, kind=layer.kind) - point,
             indices=layer.indices,
             scale=scale,
+            pixel_half=pixel_half,
             point_size=point_size,
             point_type=point_type,
             highlight=highlight if layer.kind == "vertex" else rotation_highlight,
@@ -866,6 +869,7 @@ def _find_marker_in_layer(
     *,
     deltas: npt.NDArray[np.float64],
     indices: npt.NDArray[np.intp],
+    pixel_half: float,
     scale: float,
     point_size: int,
     point_type: Literal["square", "round"],
@@ -879,6 +883,7 @@ def _find_marker_in_layer(
         size=point_size,
         point_type=point_type,
         scale=scale,
+        pixel_half=pixel_half,
     )
     if highlight is not None and highlight.index in indices:
         (i,) = np.flatnonzero(indices == highlight.index)
@@ -895,6 +900,7 @@ def _find_marker_in_layer(
             size=size,
             point_type=highlighted_type,
             scale=scale,
+            pixel_half=pixel_half,
         )[0]:
             return highlight.index
         hits[i] = False
@@ -911,14 +917,24 @@ def _covers(
     distances: npt.NDArray[np.float64],
     size: float,
     point_type: Literal["square", "round"],
+    pixel_half: float,
     scale: float,
 ) -> npt.NDArray[np.bool_]:
     if size <= 0:
         return np.zeros(len(indices), dtype=bool)
-    half = (size + _OUTLINE_WIDTH) / 2 / scale
+    marker_half = (size + _OUTLINE_WIDTH) / 2
     if point_type == "round":
-        return distances <= half * half
-    return np.abs(deltas[indices]).max(axis=1) <= half
+        bound = marker_half + pixel_half * math.sqrt(2)
+    else:
+        bound = (marker_half + pixel_half) * math.sqrt(2)
+    hits = distances < (bound / scale) ** 2
+    candidates = np.flatnonzero(hits)
+    gaps = np.maximum(np.abs(deltas[indices[candidates]]) * scale - pixel_half, 0)
+    if point_type == "round":
+        hits[candidates] = np.einsum("ij,ij->i", gaps, gaps) < marker_half**2
+    else:
+        hits[candidates] = np.maximum(gaps[:, 0], gaps[:, 1]) < marker_half
+    return hits
 
 
 def is_hit_by_point(

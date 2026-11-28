@@ -38,6 +38,7 @@ def _find_unhovered(
         shapes=shapes,
         point=point,
         pixel_center=(np.floor(point * scale) + 0.5) / scale,
+        device_pixel_ratio=1.0,
         scale=scale,
         epsilon=epsilon,
         point_size=point_size,

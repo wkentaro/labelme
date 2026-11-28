@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import enum
+import functools
 from typing import Final
 from typing import Literal
 
@@ -14,6 +15,7 @@ from .._shape import image_extent
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
+from ._shape_render import MarkerKind
 from ._shape_render import VertexHighlight
 from ._shape_render import find_marker
 from ._shape_render import is_hit_by_point
@@ -40,6 +42,7 @@ def find_hover_target(
     shapes: list[Shape],
     point: npt.NDArray[np.float64],
     pixel_center: npt.NDArray[np.float64],
+    device_pixel_ratio: float,
     scale: float,
     epsilon: float,
     point_size: int,
@@ -65,6 +68,7 @@ def find_hover_target(
     drawn = _find_drawn_marker(
         shapes=shapes,
         pixel_center=pixel_center,
+        device_pixel_ratio=device_pixel_ratio,
         scale=scale,
         point_size=point_size,
         point_type=point_type,
@@ -133,6 +137,7 @@ def _find_drawn_marker(
     *,
     shapes: list[Shape],
     pixel_center: npt.NDArray[np.float64],
+    device_pixel_ratio: float,
     scale: float,
     point_size: int,
     point_type: Literal["square", "round"],
@@ -147,9 +152,11 @@ def _find_drawn_marker(
         selected=selected,
         lifted=lifted,
     )
+    grazed = None
     for shape in reversed(stack):
         is_priority = shape is priority_shape
-        marker = find_marker(
+        find = functools.partial(
+            find_marker,
             shape=shape,
             point=pixel_center,
             scale=scale,
@@ -158,15 +165,24 @@ def _find_drawn_marker(
             highlight=highlight if is_priority else None,
             rotation_highlight=rotation_highlight if is_priority else None,
         )
-        if marker is None:
+        touched = find(pixel_half=0.5 / device_pixel_ratio)
+        if touched is None:
             continue
-        kind, index = marker
-        if shape.shape_type == "point" or shape.locked:
-            return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
-        if kind == "rotation":
-            return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=index)
-        return HitTarget(kind=HitKind.VERTEX, shape=shape, index=index)
-    return None
+        centered = find(pixel_half=0.0)
+        if centered is not None:
+            return _marker_target(shape=shape, marker=centered)
+        if grazed is None:
+            grazed = _marker_target(shape=shape, marker=touched)
+    return grazed
+
+
+def _marker_target(*, shape: Shape, marker: tuple[MarkerKind, int]) -> HitTarget:
+    kind, index = marker
+    if shape.shape_type == "point" or shape.locked:
+        return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
+    if kind == "rotation":
+        return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=index)
+    return HitTarget(kind=HitKind.VERTEX, shape=shape, index=index)
 
 
 def find_shape_at(
