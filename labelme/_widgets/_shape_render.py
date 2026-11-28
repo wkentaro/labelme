@@ -771,27 +771,22 @@ def _marker_layers(
         if highlight is not None and 0 <= highlight.index < len(points)
         else None
     )
-    if shape.shape_type != "oriented_rectangle":
-        if show_vertices:
-            corners = np.arange(len(points))
-        else:
-            corners = np.array([] if hovered is None else [hovered], dtype=np.intp)
-        return [_MarkerLayer(group="vertices", kind="vertex", indices=corners)]
-
-    painted: dict[tuple[float, ...], int] = {}
-    if show_vertices:
+    if not show_vertices:
+        corners = np.array([], dtype=np.intp)
+    elif shape.shape_type == "oriented_rectangle":
+        painted: dict[tuple[float, ...], int] = {}
         for i in range(len(points)):
             if i != hovered:
                 painted.setdefault(tuple(points[i]), i)
-    layers = [
-        _MarkerLayer(
-            group="vertices",
-            kind="vertex",
-            indices=np.array(list(painted.values()), dtype=np.intp),
-        )
-    ]
+        corners = np.array(list(painted.values()), dtype=np.intp)
+    else:
+        corners = np.delete(np.arange(len(points)), [] if hovered is None else hovered)
+    layers = [_MarkerLayer(group="vertices", kind="vertex", indices=corners)]
     hovered_handle = None
-    if len(points) == ORIENTED_RECTANGLE_POINT_COUNT:
+    if (
+        shape.shape_type == "oriented_rectangle"
+        and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
+    ):
         handles = [
             i
             for i in range(len(points))
