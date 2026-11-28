@@ -5427,3 +5427,90 @@ def test_hover_keeps_the_marker_still_drawn_under_the_pointer(
                 previous = target
 
     assert jumps == []
+
+
+def _render_at(*, canvas: Canvas, ratio: float) -> QtGui.QImage:
+    image = QtGui.QImage(canvas.size() * ratio, QtGui.QImage.Format.Format_ARGB32)
+    image.setDevicePixelRatio(ratio)
+    canvas.render(image)
+    return image
+
+
+def _drag_from(*, canvas: Canvas, start: QPointF, end: QPointF) -> None:
+    left = Qt.MouseButton.LeftButton
+    none = Qt.MouseButton.NoButton
+    for send, kind, position, button, buttons in (
+        (
+            canvas.mousePressEvent,
+            QtCore.QEvent.Type.MouseButtonPress,
+            start,
+            left,
+            left,
+        ),
+        (canvas.mouseMoveEvent, QtCore.QEvent.Type.MouseMove, end, none, left),
+        (
+            canvas.mouseReleaseEvent,
+            QtCore.QEvent.Type.MouseButtonRelease,
+            end,
+            left,
+            none,
+        ),
+    ):
+        send(
+            QtGui.QMouseEvent(
+                kind,
+                position,
+                position,
+                button,
+                buttons,
+                Qt.KeyboardModifier.NoModifier,
+            )
+        )
+
+
+@pytest.mark.parametrize(
+    ("ratio", "scale", "centers", "pointer"),
+    [
+        pytest.param(2.0, 1.0, ((40, 40.25), (35.499, 40.25)), (40, 40), id="retina"),
+        pytest.param(
+            2.0, 1.33, ((40, 40.25), (35.499, 40.25)), (40, 40), id="retina_zoomed"
+        ),
+        pytest.param(
+            1.0, 1.0, ((40.5, 40), (46, 40.5)), (40.5, 40), id="fractional_pointer"
+        ),
+    ],
+)
+def test_press_grabs_the_marker_drawn_in_the_device_pixel_under_the_pointer(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    ratio: float,
+    scale: float,
+    centers: tuple[tuple[float, float], tuple[float, float]],
+    pointer: tuple[float, float],
+) -> None:
+    loaded = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[("point", ((x / scale, y / scale),)) for x, y in centers],
+        selected=(1,),
+        scale=scale,
+    )
+    monkeypatch.setattr(canvas, "devicePixelRatioF", lambda: ratio)
+    x, y = pointer
+    drawn = _owner_of(
+        color=_render_at(canvas=canvas, ratio=ratio).pixelColor(
+            math.floor(x * ratio), math.floor(y * ratio)
+        )
+    )
+    before = [shape.points.copy() for shape in loaded]
+
+    _drag_from(canvas=canvas, start=QPointF(x, y), end=QPointF(x, y + 12))
+
+    moved = [
+        owner
+        for owner, (points, shape) in enumerate(zip(before, loaded, strict=True))
+        if not np.array_equal(points, shape.points)
+    ]
+    assert drawn is not None
+    assert moved == [drawn]
