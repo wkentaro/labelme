@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import dataclasses
 import enum
+import functools
+from collections.abc import Callable
 from typing import Final
+from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
@@ -13,7 +16,12 @@ from .._shape import image_extent
 from .._shape import nearest_edge_index
 from .._shape import nearest_rotation_point_index
 from .._shape import nearest_vertex_index
+from ._shape_render import MarkerKind
+from ._shape_render import VertexHighlight
+from ._shape_render import find_marker
 from ._shape_render import is_hit_by_point
+from ._shape_render import marker_reach
+from ._shape_render import marker_stack
 
 
 class HitKind(enum.Enum):
@@ -34,10 +42,18 @@ def find_hover_target(
     *,
     shapes: list[Shape],
     point: npt.NDArray[np.float64],
+    pixel_center: npt.NDArray[np.float64],
+    device_pixel_ratio: float,
+    marker_coverage: Callable[[Shape], float],
     scale: float,
     epsilon: float,
     point_size: int,
+    point_type: Literal["square", "round"],
     priority_shape: Shape | None,
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+    selected: list[Shape],
+    lifted: Shape | None,
 ) -> HitTarget | None:
     # Proximity is measured in image space, so the screen-pixel threshold is
     # converted here rather than scaling every shape's points.
@@ -45,12 +61,29 @@ def find_hover_target(
 
     # Every pass below costs array work per shape, so drop the shapes the
     # pointer is nowhere near once, up front.
-    margin = max(image_epsilon, point_size / 2 / scale)
+    margin = max(image_epsilon, marker_reach(point_size=point_size) / scale)
     shapes = [
         shape
         for shape in shapes
         if _is_near_extent(shape=shape, point=point, margin=margin)
     ]
+    drawn = _find_drawn_marker(
+        shapes=shapes,
+        pixel_center=pixel_center,
+        device_pixel_ratio=device_pixel_ratio,
+        marker_coverage=marker_coverage,
+        scale=scale,
+        point_size=point_size,
+        point_type=point_type,
+        priority_shape=priority_shape,
+        highlight=highlight,
+        rotation_highlight=rotation_highlight,
+        selected=selected,
+        lifted=lifted,
+    )
+    if drawn is not None:
+        return drawn
+
     candidates = _build_candidates(
         shapes=shapes,
         priority_shape=priority_shape,
@@ -101,6 +134,74 @@ def find_hover_target(
         return HitTarget(kind=HitKind.BODY, shape=top, index=None)
 
     return None
+
+
+def _find_drawn_marker(
+    *,
+    shapes: list[Shape],
+    pixel_center: npt.NDArray[np.float64],
+    device_pixel_ratio: float,
+    marker_coverage: Callable[[Shape], float],
+    scale: float,
+    point_size: int,
+    point_type: Literal["square", "round"],
+    priority_shape: Shape | None,
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+    selected: list[Shape],
+    lifted: Shape | None,
+) -> HitTarget | None:
+    drawn = _find_drawn_shape(
+        stack=marker_stack(
+            shapes=[shape for shape in shapes if shape.visible],
+            selected=selected,
+            lifted=lifted,
+        ),
+        marker_coverage=marker_coverage,
+    )
+    if drawn is None:
+        return None
+    is_priority = drawn is priority_shape
+    find = functools.partial(
+        find_marker,
+        shape=drawn,
+        point=pixel_center,
+        scale=scale,
+        point_size=point_size,
+        point_type=point_type,
+        highlight=highlight if is_priority else None,
+        rotation_highlight=rotation_highlight if is_priority else None,
+    )
+    marker = find(pixel_half=0.0) or find(pixel_half=0.5 / device_pixel_ratio)
+    if marker is None:
+        return None
+    return _marker_target(shape=drawn, marker=marker)
+
+
+def _find_drawn_shape(
+    *, stack: list[Shape], marker_coverage: Callable[[Shape], float]
+) -> Shape | None:
+    drawn = None
+    drawn_share = 0.0
+    shown = 1.0
+    for shape in reversed(stack):
+        if shown <= drawn_share:
+            break
+        coverage = marker_coverage(shape)
+        if coverage * shown > drawn_share:
+            drawn = shape
+            drawn_share = coverage * shown
+        shown *= 1 - coverage
+    return drawn
+
+
+def _marker_target(*, shape: Shape, marker: tuple[MarkerKind, int]) -> HitTarget:
+    kind, index = marker
+    if shape.shape_type == "point" or shape.locked:
+        return HitTarget(kind=HitKind.BODY, shape=shape, index=None)
+    if kind == "rotation":
+        return HitTarget(kind=HitKind.ROTATION_HANDLE, shape=shape, index=index)
+    return HitTarget(kind=HitKind.VERTEX, shape=shape, index=index)
 
 
 def find_shape_at(

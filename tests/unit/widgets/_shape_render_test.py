@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import itertools
 from typing import Final
+from typing import Literal
 
 import numpy as np
 import pytest
@@ -9,12 +11,16 @@ from PySide6 import QtGui
 
 from labelme._shape import Shape
 from labelme._shape import ShapeType
+from labelme._widgets import _shape_render
+from labelme._widgets._shape_render import RENDER_HINTS
 from labelme._widgets._shape_render import Palette
 from labelme._widgets._shape_render import ShapeRenderContext
 from labelme._widgets._shape_render import VertexHighlight
 from labelme._widgets._shape_render import bounds
 from labelme._widgets._shape_render import intersects_rect
 from labelme._widgets._shape_render import is_hit_by_point
+from labelme._widgets._shape_render import marker_coverage
+from labelme._widgets._shape_render import marker_stack
 from labelme._widgets._shape_render import render_shape
 
 _SIZE: Final = 200
@@ -852,3 +858,83 @@ def test_mask_alignment_hit_extent() -> None:
     ]
     # The hit area matches the fill and the outline: 5.0 up to 6.0.
     assert (round(xs[0], 2), round(xs[-1], 2)) == (5.0, 5.95)
+
+
+def test_marker_stack_lifts_the_hovered_shape_below_the_selection() -> None:
+    chosen, locked, first, lifted, last = (_polygon(label=None) for _ in range(5))
+    locked.locked = True
+
+    stack = marker_stack(
+        shapes=[chosen, locked, first, lifted, last],
+        selected=[chosen, locked],
+        lifted=lifted,
+    )
+
+    assert stack == [locked, first, last, lifted, chosen]
+
+
+@pytest.mark.usefixtures("qapp")
+@pytest.mark.parametrize(
+    ("shape_type", "points", "point_size", "point_type", "scale"),
+    [
+        pytest.param(
+            "point", ((20.3, 20.0),), 8, "square", 1.33, id="square_faint_edge"
+        ),
+        pytest.param("point", ((20.37, 20.81),), 8, "round", 0.9, id="round"),
+        pytest.param(
+            "oriented_rectangle",
+            ((30, 40), (50, 40), (50, 42), (30, 42)),
+            0,
+            "round",
+            0.5,
+            id="orientation_arrow_cap",
+        ),
+    ],
+)
+def test_marker_coverage_reads_each_pixel_the_markers_paint(
+    *,
+    monkeypatch: pytest.MonkeyPatch,
+    shape_type: ShapeType,
+    points: tuple[tuple[float, float], ...],
+    point_size: int,
+    point_type: Literal["square", "round"],
+    scale: float,
+) -> None:
+    monkeypatch.setattr(_shape_render, "_paint_outline_and_fill", lambda **_: None)
+    shape = Shape(
+        shape_type=shape_type, points=np.array(points, dtype=np.float64), closed=True
+    )
+    context = ShapeRenderContext(
+        scale=scale,
+        palette=Palette.from_rgb(rgb=(0, 255, 0)),
+        point_size=point_size,
+        point_type=point_type,
+        selected=False,
+        fill=False,
+        highlight=None,
+        rotation_highlight=None,
+    )
+    side = 60
+    image = QtGui.QImage(side, side, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
+    image.fill(QtCore.Qt.GlobalColor.transparent)
+    painter = QtGui.QPainter(image)
+    painter.setRenderHints(RENDER_HINTS)
+    render_shape(painter=painter, shape=shape, context=context)
+    painter.end()
+
+    mismatches = [
+        (x, y, image.pixelColor(x, y).alpha(), coverage)
+        for x, y in itertools.product(range(side), repeat=2)
+        if round(
+            coverage := marker_coverage(
+                shape=shape,
+                context=context,
+                world=QtGui.QTransform(),
+                device_pixel=QtCore.QPoint(x, y),
+                ratio=1.0,
+            )
+            * 255
+        )
+        != image.pixelColor(x, y).alpha()
+    ]
+    assert mismatches == []

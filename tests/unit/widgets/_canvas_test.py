@@ -193,7 +193,9 @@ def test_drag_hovered_rotation_point_does_not_drift_on_repeated_drags(
     shape = _make_oriented_rectangle(corners=original)
     canvas.load_shapes(shapes=[shape])
 
-    canvas._refresh_hover_state(pos=QPointF(50, 10))
+    canvas._refresh_hover_state(
+        pointer=canvas.transform_image_point_to_widget(point=QPointF(50, 10))
+    )
     assert canvas._hover.rotation == 1
     canvas._capture_rotation_anchors()
 
@@ -217,14 +219,22 @@ _FLAT_BOX: Final = [(20.0, 25.0), (54.0, 25.0), (54.0, 25.0), (20.0, 25.0)]
 
 
 @pytest.mark.parametrize(
-    ("corners", "point_size", "pointer", "grabbed"),
+    ("corners", "point_size", "path", "grabbed"),
     [
-        pytest.param(_OPEN_BOX, 24, QtCore.QPoint(31, 8), "rotation", id="open_handle"),
-        pytest.param(_OPEN_BOX, 24, QtCore.QPoint(27, 8), "corner", id="open_corner"),
         pytest.param(
-            _FLAT_BOX, 24, QtCore.QPoint(30, 22), "rotation", id="flat_handle"
+            _OPEN_BOX, 24, [QtCore.QPoint(31, 8)], "rotation", id="open_handle"
         ),
-        pytest.param(_FLAT_BOX, 8, QtCore.QPoint(19, 23), "corner", id="flat_corner"),
+        pytest.param(
+            _OPEN_BOX,
+            24,
+            [QtCore.QPoint(20, 10), QtCore.QPoint(27, 8)],
+            "corner",
+            id="open_corner",
+        ),
+        pytest.param(
+            _FLAT_BOX, 24, [QtCore.QPoint(30, 22)], "rotation", id="flat_handle"
+        ),
+        pytest.param(_FLAT_BOX, 8, [QtCore.QPoint(19, 23)], "corner", id="flat_corner"),
     ],
 )
 def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
@@ -233,7 +243,7 @@ def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
     qtbot: QtBot,
     corners: list[tuple[float, float]],
     point_size: int,
-    pointer: QtCore.QPoint,
+    path: list[QtCore.QPoint],
     grabbed: str,
 ) -> None:
     pixmap = QtGui.QPixmap(_WIDTH, _HEIGHT)
@@ -242,7 +252,11 @@ def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
     canvas.set_point_size(point_size=point_size)
     canvas.load_shapes(shapes=[_make_oriented_rectangle(corners=corners)])
 
-    canvas._refresh_hover_state(pos=QPointF(pointer))
+    for step in path:
+        canvas._refresh_hover_state(
+            pointer=canvas.transform_image_point_to_widget(point=QPointF(step))
+        )
+    pointer = path[-1]
     drawn = canvas.grab().toImage().pixelColor(pointer)
     _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(8, 8))
 
@@ -255,7 +269,9 @@ def test_marker_under_the_pointer_is_the_one_a_drag_grabs(
 def _start_rotation_near_right_edge(*, canvas: Canvas) -> None:
     shape = _make_oriented_rectangle(corners=[(70, 5), (100, 5), (100, 45), (70, 45)])
     canvas.load_shapes(shapes=[shape])
-    canvas._refresh_hover_state(pos=QPointF(85, 5))
+    canvas._refresh_hover_state(
+        pointer=canvas.transform_image_point_to_widget(point=QPointF(85, 5))
+    )
     assert canvas._hover.rotation is not None
     canvas._capture_rotation_anchors()
 
@@ -3506,7 +3522,9 @@ def test_hover_transitions_repaint(
         (QPointF(100, 40), 1, 2, None),
     ]:
         painted.clear()
-        canvas._refresh_hover_state(pos=point)
+        canvas._refresh_hover_state(
+            pointer=canvas.transform_image_point_to_widget(point=point)
+        )
         qtbot.waitUntil(lambda: bool(painted))
         active = painted[-1][shape_index]
         inactive = painted[-1][1 - shape_index]
@@ -3521,7 +3539,9 @@ def test_hover_transitions_repaint(
 
     painted.clear()
     if clear_action == "empty":
-        canvas._refresh_hover_state(pos=QPointF(130, 50))
+        canvas._refresh_hover_state(
+            pointer=canvas.transform_image_point_to_widget(point=QPointF(130, 50))
+        )
     elif clear_action == "leave":
         canvas.leaveEvent(QtCore.QEvent(QtCore.QEvent.Type.Leave))
     else:
@@ -3535,7 +3555,9 @@ def test_hover_transitions_repaint(
     )
     if clear_action == "empty":
         painted.clear()
-        canvas._refresh_hover_state(pos=QPointF(125, 50))
+        canvas._refresh_hover_state(
+            pointer=canvas.transform_image_point_to_widget(point=QPointF(125, 50))
+        )
         qtbot.wait(20)
         assert not painted
     if clear_action == "create":
@@ -4818,7 +4840,871 @@ def test_unhovered_rotation_handle_paints_over_the_corner_beside_it(
     canvas.load_shapes(shapes=[shape])
     canvas.selected_shapes = [shape]
 
-    canvas._refresh_hover_state(pos=QPointF(2, 45))
+    canvas._refresh_hover_state(
+        pointer=canvas.transform_image_point_to_widget(point=QPointF(2, 45))
+    )
     drawn = canvas.grab().toImage().pixelColor(80, 22)
 
     assert drawn == canvas._resolve_palette(label=None).vertex_fill
+
+
+_Points = tuple[tuple[float, float], ...]
+_Target = tuple[int, str, int | None]
+_SQUARE_LEFT: Final[_Points] = ((20, 20), (80, 20), (80, 90), (20, 90))
+_SQUARE_RIGHT: Final[_Points] = ((80, 20), (140, 20), (140, 90), (80, 90))
+
+
+def _owner_palette(*, owner: int) -> Palette:
+    def shade(value: int) -> QtGui.QColor:
+        rgb = [0, 0, 0]
+        rgb[owner] = value
+        return QtGui.QColor(*rgb)
+
+    clear = QtGui.QColor(0, 0, 0, 0)
+    return Palette(
+        line=shade(255),
+        fill=clear,
+        select_line=shade(235),
+        select_fill=clear,
+        vertex_fill=shade(215),
+        hvertex_fill=shade(195),
+    )
+
+
+def _load_owned_shapes(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    shapes: list[tuple[ShapeType, _Points]],
+    selected: tuple[int, ...] = (),
+    locked: tuple[int, ...] = (),
+    point_size: int = 8,
+    scale: float = 1.0,
+) -> list[Shape]:
+    pixmap = QtGui.QPixmap(300, 220)
+    pixmap.fill(QtGui.QColor("black"))
+    canvas.pixmap = pixmap
+    canvas.set_point_size(point_size=point_size)
+    monkeypatch.setattr(
+        canvas,
+        "_resolve_palette",
+        lambda *, label: _owner_palette(owner=int(label)),
+    )
+    loaded = [
+        Shape(
+            label=str(owner),
+            shape_type=shape_type,
+            points=np.array(points, dtype=np.float64),
+            closed=True,
+            locked=owner in locked,
+        )
+        for owner, (shape_type, points) in enumerate(shapes)
+    ]
+    canvas.load_shapes(shapes=loaded)
+    canvas.selection_changed.connect(
+        lambda chosen: setattr(canvas, "selected_shapes", chosen)
+    )
+    canvas.selected_shapes = [loaded[i] for i in selected]
+    canvas.scale = scale
+    return loaded
+
+
+def _owner_of(*, color: QtGui.QColor) -> int | None:
+    channels = (color.red(), color.green(), color.blue())
+    owner = int(np.argmax(channels))
+    if channels[owner] == 0 or channels[owner] < 0.75 * sum(channels):
+        return None
+    return owner
+
+
+def _drawn_owner(*, canvas: Canvas, at: QtCore.QPoint) -> int | None:
+    return _owner_of(color=canvas.grab().toImage().pixelColor(at))
+
+
+def _hover_target(*, canvas: Canvas) -> _Target | None:
+    hover = canvas._hover
+    if hover.shape is None:
+        return None
+    owner = canvas.shapes.index(hover.shape)
+    for kind in ("vertex", "rotation", "edge"):
+        index = getattr(hover, kind)
+        if index is not None:
+            return owner, kind, index
+    return owner, "body", None
+
+
+def _hover_widget_point(*, canvas: Canvas, at: tuple[float, float]) -> None:
+    canvas._refresh_hover_state(pointer=QPointF(*at))
+
+
+@pytest.mark.parametrize(
+    ("shapes", "path", "grabbed", "selected", "locked"),
+    [
+        pytest.param(
+            [("rectangle", ((5, 5), (80, 45))), ("point", ((9, 8),))],
+            [(9, 8)],
+            (1, "body", None),
+            (),
+            (),
+            id="issue_point_over_box_corner",
+        ),
+        pytest.param(
+            [("point", ((9, 8),)), ("rectangle", ((5, 5), (80, 45)))],
+            [(9, 8)],
+            (0, "body", None),
+            (),
+            (),
+            id="issue_point_under_box_corner",
+        ),
+        pytest.param(
+            [
+                ("oriented_rectangle", ((20, 35), (80, 35), (80, 70), (20, 70))),
+                ("rectangle", ((50, 43), (90, 75))),
+            ],
+            [(50, 35)],
+            (0, "rotation", 1),
+            (),
+            (),
+            id="issue_rotation_handle_beside_corner",
+        ),
+        pytest.param(
+            [("rectangle", ((10, 20), (40, 50))), ("rectangle", ((48, 50), (90, 80)))],
+            [(42, 50)],
+            (0, "vertex", 1),
+            (),
+            (),
+            id="issue_vertex_beside_upper_vertex",
+        ),
+        pytest.param(
+            [
+                ("rectangle", ((80, 80), (40, 45))),
+                ("rectangle", ((84, 80), (140, 150))),
+            ],
+            [(113, 105), (82, 80)],
+            (0, "vertex", 0),
+            (0,),
+            (),
+            id="astra_selection",
+        ),
+        pytest.param(
+            [
+                ("rectangle", ((80, 80), (40, 45))),
+                ("rectangle", ((84, 80), (140, 150))),
+            ],
+            [(51, 60), (82, 80)],
+            (0, "vertex", 0),
+            (0,),
+            (),
+            id="astra_press_reorder",
+        ),
+        pytest.param(
+            [
+                ("rectangle", ((80, 80), (40, 45))),
+                ("rectangle", ((88, 80), (140, 150))),
+            ],
+            [(45, 50), (80, 80), (81, 80), (82, 80), (83, 80), (84, 80), (85, 80)]
+            + [(86, 80)],
+            (0, "vertex", 0),
+            (),
+            (),
+            id="astra_highlight",
+        ),
+        pytest.param(
+            [
+                ("rectangle", ((80, 80), (45, 45))),
+                ("rectangle", ((80, 80), (140, 150))),
+            ],
+            [(110, 110), (80, 80)],
+            (0, "vertex", 0),
+            (),
+            (1,),
+            id="astra_locked",
+        ),
+        pytest.param(
+            [("point", ((80, 80),))],
+            [(15, 15), (76, 78)],
+            (0, "body", None),
+            (),
+            (),
+            id="astra_point_rim",
+        ),
+        pytest.param(
+            [
+                ("rectangle", ((83, 60), (170, 150))),
+                ("rectangle", ((75, 60), (155, 140))),
+            ],
+            [(79, 95), (79, 60)],
+            (0, "vertex", 0),
+            (0,),
+            (),
+            id="sol_selected_corner",
+        ),
+        pytest.param(
+            [
+                ("rectangle", ((90, 80), (40, 43))),
+                ("rectangle", ((100, 80), (170, 130))),
+            ],
+            [(90, 80), (91, 80), (92, 80), (93, 80), (94, 80), (96, 80)],
+            (0, "vertex", 0),
+            (),
+            (),
+            id="sol_highlight_tip",
+        ),
+        pytest.param(
+            [
+                ("rectangle", ((80, 80), (30, 45))),
+                ("rectangle", ((84, 80), (175, 130))),
+            ],
+            [(82, 80)],
+            (0, "vertex", 0),
+            (),
+            (1,),
+            id="sol_locked_corner",
+        ),
+        pytest.param(
+            [("rectangle", ((88, 75), (140, 130))), ("point", ((90.8, 80.5),))],
+            [(95, 81)],
+            (1, "body", None),
+            (),
+            (),
+            id="sol_point_rim",
+        ),
+        pytest.param(
+            [("rectangle", ((32, 40), (10, 15))), ("point", ((45, 43),))],
+            [(40, 40)],
+            (1, "body", None),
+            (),
+            (),
+            id="point_antialiased_rim_left",
+        ),
+        pytest.param(
+            [("rectangle", ((92, 87), (130, 130))), ("point", ((80, 80),))],
+            [(84, 82)],
+            (1, "body", None),
+            (),
+            (),
+            id="point_antialiased_rim_right",
+        ),
+        pytest.param(
+            [
+                ("point", ((94.5, 82.5),)),
+                (
+                    "oriented_rectangle",
+                    ((49.5, 80.5), (139.5, 80.5), (139.5, 81), (49.5, 81)),
+                ),
+            ],
+            [(94, 82)],
+            (1, "rotation", 3),
+            (),
+            (),
+            id="sol_handle_hole",
+        ),
+        pytest.param(
+            [
+                ("rectangle", ((99, 89), (163, 140))),
+                ("rectangle", ((90.2, 80.2), (40, 45))),
+            ],
+            [(90, 80), (97, 87)],
+            (0, "vertex", 0),
+            (),
+            (),
+            id="sol_bevel",
+        ),
+        pytest.param(
+            [("polygon", _SQUARE_LEFT), ("polygon", _SQUARE_RIGHT)],
+            [(80, 0), (80, 4), (80, 8), (80, 12), (80, 16), (80, 20)],
+            (0, "vertex", 1),
+            (0,),
+            (),
+            id="opus_t1_selected",
+        ),
+        pytest.param(
+            [("polygon", _SQUARE_LEFT), ("polygon", _SQUARE_RIGHT)],
+            [(80, 0), (80, 6), (80, 12), (79, 16), (79, 18)],
+            (0, "vertex", 1),
+            (),
+            (1,),
+            id="opus_t3_locked",
+        ),
+        pytest.param(
+            [
+                ("polygon", ((20, 20), (60, 40), (20, 90))),
+                ("polygon", ((66, 40), (140, 20), (140, 90))),
+            ],
+            [(35, 55), (56, 40), (58, 40), (60, 40), (61, 40), (62, 40), (63, 40)]
+            + [(64, 40), (65, 40), (66, 40)],
+            (0, "vertex", 1),
+            (),
+            (),
+            id="opus_t4_jump",
+        ),
+    ],
+)
+def test_press_grabs_the_marker_drawn_on_top_under_the_pointer(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    shapes: list[tuple[ShapeType, _Points]],
+    path: list[tuple[int, int]],
+    grabbed: _Target,
+    selected: tuple[int, ...],
+    locked: tuple[int, ...],
+) -> None:
+    loaded = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=shapes,
+        selected=selected,
+        locked=locked,
+    )
+
+    drawn, target, moved, end = _press_and_drag_along(
+        canvas=canvas, qtbot=qtbot, loaded=loaded, path=path
+    )
+
+    owner, kind, index = grabbed
+    assert drawn == (owner, owner, owner)
+    assert target == grabbed
+    assert moved == [owner]
+    if kind == "vertex":
+        assert index is not None
+        assert tuple(loaded[owner].points[index]) == (end.x(), end.y())
+
+
+@pytest.mark.parametrize(
+    ("shapes", "scale", "pointer"),
+    [
+        pytest.param(
+            [("rectangle", ((86, 92), (30, 30))), ("point", ((95, 97),))],
+            0.9,
+            (82, 82),
+            id="point_sliver_qt_leaves_unpainted",
+        ),
+        pytest.param(
+            [("rectangle", ((80, 80), (145, 140))), ("point", ((84, 86),))],
+            0.75,
+            (57, 64),
+            id="point_rim_qt_leaves_unpainted",
+        ),
+        pytest.param(
+            [("rectangle", ((80, 80), (145, 140))), ("point", ((83.99, 86),))],
+            0.75,
+            (57, 64),
+            id="point_rim_qt_leaves_unpainted_off_grid",
+        ),
+    ],
+)
+def test_press_grabs_the_corner_a_point_beside_it_leaves_unpainted(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    shapes: list[tuple[ShapeType, _Points]],
+    scale: float,
+    pointer: tuple[int, int],
+) -> None:
+    loaded = _load_owned_shapes(
+        canvas=canvas, monkeypatch=monkeypatch, shapes=shapes, scale=scale
+    )
+
+    drawn, target, moved, _ = _press_and_drag_along(
+        canvas=canvas, qtbot=qtbot, loaded=loaded, path=[(2, 2), pointer]
+    )
+
+    assert drawn == (0, 0, 0)
+    assert target == (0, "vertex", 0)
+    assert moved == [0]
+
+
+def _press_and_drag_along(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    loaded: list[Shape],
+    path: list[tuple[int, int]],
+) -> tuple[tuple[int | None, ...], _Target | None, list[int], QtCore.QPoint]:
+    *approach, (x, y) = path
+    pointer = QtCore.QPoint(x, y)
+    for step in approach:
+        _hover_widget_point(canvas=canvas, at=step)
+    drawn_before = _drawn_owner(canvas=canvas, at=pointer)
+    _hover_widget_point(canvas=canvas, at=(x, y))
+    drawn = _drawn_owner(canvas=canvas, at=pointer)
+    target = _hover_target(canvas=canvas)
+    before = [shape.points.copy() for shape in loaded]
+
+    qtbot.mousePress(canvas, Qt.MouseButton.LeftButton, pos=pointer)
+    held = _drawn_owner(canvas=canvas, at=pointer)
+    end = pointer + QtCore.QPoint(9, 7)
+    canvas.mouseMoveEvent(
+        QtGui.QMouseEvent(
+            QtCore.QEvent.Type.MouseMove,
+            QPointF(end),
+            QPointF(end),
+            Qt.MouseButton.NoButton,
+            Qt.MouseButton.LeftButton,
+            Qt.KeyboardModifier.NoModifier,
+        )
+    )
+    qtbot.mouseRelease(canvas, Qt.MouseButton.LeftButton, pos=end)
+
+    moved = [
+        owner
+        for owner, (points, shape) in enumerate(zip(before, loaded, strict=True))
+        if not np.array_equal(points, shape.points)
+    ]
+    return (drawn_before, drawn, held), target, moved, end
+
+
+def test_marker_paints_over_the_fill_of_a_later_selected_shape(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    lower, upper = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[
+            ("rectangle", ((20, 20), (60, 60))),
+            ("rectangle", ((40, 40), (120, 100))),
+        ],
+        selected=(1,),
+    )
+    monkeypatch.setattr(
+        canvas,
+        "_resolve_palette",
+        lambda *, label: dataclasses.replace(
+            _owner_palette(owner=int(label)),
+            select_fill=_owner_palette(owner=int(label)).line,
+        ),
+    )
+
+    assert _drawn_owner(canvas=canvas, at=QtCore.QPoint(60, 60)) == 0
+    assert _drawn_owner(canvas=canvas, at=QtCore.QPoint(80, 70)) == 1
+
+
+def test_press_skips_a_marker_too_small_to_draw(
+    *, canvas: Canvas, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    point, box = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[("point", ((80.5, 80),)), ("rectangle", ((87, 80), (140, 45)))],
+        point_size=0,
+    )
+    _hover_widget_point(canvas=canvas, at=(15, 15))
+    drawn = _drawn_owner(canvas=canvas, at=QtCore.QPoint(80, 80))
+    _hover_widget_point(canvas=canvas, at=(80, 80))
+
+    _drag(
+        qtbot=qtbot,
+        canvas=canvas,
+        start=QtCore.QPoint(80, 80),
+        end=QtCore.QPoint(80, 92),
+    )
+
+    assert drawn is None
+    assert point.points.tolist() == [[80.5, 80]]
+    assert box.points.tolist() == [[80, 92], [140, 45]]
+
+
+@pytest.mark.parametrize(
+    ("left", "end", "area"),
+    [
+        pytest.param(60, QtCore.QPoint(60, 92), 960, id="astra_flatleft"),
+        pytest.param(50, QtCore.QPoint(55, 110), 2550, id="sol_flat_left_end"),
+    ],
+)
+def test_flattened_oriented_rectangle_reopens_from_its_left_end(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    left: int,
+    end: QtCore.QPoint,
+    area: float,
+) -> None:
+    (shape,) = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[("oriented_rectangle", ((left, 80), (140, 80), (140, 80), (left, 80)))],
+    )
+    _hover_widget_point(canvas=canvas, at=(left, 80))
+    target = _hover_target(canvas=canvas)
+
+    _drag(qtbot=qtbot, canvas=canvas, start=QtCore.QPoint(left, 80), end=end)
+
+    sides = np.stack(
+        [shape.points[1] - shape.points[0], shape.points[3] - shape.points[0]]
+    )
+    assert target == (0, "vertex", 0)
+    assert abs(np.linalg.det(sides)) == pytest.approx(area)
+
+
+@pytest.mark.parametrize(
+    "center",
+    [
+        pytest.param((80, 80), id="astra_coincident"),
+        pytest.param((90, 80), id="sol_coincident_points"),
+    ],
+)
+def test_coincident_points_move_only_the_one_drawn_on_top(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    center: tuple[int, int],
+) -> None:
+    selected, hidden = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[("point", (center,)), ("point", (center,))],
+        selected=(0,),
+    )
+    drawn = _drawn_owner(canvas=canvas, at=QtCore.QPoint(*center))
+    outcomes = set()
+    for dx, dy in itertools.product(range(-5, 6), repeat=2):
+        if dx * dx + dy * dy > 25:
+            continue
+        selected.points[:] = center
+        hidden.points[:] = center
+        canvas.selected_shapes = [selected]
+        _hover_widget_point(canvas=canvas, at=(15, 15))
+        pointer = QtCore.QPoint(center[0] + dx, center[1] + dy)
+        _hover_widget_point(canvas=canvas, at=(pointer.x(), pointer.y()))
+        target = _hover_target(canvas=canvas)
+        _drag(
+            qtbot=qtbot,
+            canvas=canvas,
+            start=pointer,
+            end=pointer + QtCore.QPoint(0, 12),
+        )
+        moved = tuple(
+            owner
+            for owner, shape in enumerate((selected, hidden))
+            if not np.array_equal(shape.points[0], center)
+        )
+        outcomes.add((target, moved))
+
+    assert drawn == 0
+    assert outcomes == {(None, ()), ((0, "body", None), (0,))}
+
+
+def test_crossing_bodies_leaves_the_shared_corner_marker_in_place(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[("polygon", _SQUARE_LEFT), ("polygon", _SQUARE_RIGHT)],
+    )
+    drawn = []
+    for x in [50, 78, 82, 110, 82, 78]:
+        _hover_widget_point(canvas=canvas, at=(x, 70))
+        drawn.append(_drawn_owner(canvas=canvas, at=QtCore.QPoint(80, 20)))
+
+    assert drawn == [1] * 6
+
+
+@pytest.mark.parametrize(
+    ("shapes", "selected", "scale", "box"),
+    [
+        pytest.param(
+            [
+                ("polygon", ((20, 20), (60, 40), (20, 90))),
+                ("polygon", ((66, 40), (140, 20), (140, 90))),
+            ],
+            (),
+            1.0,
+            (48, 28, 80, 52),
+            id="close6",
+        ),
+        pytest.param(
+            [("polygon", _SQUARE_LEFT), ("polygon", _SQUARE_RIGHT)],
+            (0,),
+            1.0,
+            (66, 8, 96, 34),
+            id="shared_left_sel",
+        ),
+        pytest.param(
+            [("polygon", _SQUARE_LEFT), ("polygon", _SQUARE_RIGHT)],
+            (),
+            1.0,
+            (66, 8, 96, 34),
+            id="shared_none",
+        ),
+        pytest.param(
+            [("rectangle", ((20, 20), (130, 90))), ("point", ((28, 25),))],
+            (),
+            1.0,
+            (10, 10, 42, 38),
+            id="point_corner",
+        ),
+        pytest.param(
+            [
+                ("oriented_rectangle", ((20, 40), (90, 40), (90, 90), (20, 90))),
+                ("polygon", ((61, 33), (140, 33), (140, 100))),
+            ],
+            (),
+            1.0,
+            (44, 24, 74, 52),
+            id="handle_corner",
+        ),
+        pytest.param(
+            [
+                ("polygon", ((40, 40), (120, 80), (40, 120))),
+                ("polygon", ((130, 80), (260, 40), (260, 120))),
+            ],
+            (),
+            0.5,
+            (50, 30, 75, 50),
+            id="zoom_out_close",
+        ),
+    ],
+)
+def test_hover_keeps_the_marker_still_drawn_under_the_pointer(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    shapes: list[tuple[ShapeType, _Points]],
+    selected: tuple[int, ...],
+    scale: float,
+    box: tuple[int, int, int, int],
+) -> None:
+    _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=shapes,
+        selected=selected,
+        scale=scale,
+    )
+    monkeypatch.setattr(_shape_render, "_paint_outline_and_fill", lambda **_: None)
+    images: dict[tuple[object, ...], QtGui.QImage] = {}
+
+    def marker_owner(x: int, y: int) -> int | None:
+        state = (
+            id(canvas._hover.shape),
+            canvas._highlight,
+            canvas._rotation_highlight,
+        )
+        if state not in images:
+            images[state] = canvas.grab().toImage()
+        owners = {
+            _owner_of(color=images[state].pixelColor(x + dx, y + dy))
+            for dx, dy in itertools.product((-1, 0), repeat=2)
+        }
+        return owners.pop() if len(owners) == 1 else None
+
+    left, top, right, bottom = box
+    rows = [[(x, y) for x in range(left, right)] for y in range(top, bottom)]
+    columns = [[(x, y) for y in range(top, bottom)] for x in range(left, right)]
+    jumps = []
+    for path in rows + columns:
+        for steps in (path, path[::-1]):
+            _hover_widget_point(canvas=canvas, at=(2, 2))
+            previous = None
+            for x, y in steps:
+                drawn = marker_owner(x, y)
+                _hover_widget_point(canvas=canvas, at=(x, y))
+                target = _hover_target(canvas=canvas)
+                if (
+                    previous is not None
+                    and previous[1] in ("vertex", "rotation")
+                    and drawn == previous[0]
+                    and target is not None
+                    and target[0] != previous[0]
+                ):
+                    jumps.append((previous, (x, y), target))
+                previous = target
+
+    assert jumps == []
+
+
+def _render_at(*, canvas: Canvas, ratio: float) -> QtGui.QImage:
+    image = QtGui.QImage(canvas.size() * ratio, QtGui.QImage.Format.Format_ARGB32)
+    image.setDevicePixelRatio(ratio)
+    canvas.render(image)
+    return image
+
+
+def _drag_from(*, canvas: Canvas, start: QPointF, end: QPointF) -> None:
+    left = Qt.MouseButton.LeftButton
+    none = Qt.MouseButton.NoButton
+    for send, kind, position, button, buttons in (
+        (
+            canvas.mousePressEvent,
+            QtCore.QEvent.Type.MouseButtonPress,
+            start,
+            left,
+            left,
+        ),
+        (canvas.mouseMoveEvent, QtCore.QEvent.Type.MouseMove, end, none, left),
+        (
+            canvas.mouseReleaseEvent,
+            QtCore.QEvent.Type.MouseButtonRelease,
+            end,
+            left,
+            none,
+        ),
+    ):
+        send(
+            QtGui.QMouseEvent(
+                kind,
+                position,
+                position,
+                button,
+                buttons,
+                Qt.KeyboardModifier.NoModifier,
+            )
+        )
+
+
+@pytest.mark.parametrize(
+    ("ratio", "scale", "centers", "pointer"),
+    [
+        pytest.param(2.0, 1.0, ((40, 40.25), (35.499, 40.25)), (40, 40), id="retina"),
+        pytest.param(
+            2.0, 1.33, ((40, 40.25), (35.499, 40.25)), (40, 40), id="retina_zoomed"
+        ),
+        pytest.param(
+            1.0, 1.0, ((40.5, 40), (46, 40.5)), (40.5, 40), id="fractional_pointer"
+        ),
+    ],
+)
+def test_press_grabs_the_marker_drawn_in_the_device_pixel_under_the_pointer(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    ratio: float,
+    scale: float,
+    centers: tuple[tuple[float, float], tuple[float, float]],
+    pointer: tuple[float, float],
+) -> None:
+    loaded = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[("point", ((x / scale, y / scale),)) for x, y in centers],
+        selected=(1,),
+        scale=scale,
+    )
+    monkeypatch.setattr(canvas, "devicePixelRatioF", lambda: ratio)
+    x, y = pointer
+    drawn = _owner_of(
+        color=_render_at(canvas=canvas, ratio=ratio).pixelColor(
+            math.floor(x * ratio), math.floor(y * ratio)
+        )
+    )
+    before = [shape.points.copy() for shape in loaded]
+
+    _drag_from(canvas=canvas, start=QPointF(x, y), end=QPointF(x, y + 12))
+
+    moved = [
+        owner
+        for owner, (points, shape) in enumerate(zip(before, loaded, strict=True))
+        if not np.array_equal(points, shape.points)
+    ]
+    assert drawn is not None
+    assert moved == [drawn]
+
+
+@pytest.mark.parametrize(
+    "shape_type",
+    [
+        pytest.param("polygon", id="polygon"),
+        pytest.param("linestrip", id="linestrip"),
+    ],
+)
+def test_hovered_vertex_paints_over_the_vertex_beside_it(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    shape_type: ShapeType,
+) -> None:
+    (shape,) = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[(shape_type, ((40, 40), (48, 40), (70, 70), (40, 70)))],
+    )
+    _hover_widget_point(canvas=canvas, at=(40, 40))
+    _hover_widget_point(canvas=canvas, at=(46, 40))
+    pointer = QtCore.QPoint(46, 40)
+    with_neighbor = canvas.grab().toImage().pixelColor(pointer)
+    shape.points[1, 0] = 58
+    without_neighbor = canvas.grab().toImage().pixelColor(pointer)
+    shape.points[1, 0] = 48
+
+    _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(0, 12))
+
+    assert with_neighbor == without_neighbor
+    assert shape.points.tolist() == [[46, 52], [48, 40], [70, 70], [40, 70]]
+
+
+@pytest.mark.parametrize(
+    ("locked_shape", "pointer"),
+    [
+        pytest.param(("point", ((39.75, 40),)), QtCore.QPoint(44, 40), id="point"),
+        pytest.param(
+            ("rectangle", ((10, 10), (40, 40))), QtCore.QPoint(43, 40), id="corner"
+        ),
+    ],
+)
+def test_press_on_a_locked_marker_over_a_selected_body_moves_nothing(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    locked_shape: tuple[ShapeType, _Points],
+    pointer: QtCore.QPoint,
+) -> None:
+    loaded = _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[locked_shape, ("rectangle", ((22, 22), (90, 90)))],
+        selected=(1,),
+        locked=(0,),
+    )
+    _hover_widget_point(canvas=canvas, at=(2, 2))
+    drawn = _drawn_owner(canvas=canvas, at=pointer)
+    _hover_widget_point(canvas=canvas, at=(pointer.x(), pointer.y()))
+    target = _hover_target(canvas=canvas)
+    before = [shape.points.copy() for shape in loaded]
+
+    _drag(qtbot=qtbot, canvas=canvas, start=pointer, end=pointer + QtCore.QPoint(0, 12))
+
+    moved = [
+        owner
+        for owner, (points, shape) in enumerate(zip(before, loaded, strict=True))
+        if not np.array_equal(points, shape.points)
+    ]
+    assert drawn == 0
+    assert moved == []
+    assert target == (0, "body", None)
+
+
+def test_orientation_arrow_draws_over_its_hovered_rotation_handle(
+    *, canvas: Canvas, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=[
+            ("oriented_rectangle", ((100, 150), (200, 150), (200, 162), (100, 162)))
+        ],
+        scale=0.5,
+    )
+    handle = canvas.transform_image_point_to_widget(point=QPointF(150, 162))
+    canvas._refresh_hover_state(pointer=handle)
+    with_arrow = canvas.grab().toImage()
+    monkeypatch.setattr(
+        _shape_render, "_build_shape_oriented_rectangle_arrow_path", lambda **_: None
+    )
+    without_arrow = canvas.grab().toImage()
+
+    x, y = round(handle.x()), round(handle.y())
+    arrow_pixels = [
+        (px, py)
+        for px, py in itertools.product(range(x - 15, x + 15), range(y - 15, y + 15))
+        if with_arrow.pixel(px, py) != without_arrow.pixel(px, py)
+    ]
+    assert canvas._hover.rotation == 3
+    assert arrow_pixels

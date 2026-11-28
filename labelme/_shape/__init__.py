@@ -23,6 +23,7 @@ from ._model import Shape
 from ._model import ShapeDict
 from ._model import ShapeType
 from ._oriented_rectangle import get_rotation_handle
+from ._oriented_rectangle import get_rotation_handles
 from ._oriented_rectangle import oriented_rectangle_arrow_points
 from ._oriented_rectangle import oriented_rectangle_center
 from ._oriented_rectangle import rotate
@@ -46,6 +47,7 @@ __all__ = [
     "convert_blocker",
     "convert_shape",
     "get_rotation_handle",
+    "get_rotation_handles",
     "image_extent",
     "mask_shape_box",
     "merge_blocker",

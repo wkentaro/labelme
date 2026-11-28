@@ -5,6 +5,7 @@ import copy
 import dataclasses
 import enum
 import functools
+import math
 import typing
 from collections.abc import Callable
 from collections.abc import Sequence
@@ -46,13 +47,17 @@ from ._hint_chip import HintItem
 from ._hint_chip import paint_hint_chip
 from ._hint_chip import place_hint_chip
 from ._shape_render import NEGATIVE_RGB
+from ._shape_render import RENDER_HINTS
 from ._shape_render import Palette
 from ._shape_render import ShapeRenderCache
 from ._shape_render import ShapeRenderContext
 from ._shape_render import VertexHighlight
 from ._shape_render import bounds as _shape_bounds
 from ._shape_render import intersects_rect
+from ._shape_render import marker_coverage
+from ._shape_render import marker_stack
 from ._shape_render import render_shape
+from ._shape_render import render_shapes
 
 _DEFAULT_SHAPE_RGB: Final[tuple[int, int, int]] = (0, 255, 0)
 _DEFAULT_PALETTE: Final[Palette] = Palette.from_rgb(rgb=_DEFAULT_SHAPE_RGB)
@@ -261,6 +266,12 @@ class _Hover:
     vertex: int | None = None
     edge: int | None = None
     rotation: int | None = None
+
+    @property
+    def lifted_shape(self) -> Shape | None:
+        if self.vertex is None and self.rotation is None:
+            return None
+        return self.shape
 
 
 _AI_PROGRESS_RADIUS: Final = 12
@@ -1295,7 +1306,7 @@ class Canvas(QtWidgets.QWidget):
         if buttons & Qt.MouseButton.LeftButton:
             self._continue_left_button_drag(pos=pos, event=event)
             return
-        self._refresh_hover_state(pos=pos)
+        self._refresh_hover_state(pointer=event.position())
 
     def _advance_pan(self, *, event: QtGui.QMouseEvent) -> None:
         assert self._pan_anchor is not None
@@ -1452,9 +1463,9 @@ class Canvas(QtWidgets.QWidget):
             epsilon=self._epsilon,
         )
 
-    def _refresh_hover_state(self, *, pos: QPointF) -> None:
+    def _refresh_hover_state(self, *, pointer: QPointF) -> None:
         status_messages: list[str] = []
-        self._highlight_hover_shape(pos=pos, status_messages=status_messages)
+        self._highlight_hover_shape(pointer=pointer, status_messages=status_messages)
         self.vertex_selected.emit(self._hover.vertex is not None)
         self.edge_selected.emit(self._hover.edge is not None)
         self._update_status(extra_messages=status_messages)
@@ -1612,15 +1623,40 @@ class Canvas(QtWidgets.QWidget):
         self._is_moving_shape = True
 
     def _highlight_hover_shape(
-        self, *, pos: QPointF, status_messages: list[str]
+        self, *, pointer: QPointF, status_messages: list[str]
     ) -> None:
+        pos = self.transform_widget_point_to_image(point=pointer)
+        ratio = self.devicePixelRatioF()
+        device_pixel = QtCore.QPoint(
+            math.floor(pointer.x() * ratio), math.floor(pointer.y() * ratio)
+        )
+        pixel_center = self.transform_widget_point_to_image(
+            point=(QPointF(device_pixel) + QPointF(0.5, 0.5)) / ratio
+        )
+        world = self._world_transform()
         target = _canvas_interaction.find_hover_target(
             shapes=self.shapes,
             point=np.array([pos.x(), pos.y()]),
+            pixel_center=np.array([pixel_center.x(), pixel_center.y()]),
+            device_pixel_ratio=ratio,
+            marker_coverage=lambda shape: marker_coverage(
+                shape=shape,
+                context=self._render_context(
+                    shape=shape, highlighted=shape is self._hover.shape
+                ),
+                world=world,
+                device_pixel=device_pixel,
+                ratio=ratio,
+            ),
             scale=self.scale,
             epsilon=self._epsilon,
             point_size=self._point_size,
+            point_type=self._point_type,
             priority_shape=self._hover.shape,
+            highlight=self._highlight,
+            rotation_highlight=self._rotation_highlight,
+            selected=self.selected_shapes,
+            lifted=self._hover.lifted_shape,
         )
 
         if target is None:
@@ -1729,7 +1765,7 @@ class Canvas(QtWidgets.QWidget):
             # the hover from the last move on a shape the press is not over. A
             # press joining a held button keeps that gesture's target.
             self._prev_move_point = pos
-            self._refresh_hover_state(pos=pos)
+            self._refresh_hover_state(pointer=event.position())
         button = event.button()
         if button == Qt.MouseButton.LeftButton:
             self._press_left(pos=pos, event=event)
@@ -2257,14 +2293,16 @@ class Canvas(QtWidgets.QWidget):
         self._record_drag_anchor(shapes=self._movable_selected_shapes(), click=point)
 
     def _find_pointed_shape(self, *, point: QPointF) -> Shape | None:
-        # A hovered vertex, edge, or rotation handle acts on its own shape, so it
-        # wins over a body lying under it, or over none just outside an edge.
+        hover = self._hover
         if (
-            self._hover.vertex is not None
-            or self._hover.rotation is not None
-            or self._hover.edge is not None
+            hover.lifted_shape is not None
+            or hover.edge is not None
+            or (
+                hover.shape is not None
+                and (hover.shape.shape_type == "point" or hover.shape.locked)
+            )
         ):
-            return self._hover.shape
+            return hover.shape
         return _canvas_interaction.find_shape_at(
             shapes=self.shapes,
             point=np.array([point.x(), point.y()]),
@@ -2431,12 +2469,12 @@ class Canvas(QtWidgets.QWidget):
             painter.end()
 
     def _setup_world_transform(self, *, painter: QtGui.QPainter) -> None:
-        for hint in (
-            QtGui.QPainter.RenderHint.Antialiasing,
-            QtGui.QPainter.RenderHint.SmoothPixmapTransform,
-        ):
-            painter.setRenderHint(hint)
-        painter.translate(self._compute_image_origin_offset(area=None) * self.scale)
+        painter.setRenderHints(RENDER_HINTS)
+        painter.setTransform(self._world_transform())
+
+    def _world_transform(self) -> QtGui.QTransform:
+        offset = self._compute_image_origin_offset(area=None) * self.scale
+        return QtGui.QTransform.fromTranslate(offset.x(), offset.y())
 
     def _render_layers(self) -> tuple[Callable[[QtGui.QPainter], None], ...]:
         # Order is z-order, back-to-front.
@@ -2657,6 +2695,7 @@ class Canvas(QtWidgets.QWidget):
             if visible.isEmpty()
             else painter.transform().inverted()[0].mapRect(QRectF(visible))
         )
+        contexts: dict[Shape, ShapeRenderContext] = {}
         for shape in self.shapes:
             if not shape.visible:
                 continue
@@ -2667,9 +2706,17 @@ class Canvas(QtWidgets.QWidget):
                 painter=painter, shape=shape, context=context, rect=visible_rect
             ):
                 continue
-            render_shape(
-                painter=painter, shape=shape, context=context, cache=self._render_cache
-            )
+            contexts[shape] = context
+        render_shapes(
+            painter=painter,
+            contexts=contexts,
+            marker_stack=marker_stack(
+                shapes=list(contexts),
+                selected=self.selected_shapes,
+                lifted=self._hover.lifted_shape,
+            ),
+            cache=self._render_cache,
+        )
 
     def _draw_active_shape_layer(self, painter: QtGui.QPainter, /) -> None:
         if self.create_mode == "ai_segment":

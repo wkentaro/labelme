@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import collections
 import dataclasses
+import functools
+import math
 import sys
 import typing
 from typing import Final
@@ -19,6 +21,7 @@ from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
 from .._shape import RECTANGLE_POINT_COUNT
 from .._shape import Shape
 from .._shape import get_rotation_handle
+from .._shape import get_rotation_handles
 from .._shape import image_extent
 from .._shape import nearest_edge_index
 from .._shape import oriented_rectangle_arrow_points
@@ -104,6 +107,13 @@ class ShapeRenderContext:
 # pixels at every zoom level.
 _OUTLINE_WIDTH: Final[float] = 2.0
 
+_RASTER_SLACK: Final = 0.125
+
+RENDER_HINTS: Final = (
+    QtGui.QPainter.RenderHint.Antialiasing
+    | QtGui.QPainter.RenderHint.SmoothPixmapTransform
+)
+
 # Red marks an excluding prompt, a negative point or a counter-example box; a
 # "−" goes with it, since red and green are the pair color-blind users confuse.
 NEGATIVE_RGB: Final[tuple[int, int, int]] = (255, 0, 0)
@@ -185,13 +195,152 @@ def render_shape(
     context: ShapeRenderContext,
     cache: ShapeRenderCache | None = None,
 ) -> None:
-    if shape.mask is None and len(shape.points) == 0:
-        return
+    render_shapes(
+        painter=painter, contexts={shape: context}, marker_stack=[shape], cache=cache
+    )
 
-    palette = context.palette
-    color = palette.select_line if context.selected else palette.line
+
+def marker_stack(
+    *, shapes: list[Shape], selected: list[Shape], lifted: Shape | None
+) -> list[Shape]:
+    chosen = set(selected)
+
+    def tier(shape: Shape) -> int:
+        if shape.locked:
+            return 0
+        if shape in chosen:
+            return 3
+        if shape is lifted:
+            return 2
+        return 1
+
+    return sorted(shapes, key=tier)
+
+
+def render_shapes(
+    *,
+    painter: QtGui.QPainter,
+    contexts: dict[Shape, ShapeRenderContext],
+    marker_stack: list[Shape],
+    cache: ShapeRenderCache | None,
+) -> None:
+    marker_paths = {
+        shape: _paint_body(painter=painter, shape=shape, context=context, cache=cache)
+        for shape, context in contexts.items()
+    }
+    for shape in marker_stack:
+        paths = marker_paths[shape]
+        if paths is not None:
+            _paint_markers(painter=painter, context=contexts[shape], paths=paths)
+
+
+def marker_coverage(
+    *,
+    shape: Shape,
+    context: ShapeRenderContext,
+    world: QtGui.QTransform,
+    device_pixel: QtCore.QPoint,
+    ratio: float,
+) -> float:
+    if not context.outline or len(shape.points) == 0:
+        return 0.0
+    origin = QtCore.QPointF(device_pixel) / ratio
+    pixel = world.inverted()[0].mapRect(
+        QtCore.QRectF(origin, QtCore.QSizeF(1 / ratio, 1 / ratio))
+    )
+    paths = _build_marker_paths(
+        shape=shape,
+        context=context,
+        layers=_layers_near(shape=shape, context=context, rect=pixel),
+    )
+    reach = _OUTLINE_WIDTH + _RASTER_SLACK
+    if not (
+        paths.vertices
+        or paths.rotation_vertices
+        or paths.hover_vertex
+        or paths.negative_vertices
+        or pixel.adjusted(-reach, -reach, reach, reach).intersects(
+            paths.orientation_arrow.controlPointRect()
+        )
+    ):
+        return 0.0
+    border = 1
+    side = 2 * border + 1
+    image = QtGui.QImage(side, side, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
+    image.setDevicePixelRatio(ratio)
+    image.fill(QtCore.Qt.GlobalColor.transparent)
+    painter = QtGui.QPainter(image)
+    painter.setRenderHints(RENDER_HINTS)
+    corner = origin - QtCore.QPointF(border, border) / ratio
+    painter.setTransform(
+        world * QtGui.QTransform.fromTranslate(-corner.x(), -corner.y())
+    )
+    _paint_markers(painter=painter, context=context, paths=paths)
+    painter.end()
+    return image.pixelColor(border, border).alphaF()
+
+
+def _layers_near(
+    *, shape: Shape, context: ShapeRenderContext, rect: QtCore.QRectF
+) -> list[_MarkerLayer]:
+    point = np.array([rect.center().x(), rect.center().y()]) / context.scale
+    cover = functools.partial(
+        _covers, pixel_half=rect.width() / 2 + _RASTER_SLACK, scale=context.scale
+    )
+    near = []
+    for layer in _marker_layers(
+        shape=shape,
+        highlight=context.highlight,
+        rotation_highlight=context.rotation_highlight,
+        show_vertices=context.show_vertices,
+    ):
+        deltas = _marker_centers(shape=shape, kind=layer.kind) - point
+        distances = np.einsum("ij,ij->i", deltas, deltas)[layer.indices]
+        inside = cover(
+            deltas=deltas,
+            indices=layer.indices,
+            distances=distances,
+            size=context.point_size,
+            point_type=context.point_type,
+        )
+        highlight = (
+            context.highlight if layer.kind == "vertex" else context.rotation_highlight
+        )
+        if highlight is not None:
+            highlighted = layer.indices == highlight.index
+            size, point_type = _resolve_vertex_style(
+                highlight=highlight,
+                vertex_index=highlight.index,
+                default_size=context.point_size,
+                default_point_type=context.point_type,
+            )
+            inside[highlighted] = cover(
+                deltas=deltas,
+                indices=layer.indices[highlighted],
+                distances=distances[highlighted],
+                size=size,
+                point_type=point_type,
+            )
+        near.append(dataclasses.replace(layer, indices=layer.indices[inside]))
+    return near
+
+
+def _line_color(*, context: ShapeRenderContext) -> QtGui.QColor:
+    return context.palette.select_line if context.selected else context.palette.line
+
+
+def _paint_body(
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+    cache: ShapeRenderCache | None,
+) -> _ShapePaths | None:
+    if shape.mask is None and len(shape.points) == 0:
+        return None
+
     painter.setPen(
-        QtGui.QPen(color, _OUTLINE_WIDTH, context.line_style)
+        QtGui.QPen(_line_color(context=context), _OUTLINE_WIDTH, context.line_style)
         if context.outline
         else QtCore.Qt.PenStyle.NoPen
     )
@@ -199,14 +348,23 @@ def render_shape(
     if shape.shape_type == "mask" and shape.mask is not None:
         _paint_mask(painter=painter, shape=shape, context=context, cache=cache)
 
+    paths = None
     if len(shape.points) > 0:
-        _paint_shape_points(painter=painter, shape=shape, context=context, cache=cache)
+        paths = _shape_paths(shape=shape, context=context, cache=cache)
+        _paint_outline_and_fill(
+            painter=painter, shape=shape, context=context, paths=paths
+        )
 
     if context.show_label:
         _paint_label(painter=painter, shape=shape, context=context)
+    return paths
 
 
 _LARGEST_HIGHLIGHT: Final = VertexHighlight(index=0, mode="near")
+
+
+def marker_reach(*, point_size: int) -> float:
+    return point_size * _LARGEST_HIGHLIGHT.size_factor / 2 + _OUTLINE_WIDTH
 
 
 def intersects_rect(
@@ -223,8 +381,7 @@ def intersects_rect(
         return True
     anchor = points.min(axis=0)
     lo, hi = image_extent(shape=shape)
-    largest_marker = context.point_size * _LARGEST_HIGHLIGHT.size_factor
-    pad = largest_marker / 2 + _OUTLINE_WIDTH
+    pad = marker_reach(point_size=context.point_size)
     left, top = lo * context.scale - pad
     right, bottom = hi * context.scale + pad
     extent = QtCore.QRectF(left, top, right - left, bottom - top)
@@ -366,14 +523,12 @@ class _ShapePaths:
     )
 
 
-def _paint_shape_points(
+def _shape_paths(
     *,
-    painter: QtGui.QPainter,
     shape: Shape,
     context: ShapeRenderContext,
     cache: ShapeRenderCache | None,
-) -> None:
-    palette = context.palette
+) -> _ShapePaths:
     key = None
     if (
         cache is not None
@@ -395,13 +550,6 @@ def _paint_shape_points(
     paths = cache._get(key=key) if cache is not None and key is not None else None
     if paths is None:
         paths = _build_shape_points_paths(shape=shape, context=context)
-        for rect, point_type in paths.vertices:
-            # A zero-width pen is cosmetic in Qt and would still paint a dot.
-            if rect.isEmpty():
-                continue
-            paths.vertex_points.setdefault(
-                (rect.width(), point_type), QtGui.QPolygonF()
-            ).append(rect.center())
         if cache is not None and key is not None:
             cache._put(
                 key=key,
@@ -412,41 +560,67 @@ def _paint_shape_points(
                 + len(paths.vertices) * (256 + 16),
             )
     assert isinstance(paths, _ShapePaths)
+    return paths
 
+
+def _paint_outline_and_fill(
+    *,
+    painter: QtGui.QPainter,
+    shape: Shape,
+    context: ShapeRenderContext,
+    paths: _ShapePaths,
+) -> None:
+    palette = context.palette
     if context.outline:
         painter.drawPath(paths.line)
-        _paint_filled_vertices(
-            painter=painter,
-            vertices=paths.vertices,
-            fill=palette.hvertex_fill
-            if context.highlight is not None
-            else palette.vertex_fill,
-            points=paths.vertex_points,
-        )
-        _paint_filled_vertices(
-            painter=painter,
-            vertices=paths.rotation_vertices,
-            fill=(
-                palette.hvertex_fill
-                if context.rotation_highlight is not None
-                else palette.vertex_fill
-            ),
-        )
-        _paint_filled_vertices(
-            painter=painter, vertices=paths.hover_vertex, fill=palette.hvertex_fill
-        )
     if context.fill and shape.shape_type not in ["line", "linestrip", "points", "mask"]:
         fill = palette.select_fill if context.selected else palette.fill
         painter.fillPath(paths.line, fill)
+
+
+def _marker_pen(
+    *, color: QtGui.QColor, style: QtCore.Qt.PenStyle = QtCore.Qt.PenStyle.SolidLine
+) -> QtGui.QPen:
+    pen = QtGui.QPen(color, _OUTLINE_WIDTH, style)
+    pen.setJoinStyle(QtCore.Qt.PenJoinStyle.MiterJoin)
+    return pen
+
+
+def _paint_markers(
+    *, painter: QtGui.QPainter, context: ShapeRenderContext, paths: _ShapePaths
+) -> None:
     if not context.outline:
         return
+    palette = context.palette
+    painter.setPen(
+        _marker_pen(color=_line_color(context=context), style=context.line_style)
+    )
+    _paint_filled_vertices(
+        painter=painter,
+        vertices=paths.vertices,
+        fill=palette.hvertex_fill
+        if context.highlight is not None
+        else palette.vertex_fill,
+        points=paths.vertex_points,
+    )
+    _paint_filled_vertices(
+        painter=painter,
+        vertices=paths.rotation_vertices,
+        fill=(
+            palette.hvertex_fill
+            if context.rotation_highlight is not None
+            else palette.vertex_fill
+        ),
+    )
+    _paint_filled_vertices(
+        painter=painter, vertices=paths.hover_vertex, fill=palette.hvertex_fill
+    )
     if paths.orientation_arrow.length() > 0:
         painter.setPen(QtGui.QPen(palette.vertex_fill, _OUTLINE_WIDTH))
         painter.drawPath(paths.orientation_arrow)
-
     if paths.negative_vertices:
         neg_color = QtGui.QColor(*NEGATIVE_RGB)
-        painter.setPen(QtGui.QPen(neg_color, _OUTLINE_WIDTH))
+        painter.setPen(_marker_pen(color=neg_color))
         _paint_filled_vertices(
             painter=painter, vertices=paths.negative_vertices, fill=neg_color
         )
@@ -499,7 +673,7 @@ def _paint_filled_vertices(
             path.addRect(rect)
     if not draw_individually:
         painter.drawPath(path)
-    # The shared fill retains the holes and highlights where markers overlap.
+    path.setFillRule(QtCore.Qt.FillRule.WindingFill)
     painter.fillPath(path, fill)
 
 
@@ -603,8 +777,6 @@ def _build_shape_points_paths(
     shape: Shape,
     context: ShapeRenderContext,
 ) -> _ShapePaths:
-    paths = _ShapePaths()
-    scale = context.scale
     points = shape.points
     if shape.shape_type in ("rectangle", "mask", "circle"):
         assert len(points) in [1, 2]
@@ -613,63 +785,265 @@ def _build_shape_points_paths(
     elif shape.shape_type == "points":
         assert len(points) == len(shape.point_labels)
 
-    if shape.shape_type == "points":
-        # Prompt points are standalone markers; their outline only bounds them.
-        for i, point_label in enumerate(shape.point_labels):
-            vertices = paths.vertices if point_label == 1 else paths.negative_vertices
-            _append_shape_vertex(
-                vertices=vertices, shape=shape, context=context, vertex_index=i
-            )
-        return paths
-
-    paths.line.addPath(
-        QtGui.QTransform.fromScale(scale, scale).map(_build_outline_path(shape=shape))
+    paths = _build_marker_paths(
+        shape=shape,
+        context=context,
+        layers=_marker_layers(
+            shape=shape,
+            highlight=context.highlight,
+            rotation_highlight=context.rotation_highlight,
+            show_vertices=context.show_vertices,
+        ),
     )
+    if shape.shape_type != "points":
+        paths.line.addPath(
+            QtGui.QTransform.fromScale(context.scale, context.scale).map(
+                _build_outline_path(shape=shape)
+            )
+        )
+    return paths
+
+
+def _build_marker_paths(
+    *, shape: Shape, context: ShapeRenderContext, layers: list[_MarkerLayer]
+) -> _ShapePaths:
+    paths = _ShapePaths()
+    groups = {
+        "vertices": paths.vertices,
+        "rotations": paths.rotation_vertices,
+        "hovered": paths.hover_vertex,
+        "negatives": paths.negative_vertices,
+    }
+    for layer in layers:
+        append = (
+            _append_shape_vertex
+            if layer.kind == "vertex"
+            else _append_shape_rotation_vertex
+        )
+        for index in layer.indices:
+            append(
+                vertices=groups[layer.group],
+                shape=shape,
+                context=context,
+                vertex_index=int(index),
+            )
+    for rect, point_type in paths.vertices:
+        if rect.isEmpty():
+            continue
+        paths.vertex_points.setdefault(
+            (rect.width(), point_type), QtGui.QPolygonF()
+        ).append(rect.center())
+    if (
+        shape.shape_type == "oriented_rectangle"
+        and len(shape.points) == ORIENTED_RECTANGLE_POINT_COUNT
+    ):
+        _build_shape_oriented_rectangle_arrow_path(
+            path=paths.orientation_arrow, shape=shape, scale=context.scale
+        )
+    return paths
+
+
+MarkerKind = Literal["vertex", "rotation"]
+
+
+@dataclasses.dataclass(frozen=True)
+class _MarkerLayer:
+    group: Literal["vertices", "rotations", "hovered", "negatives"]
+    kind: MarkerKind
+    indices: npt.NDArray[np.intp]
+
+
+def _marker_layers(
+    *,
+    shape: Shape,
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+    show_vertices: bool,
+) -> list[_MarkerLayer]:
+    points = shape.points
+    if shape.shape_type == "points":
+        positive = np.asarray(shape.point_labels) == 1
+        return [
+            _MarkerLayer(
+                group="vertices", kind="vertex", indices=np.flatnonzero(positive)
+            ),
+            _MarkerLayer(
+                group="negatives", kind="vertex", indices=np.flatnonzero(~positive)
+            ),
+        ]
     # A mask's corners are not draggable, and an oriented rectangle's first
     # corner is drawn by the drag preview until its first edge is locked.
     if shape.shape_type == "mask" or (
         shape.shape_type == "oriented_rectangle" and len(points) == 1
     ):
-        return paths
-    is_oriented_rectangle = shape.shape_type == "oriented_rectangle"
-    grouped_corners: set[tuple[float, ...]] = set()
-    for i in range(len(points)):
-        hovered = context.highlight is not None and context.highlight.index == i
-        if not (context.show_vertices or hovered):
-            continue
-        on_top = hovered and is_oriented_rectangle
-        if is_oriented_rectangle and not on_top:
-            corner = tuple(points[i])
-            if corner in grouped_corners:
-                continue
-            grouped_corners.add(corner)
-        _append_shape_vertex(
-            vertices=paths.hover_vertex if on_top else paths.vertices,
-            shape=shape,
-            context=context,
-            vertex_index=i,
-        )
+        return []
+    hovered = (
+        highlight.index
+        if highlight is not None and 0 <= highlight.index < len(points)
+        else None
+    )
+    if not show_vertices:
+        corners = np.array([], dtype=np.intp)
+    elif shape.shape_type == "oriented_rectangle":
+        painted: dict[tuple[float, ...], int] = {}
+        for i in range(len(points)):
+            if i != hovered:
+                painted.setdefault(tuple(points[i]), i)
+        corners = np.array(list(painted.values()), dtype=np.intp)
+    else:
+        corners = np.delete(np.arange(len(points)), [] if hovered is None else hovered)
+    layers = [_MarkerLayer(group="vertices", kind="vertex", indices=corners)]
+    hovered_handle = None
     if (
         shape.shape_type == "oriented_rectangle"
         and len(points) == ORIENTED_RECTANGLE_POINT_COUNT
     ):
-        for i in range(len(points)):
-            if np.array_equal(points[i - 1], points[i]):
-                continue
-            hovered = (
-                context.rotation_highlight is not None
-                and context.rotation_highlight.index == i
+        handles = [
+            i
+            for i in range(len(points))
+            if not np.array_equal(points[i - 1], points[i])
+        ]
+        if rotation_highlight is not None and rotation_highlight.index in handles:
+            hovered_handle = rotation_highlight.index
+        layers.append(
+            _MarkerLayer(
+                group="rotations",
+                kind="rotation",
+                indices=np.array(
+                    [i for i in handles if i != hovered_handle], dtype=np.intp
+                ),
             )
-            _append_shape_rotation_vertex(
-                vertices=paths.hover_vertex if hovered else paths.rotation_vertices,
-                shape=shape,
-                context=context,
-                vertex_index=i,
-            )
-        _build_shape_oriented_rectangle_arrow_path(
-            path=paths.orientation_arrow, shape=shape, scale=scale
         )
-    return paths
+    if hovered is not None:
+        layers.append(
+            _MarkerLayer(
+                group="hovered",
+                kind="vertex",
+                indices=np.array([hovered], dtype=np.intp),
+            )
+        )
+    if hovered_handle is not None:
+        layers.append(
+            _MarkerLayer(
+                group="hovered",
+                kind="rotation",
+                indices=np.array([hovered_handle], dtype=np.intp),
+            )
+        )
+    return layers
+
+
+def find_marker(
+    *,
+    shape: Shape,
+    point: npt.NDArray[np.float64],
+    pixel_half: float,
+    scale: float,
+    point_size: int,
+    point_type: Literal["square", "round"],
+    highlight: VertexHighlight | None,
+    rotation_highlight: VertexHighlight | None,
+) -> tuple[MarkerKind, int] | None:
+    for layer in reversed(
+        _marker_layers(
+            shape=shape,
+            highlight=highlight,
+            rotation_highlight=rotation_highlight,
+            show_vertices=True,
+        )
+    ):
+        if len(layer.indices) == 0:
+            continue
+        index = _find_marker_in_layer(
+            deltas=_marker_centers(shape=shape, kind=layer.kind) - point,
+            indices=layer.indices,
+            scale=scale,
+            pixel_half=pixel_half,
+            point_size=point_size,
+            point_type=point_type,
+            highlight=highlight if layer.kind == "vertex" else rotation_highlight,
+        )
+        if index is not None:
+            return layer.kind, index
+    return None
+
+
+def _marker_centers(*, shape: Shape, kind: MarkerKind) -> npt.NDArray[np.float64]:
+    if kind == "vertex":
+        return shape.points
+    return get_rotation_handles(points=shape.points)
+
+
+def _find_marker_in_layer(
+    *,
+    deltas: npt.NDArray[np.float64],
+    indices: npt.NDArray[np.intp],
+    pixel_half: float,
+    scale: float,
+    point_size: int,
+    point_type: Literal["square", "round"],
+    highlight: VertexHighlight | None,
+) -> int | None:
+    distances = np.einsum("ij,ij->i", deltas, deltas)[indices]
+    hits = _covers(
+        deltas=deltas,
+        indices=indices,
+        distances=distances,
+        size=point_size,
+        point_type=point_type,
+        scale=scale,
+        pixel_half=pixel_half,
+    )
+    if highlight is not None and highlight.index in indices:
+        (i,) = np.flatnonzero(indices == highlight.index)
+        size, highlighted_type = _resolve_vertex_style(
+            highlight=highlight,
+            vertex_index=highlight.index,
+            default_size=point_size,
+            default_point_type=point_type,
+        )
+        if _covers(
+            deltas=deltas,
+            indices=indices[i : i + 1],
+            distances=distances[i : i + 1],
+            size=size,
+            point_type=highlighted_type,
+            scale=scale,
+            pixel_half=pixel_half,
+        )[0]:
+            return highlight.index
+        hits[i] = False
+    candidates = np.flatnonzero(hits)
+    if len(candidates) == 0:
+        return None
+    return int(indices[candidates[np.argmin(distances[candidates])]])
+
+
+def _covers(
+    *,
+    deltas: npt.NDArray[np.float64],
+    indices: npt.NDArray[np.intp],
+    distances: npt.NDArray[np.float64],
+    size: float,
+    point_type: Literal["square", "round"],
+    pixel_half: float,
+    scale: float,
+) -> npt.NDArray[np.bool_]:
+    if size <= 0:
+        return np.zeros(len(indices), dtype=bool)
+    marker_half = (size + _OUTLINE_WIDTH) / 2
+    if point_type == "round":
+        bound = marker_half + pixel_half * math.sqrt(2)
+    else:
+        bound = (marker_half + pixel_half) * math.sqrt(2)
+    hits = distances < (bound / scale) ** 2
+    candidates = np.flatnonzero(hits)
+    gaps = np.maximum(np.abs(deltas[indices[candidates]]) * scale - pixel_half, 0)
+    if point_type == "round":
+        hits[candidates] = np.einsum("ij,ij->i", gaps, gaps) < marker_half**2
+    else:
+        hits[candidates] = np.maximum(gaps[:, 0], gaps[:, 1]) < marker_half
+    return hits
 
 
 def is_hit_by_point(
