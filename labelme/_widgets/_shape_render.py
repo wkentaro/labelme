@@ -270,17 +270,20 @@ def marker_coverage(
         or near.intersects(paths.orientation_arrow.controlPointRect())
     ):
         return 0.0
-    image = QtGui.QImage(1, 1, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
+    border = 1
+    side = 2 * border + 1
+    image = QtGui.QImage(side, side, QtGui.QImage.Format.Format_ARGB32_Premultiplied)
     image.setDevicePixelRatio(ratio)
     image.fill(QtCore.Qt.GlobalColor.transparent)
     painter = QtGui.QPainter(image)
     painter.setRenderHints(RENDER_HINTS)
+    corner = origin - QtCore.QPointF(border, border) / ratio
     painter.setTransform(
-        world * QtGui.QTransform.fromTranslate(-origin.x(), -origin.y())
+        world * QtGui.QTransform.fromTranslate(-corner.x(), -corner.y())
     )
     _paint_markers(painter=painter, context=context, paths=paths)
     painter.end()
-    return image.pixelColor(0, 0).alphaF()
+    return image.pixelColor(border, border).alphaF()
 
 
 def _layers_near(
