@@ -5158,6 +5158,72 @@ def test_press_grabs_the_marker_drawn_on_top_under_the_pointer(
         selected=selected,
         locked=locked,
     )
+
+    drawn, target, moved, end = _press_and_drag_along(
+        canvas=canvas, qtbot=qtbot, loaded=loaded, path=path
+    )
+
+    owner, kind, index = grabbed
+    assert drawn == (owner, owner, owner)
+    assert target == grabbed
+    assert moved == [owner]
+    if kind == "vertex":
+        assert index is not None
+        assert tuple(loaded[owner].points[index]) == (end.x(), end.y())
+
+
+@pytest.mark.parametrize(
+    ("shapes", "scale", "pointer"),
+    [
+        pytest.param(
+            [("rectangle", ((86, 92), (30, 30))), ("point", ((95, 97),))],
+            0.9,
+            (82, 82),
+            id="point_sliver_qt_leaves_unpainted",
+        ),
+        pytest.param(
+            [("rectangle", ((80, 80), (145, 140))), ("point", ((84, 86),))],
+            0.75,
+            (57, 64),
+            id="point_rim_qt_leaves_unpainted",
+        ),
+        pytest.param(
+            [("rectangle", ((80, 80), (145, 140))), ("point", ((83.99, 86),))],
+            0.75,
+            (57, 64),
+            id="point_rim_qt_leaves_unpainted_off_grid",
+        ),
+    ],
+)
+def test_press_grabs_the_corner_a_point_beside_it_leaves_unpainted(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    shapes: list[tuple[ShapeType, _Points]],
+    scale: float,
+    pointer: tuple[int, int],
+) -> None:
+    loaded = _load_owned_shapes(
+        canvas=canvas, monkeypatch=monkeypatch, shapes=shapes, scale=scale
+    )
+
+    drawn, target, moved, _ = _press_and_drag_along(
+        canvas=canvas, qtbot=qtbot, loaded=loaded, path=[(2, 2), pointer]
+    )
+
+    assert drawn == (0, 0, 0)
+    assert target == (0, "vertex", 0)
+    assert moved == [0]
+
+
+def _press_and_drag_along(
+    *,
+    canvas: Canvas,
+    qtbot: QtBot,
+    loaded: list[Shape],
+    path: list[tuple[int, int]],
+) -> tuple[tuple[int | None, ...], _Target | None, list[int], QtCore.QPoint]:
     *approach, (x, y) = path
     pointer = QtCore.QPoint(x, y)
     for step in approach:
@@ -5188,13 +5254,7 @@ def test_press_grabs_the_marker_drawn_on_top_under_the_pointer(
         for owner, (points, shape) in enumerate(zip(before, loaded, strict=True))
         if not np.array_equal(points, shape.points)
     ]
-    owner, kind, index = grabbed
-    assert (drawn_before, drawn, held) == (owner, owner, owner)
-    assert target == grabbed
-    assert moved == [owner]
-    if kind == "vertex":
-        assert index is not None
-        assert tuple(loaded[owner].points[index]) == (end.x(), end.y())
+    return (drawn_before, drawn, held), target, moved, end
 
 
 def test_marker_paints_over_the_fill_of_a_later_selected_shape(
