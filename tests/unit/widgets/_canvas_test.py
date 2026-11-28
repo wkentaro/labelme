@@ -5303,3 +5303,117 @@ def test_crossing_bodies_leaves_the_shared_corner_marker_in_place(
         drawn.append(_drawn_owner(canvas=canvas, at=QtCore.QPoint(80, 20)))
 
     assert drawn == [1] * 6
+
+
+@pytest.mark.parametrize(
+    ("shapes", "selected", "scale", "box"),
+    [
+        pytest.param(
+            [
+                ("polygon", ((20, 20), (60, 40), (20, 90))),
+                ("polygon", ((66, 40), (140, 20), (140, 90))),
+            ],
+            (),
+            1.0,
+            (48, 28, 80, 52),
+            id="close6",
+        ),
+        pytest.param(
+            [("polygon", _SQUARE_LEFT), ("polygon", _SQUARE_RIGHT)],
+            (0,),
+            1.0,
+            (66, 8, 96, 34),
+            id="shared_left_sel",
+        ),
+        pytest.param(
+            [("polygon", _SQUARE_LEFT), ("polygon", _SQUARE_RIGHT)],
+            (),
+            1.0,
+            (66, 8, 96, 34),
+            id="shared_none",
+        ),
+        pytest.param(
+            [("rectangle", ((20, 20), (130, 90))), ("point", ((28, 25),))],
+            (),
+            1.0,
+            (10, 10, 42, 38),
+            id="point_corner",
+        ),
+        pytest.param(
+            [
+                ("oriented_rectangle", ((20, 40), (90, 40), (90, 90), (20, 90))),
+                ("polygon", ((61, 33), (140, 33), (140, 100))),
+            ],
+            (),
+            1.0,
+            (44, 24, 74, 52),
+            id="handle_corner",
+        ),
+        pytest.param(
+            [
+                ("polygon", ((40, 40), (120, 80), (40, 120))),
+                ("polygon", ((130, 80), (260, 40), (260, 120))),
+            ],
+            (),
+            0.5,
+            (50, 30, 75, 50),
+            id="zoom_out_close",
+        ),
+    ],
+)
+def test_hover_keeps_the_marker_still_drawn_under_the_pointer(
+    *,
+    canvas: Canvas,
+    monkeypatch: pytest.MonkeyPatch,
+    shapes: list[tuple[ShapeType, _Points]],
+    selected: tuple[int, ...],
+    scale: float,
+    box: tuple[int, int, int, int],
+) -> None:
+    _load_owned_shapes(
+        canvas=canvas,
+        monkeypatch=monkeypatch,
+        shapes=shapes,
+        selected=selected,
+        scale=scale,
+    )
+    monkeypatch.setattr(_shape_render, "_paint_outline_and_fill", lambda **_: None)
+    images: dict[tuple[object, ...], QtGui.QImage] = {}
+
+    def marker_owner(x: int, y: int) -> int | None:
+        state = (
+            id(canvas._hover.shape),
+            canvas._highlight,
+            canvas._rotation_highlight,
+        )
+        if state not in images:
+            images[state] = canvas.grab().toImage()
+        owners = {
+            _owner_of(color=images[state].pixelColor(x + dx, y + dy))
+            for dx, dy in itertools.product((-1, 0), repeat=2)
+        }
+        return owners.pop() if len(owners) == 1 else None
+
+    left, top, right, bottom = box
+    rows = [[(x, y) for x in range(left, right)] for y in range(top, bottom)]
+    columns = [[(x, y) for y in range(top, bottom)] for x in range(left, right)]
+    jumps = []
+    for path in rows + columns:
+        for steps in (path, path[::-1]):
+            _hover_widget_point(canvas=canvas, at=(2, 2))
+            previous = None
+            for x, y in steps:
+                drawn = marker_owner(x, y)
+                _hover_widget_point(canvas=canvas, at=(x, y))
+                target = _hover_target(canvas=canvas)
+                if (
+                    previous is not None
+                    and previous[1] in ("vertex", "rotation")
+                    and drawn == previous[0]
+                    and target is not None
+                    and target[0] != previous[0]
+                ):
+                    jumps.append((previous, (x, y), target))
+                previous = target
+
+    assert jumps == []
