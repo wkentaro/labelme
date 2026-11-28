@@ -19,6 +19,7 @@ from .._shape import ORIENTED_RECTANGLE_POINT_COUNT
 from .._shape import RECTANGLE_POINT_COUNT
 from .._shape import Shape
 from .._shape import get_rotation_handle
+from .._shape import get_rotation_handles
 from .._shape import image_extent
 from .._shape import nearest_edge_index
 from .._shape import oriented_rectangle_arrow_points
@@ -858,9 +859,7 @@ def find_marker(
 def _marker_centers(*, shape: Shape, kind: MarkerKind) -> npt.NDArray[np.float64]:
     if kind == "vertex":
         return shape.points
-    return np.array(
-        [get_rotation_handle(shape=shape, index=i) for i in range(len(shape.points))]
-    )
+    return get_rotation_handles(points=shape.points)
 
 
 def _find_marker_in_layer(
