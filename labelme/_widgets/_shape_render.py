@@ -484,9 +484,6 @@ def _paint_outline_and_fill(
     if context.fill and shape.shape_type not in ["line", "linestrip", "points", "mask"]:
         fill = palette.select_fill if context.selected else palette.fill
         painter.fillPath(paths.line, fill)
-    if context.outline and paths.orientation_arrow.length() > 0:
-        painter.setPen(QtGui.QPen(palette.vertex_fill, _OUTLINE_WIDTH))
-        painter.drawPath(paths.orientation_arrow)
 
 
 def _marker_pen(
@@ -526,6 +523,9 @@ def _paint_markers(
     _paint_filled_vertices(
         painter=painter, vertices=paths.hover_vertex, fill=palette.hvertex_fill
     )
+    if paths.orientation_arrow.length() > 0:
+        painter.setPen(QtGui.QPen(palette.vertex_fill, _OUTLINE_WIDTH))
+        painter.drawPath(paths.orientation_arrow)
     if paths.negative_vertices:
         neg_color = QtGui.QColor(*NEGATIVE_RGB)
         painter.setPen(_marker_pen(color=neg_color))
